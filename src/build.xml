@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="abraid-mp.src" default="build.modules">
+  
+  <!-- <property file="build.properties"/> -->
+
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/.git/**"/>
+    <exclude name="**/*~/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.war"/>
+    <include name="*.ear"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.class"/>
+  </patternset>
+  
+  <property name="project.jdk.home" value=""/>
+  <property name="project.jdk.bin" value=""/>
+  <property name="project.jdk.classpath" value=""/>
+  
+  <!-- Modules -->
+  
+  <import file="${basedir}/Common/build.xml"/>
+  
+  <import file="${basedir}/DataAcquisition/build.xml"/>
+  
+  <import file="${basedir}/DiseaseExtent/build.xml"/>
+  
+  <import file="${basedir}/FrontEnd/build.xml"/>
+  
+  <import file="${basedir}/GeoWiki/build.xml"/>
+  
+  <import file="${basedir}/ModelWrapper/build.xml"/>
+  
+  <target name="build.init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean.modules" depends="clean.module.common, clean.module.dataacquisition, clean.module.diseaseextent, clean.module.frontend, clean.module.geowiki, clean.module.modelwrapper" description="cleanup all"/>
+  
+  <target name="build.modules" depends="build.init, clean.modules, compile.module.common, compile.module.dataacquisition, compile.module.diseaseextent, compile.module.frontend, compile.module.geowiki, compile.module.modelwrapper" description="build all modules"/>
+
+</project>
