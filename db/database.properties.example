@@ -1,0 +1,5 @@
+# The name of a database superuser
+superuser.name=postgres
+
+# The name of the ABRAID-MP database
+database.name=abraid_mp

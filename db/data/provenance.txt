@@ -1,0 +1,64 @@
+ProMED Mail	1
+World Health Organization	2
+EuroSurveillance	3
+Google News	4
+Moreover Technologies	5
+ProMED Español	7
+Organización Mundial de la Salud	8
+Google News Español	9
+Google News Français	10
+Organisation mondiale de la Santé	11
+WHO Русский	13
+ProMED MBDS	15
+世界卫生组织 (WHO ZH)	16
+Google 资讯	17
+ProMED Français	18
+Wildlife Disease Node	19
+HM Community News Reports	22
+ProMED Anglophone Africa	24
+Twitter	25
+ProMED Português	26
+Google News Português	28
+World Org. for Animal Health	30
+أخبار جوجل العربية (Google News AR)	31
+Org. Mundial de Sanidad Animal	32
+Org. Mondial de la Santé Animale	33
+Eyewitness Reports	34
+موقع منظمة الصحة العالمي (WHO AR)	35
+GeoSentinel	36
+Baidu 新闻	62
+SOSO资讯	63
+Arabic RSS	70
+Local Media Surveillance	75
+Food and Agriculture Org	77
+Ministry of Health Sites	88
+Google News Deutsch	92
+Ministry of Health Sites Spanish	106
+Ministry of Health Sites French	107
+Ministry of Health Sites Portuguese	108
+Ministry of Health Sites Russian	109
+Ministry of Health Sites Chinese	110
+Ministry of Health Sites Arabic	111
+Ministry of Health Sites German	112
+Ministry of Health Sites Italian	113
+Ministry of Health Sites Korean	114
+Google News Vietnamese	115
+Google News Japanese	117
+Google News Bahasa	121
+Ministry of Health Sites Japanese	129
+Ministry of Health Sites Bahasa	133
+Ministry of Health Sites Twitter	134
+Ministry of Health Sites Twitter Spanish	135
+Ministry of Health Sites Twitter French	136
+Ministry of Health Sites Twitter Arabic	137
+Ministry of Health Sites Twitter Japanese	138
+Ministry of Health Sites Twitter Korean	139
+Ministry of Health Sites Twitter Portuguese	140
+Ministry of Health Sites Twitter Russian	141
+Ministry of Health Sites Facebook	142
+Ministry of Health Sites Facebook Spanish	143
+Ministry of Health Sites Facebook Arabic	144
+Ministry of Health Sites Facebook Korean	145
+Ministry of Health Sites Facebook Portuguese	146
+HM Community News Reports ZH	153
+Francophone News Agencies RSS Feed	157

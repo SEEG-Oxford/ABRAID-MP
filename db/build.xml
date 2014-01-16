@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Database" basedir="." default="create-database">
+    <description>Creates the ABRAID-MP database.</description>
+
+    <!-- To customise the database properties, copy file database.properties.example to database.properties and modify it -->
+    <!-- If database.properties does not exist, this uses database.properties.example -->
+    <property file="database.properties" />
+    <property file="database.properties.example" />
+
+    <!-- Creates the database -->
+    <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
+         You can use pgAdmin to add it to this file. -->
+    <target name="create-database">
+        <exec executable="psql" failonerror="true">
+            <arg value="-U" />
+            <arg value="${superuser.name}" />
+            <arg value="-w" />
+            <arg value="-v" />
+            <arg value="database_name=${database.name}" />
+            <arg value="-f" />
+            <arg value="create_database.sql" />
+        </exec>
+    </target>
+</project>
