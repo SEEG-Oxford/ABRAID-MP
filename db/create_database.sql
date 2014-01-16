@@ -27,3 +27,4 @@ CREATE EXTENSION postgis;
 -- Create default data
 \cd data
 \i data.sql
+VACUUM ANALYZE;

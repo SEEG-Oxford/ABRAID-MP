@@ -1,4 +1,4 @@
-# The name of the Postgres database's default user (i.e. password need not be specified)
+# The name of a database superuser
 superuser.name=postgres
 
 # The name of the ABRAID-MP database
