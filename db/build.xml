@@ -11,7 +11,7 @@
     <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
          You can use pgAdmin to add it to this file. -->
     <target name="create-database">
-        <exec executable="psql">
+        <exec executable="psql" failonerror="true">
             <arg value="-U" />
             <arg value="${superuser.name}" />
             <arg value="-w" />
