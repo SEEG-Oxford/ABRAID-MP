@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="abraid-mp" default="build">
+    
+  <!-- Subfiles -->
+  <import file="${basedir}/src/build.xml" />
+
+  <!-- targets -->  
+  <target name="clean" depends="clean.modules" description="cleanup everything"/>
+  <target name="build" depends="build.modules" description="build everything"/>
+
+</project>
