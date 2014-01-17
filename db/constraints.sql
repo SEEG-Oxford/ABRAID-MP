@@ -51,15 +51,3 @@ ALTER TABLE DiseaseOutbreak ADD CONSTRAINT FK_DiseaseOutbreak_Provenance
 
 ALTER TABLE Location ADD CONSTRAINT FK_Location_Country 
     FOREIGN KEY (Country) REFERENCES Country (Id);
-
-    
--- Check constraints
--- Ensure that the Location.Point field contains points with SRID 4326
-ALTER TABLE Location ADD CONSTRAINT CK_Location_Point_Dims
-    CHECK (ST_NDIMS(Point) = 2);
-
-ALTER TABLE Location ADD CONSTRAINT CK_Location_Point_GeoType
-    CHECK (GEOMETRYTYPE(Point) = 'POINT'::text OR Point IS NULL);
-
-ALTER TABLE Location ADD CONSTRAINT CK_Location_Point_SRID
-    CHECK (ST_SRID(Point) = 4326);
