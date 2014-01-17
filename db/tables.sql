@@ -46,7 +46,7 @@ CREATE TABLE DiseaseOutbreak (
 -- Represents a location
 CREATE TABLE Location ( 
     Id serial NOT NULL,
-    Point geometry,
+    Geom geometry(POINT, 4326),
     PlaceName varchar(1000),
     Admin1 varchar(50),
     Country varchar(3)
