@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="abraid-mp_lib" default="acquire.libs" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <ivy:settings file="${basedir}/ivysettings.xml"/>
+  
+  <target name="acquire.libs" depends="ivy-retrieve" />
+
+  <target name="ivy-resolve">
+   <!-- <ivy:info file="${basedir}/ivy.xml" /> -->
+   <ivy:resolve/>
+  </target>
+
+  <target name="ivy-retrieve" depends="ivy-resolve">
+    <ivy:retrieve pattern="${basedir}/lib/[artifact]-[revision]-[type].[ext]" sync="true"/>
+  </target>
+</project>
