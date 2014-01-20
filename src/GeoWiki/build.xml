@@ -8,11 +8,18 @@
   
   <property name="compiler.args.geowiki" value="${compiler.args}"/>
   
-  <property name="geowiki.output.dir" value="undefined"/>
-  <property name="geowiki.testoutput.dir" value="undefined"/>
+  <property name="geowiki.output.dir" value="${module.geowiki.basedir}/../../out/production"/>
+  <property name="geowiki.testoutput.dir" value="${module.geowiki.basedir}/../../out/test"/>
   
   <path id="geowiki.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
+    <fileset dir="${module.geowiki.basedir}/../../lib">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${module.geowiki.basedir}/../../out"/>
+    <fileset dir="${project.jdk.classpath}">
+      <include name="*.jar"/>
+    </fileset>
   </path>
   
   <path id="geowiki.module.production.classpath"/>
@@ -49,7 +56,7 @@
   
   <target name="compile.module.geowiki.production" description="Compile module GeoWiki; production classes">
     <mkdir dir="${geowiki.output.dir}"/>
-    <javac destdir="${geowiki.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.geowiki}/javac">
+    <javac destdir="${geowiki.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.geowiki}"/>
       <bootclasspath refid="geowiki.module.bootclasspath"/>
       <classpath refid="geowiki.module.production.classpath"/>
@@ -67,7 +74,7 @@
   
   <target name="compile.module.geowiki.tests" depends="compile.module.geowiki.production" description="compile module GeoWiki; test classes" unless="skip.tests">
     <mkdir dir="${geowiki.testoutput.dir}"/>
-    <javac destdir="${geowiki.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.geowiki}/javac">
+    <javac destdir="${geowiki.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.geowiki}"/>
       <bootclasspath refid="geowiki.module.bootclasspath"/>
       <classpath refid="geowiki.module.classpath"/>

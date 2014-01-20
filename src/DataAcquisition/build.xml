@@ -8,11 +8,15 @@
   
   <property name="compiler.args.dataacquisition" value="${compiler.args}"/>
   
-  <property name="dataacquisition.output.dir" value="undefined"/>
-  <property name="dataacquisition.testoutput.dir" value="undefined"/>
+  <property name="dataacquisition.output.dir" value="${module.dataacquisition.basedir}/../../out/production"/>
+  <property name="dataacquisition.testoutput.dir" value="${module.dataacquisition.basedir}/../../out/test"/>
   
   <path id="dataacquisition.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
+    <fileset dir="${module.dataacquisition.basedir}/../../lib">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${module.dataacquisition.basedir}/../../out"/>
   </path>
   
   <path id="dataacquisition.module.production.classpath"/>
@@ -49,7 +53,7 @@
   
   <target name="compile.module.dataacquisition.production" description="Compile module DataAcquisition; production classes">
     <mkdir dir="${dataacquisition.output.dir}"/>
-    <javac destdir="${dataacquisition.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.dataacquisition}/javac">
+    <javac destdir="${dataacquisition.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.dataacquisition}"/>
       <bootclasspath refid="dataacquisition.module.bootclasspath"/>
       <classpath refid="dataacquisition.module.production.classpath"/>
@@ -67,7 +71,7 @@
   
   <target name="compile.module.dataacquisition.tests" depends="compile.module.dataacquisition.production" description="compile module DataAcquisition; test classes" unless="skip.tests">
     <mkdir dir="${dataacquisition.testoutput.dir}"/>
-    <javac destdir="${dataacquisition.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.dataacquisition}/javac">
+    <javac destdir="${dataacquisition.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.dataacquisition}"/>
       <bootclasspath refid="dataacquisition.module.bootclasspath"/>
       <classpath refid="dataacquisition.module.classpath"/>

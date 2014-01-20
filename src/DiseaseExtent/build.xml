@@ -8,11 +8,15 @@
   
   <property name="compiler.args.diseaseextent" value="${compiler.args}"/>
   
-  <property name="diseaseextent.output.dir" value="undefined"/>
-  <property name="diseaseextent.testoutput.dir" value="undefined"/>
+  <property name="diseaseextent.output.dir" value="${module.diseaseextent.basedir}/../../out/production"/>
+  <property name="diseaseextent.testoutput.dir" value="${module.diseaseextent.basedir}/../../out/test"/>
   
   <path id="diseaseextent.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
+    <fileset dir="${module.diseaseextent.basedir}/../../lib">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${module.diseaseextent.basedir}/../../out"/>
   </path>
   
   <path id="diseaseextent.module.production.classpath"/>
@@ -49,7 +53,7 @@
   
   <target name="compile.module.diseaseextent.production" description="Compile module DiseaseExtent; production classes">
     <mkdir dir="${diseaseextent.output.dir}"/>
-    <javac destdir="${diseaseextent.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.diseaseextent}/javac">
+    <javac destdir="${diseaseextent.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.diseaseextent}"/>
       <bootclasspath refid="diseaseextent.module.bootclasspath"/>
       <classpath refid="diseaseextent.module.production.classpath"/>
@@ -67,7 +71,7 @@
   
   <target name="compile.module.diseaseextent.tests" depends="compile.module.diseaseextent.production" description="compile module DiseaseExtent; test classes" unless="skip.tests">
     <mkdir dir="${diseaseextent.testoutput.dir}"/>
-    <javac destdir="${diseaseextent.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.diseaseextent}/javac">
+    <javac destdir="${diseaseextent.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.diseaseextent}"/>
       <bootclasspath refid="diseaseextent.module.bootclasspath"/>
       <classpath refid="diseaseextent.module.classpath"/>

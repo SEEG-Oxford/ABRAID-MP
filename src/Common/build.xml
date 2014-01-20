@@ -8,11 +8,18 @@
   
   <property name="compiler.args.common" value="${compiler.args}"/>
   
-  <property name="common.output.dir" value="undefined"/>
-  <property name="common.testoutput.dir" value="undefined"/>
+  <property name="common.output.dir" value="${module.common.basedir}/../../out/production"/>
+  <property name="common.testoutput.dir" value="${module.common.basedir}/../../out/test"/>
   
   <path id="common.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
+    <fileset dir="${module.common.basedir}/../../lib">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${module.common.basedir}/../../out"/>
+    <fileset dir="${project.jdk.classpath}">
+      <include name="*.jar"/>
+    </fileset>
   </path>
   
   <path id="common.module.production.classpath"/>
@@ -49,7 +56,7 @@
   
   <target name="compile.module.common.production" description="Compile module Common; production classes">
     <mkdir dir="${common.output.dir}"/>
-    <javac destdir="${common.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.common}/javac">
+    <javac destdir="${common.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false" >
       <compilerarg line="${compiler.args.common}"/>
       <bootclasspath refid="common.module.bootclasspath"/>
       <classpath refid="common.module.production.classpath"/>
@@ -67,7 +74,7 @@
   
   <target name="compile.module.common.tests" depends="compile.module.common.production" description="compile module Common; test classes" unless="skip.tests">
     <mkdir dir="${common.testoutput.dir}"/>
-    <javac destdir="${common.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.common}/javac">
+    <javac destdir="${common.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false" > 
       <compilerarg line="${compiler.args.common}"/>
       <bootclasspath refid="common.module.bootclasspath"/>
       <classpath refid="common.module.classpath"/>
