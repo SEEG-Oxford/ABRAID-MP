@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.6">
+<file name="C:\Users\zool1112\ABRAID-MP\src\Common\test\uk\ac\ox\zoo\seeg\abraid\mp\common\asdf.java">
+<error line="0" severity="error" message="Got an exception - java.lang.ClassCastException: antlr.CommonAST cannot be cast to com.puppycrawl.tools.checkstyle.api.DetailAST" source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+</checkstyle>
