@@ -27,10 +27,6 @@
 
     <target name="check.style" description="Generates a report of code convention violations.">
     	<mkdir dir="${basedir}/report"/>
-    	<path id="src">
-    	<fileset dir="${basedir}/src" includes="**/*.java"/>
-    </path>
-    <echo message="${src}" />
         <checkstyle config="${basedir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
             <formatter type="xml" tofile="${basedir}/report/checkstyle-report.xml"/>
             <fileset dir="${basedir}/src" includes="**/*.java"/>
