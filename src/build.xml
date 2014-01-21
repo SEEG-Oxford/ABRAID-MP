@@ -1,53 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="abraid-mp_src" default="build.modules">
-  <dirname property="module.abraid-mp_src.basedir" file="${ant.file.abraid-mp_src}"/>
-  <!-- <property file="build.properties"/> -->
+<project name="abraid-mp_src" default="build">
 
-  <!-- Compiler options -->
-  
-  <property name="compiler.debug" value="on"/>
-  <property name="compiler.generate.no.warnings" value="off"/>
-  <property name="compiler.args" value=""/>
-  <property name="compiler.max.memory" value="128m"/>
-  <patternset id="ignored.files">
-    <exclude name="**/.git/**"/>
-    <exclude name="**/*~/**"/>
-  </patternset>
-  <patternset id="library.patterns">
-    <include name="*.zip"/>
-    <include name="*.war"/>
-    <include name="*.ear"/>
-    <include name="*.jar"/>
-  </patternset>
-  <patternset id="compiler.resources">
-    <exclude name="**/?*.java"/>
-    <exclude name="**/?*.class"/>
-  </patternset>
-  
-  <property name="project.jdk.home" value="${java.home}"/>
-  <property name="project.jdk.bin" value="${java.home}/bin"/>
-  <property name="project.jdk.classpath" value="${java.home}/lib"/>
-  
-  <!-- Modules -->
-  
-  <import file="${module.abraid-mp_src.basedir}/Common/build.xml"/>
-  
-  <import file="${module.abraid-mp_src.basedir}/DataAcquisition/build.xml"/>
-  
-  <import file="${module.abraid-mp_src.basedir}/DiseaseExtent/build.xml"/>
-  
-  <import file="${module.abraid-mp_src.basedir}/FrontEnd/build.xml"/>
-  
-  <import file="${module.abraid-mp_src.basedir}/GeoWiki/build.xml"/>
-  
-  <import file="${module.abraid-mp_src.basedir}/ModelWrapper/build.xml"/>
-  
-  <target name="build.init" description="Build initialization">
-    <!-- Perform any build initialization in this target -->
+    
+  <!-- Common -->
+  <property name="module.common.dir" value="${basedir}/Common"/>
+  <target name="module.common.build">
+    <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.common.dir}"/>
   </target>
-  
-  <target name="clean.modules" depends="clean.module.common, clean.module.dataacquisition, clean.module.diseaseextent, clean.module.frontend, clean.module.geowiki, clean.module.modelwrapper" description="cleanup all"/>
-  
-  <target name="build.modules" depends="build.init, clean.modules, compile.module.common, compile.module.dataacquisition, compile.module.diseaseextent, compile.module.frontend, compile.module.geowiki, compile.module.modelwrapper" description="build all modules"/>
+  <target name="module.common.clean">
+    <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.common.dir}"/>
+  </target>
+
+  <!-- DataAcquisition -->
+  <property name="module.dataacquisition.dir" value="${basedir}/DataAcquisition"/>
+  <target name="module.dataacquisition.build">
+    <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.dataacquisition.dir}"/>
+  </target>
+  <target name="module.dataacquisition.clean">
+    <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.dataacquisition.dir}"/>
+  </target>
+
+  <!-- DiseaseExtent -->
+  <property name="module.diseaseextent.dir" value="${basedir}/DiseaseExtent"/>
+  <target name="module.diseaseextent.build">
+    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.diseaseextent.dir}"/>
+  </target>
+  <target name="module.diseaseextent.clean">
+    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.diseaseextent.dir}"/>
+  </target>
+
+
+  <!-- FrontEnd -->
+  <property name="module.frontend.dir" value="${basedir}/FrontEnd"/>
+  <target name="module.frontend.build">
+    <ant antfile="${module.frontend.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.frontend.dir}"/>
+  </target>
+  <target name="module.frontend.clean">
+    <ant antfile="${module.frontend.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.frontend.dir}"/>
+  </target>
+
+  <!-- GeoWiki -->
+  <property name="module.geowiki.dir" value="${basedir}/GeoWiki"/>
+  <target name="module.geowiki.build">
+    <ant antfile="${module.geowiki.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.geowiki.dir}"/>
+  </target>
+  <target name="module.geowiki.clean">
+    <ant antfile="${module.geowiki.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.geowiki.dir}"/>
+  </target>
+
+  <!-- ModelWrapper -->
+  <property name="module.modelwrapper.dir" value="${basedir}/ModelWrapper"/>
+  <target name="module.modelwrapper.build">
+    <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.modelwrapper.dir}"/>
+  </target>
+  <target name="module.modelwrapper.clean">
+    <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.modelwrapper.dir}"/>
+  </target>
+
+  <!-- Targets -->
+  <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.diseaseextent.clean, module.frontend.clean, module.geowiki.clean, module.modelwrapper.clean" description="cleanup all"/>
+  <target name="build" depends="clean, module.common.build, module.dataacquisition.build, module.diseaseextent.build, module.frontend.build, module.geowiki.build, module.modelwrapper.build" description="build all modules"/>
 
 </project>
