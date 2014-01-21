@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="abraid-mp_quality" default="check.quality">
+	<property environment="env"/>
+
+	<property name="findbugs.home" value="${env.FINDBUGS_HOME}" />
+    <path id="findbugs.path">
+      <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
+    </path>
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path"/>
+   
+    <target name="check.bugs" description="Generates a Findbugs report">
+        <mkdir dir="${basedir}/report"/>
+        <findbugs home="${findbugs.home}" output="xml" outputFile="${basedir}/report/findbugs-report.xml" jvmargs="-Xmx512M">
+            <auxClasspath>
+                <fileset dir="${basedir}/lib" includes="*.jar"/>
+            </auxClasspath>
+            <sourcePath path="${basedir}/src"/>
+            <class location="${basedir}/out"/>
+        </findbugs>
+    </target>
+
+    <property name="checkstyle.home" value="${env.CHECKSTYLE_HOME}" />
+    <path id="checkstyle.path">
+      <fileset dir="${checkstyle.home}" includes="*.jar"/>
+    </path>
+	<taskdef resource="checkstyletask.properties" classpathref="checkstyle.path" />
+
+    <target name="check.style" description="Generates a report of code convention violations.">
+    	<mkdir dir="${basedir}/report"/>
+        <checkstyle config="${basedir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+            <formatter type="xml" tofile="${basedir}/report/checkstyle-report.xml"/>
+            <fileset dir="${basedir}/src" includes="**/*.java"/>
+        </checkstyle>
+    </target>
+
+    <target name="check.quality" depends="check.style, check.bugs" />
+</project>

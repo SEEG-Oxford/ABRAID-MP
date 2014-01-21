@@ -3,6 +3,7 @@
     
   <!-- Subfiles -->
   <import file="${basedir}/src/build.xml" />
+  <import file="${basedir}/static-analysis.xml" />
   <import file="${basedir}/dependency-management.xml" />
 
   <!-- targets -->  
