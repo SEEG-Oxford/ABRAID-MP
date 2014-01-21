@@ -6,7 +6,7 @@ import static org.fest.assertions.api.Assertions.*;
 
 public class ExampleTests {
     @Test
-    public void testMultiply() {
+    public void one_is_equal_to_one() {
         assertThat(1).isEqualTo(1).isPositive().isNotZero().isLessThan(2);
     }
 }
