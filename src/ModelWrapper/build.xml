@@ -8,11 +8,18 @@
   
   <property name="compiler.args.modelwrapper" value="${compiler.args}"/>
   
-  <property name="modelwrapper.output.dir" value="undefined"/>
-  <property name="modelwrapper.testoutput.dir" value="undefined"/>
+  <property name="modelwrapper.output.dir" value="${module.modelwrapper.basedir}/../../out/production"/>
+  <property name="modelwrapper.testoutput.dir" value="${module.modelwrapper.basedir}/../../out/test"/>
   
   <path id="modelwrapper.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
+    <fileset dir="${module.modelwrapper.basedir}/../../lib">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${module.modelwrapper.basedir}/../../out"/>
+    <fileset dir="${project.jdk.classpath}">
+      <include name="*.jar"/>
+    </fileset>
   </path>
   
   <path id="modelwrapper.module.production.classpath"/>
@@ -49,7 +56,7 @@
   
   <target name="compile.module.modelwrapper.production" description="Compile module ModelWrapper; production classes">
     <mkdir dir="${modelwrapper.output.dir}"/>
-    <javac destdir="${modelwrapper.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.modelwrapper}/javac">
+    <javac destdir="${modelwrapper.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.modelwrapper}"/>
       <bootclasspath refid="modelwrapper.module.bootclasspath"/>
       <classpath refid="modelwrapper.module.production.classpath"/>
@@ -67,7 +74,7 @@
   
   <target name="compile.module.modelwrapper.tests" depends="compile.module.modelwrapper.production" description="compile module ModelWrapper; test classes" unless="skip.tests">
     <mkdir dir="${modelwrapper.testoutput.dir}"/>
-    <javac destdir="${modelwrapper.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.modelwrapper}/javac">
+    <javac destdir="${modelwrapper.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.modelwrapper}"/>
       <bootclasspath refid="modelwrapper.module.bootclasspath"/>
       <classpath refid="modelwrapper.module.classpath"/>

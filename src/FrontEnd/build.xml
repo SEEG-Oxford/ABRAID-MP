@@ -8,11 +8,18 @@
   
   <property name="compiler.args.frontend" value="${compiler.args}"/>
   
-  <property name="frontend.output.dir" value="undefined"/>
-  <property name="frontend.testoutput.dir" value="undefined"/>
+  <property name="frontend.output.dir" value="${module.frontend.basedir}/../../out/production"/>
+  <property name="frontend.testoutput.dir" value="${module.frontend.basedir}/../../out/test"/>
   
   <path id="frontend.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
+    <fileset dir="{module.frontend.basedir}/../../lib">
+      <include name="$*.jar"/>
+    </fileset>
+    <pathelement path="${module.frontend.basedir}/../../out"/>
+    <fileset dir="${project.jdk.classpath}">
+      <include name="*.jar"/>
+    </fileset>
   </path>
   
   <path id="frontend.module.production.classpath"/>
@@ -49,7 +56,7 @@
   
   <target name="compile.module.frontend.production" description="Compile module FrontEnd; production classes">
     <mkdir dir="${frontend.output.dir}"/>
-    <javac destdir="${frontend.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.frontend}/javac">
+    <javac destdir="${frontend.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.frontend}"/>
       <bootclasspath refid="frontend.module.bootclasspath"/>
       <classpath refid="frontend.module.production.classpath"/>
@@ -67,7 +74,7 @@
   
   <target name="compile.module.frontend.tests" depends="compile.module.frontend.production" description="compile module FrontEnd; test classes" unless="skip.tests">
     <mkdir dir="${frontend.testoutput.dir}"/>
-    <javac destdir="${frontend.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.frontend}/javac">
+    <javac destdir="${frontend.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args.frontend}"/>
       <bootclasspath refid="frontend.module.bootclasspath"/>
       <classpath refid="frontend.module.classpath"/>
