@@ -24,9 +24,9 @@
     <exclude name="**/?*.class"/>
   </patternset>
   
-  <property name="project.jdk.home" value=""/>
-  <property name="project.jdk.bin" value=""/>
-  <property name="project.jdk.classpath" value=""/>
+  <property name="project.jdk.home" value="${java.home}"/>
+  <property name="project.jdk.bin" value="${java.home}/bin"/>
+  <property name="project.jdk.classpath" value="${java.home}/lib"/>
   
   <!-- Modules -->
   
