@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="modelwrapper-lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ModelWrapper/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/ModelWrapper/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ModelWrapper/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ModelWrapper/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>
