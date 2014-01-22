@@ -3,3 +3,4 @@
 *.war
 *.ear
 report
+TEST*.txt

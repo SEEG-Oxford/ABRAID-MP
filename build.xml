@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="abraid-mp" default="build">
   <property name="code.root" value="${basedir}/src"/>
+  <property name="db.root" value="${basedir}/db"/>
 
   <target name="build" description="build everything">
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${code.root}"/>
@@ -8,6 +9,14 @@
 
   <target name="clean" description="cleanup everything">
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${code.root}"/>
+  </target>
+
+  <target name="test" description="creates the database">
+    <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="test" dir="${code.root}"/>
+  </target>
+
+  <target name="create-database" description="creates the database">
+    <ant antfile="${db.root}/build.xml" inheritrefs="false" inheritall="false" target="create-database" dir="${db.root}"/>
   </target>
 
 </project>
