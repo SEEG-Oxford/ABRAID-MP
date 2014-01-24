@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="diseaseextent-lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/DiseaseExtent/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/DiseaseExtent/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/DiseaseExtent/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/DiseaseExtent/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>

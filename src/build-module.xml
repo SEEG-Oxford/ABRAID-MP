@@ -4,8 +4,9 @@
 
   <!-- Directories -->
   <property name="project.root.dir" value="${basedir}/../.." />
-  <property name="module.out.dir" value="${basedir}/out/production" />
-  <property name="test.out.dir" value="${basedir}/out/test" />
+  <property name="out.dir" value="${basedir}/out" />
+  <property name="module.out.dir" value="${out.dir}/production" />
+  <property name="test.out.dir" value="${out.dir}/test" />
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="src.dir" value="${basedir}/src" />  
   <property name="test.dir" value="${basedir}/test" />
@@ -80,6 +81,18 @@
   </target>
 
   <!-- Test targets -->   
+  <target name="unit.test" depends="compile.tests">
+    <junit printsummary="yes" fork="no" haltonfailure="yes">
+        <formatter type="plain" usefile="false" />
+        <formatter type="plain" />
+        <classpath refid="classpath"/>
+        <classpath path="${test.out.dir}"/>
+        <classpath path="${module.out.dir}"/>
+        <batchtest>
+          <fileset dir="${test.out.dir}" includes="**/*.class" />
+        </batchtest>
+    </junit>
+  </target>
 
   <!-- Package targets -->   
 
@@ -97,7 +110,7 @@
               <fileset dir="${lib.dir}" includes="*.jar"/>
           </auxClasspath>
           <sourcePath path="${src.dir}"/>
-          <class location="${module.out.dir}"/>
+          <class location="${out.dir}"/>
       </findbugs>
   </target>
 
@@ -111,7 +124,7 @@
     <mkdir dir="${report.dir}"/>
       <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
           <formatter type="xml" tofile="${report.dir}/checkstyle-report.xml"/>
-          <fileset dir="${src.dir}" includes="**/*.java"/>
+          <fileset dir="${basedir}" includes="**/*.java"/>
       </checkstyle>
   </target>
 

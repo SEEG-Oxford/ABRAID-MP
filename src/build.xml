@@ -10,6 +10,9 @@
   <target name="module.common.clean">
     <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.common.dir}"/>
   </target>
+  <target name="module.common.test">
+    <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.common.dir}"/>
+  </target>
 
   <!-- DataAcquisition -->
   <property name="module.dataacquisition.dir" value="${basedir}/DataAcquisition"/>
@@ -18,6 +21,9 @@
   </target>
   <target name="module.dataacquisition.clean">
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.dataacquisition.dir}"/>
+  </target>
+  <target name="module.dataacquisition.test">
+    <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.dataacquisition.dir}"/>
   </target>
 
   <!-- DiseaseExtent -->
@@ -28,7 +34,9 @@
   <target name="module.diseaseextent.clean">
     <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.diseaseextent.dir}"/>
   </target>
-
+  <target name="module.diseaseextent.test">
+    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.diseaseextent.dir}"/>
+  </target>
 
   <!-- FrontEnd -->
   <property name="module.frontend.dir" value="${basedir}/FrontEnd"/>
@@ -37,6 +45,9 @@
   </target>
   <target name="module.frontend.clean">
     <ant antfile="${module.frontend.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.frontend.dir}"/>
+  </target>
+  <target name="module.frontend.test">
+    <ant antfile="${module.frontend.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.frontend.dir}"/>
   </target>
 
   <!-- GeoWiki -->
@@ -47,6 +58,9 @@
   <target name="module.geowiki.clean">
     <ant antfile="${module.geowiki.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.geowiki.dir}"/>
   </target>
+  <target name="module.geowiki.test">
+    <ant antfile="${module.geowiki.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.geowiki.dir}"/>
+  </target>
 
   <!-- ModelWrapper -->
   <property name="module.modelwrapper.dir" value="${basedir}/ModelWrapper"/>
@@ -56,9 +70,13 @@
   <target name="module.modelwrapper.clean">
     <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.modelwrapper.dir}"/>
   </target>
+  <target name="module.modelwrapper.test">
+    <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.modelwrapper.dir}"/>
+  </target>
 
   <!-- Targets -->
   <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.diseaseextent.clean, module.frontend.clean, module.geowiki.clean, module.modelwrapper.clean" description="cleanup all"/>
   <target name="build" depends="clean, module.common.build, module.dataacquisition.build, module.diseaseextent.build, module.frontend.build, module.geowiki.build, module.modelwrapper.build" description="build all modules"/>
+  <target name="test" depends="module.common.test, module.dataacquisition.test, module.diseaseextent.test, module.frontend.test, module.geowiki.test, module.modelwrapper.test" description="test all modules"/>
 
 </project>
