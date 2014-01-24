@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/DataAcquisition/DataAcquisition.iml" filepath="$PROJECT_DIR$/DataAcquisition/DataAcquisition.iml" />
       <module fileurl="file://$PROJECT_DIR$/DiseaseExtent/DiseaseExtent.iml" filepath="$PROJECT_DIR$/DiseaseExtent/DiseaseExtent.iml" />
       <module fileurl="file://$PROJECT_DIR$/FrontEnd/FrontEnd.iml" filepath="$PROJECT_DIR$/FrontEnd/FrontEnd.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GeoWiki/GeoWiki.iml" filepath="$PROJECT_DIR$/GeoWiki/GeoWiki.iml" />
       <module fileurl="file://$PROJECT_DIR$/ModelWrapper/ModelWrapper.iml" filepath="$PROJECT_DIR$/ModelWrapper/ModelWrapper.iml" />
     </modules>
   </component>
