@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="publicsite-lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/PublicSite/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/PublicSite/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>
