@@ -1,0 +1,14 @@
+<ivy-module version="2.0">
+    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="abraid-mp"/>
+    <dependencies>
+    	<!-- Common -->
+        <dependency org="log4j" name="log4j" rev="1.2.17" />
+		<dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" />
+		<dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" />
+
+        <!-- Unit testing -->
+        <dependency org="junit" name="junit" rev="4.11" />
+        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" />
+        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" />
+    </dependencies>
+</ivy-module>
