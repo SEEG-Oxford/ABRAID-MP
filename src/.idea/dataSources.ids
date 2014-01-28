@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source source="LOCAL" name="uk:ac:ox:zoo:seeg:abraid:mp:common:config:hibernate.cfg.xml" uuid="9bc29b30-7c15-4c29-a62f-5afcfa3dece6">
+    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
+  </data-source>
+</component>

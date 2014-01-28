@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="708891733">
+    <data-source source="LOCAL" name="uk:ac:ox:zoo:seeg:abraid:mp:common:config:hibernate.cfg.xml" uuid="9bc29b30-7c15-4c29-a62f-5afcfa3dece6">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost/test</jdbc-url>
+      <user-name>root</user-name>
+      <user-password>dfd8dfc5dfc5dfdedf9bdf98df99</user-password>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+
