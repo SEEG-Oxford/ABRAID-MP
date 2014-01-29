@@ -55,6 +55,7 @@
     <mkdir dir="${test.out.dir}"/>
     <!-- Build -->
     <javac destdir="${test.out.dir}" srcdir="${test.dir}" classpathref="classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+      <classpath path="${module.out.dir}"/>
       <compilerarg line="${compiler.args}"/>
     </javac>    
     <!-- Copy resources -->
@@ -88,7 +89,7 @@
         <classpath refid="classpath"/>
         <classpath path="${test.out.dir}"/>
         <classpath path="${module.out.dir}"/>
-        <batchtest>
+        <batchtest todir="${report.dir}">
           <fileset dir="${test.out.dir}" includes="**/*.class" />
         </batchtest>
     </junit>
