@@ -54,8 +54,11 @@
   <target name="compile.tests" depends="compile.production" description="Compile module; test classes" unless="skip.tests">
     <mkdir dir="${test.out.dir}"/>
     <!-- Build -->
-    <javac destdir="${test.out.dir}" srcdir="${test.dir}" classpathref="classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
-      <classpath path="${module.out.dir}"/>
+    <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+      <classpath>
+        <path refid="classpath"/>
+        <dirset dir="${module.out.dir}"/>
+      </classpath>
       <compilerarg line="${compiler.args}"/>
     </javac>
     <!-- Copy resources -->
@@ -86,9 +89,11 @@
     <junit printsummary="yes" fork="no" haltonfailure="yes">
       <formatter type="plain" usefile="false"/>
       <formatter type="plain"/>
-      <classpath refid="classpath"/>
-      <classpath path="${test.out.dir}"/>
-      <classpath path="${module.out.dir}"/>
+      <classpath>
+        <path refid="classpath"/>
+        <dirset dir="${module.out.dir}"/>
+        <dirset dir="${test.out.dir}"/>
+      </classpath>
       <batchtest todir="${report.dir}">
         <fileset dir="${test.out.dir}" includes="**/*.class"/>
       </batchtest>
