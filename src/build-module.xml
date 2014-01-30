@@ -3,15 +3,15 @@
   <property environment="env"/>
 
   <!-- Directories -->
-  <property name="project.root.dir" value="${basedir}/../.." />
-  <property name="out.dir" value="${basedir}/out" />
-  <property name="module.out.dir" value="${out.dir}/production" />
-  <property name="test.out.dir" value="${out.dir}/test" />
-  <property name="lib.dir" value="${basedir}/lib" />
+  <property name="project.root.dir" value="${basedir}/../.."/>
+  <property name="out.dir" value="${basedir}/out"/>
+  <property name="module.out.dir" value="${out.dir}/production"/>
+  <property name="test.out.dir" value="${out.dir}/test"/>
+  <property name="lib.dir" value="${basedir}/lib"/>
   <property name="lib-local.dir" value="${basedir}/lib-local" />
-  <property name="src.dir" value="${basedir}/src" />
-  <property name="test.dir" value="${basedir}/test" />
-  <property name="report.dir" value="${basedir}/report" />
+  <property name="src.dir" value="${basedir}/src"/>
+  <property name="test.dir" value="${basedir}/test"/>
+  <property name="report.dir" value="${basedir}/report"/>
 
   <!-- Compiler options -->
   <property name="compiler.debug" value="on"/>
@@ -60,8 +60,8 @@
     <!-- Build -->
     <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <classpath>
-        <dirset dir="${module.out.dir}"/>
         <path refid="classpath"/>
+        <dirset dir="${module.out.dir}"/>
       </classpath>
       <compilerarg line="${compiler.args}"/>
     </javac>
@@ -95,9 +95,11 @@
         <jvmarg value="-Xmn64M"/>
         <jvmarg value="-Xmx512M"/>
         <formatter type="brief" usefile="false" />
-        <classpath refid="classpath"/>
-        <classpath path="${test.out.dir}"/>
-        <classpath path="${module.out.dir}"/>
+        <classpath>
+          <path refid="classpath"/>
+          <dirset dir="${module.out.dir}"/>
+          <dirset dir="${test.out.dir}"/>
+        </classpath>
         <batchtest>
           <fileset dir="${test.out.dir}" includes="**/*Test.class" />
         </batchtest>
@@ -107,7 +109,7 @@
   <!-- Package targets -->
 
   <!-- Analysis targets -->
-  <property name="findbugs.home" value="${env.FINDBUGS_HOME}" />
+  <property name="findbugs.home" value="${env.FINDBUGS_HOME}"/>
   <path id="findbugs.path">
     <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
   </path>
@@ -122,21 +124,21 @@
       </findbugs>
   </target>
 
-  <property name="checkstyle.home" value="${env.CHECKSTYLE_HOME}" />
+  <property name="checkstyle.home" value="${env.CHECKSTYLE_HOME}"/>
   <path id="checkstyle.path">
     <fileset dir="${checkstyle.home}" includes="*.jar"/>
   </path>
-  <taskdef resource="checkstyletask.properties" classpathref="checkstyle.path" />
+  <taskdef resource="checkstyletask.properties" classpathref="checkstyle.path"/>
 
   <target name="check.style" description="Generates a report of code convention violations.">
     <mkdir dir="${report.dir}"/>
-      <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
-          <formatter type="xml" tofile="${report.dir}/checkstyle-report.xml"/>
-          <fileset dir="${basedir}" includes="**/*.java"/>
-      </checkstyle>
+    <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+      <formatter type="xml" tofile="${report.dir}/checkstyle-report.xml"/>
+      <fileset dir="${basedir}" includes="**/*.java"/>
+    </checkstyle>
   </target>
 
-  <target name="check.quality" depends="check.style, check.bugs" />
+  <target name="check.quality" depends="check.style, check.bugs"/>
 
   <!-- Clean targets -->
   <target name="clean" description="cleanup module">
