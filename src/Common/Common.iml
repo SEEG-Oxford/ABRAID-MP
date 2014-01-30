@@ -4,6 +4,7 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
+          <unit-entry name="sessionFactory" value="dataSource" />
           <unit-entry name="uk:ac:ox:zoo:seeg:abraid:mp:common:config:hibernate.cfg.xml" value="9bc29b30-7c15-4c29-a62f-5afcfa3dece6" />
         </datasource-map>
         <naming-strategy-map />
@@ -27,16 +28,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/lib/junit-4.10.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="common-lib" level="project" />
   </component>
 </module>
 

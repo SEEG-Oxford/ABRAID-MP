@@ -8,7 +8,8 @@
   <property name="module.out.dir" value="${out.dir}/production" />
   <property name="test.out.dir" value="${out.dir}/test" />
   <property name="lib.dir" value="${basedir}/lib" />
-  <property name="src.dir" value="${basedir}/src" />  
+  <property name="lib-local.dir" value="${basedir}/lib-local" />
+  <property name="src.dir" value="${basedir}/src" />
   <property name="test.dir" value="${basedir}/test" />
   <property name="report.dir" value="${basedir}/report" />
 
@@ -20,47 +21,32 @@
 
   <!-- JDK -->
   <property name="jdk.home" value="${java.home}"/>
-  
-  <!-- Properties override --> 
-  <property file="${project.root.dir}/build.properties"/>
+
+  <!-- Properties override. Default build settings go in build.properties, override these using user.properties (the latter is not checked in) -->
+  <property file="${basedir}/user.properties"/>
   <property file="${basedir}/build.properties"/>
+  <property file="${project.root.dir}/user.properties"/>
+  <property file="${project.root.dir}/build.properties"/>
 
   <!-- Classpath -->
   <path id="classpath">
     <fileset dir="${lib.dir}" includes="*.jar"/>
+    <fileset dir="${lib-local.dir}" includes="*.jar"/>
   </path>
 
   <!-- Build targets -->
-  <target name="build" depends="compile.production, compile.tests" description="Compile module"/>
-  
+  <target name="build" depends="clean.full, compile.production, compile.tests" description="Compile module"/>
+
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
     <!-- Build -->
     <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args}"/>
-    </javac>    
+    </javac>
     <!-- Copy resources -->
     <copy todir="${module.out.dir}">
       <fileset dir="${src.dir}">
-        <patternset> 
-          <exclude name="**/?*.java"/>
-          <exclude name="**/?*.class"/>
-        </patternset>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.tests" depends="compile.production" description="Compile module; test classes" unless="skip.tests">
-    <mkdir dir="${test.out.dir}"/>
-    <!-- Build -->
-    <javac destdir="${test.out.dir}" srcdir="${test.dir}" classpathref="classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
-      <compilerarg line="${compiler.args}"/>
-    </javac>    
-    <!-- Copy resources -->
-    <copy todir="${test.out.dir}">
-      <fileset dir="${test.dir}">
-        <patternset> 
+        <patternset>
           <exclude name="**/?*.java"/>
           <exclude name="**/?*.class"/>
         </patternset>
@@ -69,9 +55,31 @@
     </copy>
   </target>
 
-  <!-- Lib targets --> 
+  <target name="compile.tests" depends="compile.production" description="Compile module; test classes" unless="skip.tests">
+    <mkdir dir="${test.out.dir}"/>
+    <!-- Build -->
+    <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+      <classpath>
+        <dirset dir="${module.out.dir}"/>
+        <path refid="classpath"/>
+      </classpath>
+      <compilerarg line="${compiler.args}"/>
+    </javac>
+    <!-- Copy resources -->
+    <copy todir="${test.out.dir}">
+      <fileset dir="${test.dir}">
+        <patternset>
+          <exclude name="**/?*.java"/>
+          <exclude name="**/?*.class"/>
+        </patternset>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Lib targets -->
   <ivy:settings file="${project.root.dir}/ivysettings.xml"/>
-  
+
   <target name="resolve.libs">
    <ivy:resolve/>
   </target>
@@ -80,35 +88,35 @@
     <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="true"/>
   </target>
 
-  <!-- Test targets -->   
+  <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
-    <junit printsummary="yes" fork="no" haltonfailure="yes">
-        <formatter type="plain" usefile="false" />
-        <formatter type="plain" />
+    <junit printsummary="off" fork="yes" forkmode="once">
+        <jvmarg value="-Xms128M"/>
+        <jvmarg value="-Xmn64M"/>
+        <jvmarg value="-Xmx512M"/>
+        <formatter type="brief" usefile="false" />
         <classpath refid="classpath"/>
         <classpath path="${test.out.dir}"/>
         <classpath path="${module.out.dir}"/>
         <batchtest>
-          <fileset dir="${test.out.dir}" includes="**/*.class" />
+          <fileset dir="${test.out.dir}" includes="**/*Test.class" />
         </batchtest>
     </junit>
   </target>
 
-  <!-- Package targets -->   
+  <!-- Package targets -->
 
-  <!-- Analysis targets --> 
+  <!-- Analysis targets -->
   <property name="findbugs.home" value="${env.FINDBUGS_HOME}" />
   <path id="findbugs.path">
     <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
   </path>
   <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path"/>
- 
+
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
       <mkdir dir="${report.dir}"/>
       <findbugs home="${findbugs.home}" output="xml" outputFile="${report.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
-          <auxClasspath>
-              <fileset dir="${lib.dir}" includes="*.jar"/>
-          </auxClasspath>
+          <auxClasspath refid="classpath"/>
           <sourcePath path="${src.dir}"/>
           <class location="${out.dir}"/>
       </findbugs>
@@ -130,12 +138,12 @@
 
   <target name="check.quality" depends="check.style, check.bugs" />
 
-  <!-- Clean targets --> 
+  <!-- Clean targets -->
   <target name="clean" description="cleanup module">
     <delete dir="${module.out.dir}"/>
     <delete dir="${test.out.dir}"/>
   </target>
-  
+
   <target name="clean.full" depends="clean">
     <delete dir="${lib.dir}"/>
     <delete dir="${report.dir}"/>

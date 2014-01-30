@@ -1,41 +1,56 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-//import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernate.annotations.Type;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 
 /**
+ * Represents a location.
+ *
  * Copyright (c) 2014 University of Oxford
  */
+@Entity
 public class Location {
+    // The location ID.
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-//    @Column(columnDefinition="Geometry")
-//    @Type(type = "org.hibernate.spatial.GeometryType")
-//    private Point geom;
+    // The location point. This can be a precise location, or the centroid of an admin 1 or country.
+    @Type(type = "org.hibernate.spatial.GeometryType")
+    private Point geom;
 
+    // A descriptive place name.
+    @Column
     private String placeName;
 
+    // The first administrative unit (e.g. state, province).
+    @Column
     private String admin1;
 
-    private String country;
+    // The country.
+    @ManyToOne
+    @JoinColumn(name="country")
+    private Country country;
 
-    public Location(String placeName, String admin1, String country) {
-        this.placeName = placeName;
-        this.admin1 = admin1;
+    public Location() {
+    }
+
+    public Location(Country country) {
         this.country = country;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Point getGeom() {
+        return geom;
+    }
+
+    public void setGeom(Point geom) {
+        this.geom = geom;
     }
 
     public String getPlaceName() {
@@ -54,11 +69,11 @@ public class Location {
         this.admin1 = admin1;
     }
 
-    public String getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 }

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     Hibernate configuration file.
+     Copyright (c) 2014 University of Oxford
+-->
 <!DOCTYPE hibernate-configuration SYSTEM "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</property>
-        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.username">postgres</property>
-        <property name="hibernate.connection.password">tessella</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/abraid_mp</property>
-        <property name="connection_pool_size">1</property>
-        <property name="hbm2ddl.auto">update</property>
-        <property name="show_sql">true</property>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOutbreak"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceWeight"/>
     </session-factory>
 </hibernate-configuration>

@@ -3,34 +3,40 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 import javax.persistence.*;
 
 /**
+ * Represents a disease.
+ *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "getDiseaseByName",
+                query = "from Disease where name=:name"
+        )
+})
 @Entity
 public class Disease {
+    // The disease ID.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
+    // The disease name.
     @Column
     private String name;
 
+    // The unique ID for the disease assigned by HealthMap.
     @Column
     private Integer healthMapDiseaseId;
 
     public Disease() {
     }
 
-    public Disease(String name, Integer healthMapDiseaseId) {
+    public Disease(String name) {
         this.name = name;
-        this.healthMapDiseaseId = healthMapDiseaseId;
     }
 
-    public long getId() {
+    public Integer getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
