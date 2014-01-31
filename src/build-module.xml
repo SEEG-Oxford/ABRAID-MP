@@ -8,6 +8,7 @@
   <property name="module.out.dir" value="${out.dir}/production"/>
   <property name="test.out.dir" value="${out.dir}/test"/>
   <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="lib-local.dir" value="${basedir}/lib-local" />
   <property name="src.dir" value="${basedir}/src"/>
   <property name="test.dir" value="${basedir}/test"/>
   <property name="report.dir" value="${basedir}/report"/>
@@ -21,17 +22,20 @@
   <!-- JDK -->
   <property name="jdk.home" value="${java.home}"/>
 
-  <!-- Properties override -->
-  <property file="${project.root.dir}/build.properties"/>
+  <!-- Properties override. Default build settings go in build.properties, override these using user.properties (the latter is not checked in) -->
+  <property file="${basedir}/user.properties"/>
   <property file="${basedir}/build.properties"/>
+  <property file="${project.root.dir}/user.properties"/>
+  <property file="${project.root.dir}/build.properties"/>
 
   <!-- Classpath -->
   <path id="classpath">
     <fileset dir="${lib.dir}" includes="*.jar"/>
+    <fileset dir="${lib-local.dir}" includes="*.jar"/>
   </path>
 
   <!-- Build targets -->
-  <target name="build" depends="compile.production, compile.tests" description="Compile module"/>
+  <target name="build" depends="clean, compile.production, compile.tests" description="Compile module"/>
 
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
@@ -86,17 +90,19 @@
 
   <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
-    <junit printsummary="yes" fork="no" haltonfailure="yes">
-      <formatter type="plain" usefile="false"/>
-      <formatter type="plain"/>
-      <classpath>
-        <path refid="classpath"/>
-        <dirset dir="${module.out.dir}"/>
-        <dirset dir="${test.out.dir}"/>
-      </classpath>
-      <batchtest todir="${report.dir}">
-        <fileset dir="${test.out.dir}" includes="**/*.class"/>
-      </batchtest>
+    <junit printsummary="off" fork="yes" forkmode="once">
+        <jvmarg value="-Xms128M"/>
+        <jvmarg value="-Xmn64M"/>
+        <jvmarg value="-Xmx512M"/>
+        <formatter type="brief" usefile="false" />
+        <classpath>
+          <path refid="classpath"/>
+          <dirset dir="${module.out.dir}"/>
+          <dirset dir="${test.out.dir}"/>
+        </classpath>
+        <batchtest>
+          <fileset dir="${test.out.dir}" includes="**/*Test.class" />
+        </batchtest>
     </junit>
   </target>
 
@@ -110,14 +116,12 @@
   <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path"/>
 
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
-    <mkdir dir="${report.dir}"/>
-    <findbugs home="${findbugs.home}" output="xml" outputFile="${report.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
-      <auxClasspath>
-        <fileset dir="${lib.dir}" includes="*.jar"/>
-      </auxClasspath>
-      <sourcePath path="${src.dir}"/>
-      <class location="${out.dir}"/>
-    </findbugs>
+      <mkdir dir="${report.dir}"/>
+      <findbugs home="${findbugs.home}" output="xml" outputFile="${report.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+          <auxClasspath refid="classpath"/>
+          <sourcePath path="${src.dir}"/>
+          <class location="${out.dir}"/>
+      </findbugs>
   </target>
 
   <property name="checkstyle.home" value="${env.CHECKSTYLE_HOME}"/>

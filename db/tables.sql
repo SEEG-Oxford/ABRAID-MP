@@ -39,8 +39,8 @@ CREATE TABLE DiseaseOutbreak (
     LocationId integer NOT NULL,
     ProvenanceId integer NOT NULL,
     Title varchar(4000),
-    PublicationDate date,
-    OutbreakStartDate date
+    PublicationDate timestamp,
+    OutbreakStartDate timestamp
 );
 
 -- Represents a location

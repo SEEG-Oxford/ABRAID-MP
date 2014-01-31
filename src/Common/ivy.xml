@@ -1,19 +1,44 @@
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="abraid-mp"/>
     <dependencies>
-    	<!-- Common -->
-        <dependency org="log4j" name="log4j" rev="1.2.17" />
-		<dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" />
-		<dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" />
+        <!-- Common -->
+        <dependency org="log4j" name="log4j" rev="1.2.17">
+            <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
+            <exclude org="org.apache.openejb" name="javaee-api"/>
+        </dependency>
+        <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE"/>
+        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE">
+            <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
+            <!-- TODO: This doesn't work! Workaround for the workaround is in build.xml's retrieve.manual.libs -->
+            <exclude org="org.hibernate.javax.persistence" name="hibernate-jpa-2.0-api"/>
+            <exclude org="org.apache.geronimo.specs" name="geronimo-jpa_2.0_spec"/>
+        </dependency>
+        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3"/>
 
-        <!-- Unit testing -->
-        <dependency org="junit" name="junit" rev="4.11" />
-        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" />
-        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" />
+        <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
+        <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true"/>
+        <!-- Workaround: spring-orm depends on revision 2.4.0 of these libraries, but it is not found -->
+        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.core" rev="2.5.1"/>
+        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.jpa" rev="2.5.1"/>
 
         <!-- Database -->
-        <dependency org="org.hibernate" name="hibernate" rev="3.5.4-Final" />
-        <dependency org="org.hibernatespatial" name="hibernate-spatial" rev="1.1.1"/>
-		<dependency org="org.postgis" name="postgis-jdbc" rev="1.3.3" />
+        <dependency org="org.hibernate" name="hibernate-core" rev="4.3.1.Final"/>
+        <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41"/>
+        <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2"/>
+
+        <!-- TODO: When hibernate-spatial 4.3 is released: -->
+        <!-- 1. Include this line (you may need to exclude org="postgresql" name="postgresql" if it is older than revision 9.3) -->
+        <!--    <dependency org="org.hibernate" name="hibernate-spatial" rev="4.3"/> -->
+        <!-- 2. Remove this line (it's a dependency) -->
+        <dependency org="com.vividsolutions" name="jts" rev="1.13"/>
+        <!-- 3. In build.xml, remove the download of hibernate-spatial 4.3 -->
+
+        <!-- Unit testing -->
+        <!-- TODO: Ensure that these jars are not in the release -->
+        <dependency org="junit" name="junit" rev="4.11"/>
+        <dependency org="org.mockito" name="mockito-all" rev="1.9.5"/>
+        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10"/>
+        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE"/>
+        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9"/>
     </dependencies>
 </ivy-module>
