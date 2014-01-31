@@ -1,15 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="module_common" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
-  
+
   <target name="retrieve.libs" depends="module_build.retrieve.libs, retrieve.manual.libs"/>
 
   <target name="retrieve.manual.libs">
-    <mkdir dir="${lib-local.dir}"/>
+    <mkdir dir="${lib.dir}"/>
     <!-- Retrieve Hibernate Spatial 4.3 (not currently released) -->
-    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140106.200509-2.jar" dest="${lib-local.dir}"/>
-    <!-- Workaround for ivy not excluding these modules (see Common/ivy.xml) -->
-    <delete file="${lib.dir}/hibernate-jpa-2.0-api-1.0.1.Final-jar.jar" quiet="true" />
-    <delete file="${lib.dir}/geronimo-jpa_2.0_spec-1.1-bundle.jar" quiet="true" />
+    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140106.200509-2.jar" dest="${lib.dir}"/>
   </target>
+
+  <!-- NB: The following section should be moved to build-module.xml during the deployment story -->
+  
+  <property name="dist.dir" value="${basedir}/dist"/>
+  <!-- TODO: Proper versioning -->
+  <property name="version" value="1.0"/>
+
+  <target name="build" depends="module_build.build, build.jar, publish.libs" />
+
+  <target name="clean" depends="module_build.clean">
+    <delete dir="${dist.dir}"/>
+  </target>
+  
+  <target name="build.jar" description="Creates a jar file of the compiled production code">
+    <mkdir dir="${dist.dir}"/>
+
+    <tstamp/>
+      <jar jarfile="${dist.dir}/abraid-mp-common.jar">
+        <fileset dir="${module.out.dir}"/>
+        <manifest>
+          <attribute name="Repository-Version" value="${version}"/>
+          <attribute name="Built-On" value="${TODAY}"/>
+        </manifest>
+      </jar>
+  </target>
+
+  <target name="publish.libs">
+    <ivy:publish resolver="trunk" pubrevision="${version}" overwrite="true" artifactspattern="${dist.dir}/[artifact].[ext]"/>
+  </target>
+  
 </project>
