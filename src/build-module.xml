@@ -35,7 +35,7 @@
   </path>
 
   <!-- Build targets -->
-  <target name="build" depends="clean.full, compile.production, compile.tests" description="Compile module"/>
+  <target name="build" depends="clean, compile.production, compile.tests" description="Compile module"/>
 
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>

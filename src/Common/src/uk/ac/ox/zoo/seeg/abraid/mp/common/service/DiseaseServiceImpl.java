@@ -10,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@Transactional
 public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseDao diseaseDao;
 

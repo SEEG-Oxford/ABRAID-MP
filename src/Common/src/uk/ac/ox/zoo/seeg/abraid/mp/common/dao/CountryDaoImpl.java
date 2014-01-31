@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 
 /**
@@ -8,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@Repository
 public class CountryDaoImpl extends AbstractDao<Country, String> implements CountryDao {
     /**
      * Gets a country by name.

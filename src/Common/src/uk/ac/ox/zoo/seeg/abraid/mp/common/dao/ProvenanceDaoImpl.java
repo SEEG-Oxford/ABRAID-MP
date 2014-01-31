@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 
 /**
@@ -8,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@Repository
 public class ProvenanceDaoImpl extends AbstractDao<Provenance, Integer> implements ProvenanceDao {
     /**
      * Gets a provenance by name.
