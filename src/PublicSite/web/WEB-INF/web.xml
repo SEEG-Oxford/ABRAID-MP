@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
- 
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-
-         id="WebApp_ID" version="2.5">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="ABRAID-MP-PublicSite" version="2.5">
 
     <display-name>FreeMarker_Hello_World</display-name>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>publicsite</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/beans.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>publicsite</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>freemarker</servlet-name>
@@ -56,7 +67,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
 
-
+<!--
     <servlet>
         <servlet-name>hello_servlet</servlet-name>
         <servlet-class>uk.ac.ox.zoo.seeg.abraid.mp.publicsite.HelloServlet</servlet-class>
@@ -65,7 +76,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     <servlet-mapping>
         <servlet-name>hello_servlet</servlet-name>
         <url-pattern>/hello/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 
     <!--
         Prevent the visiting of MVC Views from outside the servlet container.

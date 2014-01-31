@@ -7,5 +7,6 @@
         <!-- Production -->
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20"/>
         <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" />
+        <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" />
     </dependencies>
 </ivy-module>

@@ -30,13 +30,13 @@
     <#nested/>
 </div>
 
-<#include "footer.html"/>
+<#include "../footer.html"/>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
 
-<script src="/site/js/main.js"></script>
+<script src="/publicsite/js/main.js"></script>
 
 </body></html>
 </#macro>
