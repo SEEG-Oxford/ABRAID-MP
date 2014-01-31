@@ -67,29 +67,13 @@
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
 
-<!--
-    <servlet>
-        <servlet-name>hello_servlet</servlet-name>
-        <servlet-class>uk.ac.ox.zoo.seeg.abraid.mp.publicsite.HelloServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>hello_servlet</servlet-name>
-        <url-pattern>/hello/*</url-pattern>
-    </servlet-mapping>-->
-
-    <!--
-        Prevent the visiting of MVC Views from outside the servlet container.
-        RequestDispatcher.forward/include should and will still work. Removing
-        this may open security holes!
-    -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>FreeMarker MVC Views</web-resource-name>
             <url-pattern>*.ftl</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <!-- Nobody is allowed to visit these -->
+            <!-- Ensure no-one can retrieve .ftl files -->
         </auth-constraint>
     </security-constraint>
 
