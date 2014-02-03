@@ -10,6 +10,7 @@
   <property name="dist.out.dir" value="${out.dir}/dist"/>
   <property name="module.out.dir" value="${out.dir}/production"/>
   <property name="test.out.dir" value="${out.dir}/test"/>
+  <property name="doc.out.dir" value="${out.dir}/doc"/>
   <property name="report.out.dir" value="${out.dir}/report"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="lib-local.dir" value="${basedir}/lib-local" />
@@ -180,6 +181,16 @@
   </target>
 
   <target name="check.quality" depends="check.style, check.bugs"/>
+
+  <!-- Documentation targets -->
+  <target name="generate.docs" depends="compile.production" description="Create the javadoc files">
+    <javadoc packagenames="uk.ac.ox.zoo.seeg.abraid.mp.*" sourcepath="${src.dir}" destdir="${doc.out.dir}" author="true" version="true" use="true" failonerror="true">
+      <classpath>
+        <dirset dir="${module.out.dir}"/>
+        <path refid="classpath"/>
+      </classpath>
+    </javadoc>
+  </target>
 
   <!-- Clean targets -->
   <target name="clean" description="cleanup module">
