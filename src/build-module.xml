@@ -2,16 +2,20 @@
 <project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property environment="env"/>
 
+  <basename property="module.name" file="${basedir}"/>
+
   <!-- Directories -->
   <property name="project.root.dir" value="${basedir}/../.."/>
   <property name="out.dir" value="${basedir}/out"/>
+  <property name="dist.out.dir" value="${out.dir}/dist"/>
   <property name="module.out.dir" value="${out.dir}/production"/>
   <property name="test.out.dir" value="${out.dir}/test"/>
+  <property name="report.out.dir" value="${out.dir}/report"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="lib-local.dir" value="${basedir}/lib-local" />
   <property name="src.dir" value="${basedir}/src"/>
   <property name="test.dir" value="${basedir}/test"/>
-  <property name="report.dir" value="${basedir}/report"/>
+  <property name="web.dir" value="${basedir}/web"/>
 
   <!-- Compiler options -->
   <property name="compiler.debug" value="on"/>
@@ -35,7 +39,7 @@
   </path>
 
   <!-- Build targets -->
-  <target name="build" depends="clean, compile.production, compile.tests" description="Compile module"/>
+  <target name="build" depends="clean, compile.production, compile.tests, build.package" description="Compile module"/>
 
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
@@ -107,6 +111,39 @@
   </target>
 
   <!-- Package targets -->
+  <target name="build.package" depends="build.jar" description="Builds a deployment package, default to building a JAR, override at module level to build WAR."/>
+
+  <target name="build.jar" depends="compile.production">
+    <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar">
+      <fileset dir="${module.out.dir}">
+        <include name="**/*.class"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+      </fileset>
+      <manifest>
+        <!-- TODO: add more meta-data -->
+        <attribute name="Built-On" value="${TODAY}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="build.war" depends="compile.production">
+    <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+      <classes dir="${module.out.dir}" />
+      <fileset dir="${web.dir}">
+        <!-- Need to exclude it since webxml is an attribute of the war tag above -->
+        <exclude name="WEB-INF/web.xml" />
+      </fileset>
+      <manifest>
+        <!-- TODO: add more meta-data -->
+        <attribute name="Built-On" value="${TODAY}"/>
+      </manifest>
+    </war>
+  </target>
+
+  <target name="publish.package" depends="build.package">
+    <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="latest" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
+  </target>
 
   <!-- Analysis targets -->
   <property name="findbugs.home" value="${env.FINDBUGS_HOME}"/>
@@ -116,8 +153,8 @@
   <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path"/>
 
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
-      <mkdir dir="${report.dir}"/>
-      <findbugs home="${findbugs.home}" output="xml" outputFile="${report.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+      <mkdir dir="${report.out.dir}"/>
+      <findbugs home="${findbugs.home}" output="xml" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
           <auxClasspath refid="classpath"/>
           <sourcePath path="${src.dir}"/>
           <class location="${out.dir}"/>
@@ -131,9 +168,9 @@
   <taskdef resource="checkstyletask.properties" classpathref="checkstyle.path"/>
 
   <target name="check.style" description="Generates a report of code convention violations.">
-    <mkdir dir="${report.dir}"/>
+    <mkdir dir="${report.out.dir}"/>
     <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
-      <formatter type="xml" tofile="${report.dir}/checkstyle-report.xml"/>
+      <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
       <fileset dir="${basedir}" includes="**/*.java"/>
     </checkstyle>
   </target>
@@ -148,6 +185,7 @@
 
   <target name="clean.full" depends="clean">
     <delete dir="${lib.dir}"/>
-    <delete dir="${report.dir}"/>
+    <delete dir="${report.out.dir}"/>
+    <delete dir="${out.dir}"/>
   </target>
 </project>
