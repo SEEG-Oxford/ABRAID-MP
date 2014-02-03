@@ -39,6 +39,9 @@
     <fileset dir="${lib-local.dir}" includes="*.jar"/>
   </path>
 
+  <!-- CI targets -->
+  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package" description="Build pipeline"/> <!-- Add generate.docs -->
+
   <!-- Build targets -->
   <target name="build" depends="clean, compile.production, compile.tests, publish.package" description="Compile module"/>
 
@@ -200,7 +203,7 @@
 
   <target name="clean.full" depends="clean">
     <delete dir="${lib.dir}"/>
-    <delete dir="${report.out.dir}"/>
+    <delete dir="${lib-local.dir}"/>
     <delete dir="${out.dir}"/>
   </target>
 </project>

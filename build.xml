@@ -15,8 +15,11 @@
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="test" dir="${code.root}"/>
   </target>
 
-  <target name="create-database" description="creates the database">
-    <ant antfile="${db.root}/build.xml" inheritrefs="false" inheritall="false" target="create-database" dir="${db.root}"/>
+  <target name="create.database" description="creates the database">
+    <ant antfile="${db.root}/build.xml" inheritrefs="false" inheritall="false" target="create.database" dir="${db.root}"/>
   </target>
 
+  <target name="full" depends="create.database" description="Build pipeline">
+    <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${code.root}"/>
+  </target>
 </project>
