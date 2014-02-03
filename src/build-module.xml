@@ -39,7 +39,7 @@
   </path>
 
   <!-- Build targets -->
-  <target name="build" depends="clean, compile.production, compile.tests, build.package" description="Compile module"/>
+  <target name="build" depends="clean, compile.production, compile.tests, publish.package" description="Compile module"/>
 
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
@@ -89,6 +89,8 @@
   </target>
 
   <target name="retrieve.libs" depends="resolve.libs">
+    <mkdir dir="${lib.dir}" />
+    <mkdir dir="${lib-local.dir}" />
     <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="true"/>
   </target>
 
@@ -134,6 +136,8 @@
         <!-- Need to exclude it since webxml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
       </fileset>
+      <lib dir="${lib.dir}" />
+      <lib dir="${lib-local.dir}" />
       <manifest>
         <!-- TODO: add more meta-data -->
         <attribute name="Built-On" value="${TODAY}"/>

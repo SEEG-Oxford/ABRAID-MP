@@ -1,9 +1,8 @@
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="common"/>
     <publications>
-        <artifact name="ABRAID-MP_Common"/>
+        <artifact name="ABRAID-MP_Common" type="jar" ext="jar"/>
     </publications>
-
     <dependencies>
         <!-- Common -->
         <dependency org="log4j" name="log4j" rev="1.2.17">

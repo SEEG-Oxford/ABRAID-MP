@@ -1,5 +1,8 @@
 <ivy-module version="2.0">
-    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="abraid-mp"/>
+    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="diseaseextent"/>
+    <publications>
+        <artifact name="ABRAID-MP_DiseaseExtent" type="jar" ext="jar"/>
+    </publications>
     <dependencies>
     	<!-- Common -->
         <dependency org="log4j" name="log4j" rev="1.2.17" />
@@ -10,5 +13,8 @@
         <dependency org="junit" name="junit" rev="4.11" />
         <dependency org="org.mockito" name="mockito-all" rev="1.9.5" />
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" />
+
+        <!-- Internal -->
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="latest" />
     </dependencies>
 </ivy-module>
