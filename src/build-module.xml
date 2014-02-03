@@ -85,7 +85,7 @@
   <ivy:settings file="${project.root.dir}/ivysettings.xml"/>
 
   <target name="resolve.libs">
-   <ivy:resolve/>
+   <ivy:resolve log="download-only"/>
   </target>
 
   <target name="retrieve.libs" depends="resolve.libs">
