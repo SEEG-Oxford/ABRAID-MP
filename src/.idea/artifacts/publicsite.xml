@@ -13,9 +13,7 @@
           <element id="library" level="project" name="common-lib" />
         </element>
       </element>
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/../../ABRAID-MP-Prototypes/Website/META-INF/MANIFEST.MF" />
-      </element>
+      <element id="directory" name="META-INF" />
     </root>
   </artifact>
 </component>
