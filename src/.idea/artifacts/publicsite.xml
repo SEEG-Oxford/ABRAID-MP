@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="publicsite">
+    <output-path>$PROJECT_DIR$/out/artifacts/publicsite</output-path>
+    <root id="archive" name="publicsite.war">
+      <element id="javaee-facet-resources" facet="PublicSite/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="PublicSite" />
+          <element id="module-output" name="Common" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="publicsite-lib" />
+          <element id="library" level="project" name="common-lib" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF" />
+    </root>
+  </artifact>
+</component>

@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
 
+import java.util.List;
+
 /**
  * Service class for diseases.
  *
@@ -17,6 +19,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Required
     public void setDiseaseDao(DiseaseDao diseaseDao) {
         this.diseaseDao = diseaseDao;
+    }
+
+    /**
+     * Gets a list of all diseases.
+     * @return A list of all diseases.
+     */
+    public List<Disease> getAllDiseases() {
+        return diseaseDao.getAll();
     }
 
     /**

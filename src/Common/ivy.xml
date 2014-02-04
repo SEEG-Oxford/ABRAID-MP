@@ -16,12 +16,8 @@
             <exclude org="org.apache.openejb" name="javaee-api"/>
         </dependency>
         <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
-        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default">
-            <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
-            <!-- TODO: This doesn't work! Workaround for the workaround is in build.xml's retrieve.manual.libs -->
-            <exclude org="org.hibernate.javax.persistence" name="hibernate-jpa-2.0-api"/>
-            <exclude org="org.apache.geronimo.specs" name="geronimo-jpa_2.0_spec"/>
-        </dependency>
+        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3"/>
         <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default"/>
 
         <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
@@ -48,5 +44,10 @@
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
         <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
         <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
+
+        <!-- Workaround: Excluded as these conflict with javax.persistence 2.1 which is required by Hibernate 4 -->
+        <!-- These are transitive dependencies of org.springframework.spring-orm -->
+        <exclude org="org.hibernate.javax.persistence" module="hibernate-jpa-2.0-api"/>
+        <exclude org="org.apache.geronimo.specs" module="geronimo-jpa_2.0_spec"/>
     </dependencies>
 </ivy-module>

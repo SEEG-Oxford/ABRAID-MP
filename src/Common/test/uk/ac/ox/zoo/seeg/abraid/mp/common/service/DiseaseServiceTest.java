@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -18,6 +21,14 @@ import static org.mockito.Mockito.when;
 public class DiseaseServiceTest extends AbstractSpringUnitTests {
     @Autowired
     private DiseaseService diseaseService;
+
+    @Test
+    public void getAllDiseases() {
+        List<Disease> allDiseases = Arrays.asList(new Disease("A"), new Disease("B"));
+        when(diseaseDao.getAll()).thenReturn(allDiseases);
+        List<Disease> testAllDiseases = diseaseService.getAllDiseases();
+        assertThat(testAllDiseases).isSameAs(allDiseases);
+    }
 
     @Test
     public void getDiseaseByName() {

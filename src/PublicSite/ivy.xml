@@ -11,9 +11,10 @@
     </publications>
     <dependencies>
         <!-- External -->
-        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" />
-        <dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" conf="external->default" />
-        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
+        <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-webmvc" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" conf="external->default"/>
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
@@ -22,7 +23,7 @@
         <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
         <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
-
-        <!-- Analysis -->
+        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
+        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
     </dependencies>
 </ivy-module>
