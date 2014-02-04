@@ -2,16 +2,21 @@
 <project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property environment="env"/>
 
+  <basename property="module.name" file="${basedir}"/>
+
   <!-- Directories -->
   <property name="project.root.dir" value="${basedir}/../.."/>
   <property name="out.dir" value="${basedir}/out"/>
+  <property name="dist.out.dir" value="${out.dir}/dist"/>
   <property name="module.out.dir" value="${out.dir}/production"/>
   <property name="test.out.dir" value="${out.dir}/test"/>
+  <property name="doc.out.dir" value="${out.dir}/doc"/>
+  <property name="report.out.dir" value="${out.dir}/report"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="lib-local.dir" value="${basedir}/lib-local" />
   <property name="src.dir" value="${basedir}/src"/>
   <property name="test.dir" value="${basedir}/test"/>
-  <property name="report.dir" value="${basedir}/report"/>
+  <property name="web.dir" value="${basedir}/web"/>
 
   <!-- Compiler options -->
   <property name="compiler.debug" value="on"/>
@@ -28,19 +33,38 @@
   <property file="${project.root.dir}/user.properties"/>
   <property file="${project.root.dir}/build.properties"/>
 
+  <!-- Versioning -->
+  <exec executable="git" outputproperty="repository.version">
+    <arg value="describe"/>
+    <arg value="--dirty"/>
+  </exec>
+  <tstamp>
+    <format property="time.stamp" pattern="yyyy-MM-dd_HH:mm:ss"/>
+  </tstamp>
+  <echo>Ant running against repository verion: ${repository.version}</echo>
+
   <!-- Classpath -->
-  <path id="classpath">
-    <fileset dir="${lib.dir}" includes="*.jar"/>
+  <path id="build.classpath">
+    <fileset dir="${lib.dir}/build" includes="*.jar"/>
     <fileset dir="${lib-local.dir}" includes="*.jar"/>
   </path>
 
+  <path id="test.classpath">
+    <fileset dir="${lib.dir}/build" includes="*.jar"/>
+    <fileset dir="${lib.dir}/test" includes="*.jar"/>
+    <fileset dir="${lib-local.dir}" includes="*.jar"/>
+  </path>
+
+  <!-- CI targets -->
+  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package" description="Build pipeline"/> <!-- Add generate.docs -->
+
   <!-- Build targets -->
-  <target name="build" depends="clean, compile.production, compile.tests" description="Compile module"/>
+  <target name="build" depends="clean, compile.production, compile.tests, publish.package" description="Compile module"/>
 
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
     <!-- Build -->
-    <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+    <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="build.classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args}"/>
     </javac>
     <!-- Copy resources -->
@@ -60,7 +84,7 @@
     <!-- Build -->
     <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <classpath>
-        <path refid="classpath"/>
+        <path refid="test.classpath"/>
         <dirset dir="${module.out.dir}"/>
       </classpath>
       <compilerarg line="${compiler.args}"/>
@@ -81,11 +105,13 @@
   <ivy:settings file="${project.root.dir}/ivysettings.xml"/>
 
   <target name="resolve.libs">
-   <ivy:resolve/>
+   <ivy:resolve log="download-only"/>
   </target>
 
   <target name="retrieve.libs" depends="resolve.libs">
-    <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="true"/>
+    <mkdir dir="${lib.dir}" />
+    <mkdir dir="${lib-local.dir}" />
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
   </target>
 
   <!-- Test targets -->
@@ -96,7 +122,7 @@
         <jvmarg value="-Xmx512M"/>
         <formatter type="brief" usefile="false" />
         <classpath>
-          <path refid="classpath"/>
+          <path refid="test.classpath"/>
           <dirset dir="${module.out.dir}"/>
           <dirset dir="${test.out.dir}"/>
         </classpath>
@@ -107,6 +133,41 @@
   </target>
 
   <!-- Package targets -->
+  <target name="build.package" depends="build.jar" description="Builds a deployment package, default to building a JAR, override at module level to build WAR."/>
+
+  <target name="build.jar" depends="compile.production">
+    <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar">
+      <fileset dir="${module.out.dir}">
+        <include name="**/*.class"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+      </fileset>
+      <manifest>
+        <attribute name="Version" value="${repository.version}"/>
+        <attribute name="Built-On" value="${time.stamp}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="build.war" depends="compile.production">
+    <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+      <classes dir="${module.out.dir}" />
+      <fileset dir="${web.dir}">
+        <!-- Need to exclude it since webxml is an attribute of the war tag above -->
+        <exclude name="WEB-INF/web.xml" />
+      </fileset>
+      <lib dir="${lib.dir}" />
+      <lib dir="${lib-local.dir}" />
+      <manifest>
+        <attribute name="Version" value="${repository.version}"/>
+        <attribute name="Built-On" value="${time.stamp}"/>
+      </manifest>
+    </war>
+  </target>
+
+  <target name="publish.package" depends="build.package">
+    <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="${repository.version}" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
+  </target>
 
   <!-- Analysis targets -->
   <property name="findbugs.home" value="${env.FINDBUGS_HOME}"/>
@@ -116,9 +177,9 @@
   <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path"/>
 
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
-      <mkdir dir="${report.dir}"/>
-      <findbugs home="${findbugs.home}" output="xml" outputFile="${report.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
-          <auxClasspath refid="classpath"/>
+      <mkdir dir="${report.out.dir}"/>
+      <findbugs home="${findbugs.home}" output="xml" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+          <auxClasspath refid="build.classpath"/>
           <sourcePath path="${src.dir}"/>
           <class location="${out.dir}"/>
       </findbugs>
@@ -131,14 +192,24 @@
   <taskdef resource="checkstyletask.properties" classpathref="checkstyle.path"/>
 
   <target name="check.style" description="Generates a report of code convention violations.">
-    <mkdir dir="${report.dir}"/>
+    <mkdir dir="${report.out.dir}"/>
     <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
-      <formatter type="xml" tofile="${report.dir}/checkstyle-report.xml"/>
+      <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
       <fileset dir="${basedir}" includes="**/*.java"/>
     </checkstyle>
   </target>
 
   <target name="check.quality" depends="check.style, check.bugs"/>
+
+  <!-- Documentation targets -->
+  <target name="generate.docs" depends="compile.production" description="Create the javadoc files">
+    <javadoc packagenames="uk.ac.ox.zoo.seeg.abraid.mp.*" sourcepath="${src.dir}" destdir="${doc.out.dir}" author="true" version="true" use="true" failonerror="true">
+      <classpath>
+        <dirset dir="${module.out.dir}"/>
+        <path refid="build.classpath"/>
+      </classpath>
+    </javadoc>
+  </target>
 
   <!-- Clean targets -->
   <target name="clean" description="cleanup module">
@@ -148,6 +219,7 @@
 
   <target name="clean.full" depends="clean">
     <delete dir="${lib.dir}"/>
-    <delete dir="${report.dir}"/>
+    <delete dir="${lib-local.dir}"/>
+    <delete dir="${out.dir}"/>
   </target>
 </project>

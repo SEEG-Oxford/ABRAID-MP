@@ -1,44 +1,52 @@
 <ivy-module version="2.0">
-    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="abraid-mp"/>
+    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="common"/>
+    <configurations>
+        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
+        <conf name="build" extends="external" description="all build dependencies"/>
+        <conf name="test" visibility="private" description="unit testing dependencies"/>
+        <conf name="analysis" visibility="private" description="code analysis dependencies"/>
+    </configurations>
+    <publications>
+        <artifact name="ABRAID-MP_Common" type="jar" ext="jar" conf="build"/>
+    </publications>
     <dependencies>
         <!-- Common -->
-        <dependency org="log4j" name="log4j" rev="1.2.17">
+        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" >
             <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
             <exclude org="org.apache.openejb" name="javaee-api"/>
         </dependency>
-        <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE"/>
-        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE">
+        <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default">
             <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
             <!-- TODO: This doesn't work! Workaround for the workaround is in build.xml's retrieve.manual.libs -->
             <exclude org="org.hibernate.javax.persistence" name="hibernate-jpa-2.0-api"/>
             <exclude org="org.apache.geronimo.specs" name="geronimo-jpa_2.0_spec"/>
         </dependency>
-        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3"/>
+        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default"/>
 
         <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
-        <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true"/>
+        <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true" conf="external->default" />
         <!-- Workaround: spring-orm depends on revision 2.4.0 of these libraries, but it is not found -->
-        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.core" rev="2.5.1"/>
-        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.jpa" rev="2.5.1"/>
+        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.core" rev="2.5.1" conf="external->default" />
+        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.jpa" rev="2.5.1" conf="external->default" />
 
         <!-- Database -->
-        <dependency org="org.hibernate" name="hibernate-core" rev="4.3.1.Final"/>
-        <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41"/>
-        <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2"/>
+        <dependency org="org.hibernate" name="hibernate-core" rev="4.3.1.Final" conf="external->default" />
+        <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41" conf="external->default" />
+        <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2" conf="external->default" />
 
         <!-- TODO: When hibernate-spatial 4.3 is released: -->
         <!-- 1. Include this line (you may need to exclude org="postgresql" name="postgresql" if it is older than revision 9.3) -->
         <!--    <dependency org="org.hibernate" name="hibernate-spatial" rev="4.3"/> -->
         <!-- 2. Remove this line (it's a dependency) -->
-        <dependency org="com.vividsolutions" name="jts" rev="1.13"/>
+        <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
         <!-- 3. In build.xml, remove the download of hibernate-spatial 4.3 -->
 
         <!-- Unit testing -->
-        <!-- TODO: Ensure that these jars are not in the release -->
-        <dependency org="junit" name="junit" rev="4.11"/>
-        <dependency org="org.mockito" name="mockito-all" rev="1.9.5"/>
-        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10"/>
-        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE"/>
-        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9"/>
+        <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
+        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
+        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
+        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
+        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
     </dependencies>
 </ivy-module>
