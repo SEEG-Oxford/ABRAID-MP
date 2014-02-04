@@ -28,7 +28,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="publicsite-lib" level="project" />
-    <orderEntry type="module" module-name="Common" />
+    <orderEntry type="module" module-name="Common" exported="" />
   </component>
 </module>
 

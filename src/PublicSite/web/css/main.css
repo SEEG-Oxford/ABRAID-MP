@@ -6,6 +6,7 @@ html,body
 #wrap
 {
     min-height: 100%;
+    padding-top:50px;
     height: auto !important;
     height: 100%;
     margin: 0 auto -50px;

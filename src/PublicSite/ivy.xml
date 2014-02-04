@@ -2,7 +2,7 @@
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="abraid-mp-publicsite"/>
     <dependencies>
         <!-- ABRAID-MP modules -->
-        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="abraid-mp-common" rev="latest.integration"/>
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="abraid-mp-common" rev="latest.integration" changing="true"/>
         
         <!-- Production -->
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20"/>
