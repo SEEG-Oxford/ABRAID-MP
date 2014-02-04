@@ -111,7 +111,7 @@
   <target name="retrieve.libs" depends="resolve.libs">
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${lib-local.dir}" />
-    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true"/>
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" type="jar" sync="true" />
   </target>
 
   <!-- Test targets -->
