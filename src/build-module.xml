@@ -44,8 +44,14 @@
   <echo>Ant running against repository verion: ${repository.version}</echo>
 
   <!-- Classpath -->
-  <path id="classpath">
-    <fileset dir="${lib.dir}" includes="*.jar"/>
+  <path id="build.classpath">
+    <fileset dir="${lib.dir}/build" includes="*.jar"/>
+    <fileset dir="${lib-local.dir}" includes="*.jar"/>
+  </path>
+
+  <path id="test.classpath">
+    <fileset dir="${lib.dir}/build" includes="*.jar"/>
+    <fileset dir="${lib.dir}/test" includes="*.jar"/>
     <fileset dir="${lib-local.dir}" includes="*.jar"/>
   </path>
 
@@ -58,7 +64,7 @@
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
     <!-- Build -->
-    <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+    <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="build.classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <compilerarg line="${compiler.args}"/>
     </javac>
     <!-- Copy resources -->
@@ -78,7 +84,7 @@
     <!-- Build -->
     <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
       <classpath>
-        <path refid="classpath"/>
+        <path refid="test.classpath"/>
         <dirset dir="${module.out.dir}"/>
       </classpath>
       <compilerarg line="${compiler.args}"/>
@@ -105,7 +111,7 @@
   <target name="retrieve.libs" depends="resolve.libs">
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${lib-local.dir}" />
-    <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="true"/>
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true"/>
   </target>
 
   <!-- Test targets -->
@@ -116,7 +122,7 @@
         <jvmarg value="-Xmx512M"/>
         <formatter type="brief" usefile="false" />
         <classpath>
-          <path refid="classpath"/>
+          <path refid="test.classpath"/>
           <dirset dir="${module.out.dir}"/>
           <dirset dir="${test.out.dir}"/>
         </classpath>
@@ -173,7 +179,7 @@
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
       <mkdir dir="${report.out.dir}"/>
       <findbugs home="${findbugs.home}" output="xml" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
-          <auxClasspath refid="classpath"/>
+          <auxClasspath refid="build.classpath"/>
           <sourcePath path="${src.dir}"/>
           <class location="${out.dir}"/>
       </findbugs>
@@ -200,7 +206,7 @@
     <javadoc packagenames="uk.ac.ox.zoo.seeg.abraid.mp.*" sourcepath="${src.dir}" destdir="${doc.out.dir}" author="true" version="true" use="true" failonerror="true">
       <classpath>
         <dirset dir="${module.out.dir}"/>
-        <path refid="classpath"/>
+        <path refid="build.classpath"/>
       </classpath>
     </javadoc>
   </target>

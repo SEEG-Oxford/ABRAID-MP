@@ -1,20 +1,28 @@
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="modelwrapper"/>
+    <configurations>
+        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
+        <conf name="build" extends="external" description="all build dependencies"/>
+        <conf name="test" visibility="private" description="unit testing dependencies"/>
+        <conf name="analysis" visibility="private" description="code analysis dependencies"/>
+    </configurations>
     <publications>
-        <artifact name="ABRAID-MP_ModelWrapper" type="jar" ext="jar"/>
+        <artifact name="ABRAID-MP_ModelWrapper" type="jar" ext="jar" conf="build"/>
     </publications>
     <dependencies>
-    	<!-- Common -->
-        <dependency org="log4j" name="log4j" rev="1.2.17" />
-		<dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" />
-		<dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" />
-
-        <!-- Unit testing -->
-        <dependency org="junit" name="junit" rev="4.11" />
-        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" />
-        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" />
+        <!-- External -->
+        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" />
+        <dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" conf="external->default" />
+        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
 
         <!-- Internal -->
-        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" />
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
+
+        <!-- Testing -->
+        <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
+        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
+        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
+
+        <!-- Analysis -->
     </dependencies>
 </ivy-module>
