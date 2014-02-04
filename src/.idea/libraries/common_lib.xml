@@ -1,15 +1,14 @@
 <component name="libraryTable">
   <library name="common-lib">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/Common/lib" />
       <root url="file://$PROJECT_DIR$/Common/lib-local" />
+      <root url="file://$PROJECT_DIR$/Common/lib/test" />
+      <root url="file://$PROJECT_DIR$/Common/lib/external" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/Common/lib" />
-    </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/Common/lib" recursive="false" />
+    <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/Common/lib-local" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/Common/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$PROJECT_DIR$/Common/lib/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/Common/lib/test" recursive="false" />
   </library>
 </component>

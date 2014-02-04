@@ -1,13 +1,14 @@
 <component name="libraryTable">
   <library name="publicsite-lib">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/PublicSite/lib" />
+      <root url="file://$PROJECT_DIR$/PublicSite/lib/external" />
+      <root url="file://$PROJECT_DIR$/PublicSite/lib/test" />
+      <root url="file://$PROJECT_DIR$/PublicSite/lib-local" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/PublicSite/lib" />
-    </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib" recursive="false" type="SOURCES" />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib-local" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/PublicSite/lib/test" recursive="false" />
   </library>
 </component>
