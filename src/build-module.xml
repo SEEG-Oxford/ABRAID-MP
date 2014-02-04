@@ -33,6 +33,16 @@
   <property file="${project.root.dir}/user.properties"/>
   <property file="${project.root.dir}/build.properties"/>
 
+  <!-- Versioning -->
+  <exec executable="git" outputproperty="repository.version">
+    <arg value="describe"/>
+    <arg value="--dirty"/>
+  </exec>
+  <tstamp>
+    <format property="time.stamp" pattern="yyyy-MM-dd_HH:mm:ss"/>
+  </tstamp>
+  <echo>Ant running against repository verion: ${repository.version}</echo>
+
   <!-- Classpath -->
   <path id="classpath">
     <fileset dir="${lib.dir}" includes="*.jar"/>
@@ -127,8 +137,8 @@
         <include name="**/*.properties"/>
       </fileset>
       <manifest>
-        <!-- TODO: add more meta-data -->
-        <attribute name="Built-On" value="${TODAY}"/>
+        <attribute name="Version" value="${repository.version}"/>
+        <attribute name="Built-On" value="${time.stamp}"/>
       </manifest>
     </jar>
   </target>
@@ -143,14 +153,14 @@
       <lib dir="${lib.dir}" />
       <lib dir="${lib-local.dir}" />
       <manifest>
-        <!-- TODO: add more meta-data -->
-        <attribute name="Built-On" value="${TODAY}"/>
+        <attribute name="Version" value="${repository.version}"/>
+        <attribute name="Built-On" value="${time.stamp}"/>
       </manifest>
     </war>
   </target>
 
   <target name="publish.package" depends="build.package">
-    <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="latest" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
+    <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="${repository.version}" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
   </target>
 
   <!-- Analysis targets -->

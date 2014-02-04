@@ -15,6 +15,6 @@
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" />
 
         <!-- Internal -->
-        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="latest" />
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" />
     </dependencies>
 </ivy-module>
