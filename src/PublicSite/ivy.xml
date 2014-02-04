@@ -1,12 +1,29 @@
 <ivy-module version="2.0">
-    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="abraid-mp-publicsite"/>
+    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="publicsite"/>
+    <configurations>
+        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
+        <conf name="build" extends="external" description="all build dependencies"/>
+        <conf name="test" visibility="private" description="unit testing dependencies"/>
+        <conf name="analysis" visibility="private" description="code analysis dependencies"/>
+    </configurations>
+    <publications>
+        <artifact name="ABRAID-MP_PublicSite" type="war" ext="war" conf="build"/>
+    </publications>
     <dependencies>
-        <!-- ABRAID-MP modules -->
-        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="abraid-mp-common" rev="latest.integration" changing="true"/>
-        
-        <!-- Production -->
-        <dependency org="org.freemarker" name="freemarker" rev="2.3.20"/>
-        <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" />
-        <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" />
+        <!-- External -->
+        <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-webmvc" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" conf="external->default"/>
+
+        <!-- Internal -->
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
+
+        <!-- Testing -->
+        <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
+        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
+        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
+        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
+        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
     </dependencies>
 </ivy-module>

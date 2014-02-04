@@ -1,13 +1,14 @@
 <component name="libraryTable">
   <library name="dataacquisition-lib">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/DataAcquisition/lib" />
+      <root url="file://$PROJECT_DIR$/DataAcquisition/lib/external" />
+      <root url="file://$PROJECT_DIR$/DataAcquisition/lib/test" />
+      <root url="file://$PROJECT_DIR$/DataAcquisition/lib-local" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/DataAcquisition/lib" />
-    </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib" recursive="false" type="SOURCES" />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib-local" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib/test" recursive="false" />
   </library>
 </component>

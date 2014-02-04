@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Database" basedir="." default="create-database">
+<project name="Database" basedir="." default="create.database">
     <description>Creates the ABRAID-MP database.</description>
 
     <!-- To customise the database properties, copy file database.properties.example to database.properties and modify it -->
@@ -10,7 +10,7 @@
     <!-- Creates the database -->
     <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
          You can use pgAdmin to add it to this file. -->
-    <target name="create-database">
+    <target name="create.database">
         <exec executable="psql" failonerror="true">
             <arg value="-U" />
             <arg value="${superuser.name}" />
