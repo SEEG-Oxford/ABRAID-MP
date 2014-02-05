@@ -117,18 +117,18 @@
   <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
     <junit printsummary="off" fork="yes" forkmode="once">
-        <jvmarg value="-Xms128M"/>
-        <jvmarg value="-Xmn64M"/>
-        <jvmarg value="-Xmx512M"/>
-        <formatter type="brief" usefile="false" />
-        <classpath>
-          <path refid="test.classpath"/>
-          <dirset dir="${module.out.dir}"/>
-          <dirset dir="${test.out.dir}"/>
-        </classpath>
-        <batchtest>
-          <fileset dir="${test.out.dir}" includes="**/*Test.class" />
-        </batchtest>
+      <jvmarg value="-Xms128M"/>
+      <jvmarg value="-Xmn64M"/>
+      <jvmarg value="-Xmx512M"/>
+      <formatter type="brief" usefile="false" />
+      <classpath>
+        <path refid="test.classpath"/>
+        <dirset dir="${module.out.dir}"/>
+        <dirset dir="${test.out.dir}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${test.out.dir}" includes="**/*Test.class" />
+      </batchtest>
     </junit>
   </target>
 

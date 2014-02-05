@@ -24,5 +24,9 @@
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
 
         <!-- Analysis -->
+
+        <exclude type="source" ext="*" conf="*" />
+        <exclude type="javadoc" ext="*" conf="*" />
+        <exclude type="license" ext="*" conf="*" />
     </dependencies>
 </ivy-module>

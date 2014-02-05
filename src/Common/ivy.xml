@@ -49,5 +49,9 @@
         <!-- These are transitive dependencies of org.springframework.spring-orm -->
         <exclude org="org.hibernate.javax.persistence" module="hibernate-jpa-2.0-api"/>
         <exclude org="org.apache.geronimo.specs" module="geronimo-jpa_2.0_spec"/>
+
+        <exclude type="source" ext="*" conf="*" />
+        <exclude type="javadoc" ext="*" conf="*" />
+        <exclude type="license" ext="*" conf="*" />
     </dependencies>
 </ivy-module>

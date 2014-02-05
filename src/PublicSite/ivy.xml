@@ -25,5 +25,9 @@
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
         <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
         <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
+
+        <exclude type="source" ext="*" conf="*" />
+        <exclude type="javadoc" ext="*" conf="*" />
+        <exclude type="license" ext="*" conf="*" />
     </dependencies>
 </ivy-module>
