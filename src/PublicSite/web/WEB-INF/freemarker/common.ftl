@@ -36,7 +36,5 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
 
-<script src="js/main.js"></script>
-
 </body></html>
 </#macro>
