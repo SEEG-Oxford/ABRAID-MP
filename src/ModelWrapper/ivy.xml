@@ -14,6 +14,7 @@
         <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" />
         <dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" conf="external->default" />
         <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
+        <dependency org="org.apache.commons" name="commons-exec" rev="1.2" />
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
