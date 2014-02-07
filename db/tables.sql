@@ -53,7 +53,7 @@ CREATE TABLE Location (
 );
 
 -- Represents a person interacting with the PublicSite
-CREATE TABLE User ( 
+CREATE TABLE Expert ( 
 	Id serial NOT NULL,
 	Name varchar(50) NOT NULL,
 	HashedPassword varchar(60) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE User (
 
 -- The map table to represent the many-to-many relationship between experts users and their disease interests
 -- ie the diseases that should be displayed to a user for review in the Data Validator
-CREATE TABLE UserDisease ( 
-	UserId integer NOT NULL,
+CREATE TABLE ExpertDisease ( 
+	ExpertId integer NOT NULL,
 	DiseaseId integer NOT NULL
 );

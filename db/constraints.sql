@@ -35,11 +35,11 @@ ALTER TABLE DiseaseOutbreak ADD CONSTRAINT PK_DiseaseOutbreak
 ALTER TABLE Location ADD CONSTRAINT PK_Location 
     PRIMARY KEY (Id);
 	
-ALTER TABLE User ADD CONSTRAINT PK_User 
+ALTER TABLE Expert ADD CONSTRAINT PK_User 
 	PRIMARY KEY (Id);
 
-ALTER TABLE UserDisease ADD CONSTRAINT PK_UserDisease 
-	PRIMARY KEY (UserId, DiseaseId);
+ALTER TABLE ExpertDisease ADD CONSTRAINT PK_ExpertDisease 
+	PRIMARY KEY (ExpertId, DiseaseId);
 
     
 -- Foreign keys
@@ -58,9 +58,9 @@ ALTER TABLE DiseaseOutbreak ADD CONSTRAINT FK_DiseaseOutbreak_Provenance
 ALTER TABLE Location ADD CONSTRAINT FK_Location_Country 
     FOREIGN KEY (Country) REFERENCES Country (Id);
 	
-ALTER TABLE UserDisease ADD CONSTRAINT FK_UserDisease_Disease 
+ALTER TABLE ExpertDisease ADD CONSTRAINT FK_ExpertDisease_Disease 
 	FOREIGN KEY (DiseaseId) REFERENCES Disease (Id);
 
-ALTER TABLE UserDisease ADD CONSTRAINT FK_UserDisease_User 
-	FOREIGN KEY (UserId) REFERENCES User (Id);
+ALTER TABLE ExpertDisease ADD CONSTRAINT FK_ExpertDisease_Expert 
+	FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
 
