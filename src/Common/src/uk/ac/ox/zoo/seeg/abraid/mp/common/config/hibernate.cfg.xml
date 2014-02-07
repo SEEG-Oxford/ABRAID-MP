@@ -13,5 +13,6 @@
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceWeight"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert"/>
     </session-factory>
 </hibernate-configuration>
