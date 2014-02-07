@@ -31,7 +31,7 @@ public class Location {
 
     // The country.
     @ManyToOne
-    @JoinColumn(name="country")
+    @JoinColumn(name = "country")
     private Country country;
 
     public Location() {
