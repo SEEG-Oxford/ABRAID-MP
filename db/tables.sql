@@ -56,10 +56,11 @@ CREATE TABLE Location (
 CREATE TABLE Expert ( 
 	Id serial NOT NULL,
 	Name varchar(50) NOT NULL,
+	Email varchar(50) NOT NULL,
 	HashedPassword varchar(60) NOT NULL,
 	IsAdmin boolean,
 	Score number,
-	PubliclyVisible boolean
+	IsPubliclyVisible boolean
 );
 
 -- The map table to represent the many-to-many relationship between experts users and their disease interests
