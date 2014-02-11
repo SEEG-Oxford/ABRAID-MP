@@ -20,7 +20,7 @@ public class Provenance {
 
     // The weight (significance) that is assigned to this provenance.
     @ManyToOne
-    @JoinColumn(name="provenanceweightId")
+    @JoinColumn(name = "provenanceweightId")
     private ProvenanceWeight weight;
 
     // The feed ID used for this provenance in HealthMap.
