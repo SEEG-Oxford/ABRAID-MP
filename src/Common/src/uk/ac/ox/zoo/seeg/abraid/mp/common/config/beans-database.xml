@@ -29,6 +29,9 @@
     <bean id="provenanceWeightDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceWeightDaoImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+    <bean id="expertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <!-- Database configuration -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
