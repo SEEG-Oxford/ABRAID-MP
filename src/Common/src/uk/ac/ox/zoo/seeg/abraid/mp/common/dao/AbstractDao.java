@@ -27,6 +27,7 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  *
  * @param <E> the class which this DAO manages
+ * @param <I> the class of the entity's identifier
  */
 public abstract class AbstractDao<E, I extends Serializable> {
     private SessionFactory sessionFactory;
@@ -170,25 +171,10 @@ public abstract class AbstractDao<E, I extends Serializable> {
      * This operation cascades to associated instances if the association is mapped with
      * <tt>cascade="save-update"</tt>.
      * @param entity a transient or detached instance containing new or updated state
-     * @throws HibernateException
+     * @throws HibernateException Indicates a problem executing the SQL or processing the SQL results.
      * @see Session#saveOrUpdate(Object)
      */
     public final void save(E entity) throws HibernateException {
         currentSession().save(entity);
-    }
-
-    /**
-     * Force initialization of a proxy or persistent collection.
-     * <p/>
-     * Note: This only ensures initialization of a proxy object or collection;
-     * it is not guaranteed that the elements INSIDE the collection will be initialized/materialized.
-     * @param proxy a persistable object, proxy, persistent collection or {@code null}
-     * @throws HibernateException if we can't initialize the proxy at this time, eg. the {@link Session} was closed
-     */
-    protected final <T> T initialize(T proxy) throws HibernateException {
-        if (!Hibernate.isInitialized(proxy)) {
-            Hibernate.initialize(proxy);
-        }
-        return proxy;
     }
 }

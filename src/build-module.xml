@@ -178,10 +178,10 @@
 
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
       <mkdir dir="${report.out.dir}"/>
-      <findbugs home="${findbugs.home}" output="xml" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+      <findbugs home="${findbugs.home}" output="xml:withMessages" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
           <auxClasspath refid="build.classpath"/>
           <sourcePath path="${src.dir}"/>
-          <class location="${out.dir}"/>
+          <class location="${module.out.dir}"/>
       </findbugs>
   </target>
 
@@ -193,9 +193,10 @@
 
   <target name="check.style" description="Generates a report of code convention violations.">
     <mkdir dir="${report.out.dir}"/>
-    <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+    <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="build.classpath">
       <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
-      <fileset dir="${basedir}" includes="**/*.java"/>
+      <formatter type="plain" />
+      <fileset dir="${src.dir}" includes="**/*.java"/>
     </checkstyle>
   </target>
 
