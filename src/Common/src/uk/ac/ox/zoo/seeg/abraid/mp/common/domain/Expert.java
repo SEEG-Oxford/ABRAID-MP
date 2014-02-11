@@ -18,7 +18,8 @@ import java.util.Set;
 public class Expert {
     // The expert's serial ID.
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     // The expert's name.
     @Column
@@ -50,11 +51,11 @@ public class Expert {
     public Expert() {
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
