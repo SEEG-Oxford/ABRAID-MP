@@ -5,6 +5,7 @@
          id="ABRAID-MP-PublicSite" version="2.5">
 
     <display-name>FreeMarker_Hello_World</display-name>
+
     <welcome-file-list>
         <welcome-file>index.ftl</welcome-file>
     </welcome-file-list>
@@ -14,7 +15,9 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/beans.xml</param-value>
+            <param-value>
+                /WEB-INF/abraid-servlet-beans.xml
+            </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -23,6 +26,20 @@
         <servlet-name>publicsite</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/applicationContext.xml,
+            /WEB-INF/spring-security.xml
+        </param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>freemarker</servlet-name>
@@ -76,5 +93,17 @@
             <!-- Ensure no-one can retrieve .ftl files -->
         </auth-constraint>
     </security-constraint>
+
+    <!-- Spring Security -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 
 </web-app>

@@ -12,9 +12,18 @@
     <dependencies>
         <!-- External -->
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
+        <dependency org="org.mindrot" name="jbcrypt" rev="0.3m" conf="external->default"/>
+
+        <!-- Spring -->
+        <dependency org="org.springframework" name="spring-core" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" conf="external->default"/>
+
+        <!-- Spring Security -->
+        <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.0.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework.security" name="spring-security-web" rev="3.2.0.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework.security" name="spring-security-config" rev="3.2.0.RELEASE" conf="external->default"/>
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
