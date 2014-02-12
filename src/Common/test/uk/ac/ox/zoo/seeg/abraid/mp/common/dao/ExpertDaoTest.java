@@ -34,7 +34,7 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
         flushAndClear();
 
         // Reloads the same expert and verifies its properties
-        expert = expertDao.getByName(expertName);
+        expert = expertDao.getByEmail(expertEmail);
         assertThat(expert).isNotNull();
         assertThat(expert.getId()).isNotNull();
         assertThat(expert.getId()).isEqualTo(id);
@@ -43,8 +43,8 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void loadNonExistentExpert() {
-        String expertName = "This expert does not exist";
-        Expert expert = expertDao.getByName(expertName);
+        String expertEmail = "This expert does not exist";
+        Expert expert = expertDao.getByEmail(expertEmail);
         assertThat(expert).isNull();
     }
 }

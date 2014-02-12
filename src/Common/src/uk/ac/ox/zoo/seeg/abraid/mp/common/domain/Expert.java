@@ -5,7 +5,6 @@ import java.util.Set;
 
 /**
  * Represents an expert.
- *
  * Copyright (c) 2014 University of Oxford
  */
 @NamedQueries({
@@ -30,7 +29,7 @@ public class Expert {
     private String email;
 
     // The expert's password
-    @Column(name="HashedPassword")
+    @Column(name = "HashedPassword")
     private String password;
 
     // Whether the expert has administrative control
@@ -42,10 +41,10 @@ public class Expert {
     private boolean isPubliclyVisible;
 
     // List of diseases an expert has interest in and can validate
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(name="ExpertDisease",
-                joinColumns = {@JoinColumn(name="ExpertId")},
-                inverseJoinColumns = {@JoinColumn(name="DiseaseId")})
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(name = "ExpertDisease",
+            joinColumns = { @JoinColumn(name = "ExpertId") },
+            inverseJoinColumns = { @JoinColumn(name = "DiseaseId") })
     private Set<Disease> diseases;
 
     public Expert() {
