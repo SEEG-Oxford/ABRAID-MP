@@ -58,7 +58,7 @@ CREATE TABLE Expert (
 	Name varchar(50) NOT NULL,
 	Email varchar(50) NOT NULL,
 	HashedPassword varchar(60) NOT NULL,
-	IsAdministrator boolean,
+	IsAdministrator boolean NOT NULL,
 	Score double precision,
 	IsPubliclyVisible boolean
 );

@@ -13,10 +13,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 public class ExpertDaoImpl extends AbstractDao<Expert, Integer> implements ExpertDao {
 
     /**
-     * Gets a disease by name.
+     * Gets an expert by name.
      * @param name The name.
-     * @return The disease, or null if not found.
-     * @throws org.springframework.dao.DataAccessException if multiple diseases with this name are found (should not
+     * @return The expert, or null if not found.
+     * @throws org.springframework.dao.DataAccessException if multiple experts with this name are found (should not
      * occur as names are unique)
      */
     @Override
