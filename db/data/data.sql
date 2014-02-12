@@ -7,3 +7,4 @@
 \copy Provenance (Name, HealthMapFeedId) FROM 'provenance.txt' (ENCODING utf8)
 \copy Disease (Name, HealthMapDiseaseId) FROM 'disease.txt' (ENCODING utf8)
 \copy Country (Id, Name) FROM 'country.txt' (ENCODING utf8)
+\copy Expert (Name, Email, HashedPassword, IsAdministrator) FROM 'expert.txt' (ENCODING utf8)
