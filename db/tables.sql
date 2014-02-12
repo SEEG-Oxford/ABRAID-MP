@@ -56,7 +56,7 @@ CREATE TABLE Location (
 CREATE TABLE Expert ( 
 	Id serial NOT NULL,
 	Name varchar(50) NOT NULL,
-	Email varchar(50) NOT NULL,
+	Email varchar(320) NOT NULL,
 	HashedPassword varchar(60) NOT NULL,
 	IsAdministrator boolean NOT NULL,
 	Score double precision,

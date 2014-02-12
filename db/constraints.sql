@@ -15,7 +15,10 @@ ALTER TABLE Country
 ALTER TABLE Disease
     ADD CONSTRAINT UQ_Disease_Name UNIQUE (Name);
 
-    
+ALTER TABLE Expert
+    ADD CONSTRAINT UQ_Expert_Email UNIQUE (Email);
+   
+   
 -- Primary keys 
 ALTER TABLE ProvenanceWeight ADD CONSTRAINT PK_ProvenanceWeight 
     PRIMARY KEY (Id);

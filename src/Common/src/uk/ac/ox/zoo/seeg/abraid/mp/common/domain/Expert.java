@@ -10,8 +10,8 @@ import java.util.Set;
  */
 @NamedQueries({
         @NamedQuery(
-                name = "getExpertByName",
-                query = "from Expert where name=:name"
+                name = "getExpertByEmail",
+                query = "from Expert where email=:email"
         )
 })
 @Entity

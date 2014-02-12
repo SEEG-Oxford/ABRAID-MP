@@ -17,13 +17,13 @@ public interface ExpertDao {
     List<Expert> getAll();
 
     /**
-     * Gets an expert by name.
-     * @param name The name.
+     * Gets an expert by email address.
+     * @param email The email address.
      * @return The expert, or null if not found.
-     * @throws org.springframework.dao.DataAccessException if multiple experts with this name are found (should not
-     * occur as names are unique)
+     * @throws org.springframework.dao.DataAccessException if multiple experts with this email address are found
+     * (should not occur as emails are unique)
      */
-    Expert getByName(String name);
+    Expert getByEmail(String email);
 
     /**
      * Saves the specified expert.
