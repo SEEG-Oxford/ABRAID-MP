@@ -70,7 +70,7 @@ public class ModelProcessHandler implements ProcessHandler {
 
     /**
      * Sets the processWaiter for the process. This should be called by ProcessRunner.run().
-     * @param processWaiter
+     * @param processWaiter The process waiter
      */
     @Override
     public void setProcessWaiter(ProcessWaiter processWaiter) {

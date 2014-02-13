@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl;
@@ -20,15 +19,13 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static com.googlecode.catchexception.CatchException.catchException;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * Integration tests for the commons exec based R script runner.
- * Created by zool1112 on 13/02/14.
+ * Copyright (c) 2014 University of Oxford
  */
 public class CommonsExecIntegrationTest {
     private int SUCCESSFUL = 0;
@@ -41,7 +38,7 @@ public class CommonsExecIntegrationTest {
      */
     @Test
     public void shouldBeAbleToRunEmptyScript() throws Exception {
-        // Given
+        // Arrange
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
@@ -51,11 +48,11 @@ public class CommonsExecIntegrationTest {
             }
         });
 
-        // When
+        // Act
         ProcessHandler processHandler = runner.runModel(config);
         int exitCode = processHandler.waitForCompletion();
 
-        // Then
+        // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
     }
 
@@ -64,7 +61,7 @@ public class CommonsExecIntegrationTest {
      */
     @Test
     public void shouldBeAbleToRunHelloWorldScript() throws Exception {
-        // Given
+        // Arrange
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
@@ -74,12 +71,12 @@ public class CommonsExecIntegrationTest {
             }
         });
 
-        // When
+        // Act
         ProcessHandler processHandler = runner.runModel(config);
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getOutputStream().toString().split(System.lineSeparator())[2];
 
-        // Then
+        // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
         assertThat(result).isEqualTo("Hello, world!");
     }
@@ -89,7 +86,7 @@ public class CommonsExecIntegrationTest {
      */
     @Test
     public void shouldBeAbleToRunHelloErrorScript() throws Exception {
-        // Given
+        // Arrange
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
@@ -99,12 +96,12 @@ public class CommonsExecIntegrationTest {
             }
         });
 
-        // When
+        // Act
         ProcessHandler processHandler = runner.runModel(config);
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getErrorStream().toString().split(System.lineSeparator())[0];
 
-        // Then
+        // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
         assertThat(result).isEqualTo("Hello, world!");
     }
@@ -114,7 +111,7 @@ public class CommonsExecIntegrationTest {
      */
     @Test
     public void shouldBeAbleToRunHelloNameScript() throws Exception {
-        // Given
+        // Arrange
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
@@ -128,7 +125,7 @@ public class CommonsExecIntegrationTest {
         String expectedName = "Bob";
         PipedOutputStream writer = new PipedOutputStream();
 
-        // When
+        // Act
         ProcessHandler processHandler = runner.runModel(config);
         processHandler.getInputStream().connect(writer);
         writer.write(expectedName.getBytes());
@@ -137,7 +134,7 @@ public class CommonsExecIntegrationTest {
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getOutputStream().toString().split(System.lineSeparator())[3];
 
-        // Then
+        // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
         assertThat(result).isEqualTo("Hello, "+expectedName+"!");
     }

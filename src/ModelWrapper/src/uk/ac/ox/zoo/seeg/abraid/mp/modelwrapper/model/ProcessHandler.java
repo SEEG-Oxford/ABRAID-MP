@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 
@@ -43,11 +42,13 @@ public interface ProcessHandler {
      * Block the current thread until the subprocess completes.
      * Calls associated process waiter, so setProcessWaiter must have been called.
      * @return The exit code of the process.
+     * @throws InterruptedException Thrown if the current thread is interrupted by another thread while it is waiting.
      */
     int waitForCompletion() throws InterruptedException;
 
     /**
      * Sets the processWaiter for the process. This should be called by ProcessRunner.run().
+     * @param processWaiter The process waiter
      */
     void setProcessWaiter(ProcessWaiter processWaiter);
 }

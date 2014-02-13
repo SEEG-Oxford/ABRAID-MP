@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec;
 import org.apache.commons.exec.ExecuteException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessException;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
 
@@ -12,7 +11,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by zool1112 on 13/02/14.
+ * Tests the ForwardingExecuteResultHandler class.
+ * Copyright (c) 2014 University of Oxford
  */
 public class ForwardingExecuteResultHandlerTest {
     @Test
