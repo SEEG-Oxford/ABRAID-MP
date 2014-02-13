@@ -9,4 +9,8 @@
     <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseServiceImpl">
         <property name="diseaseDao" ref="diseaseDao"/>
     </bean>
+
+    <bean id="expertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertServiceImpl">
+        <property name="expertDao" ref="expertDao"/>
+    </bean>
 </beans>

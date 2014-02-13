@@ -37,8 +37,9 @@ public class Expert {
     private boolean isAdministrator;
 
     // Whether the expert should be displayed in list on public site
+    // For now this is Boolean to allow null values in test data, but should really be boolean with NOT NULL in DB
     @Column
-    private boolean isPubliclyVisible;
+    private Boolean isPubliclyVisible;
 
     // List of diseases an expert has interest in and can validate
     @ManyToMany(cascade = { CascadeType.ALL })
@@ -82,4 +83,11 @@ public class Expert {
         this.password = password;
     }
 
+    public boolean isAdministrator() {
+        return isAdministrator;
+    }
+
+    public void setAdministrator(boolean isAdministrator) {
+        this.isAdministrator = isAdministrator;
+    }
 }
