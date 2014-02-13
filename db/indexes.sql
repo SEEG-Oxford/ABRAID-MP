@@ -9,3 +9,4 @@ CREATE INDEX IX_DiseaseOutbreak_ProvenanceWeightId ON DiseaseOutbreak (DiseaseId
 CREATE INDEX IX_DiseaseOutbreak_LocationId ON DiseaseOutbreak (LocationId);
 CREATE INDEX IX_DiseaseOutbreak_ProvenanceId ON DiseaseOutbreak (ProvenanceId);
 CREATE INDEX IX_Location_Country ON Location (Country);
+CREATE INDEX IX_ExpertDisease_ExpertId_DiseaseId ON ExpertDisease (ExpertId, DiseaseId);

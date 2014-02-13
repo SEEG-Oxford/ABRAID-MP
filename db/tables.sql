@@ -51,3 +51,21 @@ CREATE TABLE Location (
     Admin1 varchar(50),
     Country varchar(3)
 );
+
+-- Represents a person interacting with the PublicSite
+CREATE TABLE Expert ( 
+	Id serial NOT NULL,
+	Name varchar(50) NOT NULL,
+	Email varchar(320) NOT NULL,
+	HashedPassword varchar(60) NOT NULL,
+	IsAdministrator boolean NOT NULL,
+	Score double precision,
+	IsPubliclyVisible boolean
+);
+
+-- The map table to represent the many-to-many relationship between experts users and their disease interests
+-- ie the diseases that should be displayed to a user for review in the Data Validator
+CREATE TABLE ExpertDisease ( 
+	ExpertId integer NOT NULL,
+	DiseaseId integer NOT NULL
+);
