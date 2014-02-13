@@ -37,9 +37,7 @@ public class ModelRunnerTest {
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
 
-        ModelRunnerImpl target = new ModelRunnerImpl();
-        target.setWorkspaceProvisioner(mockWorkspaceProvisioner);
-        target.setProcessRunnerFactory(mockProcessRunnerFactory);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
         RunConfiguration config = new RunConfiguration(null, null, null, 0);
 
@@ -62,9 +60,7 @@ public class ModelRunnerTest {
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
 
-        ModelRunnerImpl target = new ModelRunnerImpl();
-        target.setWorkspaceProvisioner(mockWorkspaceProvisioner);
-        target.setProcessRunnerFactory(mockProcessRunnerFactory);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
         RunConfiguration config = new RunConfiguration(null, null, null, 0);
 
@@ -88,9 +84,7 @@ public class ModelRunnerTest {
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
 
-        ModelRunnerImpl target = new ModelRunnerImpl();
-        target.setWorkspaceProvisioner(mockWorkspaceProvisioner);
-        target.setProcessRunnerFactory(mockProcessRunnerFactory);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
         File expectedR = new File("e1");
         File expectedBase = new File("base");

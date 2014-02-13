@@ -20,14 +20,9 @@ public class ModelRunnerImpl implements ModelRunner {
     private ProcessRunnerFactory processRunnerFactory;
     private WorkspaceProvisioner workspaceProvisioner;
 
-    @Required
-    public void setWorkspaceProvisioner(WorkspaceProvisioner workspaceProvisioner) {
-        this.workspaceProvisioner = workspaceProvisioner;
-    }
-
-    @Required
-    public void setProcessRunnerFactory(ProcessRunnerFactory processRunnerFactory) {
+    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner) {
         this.processRunnerFactory = processRunnerFactory;
+        this.workspaceProvisioner = workspaceProvisioner;
     }
 
     /**
