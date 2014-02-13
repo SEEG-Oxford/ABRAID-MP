@@ -1,18 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 
 /**
  * Provides callbacks for model completion and datastreams for model io.
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelProcessHandler implements ProcessHandler {
-    private final OutputStream outputStream = new PipedOutputStream();
-    private final OutputStream errorStream = new PipedOutputStream();
-    private final InputStream inputStream = new PipedInputStream();
+    private final OutputStream outputStream = new ByteArrayOutputStream();
+    private final OutputStream errorStream = new ByteArrayOutputStream();
+    private final PipedInputStream inputStream = new PipedInputStream();
+    private ProcessWaiter processWaiter = null;
 
     /**
      * Called when asynchronous model execution completes.
@@ -44,7 +42,7 @@ public class ModelProcessHandler implements ProcessHandler {
      * @return The input stream
      */
     @Override
-    public InputStream getInputStream() {
+    public PipedInputStream getInputStream() {
         return inputStream;
     }
 
@@ -55,5 +53,27 @@ public class ModelProcessHandler implements ProcessHandler {
     @Override
     public OutputStream getErrorStream() {
         return errorStream;
+    }
+
+    /**
+     * Block the current thread until the subprocess completes.
+     * @return The exit code of the process.
+     * @throws InterruptedException Thrown if the current thread is interrupted by another thread while it is waiting.
+     */
+    @Override
+    public int waitForCompletion() throws InterruptedException {
+        if (processWaiter == null) {
+            throw new IllegalStateException("Process waiter not set");
+        }
+        return processWaiter.waitForProcess();
+    }
+
+    /**
+     * Sets the processWaiter for the process. This should be called by ProcessRunner.run().
+     * @param processWaiter
+     */
+    @Override
+    public void setProcessWaiter(ProcessWaiter processWaiter) {
+        this.processWaiter = processWaiter;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 class CommonsExecProcessRunner implements ProcessRunner {
-    public static final int SUCCESS = 1;
+    public static final int SUCCESS = 0;
     private final Executor executor;
 
     // The command used to start the process.
@@ -72,5 +72,6 @@ class CommonsExecProcessRunner implements ProcessRunner {
         } catch (IOException e) {
             throw new ProcessException(e);
         }
+
     }
 }

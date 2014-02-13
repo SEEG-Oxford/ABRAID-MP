@@ -10,7 +10,8 @@ public interface ModelRunner {
     /**
      * Starts a new model run with the given configuration.
      * @param configuration The model run configuration.
+     * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
      */
-    void runModel(RunConfiguration configuration) throws ProcessException;
+    ModelProcessHandler runModel(RunConfiguration configuration) throws ProcessException;
 }

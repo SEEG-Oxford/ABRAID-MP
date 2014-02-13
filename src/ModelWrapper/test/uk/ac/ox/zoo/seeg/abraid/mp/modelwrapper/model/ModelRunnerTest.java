@@ -105,10 +105,11 @@ public class ModelRunnerTest {
         String[] stringArgs = stringArgsCaptor.getValue();
         Map<String, File> fileArgs = fileArgsCaptor.getValue();
 
-        assertThat(stringArgs).hasSize(3);
+        assertThat(stringArgs).hasSize(4);
         assertThat(stringArgs[0]).isEqualTo("--no-save");
         assertThat(stringArgs[1]).isEqualTo("--quiet");
-        String key = stringArgs[2].substring(2, stringArgs[2].length() - 1);
+        assertThat(stringArgs[2]).isEqualTo("-f");
+        String key = stringArgs[3].substring(2, stringArgs[3].length() - 1);
         assertThat(fileArgs).containsKey(key);
         assertThat(fileArgs.get(key)).isEqualTo(expectedScript);
     }
