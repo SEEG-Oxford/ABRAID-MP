@@ -17,7 +17,17 @@
                 <li><a href=""> About</a> </li>
                 <li><a href=""> Publications</a> </li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li id="hello">Hello ${expertname}</li>
+                <li><a href="publicsite/j_spring_security_logout">Log out</a></li>
+            </ul>
         </div> <!--/.navbar-collapse -->
 
+    <#--<form class="navbar-form navbar-right" action="/index" method="post">-->
+    <#--<input type="text" name="username" placeholder="Username">-->
+    <#--<input type="password" name="password" placeholder="Password">-->
+    <#--<button type="submit" class="btn btn-primary">Log in</button>-->
+    <#--</form>-->
+        
     </div> <!--/.container -->
 </div>

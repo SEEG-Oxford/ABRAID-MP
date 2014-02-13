@@ -18,11 +18,12 @@ html,body
     padding-bottom:50px;
 }
 
-.jumbotron > .container
+#hello
 {
-    padding-top: 50px;
+    padding-top:15px;
+    padding-left:15px;
+    color:rgb(153, 153, 153);
 }
-
 .footer
 {
     position: relative;
@@ -35,11 +36,11 @@ html,body
 }
 .footer > .container > .links > a, p
 {
-    color:rgb(180, 180, 180);
+    color:rgb(153, 153, 153);
     display:inline;
 }
 .footer > .container > .links > a:link, a:visited {
-    color: rgb(180, 180, 180);
+    color:rgb(153, 153, 153);
     background-color: rgb(51, 51, 51);
     text-decoration:none;
 }
@@ -57,17 +58,6 @@ html,body
 {
     float: left;
 }
-#DEMap {
-    height:500px;
-    width:1000px;
-    overflow:hidden;
-}
-#OPMap {
-    height:500px;
-    width:1000px;
-    overflow:hidden;
-}
-
 
 
 

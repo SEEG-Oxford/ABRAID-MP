@@ -12,7 +12,10 @@
 	http://www.springframework.org/schema/security/spring-security.xsd">
 
     <http auto-config="true">
+        <!-- Only administrators may view any page on public site -->
         <intercept-url pattern="/*" access="ROLE_ADMINISTRATOR" />
+        <!-- Successful logout returns to index homepage, which is intercepted by spring security login -->
+        <logout logout-success-url="/" />
     </http>
 
     <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
