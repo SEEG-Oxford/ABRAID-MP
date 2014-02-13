@@ -15,7 +15,8 @@
         <intercept-url pattern="/*" access="ROLE_ADMINISTRATOR" />
     </http>
 
-    <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"/>
+    <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
+            autowire="constructor"/>
 
     <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <beans:property name="userDetailsService" ref="userDetailsService"/>
