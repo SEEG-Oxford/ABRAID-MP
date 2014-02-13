@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
@@ -45,6 +44,6 @@ public class ModelRunnerImpl implements ModelRunner {
                 fileArguments,
                 configuration.getMaxRuntime());
 
-        processRunner.run();
+        processRunner.run(new ModelProcessHandler());
     }
 }

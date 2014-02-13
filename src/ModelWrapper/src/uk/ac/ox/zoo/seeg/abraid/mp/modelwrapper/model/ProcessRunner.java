@@ -6,8 +6,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
  */
 public interface ProcessRunner {
     /**
-     * Starts the external process.
+     * Starts the external process asynchronously.
+     * @param processHandler The handler for execution complete callbacks and datastreams.
      * @throws ProcessException Throw in response to problems in the external process.
      */
-    void run() throws ProcessException;
+    void run(ProcessHandler processHandler) throws ProcessException;
 }

@@ -16,7 +16,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper//beans.xml")
+@ContextConfiguration(locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/beans.xml")
 public class BeanTest implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 

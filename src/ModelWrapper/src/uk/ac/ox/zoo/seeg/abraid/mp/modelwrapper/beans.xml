@@ -5,6 +5,6 @@
 
     <bean id="workspaceProvisioner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisionerImpl"/>
     <bean id="processRunnerFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec.CommonsExecProcessRunnerFactory"/>
-    <bean id="modelRunner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl" autowire="constructor" />
+    <bean id="modelRunner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl" autowire="constructor"/>
 
 </beans>

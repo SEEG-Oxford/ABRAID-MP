@@ -68,7 +68,7 @@ public class ModelRunnerTest {
         target.runModel(config);
 
         // Assert
-        verify(mockProcessRunner, times(1)).run();
+        verify(mockProcessRunner, times(1)).run(any(ModelProcessHandler.class));
     }
 
     @Test

@@ -1,9 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessException;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessRunner;
 
 import java.io.File;
@@ -15,6 +14,7 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 class CommonsExecProcessRunner implements ProcessRunner {
+    public static final int SUCCESS = 1;
     private final Executor executor;
 
     // The command used to start the process.
@@ -25,6 +25,8 @@ class CommonsExecProcessRunner implements ProcessRunner {
 
     // The max allowable run time for the process in ms.
     private final int timeout;
+
+    private boolean hasRun = false;
 
     CommonsExecProcessRunner(Executor executor, File workspaceDirectory, File executable, String[] executionArguments,
                              Map<String, File> fileArguments, int timeout) {
@@ -41,19 +43,32 @@ class CommonsExecProcessRunner implements ProcessRunner {
     }
 
     /**
-     * Starts the external process.
+     * Starts the external process asynchronously.
+     * @param processHandler The handler for execution complete callbacks and datastreams.
      * @throws ProcessException Throw in response to problems in the external process.
      */
     @Override
-    public void run() throws ProcessException {
+    public void run(ProcessHandler processHandler) throws ProcessException {
+        if (hasRun) {
+            throw new ProcessException(new Throwable("Can not use same process runner twice"));
+        }
+
+        hasRun = true;
+
         executor.setWorkingDirectory(workspace);
-        executor.setExitValue(1);
+        executor.setExitValue(SUCCESS);
+        executor.setStreamHandler(new PumpStreamHandler(
+                processHandler.getOutputStream(),
+                processHandler.getErrorStream(),
+                processHandler.getInputStream()));
 
         ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
         executor.setWatchdog(watchdog);
 
+        executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
+
         try {
-            int exitValue = executor.execute(commandLine);
+            executor.execute(commandLine, new ForwardingExecuteResultHandler(processHandler));
         } catch (IOException e) {
             throw new ProcessException(e);
         }
