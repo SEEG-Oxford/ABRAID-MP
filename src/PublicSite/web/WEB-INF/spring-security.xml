@@ -13,7 +13,7 @@
 
     <http auto-config="true">
         <!-- Only administrators may view any page on public site -->
-        <intercept-url pattern="/*" access="ROLE_ADMINISTRATOR" />
+        <intercept-url pattern="/*" access="ROLE_USER" />
         <!-- Successful logout returns to index homepage, which is intercepted by spring security login -->
         <logout logout-success-url="/" />
     </http>
