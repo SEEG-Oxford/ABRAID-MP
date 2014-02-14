@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.util.List;
 
@@ -25,29 +25,29 @@ public class DiseaseServiceImpl implements DiseaseService {
      * Gets a list of all diseases.
      * @return A list of all diseases.
      */
-    public List<Disease> getAllDiseases() {
+    public List<DiseaseGroup> getAllDiseases() {
         return diseaseDao.getAll();
     }
 
     /**
-     * Gets a disease by name.
+     * Gets a diseaseGroup by name.
      * @param name The name.
-     * @return The disease, or null if not found.
+     * @return The diseaseGroup, or null if not found.
      * @throws org.springframework.dao.DataAccessException if multiple diseases with this name are found (should not
      * occur as names are unique)
      */
     @Override
-    public Disease getDiseaseByName(String name) {
+    public DiseaseGroup getDiseaseByName(String name) {
         return diseaseDao.getByName(name);
     }
 
     /**
-     * Saves the specified disease.
-     * @param disease The disease to save.
+     * Saves the specified diseaseGroup.
+     * @param diseaseGroup The diseaseGroup to save.
      */
     @Override
     @Transactional
-    public void saveDisease(Disease disease) {
-        diseaseDao.save(disease);
+    public void saveDisease(DiseaseGroup diseaseGroup) {
+        diseaseDao.save(diseaseGroup);
     }
 }

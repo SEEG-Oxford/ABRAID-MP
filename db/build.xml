@@ -17,6 +17,7 @@
         <exec executable="psql" failonerror="true">
             <arg value="-U" />
             <arg value="${superuser.name}" />
+            <arg value="-q" />
             <arg value="-w" />
             <arg value="-v" />
             <arg value="database_name=${database.name}" />
@@ -32,6 +33,7 @@
         <exec executable="psql" failonerror="true" dir="testdata">
             <arg value="-U" />
             <arg value="${superuser.name}" />
+            <arg value="-q" />
             <arg value="-w" />
             <arg value="-f" />
             <arg value="testdata.sql" />

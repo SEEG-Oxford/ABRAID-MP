@@ -15,7 +15,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
+public class DiseaseGroupOutbreakDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private DiseaseOutbreakDao diseaseOutbreakDao;
     @Autowired
@@ -34,12 +34,12 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
         String diseaseName = "Malaria";
         String title = "News title";
 
-        // Retrieve existing country, provenance and disease
+        // Retrieve existing country, provenance and diseaseGroup
         Country country = countryDao.getByName(countryName);
         Provenance provenance = provenanceDao.getByName(provenanceName);
-        Disease disease = diseaseDao.getByName(diseaseName);
+        DiseaseGroup diseaseGroup = diseaseDao.getByName(diseaseName);
         Integer provenanceId = provenance.getId();
-        Integer diseaseId = disease.getId();
+        Integer diseaseId = diseaseGroup.getId();
 
         // Create dates
         Date publicationDate = Calendar.getInstance().getTime();
@@ -54,8 +54,8 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
         Integer locationId = location.getId();
         flushAndClear();
 
-        DiseaseOutbreak outbreak = new DiseaseOutbreak();
-        outbreak.setDisease(disease);
+        DiseaseOccurrence outbreak = new DiseaseOccurrence();
+        outbreak.setDiseaseGroup(diseaseGroup);
         outbreak.setLocation(location);
         outbreak.setProvenance(provenance);
         outbreak.setTitle(title);
@@ -66,16 +66,16 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
         Integer diseaseOutbreakId = outbreak.getId();
         flushAndClear();
 
-        // Reload the same disease outbreak and verify its properties (and its parents' properties)
+        // Reload the same diseaseGroup outbreak and verify its properties (and its parents' properties)
         outbreak = diseaseOutbreakDao.getById(diseaseOutbreakId);
         assertThat(outbreak).isNotNull();
         assertThat(outbreak.getLocation()).isNotNull();
         assertThat(outbreak.getLocation().getId()).isEqualTo(locationId);
         assertThat(outbreak.getLocation().getCountry()).isNotNull();
         assertThat(outbreak.getLocation().getCountry().getName()).isEqualTo(countryName);
-        assertThat(outbreak.getDisease().getId()).isEqualTo(diseaseId);
-        assertThat(outbreak.getDisease()).isNotNull();
-        assertThat(outbreak.getDisease().getName()).isEqualTo(diseaseName);
+        assertThat(outbreak.getDiseaseGroup().getId()).isEqualTo(diseaseId);
+        assertThat(outbreak.getDiseaseGroup()).isNotNull();
+        assertThat(outbreak.getDiseaseGroup().getName()).isEqualTo(diseaseName);
         assertThat(outbreak.getProvenance()).isNotNull();
         assertThat(outbreak.getProvenance().getId()).isEqualTo(provenanceId);
         assertThat(outbreak.getProvenance().getName()).isEqualTo(provenanceName);
@@ -88,16 +88,16 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
     public void saveAndReloadDiseaseOutbreakWithNewParents() {
         String countryName = "Kenya";
         String provenanceName = "My New Provenance";
-        String diseaseName = "My New Disease";
+        String diseaseName = "My New DiseaseGroup";
         String title = "News title";
 
         // Retrieve existing country
         Country country = countryDao.getByName(countryName);
 
-        // Create provenance, disease and location
+        // Create provenance, diseaseGroup and location
         Provenance provenance = new Provenance(provenanceName);
         Location location = new Location(country);
-        Disease disease = new Disease(diseaseName);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseName);
 
         // Create dates
         Date publicationDate = Calendar.getInstance().getTime();
@@ -105,8 +105,8 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
         outbreakStartCalendar.add(Calendar.HOUR, -3);
         Date outbreakStartDate = outbreakStartCalendar.getTime();
 
-        DiseaseOutbreak outbreak = new DiseaseOutbreak();
-        outbreak.setDisease(disease);
+        DiseaseOccurrence outbreak = new DiseaseOccurrence();
+        outbreak.setDiseaseGroup(diseaseGroup);
         outbreak.setLocation(location);
         outbreak.setProvenance(provenance);
         outbreak.setTitle(title);
@@ -117,14 +117,14 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
         Integer diseaseOutbreakId = outbreak.getId();
         flushAndClear();
 
-        // Reload the same disease outbreak and verifies its properties
+        // Reload the same diseaseGroup outbreak and verifies its properties
         outbreak = diseaseOutbreakDao.getById(diseaseOutbreakId);
         assertThat(outbreak).isNotNull();
         assertThat(outbreak.getLocation()).isNotNull();
         assertThat(outbreak.getLocation().getCountry()).isNotNull();
         assertThat(outbreak.getLocation().getCountry().getName()).isEqualTo(countryName);
-        assertThat(outbreak.getDisease()).isNotNull();
-        assertThat(outbreak.getDisease().getName()).isEqualTo(diseaseName);
+        assertThat(outbreak.getDiseaseGroup()).isNotNull();
+        assertThat(outbreak.getDiseaseGroup().getName()).isEqualTo(diseaseName);
         assertThat(outbreak.getProvenance()).isNotNull();
         assertThat(outbreak.getProvenance().getName()).isEqualTo(provenanceName);
         assertThat(outbreak.getTitle()).isEqualTo(title);
@@ -134,8 +134,8 @@ public class DiseaseOutbreakDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void loadNonExistentDisease() {
-        String diseaseName = "This disease does not exist";
-        Disease disease = diseaseDao.getByName(diseaseName);
-        assertThat(disease).isNull();
+        String diseaseName = "This diseaseGroup does not exist";
+        DiseaseGroup diseaseGroup = diseaseDao.getByName(diseaseName);
+        assertThat(diseaseGroup).isNull();
     }
 }

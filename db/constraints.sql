@@ -6,6 +6,9 @@
 
 
 -- Unique constraints
+ALTER TABLE Alert
+	ADD CONSTRAINT UQ_Alert_HealthMapAlertId UNIQUE (HealthMapAlertId);
+
 ALTER TABLE DiseaseGroup
     ADD CONSTRAINT UQ_DiseaseGroup_Name_GroupType UNIQUE (Name, GroupType);
 
@@ -18,6 +21,9 @@ ALTER TABLE Feed
 ALTER TABLE HealthMapDisease
     ADD CONSTRAINT UQ_HealthMapDisease_Name UNIQUE (Name);
 
+ALTER TABLE Location
+	ADD CONSTRAINT UQ_Location_GeoNamesId UNIQUE (GeoNamesId);
+    
 ALTER TABLE Provenance
     ADD CONSTRAINT UQ_Provenance_Name UNIQUE (Name);
     

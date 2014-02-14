@@ -31,7 +31,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
 
         Location location = new Location();
         location.setCountry(country);
-        location.setPlaceName(placeName);
+        location.setName(placeName);
         locationDao.save(location);
         Integer id = location.getId();
         flushAndClear();

@@ -1,6 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.util.List;
 
@@ -14,20 +14,20 @@ public interface DiseaseService {
      * Gets a list of all diseases.
      * @return A list of all diseases.
      */
-    List<Disease> getAllDiseases();
+    List<DiseaseGroup> getAllDiseases();
 
     /**
-     * Gets a disease by name.
+     * Gets a diseaseGroup by name.
      * @param name The name.
-     * @return The disease, or null if not found.
+     * @return The diseaseGroup, or null if not found.
      * @throws org.springframework.dao.DataAccessException if multiple diseases with this name are found (should not
      * occur as names are unique)
      */
-    Disease getDiseaseByName(String name);
+    DiseaseGroup getDiseaseByName(String name);
 
     /**
-     * Saves the specified disease.
-     * @param disease The disease to save.
+     * Saves the specified diseaseGroup.
+     * @param diseaseGroup The diseaseGroup to save.
      */
-    void saveDisease(Disease disease);
+    void saveDisease(DiseaseGroup diseaseGroup);
 }

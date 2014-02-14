@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 
@@ -20,8 +19,6 @@ public class CountryDaoImpl extends AbstractDao<Country, String> implements Coun
      */
     @Override
     public Country getByName(String name) {
-        Query query = namedQuery("getCountryByName");
-        query.setString("name", name);
-        return uniqueResult(query);
+        return uniqueResultNamedQuery("getCountryByName", "name", name);
     }
 }

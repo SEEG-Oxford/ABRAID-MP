@@ -1,40 +1,44 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Date;
 
 /**
- * Represents a provenance, i.e. the source of a group of feeds.
+ * Represents a disease as defined by HealthMap.
  *
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
-public class Provenance {
-    // The provenance ID.
+public class HealthMapDisease {
+    // The disease ID from HealthMap.
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    // The name of the provenance.
+    // The disease name.
     @Column
     private String name;
 
-    // The default weight of feeds of this provenance. Used when creating a new feed.
+    // Whether or not the disease is of interest. If so, disease alerts will be retrieved from HealthMap.
     @Column
-    private Double defaultFeedWeight;
+    private boolean isOfInterest;
 
-    // The date of the last online retrieval of this provenance (if relevant).
-    @Column
-    private Date lastRetrievedDate;
+    // The corresponding disease group as defined by SEEG.
+    @ManyToOne
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @JoinColumn(name = "diseaseGroup")
+    private DiseaseGroup diseaseGroup;
 
     // The database row creation date.
     @Column
     private Date createdDate;
 
-    public Provenance() {
+    public HealthMapDisease() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -46,12 +50,20 @@ public class Provenance {
         this.name = name;
     }
 
-    public Double getDefaultFeedWeight() {
-        return defaultFeedWeight;
+    public boolean isOfInterest() {
+        return isOfInterest;
     }
 
-    public void setDefaultFeedWeight(Double defaultFeedWeight) {
-        this.defaultFeedWeight = defaultFeedWeight;
+    public void setOfInterest(boolean isOfInterest) {
+        this.isOfInterest = isOfInterest;
+    }
+
+    public DiseaseGroup getDiseaseGroup() {
+        return diseaseGroup;
+    }
+
+    public void setDiseaseGroup(DiseaseGroup diseaseGroup) {
+        this.diseaseGroup = diseaseGroup;
     }
 
     public Date getCreatedDate() {
@@ -67,11 +79,11 @@ public class Provenance {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Provenance that = (Provenance) o;
+        HealthMapDisease that = (HealthMapDisease) o;
 
+        if (isOfInterest != that.isOfInterest) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
-        if (defaultFeedWeight != null ? !defaultFeedWeight.equals(that.defaultFeedWeight) : that.defaultFeedWeight != null)
-            return false;
+        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
@@ -82,7 +94,8 @@ public class Provenance {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (defaultFeedWeight != null ? defaultFeedWeight.hashCode() : 0);
+        result = 31 * result + (isOfInterest ? 1 : 0);
+        result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

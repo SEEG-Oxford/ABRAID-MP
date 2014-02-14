@@ -115,6 +115,23 @@ public abstract class AbstractDao<E, I extends Serializable> {
     }
 
     /**
+     * Convenience method to return a single instance that matches the named query with 1 parameter,
+     * or null if the query returns no results.
+     * @param namedQuery the named query to run
+     * @param parameterName the name of the only parameter in the query
+     * @param parameterValue the value of the only parameter in the query
+     * @return the single result or {@code null}
+     * @throws HibernateException if there is more than one matching result
+     */
+    @SuppressWarnings("unchecked")
+    protected final E uniqueResultNamedQuery(String namedQuery, String parameterName, Object parameterValue)
+            throws HibernateException {
+        Query query = namedQuery(namedQuery);
+        query.setParameter(parameterName, parameterValue);
+        return uniqueResult(query);
+    }
+
+    /**
      * Get the results of a {@link Criteria} query.
      * @param criteria the {@link Criteria} query to run
      * @return the list of matched query results
@@ -137,6 +154,22 @@ public abstract class AbstractDao<E, I extends Serializable> {
     @SuppressWarnings("unchecked")
     protected final List<E> list(Query query) throws HibernateException {
         return query.list();
+    }
+
+    /**
+     * Get the results of a named query with 1 parameter.
+     * @param namedQuery the named query to run
+     * @param parameterName the name of the only parameter in the query
+     * @param parameterValue the value of the only parameter in the query
+     * @return the list of matched query results
+     * @throws HibernateException Indicates a problem executing the SQL or processing the SQL results.
+     */
+    @SuppressWarnings("unchecked")
+    protected final List<E> listNamedQuery(String namedQuery, String parameterName, Object parameterValue)
+            throws HibernateException {
+        Query query = namedQuery(namedQuery);
+        query.setParameter(parameterName, parameterValue);
+        return list(query);
     }
 
     /**

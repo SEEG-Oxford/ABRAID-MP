@@ -8,16 +8,17 @@
 -- List of tables:
 --
 -- Alert: Represents a report of a disease occurrence or occurrences, from a feed.
--- Country: Represents a country.
--- DiseaseGroup: Represents a group of diseases. This can be a disease cluster, disease microcluster, or a disease itself.
+-- Configuration: Contains system configuration, as key-value pairs.
+-- Country: Represents a country as defined by SEEG.
+-- DiseaseGroup: Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
 -- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- Expert: Represents a user of the PublicSite.
--- ExpertDiseaseGroup: The disease interests of each expert. These should be displayed to a user for review in the Data Validator.
+-- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
 -- Feed: Represents a source of alerts.
--- HealthMapCountry: The list of countries from HealthMap.
--- HealthMapDisease: The list of diseases from HealthMap.
+-- HealthMapCountry: Represents a country as defined by HealthMap.
+-- HealthMapDisease: Represents a disease as defined by HealthMap.
 -- Location: Represents the location of a disease occurrence.
--- Provenance: The source of a group of feeds.
+-- Provenance: Represents a provenance, i.e. the source of a group of feeds.
 
 
 CREATE TABLE Alert (
@@ -36,6 +37,11 @@ CREATE TABLE Country (
     Name varchar(100) NOT NULL
 );
 
+CREATE TABLE Configuration ( 
+	Name varchar(30) NOT NULL,
+	Value text
+);
+
 CREATE TABLE DiseaseGroup (
     Id serial NOT NULL,
     ParentId integer,
@@ -50,7 +56,8 @@ CREATE TABLE DiseaseOccurrence (
     LocationId integer NOT NULL,
     AlertId integer NOT NULL,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    DiagnosticWeight double precision
+    DiagnosticWeight double precision,
+    OccurrenceStartDate timestamp
 );
 
 CREATE TABLE Expert (
@@ -108,5 +115,6 @@ CREATE TABLE Provenance (
     Id serial NOT NULL,
     Name varchar(100) NOT NULL,
     DefaultFeedWeight double precision,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    LastRetrievedDate timestamp
 );
