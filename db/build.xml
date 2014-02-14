@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Database" basedir="." default="create.database">
+<project name="Database" basedir="." default="create.test.database">
     <description>Creates the ABRAID-MP database.</description>
 
     <!-- To customise the database properties, copy file database.properties.example to database.properties and modify it -->
@@ -7,6 +7,9 @@
     <property file="database.properties" />
     <property file="database.properties.example" />
 
+    <!-- Creates the database containing test data -->
+    <target name="create.test.database" depends="create.database, create.test.data" />   
+    
     <!-- Creates the database -->
     <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
          You can use pgAdmin to add it to this file. -->
@@ -19,6 +22,20 @@
             <arg value="database_name=${database.name}" />
             <arg value="-f" />
             <arg value="create_database.sql" />
+        </exec>
+    </target>
+
+    <!-- Adds test data to an existing database -->
+    <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
+         You can use pgAdmin to add it to this file. -->
+    <target name="create.test.data">
+        <exec executable="psql" failonerror="true" dir="testdata">
+            <arg value="-U" />
+            <arg value="${superuser.name}" />
+            <arg value="-w" />
+            <arg value="-f" />
+            <arg value="testdata.sql" />
+            <arg value="${database.name}" />
         </exec>
     </target>
 </project>

@@ -1,0 +1,261 @@
+1	African Trypanosomiasis	FALSE
+2	HIV/AIDS	FALSE
+3	Amebiasis	FALSE
+4	Anthrax	FALSE
+5	Arenavirus	FALSE
+6	Ascariasis	FALSE
+7	Aspergillosis	FALSE
+8	Babesiosis	FALSE
+9	Bacterial Meningitis	FALSE
+10	Blastomycosis	FALSE
+11	Botulism	FALSE
+12	BSE	FALSE
+13	Brucellosis	FALSE
+14	Campylobacter	FALSE
+15	Thrush	FALSE
+16	Cat Scratch Fever	FALSE
+17	Chagas	FALSE
+18	Chicken Pox	FALSE
+19	Chikungunya	FALSE
+20	Cholera	FALSE
+21	Liver Fluke	FALSE
+22	C. difficile	FALSE
+25	Cold	FALSE
+26	Conjunctivitis	FALSE
+27	CJD	FALSE
+28	Cryptococcosis	FALSE
+29	Cryptosporidium	FALSE
+31	Cysticercosis	FALSE
+32	Cytomegalovirus	FALSE
+33	Dengue	TRUE
+34	Diarrhea	FALSE
+35	Diphtheria	FALSE
+36	Diphyllobothriasis	FALSE
+38	Dysentery	FALSE
+39	E. coli	FALSE
+40	Eastern Equine Encephalitis	FALSE
+41	Ebola	FALSE
+42	Echinococcosis	FALSE
+43	Elephantiasis	FALSE
+44	Encephalitis	FALSE
+47	Fascioliasis	FALSE
+48	Fasciolopsiasis	FALSE
+49	Filariasis	FALSE
+50	Foodborne Illness	FALSE
+52	Giardiasis	FALSE
+53	Glanders	FALSE
+54	Gnathostomiasis	FALSE
+55	Gonorrhea	FALSE
+56	Guinea Worm	FALSE
+57	Foot and Mouth	FALSE
+58	Hantavirus	FALSE
+59	H. pylori	FALSE
+60	Hepatitis	FALSE
+61	Herpes	FALSE
+63	Histoplasmosis	FALSE
+64	Hookworm	FALSE
+65	HPV	FALSE
+66	Hymenolepiasis	FALSE
+67	Influenza	FALSE
+68	Avian Influenza	FALSE
+69	Isosporiasis	FALSE
+72	Lassa Fever	FALSE
+73	Legionnaires'	FALSE
+74	Leishmaniasis	FALSE
+75	Leprosy	FALSE
+76	Leptospirosis	FALSE
+77	Listeriosis	FALSE
+78	Lyme Disease	FALSE
+79	Machupo Virus	FALSE
+80	Malaria	TRUE
+81	Marburg Fever	FALSE
+82	Measles	FALSE
+83	Melioidosis	FALSE
+84	Meningitis	FALSE
+86	Metagonimiasis	FALSE
+87	MRSA	FALSE
+88	Monkeypox	FALSE
+89	Mononucleosis	FALSE
+90	Mucormycosis	FALSE
+91	Mumps	FALSE
+92	Myiasis	FALSE
+93	Norovirus	FALSE
+94	Hospital-Related Infection	FALSE
+96	Otitis media	FALSE
+97	Parotitis	FALSE
+98	Lice	FALSE
+99	Pelvic Inflammatory Disease	FALSE
+100	Whooping Cough	FALSE
+101	Pinworm	FALSE
+102	Plague	FALSE
+103	Pneumococcal Pneumonia	FALSE
+104	Pneumonia	FALSE
+105	Polio	TRUE
+107	Chlamydia	FALSE
+108	Q Fever	FALSE
+109	Rabies	FALSE
+110	Respiratory Syncytial Virus	FALSE
+111	Rheumatic Fever	FALSE
+113	Typhus	FALSE
+114	River Blindness	FALSE
+115	Rocky Mountain Spotted Fever	FALSE
+116	Roseola	FALSE
+117	Ross River Virus	FALSE
+118	Rubella	FALSE
+119	Salmonella	FALSE
+120	Typhoid	FALSE
+121	SARS	FALSE
+122	Scabies	FALSE
+123	Scarlet Fever	FALSE
+124	Schistosomiasis	FALSE
+125	Sexually Transmitted Infection	FALSE
+126	Shigellosis	FALSE
+127	Shingles	FALSE
+128	Smallpox-Related	FALSE
+129	Staph	FALSE
+131	Strep	FALSE
+132	Syphilis	FALSE
+133	Taeniasis	FALSE
+134	Tetanus	FALSE
+135	Foot Fungus	FALSE
+137	Toxocariasis	FALSE
+138	Toxoplasmosis	FALSE
+139	Trachoma	FALSE
+141	Trichinosis	FALSE
+142	Trichuriasis	FALSE
+143	Trypanosomiasis	FALSE
+144	Tuberculosis	FALSE
+145	Tularemia	FALSE
+146	Valley Fever	FALSE
+147	Venezuelan Equine Encephalitis	FALSE
+150	Gastroenteritis	FALSE
+151	Hemorrhagic Fever	FALSE
+152	Viral Meningitis	FALSE
+154	West Nile Virus	FALSE
+155	Western Equine Encephalitis	FALSE
+156	Yellow Fever	FALSE
+157	Newcastle Disease	FALSE
+158	Crimean-Congo Hemorrhagic Fever	FALSE
+159	Equine Infectious Anemia	FALSE
+161	Vibrio parahaemolyticus	FALSE
+162	Undiagnosed	FALSE
+163	LGV	FALSE
+165	Acinetobacter baumannii	FALSE
+166	Mycobacteria, non-TB	FALSE
+167	Classical Swine Fever	FALSE
+168	Sepsis	FALSE
+169	Hand, Foot and Mouth Disease	FALSE
+170	Bluetongue	FALSE
+171	P. aeruginosa	FALSE
+172	Human Bocavirus	FALSE
+173	Equine Herpes Virus	FALSE
+174	Not Yet Classified	FALSE
+175	Rift Valley Fever	FALSE
+176	Poisoning	FALSE
+177	Chronic Wasting Disease	FALSE
+178	Epizootic Hemorrhagic Disease	FALSE
+179	Strangles	FALSE
+180	Parvovirus	FALSE
+181	Pasteurellosis	FALSE
+182	Sheep/Goat Pox	FALSE
+183	Bovine Pleuropneumonia	FALSE
+184	Vesicular Stomatitis	FALSE
+185	Porcine Circovirus	FALSE
+186	Lumpy Skin Disease	FALSE
+187	Japanese Encephalitis	FALSE
+188	Paragonimus	FALSE
+189	Rotavirus	FALSE
+190	Peste des petits ruminants	FALSE
+191	African Horse Sickness	FALSE
+192	Avian Cholera	FALSE
+193	Enterococcus	FALSE
+194	Scrapie	FALSE
+195	Vibrio vulnificus	FALSE
+196	Rash	FALSE
+197	Pests	FALSE
+198	Soybean Rust	FALSE
+199	Other Animal Disease	FALSE
+200	Other Plant Disease	FALSE
+201	Coronavirus	FALSE
+202	Chronic/Non-Infectious Disease	FALSE
+203	Algae	FALSE
+204	Bronchitis/Bronchiolitis	FALSE
+205	Blue Ear	FALSE
+206	African Swine Fever	FALSE
+207	Bite	FALSE
+208	Vaccine Complication	FALSE
+209	Waterborne Illness	FALSE
+210	Equine Influenza	FALSE
+211	Adenovirus	FALSE
+212	Respiratory Illness	FALSE
+213	Enterovirus	FALSE
+214	Nipah/Hendra Virus	FALSE
+215	Tick-borne disease	FALSE
+216	Fever	FALSE
+217	Psittacosis	FALSE
+218	Environmental	FALSE
+219	Conflict	FALSE
+220	Flea-borne disease	FALSE
+221	Amoeba	FALSE
+222	H. influenzae	FALSE
+223	White nose syndrome	FALSE
+224	Swine Flu H1N1	FALSE
+225	Rickettsia	FALSE
+226	Bovine TB	FALSE
+227	Meningitis - HiB	FALSE
+228	Meningitis - Strep/Pneumoccocal	FALSE
+229	Meningitis - Neisseria	FALSE
+230	Gnathostoma	FALSE
+231	Anisakis	FALSE
+232	Bartonella	FALSE
+233	Paracoccidioidomycosis	FALSE
+234	Sporotrichosis	FALSE
+235	Colitis	FALSE
+236	St. Louis Encephalitis	FALSE
+237	Vibrio, noncholera	FALSE
+238	Relapsing Fever	FALSE
+239	Tick-borne Encephalitis	FALSE
+240	La Crosse Encephalitis	FALSE
+241	Paralytic Shellfish Poisoning	FALSE
+242	Animal Die-off	FALSE
+243	Hepatitis A	FALSE
+244	Hepatitis B	FALSE
+245	Hepatitis C	FALSE
+246	Hepatitis D	FALSE
+247	Hepatitis E	FALSE
+248	Antibiotic resistance	FALSE
+249	Other Human Disease	FALSE
+250	Schmallenberg	FALSE
+251	Scrub Typhus	FALSE
+253	Murray Valley encephalitis 	FALSE
+254	Feline panleukopenia virus	FALSE
+255	Ringworm	FALSE
+256	Canine distemper	FALSE
+257	Feline leukemia virus	FALSE
+258	Feline immunodeficiency virus	FALSE
+259	Canine Influenza	FALSE
+260	Feline infectious peritonitis	FALSE
+261	Helminths, miscellaneous	FALSE
+262	Protozoa, miscellaneous	FALSE
+263	Eosinophilia	FALSE
+264	Guillain Barre	FALSE
+265	HFM-Enterovirus71	FALSE
+266	HFM-CoxsackieA	FALSE
+267	Food-related toxin	FALSE
+268	Swine Flu H3N2	FALSE
+269	Kawasaki Disease	FALSE
+270	Fungal Meningitis	FALSE
+271	Avian Influenza H7N9	FALSE
+272	Klebsiella pneumoniae	FALSE
+273	Enterobacter cloacae	FALSE
+274	Serratia marcescens	FALSE
+275	Citrobacter freundii	FALSE
+276	Proteus mirabilis	FALSE
+277	Stenotrophomonas maltophilia	FALSE
+278	Burkholderia cepacia	FALSE
+279	Vancomycin Resistant Enterococci (VRE)	FALSE
+280	Clostridium perfringens enterotoxin (CPE)	FALSE
+281	Carbapenem-resistant enterobacteriaceae (CRE)	FALSE
+282	Zika virus	FALSE
+283	Avian Influenza H5N1	FALSE
+284	Powassan virus	FALSE

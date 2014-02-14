@@ -1,71 +1,112 @@
 -- Script: tables.sql
 --
--- Description: Creates tables and constraints for the ABRAID-MP database.
+-- Description: Creates tables for the ABRAID-MP database.
 --
 -- Copyright (c) 2014 University of Oxford
 
 
--- Represents the weight of a provenance (e.g. Low, High)
-CREATE TABLE ProvenanceWeight ( 
+-- List of tables:
+--
+-- Alert: Represents a report of a disease occurrence or occurrences, from a feed.
+-- Country: Represents a country.
+-- DiseaseGroup: Represents a group of diseases. This can be a disease cluster, disease microcluster, or a disease itself.
+-- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
+-- Expert: Represents a user of the PublicSite.
+-- ExpertDiseaseGroup: The disease interests of each expert. These should be displayed to a user for review in the Data Validator.
+-- Feed: Represents a source of alerts.
+-- HealthMapCountry: The list of countries from HealthMap.
+-- HealthMapDisease: The list of diseases from HealthMap.
+-- Location: Represents the location of a disease occurrence.
+-- Provenance: The source of a group of feeds.
+
+
+CREATE TABLE Alert (
     Id serial NOT NULL,
-    Name varchar(30) NOT NULL
+    FeedId integer NOT NULL,
+    Title text,
+    PublicationDate timestamp,
+    Url varchar(2000),
+    Summary text,
+    HealthMapAlertId bigint,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
--- Represents the source of the information concerning a disease outbreak
-CREATE TABLE Provenance ( 
+CREATE TABLE Country (
+    Id integer NOT NULL,
+    Name varchar(100) NOT NULL
+);
+
+CREATE TABLE DiseaseGroup (
+    Id serial NOT NULL,
+    ParentId integer,
+    Name varchar(100) NOT NULL,
+    GroupType varchar(15) NOT NULL,
+    CreatedDate double precision NOT NULL
+);
+
+CREATE TABLE DiseaseOccurrence (
+    Id serial NOT NULL,
+    DiseaseGroupId integer NOT NULL,
+    LocationId integer NOT NULL,
+    AlertId integer NOT NULL,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    DiagnosticWeight double precision
+);
+
+CREATE TABLE Expert (
+    Id serial NOT NULL,
+    Name varchar(1000) NOT NULL,
+    Email varchar(320) NOT NULL,
+    HashedPassword varchar(60) NOT NULL,
+    IsAdministrator boolean NOT NULL,
+    Score double precision,
+    IsPubliclyVisible boolean,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+CREATE TABLE ExpertDiseaseGroup (
+    ExpertId integer NOT NULL,
+    DiseaseGroupId integer NOT NULL
+);
+
+CREATE TABLE Feed (
+    Id serial NOT NULL,
+    ProvenanceId integer NOT NULL,
+    Name varchar(100) NOT NULL,
+    Weight double precision NOT NULL,
+    HealthMapFeedId bigint,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+CREATE TABLE HealthMapCountry (
+    Id bigint NOT NULL,
+    Name varchar(100) NOT NULL,
+    CountryId integer
+);
+
+CREATE TABLE HealthMapDisease (
+    Id bigint NOT NULL,
+    Name varchar(100) NOT NULL,
+    IsOfInterest boolean NOT NULL,
+    DiseaseGroupId integer,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+CREATE TABLE Location (
+    Id serial NOT NULL,
+    Name varchar(1000) NOT NULL,
+    Geom geometry NOT NULL,
+    Precision varchar(10) NOT NULL,
+    CountryId integer NOT NULL,
+    Admin1 varchar(50),
+    Admin2 varchar(50),
+    GeoNamesId integer,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+CREATE TABLE Provenance (
     Id serial NOT NULL,
     Name varchar(100) NOT NULL,
-    ProvenanceWeightId integer,
-    HealthMapFeedId integer
-);
-
--- Represents a country
-CREATE TABLE Country ( 
-    Id varchar(3) NOT NULL,
-    Name varchar(1000) NOT NULL
-);
-
--- Represents a disease
-CREATE TABLE Disease ( 
-    Id serial NOT NULL,
-    Name varchar(50) NOT NULL,
-    HealthMapDiseaseId integer
-);
-
--- Represents a disease outbreak, e.g. an alert from HealthMap
-CREATE TABLE DiseaseOutbreak ( 
-    Id serial NOT NULL,
-    DiseaseId integer NOT NULL,
-    LocationId integer NOT NULL,
-    ProvenanceId integer NOT NULL,
-    Title varchar(4000),
-    PublicationDate timestamp,
-    OutbreakStartDate timestamp
-);
-
--- Represents a location
-CREATE TABLE Location ( 
-    Id serial NOT NULL,
-    Geom geometry(POINT, 4326),
-    PlaceName varchar(1000),
-    Admin1 varchar(50),
-    Country varchar(3)
-);
-
--- Represents a person interacting with the PublicSite
-CREATE TABLE Expert ( 
-	Id serial NOT NULL,
-	Name varchar(50) NOT NULL,
-	Email varchar(320) NOT NULL,
-	HashedPassword varchar(60) NOT NULL,
-	IsAdministrator boolean NOT NULL,
-	Score double precision,
-	IsPubliclyVisible boolean
-);
-
--- The map table to represent the many-to-many relationship between experts users and their disease interests
--- ie the diseases that should be displayed to a user for review in the Data Validator
-CREATE TABLE ExpertDisease ( 
-	ExpertId integer NOT NULL,
-	DiseaseId integer NOT NULL
+    DefaultFeedWeight double precision,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
