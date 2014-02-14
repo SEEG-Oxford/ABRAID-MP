@@ -12,9 +12,7 @@
 	http://www.springframework.org/schema/security/spring-security.xsd">
 
     <http auto-config="true">
-        <!-- Only administrators may view any page on public site -->
-        <intercept-url pattern="/*" access="ROLE_USER" />
-        <!-- Successful logout returns to index homepage, which is intercepted by spring security login -->
+        <intercept-url pattern="/admin" access="ROLE_ADMINISTRATOR" />
         <logout logout-success-url="/" />
         <!-- Prevent user logging in multiple times -->
         <session-management>

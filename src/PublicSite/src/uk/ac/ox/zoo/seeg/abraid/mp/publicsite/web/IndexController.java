@@ -1,15 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,12 +20,10 @@ import java.util.List;
 public class IndexController {
 
     private DiseaseService diseaseService;
-    private ExpertService expertService;
 
     @Autowired
-    public IndexController(DiseaseService diseaseService, ExpertService expertService) {
+    public IndexController(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
-        this.expertService = expertService;
     }
 
     /**
@@ -39,9 +34,7 @@ public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String getAll(Model model) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Expert expert = expertService.getExpertByEmail(username);
-        model.addAttribute("expertname", expert.getName());
+        model.addAttribute("welcomemessage", "");
 
         List<Disease> allDiseases = diseaseService.getAllDiseases();
         Collections.sort(allDiseases, new Comparator<Disease>() {
@@ -53,4 +46,6 @@ public class IndexController {
         model.addAttribute("diseases", allDiseases);
         return "index";
     }
+
+
 }
