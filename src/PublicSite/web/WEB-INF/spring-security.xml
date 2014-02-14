@@ -16,6 +16,10 @@
         <intercept-url pattern="/*" access="ROLE_USER" />
         <!-- Successful logout returns to index homepage, which is intercepted by spring security login -->
         <logout logout-success-url="/" />
+        <!-- Prevent user logging in multiple times -->
+        <session-management>
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+        </session-management>
     </http>
 
     <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
