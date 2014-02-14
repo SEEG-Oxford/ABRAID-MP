@@ -4,7 +4,7 @@
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="fileset" name="ModelWrapperContext" removed="false">
-          <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/model/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/beans.xml</file>
         </fileset>
       </configuration>
     </facet>
