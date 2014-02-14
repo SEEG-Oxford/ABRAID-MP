@@ -33,8 +33,12 @@
         <beans:property name="providers" ref="daoAuthenticationProvider" />
     </beans:bean>
 
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
     <authentication-manager>
-        <authentication-provider user-service-ref="userDetailsService"/>
+        <authentication-provider user-service-ref="userDetailsService">
+            <password-encoder ref="passwordEncoder"/>
+        </authentication-provider>
     </authentication-manager>
 
 </beans:beans>
