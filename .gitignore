@@ -6,3 +6,4 @@ report
 out
 TEST*.txt
 user.properties
+src/.idea/dictionaries/
