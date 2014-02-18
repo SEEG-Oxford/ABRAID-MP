@@ -9,21 +9,29 @@ $(document).ready(function() {
                     type: "POST",
                     data: {j_username:username, j_password:password},
                     dataType: "json",
-                    success: function(data, status, xhr) {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            $("#message").text(data.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert(status + " " + error);
-                    }
+                    success: ajaxSuccess,
+                    error: ajaxError
                 });
             } else {
-                $("#message").text("Invalid credentials");
+                inputError;
             }
             e.preventDefault();
         }
     );
+
+    function ajaxSuccess(data, status, xhr) {
+        if (data.success) {
+            location.reload();
+        } else {
+            $("#logInMessage").text(data.message);
+        }
+    }
+
+    function ajaxError(xhr, status, error) {
+        alert(status + " " + error);
+    }
+
+    function inputError() {
+        $("#logInMessage").text("Invalid credentials");
+    }
 })
