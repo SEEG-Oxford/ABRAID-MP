@@ -20,9 +20,12 @@ $(document).ready(function() {
     );
 
     function ajaxSuccess(data, status, xhr) {
+        // boolean success in JSON returned from authentication handler informs whether log in was successful
         if (data.success) {
+            // Refresh page to change security section displayed in navbar.ftl
             location.reload();
         } else {
+            // Display authentication error message to user and clear input fields
             $("#logInMessage").text(data.message);
         }
     }
