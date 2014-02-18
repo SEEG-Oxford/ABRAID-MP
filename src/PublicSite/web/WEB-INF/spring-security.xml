@@ -11,32 +11,45 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <http auto-config="true">
+    <http auto-config="false"  entry-point-ref="authenticationProcessingFilterEntryPoint" authentication-manager-ref="authenticationManager">
         <intercept-url pattern="/admin" access="ROLE_ADMINISTRATOR" />
         <logout logout-success-url="/" />
+        <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
         <!-- Prevent user logging in multiple times -->
         <session-management>
             <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
         </session-management>
     </http>
 
+    <beans:bean id="authenticationProcessingFilterEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:property name="loginFormUrl" value="/" />
+        <beans:property name="forceHttps" value="false" />
+    </beans:bean>
+
     <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
             autowire="constructor"/>
 
     <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <beans:property name="userDetailsService" ref="userDetailsService"/>
+        <beans:property name="passwordEncoder" ref="passwordEncoder" />
     </beans:bean>
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
         <beans:property name="providers" ref="daoAuthenticationProvider" />
     </beans:bean>
 
-    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="filterProcessesUrl" value="/j_spring_security_check"/>
+        <beans:property name="authenticationFailureHandler" ref="failureHandler"/>
+        <beans:property name="authenticationSuccessHandler" ref="successHandler"/>
+    </beans:bean>
 
-    <authentication-manager>
-        <authentication-provider user-service-ref="userDetailsService">
-            <password-encoder ref="passwordEncoder"/>
-        </authentication-provider>
-    </authentication-manager>
+    <beans:bean id="successHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationSuccessHandler"/>
+
+    <beans:bean id="failureHandler" class=" uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationFailureHandler" />
 
 </beans:beans>

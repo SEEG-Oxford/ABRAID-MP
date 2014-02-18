@@ -1,5 +1,5 @@
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
-<#import "/spring.ftl" as spring />
+
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -19,15 +19,15 @@
                 <li><a href=""> Data Validation</a> </li>
                 <li><a href=""> About</a> </li>
                 <li><a href=""> Publications</a> </li>
-                <li><a href="<@spring.url "/admin"/>">Admin</a></li>
+                <li><a href="admin">Admin</a></li>
             </ul>
 
             <#-- If user not logged in: display login form -->
             <@security.authorize  ifAnyGranted="ROLE_ANONYMOUS">
-                <form class="navbar-form navbar-right" action="/index" method="post">
-                    <input type="text" name="email" placeholder="Email address">
-                    <input type="password" name="password" placeholder="Password">
-                    <button type="submit" class="btn btn-primary">Log in</button>
+                <form class="navbar-form navbar-right" action="">
+                    <input type="text" id="username" placeholder="Email address">
+                    <input type="password" id="password" placeholder="Password">
+                    <input type="submit" id="loginButton" class="btn btn-primary" value="Log in">
                 </form>
             </@security.authorize>
 
@@ -35,7 +35,7 @@
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right">
                     <li id="hello">${welcomemessage}</li>
-                    <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
+                    <li><a href="j_spring_security_logout">Log out</a></li>
                 </ul>
             </@security.authorize>
 
