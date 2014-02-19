@@ -38,7 +38,7 @@ public class DiseaseOccurrence {
     private Alert alert;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
 
     // A weighting to take into account the method of disease diagnosis.
@@ -83,10 +83,6 @@ public class DiseaseOccurrence {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public Double getDiagnosticWeight() {
         return diagnosticWeight;
     }
@@ -104,6 +100,7 @@ public class DiseaseOccurrence {
     }
 
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -134,4 +131,5 @@ public class DiseaseOccurrence {
         result = 31 * result + (occurrenceStartDate != null ? occurrenceStartDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

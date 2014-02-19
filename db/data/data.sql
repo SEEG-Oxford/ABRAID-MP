@@ -8,10 +8,12 @@
 \copy Feed (ProvenanceId, Name, Weight, HealthMapFeedId) FROM 'feed.txt' (ENCODING utf8)
 \copy Country (Id, Name) FROM 'country.txt' (ENCODING utf8)
 \copy HealthMapCountry (Id, Name, CountryId) FROM 'healthmapcountry.txt' (ENCODING utf8)
-\copy HealthMapDisease (Id, Name, IsOfInterest) FROM 'healthmapdisease.txt' (ENCODING utf8)
+\copy DiseaseGroup (Id, ParentId, Name, GroupType) FROM 'diseasegroup.txt' (ENCODING utf8)
+\copy HealthMapDisease (Id, Name, IsOfInterest, DiseaseGroupId) FROM 'healthmapdisease.txt' (ENCODING utf8)
 
--- The provenance data contains explicit values of ID, which is of type serial. This is so that the feed
--- data can refer to the appropriate provenance row. So now we need to reset the provenance ID sequence.
+-- Some of the data above contains explicit values of serial primary keys, so that child tables can refer
+-- to known IDs. So now we need to reset the sequences of such primary keys.
+SELECT setval('diseasegroup_id_seq', (SELECT MAX(id) FROM DiseaseGroup));
 SELECT setval('provenance_id_seq', (SELECT MAX(id) FROM Provenance));
 
 VACUUM ANALYZE;

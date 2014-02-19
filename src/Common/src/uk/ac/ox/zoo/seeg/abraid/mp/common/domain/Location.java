@@ -13,13 +13,13 @@ import java.util.Date;
  */
 @NamedQueries({
         @NamedQuery(
-                name = "getLocationByPoint",
-                query = "from Location where point=:point"
+                name = "getLocationsByPoint",
+                query = "from Location where geom=:point"
         ),
         @NamedQuery(
-        name = "getLocationByGeoNamesId",
-        query = "from Location where geoNamesId=:geoNamesId"
-)
+                name = "getLocationByGeoNamesId",
+                query = "from Location where geoNamesId=:geoNamesId"
+        )
 })
 @Entity
 public class Location {
@@ -40,11 +40,11 @@ public class Location {
     // The precision of this location.
     @Column
     @Enumerated(EnumType.STRING)
-    private LocationPrecision locationPrecision;
+    private LocationPrecision precision;
 
     // The country.
     @ManyToOne
-    @JoinColumn(name = "country")
+    @JoinColumn(name = "countryId")
     private Country country;
 
     // The first administrative unit (e.g. state, province).
@@ -60,7 +60,7 @@ public class Location {
     private Integer geoNamesId;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
 
     public Location() {
@@ -86,12 +86,12 @@ public class Location {
         this.geom = geom;
     }
 
-    public LocationPrecision getLocationPrecision() {
-        return locationPrecision;
+    public LocationPrecision getPrecision() {
+        return precision;
     }
 
-    public void setLocationPrecision(LocationPrecision locationPrecision) {
-        this.locationPrecision = locationPrecision;
+    public void setPrecision(LocationPrecision precision) {
+        this.precision = precision;
     }
 
     public Country getCountry() {
@@ -122,10 +122,6 @@ public class Location {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public Integer getGeoNamesId() {
         return geoNamesId;
     }
@@ -135,6 +131,7 @@ public class Location {
     }
 
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -149,7 +146,7 @@ public class Location {
         if (geoNamesId != null ? !geoNamesId.equals(location.geoNamesId) : location.geoNamesId != null) return false;
         if (geom != null ? !geom.equals(location.geom) : location.geom != null) return false;
         if (id != null ? !id.equals(location.id) : location.id != null) return false;
-        if (locationPrecision != location.locationPrecision) return false;
+        if (precision != location.precision) return false;
         if (name != null ? !name.equals(location.name) : location.name != null) return false;
 
         return true;
@@ -160,7 +157,7 @@ public class Location {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (geom != null ? geom.hashCode() : 0);
-        result = 31 * result + (locationPrecision != null ? locationPrecision.hashCode() : 0);
+        result = 31 * result + (precision != null ? precision.hashCode() : 0);
         result = 31 * result + (country != null ? country.hashCode() : 0);
         result = 31 * result + (admin1 != null ? admin1.hashCode() : 0);
         result = 31 * result + (admin2 != null ? admin2.hashCode() : 0);
@@ -168,4 +165,5 @@ public class Location {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

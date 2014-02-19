@@ -8,6 +8,12 @@ import java.util.Date;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "getFeedsByProvenanceName",
+                query = "from Feed where provenance.name=:provenanceName"
+        )
+})
 @Entity
 public class Feed {
     // The primary key.
@@ -32,8 +38,17 @@ public class Feed {
     private Long healthMapFeedId;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
+
+    public Feed() {
+    }
+
+    public Feed(String name, Provenance provenance, double weight) {
+        this.name = name;
+        this.provenance = provenance;
+        this.weight = weight;
+    }
 
     public Integer getId() {
         return id;
@@ -75,11 +90,8 @@ public class Feed {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -110,4 +122,5 @@ public class Feed {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

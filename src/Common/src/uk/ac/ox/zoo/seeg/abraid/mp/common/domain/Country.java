@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Immutable;
+
 import javax.persistence.*;
 
 /**
@@ -14,6 +16,7 @@ import javax.persistence.*;
         )
 })
 @Entity
+@Immutable
 public class Country {
     // The country's ID. This is the ID used in the SEEG's shapefiles.
     @Id
@@ -39,6 +42,7 @@ public class Country {
     }
 
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -57,4 +61,5 @@ public class Country {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

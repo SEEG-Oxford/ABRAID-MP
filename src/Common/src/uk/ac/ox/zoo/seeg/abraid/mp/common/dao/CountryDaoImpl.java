@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 
@@ -10,6 +11,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
  */
 @Repository
 public class CountryDaoImpl extends AbstractDao<Country, String> implements CountryDao {
+    public CountryDaoImpl(SessionFactory sessionFactory) {
+        super(sessionFactory);
+    }
+
     /**
      * Gets a country by name.
      * @param name The name.

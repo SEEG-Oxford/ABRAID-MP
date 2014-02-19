@@ -8,6 +8,12 @@ import java.util.Date;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "getProvenanceByName",
+                query = "from Provenance where name=:name"
+        )
+})
 @Entity
 public class Provenance {
     // The provenance ID.
@@ -28,7 +34,7 @@ public class Provenance {
     private Date lastRetrievedDate;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
 
     public Provenance() {
@@ -58,10 +64,7 @@ public class Provenance {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,4 +89,5 @@ public class Provenance {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

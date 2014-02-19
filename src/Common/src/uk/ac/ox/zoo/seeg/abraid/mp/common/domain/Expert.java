@@ -49,7 +49,7 @@ public class Expert {
     private Set<DiseaseGroup> diseaseGroups;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
 
     public Integer getId() {
@@ -108,11 +108,8 @@ public class Expert {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -144,4 +141,5 @@ public class Expert {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

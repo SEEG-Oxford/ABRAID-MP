@@ -21,7 +21,7 @@ public interface HealthMapDiseaseDao {
      * @param id The ID.
      * @return The HealthMap disease, or null if not found.
      */
-    HealthMapDisease getById(Integer id);
+    HealthMapDisease getById(Long id);
 
     /**
      * Saves the specified HealthMap disease.

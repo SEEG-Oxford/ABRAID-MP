@@ -8,7 +8,6 @@
 -- List of tables:
 --
 -- Alert: Represents a report of a disease occurrence or occurrences, from a feed.
--- Configuration: Contains system configuration, as key-value pairs.
 -- Country: Represents a country as defined by SEEG.
 -- DiseaseGroup: Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
 -- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
@@ -37,17 +36,12 @@ CREATE TABLE Country (
     Name varchar(100) NOT NULL
 );
 
-CREATE TABLE Configuration ( 
-	Name varchar(30) NOT NULL,
-	Value text
-);
-
 CREATE TABLE DiseaseGroup (
     Id serial NOT NULL,
     ParentId integer,
     Name varchar(100) NOT NULL,
     GroupType varchar(15) NOT NULL,
-    CreatedDate double precision NOT NULL
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE DiseaseOccurrence (

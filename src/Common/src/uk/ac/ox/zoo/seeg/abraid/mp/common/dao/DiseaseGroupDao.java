@@ -9,21 +9,19 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public interface DiseaseDao {
+public interface DiseaseGroupDao {
     /**
-     * Gets all diseases.
-     * @return All diseases.
+     * Gets all disease groups.
+     * @return All disease groups.
      */
     List<DiseaseGroup> getAll();
 
     /**
-     * Gets a diseaseGroup by name.
-     * @param name The name.
-     * @return The diseaseGroup, or null if not found.
-     * @throws org.springframework.dao.DataAccessException if multiple disease groups with this name are found (should not
-     * occur as names are unique)
+     * Gets a disease group by ID.
+     * @param id The ID.
+     * @return The disease group with the specified ID, or null if not found.
      */
-    DiseaseGroup getByName(String name);
+    DiseaseGroup getById(Integer id);
 
     /**
      * Saves the specified diseaseGroup.

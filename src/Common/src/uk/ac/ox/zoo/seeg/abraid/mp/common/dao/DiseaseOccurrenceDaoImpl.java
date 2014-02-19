@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
@@ -9,5 +10,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
  * Copyright (c) 2014 University of Oxford
  */
 @Repository
-public class DiseaseOutbreakDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOutbreakDao {
+public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOccurrenceDao {
+    public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
+        super(sessionFactory);
+    }
 }

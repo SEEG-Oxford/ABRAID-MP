@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 
@@ -10,6 +11,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
  */
 @Repository
 public class ProvenanceDaoImpl extends AbstractDao<Provenance, Integer> implements ProvenanceDao {
+    public ProvenanceDaoImpl(SessionFactory sessionFactory) {
+        super(sessionFactory);
+    }
+
     /**
      * Gets a provenance by name.
      *

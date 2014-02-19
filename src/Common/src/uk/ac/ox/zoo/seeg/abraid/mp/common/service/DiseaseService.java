@@ -1,33 +1,36 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
 /**
- * Service interface for diseases.
+ * Service interface for diseases, including disease occurrences.
  *
  * Copyright (c) 2014 University of Oxford
  */
 public interface DiseaseService {
     /**
-     * Gets a list of all diseases.
-     * @return A list of all diseases.
+     * Gets all HealthMap diseases.
+     * @return All HealthMap diseases.
      */
-    List<DiseaseGroup> getAllDiseases();
+    List<HealthMapDisease> getAllHealthMapDiseases();
 
     /**
-     * Gets a diseaseGroup by name.
-     * @param name The name.
-     * @return The diseaseGroup, or null if not found.
-     * @throws org.springframework.dao.DataAccessException if multiple diseases with this name are found (should not
-     * occur as names are unique)
+     * Gets all disease groups.
+     * @return All disease groups.
      */
-    DiseaseGroup getDiseaseByName(String name);
+    List<DiseaseGroup> getAllDiseaseGroups();
 
     /**
-     * Saves the specified diseaseGroup.
-     * @param diseaseGroup The diseaseGroup to save.
+     * Saves a disease occurrence.
+     * @param diseaseOccurrence The disease occurrence to save.
      */
-    void saveDisease(DiseaseGroup diseaseGroup);
+    void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence);
+
+    /**
+     * Saves a HealthMap disease.
+     * @param disease The disease to save.
+     */
+    void saveHealthMapDisease(HealthMapDisease disease);
 }

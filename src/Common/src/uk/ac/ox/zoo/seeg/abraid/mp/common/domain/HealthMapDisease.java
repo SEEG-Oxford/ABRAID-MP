@@ -28,11 +28,11 @@ public class HealthMapDisease {
     // The corresponding disease group as defined by SEEG.
     @ManyToOne
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "diseaseGroup")
+    @JoinColumn(name = "diseaseGroupId")
     private DiseaseGroup diseaseGroup;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
 
     public HealthMapDisease() {
@@ -40,6 +40,10 @@ public class HealthMapDisease {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -70,11 +74,8 @@ public class HealthMapDisease {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -99,4 +100,5 @@ public class HealthMapDisease {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

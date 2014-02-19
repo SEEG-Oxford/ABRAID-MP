@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.*;
-import org.springframework.beans.factory.annotation.Required;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -34,22 +33,12 @@ public abstract class AbstractDao<E, I extends Serializable> {
 
     private final Class<?> entityClass;
 
-    /**
-     * Creates a new DAO.
-     */
-    public AbstractDao() {
+    public AbstractDao(SessionFactory sessionFactory) {
         ParameterizedType superType = (ParameterizedType) getClass().getGenericSuperclass();
         this.entityClass = (Class) superType.getActualTypeArguments()[0];
-    }
-
-    /**
-     * Sets the session factory.
-     * @param sessionFactory The session factory
-     */
-    @Required
-    public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
 
     /**
      * Returns the current session.

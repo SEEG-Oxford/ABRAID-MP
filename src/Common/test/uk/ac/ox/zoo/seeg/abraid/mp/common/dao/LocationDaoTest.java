@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.List;
@@ -25,50 +26,174 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void saveAndReloadCountryLocation() {
-        String countryName = "Mauritius";
-        String placeName = "Point d'Esny";
+        // Arrange
+        String countryName = "Botswana";
+        String placeName = "Botswana";
         Country country = countryDao.getByName(countryName);
+        double x = -22.34284;
+        double y = -24.6871;
+        Point point = GeometryUtils.createPoint(x, y);
 
         Location location = new Location();
-        location.setCountry(country);
         location.setName(placeName);
-        locationDao.save(location);
-        Integer id = location.getId();
-        flushAndClear();
-
-        // Reloads the same entity and verifies its properties
-        location = locationDao.getById(id);
-        assertThat(location).isNotNull();
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(countryName);
-    }
-
-    // TODO: Test for Admin 1 not yet added because this area of the schema is very likely to change
-
-    @Test
-    public void saveAndReloadPreciseLocation() {
-        double oxfordX = -1.24759;
-        double oxfordY = 51.75042;
-        Point point = GeometryUtils.createPoint(oxfordX, oxfordY);
-
-        Location location = new Location();
         location.setGeom(point);
+        location.setPrecision(LocationPrecision.COUNTRY);
+        location.setCountry(country);
+
+        // Act
         locationDao.save(location);
         Integer id = location.getId();
         flushAndClear();
 
-        // Reloads the same entity and verifies its properties
+        // Assert
         location = locationDao.getById(id);
         assertThat(location).isNotNull();
         assertThat(location.getGeom()).isNotNull();
-        assertThat(location.getGeom().getX()).isEqualTo(oxfordX);
-        assertThat(location.getGeom().getY()).isEqualTo(oxfordY);
+        assertThat(location.getGeom().getX()).isEqualTo(x);
+        assertThat(location.getGeom().getY()).isEqualTo(y);
+        assertThat(location.getName()).isEqualTo(placeName);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
+        assertThat(location.getCountry()).isNotNull();
+        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getCreatedDate()).isNotNull();
     }
 
     @Test
-    public void loadNonExistentLocation() {
+    public void saveAndReloadAdmin1LocationByGeoNamesId() {
+        // Arrange
+        String countryName = "UK of Great Britain and Northern Ireland";
+        String placeName = "England";
+        String admin1 = "England";
+        Country country = countryDao.getByName(countryName);
+        double x = 52.88496;
+        double y = -1.97703;
+        Point point = GeometryUtils.createPoint(x, y);
+        int geoNamesId = 6269131;
+
+        Location location = new Location();
+        location.setName(placeName);
+        location.setGeom(point);
+        location.setPrecision(LocationPrecision.ADMIN1);
+        location.setAdmin1(admin1);
+        location.setCountry(country);
+        location.setGeoNamesId(geoNamesId);
+
+        // Act
+        locationDao.save(location);
+        Integer id = location.getId();
+        flushAndClear();
+
+        // Assert
+        location = locationDao.getByGeoNamesId(geoNamesId);
+        assertThat(location).isNotNull();
+        assertThat(location.getId()).isEqualTo(id);
+        assertThat(location.getGeom()).isNotNull();
+        assertThat(location.getGeom().getX()).isEqualTo(x);
+        assertThat(location.getGeom().getY()).isEqualTo(y);
+        assertThat(location.getName()).isEqualTo(placeName);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+        assertThat(location.getCountry()).isNotNull();
+        assertThat(location.getAdmin1()).isEqualTo(admin1);
+        assertThat(location.getAdmin2()).isNull();
+        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getCreatedDate()).isNotNull();
+        assertThat(location.getGeoNamesId()).isEqualTo(geoNamesId);
+    }
+
+    @Test
+    public void saveAndReloadAdmin2Location() {
+        // Arrange
+        String countryName = "UK of Great Britain and Northern Ireland";
+        String placeName = "Oxfordshire";
+        String admin1 = "England";
+        String admin2 = "Oxfordshire";
+        Country country = countryDao.getByName(countryName);
+        double x = 51.81394;
+        double y = -1.29479;
+        Point point = GeometryUtils.createPoint(x, y);
+
+        Location location = new Location();
+        location.setName(placeName);
+        location.setGeom(point);
+        location.setPrecision(LocationPrecision.ADMIN2);
+        location.setAdmin1(admin1);
+        location.setAdmin2(admin2);
+        location.setCountry(country);
+
+        // Act
+        locationDao.save(location);
+        Integer id = location.getId();
+        flushAndClear();
+
+        // Assert
+        location = locationDao.getById(id);
+        assertThat(location).isNotNull();
+        assertThat(location.getGeom()).isNotNull();
+        assertThat(location.getGeom().getX()).isEqualTo(x);
+        assertThat(location.getGeom().getY()).isEqualTo(y);
+        assertThat(location.getName()).isEqualTo(placeName);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN2);
+        assertThat(location.getCountry()).isNotNull();
+        assertThat(location.getAdmin1()).isEqualTo(admin1);
+        assertThat(location.getAdmin2()).isEqualTo(admin2);
+        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getCreatedDate()).isNotNull();
+    }
+
+    @Test
+    public void saveAndReloadPreciseLocationByPoint() {
+        // Arrange
+        String countryName = "UK of Great Britain and Northern Ireland";
+        String placeName = "Oxford";
+        String admin1 = "England";
+        String admin2 = "Oxfordshire";
+        Country country = countryDao.getByName(countryName);
+        double x = 51.75042;
+        double y = -1.24759;
+        Point point = GeometryUtils.createPoint(x, y);
+
+        Location location = new Location();
+        location.setName(placeName);
+        location.setGeom(point);
+        location.setPrecision(LocationPrecision.PRECISE);
+        location.setAdmin1(admin1);
+        location.setAdmin2(admin2);
+        location.setCountry(country);
+
+        // Act
+        locationDao.save(location);
+        Integer id = location.getId();
+        flushAndClear();
+
+        // Assert
+        List<Location> locations = locationDao.getByPoint(point);
+        assertThat(locations).hasSize(1);
+        location = locations.get(0);
+        assertThat(location).isNotNull();
+        assertThat(location.getId()).isEqualTo(id);
+        assertThat(location.getGeom()).isNotNull();
+        assertThat(location.getGeom().getX()).isEqualTo(x);
+        assertThat(location.getGeom().getY()).isEqualTo(y);
+        assertThat(location.getName()).isEqualTo(placeName);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
+        assertThat(location.getCountry()).isNotNull();
+        assertThat(location.getAdmin1()).isEqualTo(admin1);
+        assertThat(location.getAdmin2()).isEqualTo(admin2);
+        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getCreatedDate()).isNotNull();
+    }
+
+    @Test
+    public void loadNonExistentLocationById() {
         Location location = locationDao.getById(-1);
         assertThat(location).isNull();
+    }
+
+    @Test
+    public void loadNonExistentLocationByPoint() {
+        Point point = GeometryUtils.createPoint(-70, 60);
+        List<Location> locations = locationDao.getByPoint(point);
+        assertThat(locations).hasSize(0);
     }
 
     @Test

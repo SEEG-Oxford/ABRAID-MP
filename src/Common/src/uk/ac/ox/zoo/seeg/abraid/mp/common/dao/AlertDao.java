@@ -14,4 +14,10 @@ public interface AlertDao {
      * @return The alert, or null if not found.
      */
     Alert getByHealthMapAlertId(Long healthMapAlertId);
+
+    /**
+     * Saves an alert.
+     * @param alert The alert to save.
+     */
+    void save(Alert alert);
 }

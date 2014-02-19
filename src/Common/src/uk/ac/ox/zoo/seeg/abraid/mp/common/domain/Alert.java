@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -24,6 +26,7 @@ public class Alert {
     // The disease.
     @ManyToOne
     @JoinColumn(name = "feedId")
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Feed feed;
 
     // The title of the alert.
@@ -48,7 +51,7 @@ public class Alert {
     private Long healthMapAlertId;
 
     // The database row creation date.
-    @Column
+    @Column(insertable = false, updatable = false)
     private Date createdDate;
 
     public Alert() {
@@ -110,10 +113,7 @@ public class Alert {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -147,4 +147,5 @@ public class Alert {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

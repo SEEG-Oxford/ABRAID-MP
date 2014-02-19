@@ -46,6 +46,7 @@ public class HealthMapCountry {
     }
 
     @Override
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -66,4 +67,5 @@ public class HealthMapCountry {
         result = 31 * result + (country != null ? country.hashCode() : 0);
         return result;
     }
+    // CHECKSTYLE.ON
 }

@@ -4,49 +4,108 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
 
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * Tests the DiseaseDao class.
+ * Tests the DiseaseGroupDao class.
  *
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
-    private DiseaseDao diseaseDao;
+    private DiseaseGroupDao diseaseGroupDao;
 
     @Test
-    public void saveAndReloadDisease() {
-        String diseaseName = "Test diseaseGroup";
+    public void saveAndReloadDiseaseCluster() {
+        // Arrange
+        String diseaseClusterName = "Test disease cluster";
 
-        // Creates and saves a diseaseGroup
         DiseaseGroup diseaseGroup = new DiseaseGroup();
-        diseaseGroup.setName(diseaseName);
-        diseaseDao.save(diseaseGroup);
+        diseaseGroup.setName(diseaseClusterName);
+        diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
         Integer id = diseaseGroup.getId();
         flushAndClear();
 
-        // Reloads the same diseaseGroup and verifies its properties
-        diseaseGroup = diseaseDao.getByName(diseaseName);
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(id);
         assertThat(diseaseGroup).isNotNull();
-        assertThat(diseaseGroup.getId()).isNotNull();
-        assertThat(diseaseGroup.getId()).isEqualTo(id);
-        assertThat(diseaseGroup.getName()).isEqualTo(diseaseName);
+        assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.CLUSTER);
+        assertThat(diseaseGroup.getParentGroup()).isNull();
+        assertThat(diseaseGroup.getCreatedDate()).isNotNull();
     }
 
     @Test
-    public void loadNonExistentDisease() {
-        String diseaseName = "This diseaseGroup does not exist";
-        DiseaseGroup diseaseGroup = diseaseDao.getByName(diseaseName);
+    public void saveAndReloadDiseaseMicroCluster() {
+        // Arrange
+        String diseaseClusterName = "Test disease microcluster";
+        DiseaseGroup diseaseCluster = diseaseGroupDao.getById(1);
+
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        diseaseGroup.setName(diseaseClusterName);
+        diseaseGroup.setGroupType(DiseaseGroupType.MICROCLUSTER);
+        diseaseGroup.setParentGroup(diseaseCluster);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        Integer id = diseaseGroup.getId();
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(id);
+        assertThat(diseaseGroup).isNotNull();
+        assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.MICROCLUSTER);
+        assertThat(diseaseGroup.getParentGroup()).isNotNull();
+        assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseCluster);
+        assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+    }
+
+    @Test
+    public void saveAndReloadDisease() {
+        // Arrange
+        String diseaseClusterName = "Test disease";
+        DiseaseGroup diseaseMicroCluster = diseaseGroupDao.getById(16);
+        DiseaseGroup diseaseCluster = diseaseGroupDao.getById(6);
+
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        diseaseGroup.setName(diseaseClusterName);
+        diseaseGroup.setGroupType(DiseaseGroupType.DISEASE);
+        diseaseGroup.setParentGroup(diseaseMicroCluster);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        Integer id = diseaseGroup.getId();
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(id);
+        assertThat(diseaseGroup).isNotNull();
+        assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.DISEASE);
+        assertThat(diseaseGroup.getParentGroup()).isNotNull();
+        assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseMicroCluster);
+        assertThat(diseaseGroup.getParentGroup().getParentGroup()).isNotNull();
+        assertThat(diseaseGroup.getParentGroup().getParentGroup()).isEqualTo(diseaseCluster);
+        assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+    }
+
+    @Test
+    public void loadNonExistentDiseaseGroup() {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(-1);
         assertThat(diseaseGroup).isNull();
     }
 
     @Test
-    public void getAllDiseases() {
-        List<DiseaseGroup> diseaseGroups = diseaseDao.getAll();
-        assertThat(diseaseGroups).hasSize(261);
+    public void getAllDiseaseGroups() {
+        List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getAll();
+        assertThat(diseaseGroups).hasSize(56);
     }
 }

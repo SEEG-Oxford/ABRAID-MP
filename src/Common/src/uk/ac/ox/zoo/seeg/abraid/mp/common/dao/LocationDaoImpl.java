@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import com.vividsolutions.jts.geom.Point;
-import org.hibernate.Query;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 
@@ -14,6 +14,10 @@ import java.util.List;
  */
 @Repository
 public class LocationDaoImpl extends AbstractDao<Location, Integer> implements LocationDao {
+    public LocationDaoImpl(SessionFactory sessionFactory) {
+        super(sessionFactory);
+    }
+
     /**
      * Gets a location by GeoNames ID.
      * @param geoNamesId The GeoNames ID.
@@ -30,7 +34,6 @@ public class LocationDaoImpl extends AbstractDao<Location, Integer> implements L
      * @return The locations at this point. If none is found, the list is empty.
      */
     public List<Location> getByPoint(Point point) {
-        // TODO
-        return null;
+        return listNamedQuery("getLocationsByPoint", "point", point);
     }
 }

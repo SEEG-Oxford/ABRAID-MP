@@ -7,7 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public interface DiseaseOutbreakDao {
+public interface DiseaseOccurrenceDao {
     /**
      * Gets a disease occurrence by ID.
      * @param id The disease occurrence ID.
