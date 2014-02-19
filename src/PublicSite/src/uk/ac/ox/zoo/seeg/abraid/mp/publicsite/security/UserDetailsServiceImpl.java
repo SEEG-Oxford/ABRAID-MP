@@ -8,12 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Service to load users from hibernate.
+ * Service to load Expert via ExpertService, as a Spring UserDetails.
  * Copyright (c) 2014 University of Oxford
  */
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -40,12 +41,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private User buildUserFromExpert(Expert expert) {
 
-        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(ROLE_USER));
         if (expert.isAdministrator()) {
             authorities.add(new SimpleGrantedAuthority(ROLE_ADMINISTRATOR));
         }
 
-        return new MyUser(expert.getEmail(), expert.getName(), expert.getPassword(), authorities);
+        return new PublicSiteUser(expert.getEmail(), expert.getName(), expert.getPassword(), authorities);
     }
 }
