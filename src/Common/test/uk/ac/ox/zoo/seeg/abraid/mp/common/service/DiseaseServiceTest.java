@@ -3,7 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests the DiseaseService class.
- *
+ * 
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseServiceTest extends AbstractSpringUnitTests {
@@ -23,26 +25,42 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     private DiseaseService diseaseService;
 
     @Test
-    public void getAllDiseases() {
-        List<Disease> allDiseases = Arrays.asList(new Disease("A"), new Disease("B"));
-        when(diseaseDao.getAll()).thenReturn(allDiseases);
-        List<Disease> testAllDiseases = diseaseService.getAllDiseases();
-        assertThat(testAllDiseases).isSameAs(allDiseases);
+    public void getAllHealthMapDiseases() {
+        // Arrange
+        List<HealthMapDisease> diseases = Arrays.asList(new HealthMapDisease());
+        when(healthMapDiseaseDao.getAll()).thenReturn(diseases);
+
+        // Act
+        List<HealthMapDisease> testDiseases = diseaseService.getAllHealthMapDiseases();
+
+        // Assert
+        assertThat(testDiseases).isSameAs(diseases);
     }
 
     @Test
-    public void getDiseaseByName() {
-        String name = "Test Disease Name";
-        Disease disease = new Disease(name);
-        when(diseaseDao.getByName(name)).thenReturn(disease);
-        Disease testDisease = diseaseService.getDiseaseByName(name);
-        assertThat(testDisease).isSameAs(disease);
+    public void getAllDiseaseGroups() {
+        // Arrange
+        List<DiseaseGroup> diseaseGroups = Arrays.asList(new DiseaseGroup());
+        when(diseaseGroupDao.getAll()).thenReturn(diseaseGroups);
+
+        // Act
+        List<DiseaseGroup> testDiseaseGroups = diseaseService.getAllDiseaseGroups();
+
+        // Assert
+        assertThat(testDiseaseGroups).isSameAs(diseaseGroups);
     }
 
     @Test
-    public void saveDisease() {
-        Disease disease = new Disease();
-        diseaseService.saveDisease(disease);
-        verify(diseaseDao).save(eq(disease));
+    public void saveDiseaseOccurrence() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        diseaseService.saveDiseaseOccurrence(occurrence);
+        verify(diseaseOccurrenceDao).save(eq(occurrence));
+    }
+
+    @Test
+    public void saveHealthMapDisease() {
+        HealthMapDisease disease = new HealthMapDisease();
+        diseaseService.saveHealthMapDisease(disease);
+        verify(healthMapDiseaseDao).save(eq(disease));
     }
 }

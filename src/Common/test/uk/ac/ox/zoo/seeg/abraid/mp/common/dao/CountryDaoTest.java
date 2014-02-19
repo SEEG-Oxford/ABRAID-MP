@@ -21,6 +21,21 @@ public class CountryDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllCountries() {
         List<Country> countries = countryDao.getAll();
-        assertThat(countries).hasSize(252);
+        assertThat(countries).hasSize(245);
+    }
+
+    @Test
+    public void getCountryByValidName() {
+        String countryName = "Australia";
+        Country country = countryDao.getByName(countryName);
+        assertThat(country).isNotNull();
+        assertThat(country.getName()).isEqualTo(countryName);
+    }
+
+    @Test
+    public void getCountryByInvalidName() {
+        String countryName = "This country does not exist";
+        Country country = countryDao.getByName(countryName);
+        assertThat(country).isNull();
     }
 }

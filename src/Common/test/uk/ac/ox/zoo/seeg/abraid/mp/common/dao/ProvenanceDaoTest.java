@@ -20,16 +20,17 @@ public class ProvenanceDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void saveAndReloadProvenance() {
+        // Arrange
         String provenanceName = "Test provenance";
-
-        // Creates and saves a provenance
         Provenance provenance = new Provenance();
         provenance.setName(provenanceName);
+
+        // Act
         provenanceDao.save(provenance);
         Integer id = provenance.getId();
         flushAndClear();
 
-        // Reloads the same provenance and verifies its properties
+        // Assert
         provenance = provenanceDao.getByName(provenanceName);
         assertThat(provenance).isNotNull();
         assertThat(provenance.getId()).isNotNull();
@@ -47,6 +48,6 @@ public class ProvenanceDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllProvenances() {
         List<Provenance> provenances = provenanceDao.getAll();
-        assertThat(provenances).hasSize(64);
+        assertThat(provenances).hasSize(1);
     }
 }
