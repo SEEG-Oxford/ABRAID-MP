@@ -4,6 +4,12 @@
 
     <div id="main" class="container">
 
+    <div style="padding:10px">
+        <p>This page will present our model outputs and links to download data.</p>
+    </div>
+
+    <div class="jumbotron" style="padding:10px">
+
     <@security.authorize  ifAnyGranted="ROLE_USER">
         <div>All logged in users can see this.<br> </div>
     </@security.authorize>
@@ -12,11 +18,7 @@
         <div>Only administrators can see this.</div>
     </@security.authorize>
 
-    <ul style="padding: 10px">
-        <#list diseases as disease>
-            <li>${disease.name}</li>
-        </#list>
-    </ul>
+    </div>
 
     </div> <!-- /container -->
 </@c.page>

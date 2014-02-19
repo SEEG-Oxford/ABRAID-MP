@@ -46,6 +46,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(ROLE_ADMINISTRATOR));
         }
 
-        return new User(expert.getEmail(), expert.getPassword(), authorities);
+        return new MyUser(expert.getEmail(), expert.getName(), expert.getPassword(), authorities);
     }
 }
