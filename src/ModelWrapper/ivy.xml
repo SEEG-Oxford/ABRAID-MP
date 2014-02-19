@@ -1,7 +1,8 @@
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="modelwrapper"/>
     <configurations>
-        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
+        <conf name="external"
+              description="external build dependencies (these are separated from internal ones, for better intellij support)"/>
         <conf name="build" extends="external" description="all build dependencies"/>
         <conf name="test" visibility="private" description="unit testing dependencies"/>
         <conf name="analysis" visibility="private" description="code analysis dependencies"/>
@@ -11,22 +12,25 @@
     </publications>
     <dependencies>
         <!-- External -->
-        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" />
-        <dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" conf="external->default" />
-        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
+        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default"/>
+        <dependency org="org.apache.commons" name="commons-exec" rev="1.2" conf="external->default"/>
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
 
         <!-- Testing -->
-        <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
-        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
-        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
+        <dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
+        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default"/>
+        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default"/>
+        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default"/>
+        <dependency org="com.googlecode.catch-exception" name="catch-exception" rev="1.2.0" conf="test->default"/>
 
         <!-- Analysis -->
 
-        <exclude type="source" ext="*" conf="*" />
-        <exclude type="javadoc" ext="*" conf="*" />
-        <exclude type="license" ext="*" conf="*" />
+        <exclude type="source" ext="*" conf="*"/>
+        <exclude type="javadoc" ext="*" conf="*"/>
+        <exclude type="license" ext="*" conf="*"/>
     </dependencies>
 </ivy-module>

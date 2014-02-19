@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
-import java.util.List;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -20,20 +18,22 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void saveAndReloadExpert() {
+        // Arrange
         String expertName = "Test Expert";
         String expertEmail = "hello@world.com";
         String expertPassword = "password";
 
-        // Creates and saves an expert
         Expert expert = new Expert();
         expert.setName(expertName);
         expert.setEmail(expertEmail);
         expert.setPassword(expertPassword);
+
+        // Act
         expertDao.save(expert);
         Integer id = expert.getId();
         flushAndClear();
 
-        // Reloads the same expert and verifies its properties
+        // Assert
         expert = expertDao.getByEmail(expertEmail);
         assertThat(expert).isNotNull();
         assertThat(expert.getId()).isNotNull();

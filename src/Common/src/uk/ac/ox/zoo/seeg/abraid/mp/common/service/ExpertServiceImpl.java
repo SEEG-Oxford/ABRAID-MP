@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
@@ -16,8 +15,7 @@ import java.util.List;
 public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
 
-    @Required
-    public void setExpertDao(ExpertDao expertDao) {
+    public ExpertServiceImpl(ExpertDao expertDao) {
         this.expertDao = expertDao;
     }
 

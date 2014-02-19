@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_deseaseextent" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="module_diseaseextent" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
 </project>

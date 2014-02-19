@@ -6,64 +6,101 @@
 
 
 -- Unique constraints
-ALTER TABLE ProvenanceWeight
-    ADD CONSTRAINT UQ_ProvenanceWeight_Name UNIQUE (Name);
+ALTER TABLE Alert
+	ADD CONSTRAINT UQ_Alert_HealthMapAlertId UNIQUE (HealthMapAlertId);
 
-ALTER TABLE Country
-    ADD CONSTRAINT UQ_Country_Name UNIQUE (Name);
-
-ALTER TABLE Disease
-    ADD CONSTRAINT UQ_Disease_Name UNIQUE (Name);
+ALTER TABLE DiseaseGroup
+    ADD CONSTRAINT UQ_DiseaseGroup_Name_GroupType UNIQUE (Name, GroupType);
 
 ALTER TABLE Expert
     ADD CONSTRAINT UQ_Expert_Email UNIQUE (Email);
+
+ALTER TABLE Feed
+    ADD CONSTRAINT UQ_Feed_Name UNIQUE (Name);
+
+ALTER TABLE HealthMapDisease
+    ADD CONSTRAINT UQ_HealthMapDisease_Name UNIQUE (Name);
+
+ALTER TABLE Location
+	ADD CONSTRAINT UQ_Location_GeoNamesId UNIQUE (GeoNamesId);
+    
+ALTER TABLE Provenance
+    ADD CONSTRAINT UQ_Provenance_Name UNIQUE (Name);
+    
    
-   
--- Primary keys 
-ALTER TABLE ProvenanceWeight ADD CONSTRAINT PK_ProvenanceWeight 
+-- Primary keys
+ALTER TABLE Alert ADD CONSTRAINT PK_Alert
     PRIMARY KEY (Id);
 
-ALTER TABLE Provenance ADD CONSTRAINT PK_Provenance 
+ALTER TABLE Country ADD CONSTRAINT PK_Country
     PRIMARY KEY (Id);
 
-ALTER TABLE Country ADD CONSTRAINT PK_Country 
+ALTER TABLE DiseaseGroup ADD CONSTRAINT PK_Disease
     PRIMARY KEY (Id);
 
-ALTER TABLE Disease ADD CONSTRAINT PK_Disease 
+ALTER TABLE DiseaseOccurrence ADD CONSTRAINT PK_DiseaseOutbreak
     PRIMARY KEY (Id);
 
-ALTER TABLE DiseaseOutbreak ADD CONSTRAINT PK_DiseaseOutbreak 
+ALTER TABLE Expert ADD CONSTRAINT PK_Expert
     PRIMARY KEY (Id);
 
-ALTER TABLE Location ADD CONSTRAINT PK_Location 
+ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT PK_ExpertDiseaseGroup
+    PRIMARY KEY (ExpertId, DiseaseGroupId);
+
+ALTER TABLE Feed ADD CONSTRAINT PK_Feed
     PRIMARY KEY (Id);
 	
-ALTER TABLE Expert ADD CONSTRAINT PK_Expert
-	PRIMARY KEY (Id);
+ALTER TABLE HealthMapCountry ADD CONSTRAINT PK_HealthMapCountry
+    PRIMARY KEY (Id);
 
-ALTER TABLE ExpertDisease ADD CONSTRAINT PK_ExpertDisease 
-	PRIMARY KEY (ExpertId, DiseaseId);
+ALTER TABLE HealthMapDisease ADD CONSTRAINT PK_HealthMapDisease
+    PRIMARY KEY (Id);
 
-    
+ALTER TABLE Location ADD CONSTRAINT PK_Location
+    PRIMARY KEY (Id);
+
+ALTER TABLE Provenance ADD CONSTRAINT PK_Provenance
+    PRIMARY KEY (Id);
+
+
 -- Foreign keys
-ALTER TABLE Provenance ADD CONSTRAINT FK_Provenance_ProvenanceWeight
-    FOREIGN KEY (ProvenanceWeightId) REFERENCES ProvenanceWeight (Id);
+ALTER TABLE Alert ADD CONSTRAINT FK_Alert_Feed
+    FOREIGN KEY (FeedId) REFERENCES Feed (Id);
 
-ALTER TABLE DiseaseOutbreak ADD CONSTRAINT FK_DiseaseOutbreak_Disease 
-    FOREIGN KEY (DiseaseId) REFERENCES Disease (Id);
+ALTER TABLE DiseaseGroup ADD CONSTRAINT FK_DiseaseGroup_DiseaseGroup
+    FOREIGN KEY (ParentId) REFERENCES DiseaseGroup (Id);
 
-ALTER TABLE DiseaseOutbreak ADD CONSTRAINT FK_DiseaseOutbreak_Location 
+ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Alert
+    FOREIGN KEY (AlertId) REFERENCES Alert (Id);
+
+ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Disease
+    FOREIGN KEY (DiseaseGroupId) REFERENCES DiseaseGroup (Id);
+
+ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Location
     FOREIGN KEY (LocationId) REFERENCES Location (Id);
 
-ALTER TABLE DiseaseOutbreak ADD CONSTRAINT FK_DiseaseOutbreak_Provenance 
+ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_DiseaseGroup
+    FOREIGN KEY (DiseaseGroupId) REFERENCES DiseaseGroup (Id);
+
+ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_Expert
+    FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
+
+ALTER TABLE Feed ADD CONSTRAINT FK_Feed_Provenance
     FOREIGN KEY (ProvenanceId) REFERENCES Provenance (Id);
 
-ALTER TABLE Location ADD CONSTRAINT FK_Location_Country 
-    FOREIGN KEY (Country) REFERENCES Country (Id);
-	
-ALTER TABLE ExpertDisease ADD CONSTRAINT FK_ExpertDisease_Disease 
-	FOREIGN KEY (DiseaseId) REFERENCES Disease (Id);
+ALTER TABLE HealthMapCountry ADD CONSTRAINT FK_HealthMapCountry_Country
+    FOREIGN KEY (CountryId) REFERENCES Country (Id);
 
-ALTER TABLE ExpertDisease ADD CONSTRAINT FK_ExpertDisease_Expert 
-	FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
+ALTER TABLE HealthMapDisease ADD CONSTRAINT FK_HealthMapDisease_DiseaseGroup
+    FOREIGN KEY (DiseaseGroupId) REFERENCES DiseaseGroup (Id);
 
+ALTER TABLE Location ADD CONSTRAINT FK_Location_Country
+    FOREIGN KEY (CountryId) REFERENCES Country (Id);
+
+    
+-- Check constraints
+ALTER TABLE DiseaseGroup ADD CONSTRAINT CK_DiseaseGroup_GroupType
+    CHECK (GroupType IN ('CLUSTER', 'MICROCLUSTER', 'DISEASE'));
+
+ALTER TABLE Location ADD CONSTRAINT CK_Location_Precision
+    CHECK (Precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));

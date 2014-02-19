@@ -7,12 +7,15 @@
 
 <hibernate-configuration>
     <session-factory>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country"/>
-        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Disease"/>
-        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOutbreak"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance"/>
-        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceWeight"/>
-        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert"/>
     </session-factory>
 </hibernate-configuration>
