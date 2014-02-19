@@ -19,16 +19,36 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 public abstract class AbstractSpringUnitTests {
     @ReplaceWithMock
     @Autowired
+    protected AlertDao alertDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected CountryDao countryDao;
 
     @ReplaceWithMock
     @Autowired
-    protected DiseaseDao diseaseDao;
+    protected DiseaseGroupDao diseaseGroupDao;
 
     @ReplaceWithMock
     @Autowired
-    protected DiseaseOutbreakDao diseaseOutbreakDao;
+    protected DiseaseOccurrenceDao diseaseOccurrenceDao;
 
+    @ReplaceWithMock
+    @Autowired
+    protected ExpertDao expertDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected FeedDao feedDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected HealthMapCountryDao healthMapCountryDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected HealthMapDiseaseDao healthMapDiseaseDao;
+    
     @ReplaceWithMock
     @Autowired
     protected LocationDao locationDao;
@@ -36,8 +56,4 @@ public abstract class AbstractSpringUnitTests {
     @ReplaceWithMock
     @Autowired
     protected ProvenanceDao provenanceDao;
-
-    @ReplaceWithMock
-    @Autowired
-    protected ProvenanceWeightDao provenanceWeightDao;
 }

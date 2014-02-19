@@ -11,7 +11,7 @@
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${code.root}"/>
   </target>
 
-  <target name="test" description="creates the database">
+  <target name="test" description="test everything">
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="test" dir="${code.root}"/>
   </target>
 

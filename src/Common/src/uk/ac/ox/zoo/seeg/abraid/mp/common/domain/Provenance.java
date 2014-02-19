@@ -1,12 +1,19 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
- * Represents a provenance, i.e. the source of a disease outbreak alert.
+ * Represents a provenance, i.e. the source of a group of feeds.
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "getProvenanceByName",
+                query = "from Provenance where name=:name"
+        )
+})
 @Entity
 public class Provenance {
     // The provenance ID.
@@ -18,26 +25,19 @@ public class Provenance {
     @Column
     private String name;
 
-    // The weight (significance) that is assigned to this provenance.
-    @ManyToOne
-    @JoinColumn(name = "provenanceweightId")
-    private ProvenanceWeight weight;
-
-    // The feed ID used for this provenance in HealthMap.
+    // The default weight of feeds of this provenance. Used when creating a new feed.
     @Column
-    private Integer healthMapFeedId;
+    private Double defaultFeedWeight;
+
+    // The date of the last online retrieval of this provenance (if relevant).
+    @Column
+    private Date lastRetrievedDate;
+
+    // The database row creation date.
+    @Column(insertable = false, updatable = false)
+    private Date createdDate;
 
     public Provenance() {
-    }
-
-    public Provenance(String name) {
-        this.name = name;
-    }
-
-    public Provenance(String name, ProvenanceWeight weight, Integer healthMapFeedId) {
-        this.name = name;
-        this.weight = weight;
-        this.healthMapFeedId = healthMapFeedId;
     }
 
     public Integer getId() {
@@ -52,19 +52,42 @@ public class Provenance {
         this.name = name;
     }
 
-    public ProvenanceWeight getWeight() {
-        return weight;
+    public Double getDefaultFeedWeight() {
+        return defaultFeedWeight;
     }
 
-    public void setWeight(ProvenanceWeight weight) {
-        this.weight = weight;
+    public void setDefaultFeedWeight(Double defaultFeedWeight) {
+        this.defaultFeedWeight = defaultFeedWeight;
     }
 
-    public Integer getHealthMapFeedId() {
-        return healthMapFeedId;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setHealthMapFeedId(Integer healthMapFeedId) {
-        this.healthMapFeedId = healthMapFeedId;
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Provenance that = (Provenance) o;
+
+        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        if (defaultFeedWeight != null ? !defaultFeedWeight.equals(that.defaultFeedWeight) : that.defaultFeedWeight != null)
+            return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+
+        return true;
     }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (defaultFeedWeight != null ? defaultFeedWeight.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        return result;
+    }
+    // CHECKSTYLE.ON
 }
