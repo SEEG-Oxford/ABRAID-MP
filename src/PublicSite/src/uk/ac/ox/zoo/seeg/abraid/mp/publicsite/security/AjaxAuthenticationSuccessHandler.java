@@ -19,8 +19,8 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
      * @param request The HTTP servlet request
      * @param response The HTTP servlet response
      * @param auth Authentication
-     * @throws java.io.IOException
-     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException if the superclass throws this exception
+     * @throws javax.servlet.ServletException if the superclass throws this exception
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
             throws IOException, ServletException {

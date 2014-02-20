@@ -19,8 +19,8 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
      * @param request The HTTP servlet request
      * @param response The HTTP servlet response
      * @param auth The authentication exception, eg "Bad credentials"
-     * @throws IOException
-     * @throws ServletException
+     * @throws IOException if the superclass throws this exception
+     * @throws ServletException if the superclass throws this exception
      */
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException auth)

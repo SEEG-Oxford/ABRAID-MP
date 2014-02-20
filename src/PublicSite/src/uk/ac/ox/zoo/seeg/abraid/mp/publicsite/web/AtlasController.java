@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class AtlasController {
-
     /**
      * Return the view to display.
      * @return The ftl page name.
@@ -19,6 +18,4 @@ public class AtlasController {
     public String showPage() {
         return "atlas";
     }
-
-
 }

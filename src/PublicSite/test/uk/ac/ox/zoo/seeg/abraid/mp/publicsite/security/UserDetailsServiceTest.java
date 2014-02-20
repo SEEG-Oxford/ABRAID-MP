@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
+ * Tests the UserDetailsService class.
  * Copyright (c) 2014 University of Oxford
  */
 public class UserDetailsServiceTest {

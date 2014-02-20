@@ -29,9 +29,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String emailAddress) throws UsernameNotFoundException {
 
-        Expert expert = expertService.getExpertByEmail(s);
+        Expert expert = expertService.getExpertByEmail(emailAddress);
         if (expert == null) {
             throw new UsernameNotFoundException("User not found");
         }
