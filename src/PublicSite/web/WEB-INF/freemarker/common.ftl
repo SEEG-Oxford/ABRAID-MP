@@ -15,26 +15,24 @@
 
     <link rel="stylesheet" href="css/main.css">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
 </head>
 <body>
 
-<#include "navbar.ftl"/>
-
-<!--[if lt IE 7]>
-<p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a>
-    to improve your experience.</p>
-<![endif]-->
+    <#include "navbar.ftl"/>
 
 <div id="wrap">
     <#nested/>
 </div>
 
-<#include "footer.html"/>
+    <#include "footer.html"/>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
+
+<script type="text/javascript" src="js/switchActiveNavBarLinks.js"></script>
+<script type="text/javascript" src="js/login.js"></script>
 
 </body></html>
 </#macro>

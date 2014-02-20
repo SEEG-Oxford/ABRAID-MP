@@ -18,6 +18,7 @@
       <configuration>
         <fileset id="fileset" name="Spring Application Context" removed="false">
           <file>file://$MODULE_DIR$/web/WEB-INF/beans.xml</file>
+          <file>file://$MODULE_DIR$/web/WEB-INF/spring-security.xml</file>
         </fileset>
       </configuration>
     </facet>
