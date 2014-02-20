@@ -13,7 +13,7 @@ $(document).ready(function() {
                     error: ajaxError
                 });
             } else {
-                inputError;
+                inputError();
             }
             e.preventDefault();
         }
@@ -35,6 +35,6 @@ $(document).ready(function() {
     }
 
     function inputError() {
-        $("#logInMessage").text("Invalid credentials");
+        $("#logInMessage").text("Enter username and/or password");
     }
 })
