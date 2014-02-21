@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Contains all beans in this module.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- TODO: Should there be one properties file per module i.e. this one and common.properties? -->
+    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties"/>
+
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
+
+    <!-- Web service beans -->
+    <bean id="geoNamesWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.GeoNamesWebService" autowire="constructor">
+        <property name="rootUrlGetJSON" value="${geonames.rootUrlGetJSON}"/>
+        <property name="username" value="${geonames.username}"/>
+    </bean>
+
+    <bean id="healthMapWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapWebService" autowire="constructor">
+        <property name="rootUrl" value="${healthmap.rootUrl}"/>
+        <property name="authorizationCode" value="${healthmap.authorizationCode}"/>
+        <!-- If specified, this value must have the format "yyyy-MM-dd HH:mm:ssZ" e.g. "2014-04-21 15:29:03+0100" -->
+        <property name="defaultStartDate" value="${healthmap.defaultStartDate}"/>
+    </bean>
+
+    <!-- HealthMap data processing beans -->
+    <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapAlertConverter" autowire="constructor"/>
+    <bean id="healthMapDataAcquisition" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition" autowire="constructor"/>
+    <bean id="healthMapDataConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataConverter" autowire="constructor"/>
+    <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLocationConverter" autowire="constructor"/>
+    <bean id="healthMapLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLookupData" autowire="constructor"/>
+
+    <!-- Main bean (program entry point) -->
+    <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main" autowire="constructor"/>
+
+</beans>

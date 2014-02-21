@@ -64,6 +64,14 @@ public class Provenance {
         return createdDate;
     }
 
+    public Date getLastRetrievedDate() {
+        return lastRetrievedDate;
+    }
+
+    public void setLastRetrievedDate(Date lastRetrievedDate) {
+        this.lastRetrievedDate = lastRetrievedDate;
+    }
+
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -77,6 +85,7 @@ public class Provenance {
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (lastRetrievedDate != null ? !lastRetrievedDate.equals(that.lastRetrievedDate) : that.lastRetrievedDate != null) return false;
 
         return true;
     }
@@ -87,6 +96,7 @@ public class Provenance {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (defaultFeedWeight != null ? defaultFeedWeight.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        result = 31 * result + (lastRetrievedDate != null ? lastRetrievedDate.hashCode() : 0);
         return result;
     }
     // CHECKSTYLE.ON

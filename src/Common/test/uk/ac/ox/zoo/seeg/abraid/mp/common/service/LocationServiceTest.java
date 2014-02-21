@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.Arrays;
@@ -37,14 +38,15 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
     }
 
     @Test
-    public void getByPoint() {
+    public void getByPointAndPrecision() {
         // Arrange
         Point point = GeometryUtils.createPoint(1, 2);
+        LocationPrecision precision = LocationPrecision.ADMIN1;
         List<Location> locations = Arrays.asList(new Location());
-        when(locationDao.getByPoint(point)).thenReturn(locations);
+        when(locationDao.getByPointAndPrecision(point, precision)).thenReturn(locations);
 
         // Act
-        List<Location> testLocations = locationService.getLocationsByPoint(point);
+        List<Location> testLocations = locationService.getLocationsByPointAndPrecision(point, precision);
 
         // Assert
         assertThat(testLocations).isSameAs(locations);
@@ -74,5 +76,10 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testCountries).isSameAs(countries);
+    }
+
+    @Test
+    public void getGeoNamesLocationPrecisionMappings() {
+        // TODO
     }
 }

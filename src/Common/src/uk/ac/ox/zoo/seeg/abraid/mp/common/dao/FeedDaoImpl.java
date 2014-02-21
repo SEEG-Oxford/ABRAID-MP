@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceName;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class FeedDaoImpl extends AbstractDao<Feed, Integer> implements FeedDao {
      * @return A list of feeds whose provenance has the given name.
      */
     @Override
-    public List<Feed> getByProvenanceName(ProvenanceName provenanceName) {
-        return listNamedQuery("getFeedsByProvenanceName", "provenanceName", provenanceName.getName());
+    public List<Feed> getByProvenanceName(String provenanceName) {
+        return listNamedQuery("getFeedsByProvenanceName", "provenanceName", provenanceName);
     }
 }

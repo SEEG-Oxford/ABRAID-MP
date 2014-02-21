@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceName;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public interface AlertService {
      * @param provenanceName The provenance name.
      * @return A list of alert feeds with the specified provenance name.
      */
-    List<Feed> getFeedsByProvenanceName(ProvenanceName provenanceName);
+    List<Feed> getFeedsByProvenanceName(String provenanceName);
 
     /**
      * Gets a provenance by name.
@@ -33,4 +32,10 @@ public interface AlertService {
      * @return The provenance with the specified name, or null if non-existent.
      */
     Provenance getProvenanceByName(String name);
+
+    /**
+     * Saves a provenance.
+     * @param provenance The provenance to save.
+     */
+    void saveProvenance(Provenance provenance);
 }

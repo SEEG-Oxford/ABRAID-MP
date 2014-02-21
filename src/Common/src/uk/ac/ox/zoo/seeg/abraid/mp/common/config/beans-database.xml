@@ -17,6 +17,7 @@
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />
     <bean id="expertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDaoImpl" autowire="constructor" />
     <bean id="feedDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDaoImpl" autowire="constructor" />
+    <bean id="geoNamesLocationPrecisionDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDaoImpl" autowire="constructor" />
     <bean id="healthMapCountryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapCountryDaoImpl" autowire="constructor" />
     <bean id="healthMapDiseaseDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapDiseaseDaoImpl" autowire="constructor" />
     <bean id="locationDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDaoImpl" autowire="constructor" />

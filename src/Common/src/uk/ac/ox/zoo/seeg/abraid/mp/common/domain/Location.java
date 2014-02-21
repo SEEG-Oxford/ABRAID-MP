@@ -47,14 +47,6 @@ public class Location {
     @JoinColumn(name = "countryId")
     private Country country;
 
-    // The first administrative unit (e.g. state, province).
-    @Column
-    private String admin1;
-
-    // The second administrative unit.
-    @Column
-    private String admin2;
-
     // The GeoNames ID corresponding to this location.
     @Column
     private Integer geoNamesId;
@@ -102,22 +94,6 @@ public class Location {
         this.country = country;
     }
 
-    public String getAdmin1() {
-        return admin1;
-    }
-
-    public void setAdmin1(String admin1) {
-        this.admin1 = admin1;
-    }
-
-    public String getAdmin2() {
-        return admin2;
-    }
-
-    public void setAdmin2(String admin2) {
-        this.admin2 = admin2;
-    }
-
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -138,8 +114,6 @@ public class Location {
 
         Location location = (Location) o;
 
-        if (admin1 != null ? !admin1.equals(location.admin1) : location.admin1 != null) return false;
-        if (admin2 != null ? !admin2.equals(location.admin2) : location.admin2 != null) return false;
         if (country != null ? !country.equals(location.country) : location.country != null) return false;
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
@@ -159,8 +133,6 @@ public class Location {
         result = 31 * result + (geom != null ? geom.hashCode() : 0);
         result = 31 * result + (precision != null ? precision.hashCode() : 0);
         result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (admin1 != null ? admin1.hashCode() : 0);
-        result = 31 * result + (admin2 != null ? admin2.hashCode() : 0);
         result = 31 * result + (geoNamesId != null ? geoNamesId.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;

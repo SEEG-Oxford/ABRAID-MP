@@ -27,7 +27,7 @@
 29	Cryptosporidium	FALSE	\N
 31	Cysticercosis	FALSE	\N
 32	Cytomegalovirus	FALSE	\N
-33	Dengue	TRUE	\N
+33	Dengue	FALSE	\N
 34	Diarrhea	FALSE	\N
 35	Diphtheria	FALSE	\N
 36	Diphyllobothriasis	FALSE	\N
@@ -61,7 +61,7 @@
 69	Isosporiasis	FALSE	\N
 72	Lassa Fever	FALSE	\N
 73	Legionnaires'	FALSE	\N
-74	Leishmaniasis	FALSE	15
+74	Leishmaniasis	TRUE	15
 75	Leprosy	FALSE	\N
 76	Leptospirosis	FALSE	\N
 77	Listeriosis	FALSE	\N
@@ -90,7 +90,7 @@
 102	Plague	FALSE	\N
 103	Pneumococcal Pneumonia	FALSE	\N
 104	Pneumonia	FALSE	\N
-105	Polio	TRUE	\N
+105	Polio	FALSE	\N
 107	Chlamydia	FALSE	\N
 108	Q Fever	FALSE	\N
 109	Rabies	FALSE	\N

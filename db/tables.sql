@@ -50,7 +50,6 @@ CREATE TABLE DiseaseOccurrence (
     LocationId integer NOT NULL,
     AlertId integer NOT NULL,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    DiagnosticWeight double precision,
     OccurrenceStartDate timestamp
 );
 
@@ -79,6 +78,11 @@ CREATE TABLE Feed (
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
+CREATE TABLE GeoNamesLocationPrecision ( 
+    GeoNamesFeatureCode varchar(50) NOT NULL,
+    LocationPrecision varchar(50) NOT NULL
+);
+
 CREATE TABLE HealthMapCountry (
     Id bigint NOT NULL,
     Name varchar(100) NOT NULL,
@@ -88,7 +92,6 @@ CREATE TABLE HealthMapCountry (
 CREATE TABLE HealthMapDisease (
     Id bigint NOT NULL,
     Name varchar(100) NOT NULL,
-    IsOfInterest boolean NOT NULL,
     DiseaseGroupId integer,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
@@ -99,8 +102,6 @@ CREATE TABLE Location (
     Geom geometry NOT NULL,
     Precision varchar(10) NOT NULL,
     CountryId integer NOT NULL,
-    Admin1 varchar(50),
-    Admin2 varchar(50),
     GeoNamesId integer,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
