@@ -25,9 +25,9 @@ public class Provenance {
     @Column
     private String name;
 
-    // The default weight of feeds of this provenance. Used when creating a new feed.
+    // The default weighting of feeds of this provenance. Used when creating a new feed.
     @Column
-    private Double defaultFeedWeight;
+    private Double defaultFeedWeighting;
 
     // The date of the last online retrieval of this provenance (if relevant).
     @Column
@@ -52,12 +52,12 @@ public class Provenance {
         this.name = name;
     }
 
-    public Double getDefaultFeedWeight() {
-        return defaultFeedWeight;
+    public Double getDefaultFeedWeighting() {
+        return defaultFeedWeighting;
     }
 
-    public void setDefaultFeedWeight(Double defaultFeedWeight) {
-        this.defaultFeedWeight = defaultFeedWeight;
+    public void setDefaultFeedWeighting(Double defaultFeedWeighting) {
+        this.defaultFeedWeighting = defaultFeedWeighting;
     }
 
     public Date getCreatedDate() {
@@ -73,7 +73,7 @@ public class Provenance {
         Provenance that = (Provenance) o;
 
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
-        if (defaultFeedWeight != null ? !defaultFeedWeight.equals(that.defaultFeedWeight) : that.defaultFeedWeight != null)
+        if (defaultFeedWeighting != null ? !defaultFeedWeighting.equals(that.defaultFeedWeighting) : that.defaultFeedWeighting != null)
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -85,7 +85,7 @@ public class Provenance {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (defaultFeedWeight != null ? defaultFeedWeight.hashCode() : 0);
+        result = 31 * result + (defaultFeedWeighting != null ? defaultFeedWeighting.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

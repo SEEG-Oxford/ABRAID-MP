@@ -51,7 +51,7 @@ CREATE TABLE DiseaseOccurrence (
     LocationId integer NOT NULL,
     AlertId integer NOT NULL,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    DiagnosticWeight double precision,
+    ValidationWeighting double precision,
     OccurrenceStartDate timestamp
 );
 
@@ -81,7 +81,7 @@ CREATE TABLE Feed (
     Id serial NOT NULL,
     ProvenanceId integer NOT NULL,
     Name varchar(100) NOT NULL,
-    Weight double precision NOT NULL,
+    Weighting double precision NOT NULL,
     HealthMapFeedId bigint,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
@@ -109,13 +109,14 @@ CREATE TABLE Location (
     Admin1 varchar(50),
     Admin2 varchar(50),
     GeoNamesId integer,
+	ResolutionWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE Provenance (
     Id serial NOT NULL,
     Name varchar(100) NOT NULL,
-    DefaultFeedWeight double precision,
+    DefaultFeedWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     LastRetrievedDate timestamp
 );
