@@ -2,8 +2,7 @@
 <#import "common.ftl" as c/>
 <@c.page title="ABRAID MP">
 
-    <div id="main" class="container">
-
+<div class="container">
     <div style="padding:10px">
         <p>This page will present our model outputs and links to download data.</p>
     </div>
@@ -25,6 +24,6 @@
             <li>${country.name}</li>
         </#list>
     </ul>
+</div>
 
-    </div> <!-- /container -->
 </@c.page>

@@ -20,7 +20,7 @@
 
     <#include "navbar.ftl"/>
 
-<div id="wrap">
+<div id="common">
     <#nested/>
 </div>
 
@@ -33,6 +33,7 @@
 
 <script src="js/navbar.js"></script>
 <script src="js/login.js"></script>
+<script src="js/leafletMap.js"></script>
 
 </body></html>
 </#macro>

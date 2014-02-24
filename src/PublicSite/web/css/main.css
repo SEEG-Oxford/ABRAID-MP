@@ -2,22 +2,21 @@ html,body
 {
     height:100%;
 }
-
-#wrap
+#common
 {
-    min-height: 100%;
     padding-top:50px;
-    height: auto !important;
+    padding-bottom:50px;
+    min-height: 100%;
+    /*height: auto !important;*/
     height: 100%;
     margin: 0 auto -50px;
-}
-
-#main
-{
     overflow:auto;
-    padding-bottom:50px;
 }
-
+#map
+{
+    height:100%;
+    width:100%;
+}
 #hello
 {
     padding-top:15px;
@@ -44,7 +43,6 @@ html,body
     background-color: rgb(51, 51, 51);
     text-decoration:none;
 }
-
 .footer > .container > .links > a:hover {
     color: #ffffff;
     background-color: rgb(51, 51, 51);
