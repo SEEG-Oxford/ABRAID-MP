@@ -16,6 +16,7 @@
         <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default"/>
         <dependency org="org.apache.commons" name="commons-exec" rev="1.2" conf="external->default"/>
+        <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
