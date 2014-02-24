@@ -20,5 +20,11 @@
 
     </div>
 
+    <ul style="padding: 10px">
+        <#list countries as country>
+            <li>${country.name}</li>
+        </#list>
+    </ul>
+
     </div> <!-- /container -->
 </@c.page>

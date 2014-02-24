@@ -16,9 +16,9 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="<@spring.url "/"/>"> Atlas</a> </li>
-                <li><a href="datavalidation"> Data Validation</a> </li>
-                <li><a href="about"> About</a> </li>
-                <li><a href="publications"> Publications</a> </li>
+                <li><a href="<@spring.url "/datavalidation"/>"> Data Validation</a> </li>
+                <li><a href="<@spring.url "/about"/>"> About</a> </li>
+                <li><a href="<@spring.url "/publications"/>"> Publications</a> </li>
             </ul>
 
             <#-- If user not logged in: display login form -->
