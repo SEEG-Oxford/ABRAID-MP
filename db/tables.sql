@@ -13,6 +13,7 @@
 -- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- Expert: Represents a user of the PublicSite.
 -- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
+-- ExpertReview: Represents an expert's response on the validity of a disease occurrence point.
 -- Feed: Represents a source of alerts.
 -- HealthMapCountry: Represents a country as defined by HealthMap.
 -- HealthMapDisease: Represents a disease as defined by HealthMap.
@@ -68,6 +69,12 @@ CREATE TABLE Expert (
 CREATE TABLE ExpertDiseaseGroup (
     ExpertId integer NOT NULL,
     DiseaseGroupId integer NOT NULL
+);
+
+CREATE TABLE ExpertReview (
+	ExpertId integer NOT NULL,
+	DiseaseOccurrenceId integer NOT NULL,
+	Response varchar(3) NOT NULL
 );
 
 CREATE TABLE Feed (

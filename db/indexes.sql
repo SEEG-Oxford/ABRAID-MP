@@ -11,6 +11,9 @@ CREATE INDEX IX_DiseaseOccurrence_DiseaseGroupId ON DiseaseOccurrence (DiseaseGr
 CREATE INDEX IX_DiseaseOccurrence_LocationId ON DiseaseOccurrence (LocationId);
 CREATE INDEX IX_ExpertDiseaseGroup_DiseaseGroupId ON ExpertDiseaseGroup (DiseaseGroupId);
 CREATE INDEX IX_ExpertDiseaseGroup_ExpertId ON ExpertDiseaseGroup (ExpertId);
+CREATE INDEX IX_ExpertReview_DiseaseOccurrenceId ON ExpertReview (DiseaseOccurrenceId);
+CREATE INDEX IX_ExpertReview_ExpertId ON ExpertReview (ExpertId);
+-- Or: CREATE INDEX IX_ExpertReview_ExpertId_DiseaseOccurrenceId ON ExpertReview (ExpertId, DiseaseOccurrenceId);
 CREATE INDEX IX_Feed_ProvenanceId ON Feed (ProvenanceId);
 CREATE INDEX IX_HealthMapCountry_CountryId ON HealthMapCountry (CountryId);
 CREATE INDEX IX_HealthMapDisease_DiseaseGroupId ON HealthMapDisease (DiseaseGroupId);

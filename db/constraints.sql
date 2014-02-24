@@ -46,6 +46,9 @@ ALTER TABLE Expert ADD CONSTRAINT PK_Expert
 
 ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT PK_ExpertDiseaseGroup
     PRIMARY KEY (ExpertId, DiseaseGroupId);
+	
+ALTER TABLE ExpertReview ADD CONSTRAINT PK_ExpertReview 
+	PRIMARY KEY (ExpertId, DiseaseOccurrenceId);
 
 ALTER TABLE Feed ADD CONSTRAINT PK_Feed
     PRIMARY KEY (Id);
@@ -84,6 +87,12 @@ ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_DiseaseGroup
 
 ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_Expert
     FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
+	
+ALTER TABLE ExpertReview ADD CONSTRAINT FK_ExpertReview_DiseaseOccurrence 
+	FOREIGN KEY (DiseaseOccurrenceId) REFERENCES DiseaseOccurrence (Id);
+
+ALTER TABLE ExpertReview ADD CONSTRAINT FK_ExpertReview_Expert 
+	FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
 
 ALTER TABLE Feed ADD CONSTRAINT FK_Feed_Provenance
     FOREIGN KEY (ProvenanceId) REFERENCES Provenance (Id);
@@ -104,3 +113,6 @@ ALTER TABLE DiseaseGroup ADD CONSTRAINT CK_DiseaseGroup_GroupType
 
 ALTER TABLE Location ADD CONSTRAINT CK_Location_Precision
     CHECK (Precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));
+	
+ALTER TABLE ExpertReview ADD CONSTRAINT CK_ExpertReview_Response
+	CHECK (Response IN ('YES', 'NO', 'DK'));
