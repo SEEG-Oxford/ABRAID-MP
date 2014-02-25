@@ -107,7 +107,7 @@ public class ModelRunnerTest {
 
         assertThat(stringArgs).hasSize(4);
         assertThat(stringArgs[0]).isEqualTo("--no-save");
-        assertThat(stringArgs[1]).isEqualTo("--quiet");
+        assertThat(stringArgs[1]).isEqualTo("--slave");
         assertThat(stringArgs[2]).isEqualTo("-f");
         String key = stringArgs[3].substring(2, stringArgs[3].length() - 1);
         assertThat(fileArgs).containsKey(key);

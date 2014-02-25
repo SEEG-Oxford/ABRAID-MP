@@ -21,7 +21,7 @@ public class BeanTest implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Test
-    public void canObtainModelRunnerBean() {
+    public void canObtainModelRunnerBean() throws Exception {
         // Arrange
         // Act
         Object result = applicationContext.getBean("modelRunner");
