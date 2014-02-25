@@ -33,7 +33,11 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
                 configuration.getRunName() + "-" + UUID.randomUUID().toString());
 
         File workingDirectory = workingDirectoryPath.toFile();
-        workingDirectory.mkdirs();
+        boolean directoryCreated = workingDirectory.mkdirs();
+
+        if (!directoryCreated) {
+            throw new IOException("Directory could not be created.");
+        }
 
         // Copy input data
         // Copy model

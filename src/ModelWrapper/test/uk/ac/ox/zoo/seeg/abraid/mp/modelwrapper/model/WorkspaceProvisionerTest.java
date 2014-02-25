@@ -6,7 +6,10 @@ import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -56,6 +59,21 @@ public class WorkspaceProvisionerTest {
         // Assert
         verify(scriptGenerator, times(1)).generateScript(eq(config), any(File.class), eq(false));
         assertThat(script).isEqualTo(expectedScript);
+    }
+
+    @Test
+    public void provisionWorkspaceShouldThrowIfDirectoryCanNotBeCreated() throws Exception {
+        // Arrange
+        File notAValidDirectory = testFolder.newFile();
+        WorkspaceProvisioner target = new WorkspaceProvisionerImpl(mock(ScriptGenerator.class));
+        RunConfiguration conf = new RunConfiguration(null, notAValidDirectory, "", 0);
+
+        // Act
+        catchException(target).provisionWorkspace(conf);
+        Exception result = caughtException();
+
+        // Assert
+        assertThat(result).isInstanceOf(IOException.class);
     }
 
 }
