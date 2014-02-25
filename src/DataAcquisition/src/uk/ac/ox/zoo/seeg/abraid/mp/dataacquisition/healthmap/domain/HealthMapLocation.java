@@ -1,5 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.springframework.util.StringUtils;
+
 import java.util.List;
 
 /**
@@ -9,11 +12,14 @@ import java.util.List;
  */
 public class HealthMapLocation {
     private String country;
-    private String place_name;
+    @JsonProperty("place_name")
+    private String placeName;
     private Double lat;
     private Double lng;
-    private Integer geonameid;
-    private String place_basic_type;
+    @JsonProperty("geonameid")
+    private Integer geoNameId;
+    @JsonProperty("place_basic_type")
+    private String placeBasicType;
 
     private List<HealthMapAlert> alerts;
 
@@ -22,15 +28,15 @@ public class HealthMapLocation {
     }
 
     public void setCountry(String country) {
-        this.country = country;
+        this.country = StringUtils.trimWhitespace(country);
     }
 
-    public String getPlace_name() {
-        return place_name;
+    public String getPlaceName() {
+        return placeName;
     }
 
-    public void setPlace_name(String place_name) {
-        this.place_name = place_name;
+    public void setPlaceName(String placeName) {
+        this.placeName = StringUtils.trimWhitespace(placeName);
     }
 
     public Double getLat() {
@@ -49,20 +55,20 @@ public class HealthMapLocation {
         this.lng = lng;
     }
 
-    public Integer getGeonameid() {
-        return geonameid;
+    public Integer getGeoNameId() {
+        return geoNameId;
     }
 
-    public void setGeonameid(Integer geonameid) {
-        this.geonameid = geonameid;
+    public void setGeoNameId(Integer geoNameId) {
+        this.geoNameId = geoNameId;
     }
 
-    public String getPlace_basic_type() {
-        return place_basic_type;
+    public String getPlaceBasicType() {
+        return placeBasicType;
     }
 
-    public void setPlace_basic_type(String place_basic_type) {
-        this.place_basic_type = place_basic_type;
+    public void setPlaceBasicType(String placeBasicType) {
+        this.placeBasicType = StringUtils.trimWhitespace(placeBasicType);
     }
 
     public List<HealthMapAlert> getAlerts() {

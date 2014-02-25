@@ -5,6 +5,9 @@ import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Represents a disease as defined by HealthMap.
+ */
 @Entity
 public class HealthMapDisease {
     // The disease ID from HealthMap.

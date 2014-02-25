@@ -24,9 +24,10 @@ public class HealthMapDataAcquisition {
     private HealthMapWebService healthMapWebService;
     private HealthMapDataConverter healthMapDataConverter;
     private AlertService alertService;
+    private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
 
-    private static final Logger log = Logger.getLogger(HealthMapDataAcquisition.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Could not read HealthMap web service response: %s";
+    private static final int DEFAULT_START_DATE_DAYS_BEFORE_NOW = 7;
 
     public HealthMapDataAcquisition(HealthMapWebService healthMapWebService,
                                     HealthMapDataConverter healthMapDataConverter, AlertService alertService) {
@@ -53,9 +54,8 @@ public class HealthMapDataAcquisition {
     private List<HealthMapLocation> retrieveData(Date startDate, Date endDate) {
         try {
             return healthMapWebService.sendRequest(startDate, endDate);
-        }
-        catch (WebServiceClientException|JsonParserException e) {
-            log.error(format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
+        } catch (WebServiceClientException|JsonParserException e) {
+            LOGGER.error(format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
             return null;
         }
     }
@@ -71,14 +71,12 @@ public class HealthMapDataAcquisition {
         Provenance provenance = alertService.getProvenanceByName(ProvenanceNames.HEALTHMAP);
         if (provenance != null && provenance.getLastRetrievedDate() != null) {
             return provenance.getLastRetrievedDate();
-        }
-        else if (healthMapWebService.getDefaultStartDate() != null) {
+        } else if (healthMapWebService.getDefaultStartDate() != null) {
             return healthMapWebService.getDefaultStartDate();
-        }
-        else {
+        } else {
             // Default start date is 7 days ago
             Calendar startDate = Calendar.getInstance();
-            startDate.add(Calendar.DAY_OF_MONTH, -7);
+            startDate.add(Calendar.DAY_OF_MONTH, -DEFAULT_START_DATE_DAYS_BEFORE_NOW);
             return startDate.getTime();
         }
     }

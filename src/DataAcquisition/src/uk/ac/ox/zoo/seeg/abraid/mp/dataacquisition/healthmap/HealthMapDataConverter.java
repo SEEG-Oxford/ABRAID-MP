@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
@@ -23,6 +24,10 @@ public class HealthMapDataConverter {
     private HealthMapLocationConverter locationConverter;
     private HealthMapAlertConverter diseaseOccurrenceConverter;
 
+    private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
+    private static final String CONVERSION_MESSAGE = "Converting %d HealthMap location(s) with corresponding alerts";
+    private static final String COUNT_MESSAGE = "Saved %d HealthMap disease occurrence(s)";
+
     public HealthMapDataConverter(HealthMapLocationConverter locationConverter,
                                   HealthMapAlertConverter diseaseOccurrenceConverter,
                                   AlertService alertService, DiseaseService diseaseService) {
@@ -38,18 +43,27 @@ public class HealthMapDataConverter {
      * @param retrievalDate The date that the HealthMap locations were retrieved.
      */
     public void convert(List<HealthMapLocation> healthMapLocations, Date retrievalDate) {
-        for(HealthMapLocation healthMapLocation : healthMapLocations) {
+        LOGGER.info(String.format(CONVERSION_MESSAGE, healthMapLocations.size()));
+
+        int diseaseOccurrencesCount = 0;
+        for (HealthMapLocation healthMapLocation : healthMapLocations) {
             Location location = locationConverter.convert(healthMapLocation);
 
-            for(HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
+            for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
                 DiseaseOccurrence occurrence = diseaseOccurrenceConverter.convert(healthMapAlert, location);
-                diseaseService.saveDiseaseOccurrence(occurrence);
+                if (occurrence != null) {
+                    diseaseService.saveDiseaseOccurrence(occurrence);
+                    diseaseOccurrencesCount++;
+                }
             }
         }
 
         writeLastRetrievedDate(retrievalDate);
 
-        // TODO: Ensure that the transaction commits at this point
+        // TODO: Add "in %d locations" to this message when we are sure that locations count <= disease occurrences
+        LOGGER.info(String.format(COUNT_MESSAGE, diseaseOccurrencesCount));
+
+        // TODO: Ensure that the transaction commits at this point (and not afterwards)
     }
 
     private void writeLastRetrievedDate(Date retrievalDate) {

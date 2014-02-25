@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -12,7 +13,8 @@ import java.util.regex.Pattern;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapAlert {
-    // TODO: Ideally, move this to HealthMapWebService (custom JSON deserializer?)
+    // Regular expression for extracting the alert ID from a link.
+    // For example, in the link "http://healthmap.org/ln.php?2154965", the alert ID is 2154965.
     private static final Pattern ALERT_ID_REGEXP = Pattern.compile("http://healthmap.org/ln\\.php\\?(\\d+)");
 
     private String feed;
@@ -20,15 +22,17 @@ public class HealthMapAlert {
     private String summary;
     private Date date;
     private String link;
-    private String descr;
-    private String original_url;
+    @JsonProperty("descr")
+    private String description;
+    @JsonProperty("original_url")
+    private String originalUrl;
 
     public String getFeed() {
         return feed;
     }
 
     public void setFeed(String feed) {
-        this.feed = feed;
+        this.feed = StringUtils.trimWhitespace(feed);
     }
 
     public String getDisease() {
@@ -36,7 +40,7 @@ public class HealthMapAlert {
     }
 
     public void setDisease(String disease) {
-        this.disease = disease;
+        this.disease = StringUtils.trimWhitespace(disease);
     }
 
     public String getSummary() {
@@ -44,7 +48,7 @@ public class HealthMapAlert {
     }
 
     public void setSummary(String summary) {
-        this.summary = summary;
+        this.summary = StringUtils.trimWhitespace(summary);
     }
 
     public Date getDate() {
@@ -60,25 +64,29 @@ public class HealthMapAlert {
     }
 
     public void setLink(String link) {
-        this.link = link;
+        this.link = StringUtils.trimWhitespace(link);
     }
 
-    public String getDescr() {
-        return descr;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescr(String descr) {
-        this.descr = descr;
+    public void setDescription(String description) {
+        this.description = StringUtils.trimWhitespace(description);
     }
 
-    public String getOriginal_url() {
-        return original_url;
+    public String getOriginalUrl() {
+        return originalUrl;
     }
 
-    public void setOriginal_url(String original_url) {
-        this.original_url = original_url;
+    public void setOriginalUrl(String originalUrl) {
+        this.originalUrl = StringUtils.trimWhitespace(originalUrl);
     }
 
+    /**
+     * Extracts the alert ID from the link.
+     * @return The alert ID, or null if it could not be extracted from the link.
+     */
     public Long getAlertId() {
         Long alertId = null;
         if (StringUtils.hasText(link)) {

@@ -75,12 +75,8 @@ public class DiseaseGroup {
         this.groupType = groupType;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    @Override
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -94,6 +90,10 @@ public class DiseaseGroup {
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
 
         return true;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
     @Override

@@ -15,7 +15,6 @@ public class JsonParser {
     private ObjectMapper mapper;
 
     public JsonParser() {
-        // TODO: Use Jackson 2.0 instead of 1.9, using a different ivy?
         mapper = new ObjectMapper();
         mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -37,8 +36,7 @@ public class JsonParser {
     public <T> T parse(String json, Class<T> responseClass) throws JsonParserException {
         try {
             return mapper.readValue(json, responseClass);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new JsonParserException(e.getMessage(), e);
         }
     }
@@ -56,8 +54,7 @@ public class JsonParser {
     public <T> T parse(String json, TypeReference<T> responseClass) throws JsonParserException {
         try {
             return mapper.readValue(json, responseClass);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new JsonParserException(e.getMessage(), e);
         }
     }

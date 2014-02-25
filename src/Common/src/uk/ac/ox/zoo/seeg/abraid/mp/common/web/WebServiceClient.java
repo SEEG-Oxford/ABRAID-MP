@@ -10,6 +10,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static java.lang.String.format;
 
 /**
@@ -19,6 +22,7 @@ import static java.lang.String.format;
  */
 public class WebServiceClient {
     private static final String CALLING_WEB_SERVICE_MESSAGE = "Calling web service URL \"%s\"";
+    private static final String CALLED_WEB_SERVICE_MESSAGE =  "Call to web service URL \"%s\" took %d ms";
     private static final String STATUS_UNSUCCESSFUL_MESSAGE =
             "Web service returned status code %d (\"%s\"). Web service URL: \"%s\"";
     private static final String GENERAL_ERROR_MESSAGE =
@@ -26,7 +30,7 @@ public class WebServiceClient {
     private static final int CONNECT_TIMEOUT_MILLISECONDS = 60000;
     private static final int READ_TIMEOUT_MILLISECONDS = 60000;
 
-    private static final Logger log = Logger.getLogger(WebServiceClient.class);
+    private static final Logger LOGGER = Logger.getLogger(WebServiceClient.class);
 
     /**
      * Calls a web service.
@@ -43,7 +47,8 @@ public class WebServiceClient {
             client.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT_MILLISECONDS);
             client.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT_MILLISECONDS);
 
-            log.info(format(CALLING_WEB_SERVICE_MESSAGE, url));
+            Date startDate = Calendar.getInstance().getTime();
+            LOGGER.debug(format(CALLING_WEB_SERVICE_MESSAGE, url));
             Response response = client.target(url).request().get();
 
             // If the response's status code is not in the "successful" family, throw an exception
@@ -54,9 +59,12 @@ public class WebServiceClient {
                 throw new WebServiceClientException(message);
             }
 
+            Date endDate = Calendar.getInstance().getTime();
+            long callDuration = endDate.getTime() - startDate.getTime();
+            LOGGER.debug(format(CALLED_WEB_SERVICE_MESSAGE, url, callDuration));
+
             return response.readEntity(String.class);
-        }
-        catch(ProcessingException e) {
+        } catch (ProcessingException e) {
             // Jersey wraps javax.ws.rs.ProcessingException around all sorts of exceptions (unknown host, illegal
             // argument, time out, protocol not supported, etc.). We convert this to our WebServiceClientException;
             // as well as being consistent and friendly, it hides callers from the javax.ws.rs library.
@@ -68,8 +76,7 @@ public class WebServiceClient {
     private String getInnermostExceptionMessage(Throwable t) {
         if (t.getCause() == null) {
             return t.getMessage();
-        }
-        else {
+        } else {
             return getInnermostExceptionMessage(t.getCause());
         }
     }

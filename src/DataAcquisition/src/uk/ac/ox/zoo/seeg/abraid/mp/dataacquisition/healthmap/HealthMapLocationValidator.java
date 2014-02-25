@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
@@ -14,6 +15,7 @@ import static java.lang.String.format;
  */
 public class HealthMapLocationValidator {
     private static final String LAT_LONG_MISSING = "Missing lat/long in HealthMap location (place name \"%s\")";
+    private static final String COUNTRY_MISSING = "Missing country in HealthMap location (place name \"%s\")";
     private static final String COUNTRY_DOES_NOT_EXIST = "HealthMap country \"%s\" does not exist in ABRAID database";
 
     private HealthMapLocation location;
@@ -29,19 +31,27 @@ public class HealthMapLocationValidator {
      * @return An error message if invalid, or null if valid.
      */
     public String validate() {
-        String errorMessage = validateLatLong();
-        errorMessage = (errorMessage != null) ? errorMessage : validateCountry();
+        String errorMessage = validateLatLongMissing();
+        errorMessage = (errorMessage != null) ? errorMessage : validateCountryMissing();
+        errorMessage = (errorMessage != null) ? errorMessage : validateCountryDoesNotExist();
         return errorMessage;
     }
 
-    private String validateLatLong() {
-        if (location.getLat() != null || location.getLng() != null) {
-            return format(LAT_LONG_MISSING, location.getPlace_name());
+    private String validateLatLongMissing() {
+        if (location.getLat() == null || location.getLng() == null) {
+            return format(LAT_LONG_MISSING, location.getPlaceName());
         }
         return null;
     }
 
-    private String validateCountry() {
+    private String validateCountryMissing() {
+        if (!StringUtils.hasText(location.getCountry())) {
+            return format(COUNTRY_MISSING, location.getPlaceName());
+        }
+        return null;
+    }
+
+    private String validateCountryDoesNotExist() {
         HealthMapCountry healthMapCountry = countryMap.get(location.getCountry());
         if (healthMapCountry == null) {
             return format(COUNTRY_DOES_NOT_EXIST, location.getCountry());

@@ -13,8 +13,8 @@ import java.util.Date;
  */
 @NamedQueries({
         @NamedQuery(
-                name = "getLocationsByPoint",
-                query = "from Location where geom=:point"
+                name = "getLocationsByPointAndPrecision",
+                query = "from Location where geom=:point and precision=:precision"
         ),
         @NamedQuery(
                 name = "getLocationByGeoNamesId",

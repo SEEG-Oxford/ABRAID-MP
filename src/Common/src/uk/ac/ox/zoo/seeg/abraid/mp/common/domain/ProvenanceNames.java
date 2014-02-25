@@ -5,6 +5,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class ProvenanceNames {
+public final class ProvenanceNames {
+    /**
+     * The HealthMap provenance.
+     */
     public static final String HEALTHMAP = "HealthMap";
+
+    private ProvenanceNames() {
+    }
 }

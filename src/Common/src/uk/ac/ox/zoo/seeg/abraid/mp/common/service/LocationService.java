@@ -23,6 +23,7 @@ public interface LocationService {
      * Gets a list of locations that have the specified point and precision. This returns a list of locations as there
      * may be several at the same point with the same precision.
      * @param point The point.
+     * @param precision The precision.
      * @return The locations at this point. If none is found, the list is empty.
      */
     List<Location> getLocationsByPointAndPrecision(Point point, LocationPrecision precision);

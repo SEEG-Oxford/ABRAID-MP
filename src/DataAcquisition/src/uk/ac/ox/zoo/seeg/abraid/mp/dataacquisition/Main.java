@@ -11,6 +11,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquis
 public class Main {
     private HealthMapDataAcquisition healthMapDataAcquisition;
 
+    /**
+     * Entry method for the DataAcquisition module.
+     * @param args Command line arguments (unused).
+     */
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
                 "classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml");

@@ -73,7 +73,7 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
         // Arrange
         String diseaseClusterName = "Test disease";
         DiseaseGroup diseaseMicroCluster = diseaseGroupDao.getById(16);
-        DiseaseGroup diseaseCluster = diseaseGroupDao.getById(6);
+        DiseaseGroup diseaseCluster = diseaseGroupDao.getById(5);
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
@@ -106,6 +106,6 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getAll();
-        assertThat(diseaseGroups).hasSize(56);
+        assertThat(diseaseGroups).hasSize(51);
     }
 }

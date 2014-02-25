@@ -36,6 +36,7 @@ public interface LocationDao {
      * Gets locations by point and precision. This returns a list of locations as there may be several at the same
      * point.
      * @param point The point.
+     * @param precision The precision.
      * @return The locations at this point. If none is found, the list is empty.
      */
     List<Location> getByPointAndPrecision(Point point, LocationPrecision precision);

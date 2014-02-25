@@ -21,13 +21,13 @@ import static java.lang.String.format;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapLocationConverter {
-    private static final Logger log = Logger.getLogger(HealthMapLocationConverter.class);
+    private static final Logger LOGGER = Logger.getLogger(HealthMapLocationConverter.class);
     private static final String MULTIPLE_LOCATIONS_MATCH_MESSAGE =
             "More than one location already exists at point (%f,%f) and with precision %s";
     private static final String IGNORING_COUNTRY_MESSAGE =
-            "Ignoring HealthMap location in country %s as it is not of interest";
+            "Ignoring HealthMap location in country \"%s\" as it is not of interest";
     private static final String GEONAMES_FCODE_NOT_IN_DATABASE =
-            "GeoName ID %d has feature code \"%s\", which is not in the ABRAID database - assuming precise location";
+            "Feature code \"%s\" is not in the ABRAID database (GeoName ID %d) - assuming precise location";
 
     private LocationService locationService;
     private HealthMapLookupData lookupData;
@@ -64,7 +64,7 @@ public class HealthMapLocationConverter {
         String validationMessage =
                 new HealthMapLocationValidator(healthMapLocation, lookupData.getCountryMap()).validate();
         if (validationMessage != null) {
-            log.error(validationMessage);
+            LOGGER.error(validationMessage);
             return false;
         }
         return true;
@@ -73,18 +73,17 @@ public class HealthMapLocationConverter {
     private Location findExistingLocation(HealthMapLocation healthMapLocation, Point point) {
         Location location = null;
 
-        if (healthMapLocation.getGeonameid() != null) {
+        if (healthMapLocation.getGeoNameId() != null) {
             // Query for an existing location at the specified GeoNames ID
-            location = locationService.getLocationByGeoNamesId(healthMapLocation.getGeonameid());
-        }
-        else {
+            location = locationService.getLocationByGeoNamesId(healthMapLocation.getGeoNameId());
+        } else {
             // Query for an existing location at the specified lat/long and location precision
             LocationPrecision precision = findLocationPrecision(healthMapLocation);
             List<Location> locations = locationService.getLocationsByPointAndPrecision(point, precision);
             if (locations.size() > 0) {
                 location = locations.get(0);
                 if (locations.size() > 1) {
-                    log.warn(format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision));
+                    LOGGER.warn(format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision));
                 }
             }
         }
@@ -97,19 +96,17 @@ public class HealthMapLocationConverter {
 
         HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountry());
         if (healthMapCountry.getCountry() == null) {
-            log.warn(format(IGNORING_COUNTRY_MESSAGE, healthMapLocation.getCountry()));
-        }
-        else {
+            LOGGER.warn(format(IGNORING_COUNTRY_MESSAGE, healthMapLocation.getCountry()));
+        } else {
             location.setCountry(healthMapCountry.getCountry());
             location.setGeom(point);
-            // TODO: See if the JSON parser can retrieve place_name into placeName (annotation?)
-            location.setName(healthMapLocation.getPlace_name());
+            location.setName(healthMapLocation.getPlaceName());
 
-            if (healthMapLocation.getGeonameid() != null) {
-                LocationPrecision precision = getGeoNamesLocationPrecision(healthMapLocation.getGeonameid());
+            if (healthMapLocation.getGeoNameId() != null) {
+                LocationPrecision precision = getGeoNamesLocationPrecision(healthMapLocation.getGeoNameId());
                 if (precision != null) {
                     // We obtained a feature code from GeoNames and mapped it to our location precision
-                    location.setGeoNamesId(healthMapLocation.getGeonameid());
+                    location.setGeoNamesId(healthMapLocation.getGeoNameId());
                     location.setPrecision(precision);
                 }
             }
@@ -135,7 +132,7 @@ public class HealthMapLocationConverter {
             if (precision == null) {
                 // We retrieved the GeoNames feature code from the web service, but the feature code is not in
                 // our mapping table. So assume that it's a precise location.
-                log.warn(format(GEONAMES_FCODE_NOT_IN_DATABASE, geoNamesId, geoName.getFcode()));
+                LOGGER.warn(format(GEONAMES_FCODE_NOT_IN_DATABASE, geoName.getFcode(), geoNamesId));
                 precision = LocationPrecision.PRECISE;
             }
         }
@@ -148,6 +145,6 @@ public class HealthMapLocationConverter {
     }
 
     private LocationPrecision findLocationPrecision(HealthMapLocation healthMapLocation) {
-        return LocationPrecision.findByHealthMapPlaceBasicType(healthMapLocation.getPlace_basic_type());
+        return LocationPrecision.findByHealthMapPlaceBasicType(healthMapLocation.getPlaceBasicType());
     }
 }

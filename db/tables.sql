@@ -14,6 +14,7 @@
 -- Expert: Represents a user of the PublicSite.
 -- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
 -- Feed: Represents a source of alerts.
+-- GeoNamesLocationPrecision: Represents a mapping between a GeoNames feature code and a location precision.
 -- HealthMapCountry: Represents a country as defined by HealthMap.
 -- HealthMapDisease: Represents a disease as defined by HealthMap.
 -- Location: Represents the location of a disease occurrence.

@@ -64,6 +64,7 @@ public class LocationServiceImpl implements LocationService {
      * Gets a list of locations that have the specified point and precision. This returns a list of locations as there
      * may be several at the same point with the same precision.
      * @param point The point.
+     * @param precision The precision.
      * @return The locations at this point. If none is found, the list is empty.
      */
     @Override
@@ -79,8 +80,8 @@ public class LocationServiceImpl implements LocationService {
     public Map<String, LocationPrecision> getGeoNamesLocationPrecisionMappings() {
         List<GeoNamesLocationPrecision> list = geoNamesLocationPrecisionDao.getAll();
         Map<String, LocationPrecision> map = new HashMap<>();
-        for(GeoNamesLocationPrecision item : list) {
-            map.put(item.getGeoNamesFeatureCode(), item.getPrecision());
+        for (GeoNamesLocationPrecision item : list) {
+            map.put(item.getGeoNamesFeatureCode(), item.getLocationPrecision());
         }
         return map;
     }

@@ -29,10 +29,10 @@ public enum LocationPrecision {
      */
     private String healthMapPlaceBasicType;
 
-    LocationPrecision() {
+    private LocationPrecision() {
     }
 
-    LocationPrecision(String healthMapPlaceBasicType) {
+    private LocationPrecision(String healthMapPlaceBasicType) {
         this.healthMapPlaceBasicType = healthMapPlaceBasicType;
     }
 
@@ -46,8 +46,9 @@ public enum LocationPrecision {
      * @return The first matching location precision, or null if not found.
      */
     public static LocationPrecision findByHealthMapPlaceBasicType(String healthMapPlaceBasicType) {
-        for(LocationPrecision precision : values()) {
-            if (precision.getHealthMapPlaceBasicType().equals(healthMapPlaceBasicType)) {
+        for (LocationPrecision precision : values()) {
+            String placeBasicType = precision.getHealthMapPlaceBasicType();
+            if (placeBasicType != null && placeBasicType.equals(healthMapPlaceBasicType)) {
                 return precision;
             }
         }
