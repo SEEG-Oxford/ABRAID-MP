@@ -24,11 +24,12 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
      * Creates a model run script file in the working directory for the given configuration.
      * @param runConfiguration The model run configuration.
      * @param workingDirectory The directory in which the script should be created.
+     * @param dryRun Indicates whether the full model should run.
      * @return The script file.
      * @throws IOException Thrown in response to issues creating the script file.
      */
     @Override
-    public File generateScript(RunConfiguration runConfiguration, File workingDirectory) throws IOException {
+    public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun) throws IOException {
         //Freemarker configuration object
         Configuration cfg = new Configuration();
 
@@ -38,7 +39,14 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
 
         // Build the data-model
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("message", "Hello, World!");
+        data.put("run", runConfiguration.getRunName());
+        data.put("dry_run", dryRun);
+        data.put("verbosity", 0);
+        data.put("disease", "P.vivax");
+        data.put("model_version", "bbc934aefeabbd5579f65973a5aa90e180145176");
+        data.put("outbreak_file", "outbreakData.csv");
+        data.put("extent_file", "extentData.csv");
+        data.put("covariants", new String[] { "file1.csv", "file2.csv" });
 
         // File output
         File scriptFile = Paths.get(workingDirectory.getAbsolutePath(), SCRIPT_FILE_NAME).toFile();

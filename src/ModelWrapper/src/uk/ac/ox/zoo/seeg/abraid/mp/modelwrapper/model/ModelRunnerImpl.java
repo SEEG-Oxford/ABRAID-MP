@@ -14,7 +14,7 @@ public class ModelRunnerImpl implements ModelRunner {
     private static final String SCRIPT_FILE_ID = "script_file";
 
     // The arguments to pass to R
-    private static final String[] R_OPTIONS = {"--no-save", "--quiet", "-f", "${" + SCRIPT_FILE_ID + "}"};
+    private static final String[] R_OPTIONS = {"--no-save", "--slave", "-f", "${" + SCRIPT_FILE_ID + "}"};
 
     private ProcessRunnerFactory processRunnerFactory;
     private WorkspaceProvisioner workspaceProvisioner;
