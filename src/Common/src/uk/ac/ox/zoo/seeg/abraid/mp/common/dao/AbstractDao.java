@@ -200,8 +200,8 @@ public abstract class AbstractDao<E, I extends Serializable> {
 
     private Query getParameterisedNamedQuery(String namedQuery, Object[] parameterNamesAndValues) {
         Query query = namedQuery(namedQuery);
-        for(int i = 0; i < parameterNamesAndValues.length; i += 2) {
-            query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i+1]);
+        for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
+            query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);
         }
         return query;
     }

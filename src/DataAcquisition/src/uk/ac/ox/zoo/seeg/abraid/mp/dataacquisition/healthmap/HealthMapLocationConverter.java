@@ -60,6 +60,29 @@ public class HealthMapLocationConverter {
         return location;
     }
 
+    /**
+     * Adds location precision to a location. This is split out from the rest of the convert method, so that
+     * we only call GeoNames if necessary.
+     * @param location The location.
+     * @param healthMapLocation The HealthMap location.
+     */
+    public void addPrecision(Location location, HealthMapLocation healthMapLocation) {
+        if (healthMapLocation.getGeoNameId() != null) {
+            LocationPrecision precision = getGeoNamesLocationPrecision(healthMapLocation.getGeoNameId());
+            if (precision != null) {
+                // We obtained a feature code from GeoNames and mapped it to our location precision
+                location.setGeoNamesId(healthMapLocation.getGeoNameId());
+                location.setPrecision(precision);
+            }
+        }
+
+        if (location.getGeoNamesId() == null) {
+            // Either the HealthMap location does not have a GeoNames ID, or the GeoNames web service couldn't
+            // find it. So use the "rough" location precision supplied in HealthMap's place_basic_type field.
+            location.setPrecision(findLocationPrecision(healthMapLocation));
+        }
+    }
+
     private boolean validate(HealthMapLocation healthMapLocation) {
         String validationMessage =
                 new HealthMapLocationValidator(healthMapLocation, lookupData.getCountryMap()).validate();
@@ -101,21 +124,6 @@ public class HealthMapLocationConverter {
             location.setCountry(healthMapCountry.getCountry());
             location.setGeom(point);
             location.setName(healthMapLocation.getPlaceName());
-
-            if (healthMapLocation.getGeoNameId() != null) {
-                LocationPrecision precision = getGeoNamesLocationPrecision(healthMapLocation.getGeoNameId());
-                if (precision != null) {
-                    // We obtained a feature code from GeoNames and mapped it to our location precision
-                    location.setGeoNamesId(healthMapLocation.getGeoNameId());
-                    location.setPrecision(precision);
-                }
-            }
-
-            if (location.getGeoNamesId() == null) {
-                // Either the HealthMap location does not have a GeoNames ID, or the GeoNames web service couldn't
-                // find it. So use the "rough" location precision supplied in HealthMap's place_basic_type field.
-                location.setPrecision(findLocationPrecision(healthMapLocation));
-            }
         }
 
         return location;

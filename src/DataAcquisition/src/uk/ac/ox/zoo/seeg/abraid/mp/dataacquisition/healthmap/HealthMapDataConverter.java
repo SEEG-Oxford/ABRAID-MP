@@ -47,11 +47,21 @@ public class HealthMapDataConverter {
 
         int diseaseOccurrencesCount = 0;
         for (HealthMapLocation healthMapLocation : healthMapLocations) {
+            // Convert the location
             Location location = locationConverter.convert(healthMapLocation);
+            boolean isNewLocation = true;
 
+            // Convert each alert
             for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
                 DiseaseOccurrence occurrence = diseaseOccurrenceConverter.convert(healthMapAlert, location);
                 if (occurrence != null) {
+                    if (isNewLocation) {
+                        // Add the location precision (using GeoNames) when we know that the location is definitely
+                        // going to be saved
+                        locationConverter.addPrecision(location, healthMapLocation);
+                        isNewLocation = false;
+                    }
+
                     diseaseService.saveDiseaseOccurrence(occurrence);
                     diseaseOccurrencesCount++;
                 }

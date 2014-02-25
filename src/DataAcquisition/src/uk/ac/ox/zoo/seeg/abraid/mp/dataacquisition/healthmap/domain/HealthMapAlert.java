@@ -91,7 +91,7 @@ public class HealthMapAlert {
         Long alertId = null;
         if (StringUtils.hasText(link)) {
             Matcher regExMatcher = ALERT_ID_REGEXP.matcher(link.trim());
-            while(regExMatcher.find() && regExMatcher.groupCount() == 1) {
+            while (regExMatcher.find() && regExMatcher.groupCount() == 1) {
                 alertId = Long.parseLong(regExMatcher.group(1));
             }
         }
