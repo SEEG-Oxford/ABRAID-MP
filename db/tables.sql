@@ -59,7 +59,8 @@ CREATE TABLE DiseaseOccurrenceReview (
 	Id serial NOT NULL,
 	ExpertId integer NOT NULL,
 	DiseaseOccurrenceId integer NOT NULL,
-	Response varchar(6) NOT NULL
+	Response varchar(6) NOT NULL,
+	CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE Expert (
