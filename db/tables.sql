@@ -111,7 +111,7 @@ CREATE TABLE Location (
     Admin1 varchar(50),
     Admin2 varchar(50),
     GeoNamesId integer,
-	ResolutionWeighting double precision,
+    ResolutionWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 

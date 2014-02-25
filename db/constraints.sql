@@ -112,7 +112,7 @@ ALTER TABLE DiseaseGroup ADD CONSTRAINT CK_DiseaseGroup_GroupType
     CHECK (GroupType IN ('CLUSTER', 'MICROCLUSTER', 'DISEASE'));
 	
 ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT CK_DiseaseOccurrenceReview_Response
-	CHECK (Response IN ('YES', 'NO', 'UNSURE'));
+    CHECK (Response IN ('YES', 'NO', 'UNSURE'));
 
 ALTER TABLE Location ADD CONSTRAINT CK_Location_Precision
     CHECK (Precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));
