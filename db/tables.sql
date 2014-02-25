@@ -55,6 +55,13 @@ CREATE TABLE DiseaseOccurrence (
     OccurrenceStartDate timestamp
 );
 
+CREATE TABLE DiseaseOccurrenceReview (
+	Id serial NOT NULL,
+	ExpertId integer NOT NULL,
+	DiseaseOccurrenceId integer NOT NULL,
+	Response varchar(3) NOT NULL
+);
+
 CREATE TABLE Expert (
     Id serial NOT NULL,
     Name varchar(1000) NOT NULL,
@@ -69,12 +76,6 @@ CREATE TABLE Expert (
 CREATE TABLE ExpertDiseaseGroup (
     ExpertId integer NOT NULL,
     DiseaseGroupId integer NOT NULL
-);
-
-CREATE TABLE ExpertReview (
-	ExpertId integer NOT NULL,
-	DiseaseOccurrenceId integer NOT NULL,
-	Response varchar(3) NOT NULL
 );
 
 CREATE TABLE Feed (

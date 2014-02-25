@@ -40,15 +40,15 @@ ALTER TABLE DiseaseGroup ADD CONSTRAINT PK_Disease
 
 ALTER TABLE DiseaseOccurrence ADD CONSTRAINT PK_DiseaseOutbreak
     PRIMARY KEY (Id);
+	
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT PK_DiseaseOccurrenceReview 
+	PRIMARY KEY (Id);
 
 ALTER TABLE Expert ADD CONSTRAINT PK_Expert
     PRIMARY KEY (Id);
 
 ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT PK_ExpertDiseaseGroup
     PRIMARY KEY (ExpertId, DiseaseGroupId);
-	
-ALTER TABLE ExpertReview ADD CONSTRAINT PK_ExpertReview 
-	PRIMARY KEY (ExpertId, DiseaseOccurrenceId);
 
 ALTER TABLE Feed ADD CONSTRAINT PK_Feed
     PRIMARY KEY (Id);
@@ -81,18 +81,18 @@ ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Disease
 
 ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Location
     FOREIGN KEY (LocationId) REFERENCES Location (Id);
+	
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT FK_DiseaseOccurrenceReview_DiseaseOccurrence 
+	FOREIGN KEY (DiseaseOccurrenceId) REFERENCES DiseaseOccurrence (Id);
+
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT FK_DiseaseOccurrenceReview_Expert 
+	FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
 
 ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_DiseaseGroup
     FOREIGN KEY (DiseaseGroupId) REFERENCES DiseaseGroup (Id);
 
 ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_Expert
     FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
-	
-ALTER TABLE ExpertReview ADD CONSTRAINT FK_ExpertReview_DiseaseOccurrence 
-	FOREIGN KEY (DiseaseOccurrenceId) REFERENCES DiseaseOccurrence (Id);
-
-ALTER TABLE ExpertReview ADD CONSTRAINT FK_ExpertReview_Expert 
-	FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
 
 ALTER TABLE Feed ADD CONSTRAINT FK_Feed_Provenance
     FOREIGN KEY (ProvenanceId) REFERENCES Provenance (Id);
@@ -110,9 +110,9 @@ ALTER TABLE Location ADD CONSTRAINT FK_Location_Country
 -- Check constraints
 ALTER TABLE DiseaseGroup ADD CONSTRAINT CK_DiseaseGroup_GroupType
     CHECK (GroupType IN ('CLUSTER', 'MICROCLUSTER', 'DISEASE'));
+	
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT CK_DiseaseOccurrenceReview_Response
+	CHECK (Response IN ('YES', 'NO', 'UNSURE'));
 
 ALTER TABLE Location ADD CONSTRAINT CK_Location_Precision
     CHECK (Precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));
-	
-ALTER TABLE ExpertReview ADD CONSTRAINT CK_ExpertReview_Response
-	CHECK (Response IN ('YES', 'NO', 'DK'));
