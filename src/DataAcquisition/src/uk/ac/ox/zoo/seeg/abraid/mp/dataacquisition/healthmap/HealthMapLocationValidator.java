@@ -6,8 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLoc
 
 import java.util.Map;
 
-import static java.lang.String.format;
-
 /**
  * Validates a HealthMapLocation.
  *
@@ -39,14 +37,14 @@ public class HealthMapLocationValidator {
 
     private String validateLatLongMissing() {
         if (location.getLat() == null || location.getLng() == null) {
-            return format(LAT_LONG_MISSING, location.getPlaceName());
+            return String.format(LAT_LONG_MISSING, location.getPlaceName());
         }
         return null;
     }
 
     private String validateCountryMissing() {
         if (!StringUtils.hasText(location.getCountry())) {
-            return format(COUNTRY_MISSING, location.getPlaceName());
+            return String.format(COUNTRY_MISSING, location.getPlaceName());
         }
         return null;
     }
@@ -54,7 +52,7 @@ public class HealthMapLocationValidator {
     private String validateCountryDoesNotExist() {
         HealthMapCountry healthMapCountry = countryMap.get(location.getCountry());
         if (healthMapCountry == null) {
-            return format(COUNTRY_DOES_NOT_EXIST, location.getCountry());
+            return String.format(COUNTRY_DOES_NOT_EXIST, location.getCountry());
         }
         return null;
     }

@@ -13,8 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLoc
 
 import java.util.List;
 
-import static java.lang.String.format;
-
 /**
  * Converts a HealthMap location into an ABRAID location.
  *
@@ -106,7 +104,7 @@ public class HealthMapLocationConverter {
             if (locations.size() > 0) {
                 location = locations.get(0);
                 if (locations.size() > 1) {
-                    LOGGER.warn(format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision));
+                    LOGGER.warn(String.format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision));
                 }
             }
         }
@@ -119,7 +117,7 @@ public class HealthMapLocationConverter {
 
         HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountry());
         if (healthMapCountry.getCountry() == null) {
-            LOGGER.warn(format(IGNORING_COUNTRY_MESSAGE, healthMapLocation.getCountry()));
+            LOGGER.warn(String.format(IGNORING_COUNTRY_MESSAGE, healthMapLocation.getCountry()));
         } else {
             location.setCountry(healthMapCountry.getCountry());
             location.setGeom(point);
@@ -140,7 +138,7 @@ public class HealthMapLocationConverter {
             if (precision == null) {
                 // We retrieved the GeoNames feature code from the web service, but the feature code is not in
                 // our mapping table. So assume that it's a precise location.
-                LOGGER.warn(format(GEONAMES_FCODE_NOT_IN_DATABASE, geoName.getFcode(), geoNamesId));
+                LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, geoName.getFcode(), geoNamesId));
                 precision = LocationPrecision.PRECISE;
             }
         }

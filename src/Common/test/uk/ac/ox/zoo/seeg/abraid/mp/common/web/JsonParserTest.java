@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 
 /**
  * Tests the JSON parser.
@@ -29,28 +31,30 @@ public class JsonParserTest {
         assertThat(person.getAge()).isEqualTo(46);
     }
 
-    @Test(expected = JsonParserException.class)
+    @Test
     public void parseInvalidDataType() {
         // Arrange
         String json = "{ \"name\": \"Boris Becker\", \"age\": \"Invalid\" }";
         JsonParser parser = new JsonParser();
 
         // Act
-        parser.parse(json, JsonParserTestPerson.class);
+        catchException(parser).parse(json, JsonParserTestPerson.class);
 
-        // Assert: see annotation for expected exception
+        // Assert
+        assertThat(caughtException()).isInstanceOf(JsonParserException.class);
     }
 
-    @Test(expected = JsonParserException.class)
+    @Test
     public void parseInvalidJsonFormat() {
         // Arrange
         String json = "{ \"name\" Boris Becker, \"age\" 46 }";
         JsonParser parser = new JsonParser();
 
         // Act
-        parser.parse(json, JsonParserTestPerson.class);
+        catchException(parser).parse(json, JsonParserTestPerson.class);
 
-        // Assert: see annotation for expected exception
+        // Assert
+        assertThat(caughtException()).isInstanceOf(JsonParserException.class);
     }
 
     @Test

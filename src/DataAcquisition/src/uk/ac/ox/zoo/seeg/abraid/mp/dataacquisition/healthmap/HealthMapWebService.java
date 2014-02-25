@@ -13,8 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.String.format;
-
 /**
  * A wrapper to call the HealthMap web service.
  *
@@ -90,7 +88,7 @@ public class HealthMapWebService {
 
         String url = buildUrl(formattedStartDate, formattedEndDate);
 
-        LOGGER.info(format(CALLING_WEB_SERVICE_MESSAGE, formattedStartDate, formattedEndDate));
+        LOGGER.info(String.format(CALLING_WEB_SERVICE_MESSAGE, formattedStartDate, formattedEndDate));
         String json = webServiceClient.request(url);
 
         return parseJson(json);

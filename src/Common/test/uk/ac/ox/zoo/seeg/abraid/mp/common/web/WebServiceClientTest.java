@@ -3,6 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 
 /**
  * Tests the WebServiceClient class.
@@ -10,37 +12,40 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class WebServiceClientTest {
-    @Test(expected=WebServiceClientException.class)
+    @Test
     public void getUnknownHost() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        client.request("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be");
+        catchException(client).request("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be");
 
-        // Assert: see annotation for expected exception
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
-    @Test(expected=WebServiceClientException.class)
+    @Test
     public void getMalformedURL() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        client.request("this is malformed");
+        catchException(client).request("this is malformed");
 
-        // Assert: see annotation for expected exception
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
-    @Test(expected=WebServiceClientException.class)
+    @Test
     public void getUnknownPage() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        client.request("http://www.google.co.uk/kjhdfgoiunewrpoimclsd");
+        catchException(client).request("http://www.google.co.uk/kjhdfgoiunewrpoimclsd");
 
         // Assert: see annotation for expected exception
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test

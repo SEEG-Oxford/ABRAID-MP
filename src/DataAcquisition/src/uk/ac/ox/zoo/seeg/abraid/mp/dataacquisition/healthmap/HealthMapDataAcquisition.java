@@ -13,8 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.String.format;
-
 /**
  * Acquires data from HealthMap.
  *
@@ -55,7 +53,7 @@ public class HealthMapDataAcquisition {
         try {
             return healthMapWebService.sendRequest(startDate, endDate);
         } catch (WebServiceClientException|JsonParserException e) {
-            LOGGER.error(format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
+            LOGGER.error(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
             return null;
         }
     }

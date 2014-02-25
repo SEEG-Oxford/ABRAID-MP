@@ -48,6 +48,7 @@
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
         <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
         <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
+        <dependency org="com.googlecode.catch-exception" name="catch-exception" rev="1.2.0" conf="test->default"/>
 
         <!-- Workaround: Excluded as these conflict with javax.persistence 2.1 which is required by Hibernate 4 -->
         <!-- These are transitive dependencies of org.springframework.spring-orm -->
