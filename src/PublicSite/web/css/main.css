@@ -15,7 +15,26 @@ html,body
 #map
 {
     height:100%;
+    width:85%;
+    float:left;
+}
+#sidePanel
+{
+    width:15%;
+    float:right;
+}
+#datapointInfo
+{
+    height:90%;
+    border:1px solid black;
+}
+#counter
+{
+    height:10%;
     width:100%;
+    position:absolute;
+    bottom:0px;
+    border:1px solid black;
 }
 #hello
 {
