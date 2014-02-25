@@ -29,7 +29,8 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
      * @throws IOException Thrown in response to issues creating the script file.
      */
     @Override
-    public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun) throws IOException {
+    public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun)
+            throws IOException {
         //Load template from source folder
         Template template = loadTemplate();
 
@@ -42,7 +43,8 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         return scriptFile;
     }
 
-    private static File applyTemplate(File workingDirectory, Template template, Map<String, Object> data) throws IOException {
+    private static File applyTemplate(File workingDirectory, Template template, Map<String, Object> data)
+            throws IOException {
         File scriptFile = Paths.get(workingDirectory.getAbsolutePath(), SCRIPT_FILE_NAME).toFile();
         Writer fileWriter = null;
         try {
@@ -76,7 +78,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("model_version", "bbc934aefeabbd5579f65973a5aa90e180145176");
         data.put("outbreak_file", "outbreakData.csv");
         data.put("extent_file", "extentData.csv");
-        data.put("covariants", new String[] { "file1.csv", "file2.csv" });
+        data.put("covariants", new String[] {"file1.csv", "file2.csv"});
         return data;
     }
 }
