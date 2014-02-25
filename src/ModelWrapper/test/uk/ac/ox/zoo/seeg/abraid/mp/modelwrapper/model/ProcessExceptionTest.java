@@ -10,7 +10,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class ProcessExceptionTest {
     @Test
-    public void processExceptionAssignsCauseCorrectly() {
+    public void processExceptionAssignsCauseCorrectly() throws Exception {
         // Arrange
         Throwable expectation = new Throwable();
 

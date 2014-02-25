@@ -13,6 +13,7 @@
 -- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- Expert: Represents a user of the PublicSite.
 -- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
+-- ExpertReview: Represents an expert's response on the validity of a disease occurrence point.
 -- Feed: Represents a source of alerts.
 -- GeoNamesLocationPrecision: Represents a mapping between a GeoNames feature code and a location precision.
 -- HealthMapCountry: Represents a country as defined by HealthMap.
@@ -51,7 +52,16 @@ CREATE TABLE DiseaseOccurrence (
     LocationId integer NOT NULL,
     AlertId integer NOT NULL,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    ValidationWeighting double precision,
     OccurrenceStartDate timestamp
+);
+
+CREATE TABLE DiseaseOccurrenceReview (
+    Id serial NOT NULL,
+    ExpertId integer NOT NULL,
+    DiseaseOccurrenceId integer NOT NULL,
+    Response varchar(6) NOT NULL,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE Expert (
@@ -74,7 +84,7 @@ CREATE TABLE Feed (
     Id serial NOT NULL,
     ProvenanceId integer NOT NULL,
     Name varchar(100) NOT NULL,
-    Weight double precision NOT NULL,
+    Weighting double precision NOT NULL,
     HealthMapFeedId bigint,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
@@ -104,13 +114,14 @@ CREATE TABLE Location (
     Precision varchar(10) NOT NULL,
     CountryId integer NOT NULL,
     GeoNamesId integer,
+    ResolutionWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE Provenance (
     Id serial NOT NULL,
     Name varchar(100) NOT NULL,
-    DefaultFeedWeight double precision,
+    DefaultFeedWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     LastRetrievedDate timestamp
 );

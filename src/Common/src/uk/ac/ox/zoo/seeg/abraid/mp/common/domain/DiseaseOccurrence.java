@@ -41,6 +41,9 @@ public class DiseaseOccurrence {
     @Column(insertable = false, updatable = false)
     private Date createdDate;
 
+    // The weighting as calculated from experts' responses.
+    private Double validationWeighting;
+
     // The start date of the disease occurrence (if known).
     @Column
     private Date occurrenceStartDate;
@@ -80,6 +83,14 @@ public class DiseaseOccurrence {
         return createdDate;
     }
 
+    public Double getValidationWeighting() {
+        return validationWeighting;
+    }
+
+    public void setValidationWeighting(Double validationWeighting) {
+        this.validationWeighting = validationWeighting;
+    }
+
     public Date getOccurrenceStartDate() {
         return occurrenceStartDate;
     }
@@ -98,6 +109,8 @@ public class DiseaseOccurrence {
 
         if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
+            return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
@@ -114,6 +127,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (location != null ? location.hashCode() : 0);
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        result = 31 * result + (validationWeighting != null ? validationWeighting.hashCode() : 0);
         result = 31 * result + (occurrenceStartDate != null ? occurrenceStartDate.hashCode() : 0);
         return result;
     }

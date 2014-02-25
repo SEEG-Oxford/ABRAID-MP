@@ -27,12 +27,12 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
     public void saveAndReloadFeed() {
         // Arrange
         String feedName = "Test feed";
-        double feedWeight = 0.3;
+        double feedWeighting = 0.3;
 
         Provenance provenance = provenanceDao.getByName(ProvenanceNames.HEALTHMAP);
         Feed feed = new Feed();
         feed.setProvenance(provenance);
-        feed.setWeight(feedWeight);
+        feed.setWeighting(feedWeighting);
         feed.setName(feedName);
 
         // Act
@@ -46,7 +46,7 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
         assertThat(feed.getName()).isEqualTo(feedName);
         assertThat(feed.getProvenance()).isEqualTo(provenance);
         assertThat(feed.getCreatedDate()).isNotNull();
-        assertThat(feed.getWeight()).isEqualTo(feedWeight);
+        assertThat(feed.getWeighting()).isEqualTo(feedWeighting);
     }
 
     @Test

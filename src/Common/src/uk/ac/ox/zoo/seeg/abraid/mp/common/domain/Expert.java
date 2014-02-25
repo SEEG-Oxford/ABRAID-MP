@@ -42,16 +42,16 @@ public class Expert {
     @Column
     private Boolean isPubliclyVisible;
 
+    // The database row creation date.
+    @Column(insertable = false, updatable = false)
+    private Date createdDate;
+
     // List of disease groups an expert has interest in and can validate.
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ExpertDiseaseGroup",
             joinColumns = { @JoinColumn(name = "ExpertId") },
             inverseJoinColumns = { @JoinColumn(name = "DiseaseGroupId") })
     private Set<DiseaseGroup> diseaseGroups;
-
-    // The database row creation date.
-    @Column(insertable = false, updatable = false)
-    private Date createdDate;
 
     public Integer getId() {
         return id;
@@ -109,8 +109,8 @@ public class Expert {
         return createdDate;
     }
 
-    @Override
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -118,12 +118,13 @@ public class Expert {
         Expert expert = (Expert) o;
 
         if (isAdministrator != expert.isAdministrator) return false;
-        if (isPubliclyVisible != expert.isPubliclyVisible) return false;
         if (createdDate != null ? !createdDate.equals(expert.createdDate) : expert.createdDate != null) return false;
         if (diseaseGroups != null ? !diseaseGroups.equals(expert.diseaseGroups) : expert.diseaseGroups != null)
             return false;
         if (email != null ? !email.equals(expert.email) : expert.email != null) return false;
         if (id != null ? !id.equals(expert.id) : expert.id != null) return false;
+        if (isPubliclyVisible != null ? !isPubliclyVisible.equals(expert.isPubliclyVisible) : expert.isPubliclyVisible != null)
+            return false;
         if (name != null ? !name.equals(expert.name) : expert.name != null) return false;
         if (password != null ? !password.equals(expert.password) : expert.password != null) return false;
 
@@ -137,9 +138,9 @@ public class Expert {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (isAdministrator ? 1 : 0);
-        result = 31 * result + (isPubliclyVisible ? 1 : 0);
-        result = 31 * result + (diseaseGroups != null ? diseaseGroups.hashCode() : 0);
+        result = 31 * result + (isPubliclyVisible != null ? isPubliclyVisible.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        result = 31 * result + (diseaseGroups != null ? diseaseGroups.hashCode() : 0);
         return result;
     }
     // CHECKSTYLE.ON

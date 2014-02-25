@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -14,7 +15,7 @@ public class ModelRunnerImpl implements ModelRunner {
     private static final String SCRIPT_FILE_ID = "script_file";
 
     // The arguments to pass to R
-    private static final String[] R_OPTIONS = {"--no-save", "--quiet", "-f", "${" + SCRIPT_FILE_ID + "}"};
+    private static final String[] R_OPTIONS = {"--no-save", "--slave", "-f", "${" + SCRIPT_FILE_ID + "}"};
 
     private ProcessRunnerFactory processRunnerFactory;
     private WorkspaceProvisioner workspaceProvisioner;
@@ -29,9 +30,10 @@ public class ModelRunnerImpl implements ModelRunner {
      * @param configuration The model run configuration.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
+     * @throws IOException Thrown if the workspace can not be correctly provisioned.
      */
     @Override
-    public ModelProcessHandler runModel(RunConfiguration configuration) throws ProcessException {
+    public ModelProcessHandler runModel(RunConfiguration configuration) throws ProcessException, IOException {
         // Provision workspace
         File scriptFile = workspaceProvisioner.provisionWorkspace(configuration);
 

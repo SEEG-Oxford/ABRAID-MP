@@ -14,7 +14,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class CommonsExecProcessRunnerFactoryTest {
     @Test
-    public void createProcessRunnerCreatesCorrectProcessRunnerImplementation() {
+    public void createProcessRunnerCreatesCorrectProcessRunnerImplementation() throws Exception {
         // Arrange
         ProcessRunnerFactory target = new CommonsExecProcessRunnerFactory();
 
@@ -26,7 +26,7 @@ public class CommonsExecProcessRunnerFactoryTest {
     }
 
     @Test
-    public void createProcessRunnerCreatesNewInstance() {
+    public void createProcessRunnerCreatesNewInstance() throws Exception {
         // Arrange
         ProcessRunnerFactory target = new CommonsExecProcessRunnerFactory();
 

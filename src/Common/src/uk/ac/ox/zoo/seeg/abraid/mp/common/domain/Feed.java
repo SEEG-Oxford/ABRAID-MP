@@ -30,8 +30,8 @@ public class Feed {
     @JoinColumn(name = "provenanceId")
     private Provenance provenance;
 
-    // The weight given to this feed.
-    private double weight;
+    // The weighting given to this feed.
+    private double weighting;
 
     // The feed ID used for this provenance in HealthMap.
     @Column
@@ -44,10 +44,10 @@ public class Feed {
     public Feed() {
     }
 
-    public Feed(String name, Provenance provenance, double weight) {
+    public Feed(String name, Provenance provenance, double weighting) {
         this.name = name;
         this.provenance = provenance;
-        this.weight = weight;
+        this.weighting = weighting;
     }
 
     public Integer getId() {
@@ -70,12 +70,12 @@ public class Feed {
         this.provenance = provenance;
     }
 
-    public double getWeight() {
-        return weight;
+    public double getWeighting() {
+        return weighting;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setWeighting(double weighting) {
+        this.weighting = weighting;
     }
 
     public Long getHealthMapFeedId() {
@@ -98,7 +98,7 @@ public class Feed {
 
         Feed feed = (Feed) o;
 
-        if (Double.compare(feed.weight, weight) != 0) return false;
+        if (Double.compare(feed.weighting, weighting) != 0) return false;
         if (createdDate != null ? !createdDate.equals(feed.createdDate) : feed.createdDate != null) return false;
         if (healthMapFeedId != null ? !healthMapFeedId.equals(feed.healthMapFeedId) : feed.healthMapFeedId != null)
             return false;
@@ -116,7 +116,7 @@ public class Feed {
         result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (provenance != null ? provenance.hashCode() : 0);
-        temp = Double.doubleToLongBits(weight);
+        temp = Double.doubleToLongBits(weighting);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (healthMapFeedId != null ? healthMapFeedId.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
