@@ -7,6 +7,8 @@ import java.util.Date;
 
 /**
  * Represents a disease as defined by HealthMap.
+ *
+ * Copyright (c) 2014 University of Oxford
  */
 @Entity
 public class HealthMapDisease {
