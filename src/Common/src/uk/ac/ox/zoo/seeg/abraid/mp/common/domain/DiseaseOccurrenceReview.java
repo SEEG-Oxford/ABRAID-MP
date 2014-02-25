@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Represents an expert's response to the validity of a disease occurrence point.
@@ -11,12 +12,7 @@ import javax.persistence.*;
 @NamedQueries({
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewsByExpertId",
-        query = "from DiseaseOccurrenceReview where expert.Id=:expertId"
-    ),
-    @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertIdAndDiseaseOccurrenceId",
-        query = "from DiseaseOccurrenceReview where expert.Id=:expertId"
-              + "and diseaseOccurrence.diseaseGroup.Id=:diseaseGroupId"
+        query = "from DiseaseOccurrenceReview where expert.id=:expertId"
     )
 })
 public class DiseaseOccurrenceReview {
@@ -39,4 +35,44 @@ public class DiseaseOccurrenceReview {
     @Column
     @Enumerated(EnumType.STRING)
     private DiseaseOccurrenceReviewResponse response;
+
+    // The database row creation date.
+    @Column(insertable = false, updatable = false)
+    private Date createdDate;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Expert getExpert() {
+        return expert;
+    }
+
+    public void setExpert(Expert expert) {
+        this.expert = expert;
+    }
+
+    public DiseaseOccurrence getDiseaseOccurrence() {
+        return diseaseOccurrence;
+    }
+
+    public DiseaseOccurrenceReviewResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(DiseaseOccurrenceReviewResponse response) {
+        this.response = response;
+    }
+
+    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
+        this.diseaseOccurrence = diseaseOccurrence;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 }
