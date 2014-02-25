@@ -1,56 +1,51 @@
-1	\N	Robovirus	CLUSTER
-2	\N	Platyhelminthes_cesto	CLUSTER
-3	\N	Nematode_vector/water	CLUSTER
-4	\N	Arbovirus	CLUSTER
-5	\N	HIV	CLUSTER
+1	\N	Arbovirus	CLUSTER
+2	\N	Bacteria_food/water-borne	CLUSTER
+3	\N	HIV	CLUSTER
+4	\N	Nematode_food/soil	CLUSTER
+5	\N	Nematode_vector/water	CLUSTER
 6	\N	Parasite_vector-borne	CLUSTER
-7	\N	Rickettsiales	CLUSTER
-8	\N	Platyhelminthes_trema	CLUSTER
-9	1	Arenaviridae	MICROCLUSTER
-10	1	Bunyaviridae	MICROCLUSTER
-11	2	Cestodes	MICROCLUSTER
-12	3	Filariasis	MICROCLUSTER
-13	4	Flaviviridae_tick	MICROCLUSTER
-14	5	HIV	MICROCLUSTER
-15	6	Leishmaniasis	MICROCLUSTER
-16	6	Malaria	MICROCLUSTER
-17	7	Other spotted fever group rickettsioses	MICROCLUSTER
-18	7	Tick-borne spotted fever group rickettsioses	MICROCLUSTER
-19	8	Trematode_water	MICROCLUSTER
-20	7	Typhus group	MICROCLUSTER
-21	9	Argentine hemorrhagic fever (Junin virus)	DISEASE
-22	9	Bolivian hemorrhagic fever (Machupo virus)	DISEASE
-23	9	Brazilian hemorrhagic fever (Sabia virus)	DISEASE
-24	9	Venezuelen hemorrhagic fever	DISEASE
-25	9	Whitewater Arroyo virus infection	DISEASE
-26	10	Hantavirus infection - Old World	DISEASE
-27	10	Hantavirus pulmonary syndrome	DISEASE
-28	11	Echinococcosis - American polycystic	DISEASE
-29	11	Echinococcosis - multilocular	DISEASE
-30	11	Echinococcosis - unilocular	DISEASE
-31	12	Filariasis - Bancroftian	DISEASE
-32	12	Filariasis - Brugia malayi	DISEASE
-33	12	Filariasis - Brugia timori	DISEASE
-34	13	Tick-borne encephalitis	DISEASE
-35	13	Tick-borne encephalitis: Russian spring-summer	DISEASE
-36	14	HIV infection - initial illness (part)	DISEASE
-37	14	HIV infection (part)	DISEASE
-38	15	Leishmaniasis - cutaneous/mucosal, New World	DISEASE
-39	15	Leishmaniasis - cutaneous/mucosal, Old World	DISEASE
-40	15	Leishmaniasis - visceral	DISEASE
-41	16	P. knowlesi	DISEASE
-42	16	P. malariae	DISEASE
-43	16	P. ovale	DISEASE
-44	16	P. vivax	DISEASE
-45	16	P. falciparum	DISEASE
-46	17	Rickettsia felis infection	DISEASE
-47	17	Rickettsialpox	DISEASE
-48	18	Rickettsia sibirica mongolotimonae infection	DISEASE
-49	19	Schistosomiasis - haematobium	DISEASE
-50	19	Schistosomiasis - intercalatum	DISEASE
-51	19	Schistosomiasis - japonicum	DISEASE
-52	19	Schistosomiasis - mansoni	DISEASE
-53	19	Schistosomiasis - mattheei	DISEASE
-54	19	Schistosomiasis - mekongi	DISEASE
-55	20	Typhus - epidemic	DISEASE
-56	20	Typhus - scrub (mite-borne)	DISEASE
+7	\N	Platyhelminthes_trema	CLUSTER
+8	\N	Virus_faecal-oral	CLUSTER
+9	2	Bacteria_food/water-borne	MICROCLUSTER
+10	5	Filariasis	MICROCLUSTER
+11	1	Flaviviridae_mosquito	MICROCLUSTER
+12	3	HIV	MICROCLUSTER
+13	6	Leishmaniasis	MICROCLUSTER
+14	6	Malaria	MICROCLUSTER
+15	5	Nematode_fly	MICROCLUSTER
+16	5	Nematode_water	MICROCLUSTER
+17	8	Picornaviridae	MICROCLUSTER
+18	4	Soil-transmitted helminths	MICROCLUSTER
+19	7	Trematode_water	MICROCLUSTER
+20	6	Trypanosomiasis	MICROCLUSTER
+21	11	Dengue	DISEASE
+22	11	Japanese encephalitis	DISEASE
+23	11	Murray Valley encephalitis	DISEASE
+24	11	St. Louis encephalitis	DISEASE
+25	11	West Nile fever	DISEASE
+26	11	Yellow fever	DISEASE
+27	11	Zika	DISEASE
+28	9	Cholera	DISEASE
+29	12	HIV infection	DISEASE
+30	18	Ascariasis	DISEASE
+31	18	Hookworm	DISEASE
+32	18	Trichuriasis	DISEASE
+33	16	Dracunculiasis (Guinea worm)	DISEASE
+34	15	Onchocerciasis	DISEASE
+35	10	Filariasis - Bancroftian	DISEASE
+36	10	Filariasis - Brugia malayi	DISEASE
+37	10	Filariasis - Brugia timori	DISEASE
+38	20	Trypanosomiasis - African	DISEASE
+39	20	Trypanosomiasis - American	DISEASE
+40	13	Leishmaniasis - cutaneous/mucosal, New World	DISEASE
+41	13	Leishmaniasis - cutaneous/mucosal, Old World	DISEASE
+42	13	Leishmaniasis - visceral	DISEASE
+43	14	Plasmodium knowlesi	DISEASE
+44	14	Plasmodium malariae	DISEASE
+45	14	Plasmodium ovale	DISEASE
+46	14	Plasmodium vivax	DISEASE
+47	14	Plasmodium falciparum	DISEASE
+48	19	Schistosomiasis - haematobium	DISEASE
+49	19	Schistosomiasis - japonicum	DISEASE
+50	19	Schistosomiasis - mansoni	DISEASE
+51	17	Poliomyelitis	DISEASE

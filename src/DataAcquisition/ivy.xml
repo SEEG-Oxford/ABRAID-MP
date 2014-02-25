@@ -1,7 +1,7 @@
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="dataacquisition"/>
     <configurations>
-        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
+        <conf name="external" description="external build dependencies (these are separated from internal ones, for better IntelliJ support)"/>
         <conf name="build" extends="external" description="all build dependencies"/>
         <conf name="test" visibility="private" description="unit testing dependencies"/>
         <conf name="analysis" visibility="private" description="code analysis dependencies"/>
@@ -11,10 +11,20 @@
     </publications>
     <dependencies>
         <!-- External -->
-        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" />
-        <dependency org="org.springframework" name="spring-core" rev="3.2.5.RELEASE" conf="external->default" />
-        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
+        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default">
+            <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
+            <exclude org="org.apache.openejb" name="javaee-api"/>
+        </dependency>
+        <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default"/>
 
+        <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
+        <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.6" conf="external->default"/>
+        <dependency org="org.glassfish.jersey.media" name="jersey-media-json-jackson" rev="2.6" conf="external->default"/>
+
+        <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
+        
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
 
@@ -22,8 +32,8 @@
         <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
         <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
         <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
-
-        <!-- Analysis -->
+        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
+        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
 
         <exclude type="source" ext="*" conf="*" />
         <exclude type="javadoc" ext="*" conf="*" />

@@ -134,8 +134,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.PRECISE);
-        location.setAdmin1(admin1);
-        location.setAdmin2(admin2);
         location.setCountry(country);
         locationDao.save(location);
 

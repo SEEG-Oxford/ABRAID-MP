@@ -7,7 +7,7 @@
 
 -- Unique constraints
 ALTER TABLE Alert
-	ADD CONSTRAINT UQ_Alert_HealthMapAlertId UNIQUE (HealthMapAlertId);
+    ADD CONSTRAINT UQ_Alert_HealthMapAlertId UNIQUE (HealthMapAlertId);
 
 ALTER TABLE DiseaseGroup
     ADD CONSTRAINT UQ_DiseaseGroup_Name_GroupType UNIQUE (Name, GroupType);
@@ -22,12 +22,12 @@ ALTER TABLE HealthMapDisease
     ADD CONSTRAINT UQ_HealthMapDisease_Name UNIQUE (Name);
 
 ALTER TABLE Location
-	ADD CONSTRAINT UQ_Location_GeoNamesId UNIQUE (GeoNamesId);
-    
+    ADD CONSTRAINT UQ_Location_GeoNamesId UNIQUE (GeoNamesId);
+
 ALTER TABLE Provenance
     ADD CONSTRAINT UQ_Provenance_Name UNIQUE (Name);
-    
-   
+
+
 -- Primary keys
 ALTER TABLE Alert ADD CONSTRAINT PK_Alert
     PRIMARY KEY (Id);
@@ -52,7 +52,10 @@ ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT PK_ExpertDiseaseGroup
 
 ALTER TABLE Feed ADD CONSTRAINT PK_Feed
     PRIMARY KEY (Id);
-	
+
+ALTER TABLE GeoNamesLocationPrecision ADD CONSTRAINT PK_GeoNamesLocationPrecision
+    PRIMARY KEY (GeoNamesFeatureCode);
+
 ALTER TABLE HealthMapCountry ADD CONSTRAINT PK_HealthMapCountry
     PRIMARY KEY (Id);
 
@@ -106,7 +109,7 @@ ALTER TABLE HealthMapDisease ADD CONSTRAINT FK_HealthMapDisease_DiseaseGroup
 ALTER TABLE Location ADD CONSTRAINT FK_Location_Country
     FOREIGN KEY (CountryId) REFERENCES Country (Id);
 
-    
+
 -- Check constraints
 ALTER TABLE DiseaseGroup ADD CONSTRAINT CK_DiseaseGroup_GroupType
     CHECK (GroupType IN ('CLUSTER', 'MICROCLUSTER', 'DISEASE'));

@@ -9,4 +9,6 @@
     <import resource="beans-database.xml"/>
     <import resource="beans-service.xml"/>
 
+    <bean id="webServiceClient" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient" autowire="constructor"/>
+
 </beans>

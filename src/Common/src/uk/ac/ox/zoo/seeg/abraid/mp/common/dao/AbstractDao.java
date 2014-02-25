@@ -107,16 +107,15 @@ public abstract class AbstractDao<E, I extends Serializable> {
      * Convenience method to return a single instance that matches the named query with 1 parameter,
      * or null if the query returns no results.
      * @param namedQuery the named query to run
-     * @param parameterName the name of the only parameter in the query
-     * @param parameterValue the value of the only parameter in the query
+     * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
      * @return the single result or {@code null}
      * @throws HibernateException if there is more than one matching result
      */
     @SuppressWarnings("unchecked")
-    protected final E uniqueResultNamedQuery(String namedQuery, String parameterName, Object parameterValue)
+    protected final E uniqueResultNamedQuery(String namedQuery, Object... parameterNamesAndValues)
             throws HibernateException {
-        Query query = namedQuery(namedQuery);
-        query.setParameter(parameterName, parameterValue);
+        Query query = getParameterisedNamedQuery(namedQuery, parameterNamesAndValues);
         return uniqueResult(query);
     }
 
@@ -148,16 +147,15 @@ public abstract class AbstractDao<E, I extends Serializable> {
     /**
      * Get the results of a named query with 1 parameter.
      * @param namedQuery the named query to run
-     * @param parameterName the name of the only parameter in the query
-     * @param parameterValue the value of the only parameter in the query
+     * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
      * @return the list of matched query results
      * @throws HibernateException Indicates a problem executing the SQL or processing the SQL results.
      */
     @SuppressWarnings("unchecked")
-    protected final List<E> listNamedQuery(String namedQuery, String parameterName, Object parameterValue)
+    protected final List<E> listNamedQuery(String namedQuery, Object... parameterNamesAndValues)
             throws HibernateException {
-        Query query = namedQuery(namedQuery);
-        query.setParameter(parameterName, parameterValue);
+        Query query = getParameterisedNamedQuery(namedQuery, parameterNamesAndValues);
         return list(query);
     }
 
@@ -198,5 +196,13 @@ public abstract class AbstractDao<E, I extends Serializable> {
      */
     public final void save(E entity) throws HibernateException {
         currentSession().save(entity);
+    }
+
+    private Query getParameterisedNamedQuery(String namedQuery, Object[] parameterNamesAndValues) {
+        Query query = namedQuery(namedQuery);
+        for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
+            query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);
+        }
+        return query;
     }
 }

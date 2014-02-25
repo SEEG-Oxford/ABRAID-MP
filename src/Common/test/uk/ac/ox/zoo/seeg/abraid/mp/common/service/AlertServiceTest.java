@@ -6,7 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceName;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,7 @@ public class AlertServiceTest extends AbstractSpringUnitTests {
     public void getFeedsByProvenanceName() {
         // Arrange
         List<Feed> feeds = Arrays.asList(new Feed());
-        ProvenanceName provenanceName = ProvenanceName.HEALTHMAP;
+        String provenanceName = ProvenanceNames.HEALTHMAP;
         when(feedDao.getByProvenanceName(provenanceName)).thenReturn(feeds);
 
         // Act
@@ -63,5 +63,10 @@ public class AlertServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testProvenance).isSameAs(provenance);
+    }
+
+    @Test
+    public void saveProvenance() {
+        // TODO
     }
 }

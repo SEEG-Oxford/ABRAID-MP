@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
 import java.util.List;
 
@@ -31,9 +32,10 @@ public class LocationDaoImpl extends AbstractDao<Location, Integer> implements L
      * Gets locations by point. This returns a list of locations as there may be several at the same point (e.g. a
      * precise location, a centroid of a country).
      * @param point The point.
+     * @param precision The precision.
      * @return The locations at this point. If none is found, the list is empty.
      */
-    public List<Location> getByPoint(Point point) {
-        return listNamedQuery("getLocationsByPoint", "point", point);
+    public List<Location> getByPointAndPrecision(Point point, LocationPrecision precision) {
+        return listNamedQuery("getLocationsByPointAndPrecision", "point", point, "precision", precision);
     }
 }

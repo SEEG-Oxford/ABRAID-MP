@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceName;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public interface FeedDao {
      * @param provenanceName The provenance name.
      * @return A list of feeds whose provenance has the given name.
      */
-    List<Feed> getByProvenanceName(ProvenanceName provenanceName);
+    List<Feed> getByProvenanceName(String provenanceName);
 
     /**
      * Saves a feed.

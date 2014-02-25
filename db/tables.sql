@@ -15,6 +15,7 @@
 -- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
 -- ExpertReview: Represents an expert's response on the validity of a disease occurrence point.
 -- Feed: Represents a source of alerts.
+-- GeoNamesLocationPrecision: Represents a mapping between a GeoNames feature code and a location precision.
 -- HealthMapCountry: Represents a country as defined by HealthMap.
 -- HealthMapDisease: Represents a disease as defined by HealthMap.
 -- Location: Represents the location of a disease occurrence.
@@ -56,11 +57,11 @@ CREATE TABLE DiseaseOccurrence (
 );
 
 CREATE TABLE DiseaseOccurrenceReview (
-	Id serial NOT NULL,
-	ExpertId integer NOT NULL,
-	DiseaseOccurrenceId integer NOT NULL,
-	Response varchar(6) NOT NULL,
-	CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    Id serial NOT NULL,
+    ExpertId integer NOT NULL,
+    DiseaseOccurrenceId integer NOT NULL,
+    Response varchar(6) NOT NULL,
+    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE Expert (
@@ -88,6 +89,11 @@ CREATE TABLE Feed (
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
+CREATE TABLE GeoNamesLocationPrecision ( 
+    GeoNamesFeatureCode varchar(50) NOT NULL,
+    LocationPrecision varchar(50) NOT NULL
+);
+
 CREATE TABLE HealthMapCountry (
     Id bigint NOT NULL,
     Name varchar(100) NOT NULL,
@@ -97,7 +103,6 @@ CREATE TABLE HealthMapCountry (
 CREATE TABLE HealthMapDisease (
     Id bigint NOT NULL,
     Name varchar(100) NOT NULL,
-    IsOfInterest boolean NOT NULL,
     DiseaseGroupId integer,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
@@ -108,8 +113,6 @@ CREATE TABLE Location (
     Geom geometry NOT NULL,
     Precision varchar(10) NOT NULL,
     CountryId integer NOT NULL,
-    Admin1 varchar(50),
-    Admin2 varchar(50),
     GeoNamesId integer,
     ResolutionWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
