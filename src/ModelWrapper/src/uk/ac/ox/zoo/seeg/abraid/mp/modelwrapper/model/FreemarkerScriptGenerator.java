@@ -30,25 +30,19 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
      */
     @Override
     public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun) throws IOException {
-        //Freemarker configuration object
-        Configuration cfg = new Configuration();
-
         //Load template from source folder
-        cfg.setClassForTemplateLoading(this.getClass(), "");
-        Template template = cfg.getTemplate(TEMPLATE_FILE_NAME);
+        Template template = loadTemplate();
 
         // Build the data-model
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("run", runConfiguration.getRunName());
-        data.put("dry_run", dryRun);
-        data.put("verbosity", 0);
-        data.put("disease", "P.vivax");
-        data.put("model_version", "bbc934aefeabbd5579f65973a5aa90e180145176");
-        data.put("outbreak_file", "outbreakData.csv");
-        data.put("extent_file", "extentData.csv");
-        data.put("covariants", new String[] { "file1.csv", "file2.csv" });
+        Map<String, Object> data = buildDataModel(runConfiguration, dryRun);
 
         // File output
+        File scriptFile = applyTemplate(workingDirectory, template, data);
+
+        return scriptFile;
+    }
+
+    private static File applyTemplate(File workingDirectory, Template template, Map<String, Object> data) throws IOException {
         File scriptFile = Paths.get(workingDirectory.getAbsolutePath(), SCRIPT_FILE_NAME).toFile();
         Writer fileWriter = null;
         try {
@@ -62,7 +56,27 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
                 fileWriter.close();
             }
         }
-
         return scriptFile;
+    }
+
+    private Template loadTemplate() throws IOException {
+        //Freemarker configuration object
+        Configuration config = new Configuration();
+
+        config.setClassForTemplateLoading(this.getClass(), "");
+        return config.getTemplate(TEMPLATE_FILE_NAME);
+    }
+
+    private static Map<String, Object> buildDataModel(RunConfiguration runConfiguration, boolean dryRun) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("run", runConfiguration.getRunName());
+        data.put("dry_run", dryRun);
+        data.put("verbosity", 0);
+        data.put("disease", "P.vivax");
+        data.put("model_version", "bbc934aefeabbd5579f65973a5aa90e180145176");
+        data.put("outbreak_file", "outbreakData.csv");
+        data.put("extent_file", "extentData.csv");
+        data.put("covariants", new String[] { "file1.csv", "file2.csv" });
+        return data;
     }
 }
