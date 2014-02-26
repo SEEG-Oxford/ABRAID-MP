@@ -5,9 +5,8 @@ jdk:
 services: postgresql
 before_script:
   - sudo apt-get update
-  - sudo apt-get install ivy findbugs checkstyle
+  - sudo apt-get install ivy checkstyle
   - export CHECKSTYLE_HOME="/usr/share/java"
-  - export FINDBUGS_HOME="/usr/share/findbugs"
 #Probably need to mess around with user/pass
 #Probably need findbugs/ivy/checkstyles
 script: ant full

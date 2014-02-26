@@ -170,7 +170,7 @@
   </target>
 
   <!-- Analysis targets -->
-  <property name="findbugs.home" value="${env.FINDBUGS_HOME}"/>
+  <!--property name="findbugs.home" value="${env.FINDBUGS_HOME}"/>
   <path id="findbugs.path">
     <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
   </path>
@@ -183,7 +183,7 @@
           <sourcePath path="${src.dir}"/>
           <class location="${module.out.dir}"/>
       </findbugs>
-  </target>
+  </target-->
 
   <property name="checkstyle.home" value="${env.CHECKSTYLE_HOME}"/>
   <path id="checkstyle.path">
@@ -200,7 +200,7 @@
     </checkstyle>
   </target>
 
-  <target name="check.quality" depends="check.style, check.bugs"/>
+  <target name="check.quality" depends="check.style"/>
 
   <!-- Documentation targets -->
   <target name="generate.docs" depends="compile.production" description="Create the javadoc files">
