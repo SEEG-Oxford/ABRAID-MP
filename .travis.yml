@@ -1,0 +1,8 @@
+language: java
+jdk:
+  - openjdk7
+  - oraclejdk7
+services: postgresql
+#Probably need to mess around with user/pass
+#Probably need findbugs/ivy/checkstyles
+script: ant full
