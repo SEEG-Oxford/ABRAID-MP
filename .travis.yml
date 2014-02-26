@@ -3,10 +3,12 @@ jdk:
   - openjdk7
   - oraclejdk7
 services: postgresql
+cache:
+  apt: true
+  directories:
+  - .ant/lib
+  - .ivy2/cache
 before_script:
   - sudo apt-get update
-  - sudo apt-get install ivy checkstyle r-base
-  - export CHECKSTYLE_HOME="/usr/share/java"
-#Probably need to mess around with user/pass
-#Probably need findbugs/ivy/checkstyles
-script: ant full -lib /usr/share/java
+  - sudo apt-get install r-base
+script: ant full
