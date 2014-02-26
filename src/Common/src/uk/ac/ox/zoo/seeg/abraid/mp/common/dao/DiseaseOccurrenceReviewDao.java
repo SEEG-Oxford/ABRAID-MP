@@ -17,14 +17,14 @@ public interface DiseaseOccurrenceReviewDao {
     List<DiseaseOccurrenceReview> getAll();
 
     /**
-     * Gets all reviews by one expert.
+     * Gets all reviews by the specified expert.
      * @param expertId The expert's Id.
      * @return A list of the expert's reviews.
      */
     List<DiseaseOccurrenceReview> getByExpertId(Integer expertId);
 
     /**
-     * Gets all reviews by one expert.
+     * Gets all reviews by the specified expert, for the specified disease group.
      * @param expertId The expert's Id.
      * @param diseaseGroupId The disease group's Id.
      * @return A list of the expert's reviews.
