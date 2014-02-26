@@ -70,7 +70,7 @@ CREATE TABLE Expert (
     Email varchar(320) NOT NULL,
     HashedPassword varchar(60) NOT NULL,
     IsAdministrator boolean NOT NULL,
-    Score double precision,
+    Weighting double precision,
     IsPubliclyVisible boolean,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

@@ -42,6 +42,10 @@ public class Expert {
     @Column
     private Boolean isPubliclyVisible;
 
+    // The expert's "score" determines the weighting of his response.
+    @Column
+    private double weighting;
+
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     private Date createdDate;
