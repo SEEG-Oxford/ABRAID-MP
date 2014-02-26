@@ -24,6 +24,14 @@ public interface DiseaseOccurrenceReviewDao {
     List<DiseaseOccurrenceReview> getByExpertId(Integer expertId);
 
     /**
+     * Gets all reviews by one expert.
+     * @param expertId The expert's Id.
+     * @param diseaseGroupId The disease's Id.
+     * @return A list of the expert's reviews.
+     */
+    public List<DiseaseOccurrenceReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId);
+
+    /**
      * Saves the specified review.
      * @param diseaseOccurrenceReview The review to save.
      */

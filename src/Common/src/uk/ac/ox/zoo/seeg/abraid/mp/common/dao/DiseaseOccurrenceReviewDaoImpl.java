@@ -27,4 +27,15 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     public List<DiseaseOccurrenceReview> getByExpertId(Integer expertId) {
         return listNamedQuery("getDiseaseOccurrenceReviewsByExpertId", "expertId", expertId);
     }
+
+    /**
+     * Gets all reviews by one expert.
+     * @param expertId The expert's Id.
+     * @return A list of the expert's reviews.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
+                "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+    }
 }
