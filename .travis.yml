@@ -9,4 +9,4 @@ before_script:
   - export CHECKSTYLE_HOME="/usr/share/java"
 #Probably need to mess around with user/pass
 #Probably need findbugs/ivy/checkstyles
-script: ant full
+script: ant full -lib /usr/share/java
