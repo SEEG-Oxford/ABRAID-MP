@@ -5,7 +5,7 @@ jdk:
 services: postgresql
 before_script:
   - sudo apt-get update
-  - sudo apt-get install ivy checkstyle
+  - sudo apt-get install ivy checkstyle r-base
   - export CHECKSTYLE_HOME="/usr/share/java"
 #Probably need to mess around with user/pass
 #Probably need findbugs/ivy/checkstyles
