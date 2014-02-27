@@ -195,7 +195,7 @@
   </path>
 
 
-  <target name="check.style" description="Generates a report of code convention violations.">
+  <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.path"/>
     <mkdir dir="${report.out.dir}"/>
     <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="build.classpath">
