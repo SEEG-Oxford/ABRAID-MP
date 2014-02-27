@@ -55,8 +55,12 @@
     <fileset dir="${lib-local.dir}" includes="*.jar"/>
   </path>
 
+  <path id="analysis.classpath">
+    <fileset dir="${lib.dir}/analysis" includes="*.jar"/>
+  </path>
+
   <!-- CI targets -->
-  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package" description="Build pipeline"/> <!-- Add generate.docs -->
+  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality,  publish.package" description="Build pipeline"/> <!-- Add generate.docs -->
 
   <!-- Build targets -->
   <target name="build" depends="clean, compile.production, compile.tests, publish.package" description="Compile module"/>
@@ -136,11 +140,10 @@
 
   <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
-    <junit printsummary="off" fork="yes" forkmode="once">
+    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="junit.failure">
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
-      <formatter type="brief" usefile="false" />
       <classpath>
         <path refid="test.classpath"/>
         <dirset dir="${module.out.dir}"/>
@@ -190,12 +193,8 @@
   </target>
 
   <!-- Analysis targets -->
-  <path id="analysis.path">
-    <fileset dir="${lib.dir}/analysis" includes="*.jar"/>
-  </path>
-
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
-    <taskdef resource="checkstyletask.properties" classpathref="analysis.path"/>
+    <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
     <mkdir dir="${report.out.dir}"/>
     <checkstyle config="${project.root.dir}/src/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="build.classpath">
       <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
@@ -204,11 +203,21 @@
     </checkstyle>
   </target>
 
-  <target name="check.quality" depends="check.style"/>
+  <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="analysis.classpath"/>
+    <mkdir dir="${report.out.dir}"/>
+    <findbugs classpathref="analysis.classpath" output="xml:withMessages" warningsProperty="findbugs.failure" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+      <auxClasspath refid="build.classpath"/>
+      <sourcePath path="${src.dir}"/>
+      <class location="${module.out.dir}"/>
+    </findbugs>
+  </target>
+
+  <target name="check.quality" depends="check.style, check.bugs"/>
 
   <!-- Documentation targets -->
   <target name="generate.docs" depends="compile.production" description="Create the javadoc files">
-    <javadoc packagenames="uk.ac.ox.zoo.seeg.abraid.mp.*" sourcepath="${src.dir}" destdir="${doc.out.dir}" author="true" version="true" use="true" failonerror="true">
+    <javadoc packagenames="uk.ac.ox.zoo.seeg.abraid.mp.*" sourcepath="${src.dir}" destdir="${doc.out.dir}" author="true" version="true" use="true" failonerror="false">
       <classpath>
         <dirset dir="${module.out.dir}"/>
         <path refid="build.classpath"/>
