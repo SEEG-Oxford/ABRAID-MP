@@ -1,8 +1,12 @@
 language: java
 jdk:
+  - openjdk6
   - openjdk7
+  - openjdk8
   - oraclejdk7
+  - oraclejdk8
 services: postgresql
+# Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
 cache:
   apt: true
   directories:
