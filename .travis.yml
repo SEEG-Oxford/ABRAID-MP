@@ -3,11 +3,11 @@ jdk:
   - openjdk7
   - oraclejdk7
 services: postgresql
-cache:
-  apt: true
-  directories:
-  - .ant/lib
-  - .ivy2/cache
+#cache:
+#  apt: true
+#  directories:
+#  - .ant/lib
+#  - .ivy2/cache
 before_script:
   - sudo apt-get update
   - sudo apt-get install r-base
