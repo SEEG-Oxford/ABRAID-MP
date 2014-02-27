@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
   <property environment="env"/>
 
   <basename property="module.name" file="${basedir}"/>
@@ -60,7 +60,18 @@
   </path>
 
   <!-- CI targets -->
-  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality,  publish.package" description="Build pipeline"/> <!-- Add generate.docs -->
+  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package" description="Build pipeline"> <!-- Add generate.docs -->
+    <echo>Module: ${module.name}</echo>
+    <echo if:set="test.failure">Tests unsuccessful!</echo>
+    <echo if:set="style.failure">Styling errors!</echo>
+    <echo if:set="bug.failure">Potential bugs detected!</echo>
+
+    <fail if="test.failure">Quality checks failed!</fail>
+    <fail if="style.failure">Quality checks failed!</fail>
+    <fail if="bug.failure">Quality checks failed!</fail>
+
+    <echo unless:set="test.failure">Quality checks passed!</echo>
+  </target>
 
   <!-- Build targets -->
   <target name="build" depends="clean, compile.production, compile.tests, publish.package" description="Compile module"/>
@@ -140,10 +151,11 @@
 
   <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
-    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="junit.failure">
+    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure">
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
+      <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>
         <dirset dir="${module.out.dir}"/>
@@ -196,17 +208,18 @@
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
     <mkdir dir="${report.out.dir}"/>
-    <checkstyle config="${project.root.dir}/src/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="build.classpath">
+    <checkstyle config="${project.root.dir}/src/code-style.xml" failureProperty="style.failure" failOnViolation="false" classpathref="build.classpath">
       <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
       <formatter type="plain" />
       <fileset dir="${src.dir}" includes="**/*.java"/>
     </checkstyle>
+    <property name="checkstyle.failure" value="foo"/>
   </target>
 
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="analysis.classpath"/>
     <mkdir dir="${report.out.dir}"/>
-    <findbugs classpathref="analysis.classpath" output="xml:withMessages" warningsProperty="findbugs.failure" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+    <findbugs classpathref="analysis.classpath" output="xml:withMessages" warningsProperty="bug.failure" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
       <auxClasspath refid="build.classpath"/>
       <sourcePath path="${src.dir}"/>
       <class location="${module.out.dir}"/>

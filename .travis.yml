@@ -13,7 +13,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install r-base devscripts
 script:
-  - echo "================== Errors =================="
-  - annotate-output ant full 2>&1 | tee build.log | grep "E:"
-  - echo "================= Full Log ================="
-  - cat build.log
+  - "# ================== Errors =================="
+  - annotate-output +"" ant full 2>&1 | tee build.log | grep "E:"
+  - "# ================= Full Log ================="
+  - cat build.log; test ${PIPESTATUS[0]} -eq 0
