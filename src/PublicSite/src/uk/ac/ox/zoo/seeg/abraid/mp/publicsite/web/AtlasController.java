@@ -19,13 +19,14 @@ public class AtlasController {
     private LocationService locationService;
 
     @Autowired
-    public AtlasController(LocationService locationService){
+    public AtlasController(LocationService locationService) {
         this.locationService = locationService;
     }
 
     /**
      * Gets all countries in the database and adds them to the model map.
      * Return the view to display.
+     * @param model The data model.
      * @return The ftl page name.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
