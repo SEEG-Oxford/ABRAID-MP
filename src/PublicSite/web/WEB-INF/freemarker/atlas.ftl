@@ -1,3 +1,6 @@
+<#--
+    PublicSite's index/ landing page, to display model outputs
+-->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "common.ftl" as c/>
 <@c.page title="ABRAID MP">

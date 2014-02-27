@@ -1,3 +1,6 @@
+<#--
+    The page template, including header and footer
+-->
 <#macro page title>
 <!DOCTYPE html>
 <html class="no-js">

@@ -1,3 +1,7 @@
+<#--
+    Page header with links between pages
+    Currently holds log in form, but this will be replaced by ABRAID logo
+-->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "/spring.ftl" as spring />
 

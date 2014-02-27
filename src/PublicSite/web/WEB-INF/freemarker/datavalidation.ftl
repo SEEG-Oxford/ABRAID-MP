@@ -1,3 +1,6 @@
+<#--
+    The map page for an expert to submit reviews
+-->
 <#import "common.ftl" as c/>
 <@c.page title="ABRAID MP">
 
