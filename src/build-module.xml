@@ -121,10 +121,10 @@
       <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
     </path>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    <ivy:settings file="${project.root.dir}/src/ivy-settings.xml" />
   </target>
 
   <target name="resolve.libs" depends="init.ivy">
-   <ivy:settings file="${project.root.dir}/ivysettings.xml" />
    <ivy:resolve log="download-only"/>
   </target>
 
@@ -194,11 +194,10 @@
     <fileset dir="${lib.dir}/analysis" includes="*.jar"/>
   </path>
 
-
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.path"/>
     <mkdir dir="${report.out.dir}"/>
-    <checkstyle config="${project.root.dir}/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="build.classpath">
+    <checkstyle config="${project.root.dir}/src/code-style.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="build.classpath">
       <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
       <formatter type="plain" />
       <fileset dir="${src.dir}" includes="**/*.java"/>
