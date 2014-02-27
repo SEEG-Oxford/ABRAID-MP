@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
-import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
@@ -13,13 +12,14 @@ import java.util.Map;
  */
 public class HealthMapLocationValidator {
     private static final String LAT_LONG_MISSING = "Missing lat/long in HealthMap location (place name \"%s\")";
-    private static final String COUNTRY_MISSING = "Missing country in HealthMap location (place name \"%s\")";
-    private static final String COUNTRY_DOES_NOT_EXIST = "HealthMap country \"%s\" does not exist in ABRAID database";
+    private static final String COUNTRY_MISSING = "Missing country ID in HealthMap location (place name \"%s\")";
+    private static final String COUNTRY_DOES_NOT_EXIST =
+            "HealthMap country \"%s\" (ID %d) does not exist in ABRAID database (place name \"%s\")";
 
     private HealthMapLocation location;
-    private Map<String, HealthMapCountry> countryMap;
+    private Map<Long, HealthMapCountry> countryMap;
 
-    public HealthMapLocationValidator(HealthMapLocation location, Map<String, HealthMapCountry> countryMap) {
+    public HealthMapLocationValidator(HealthMapLocation location, Map<Long, HealthMapCountry> countryMap) {
         this.location = location;
         this.countryMap = countryMap;
     }
@@ -43,16 +43,17 @@ public class HealthMapLocationValidator {
     }
 
     private String validateCountryMissing() {
-        if (!StringUtils.hasText(location.getCountry())) {
+        if (location.getCountryId() == null || location.getCountryId() == 0) {
             return String.format(COUNTRY_MISSING, location.getPlaceName());
         }
         return null;
     }
 
     private String validateCountryDoesNotExist() {
-        HealthMapCountry healthMapCountry = countryMap.get(location.getCountry());
+        HealthMapCountry healthMapCountry = countryMap.get(location.getCountryId());
         if (healthMapCountry == null) {
-            return String.format(COUNTRY_DOES_NOT_EXIST, location.getCountry());
+            return String.format(COUNTRY_DOES_NOT_EXIST, location.getCountry(), location.getCountryId(),
+                    location.getPlaceName());
         }
         return null;
     }

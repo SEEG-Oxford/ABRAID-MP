@@ -11,9 +11,9 @@
 -- Country: Represents a country as defined by SEEG.
 -- DiseaseGroup: Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
 -- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
+-- DiseaseOccurrenceReview: Represents an expert's response on the validity of a disease occurrence point.
 -- Expert: Represents a user of the PublicSite.
 -- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
--- ExpertReview: Represents an expert's response on the validity of a disease occurrence point.
 -- Feed: Represents a source of alerts.
 -- GeoNamesLocationPrecision: Represents a mapping between a GeoNames feature code and a location precision.
 -- HealthMapCountry: Represents a country as defined by HealthMap.
@@ -90,8 +90,8 @@ CREATE TABLE Feed (
 );
 
 CREATE TABLE GeoNamesLocationPrecision ( 
-    GeoNamesFeatureCode varchar(50) NOT NULL,
-    LocationPrecision varchar(50) NOT NULL
+    GeoNamesFeatureCode varchar(10) NOT NULL,
+    LocationPrecision varchar(10) NOT NULL
 );
 
 CREATE TABLE HealthMapCountry (
@@ -109,11 +109,12 @@ CREATE TABLE HealthMapDisease (
 
 CREATE TABLE Location (
     Id serial NOT NULL,
-    Name varchar(1000) NOT NULL,
+    Name varchar(1000),
     Geom geometry NOT NULL,
     Precision varchar(10) NOT NULL,
     CountryId integer NOT NULL,
     GeoNamesId integer,
+    GeoNamesFeatureCode varchar(10),
     ResolutionWeighting double precision,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

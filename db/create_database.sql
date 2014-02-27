@@ -1,8 +1,11 @@
 -- Script: create_database.sql
 --
--- Description: Creates (or recreates) the ABRAID-MP database itself. Notes:
--- * Must be run as a user which is able to create databases
--- * Expects parameter "database_name" to contain the database name
+-- Description: Creates (or recreates) the ABRAID-MP database itself. Must be run as a user that is able to create databases.
+--
+-- Parameters:
+--      database_name: The ABRAID-MP database name
+--      application_username: The ABRAID-MP application's username
+--      application_password: The ABRAID-MP application's password
 --
 -- Copyright (c) 2014 University of Oxford
 
@@ -23,6 +26,7 @@ CREATE EXTENSION postgis;
 \i tables.sql
 \i constraints.sql
 \i indexes.sql
+\i roles.sql
 
 -- Create default data
 \cd data

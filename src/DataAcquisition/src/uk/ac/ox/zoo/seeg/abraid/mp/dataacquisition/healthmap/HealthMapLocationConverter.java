@@ -26,6 +26,8 @@ public class HealthMapLocationConverter {
             "Ignoring HealthMap location in country \"%s\" as it is not of interest";
     private static final String GEONAMES_FCODE_NOT_IN_DATABASE =
             "Feature code \"%s\" is not in the ABRAID database (GeoName ID %d) - assuming precise location";
+    private static final String GEONAMES_ID_NOT_FOUND =
+            "GeoNames ID %d was not found by the GeoNames web service - assuming precise location";
 
     private LocationService locationService;
     private HealthMapLookupData lookupData;
@@ -65,19 +67,16 @@ public class HealthMapLocationConverter {
      * @param healthMapLocation The HealthMap location.
      */
     public void addPrecision(Location location, HealthMapLocation healthMapLocation) {
-        if (healthMapLocation.getGeoNameId() != null) {
-            LocationPrecision precision = getGeoNamesLocationPrecision(healthMapLocation.getGeoNameId());
-            if (precision != null) {
-                // We obtained a feature code from GeoNames and mapped it to our location precision
-                location.setGeoNamesId(healthMapLocation.getGeoNameId());
-                location.setPrecision(precision);
-            }
+        Integer geoNamesId = healthMapLocation.getGeoNameId();
+
+        if (geoNamesId != null) {
+            addPrecisionUsingGeoNames(location, geoNamesId);
         }
 
         if (location.getGeoNamesId() == null) {
             // Either the HealthMap location does not have a GeoNames ID, or the GeoNames web service couldn't
             // find it. So use the "rough" location precision supplied in HealthMap's place_basic_type field.
-            location.setPrecision(findLocationPrecision(healthMapLocation));
+            addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
         }
     }
 
@@ -115,9 +114,9 @@ public class HealthMapLocationConverter {
     private Location createLocation(HealthMapLocation healthMapLocation, Point point) {
         Location location = new Location();
 
-        HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountry());
+        HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountryId());
         if (healthMapCountry.getCountry() == null) {
-            LOGGER.warn(String.format(IGNORING_COUNTRY_MESSAGE, healthMapLocation.getCountry()));
+            LOGGER.warn(String.format(IGNORING_COUNTRY_MESSAGE, healthMapCountry.getName()));
         } else {
             location.setCountry(healthMapCountry.getCountry());
             location.setGeom(point);
@@ -127,30 +126,46 @@ public class HealthMapLocationConverter {
         return location;
     }
 
-    private LocationPrecision getGeoNamesLocationPrecision(int geoNamesId) {
-        LocationPrecision precision = null;
-        GeoName geoName = geoNamesWebService.getById(geoNamesId);
+    private void addPrecisionUsingGeoNames(Location location, Integer geoNamesId) {
+        String geoNamesFeatureCode = getGeoNamesFeatureCode(geoNamesId);
 
-        if (geoName != null) {
-            // If the geonames feature code is not found, log for info i.e. "feature code XYZ not found,
-            // assuming a precise location"
-            precision = lookupData.getGeoNamesMap().get(geoName.getFcode());
+        if (geoNamesFeatureCode != null) {
+            LocationPrecision precision = lookupData.getGeoNamesMap().get(geoNamesFeatureCode);
             if (precision == null) {
                 // We retrieved the GeoNames feature code from the web service, but the feature code is not in
                 // our mapping table. So assume that it's a precise location.
-                LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, geoName.getFcode(), geoNamesId));
+                LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, geoNamesFeatureCode, geoNamesId));
                 precision = LocationPrecision.PRECISE;
             }
-        }
 
-        return precision;
+            location.setGeoNamesId(geoNamesId);
+            location.setGeoNamesFeatureCode(geoNamesFeatureCode);
+            location.setPrecision(precision);
+        }
     }
 
-    private Point createPointFromLatLong(HealthMapLocation healthMapLocation) {
-        return GeometryUtils.createPoint(healthMapLocation.getLat(), healthMapLocation.getLng());
+    private void addPrecisionUsingHealthMapPlaceBasicType(Location location, HealthMapLocation healthMapLocation) {
+        location.setPrecision(findLocationPrecision(healthMapLocation));
     }
 
     private LocationPrecision findLocationPrecision(HealthMapLocation healthMapLocation) {
         return LocationPrecision.findByHealthMapPlaceBasicType(healthMapLocation.getPlaceBasicType());
+    }
+
+    private String getGeoNamesFeatureCode(int geoNamesId) {
+        String featureCode = null;
+        GeoName geoName = geoNamesWebService.getById(geoNamesId);
+
+        if (geoName != null) {
+            featureCode = geoName.getFcode();
+        } else {
+            LOGGER.warn(String.format(GEONAMES_ID_NOT_FOUND, geoNamesId));
+        }
+
+        return featureCode;
+    }
+
+    private Point createPointFromLatLong(HealthMapLocation healthMapLocation) {
+        return GeometryUtils.createPoint(healthMapLocation.getLat(), healthMapLocation.getLng());
     }
 }

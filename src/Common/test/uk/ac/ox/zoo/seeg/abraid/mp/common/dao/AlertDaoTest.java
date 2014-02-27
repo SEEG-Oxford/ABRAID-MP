@@ -30,7 +30,6 @@ public class AlertDaoTest extends AbstractSpringIntegrationTests {
         Calendar publicationCalendar = Calendar.getInstance();
         publicationCalendar.add(Calendar.DAY_OF_YEAR, -5);
         Date publicationDate = publicationCalendar.getTime();
-        Date createdDate = Calendar.getInstance().getTime();
         long healthMapAlertId = 100L;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
         String summary = "This is a summary of the alert";
@@ -46,10 +45,11 @@ public class AlertDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         alertDao.save(alert);
-        flushAndClear();
-        alert = alertDao.getByHealthMapAlertId(healthMapAlertId);
 
         // Assert
+        assertThat(alert.getCreatedDate()).isNotNull();
+        flushAndClear();
+        alert = alertDao.getByHealthMapAlertId(healthMapAlertId);
         assertThat(alert.getFeed()).isEqualTo(feed);
         assertThat(alert.getCreatedDate()).isNotNull();
         assertThat(alert.getHealthMapAlertId()).isEqualTo(healthMapAlertId);

@@ -2,6 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -39,6 +41,7 @@ public class DiseaseOccurrence {
 
     // The database row creation date.
     @Column(insertable = false, updatable = false)
+    @Generated(value = GenerationTime.INSERT)
     private Date createdDate;
 
     // The weighting as calculated from experts' responses.

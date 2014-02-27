@@ -43,6 +43,7 @@ public class HealthMapDiseaseDaoTest extends AbstractSpringIntegrationTests {
         assertThat(disease).isNotNull();
         assertThat(disease.getName()).isEqualTo(healthMapDiseaseName);
         assertThat(disease.getDiseaseGroup()).isEqualTo(diseaseGroup);
+        assertThat(disease.getCreatedDate()).isNotNull();
     }
 
     @Test

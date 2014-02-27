@@ -32,10 +32,12 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         expertDao.save(expert);
-        Integer id = expert.getId();
-        flushAndClear();
 
         // Assert
+        assertThat(expert.getCreatedDate()).isNotNull();
+
+        Integer id = expert.getId();
+        flushAndClear();
         expert = expertDao.getByEmail(expertEmail);
         assertThat(expert).isNotNull();
         assertThat(expert.getId()).isNotNull();

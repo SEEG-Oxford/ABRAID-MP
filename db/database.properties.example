@@ -3,3 +3,9 @@ superuser.name=postgres
 
 # The name of the ABRAID-MP database
 database.name=abraid_mp
+
+# The name of the ABRAID-MP application user
+application.username=abraid_mp_application
+
+# The password for the ABRAID-MP application user
+application.password=tessella

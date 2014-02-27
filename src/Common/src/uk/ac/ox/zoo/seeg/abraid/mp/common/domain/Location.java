@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import com.vividsolutions.jts.geom.Point;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -51,8 +53,13 @@ public class Location {
     @Column
     private Integer geoNamesId;
 
+    // The GeoNames feature code obtained for this location. This indicates location precision.
+    @Column
+    private String geoNamesFeatureCode;
+
     // The database row creation date.
     @Column(insertable = false, updatable = false)
+    @Generated(value = GenerationTime.INSERT)
     private Date createdDate;
 
     public Location() {
@@ -106,6 +113,14 @@ public class Location {
         this.geoNamesId = geoNamesId;
     }
 
+    public String getGeoNamesFeatureCode() {
+        return geoNamesFeatureCode;
+    }
+
+    public void setGeoNamesFeatureCode(String geoNamesFeatureCode) {
+        this.geoNamesFeatureCode = geoNamesFeatureCode;
+    }
+
     @Override
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     public boolean equals(Object o) {
@@ -118,6 +133,7 @@ public class Location {
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
         if (geoNamesId != null ? !geoNamesId.equals(location.geoNamesId) : location.geoNamesId != null) return false;
+        if (geoNamesFeatureCode != null ? !geoNamesFeatureCode.equals(location.geoNamesFeatureCode) : location.geoNamesFeatureCode != null) return false;
         if (geom != null ? !geom.equals(location.geom) : location.geom != null) return false;
         if (id != null ? !id.equals(location.id) : location.id != null) return false;
         if (precision != location.precision) return false;
@@ -134,6 +150,7 @@ public class Location {
         result = 31 * result + (precision != null ? precision.hashCode() : 0);
         result = 31 * result + (country != null ? country.hashCode() : 0);
         result = 31 * result + (geoNamesId != null ? geoNamesId.hashCode() : 0);
+        result = 31 * result + (geoNamesFeatureCode != null ? geoNamesFeatureCode.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

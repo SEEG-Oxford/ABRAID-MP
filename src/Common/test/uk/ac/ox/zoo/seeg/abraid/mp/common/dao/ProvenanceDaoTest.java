@@ -27,15 +27,18 @@ public class ProvenanceDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         provenanceDao.save(provenance);
-        Integer id = provenance.getId();
-        flushAndClear();
 
         // Assert
+        assertThat(provenance.getCreatedDate()).isNotNull();
+
+        Integer id = provenance.getId();
+        flushAndClear();
         provenance = provenanceDao.getByName(provenanceName);
         assertThat(provenance).isNotNull();
         assertThat(provenance.getId()).isNotNull();
         assertThat(provenance.getId()).isEqualTo(id);
         assertThat(provenance.getName()).isEqualTo(provenanceName);
+        assertThat(provenance.getCreatedDate()).isNotNull();
     }
 
     @Test
