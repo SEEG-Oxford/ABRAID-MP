@@ -1,13 +1,15 @@
+/*
+    Zoom slider plugin for Leaflet taken from http://kartena.github.io/Leaflet.zoomslider/
+    Customised with some styling and colour changes
+*/
 /** Slider **/
 .leaflet-control-zoomslider-wrap {
 	padding-top: 5px;
 	padding-bottom: 5px;
-	/*background-color: #fff;*/
 	border-bottom: 1px solid #ccc;
 }
 .leaflet-control-zoomslider-body {
 	width: 2px;
-	/*border: solid #fff;*/
 	border-width: 0px 9px 0px 9px;
 	background-color: black;
 	margin: 0 auto;
@@ -107,7 +109,6 @@
 }
 
 /* Old IE */
-
 .leaflet-oldie .leaflet-control-zoomslider-wrap {
 	width: 26px;
 }
