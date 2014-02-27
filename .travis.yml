@@ -11,5 +11,5 @@ cache:
   - .ivy2/cache
 before_script:
   - sudo apt-get update
-  - sudo apt-get install r-base devtools
+  - sudo apt-get install r-base devscripts
 script: annotate-output ant full 2>&1 | tee build.log | grep "E:"
