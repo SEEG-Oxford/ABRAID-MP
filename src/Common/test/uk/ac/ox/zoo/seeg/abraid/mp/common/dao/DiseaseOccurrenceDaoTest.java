@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -25,7 +26,37 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     @Autowired
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+    @Autowired
+    private ExpertDao expertDao;
+    @Autowired
     private FeedDao feedDao;
+
+    @Test
+    public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
+        // Arrange
+        Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
+        DiseaseOccurrenceReview review = createDiseaseOccurrenceReview(expert, occurrence, response);
+        diseaseOccurrenceReviewDao.save(review);
+
+        // Act
+        Integer expertId = expert.getId();
+        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+
+        // Assert
+        assertThat(list).doesNotContain(occurrence);
+    }
+
+    public DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(expert);
+        review.setDiseaseOccurrence(occurrence);
+        review.setResponse(response);
+        return review;
+    }
 
     @Test
     public void saveThenReloadDiseaseOccurrence() {

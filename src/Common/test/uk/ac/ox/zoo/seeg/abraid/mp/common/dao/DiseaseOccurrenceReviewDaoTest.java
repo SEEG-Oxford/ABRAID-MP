@@ -149,8 +149,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     private Location createLocation() {
         String countryName = "UK of Great Britain and Northern Ireland";
         String placeName = "Oxford";
-        String admin1 = "England";
-        String admin2 = "Oxfordshire";
         Country country = countryDao.getByName(countryName);
         double x = 51.75042;
         double y = -1.24759;

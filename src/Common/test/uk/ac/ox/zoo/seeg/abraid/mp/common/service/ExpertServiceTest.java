@@ -3,8 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,21 @@ import static org.mockito.Mockito.when;
 public class ExpertServiceTest extends AbstractSpringUnitTests {
     @Autowired
     private ExpertService expertService;
+
+    @Test
+    public void expertServiceMustReturnExpectedList() {
+        // Arrange
+        Integer expertId = 1;
+        Integer diseaseGroupId = 1;
+        List<DiseaseOccurrence> testList = new ArrayList<DiseaseOccurrence>();
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId)).thenReturn(testList);
+
+        // Act
+        List<DiseaseOccurrence> list = expertService.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+
+        // Assert
+        assertThat(list).isSameAs(testList);
+    }
 
     @Test
     public void getAllExperts() {
