@@ -20,6 +20,14 @@ public class GeoNamesLocationPrecision {
     @Enumerated(EnumType.STRING)
     private LocationPrecision locationPrecision;
 
+    public GeoNamesLocationPrecision() {
+    }
+
+    public GeoNamesLocationPrecision(String geoNamesFeatureCode, LocationPrecision locationPrecision) {
+        this.geoNamesFeatureCode = geoNamesFeatureCode;
+        this.locationPrecision = locationPrecision;
+    }
+
     public String getGeoNamesFeatureCode() {
         return geoNamesFeatureCode;
     }

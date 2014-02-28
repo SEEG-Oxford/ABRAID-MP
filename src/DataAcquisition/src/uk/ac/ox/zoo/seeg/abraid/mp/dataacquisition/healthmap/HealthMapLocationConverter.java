@@ -157,7 +157,7 @@ public class HealthMapLocationConverter {
         GeoName geoName = geoNamesWebService.getById(geoNamesId);
 
         if (geoName != null) {
-            featureCode = geoName.getFcode();
+            featureCode = geoName.getFeatureCode();
         } else {
             LOGGER.warn(String.format(GEONAMES_ID_NOT_FOUND, geoNamesId));
         }

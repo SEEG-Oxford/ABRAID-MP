@@ -3,15 +3,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -67,6 +66,13 @@ public class AlertServiceTest extends AbstractSpringUnitTests {
 
     @Test
     public void saveProvenance() {
-        // TODO
+        // Arrange
+        Provenance provenance = new Provenance();
+
+        // Act
+        alertService.saveProvenance(provenance);
+
+        // Assert
+        verify(provenanceDao).save(eq(provenance));
     }
 }

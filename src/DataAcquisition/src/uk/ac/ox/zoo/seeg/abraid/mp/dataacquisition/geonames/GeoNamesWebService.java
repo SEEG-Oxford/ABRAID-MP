@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoNameStatus;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -25,6 +27,9 @@ public class GeoNamesWebService {
     // Web service parameter names
     private String usernameParameterName;
     private String geoNameIdParameterName;
+
+    private static final Logger LOGGER = Logger.getLogger(GeoNamesWebService.class);
+    private static final String GEONAMES_RETURNED_STATUS_MESSAGE = "GeoNames returned status code %d (\"%s\"). URL: %s";
 
     public GeoNamesWebService(WebServiceClient webServiceClient) {
         this.webServiceClient = webServiceClient;
@@ -57,7 +62,17 @@ public class GeoNamesWebService {
         String url = buildUrl(geoNameId);
         String json = webServiceClient.request(url);
         GeoName geoName = parseJson(json);
-        return (geoName.getGeonameId() == null) ? null : geoName;
+
+        GeoNameStatus status = geoName.getStatus();
+        if (status != null) {
+            // If the GeoName status exists, something went wrong (most probably the ID was not found). We have asked
+            // GeoNames for a list of status codes and messages, as we may need to throw an exception for some of
+            // these.
+            LOGGER.warn(String.format(GEONAMES_RETURNED_STATUS_MESSAGE, status.getValue(), status.getMessage(), url));
+            return null;
+        } else {
+            return geoName;
+        }
     }
 
     private String buildUrl(int geoNameId) {
