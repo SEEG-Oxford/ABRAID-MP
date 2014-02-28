@@ -25,6 +25,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
     public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrencesYetToBeReviewed", "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+        return listNamedQuery("getDiseaseOccurrencesYetToBeReviewed",
+                "expertId", expertId, "diseaseGroupId", diseaseGroupId);
     }
 }

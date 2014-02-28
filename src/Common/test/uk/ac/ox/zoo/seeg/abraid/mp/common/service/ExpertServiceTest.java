@@ -24,7 +24,7 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     private ExpertService expertService;
 
     @Test
-    public void expertServiceMustReturnExpectedList() {
+    public void getDiseaseOccurrencesYetToBeReviewedMustReturnExpectedList() {
         // Arrange
         Integer expertId = 1;
         Integer diseaseGroupId = 1;

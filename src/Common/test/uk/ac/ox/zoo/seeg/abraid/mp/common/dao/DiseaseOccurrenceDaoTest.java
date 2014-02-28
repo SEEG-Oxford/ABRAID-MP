@@ -50,6 +50,31 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         assertThat(list).doesNotContain(occurrence);
     }
 
+    @Test
+    public void getDiseaseOccurrencesYetToBeReviewedMustReturnOccurrencesForCorrectExpert() {
+        // Arrange
+        // Two experts save reviews for different disease occurrences
+        Expert expert0 = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence0 = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrenceReviewResponse response0 = DiseaseOccurrenceReviewResponse.YES;
+        DiseaseOccurrenceReview review0 = createDiseaseOccurrenceReview(expert0, occurrence0, response0);
+        diseaseOccurrenceReviewDao.save(review0);
+
+        Expert expert1 = expertDao.getByEmail("zool1251@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence1 = diseaseOccurrenceDao.getById(2);
+        DiseaseOccurrenceReviewResponse response1 = DiseaseOccurrenceReviewResponse.NO;
+        DiseaseOccurrenceReview review1 = createDiseaseOccurrenceReview(expert1, occurrence1, response1);
+        diseaseOccurrenceReviewDao.save(review1);
+
+        // Act
+        Integer expertId = expert0.getId();
+        Integer diseaseGroupId = occurrence0.getDiseaseGroup().getId();
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+
+        // Assert
+        assertThat(list).contains(occurrence1);
+    }
+
     public DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(expert);
