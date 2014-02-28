@@ -36,14 +36,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         Calendar occurrenceStartCalendar = Calendar.getInstance();
         occurrenceStartCalendar.add(Calendar.DAY_OF_YEAR, -5);
         Date occurrenceStartDate = occurrenceStartCalendar.getTime();
-        double diagnosticWeight = 0.5;
+        double validationWeighting = 0.5;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
         occurrence.setLocation(location);
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setOccurrenceStartDate(occurrenceStartDate);
-        occurrence.setDiagnosticWeight(diagnosticWeight);
+        occurrence.setValidationWeighting(validationWeighting);
 
         // Act
         diseaseOccurrenceDao.save(occurrence);
@@ -57,7 +57,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         assertThat(occurrence.getCreatedDate()).isNotNull();
         assertThat(occurrence.getLocation()).isNotNull();
         assertThat(occurrence.getLocation().getId()).isNotNull();
-        assertThat(occurrence.getDiagnosticWeight()).isEqualTo(diagnosticWeight);
+        assertThat(occurrence.getValidationWeighting()).isEqualTo(validationWeighting);
         assertThat(occurrence.getDiseaseGroup()).isNotNull();
         assertThat(occurrence.getDiseaseGroup().getId()).isNotNull();
         assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(occurrenceStartDate);

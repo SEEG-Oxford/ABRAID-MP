@@ -1,24 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+       <!ENTITY ivy-configurations SYSTEM "../ivy-configurations.xml">
+       <!ENTITY ivy-project-dependencies SYSTEM "../ivy-project-dependencies.xml">
+       <!ENTITY ivy-excludes SYSTEM "../ivy-excludes.xml">
+]>
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="common"/>
     <configurations>
-        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
-        <conf name="build" extends="external" description="all build dependencies"/>
-        <conf name="test" visibility="private" description="unit testing dependencies"/>
-        <conf name="analysis" visibility="private" description="code analysis dependencies"/>
+        &ivy-configurations;
     </configurations>
     <publications>
         <artifact name="ABRAID-MP_Common" type="jar" ext="jar" conf="build"/>
     </publications>
     <dependencies>
         <!-- Common -->
-        <dependency org="log4j" name="log4j" rev="1.2.17" conf="external->default" >
-            <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 -->
-            <exclude org="org.apache.openejb" name="javaee-api"/>
-        </dependency>
         <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default"/>
-        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3"/>
-        <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default"/>
+
+        <!-- Web services -->
+        <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
+        <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.6" conf="external->default"/>
+        <dependency org="org.glassfish.jersey.media" name="jersey-media-json-jackson" rev="2.6" conf="external->default"/>
 
         <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
         <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true" conf="external->default" />
@@ -38,20 +40,13 @@
         <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
         <!-- 3. In build.xml, remove the download of hibernate-spatial 4.3 -->
 
-        <!-- Unit testing -->
-        <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
-        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
-        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
-        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
-        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
+        &ivy-project-dependencies;
 
         <!-- Workaround: Excluded as these conflict with javax.persistence 2.1 which is required by Hibernate 4 -->
         <!-- These are transitive dependencies of org.springframework.spring-orm -->
         <exclude org="org.hibernate.javax.persistence" module="hibernate-jpa-2.0-api"/>
         <exclude org="org.apache.geronimo.specs" module="geronimo-jpa_2.0_spec"/>
 
-        <exclude type="source" ext="*" conf="*" />
-        <exclude type="javadoc" ext="*" conf="*" />
-        <exclude type="license" ext="*" conf="*" />
+        &ivy-excludes;
     </dependencies>
 </ivy-module>

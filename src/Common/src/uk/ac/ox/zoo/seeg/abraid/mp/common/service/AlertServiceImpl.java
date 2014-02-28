@@ -6,7 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceName;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class AlertServiceImpl implements AlertService {
      * @return A list of feeds with the specified provenance name.
      */
     @Override
-    public List<Feed> getFeedsByProvenanceName(ProvenanceName provenanceName) {
+    public List<Feed> getFeedsByProvenanceName(String provenanceName) {
         return feedDao.getByProvenanceName(provenanceName);
     }
 
@@ -54,5 +53,14 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Provenance getProvenanceByName(String name) {
         return provenanceDao.getByName(name);
+    }
+
+    /**
+     * Saves a provenance.
+     * @param provenance The provenance to save.
+     */
+    @Override
+    public void saveProvenance(Provenance provenance) {
+        provenanceDao.save(provenance);
     }
 }

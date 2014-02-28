@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import com.vividsolutions.jts.geom.Point;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
 import java.util.List;
 
@@ -32,12 +33,13 @@ public interface LocationDao {
     Location getByGeoNamesId(int geoNamesId);
 
     /**
-     * Gets locations by point. This returns a list of locations as there may be several at the same point (e.g. a
-     * precise location, a centroid of a country).
+     * Gets locations by point and precision. This returns a list of locations as there may be several at the same
+     * point.
      * @param point The point.
+     * @param precision The precision.
      * @return The locations at this point. If none is found, the list is empty.
      */
-    List<Location> getByPoint(Point point);
+    List<Location> getByPointAndPrecision(Point point, LocationPrecision precision);
 
     /**
      * Saves the specified location.

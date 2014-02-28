@@ -1,10 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+       <!ENTITY ivy-configurations SYSTEM "../ivy-configurations.xml">
+       <!ENTITY ivy-project-dependencies SYSTEM "../ivy-project-dependencies.xml">
+       <!ENTITY ivy-excludes SYSTEM "../ivy-excludes.xml">
+]>
 <ivy-module version="2.0">
     <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="publicsite"/>
     <configurations>
-        <conf name="external" description="external build dependencies (these are seperated from internal ones, for better intellij support)"/>
-        <conf name="build" extends="external" description="all build dependencies"/>
-        <conf name="test" visibility="private" description="unit testing dependencies"/>
-        <conf name="analysis" visibility="private" description="code analysis dependencies"/>
+        &ivy-configurations;
     </configurations>
     <publications>
         <artifact name="ABRAID-MP_PublicSite" type="war" ext="war" conf="build"/>
@@ -15,7 +18,6 @@
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
 
         <!-- Spring -->
-        <dependency org="org.springframework" name="spring-core" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.1.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" conf="external->default"/>
@@ -29,15 +31,8 @@
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
 
-        <!-- Testing -->
-        <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
-        <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
-        <dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
-        <dependency org="org.springframework" name="spring-test" rev="4.0.1.RELEASE" conf="test->default" />
-        <dependency org="org.kubek2k" name="springockito-annotations" rev="1.0.9" conf="test->default" />
+        &ivy-project-dependencies;
 
-        <exclude type="source" ext="*" conf="*" />
-        <exclude type="javadoc" ext="*" conf="*" />
-        <exclude type="license" ext="*" conf="*" />
+        &ivy-excludes;
     </dependencies>
 </ivy-module>

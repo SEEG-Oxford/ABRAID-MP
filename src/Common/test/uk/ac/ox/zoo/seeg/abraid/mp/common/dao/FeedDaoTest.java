@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceName;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 
 import java.util.List;
 
@@ -27,12 +27,12 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
     public void saveAndReloadFeed() {
         // Arrange
         String feedName = "Test feed";
-        double feedWeight = 0.3;
+        double feedWeighting = 0.3;
 
-        Provenance provenance = provenanceDao.getByName(ProvenanceName.HEALTHMAP.getName());
+        Provenance provenance = provenanceDao.getByName(ProvenanceNames.HEALTHMAP);
         Feed feed = new Feed();
         feed.setProvenance(provenance);
-        feed.setWeight(feedWeight);
+        feed.setWeighting(feedWeighting);
         feed.setName(feedName);
 
         // Act
@@ -46,7 +46,7 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
         assertThat(feed.getName()).isEqualTo(feedName);
         assertThat(feed.getProvenance()).isEqualTo(provenance);
         assertThat(feed.getCreatedDate()).isNotNull();
-        assertThat(feed.getWeight()).isEqualTo(feedWeight);
+        assertThat(feed.getWeighting()).isEqualTo(feedWeighting);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getFeedsByProvenanceName() {
-        List<Feed> feeds = feedDao.getByProvenanceName(ProvenanceName.HEALTHMAP);
+        List<Feed> feeds = feedDao.getByProvenanceName(ProvenanceNames.HEALTHMAP);
         assertThat(feeds).hasSize(64);
     }
 }

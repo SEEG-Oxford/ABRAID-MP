@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
@@ -25,9 +24,6 @@ public class ExpertDaoImpl extends AbstractDao<Expert, Integer> implements Exper
      */
     @Override
     public Expert getByEmail(String email) {
-        Query query = namedQuery("getExpertByEmail");
-        query.setString("email", email);
-        return uniqueResult(query);
+        return uniqueResultNamedQuery("getExpertByEmail", "email", email);
     }
-
 }

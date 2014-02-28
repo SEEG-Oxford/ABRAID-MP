@@ -7,10 +7,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisioner;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,11 +71,11 @@ public class CommonsExecIntegrationTest {
         // Act
         ProcessHandler processHandler = runner.runModel(config);
         int exitCode = processHandler.waitForCompletion();
-        String result = processHandler.getOutputStream().toString().split(System.lineSeparator())[2];
+        String result = processHandler.getOutputStream().toString();
 
         // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
-        assertThat(result).isEqualTo("Hello, world!");
+        assertThat(result).startsWith("Hello, world!");
     }
 
     /**
@@ -99,11 +96,11 @@ public class CommonsExecIntegrationTest {
         // Act
         ProcessHandler processHandler = runner.runModel(config);
         int exitCode = processHandler.waitForCompletion();
-        String result = processHandler.getErrorStream().toString().split(System.lineSeparator())[0];
+        String result = processHandler.getErrorStream().toString();
 
         // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
-        assertThat(result).isEqualTo("Hello, world!");
+        assertThat(result).startsWith("Hello, world!");
     }
 
     /**
@@ -132,11 +129,37 @@ public class CommonsExecIntegrationTest {
         writer.flush();
         writer.close();
         int exitCode = processHandler.waitForCompletion();
-        String result = processHandler.getOutputStream().toString().split(System.lineSeparator())[3];
+        String result = processHandler.getOutputStream().toString();
 
         // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
-        assertThat(result).isEqualTo("Hello, "+expectedName+"!");
+        assertThat(result).startsWith("Hello, "+expectedName+"!");
+    }
+
+    /**
+     * Verifies that the generated modelRun script valid R and can be run
+     */
+    @Test
+    public void shouldBeAbleToDoDryRunOfModel() throws Exception {
+        // Arrange
+        final RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
+        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
+        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
+        when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
+            public File answer(InvocationOnMock invocationOnMock) throws Throwable {
+                ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
+                return scriptGenerator.generateScript(config, testFolder.getRoot(), true);
+            }
+        });
+
+        // Act
+        ProcessHandler processHandler = runner.runModel(config);
+        int exitCode = processHandler.waitForCompletion();
+        String output = processHandler.getOutputStream().toString();
+
+        // Assert
+        assertThat(exitCode).isEqualTo(SUCCESSFUL);
+        //assertThat(output)
     }
 
     /**

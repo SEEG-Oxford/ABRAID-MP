@@ -1,9 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.util.Date;
 
 /**
@@ -20,10 +19,6 @@ public class HealthMapDisease {
     // The disease name.
     @Column
     private String name;
-
-    // Whether or not the disease is of interest. If so, disease alerts will be retrieved from HealthMap.
-    @Column
-    private boolean isOfInterest;
 
     // The corresponding disease group as defined by SEEG.
     @ManyToOne
@@ -54,14 +49,6 @@ public class HealthMapDisease {
         this.name = name;
     }
 
-    public boolean isOfInterest() {
-        return isOfInterest;
-    }
-
-    public void setOfInterest(boolean isOfInterest) {
-        this.isOfInterest = isOfInterest;
-    }
-
     public DiseaseGroup getDiseaseGroup() {
         return diseaseGroup;
     }
@@ -82,7 +69,6 @@ public class HealthMapDisease {
 
         HealthMapDisease that = (HealthMapDisease) o;
 
-        if (isOfInterest != that.isOfInterest) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
@@ -95,7 +81,6 @@ public class HealthMapDisease {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (isOfInterest ? 1 : 0);
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;

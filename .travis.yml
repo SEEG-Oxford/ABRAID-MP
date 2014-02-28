@@ -1,0 +1,16 @@
+language: java
+jdk:
+  - openjdk7
+  - oraclejdk7
+services: postgresql
+# Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
+cache:
+  apt: true
+  directories:
+  - .ant/lib
+  - .ivy2/cache
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install r-base devscripts
+  - chmod +x .travis.sh
+script: "./.travis.sh"

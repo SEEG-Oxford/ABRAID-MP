@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Point;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service interface for locations, including countries.
@@ -19,11 +20,13 @@ public interface LocationService {
     Location getLocationByGeoNamesId(int geoNamesId);
 
     /**
-     * Gets a list of locations that have the specified point.
+     * Gets a list of locations that have the specified point and precision. This returns a list of locations as there
+     * may be several at the same point with the same precision.
      * @param point The point.
-     * @return The locations with the specified point.
+     * @param precision The precision.
+     * @return The locations at this point. If none is found, the list is empty.
      */
-    List<Location> getLocationsByPoint(Point point);
+    List<Location> getLocationsByPointAndPrecision(Point point, LocationPrecision precision);
 
     /**
      * Gets all countries.
@@ -36,4 +39,10 @@ public interface LocationService {
      * @return All HealthMap countries.
      */
     List<HealthMapCountry> getAllHealthMapCountries();
+
+    /**
+     * Gets mappings between GeoNames feature codes and location precision.
+     * @return A set of mappings.
+     */
+    Map<String, LocationPrecision> getGeoNamesLocationPrecisionMappings();
 }

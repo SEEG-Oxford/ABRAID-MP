@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
+import java.util.List;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -39,12 +41,27 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
         assertThat(expert.getId()).isNotNull();
         assertThat(expert.getId()).isEqualTo(id);
         assertThat(expert.getName()).isEqualTo(expertName);
+        assertThat(expert.getCreatedDate()).isNotNull();
     }
 
     @Test
     public void loadNonExistentExpert() {
+        // Arrange
         String expertEmail = "This expert does not exist";
+
+        // Act
         Expert expert = expertDao.getByEmail(expertEmail);
+
+        // Assert
         assertThat(expert).isNull();
+    }
+
+    @Test
+    public void getAllExperts() {
+        // Act
+        List<Expert> experts = expertDao.getAll();
+
+        // Assert
+        assertThat(experts).hasSize(2);
     }
 }

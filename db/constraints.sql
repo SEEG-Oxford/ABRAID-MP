@@ -7,7 +7,7 @@
 
 -- Unique constraints
 ALTER TABLE Alert
-	ADD CONSTRAINT UQ_Alert_HealthMapAlertId UNIQUE (HealthMapAlertId);
+    ADD CONSTRAINT UQ_Alert_HealthMapAlertId UNIQUE (HealthMapAlertId);
 
 ALTER TABLE DiseaseGroup
     ADD CONSTRAINT UQ_DiseaseGroup_Name_GroupType UNIQUE (Name, GroupType);
@@ -22,12 +22,12 @@ ALTER TABLE HealthMapDisease
     ADD CONSTRAINT UQ_HealthMapDisease_Name UNIQUE (Name);
 
 ALTER TABLE Location
-	ADD CONSTRAINT UQ_Location_GeoNamesId UNIQUE (GeoNamesId);
-    
+    ADD CONSTRAINT UQ_Location_GeoNamesId UNIQUE (GeoNamesId);
+
 ALTER TABLE Provenance
     ADD CONSTRAINT UQ_Provenance_Name UNIQUE (Name);
-    
-   
+
+
 -- Primary keys
 ALTER TABLE Alert ADD CONSTRAINT PK_Alert
     PRIMARY KEY (Id);
@@ -40,6 +40,9 @@ ALTER TABLE DiseaseGroup ADD CONSTRAINT PK_Disease
 
 ALTER TABLE DiseaseOccurrence ADD CONSTRAINT PK_DiseaseOutbreak
     PRIMARY KEY (Id);
+	
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT PK_DiseaseOccurrenceReview 
+	PRIMARY KEY (Id);
 
 ALTER TABLE Expert ADD CONSTRAINT PK_Expert
     PRIMARY KEY (Id);
@@ -49,7 +52,10 @@ ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT PK_ExpertDiseaseGroup
 
 ALTER TABLE Feed ADD CONSTRAINT PK_Feed
     PRIMARY KEY (Id);
-	
+
+ALTER TABLE GeoNamesLocationPrecision ADD CONSTRAINT PK_GeoNamesLocationPrecision
+    PRIMARY KEY (GeoNamesFeatureCode);
+
 ALTER TABLE HealthMapCountry ADD CONSTRAINT PK_HealthMapCountry
     PRIMARY KEY (Id);
 
@@ -78,6 +84,12 @@ ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Disease
 
 ALTER TABLE DiseaseOccurrence ADD CONSTRAINT FK_DiseaseOccurrence_Location
     FOREIGN KEY (LocationId) REFERENCES Location (Id);
+	
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT FK_DiseaseOccurrenceReview_DiseaseOccurrence 
+	FOREIGN KEY (DiseaseOccurrenceId) REFERENCES DiseaseOccurrence (Id);
+
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT FK_DiseaseOccurrenceReview_Expert 
+	FOREIGN KEY (ExpertId) REFERENCES Expert (Id);
 
 ALTER TABLE ExpertDiseaseGroup ADD CONSTRAINT FK_ExpertDiseaseGroup_DiseaseGroup
     FOREIGN KEY (DiseaseGroupId) REFERENCES DiseaseGroup (Id);
@@ -97,10 +109,13 @@ ALTER TABLE HealthMapDisease ADD CONSTRAINT FK_HealthMapDisease_DiseaseGroup
 ALTER TABLE Location ADD CONSTRAINT FK_Location_Country
     FOREIGN KEY (CountryId) REFERENCES Country (Id);
 
-    
+
 -- Check constraints
 ALTER TABLE DiseaseGroup ADD CONSTRAINT CK_DiseaseGroup_GroupType
     CHECK (GroupType IN ('CLUSTER', 'MICROCLUSTER', 'DISEASE'));
+	
+ALTER TABLE DiseaseOccurrenceReview ADD CONSTRAINT CK_DiseaseOccurrenceReview_Response
+    CHECK (Response IN ('YES', 'NO', 'UNSURE'));
 
 ALTER TABLE Location ADD CONSTRAINT CK_Location_Precision
     CHECK (Precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));
