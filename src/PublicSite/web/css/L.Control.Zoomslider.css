@@ -1,7 +1,9 @@
-/*
-    Zoom slider plugin for Leaflet taken from http://kartena.github.io/Leaflet.zoomslider/
-    Customised with some styling and colour changes
-*/
+/**
+ * Zoom slider widget, available from Leaflet plugin page.
+ * Taken from http://kartena.github.io/Leaflet.zoomslider/
+ * Customised with some styling and colour changes
+ */
+
 /** Slider **/
 .leaflet-control-zoomslider-wrap {
 	padding-top: 5px;

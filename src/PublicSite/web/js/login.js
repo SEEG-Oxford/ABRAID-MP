@@ -1,3 +1,8 @@
+/**
+ * The AJAX call to Spring Security when login button is clicked.
+ * Copyright (c) 2014 University of Oxford
+ */
+
 $(document).ready(function () {
     $("#loginButton").click(function (e) {
             var username = $("#username").val();

@@ -1,5 +1,6 @@
 <#--
-    The page template, including header and footer
+    The page template, including header and footer.
+    Copyright (c) 2014 University of Oxford
 -->
 <#macro page title>
 <!DOCTYPE html>

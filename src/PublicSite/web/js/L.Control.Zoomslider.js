@@ -1,4 +1,7 @@
-// Zoom slider plugin for Leaflet taken from http://kartena.github.io/Leaflet.zoomslider/
+/**
+ * Zoom slider widget, available from Leaflet plugin page.
+ * Taken from http://kartena.github.io/Leaflet.zoomslider/
+ */
 
 (function (factory) {
 	// Packaging/modules magic dance

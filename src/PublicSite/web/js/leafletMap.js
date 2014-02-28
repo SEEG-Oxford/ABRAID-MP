@@ -1,3 +1,8 @@
+/**
+ * JS file for adding Leaflet map and layers.
+ * Copyright (c) 2014 University of Oxford
+ */
+
 // Initialise map at "map" div
 var map = L.map('map', {
     attributionControl: false,

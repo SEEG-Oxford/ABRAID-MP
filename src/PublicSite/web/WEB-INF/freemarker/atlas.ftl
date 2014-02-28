@@ -1,5 +1,6 @@
 <#--
-    PublicSite's index/ landing page, to display model outputs
+    PublicSite's index/ landing page, to display model outputs.
+    Copyright (c) 2014 University of Oxford
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "common.ftl" as c/>
