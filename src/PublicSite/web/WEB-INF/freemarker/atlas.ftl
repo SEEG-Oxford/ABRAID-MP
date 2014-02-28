@@ -1,9 +1,12 @@
+<#--
+    PublicSite's index/ landing page, to display model outputs.
+    Copyright (c) 2014 University of Oxford
+-->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "common.ftl" as c/>
 <@c.page title="ABRAID MP">
 
-    <div id="main" class="container">
-
+<div class="container">
     <div style="padding:10px">
         <p>This page will present our model outputs and links to download data.</p>
     </div>
@@ -20,5 +23,11 @@
 
     </div>
 
-    </div> <!-- /container -->
+    <ul style="padding: 10px">
+        <#list countries as country>
+            <li>${country.name}</li>
+        </#list>
+    </ul>
+</div>
+
 </@c.page>

@@ -1,3 +1,8 @@
+<#--
+    Page header with links between pages.
+    Currently holds log in form, but this will be replaced by ABRAID logo.
+    Copyright (c) 2014 University of Oxford
+-->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "/spring.ftl" as spring />
 
@@ -15,14 +20,13 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<@spring.url "/"/>"> Atlas</a> </li>
-                <li><a href="datavalidation"> Data Validation</a> </li>
-                <li><a href="about"> About</a> </li>
-                <li><a href="publications"> Publications</a> </li>
+                <li><a href="<@spring.url "/"/>">Atlas</a></li>
+                <li><a href="<@spring.url "/datavalidation"/>">Data Validation</a></li>
+                <li><a href="<@spring.url "/about"/>">About</a></li>
+                <li><a href="<@spring.url "/publications"/>">Publications</a></li>
             </ul>
 
             <#-- If user not logged in: display login form -->
-
             <@security.authorize  ifAnyGranted="ROLE_ANONYMOUS">
                 <form class="navbar-form navbar-right" action="">
                     <p id="logInMessage"></p>

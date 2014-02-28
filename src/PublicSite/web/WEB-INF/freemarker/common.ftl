@@ -1,3 +1,7 @@
+<#--
+    The page template, including header and footer.
+    Copyright (c) 2014 University of Oxford
+-->
 <#macro page title>
 <!DOCTYPE html>
 <html class="no-js">
@@ -14,13 +18,14 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
 
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/L.Control.Zoomslider.css">
 
 </head>
 <body>
 
     <#include "navbar.ftl"/>
 
-<div id="wrap">
+<div id="common">
     <#nested/>
 </div>
 
@@ -31,8 +36,10 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
 
-<script type="text/javascript" src="js/switchActiveNavBarLinks.js"></script>
-<script type="text/javascript" src="js/login.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/login.js"></script>
+<script src="js/L.Control.Zoomslider.js"></script>
+<script src="js/leafletMap.js"></script>
 
 </body></html>
 </#macro>
