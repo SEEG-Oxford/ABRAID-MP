@@ -38,9 +38,9 @@ public class HealthMapWebService {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
 
     // Web service parameter names
-    private static final String AUTHORIZATION_PARAMETER = "auth";
-    private static final String START_DATE_PARAMETER = "sdate";
-    private static final String END_DATE_PARAMETER = "edate";
+    private String authorizationParameterName;
+    private String startDateParameterName;
+    private String endDateParameterName;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapWebService.class);
     private static final String CALLING_WEB_SERVICE_MESSAGE =
@@ -84,6 +84,18 @@ public class HealthMapWebService {
         this.defaultStartDateDaysBeforeNow = defaultStartDateDaysBeforeNow;
     }
 
+    public void setAuthorizationParameterName(String authorizationParameterName) {
+        this.authorizationParameterName = authorizationParameterName;
+    }
+
+    public void setStartDateParameterName(String startDateParameterName) {
+        this.startDateParameterName = startDateParameterName;
+    }
+
+    public void setEndDateParameterName(String endDateParameterName) {
+        this.endDateParameterName = endDateParameterName;
+    }
+
     /**
      * Sends a request to the HealthMap web service.
      * @param startDate The start of the date range for HealthMap alert retrieval.
@@ -107,10 +119,10 @@ public class HealthMapWebService {
 
     private String buildUrl(String startDate, String endDate) {
         // The root URL and authorization code have already been set by the global configuration
-        UriBuilder builder = UriBuilder.fromUri(rootUrl).queryParam(AUTHORIZATION_PARAMETER, authorizationCode);
+        UriBuilder builder = UriBuilder.fromUri(rootUrl).queryParam(authorizationParameterName, authorizationCode);
         // Add the start date and end date if they are non-null
-        addParameterIfNotNull(builder, START_DATE_PARAMETER, startDate);
-        addParameterIfNotNull(builder, END_DATE_PARAMETER, endDate);
+        addParameterIfNotNull(builder, startDateParameterName, startDate);
+        addParameterIfNotNull(builder, endDateParameterName, endDate);
         return builder.build().toString();
     }
 

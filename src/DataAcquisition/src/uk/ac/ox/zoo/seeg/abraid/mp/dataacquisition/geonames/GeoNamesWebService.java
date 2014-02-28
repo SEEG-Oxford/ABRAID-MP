@@ -22,6 +22,10 @@ public class GeoNamesWebService {
     // The username for the GeoNames web service
     private String username;
 
+    // Web service parameter names
+    private String usernameParameterName;
+    private String geoNameIdParameterName;
+
     public GeoNamesWebService(WebServiceClient webServiceClient) {
         this.webServiceClient = webServiceClient;
     }
@@ -32,6 +36,14 @@ public class GeoNamesWebService {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setUsernameParameterName(String usernameParameterName) {
+        this.usernameParameterName = usernameParameterName;
+    }
+
+    public void setGeoNameIdParameterName(String geoNameIdParameterName) {
+        this.geoNameIdParameterName = geoNameIdParameterName;
     }
 
     /**
@@ -51,8 +63,8 @@ public class GeoNamesWebService {
     private String buildUrl(int geoNameId) {
         // The root URL and username have already been set by the global configuration
         return UriBuilder.fromUri(rootUrlGetJSON)
-                .queryParam("username", username)
-                .queryParam("geonameId", geoNameId)
+                .queryParam(usernameParameterName, username)
+                .queryParam(geoNameIdParameterName, geoNameId)
                 .build()
                 .toString();
     }

@@ -17,6 +17,8 @@
     <bean id="geoNamesWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.GeoNamesWebService" autowire="constructor">
         <property name="rootUrlGetJSON" value="${geonames.rootUrlGetJSON}"/>
         <property name="username" value="${geonames.username}"/>
+        <property name="usernameParameterName" value="${geonames.usernameParameterName}"/>
+        <property name="geoNameIdParameterName" value="${geonames.geoNameIdParameterName}"/>
     </bean>
 
     <bean id="healthMapWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapWebService" autowire="constructor">
@@ -26,6 +28,9 @@
         <property name="defaultStartDate" value="${healthmap.defaultStartDate}"/>
         <!-- Note the default value of this property, after the colon in the value -->
         <property name="defaultStartDateDaysBeforeNow" value="${healthmap.defaultStartDateDaysBeforeNow:7}"/>
+        <property name="authorizationParameterName" value="${healthmap.authorizationParameterName}"/>
+        <property name="startDateParameterName" value="${healthmap.startDateParameterName}"/>
+        <property name="endDateParameterName" value="${healthmap.endDateParameterName}"/>
     </bean>
 
     <!-- HealthMap data processing beans -->
