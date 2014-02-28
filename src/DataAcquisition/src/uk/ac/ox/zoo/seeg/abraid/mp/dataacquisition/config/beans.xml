@@ -24,6 +24,8 @@
         <property name="authorizationCode" value="${healthmap.authorizationCode}"/>
         <!-- If specified, this value must have the format "yyyy-MM-dd HH:mm:ssZ" e.g. "2014-04-21 15:29:03+0100" -->
         <property name="defaultStartDate" value="${healthmap.defaultStartDate}"/>
+        <!-- Note the default value of this property, after the colon in the value -->
+        <property name="defaultStartDateDaysBeforeNow" value="${healthmap.defaultStartDateDaysBeforeNow:7}"/>
     </bean>
 
     <!-- HealthMap data processing beans -->

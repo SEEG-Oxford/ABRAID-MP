@@ -30,10 +30,11 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
-        Integer id = diseaseGroup.getId();
-        flushAndClear();
 
         // Assert
+        assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        Integer id = diseaseGroup.getId();
+        flushAndClear();
         diseaseGroup = diseaseGroupDao.getById(id);
         assertThat(diseaseGroup).isNotNull();
         assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);

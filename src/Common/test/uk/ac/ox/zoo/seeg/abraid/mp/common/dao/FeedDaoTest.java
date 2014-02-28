@@ -37,11 +37,13 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         feedDao.save(feed);
-        Integer id = feed.getId();
-        flushAndClear();
+        assertThat(feed.getCreatedDate()).isNotNull();
 
         // Assert
+        Integer id = feed.getId();
+        flushAndClear();
         feed = feedDao.getById(id);
+
         assertThat(feed).isNotNull();
         assertThat(feed.getName()).isEqualTo(feedName);
         assertThat(feed.getProvenance()).isEqualTo(provenance);

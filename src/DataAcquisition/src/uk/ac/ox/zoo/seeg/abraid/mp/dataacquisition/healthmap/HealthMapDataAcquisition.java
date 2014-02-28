@@ -25,7 +25,6 @@ public class HealthMapDataAcquisition {
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
 
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Could not read HealthMap web service response: %s";
-    private static final int DEFAULT_START_DATE_DAYS_BEFORE_NOW = 7;
 
     public HealthMapDataAcquisition(HealthMapWebService healthMapWebService,
                                     HealthMapDataConverter healthMapDataConverter, AlertService alertService) {
@@ -62,7 +61,8 @@ public class HealthMapDataAcquisition {
      * Gets the start date for the HealthMap alerts retrieval. This is the first of these that is non-null:
      * 1. The last retrieval date as stored in database field Provenance.LastRetrievalDate
      * 2. The default start date
-     * 3. 7 days before now
+     * 3. n days before now, where n is specified as the parameter "default start date days before now"
+     * 4. 7 days before now
      * @return The start date for the HealthMap alerts retrieval.
      */
     private Date getStartDate() {
@@ -72,9 +72,8 @@ public class HealthMapDataAcquisition {
         } else if (healthMapWebService.getDefaultStartDate() != null) {
             return healthMapWebService.getDefaultStartDate();
         } else {
-            // Default start date is 7 days ago
             Calendar startDate = Calendar.getInstance();
-            startDate.add(Calendar.DAY_OF_MONTH, -DEFAULT_START_DATE_DAYS_BEFORE_NOW);
+            startDate.add(Calendar.DAY_OF_MONTH, -healthMapWebService.getDefaultStartDateDaysBeforeNow());
             return startDate.getTime();
         }
     }

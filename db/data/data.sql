@@ -14,7 +14,10 @@
 
 -- Some of the data above contains explicit values of serial primary keys, so that child tables can refer
 -- to known IDs. So now we need to reset the sequences of such primary keys.
-SELECT setval('diseasegroup_id_seq', (SELECT MAX(id) FROM DiseaseGroup));
-SELECT setval('provenance_id_seq', (SELECT MAX(id) FROM Provenance));
+\pset footer off
+\echo Resetting sequences after creating data:
+\echo
+SELECT setval('diseasegroup_id_seq', (SELECT MAX(id) FROM DiseaseGroup)) max_diseasegroup_id;
+SELECT setval('provenance_id_seq', (SELECT MAX(id) FROM Provenance)) max_provenance_id;
 
 VACUUM ANALYZE;

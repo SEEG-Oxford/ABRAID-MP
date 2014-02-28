@@ -21,7 +21,7 @@ public class HealthMapLookupData {
     private LocationService locationService;
     private DiseaseService diseaseService;
 
-    private Map<String, HealthMapCountry> countryMap;
+    private Map<Long, HealthMapCountry> countryMap;
     private Map<String, HealthMapDisease> diseaseMap;
     private Map<String, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
@@ -37,10 +37,10 @@ public class HealthMapLookupData {
      * Gets a list of HealthMap countries, indexed by HealthMap country name.
      * @return A list of HealthMap countries, indexed by HealthMap country name.
      */
-    public Map<String, HealthMapCountry> getCountryMap() {
+    public Map<Long, HealthMapCountry> getCountryMap() {
         if (countryMap == null) {
             List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
-            countryMap = index(countries, on(HealthMapCountry.class).getName());
+            countryMap = index(countries, on(HealthMapCountry.class).getId());
         }
         return countryMap;
     }

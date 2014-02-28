@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -92,7 +93,7 @@ public class HealthMapAlert {
         if (StringUtils.hasText(link)) {
             Matcher regExMatcher = ALERT_ID_REGEXP.matcher(link.trim());
             while (regExMatcher.find() && regExMatcher.groupCount() == 1) {
-                alertId = Long.parseLong(regExMatcher.group(1));
+                alertId = ParseUtils.parseLong(regExMatcher.group(1));
             }
         }
         return alertId;

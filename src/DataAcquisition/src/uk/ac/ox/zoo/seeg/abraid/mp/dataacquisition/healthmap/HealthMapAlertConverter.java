@@ -58,12 +58,11 @@ public class HealthMapAlertConverter {
                     // TODO: Ask Clark for an "exclude these disease IDs" web service parameter
                     LOGGER.warn(String.format(DISEASE_NOT_OF_INTEREST_MESSAGE, healthMapAlert.getDisease()));
                 } else {
-                    if (healthMapDisease == null) {
+                    if (healthMapDisease != null) {
                         // TODO: If the disease ID (when we have it) does not exist, add a new HealthMap disease
                         // that is linked to a new top-level disease group (i.e. disease cluster).
                         // Alert this to the system administrator.
-                        healthMapDisease = new HealthMapDisease();
-                    } else {
+
                         // TODO: If the disease does exist but the name has changed, rename it.
                         // Alert this to the system administrator. Move the code below outside of this block.
                         occurrence = new DiseaseOccurrence();

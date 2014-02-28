@@ -42,10 +42,12 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         locationDao.save(location);
+
+        // Assert
+        assertThat(location.getCreatedDate()).isNotNull();
         Integer id = location.getId();
         flushAndClear();
 
-        // Assert
         location = locationDao.getById(id);
         assertThat(location).isNotNull();
         assertThat(location.getGeom()).isNotNull();
@@ -185,6 +187,6 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllLocations() {
         List<Location> locations = locationDao.getAll();
-        assertThat(locations).hasSize(0);
+        assertThat(locations).hasSize(30);
     }
 }

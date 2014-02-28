@@ -11,8 +11,7 @@
     <target name="create.test.database" depends="create.database, create.test.data" />   
     
     <!-- Creates the database -->
-    <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
-         You can use pgAdmin to add it to this file. -->
+    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="create.database">
         <exec executable="psql" failonerror="true">
             <arg value="-U" />
@@ -21,14 +20,17 @@
             <arg value="-w" />
             <arg value="-v" />
             <arg value="database_name=${database.name}" />
+            <arg value="-v" />
+            <arg value="application_username=${application.username}" />
+            <arg value="-v" />
+            <arg value="application_password=${application.password}" />
             <arg value="-f" />
             <arg value="create_database.sql" />
         </exec>
     </target>
 
     <!-- Adds test data to an existing database -->
-    <!-- Assumes that the superuser password is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows).
-         You can use pgAdmin to add it to this file. -->
+    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="create.test.data">
         <exec executable="psql" failonerror="true" dir="testdata">
             <arg value="-U" />

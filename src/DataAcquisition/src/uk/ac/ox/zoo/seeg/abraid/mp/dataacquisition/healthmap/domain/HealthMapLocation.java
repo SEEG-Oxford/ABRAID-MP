@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
 import java.util.List;
 
@@ -12,16 +13,28 @@ import java.util.List;
  */
 public class HealthMapLocation {
     private String country;
+    @JsonProperty("country_id")
+    private Long countryId;
     @JsonProperty("place_name")
     private String placeName;
-    private Double lat;
-    private Double lng;
+    @JsonProperty("lat")
+    private Double latitude;
+    @JsonProperty("lng")
+    private Double longitude;
     @JsonProperty("geonameid")
     private Integer geoNameId;
     @JsonProperty("place_basic_type")
     private String placeBasicType;
 
     private List<HealthMapAlert> alerts;
+
+    public Long getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(String countryId) {
+        this.countryId = ParseUtils.parseLong(countryId);
+    }
 
     public String getCountry() {
         return country;
@@ -39,28 +52,28 @@ public class HealthMapLocation {
         this.placeName = StringUtils.trimWhitespace(placeName);
     }
 
-    public Double getLat() {
-        return lat;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setLat(Double lat) {
-        this.lat = lat;
+    public void setLatitude(String latitude) {
+        this.latitude = ParseUtils.parseDouble(latitude);
     }
 
-    public Double getLng() {
-        return lng;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setLng(Double lng) {
-        this.lng = lng;
+    public void setLongitude(String longitude) {
+        this.longitude = ParseUtils.parseDouble(longitude);
     }
 
     public Integer getGeoNameId() {
         return geoNameId;
     }
 
-    public void setGeoNameId(Integer geoNameId) {
-        this.geoNameId = geoNameId;
+    public void setGeoNameId(String geoNameId) {
+        this.geoNameId = ParseUtils.parseInteger(geoNameId);
     }
 
     public String getPlaceBasicType() {

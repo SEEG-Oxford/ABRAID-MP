@@ -1,5 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -48,6 +51,7 @@ public class Expert {
 
     // The database row creation date.
     @Column(insertable = false, updatable = false)
+    @Generated(value = GenerationTime.INSERT)
     private Date createdDate;
 
     // List of disease groups an expert has interest in and can validate.

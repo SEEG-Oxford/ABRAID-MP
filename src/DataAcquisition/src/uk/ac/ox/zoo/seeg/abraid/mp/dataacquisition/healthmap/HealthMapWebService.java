@@ -31,6 +31,9 @@ public class HealthMapWebService {
     // Provenance.LastRetrievedDate field.
     private Date defaultStartDate;
 
+    // If defaultStartDate is not specified, the start date is this number of days before now (i.e. the current date).
+    private int defaultStartDateDaysBeforeNow;
+
     // The date/time format used in both the request URL and the response JSON.
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
 
@@ -55,6 +58,10 @@ public class HealthMapWebService {
         this.authorizationCode = authorizationCode;
     }
 
+    public Date getDefaultStartDate() {
+        return defaultStartDate;
+    }
+
     /**
      * Sets the default start date.
      * @param defaultStartDateString The default start date.
@@ -69,8 +76,12 @@ public class HealthMapWebService {
         }
     }
 
-    public Date getDefaultStartDate() {
-        return defaultStartDate;
+    public int getDefaultStartDateDaysBeforeNow() {
+        return defaultStartDateDaysBeforeNow;
+    }
+
+    public void setDefaultStartDateDaysBeforeNow(int defaultStartDateDaysBeforeNow) {
+        this.defaultStartDateDaysBeforeNow = defaultStartDateDaysBeforeNow;
     }
 
     /**
