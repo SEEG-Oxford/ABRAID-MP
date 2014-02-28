@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property environment="env"/>
 
   <basename property="module.name" file="${basedir}"/>
@@ -60,16 +60,35 @@
   </path>
 
   <!-- CI targets -->
-  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package" description="Build pipeline"> <!-- Add generate.docs -->
-    <echo>Module: ${module.name}</echo>
-    <echo if:set="test.failure">[Summary] ${module.name}: Tests unsuccessful!</echo>
-    <echo if:set="style.failure">[Summary] ${module.name}: Styling errors!</echo>
-    <echo if:set="bug.failure">[Summary] ${module.name}: Potential bugs detected!</echo>
+  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package, print.summary" description="Build pipeline"> <!-- Add generate.docs -->
+    <fail message="Quality checks failed!" if="build.failure" />
+  </target>
 
-    <fail if="test.failure">Quality checks failed!</fail>
-    <fail if="style.failure">Quality checks failed!</fail>
-    <fail if="bug.failure">Quality checks failed!</fail>
+  <target name="print.summary" depends="test.summary, style.summary, bug.summary, combine.results, composite.summary" />
 
+  <target name="test.summary" if="test.failure">
+    <echo>[Summary] ${module.name}: Tests unsuccessful!</echo>
+  </target>
+
+  <target name="style.summary" if="style.failure">
+    <echo>[Summary] ${module.name}: Styling errors!</echo>
+  </target>
+
+  <target name="bug.summary" if="bug.failure">
+    <echo>[Summary] ${module.name}: Bugs detected!</echo>
+  </target>
+
+  <target name="combine.results">
+    <condition property="build.failure">
+        <or>
+          <isset property="test.failure"/>
+          <isset property="style.failure"/>
+          <isset property="bug.failure"/>
+       </or>
+     </condition>
+  </target>
+
+  <target name="composite.summary" unless="build.failure">
     <echo>[Summary] ${module.name}: Quality checks passed!</echo>
   </target>
 
@@ -213,7 +232,6 @@
       <formatter type="plain" />
       <fileset dir="${src.dir}" includes="**/*.java"/>
     </checkstyle>
-    <property name="checkstyle.failure" value="foo"/>
   </target>
 
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
