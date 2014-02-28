@@ -32,8 +32,7 @@ public class HealthMapWebService {
     private Date defaultStartDate;
 
     // If defaultStartDate is not specified, the start date is this number of days before now (i.e. the current date).
-    private static final int DEFAULT_START_DATE_DAYS_BEFORE_NOW = 7;
-    private int defaultStartDateDaysBeforeNow = DEFAULT_START_DATE_DAYS_BEFORE_NOW;
+    private int defaultStartDateDaysBeforeNow;
 
     // The date/time format used in both the request URL and the response JSON.
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
