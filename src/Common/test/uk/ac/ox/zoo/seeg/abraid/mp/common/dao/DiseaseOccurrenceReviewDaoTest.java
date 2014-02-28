@@ -64,6 +64,32 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
     }
 
+    public void getAllReviewsForExpertForOneDisease() {
+        // Arrange
+        Expert expert = createExpert();
+        DiseaseOccurrence diseaseOccurrence = createDiseaseOccurrence();
+        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
+
+        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview();
+        diseaseOccurrenceReview.setExpert(expert);
+        diseaseOccurrenceReview.setDiseaseOccurrence(diseaseOccurrence);
+        diseaseOccurrenceReview.setResponse(response);
+
+        // Act
+        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
+        flushAndClear();
+
+        // Assert
+        DiseaseGroup diseaseGroup = diseaseOccurrenceReview.getDiseaseOccurrence().getDiseaseGroup();
+        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expert.getId(), diseaseGroup.getId());
+        assertThat(reviews).hasSize(1);
+
+        DiseaseOccurrenceReview review = reviews.get(0);
+        assertThat(review.getResponse()).isEqualTo(response);
+        assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
+        assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
+    }
+
     private Expert createExpert() {
         String name = "Test Expert";
         String email = "expert@test.com";

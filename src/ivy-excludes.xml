@@ -1,0 +1,3 @@
+<exclude type="source" ext="*" conf="*" />
+<exclude type="javadoc" ext="*" conf="*" />
+<exclude type="license" ext="*" conf="*" />

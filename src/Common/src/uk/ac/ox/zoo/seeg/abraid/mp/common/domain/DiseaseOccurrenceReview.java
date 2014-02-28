@@ -16,6 +16,11 @@ import java.util.Date;
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewsByExpertId",
         query = "from DiseaseOccurrenceReview where expert.id=:expertId"
+    ),
+    @NamedQuery(
+        name = "getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
+        query = "from DiseaseOccurrenceReview where expert.id=:expertId"
+              + " and diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
     )
 })
 public class DiseaseOccurrenceReview {

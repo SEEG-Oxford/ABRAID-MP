@@ -81,6 +81,5 @@
   <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.diseaseextent.clean, module.publicsite.clean, module.modelwrapper.clean" description="cleanup all"/>
   <target name="build" depends="module.common.build, module.dataacquisition.build, module.diseaseextent.build, module.publicsite.build, module.modelwrapper.build" description="build all modules"/>
   <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.diseaseextent.test, module.publicsite.test, module.modelwrapper.test" description="test all modules"/>
-  <target name="full" depends="module.common.full, module.dataacquisition.full, module.diseaseextent.full, module.publicsite.full, module.modelwrapper.full" description="build pipeline"/>
-
+  <target name="full" depends="module.common.full, module.dataacquisition.full, module.diseaseextent.full, module.publicsite.full, module.modelwrapper.full" description="build pipeline" />
 </project>

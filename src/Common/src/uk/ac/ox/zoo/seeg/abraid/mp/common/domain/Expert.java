@@ -45,6 +45,10 @@ public class Expert {
     @Column
     private Boolean isPubliclyVisible;
 
+    // The expert's "score" determines the weighting of his response.
+    @Column
+    private Double weighting;
+
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -107,6 +111,14 @@ public class Expert {
 
     public void setDiseaseGroups(Set<DiseaseGroup> diseaseGroups) {
         this.diseaseGroups = diseaseGroups;
+    }
+
+    public Double getWeighting() {
+        return weighting;
+    }
+
+    public void setWeighting(Double weighting) {
+        this.weighting = weighting;
     }
 
     public Date getCreatedDate() {
