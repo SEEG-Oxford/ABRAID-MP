@@ -62,15 +62,15 @@
   <!-- CI targets -->
   <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package" description="Build pipeline"> <!-- Add generate.docs -->
     <echo>Module: ${module.name}</echo>
-    <echo if:set="test.failure">Tests unsuccessful!</echo>
-    <echo if:set="style.failure">Styling errors!</echo>
-    <echo if:set="bug.failure">Potential bugs detected!</echo>
+    <echo if:set="test.failure">[Summary] ${module.name}: Tests unsuccessful!</echo>
+    <echo if:set="style.failure">[Summary] ${module.name}: Styling errors!</echo>
+    <echo if:set="bug.failure">[Summary] ${module.name}: Potential bugs detected!</echo>
 
     <fail if="test.failure">Quality checks failed!</fail>
     <fail if="style.failure">Quality checks failed!</fail>
     <fail if="bug.failure">Quality checks failed!</fail>
 
-    <echo unless:set="test.failure">Quality checks passed!</echo>
+    <echo>[Summary] ${module.name}: Quality checks passed!</echo>
   </target>
 
   <!-- Build targets -->
