@@ -17,8 +17,10 @@ public class HealthMapLocation {
     private Long countryId;
     @JsonProperty("place_name")
     private String placeName;
-    private Double lat;
-    private Double lng;
+    @JsonProperty("lat")
+    private Double latitude;
+    @JsonProperty("lng")
+    private Double longitude;
     @JsonProperty("geonameid")
     private Integer geoNameId;
     @JsonProperty("place_basic_type")
@@ -50,20 +52,20 @@ public class HealthMapLocation {
         this.placeName = StringUtils.trimWhitespace(placeName);
     }
 
-    public Double getLat() {
-        return lat;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setLat(String lat) {
-        this.lat = ParseUtils.parseDouble(lat);
+    public void setLatitude(String latitude) {
+        this.latitude = ParseUtils.parseDouble(latitude);
     }
 
-    public Double getLng() {
-        return lng;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setLng(String lng) {
-        this.lng = ParseUtils.parseDouble(lng);
+    public void setLongitude(String longitude) {
+        this.longitude = ParseUtils.parseDouble(longitude);
     }
 
     public Integer getGeoNameId() {

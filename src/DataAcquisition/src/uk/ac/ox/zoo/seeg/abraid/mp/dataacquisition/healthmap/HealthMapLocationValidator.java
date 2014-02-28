@@ -36,7 +36,7 @@ public class HealthMapLocationValidator {
     }
 
     private String validateLatLongMissing() {
-        if (location.getLat() == null || location.getLng() == null) {
+        if (location.getLatitude() == null || location.getLongitude() == null) {
             return String.format(LAT_LONG_MISSING, location.getPlaceName());
         }
         return null;
