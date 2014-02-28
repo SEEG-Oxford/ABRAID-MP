@@ -12,4 +12,5 @@ cache:
 before_script:
   - sudo apt-get update
   - sudo apt-get install r-base devscripts
-script: .travis.sh
+  - chmod +x .travis.sh
+script: "./.travis.sh"
