@@ -8,6 +8,6 @@ if [ $EXIT -ne 0 ]
 then
     echo "================== Summary =================="
     echo "Build exited with code: $EXIT"
-    grep "(^\ E\:)|(\ O\:\ \[echo\]\ \[Summary\])" build.log
+    grep -E "(^\ E\:)|(\ O\:\ \[echo\]\ \[Summary\])" build.log
 fi
 exit $EXIT
