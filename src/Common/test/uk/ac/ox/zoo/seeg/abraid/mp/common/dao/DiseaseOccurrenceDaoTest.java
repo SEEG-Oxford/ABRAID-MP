@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -19,18 +18,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
-    @Autowired
-    private CountryDao countryDao;
-    @Autowired
-    private DiseaseGroupDao diseaseGroupDao;
-    @Autowired
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
-    @Autowired
-    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
-    @Autowired
-    private ExpertDao expertDao;
-    @Autowired
-    private FeedDao feedDao;
 
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
@@ -38,8 +25,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
-        DiseaseOccurrenceReview review = createDiseaseOccurrenceReview(expert, occurrence, response);
-        diseaseOccurrenceReviewDao.save(review);
+        createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
         // Act
         Integer expertId = expert.getId();
@@ -51,20 +37,56 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     }
 
     @Test
+    public void getDiseaseOccurrencesYetToBeReviewedMustOnlyReturnSpecifiedDiseaseGroup() {
+        // Arrange
+        Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
+        createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
+
+        // Act
+        Integer expertId = expert.getId();
+        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+
+        // Assert
+        for (DiseaseOccurrence item : list) {
+            assertThat(item.getDiseaseGroup().getId()).isSameAs(diseaseGroupId);
+        }
+    }
+
+    @Test
+    public void getDiseaseOccurrencesYetToBeReviewedMustHaveNoIntersectionWithExpertsReviewedList() {
+        // Arrange
+        Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
+        createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
+
+        // Act
+        Integer expertId = expert.getId();
+        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        List<DiseaseOccurrence> occurrencesYetToBeReviewed = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+
+        //Assert
+        List<DiseaseOccurrenceReview> reviewedOccurrences = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+        occurrencesYetToBeReviewed.retainAll(reviewedOccurrences);
+        assertThat(occurrencesYetToBeReviewed).hasSize(0);
+    }
+
+    @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustReturnOccurrencesForCorrectExpert() {
         // Arrange
         // Two experts save reviews for different disease occurrences
         Expert expert0 = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence0 = diseaseOccurrenceDao.getById(1);
         DiseaseOccurrenceReviewResponse response0 = DiseaseOccurrenceReviewResponse.YES;
-        DiseaseOccurrenceReview review0 = createDiseaseOccurrenceReview(expert0, occurrence0, response0);
-        diseaseOccurrenceReviewDao.save(review0);
+        createAndSaveDiseaseOccurrenceReview(expert0, occurrence0, response0);
 
         Expert expert1 = expertDao.getByEmail("zool1251@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence1 = diseaseOccurrenceDao.getById(2);
         DiseaseOccurrenceReviewResponse response1 = DiseaseOccurrenceReviewResponse.NO;
-        DiseaseOccurrenceReview review1 = createDiseaseOccurrenceReview(expert1, occurrence1, response1);
-        diseaseOccurrenceReviewDao.save(review1);
+        createAndSaveDiseaseOccurrenceReview(expert1, occurrence1, response1);
 
         // Act
         Integer expertId = expert0.getId();
@@ -73,14 +95,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
         // Assert
         assertThat(list).contains(occurrence1);
-    }
-
-    public DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
-        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
-        review.setExpert(expert);
-        review.setDiseaseOccurrence(occurrence);
-        review.setResponse(response);
-        return review;
+        assertThat(list).doesNotContain(occurrence0);
     }
 
     @Test
@@ -160,5 +175,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         location.setName(placeName);
         location.setPrecision(LocationPrecision.PRECISE);
         return location;
+    }
+
+    public DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(expert);
+        review.setDiseaseOccurrence(occurrence);
+        review.setResponse(response);
+        diseaseOccurrenceReviewDao.save(review);
+        return review;
     }
 }
