@@ -48,7 +48,7 @@ EXCLUDE_PATERNS="\
 \[findbugs\]\ (.*)FindBugs2\.execute|\
 \[findbugs\]\ (.*)FindBugs\.runMain|\
 \[findbugs\]\ (.*)FindBugs2\.main|\
-\[findbugs\]\ (.*)FileSystemPreferences\$1\ run|\
+\[findbugs\]\ (.*)FileSystemPreferences.1\ run|\
 \[findbugs\]\ INFO\:\ Created\ user\ preferences\ directory|\
 \[checkstyle\]\ Running|\
 \[junit\]\ (.*)SKIPPED" # Remove once Ed's fixed his stuff
