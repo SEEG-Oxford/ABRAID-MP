@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#   A project build script for use with travis-ci.org
+#   Copyright (c) 2014 University of Oxford
 
 # Cause travis to create a folding group in the stdout output with the title "Log"
 echo -en 'travis_fold:start:Log\r'
@@ -27,9 +29,9 @@ INCLUDE_PATERNS="\
 \[Summary\]|\
 \[findbugs\]|\
 \[checkstyle\]|\
-\[junit\](.)*ERROR|\
-\[junit\](.)*SKIPPED|\
-\[junit\](.)*FAILED|\
+\[junit\](.*)ERROR|\
+\[junit\](.*)SKIPPED|\
+\[junit\](.*)FAILED|\
 Cannot\ execute"
 
 # Define a set of paterns to match in the build log for excludsion from the summary output
@@ -42,11 +44,12 @@ EXCLUDE_PATERNS="\
 \[findbugs\]\ Setting\ |\
 \[findbugs\]\ Java\ Result|\
 \[findbugs\]\ Warnings\ generated|\
-\[findbugs\].*Findbugs2\.execute|\
-\[findbugs\].*Findbugs\.runMain|\
-\[findbugs\].*Findbugs2\.main|\
-\[findbugs\]\ java.io.IOExection: No files|\
-\[checkstyle\]\ Running"
+\[findbugs\]\ java.io.IOException\: No files|\
+\[findbugs\]\ (.*)FindBugs2\.execute|\
+\[findbugs\]\ (.*)FindBugs\.runMain|\
+\[findbugs\]\ (.*)FindBugs2\.main|\
+\[checkstyle\]\ Running|\
+\[junit\]\ (.*)SKIPPED" # Remove once Ed's fixed his stuff
 
 # Copy a subset of the full log to the screen as a summary
 echo "================== Summary =================="

@@ -88,7 +88,7 @@
         <or>
           <isset property="test.failure"/>
           <isset property="style.failure"/>
-          <!--isset property="bug.failure"/ Enable once Ed's fixed his stuff -->
+          <isset property="bug.failure"/>
        </or>
      </condition>
   </target>
@@ -242,7 +242,7 @@
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="analysis.classpath"/>
     <mkdir dir="${report.out.dir}"/>
-    <findbugs classpathref="analysis.classpath" output="emacs" warningsProperty="bug.failure" jvmargs="-Xmx512M">
+    <findbugs classpathref="analysis.classpath" output="emacs" warningsProperty="bug.failure" jvmargs="-Xmx512M" excludeFilter="${project.root.dir}/src/code-rules.xml">
       <auxClasspath refid="build.classpath"/>
       <sourcePath path="${src.dir}"/>
       <class location="${module.out.dir}"/>
