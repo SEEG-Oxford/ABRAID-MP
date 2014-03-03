@@ -34,7 +34,7 @@ INCLUDE_PATERNS="\
 \[junit\](.*)FAILED|\
 Cannot\ execute"
 
-# Define a set of paterns to match in the build log for excludsion from the summary output
+# Define a set of paterns to match in the build log for exclusion from the summary output
 # 1. Unnessary findbugs outputs (we only want the warnings), 2. Unnessary checkstyle outputs (we only want the warnings)
 EXCLUDE_PATERNS="\
 \[findbugs\]\ Executing\ findbugs|\
