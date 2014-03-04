@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -87,9 +88,10 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         List<DiseaseOccurrence> occurrencesYetToBeReviewed = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
 
         //Assert
-        List<DiseaseOccurrenceReview> reviewedOccurrences = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
-        occurrencesYetToBeReviewed.retainAll(reviewedOccurrences);
-        assertThat(occurrencesYetToBeReviewed).hasSize(0);
+        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+        for (DiseaseOccurrenceReview review : reviews) {
+            assertThat(occurrencesYetToBeReviewed).doesNotContain(review.getDiseaseOccurrence());
+        }
     }
 
     @Test

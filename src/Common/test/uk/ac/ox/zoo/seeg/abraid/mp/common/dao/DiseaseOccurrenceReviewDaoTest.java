@@ -106,8 +106,8 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroup.getId());
 
         // Assert
-        assertThat(reviews).isEmpty();
         assertThat(reviews).isNotNull();
+        assertThat(reviews).isEmpty();
     }
 
     private Expert createExpert() {
