@@ -44,6 +44,10 @@ public class Provenance {
     public Provenance() {
     }
 
+    public Provenance(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }

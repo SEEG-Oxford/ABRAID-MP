@@ -54,6 +54,13 @@ public class Feed {
         this.weighting = weighting;
     }
 
+    public Feed(Integer id, String name, Provenance provenance, double weighting) {
+        this.id = id;
+        this.name = name;
+        this.provenance = provenance;
+        this.weighting = weighting;
+    }
+
     public Integer getId() {
         return id;
     }

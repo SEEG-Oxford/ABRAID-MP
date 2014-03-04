@@ -106,8 +106,8 @@ public class HealthMapWebService {
      */
     public List<HealthMapLocation> sendRequest(Date startDate, Date endDate)
             throws WebServiceClientException, JsonParserException {
-        String formattedStartDate = dateFormat.format(startDate);
-        String formattedEndDate = dateFormat.format(endDate);
+        String formattedStartDate = formatDateWithNullProtection(startDate);
+        String formattedEndDate = formatDateWithNullProtection(endDate);
 
         String url = buildUrl(formattedStartDate, formattedEndDate);
 
@@ -138,6 +138,10 @@ public class HealthMapWebService {
         // Because our desired type uses generics, we need to wrap it in a TypeReference
         // (we cannot use List<HealthMapLocation>.class)
         return parser.parse(json, new TypeReference<List<HealthMapLocation>>() { });
+    }
+
+    private String formatDateWithNullProtection(Date date) {
+        return (date != null) ? dateFormat.format(date) : null;
     }
 
     private void addParameterIfNotNull(UriBuilder builder, String parameterName, String parameterValue) {

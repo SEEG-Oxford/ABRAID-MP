@@ -166,6 +166,6 @@ public class HealthMapLocationConverter {
     }
 
     private Point createPointFromLatLong(HealthMapLocation healthMapLocation) {
-        return GeometryUtils.createPoint(healthMapLocation.getLatitude(), healthMapLocation.getLongitude());
+        return GeometryUtils.createPoint(healthMapLocation.getLongitude(), healthMapLocation.getLatitude());
     }
 }

@@ -96,14 +96,14 @@ public class GeoNamesWebServiceTest {
     }
 
     private String getGeoNamesUrl(int geoNameId) {
-        return "http://api.geonames.org/getJSON?username=edwiles&geonameId=" + geoNameId;
+        return "http://api.geonames.org/getJSON?username=testuser&geonameId=" + geoNameId;
     }
 
     private GeoNamesWebService getGeoNamesWebService(WebServiceClient client) {
         GeoNamesWebService webService = new GeoNamesWebService(client);
         webService.setRootUrlGetJSON("http://api.geonames.org/getJSON");
         webService.setGeoNameIdParameterName("geonameId");
-        webService.setUsername("edwiles");
+        webService.setUsername("testuser");
         webService.setUsernameParameterName("username");
         return webService;
     }
