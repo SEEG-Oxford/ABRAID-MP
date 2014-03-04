@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -19,6 +20,29 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTests {
+    @Autowired
+    private AlertDao alertDao;
+
+    @Autowired
+    private CountryDao countryDao;
+
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+
+    @Autowired
+    private ExpertDao expertDao;
+
+    @Autowired
+    private FeedDao feedDao;
+
+    @Autowired
+    private LocationDao locationDao;
 
     @Test
     public void getAllReviewsForExpert() {

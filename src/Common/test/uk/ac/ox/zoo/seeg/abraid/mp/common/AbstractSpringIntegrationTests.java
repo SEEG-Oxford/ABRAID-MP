@@ -19,22 +19,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 public abstract class AbstractSpringIntegrationTests {
     @Autowired
     private SessionFactory sessionFactory;
-    @Autowired
-    protected AlertDao alertDao;
-    @Autowired
-    protected CountryDao countryDao;
-    @Autowired
-    protected DiseaseGroupDao diseaseGroupDao;
-    @Autowired
-    protected DiseaseOccurrenceDao diseaseOccurrenceDao;
-    @Autowired
-    protected DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
-    @Autowired
-    protected ExpertDao expertDao;
-    @Autowired
-    protected FeedDao feedDao;
-    @Autowired
-    protected LocationDao locationDao;
 
     /**
      * Flushes the session, causing it to send any queued commands to the database. Also clears
