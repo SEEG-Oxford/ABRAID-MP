@@ -37,7 +37,6 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private FeedDao feedDao;
 
-
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
         // Arrange
@@ -70,7 +69,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
         // Assert
         for (DiseaseOccurrence item : list) {
-            assertThat(item.getDiseaseGroup().getId()).isSameAs(diseaseGroupId);
+            assertThat(item.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
         }
     }
 
@@ -196,7 +195,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         return location;
     }
 
-    public DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
+    private DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(expert);
         review.setDiseaseOccurrence(occurrence);

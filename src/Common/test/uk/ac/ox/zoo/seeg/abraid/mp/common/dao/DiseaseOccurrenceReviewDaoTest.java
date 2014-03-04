@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-
 /**
  * Tests the DiseaseOccurrenceReviewDao class.
  *
@@ -108,7 +107,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
 
         // Assert
         assertThat(reviews).isEmpty();
-        assertThat(reviews).hasSize(0);
         assertThat(reviews).isNotNull();
     }
 
