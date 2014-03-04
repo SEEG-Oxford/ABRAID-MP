@@ -70,6 +70,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
     }
 
+    @Test
     public void getAllReviewsForExpertForOneDisease() {
         // Arrange
         Expert expert = createExpert();
@@ -94,6 +95,21 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         assertThat(review.getResponse()).isEqualTo(response);
         assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
         assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
+    }
+
+    @Test
+    public void getAllReviewsForExpertMustReturnEmptyListIfNoReviewsHaveBeenSubmitted() {
+        // Arrange
+        Integer expertId = 1;
+        DiseaseGroup diseaseGroup = createDiseaseGroup();
+
+        // Act
+        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroup.getId());
+
+        // Assert
+        assertThat(reviews).isEmpty();
+        assertThat(reviews).hasSize(0);
+        assertThat(reviews).isNotNull();
     }
 
     private Expert createExpert() {

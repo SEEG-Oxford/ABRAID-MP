@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -17,10 +18,13 @@ import java.util.List;
 public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private DiseaseGroupDao diseaseGroupDao;
 
-    public ExpertServiceImpl(ExpertDao expertDao, DiseaseOccurrenceDao diseaseOccurrenceDao) {
+    public ExpertServiceImpl(ExpertDao expertDao, DiseaseOccurrenceDao diseaseOccurrenceDao,
+                             DiseaseGroupDao diseaseGroupDao) {
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
+        this.diseaseGroupDao = diseaseGroupDao;
     }
 
     /**
@@ -49,9 +53,18 @@ public class ExpertServiceImpl implements ExpertService {
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the diseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
+     * @throws java.lang.IllegalArgumentException if the expertId or diseaseGroupId cannot be found in the database.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId) {
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId)
+            throws IllegalArgumentException {
+        if (expertDao.getById(expertId) == null) {
+            throw new IllegalArgumentException("Expert does not exist in database.");
+        }
+        if (diseaseGroupDao.getById(diseaseGroupId) == null) {
+            throw new IllegalArgumentException("Disease Group does not exist in database.");
+        }
+
         return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
     }
 

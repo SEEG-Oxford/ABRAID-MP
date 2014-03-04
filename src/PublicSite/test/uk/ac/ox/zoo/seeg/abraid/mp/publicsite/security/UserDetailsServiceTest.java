@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -29,8 +30,9 @@ public class UserDetailsServiceTest {
 
         ExpertDao expertDao = mock(ExpertDao.class);
         DiseaseOccurrenceDao diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
+        DiseaseGroupDao diseaseGroupDao = mock(DiseaseGroupDao.class);
 
-        UserDetailsService userDetailsService = new UserDetailsServiceImpl(new ExpertServiceImpl(expertDao, diseaseOccurrenceDao));
+        UserDetailsService userDetailsService = new UserDetailsServiceImpl(new ExpertServiceImpl(expertDao, diseaseOccurrenceDao, diseaseGroupDao));
 
         String fullName = "Helena Patching";
         String email = "zool1250@zoo.ox.ac.uk";

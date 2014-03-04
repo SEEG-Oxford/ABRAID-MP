@@ -17,6 +17,13 @@ public interface ExpertDao {
     List<Expert> getAll();
 
     /**
+     * Gets an expert by its id.
+     * @param id The expert's id.
+     * @return The expert.
+     */
+    Expert getById(Integer id);
+
+    /**
      * Gets an expert by email address.
      * @param email The email address.
      * @return The expert, or null if not found.
