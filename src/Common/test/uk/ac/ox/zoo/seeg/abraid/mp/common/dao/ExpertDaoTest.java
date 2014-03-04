@@ -47,6 +47,35 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
     }
 
     @Test
+    public void saveAndReloadExpertOnId() {
+        // Arrange
+        String expertName = "Test Expert";
+        String expertEmail = "hello@world.com";
+        String expertPassword = "password";
+
+        Expert expert = new Expert();
+        expert.setName(expertName);
+        expert.setEmail(expertEmail);
+        expert.setPassword(expertPassword);
+
+        // Act
+        expertDao.save(expert);
+
+        // Assert
+        assertThat(expert.getCreatedDate()).isNotNull();
+
+        Integer id = expert.getId();
+        flushAndClear();
+
+        expert = expertDao.getById(id);
+        assertThat(expert).isNotNull();
+        assertThat(expert.getId()).isNotNull();
+        assertThat(expert.getEmail()).isEqualTo(expertEmail);
+        assertThat(expert.getName()).isEqualTo(expertName);
+        assertThat(expert.getCreatedDate()).isNotNull();
+    }
+
+    @Test
     public void loadNonExistentExpert() {
         // Arrange
         String expertEmail = "This expert does not exist";
