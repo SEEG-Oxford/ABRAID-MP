@@ -1,14 +1,17 @@
+#   Travis-ci.org configuration file for ABRAID-MP
+#   Copyright (c) 2014 University of Oxford
 language: java
 jdk:
   - openjdk7
   - oraclejdk7
 services: postgresql
 # Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
-cache:
-  apt: true
-  directories:
-  - .ant/lib
-  - .ivy2/cache
+# Note: need to be carefull that the ivy-published version of common doesnt cache
+#cache:
+#  apt: true
+#  directories:
+#  - .ant/lib
+#  - .ivy2/cache
 before_script:
   - sudo apt-get update
   - sudo apt-get install r-base devscripts

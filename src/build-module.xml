@@ -60,11 +60,16 @@
   </path>
 
   <!-- CI targets -->
-  <target name="full" depends="clean, compile.production, compile.tests, unit.test, check.quality, publish.package, print.summary" description="Build pipeline"> <!-- Add generate.docs -->
+  <target name="full" depends="print.start, clean, compile.production, compile.tests, unit.test, check.quality, publish.package, print.summary" description="Build pipeline"> <!-- Add generate.docs -->
     <fail message="Quality checks failed!" if="build.failure" />
   </target>
 
   <target name="print.summary" depends="test.summary, style.summary, bug.summary, combine.results, composite.summary" />
+
+  <target name="print.start">
+    <echo message="[Summary]" />
+    <echo message="[Summary] Starting ${module.name}" />
+  </target>
 
   <target name="test.summary" if="test.failure">
     <echo>[Summary] ${module.name}: Tests unsuccessful!</echo>
@@ -83,7 +88,7 @@
         <or>
           <isset property="test.failure"/>
           <isset property="style.failure"/>
-          <!--isset property="bug.failure"/ Enable once Ed's fixed his stuff -->
+          <isset property="bug.failure"/>
        </or>
      </condition>
   </target>
@@ -237,7 +242,7 @@
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="analysis.classpath"/>
     <mkdir dir="${report.out.dir}"/>
-    <findbugs classpathref="analysis.classpath" output="xml:withMessages" warningsProperty="bug.failure" outputFile="${report.out.dir}/findbugs-report.xml" jvmargs="-Xmx512M">
+    <findbugs classpathref="analysis.classpath" output="emacs" warningsProperty="bug.failure" jvmargs="-Xmx512M" excludeFilter="${project.root.dir}/src/code-rules.xml">
       <auxClasspath refid="build.classpath"/>
       <sourcePath path="${src.dir}"/>
       <class location="${module.out.dir}"/>
