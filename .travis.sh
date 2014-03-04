@@ -24,7 +24,7 @@ echo -en 'travis_fold:end:Log\r'
 
 # Define a set of paterns to match in the build log for inclusion the summary output
 # 1. Lines marked as error output, 2. Lines marked as summary ouput, 3. Findbugs output, 4. Checkstyle output, 5. JUnit warnings
-INCLUDE_PATERNS="\
+INCLUDE_PATTERNS="\
 (^\ E\:)|\
 \[Summary\]|\
 \[findbugs\]|\
@@ -36,7 +36,7 @@ Cannot\ execute"
 
 # Define a set of paterns to match in the build log for exclusion from the summary output
 # 1. Unnessary findbugs outputs (we only want the warnings), 2. Unnessary checkstyle outputs (we only want the warnings)
-EXCLUDE_PATERNS="\
+EXCLUDE_PATTERNS="\
 \[findbugs\]\ Executing\ findbugs|\
 \[findbugs\]\ Running\ FindBugs|\
 \[findbugs\]\ Exit\ code\ set\ to|\
@@ -55,7 +55,7 @@ EXCLUDE_PATERNS="\
 
 # Copy a subset of the full log to the screen as a summary
 echo "================== Summary =================="
-grep -E "${INCLUDE_PATERNS}" build.log | grep -v -E "${EXCLUDE_PATERNS}"
+grep -E "${INCLUDE_PATTERNS}" build.log | grep -v -E "${EXCLUDE_PATTERNS}"
 
 # Return exit code of "ant full"
 exit $EXIT
