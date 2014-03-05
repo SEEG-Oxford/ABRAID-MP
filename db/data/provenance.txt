@@ -1,1 +1,1 @@
-1	HealthMap
+1	HealthMap	1

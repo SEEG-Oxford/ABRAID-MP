@@ -3,12 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -62,5 +59,104 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         HealthMapDisease disease = new HealthMapDisease();
         diseaseService.saveHealthMapDisease(disease);
         verify(healthMapDiseaseDao).save(eq(disease));
+    }
+
+    @Test
+    public void diseaseOccurrenceExists() {
+        // Arrange
+        Alert alert = new Alert();
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        Location location = new Location();
+        Date occurrenceStartDate = Calendar.getInstance().getTime();
+
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(alert);
+        occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setLocation(location);
+        occurrence.setOccurrenceStartDate(occurrenceStartDate);
+
+        DiseaseOccurrence returnedOccurrence = new DiseaseOccurrence();
+        List<DiseaseOccurrence> occurrences = Arrays.asList(returnedOccurrence);
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(diseaseGroup, location, alert,
+                occurrenceStartDate)).thenReturn(occurrences);
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isTrue();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExist() {
+        // Arrange
+        Alert alert = new Alert();
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        Location location = new Location();
+        Date occurrenceStartDate = Calendar.getInstance().getTime();
+
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(alert);
+        occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setLocation(location);
+        occurrence.setOccurrenceStartDate(occurrenceStartDate);
+
+        List<DiseaseOccurrence> occurrences = new ArrayList<>();
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(diseaseGroup, location, alert,
+                occurrenceStartDate)).thenReturn(occurrences);
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExistBecauseAlertIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(null);
+        occurrence.setDiseaseGroup(new DiseaseGroup());
+        occurrence.setLocation(new Location());
+        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExistBecauseDiseaseGroupIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(new Alert());
+        occurrence.setDiseaseGroup(null);
+        occurrence.setLocation(new Location());
+        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExistBecauseLocationIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(new Alert());
+        occurrence.setDiseaseGroup(new DiseaseGroup());
+        occurrence.setLocation(null);
+        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
     }
 }

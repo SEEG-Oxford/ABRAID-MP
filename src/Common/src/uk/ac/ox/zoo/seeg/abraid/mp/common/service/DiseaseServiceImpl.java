@@ -61,4 +61,24 @@ public class DiseaseServiceImpl implements DiseaseService {
     public List<DiseaseGroup> getAllDiseaseGroups() {
         return diseaseGroupDao.getAll();
     }
+
+    /**
+     * Determines whether the specified disease occurrence already exists in the database. This is true if an
+     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * @param occurrence The disease occurrence.
+     * @return True if the occurrence already exists in the database, otherwise false.
+     */
+    public boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence) {
+        // These are not-null fields in the database, so if any of them are null then there cannot possibly be a
+        // matching disease occurrence in the database
+        if (occurrence.getDiseaseGroup() == null || occurrence.getLocation() == null || occurrence.getAlert() == null) {
+            return false;
+        }
+
+        List<DiseaseOccurrence> matchingOccurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceStartDate());
+
+        return matchingOccurrences.size() > 0;
+    }
 }

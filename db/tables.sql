@@ -122,7 +122,7 @@ CREATE TABLE Location (
 CREATE TABLE Provenance (
     Id serial NOT NULL,
     Name varchar(100) NOT NULL,
-    DefaultFeedWeighting double precision,
+    DefaultFeedWeighting double precision NOT NULL,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     LastRetrievedDate timestamp
 );

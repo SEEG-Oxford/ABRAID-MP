@@ -14,6 +14,13 @@ import java.util.Date;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForExistenceCheck",
+                query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
+                        "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
+        )
+})
 @Entity
 public class DiseaseOccurrence {
     // The primary key.

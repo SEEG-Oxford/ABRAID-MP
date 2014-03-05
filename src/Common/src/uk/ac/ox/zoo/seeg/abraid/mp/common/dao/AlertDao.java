@@ -9,6 +9,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
  */
 public interface AlertDao {
     /**
+     * Gets an alert by ID.
+     * @param alertId The alert ID.
+     * @return The alert, or null if not found.
+     */
+    Alert getById(Integer alertId);
+
+    /**
      * Gets an alert by HealthMap alert ID.
      * @param healthMapAlertId The HealthMap alert ID.
      * @return The alert, or null if not found.

@@ -25,10 +25,19 @@ public class WebServiceClient {
             "Web service returned status code %d (\"%s\"). Web service URL: \"%s\"";
     private static final String GENERAL_ERROR_MESSAGE =
             "Error when accessing web service with URL \"%s\": %s";
-    private static final int CONNECT_TIMEOUT_MILLISECONDS = 60000;
-    private static final int READ_TIMEOUT_MILLISECONDS = 60000;
 
     private static final Logger LOGGER = Logger.getLogger(WebServiceClient.class);
+
+    private int connectTimeoutMilliseconds;
+    private int readTimeoutMilliseconds;
+
+    public void setConnectTimeoutMilliseconds(int connectTimeoutMilliseconds) {
+        this.connectTimeoutMilliseconds = connectTimeoutMilliseconds;
+    }
+
+    public void setReadTimeoutMilliseconds(int readTimeoutMilliseconds) {
+        this.readTimeoutMilliseconds = readTimeoutMilliseconds;
+    }
 
     /**
      * Calls a web service.
@@ -42,8 +51,8 @@ public class WebServiceClient {
             ClientConfig clientConfig = new ClientConfig();
             clientConfig.connectorProvider(new ApacheConnectorProvider());
             Client client = ClientBuilder.newClient(clientConfig);
-            client.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT_MILLISECONDS);
-            client.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT_MILLISECONDS);
+            client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
+            client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 
             Date startDate = Calendar.getInstance().getTime();
             LOGGER.debug(String.format(CALLING_WEB_SERVICE_MESSAGE, url));

@@ -161,6 +161,7 @@ public class HealthMapWebServiceTest {
                 "182133&rss=t");
         assertThat(location1Alert1.getSummary()).isEqualTo("Confirmed Influenza - Avian in Guangdong Sheng, China -" +
                 " human");
+        assertThat(location1Alert1.getDiseaseId()).isEqualTo(271);
 
         HealthMapAlert location1Alert2 = location1.getAlerts().get(1);
         assertThat(location1Alert2.getAlertId()).isEqualTo(2155089);
@@ -177,6 +178,7 @@ public class HealthMapWebServiceTest {
                 "ions-reported-in-china.aspx?type%3Dmsgn%26utm_source%3Dgoogle%26utm_campaign%3Dsitemap");
         assertThat(location1Alert2.getSummary()).isEqualTo("Two New Cases Of Human H7N9 Infections Reported In China" +
                 " - RTT News");
+        assertThat(location1Alert2.getDiseaseId()).isEqualTo(271);
 
         HealthMapLocation location2 = healthMapLocations.get(1);
         assertThat(location2.getCountry()).isNull();
@@ -198,6 +200,7 @@ public class HealthMapWebServiceTest {
         assertThat(location2Alert1.getOriginalUrl()).isEqualTo("http://www.folkebladet.no/nyheter/article8911579.ece");
         assertThat(location2Alert1.getSummary()).isEqualTo("Konstaterte smittsom hjernehinnebetennelse på 2-åring " +
                 "-Folkebladet.no");
+        assertThat(location2Alert1.getDiseaseId()).isEqualTo(84);
     }
 
     @Test
@@ -281,6 +284,7 @@ public class HealthMapWebServiceTest {
     private Date getDate(int year, int month, int date, int hourOfDay, int minute, int second) {
         // The date's timezone is UTC (i.e. +0000)
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/UTC"));
+        //noinspection MagicConstant
         calendar.set(year, month - 1, date, hourOfDay, minute, second);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();

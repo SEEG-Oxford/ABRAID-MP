@@ -22,9 +22,10 @@ public class HealthMapLookupData {
     private DiseaseService diseaseService;
 
     private Map<Long, HealthMapCountry> countryMap;
-    private Map<String, HealthMapDisease> diseaseMap;
+    private Map<Long, HealthMapDisease> diseaseMap;
     private Map<String, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
+    private Provenance healthMapProvenance;
 
     public HealthMapLookupData(AlertService alertService, LocationService locationService,
                                DiseaseService diseaseService) {
@@ -46,13 +47,13 @@ public class HealthMapLookupData {
     }
 
     /**
-     * Gets a list of HealthMap diseases, indexed by HealthMap disease name.
-     * @return A list of HealthMap diseases, indexed by HealthMap disease name.
+     * Gets a list of HealthMap diseases, indexed by HealthMap disease ID.
+     * @return A list of HealthMap diseases, indexed by HealthMap disease ID.
      */
-    public Map<String, HealthMapDisease> getDiseaseMap() {
+    public Map<Long, HealthMapDisease> getDiseaseMap() {
         if (diseaseMap == null) {
             List<HealthMapDisease> diseases = diseaseService.getAllHealthMapDiseases();
-            diseaseMap = index(diseases, on(HealthMapDisease.class).getName());
+            diseaseMap = index(diseases, on(HealthMapDisease.class).getId());
         }
         return diseaseMap;
     }
@@ -78,5 +79,16 @@ public class HealthMapLookupData {
             geoNamesMap = locationService.getGeoNamesLocationPrecisionMappings();
         }
         return geoNamesMap;
+    }
+
+    /**
+     * Gets the HealthMap provenance.
+     * @return The HealthMap provenance.
+     */
+    public Provenance getHealthMapProvenance() {
+        if (healthMapProvenance == null) {
+            healthMapProvenance = alertService.getProvenanceByName(ProvenanceNames.HEALTHMAP);
+        }
+        return healthMapProvenance;
     }
 }

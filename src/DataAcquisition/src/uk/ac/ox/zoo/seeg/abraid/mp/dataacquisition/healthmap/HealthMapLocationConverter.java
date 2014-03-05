@@ -61,22 +61,24 @@ public class HealthMapLocationConverter {
     }
 
     /**
-     * Adds location precision to a location. This is split out from the rest of the convert method, so that
-     * we only call GeoNames if necessary.
+     * Adds location precision to a location, if the location is new (i.e. unsaved). This is split out from the rest of
+     * the convert method, so that we only call GeoNames if necessary.
      * @param location The location.
      * @param healthMapLocation The HealthMap location.
      */
-    public void addPrecision(Location location, HealthMapLocation healthMapLocation) {
-        Integer geoNamesId = healthMapLocation.getGeoNameId();
+    public void addPrecisionIfNewLocation(Location location, HealthMapLocation healthMapLocation) {
+        if (location.getId() == null) {
+            Integer geoNamesId = healthMapLocation.getGeoNameId();
 
-        if (geoNamesId != null) {
-            addPrecisionUsingGeoNames(location, geoNamesId);
-        }
+            if (geoNamesId != null) {
+                addPrecisionUsingGeoNames(location, geoNamesId);
+            }
 
-        if (location.getGeoNamesId() == null) {
-            // Either the HealthMap location does not have a GeoNames ID, or the GeoNames web service couldn't
-            // find it. So use the "rough" location precision supplied in HealthMap's place_basic_type field.
-            addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
+            if (location.getGeoNamesId() == null) {
+                // Either the HealthMap location does not have a GeoNames ID, or the GeoNames web service couldn't
+                // find it. So use the "rough" location precision supplied in HealthMap's place_basic_type field.
+                addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
+            }
         }
     }
 

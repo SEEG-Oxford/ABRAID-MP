@@ -20,6 +20,8 @@ public class HealthMapAlert {
 
     private String feed;
     private String disease;
+    @JsonProperty("disease_id")
+    private Long diseaseId;
     private String summary;
     private Date date;
     private String link;
@@ -27,6 +29,21 @@ public class HealthMapAlert {
     private String description;
     @JsonProperty("original_url")
     private String originalUrl;
+
+    public HealthMapAlert() {
+    }
+
+    public HealthMapAlert(String feed, String disease, Long diseaseId, String summary, Date date, String link,
+                          String description, String originalUrl) {
+        this.feed = feed;
+        this.disease = disease;
+        this.diseaseId = diseaseId;
+        this.summary = summary;
+        this.date = date;
+        this.link = link;
+        this.description = description;
+        this.originalUrl = originalUrl;
+    }
 
     public String getFeed() {
         return feed;
@@ -42,6 +59,14 @@ public class HealthMapAlert {
 
     public void setDisease(String disease) {
         this.disease = StringUtils.trimWhitespace(disease);
+    }
+
+    public Long getDiseaseId() {
+        return diseaseId;
+    }
+
+    public void setDiseaseId(String diseaseId) {
+        this.diseaseId = ParseUtils.parseLong(diseaseId);
     }
 
     public String getSummary() {

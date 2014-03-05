@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
@@ -23,18 +22,21 @@ public class HealthMapDataConverter {
     private DiseaseService diseaseService;
     private HealthMapLocationConverter locationConverter;
     private HealthMapAlertConverter diseaseOccurrenceConverter;
+    private HealthMapLookupData healthMapLookupData;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
     private static final String CONVERSION_MESSAGE = "Converting %d HealthMap location(s) with corresponding alerts";
-    private static final String COUNT_MESSAGE = "Saved %d HealthMap disease occurrence(s)";
+    private static final String COUNT_MESSAGE = "Saved %d HealthMap disease occurrence(s) in %d location(s)";
 
     public HealthMapDataConverter(HealthMapLocationConverter locationConverter,
                                   HealthMapAlertConverter diseaseOccurrenceConverter,
-                                  AlertService alertService, DiseaseService diseaseService) {
+                                  AlertService alertService, DiseaseService diseaseService,
+                                  HealthMapLookupData healthMapLookupData) {
         this.locationConverter = locationConverter;
         this.diseaseOccurrenceConverter = diseaseOccurrenceConverter;
         this.alertService = alertService;
         this.diseaseService = diseaseService;
+        this.healthMapLookupData = healthMapLookupData;
     }
 
     /**
@@ -45,39 +47,39 @@ public class HealthMapDataConverter {
     public void convert(List<HealthMapLocation> healthMapLocations, Date retrievalDate) {
         LOGGER.info(String.format(CONVERSION_MESSAGE, healthMapLocations.size()));
 
+        int locationsCount = 0;
         int diseaseOccurrencesCount = 0;
         for (HealthMapLocation healthMapLocation : healthMapLocations) {
             // Convert the location
             Location location = locationConverter.convert(healthMapLocation);
-            boolean isNewLocation = true;
+            boolean isFirstOccurrenceInThisLocation = true;
 
             // Convert each alert
             for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
                 DiseaseOccurrence occurrence = diseaseOccurrenceConverter.convert(healthMapAlert, location);
                 if (occurrence != null) {
-                    if (isNewLocation) {
+                    if (isFirstOccurrenceInThisLocation) {
                         // Add the location precision (using GeoNames) when we know that the location is definitely
                         // going to be saved
-                        locationConverter.addPrecision(location, healthMapLocation);
-                        isNewLocation = false;
+                        locationConverter.addPrecisionIfNewLocation(location, healthMapLocation);
+                        locationsCount++;
+                        isFirstOccurrenceInThisLocation = false;
                     }
 
                     diseaseService.saveDiseaseOccurrence(occurrence);
                     diseaseOccurrencesCount++;
+                    locationsCount++;
                 }
             }
         }
 
         writeLastRetrievedDate(retrievalDate);
 
-        // TODO: Add "in %d locations" to this message when we are sure that locations count <= disease occurrences
-        LOGGER.info(String.format(COUNT_MESSAGE, diseaseOccurrencesCount));
-
-        // TODO: Ensure that the transaction commits at this point (and not afterwards)
+        LOGGER.info(String.format(COUNT_MESSAGE, diseaseOccurrencesCount, locationsCount));
     }
 
     private void writeLastRetrievedDate(Date retrievalDate) {
-        Provenance provenance = alertService.getProvenanceByName(ProvenanceNames.HEALTHMAP);
+        Provenance provenance = healthMapLookupData.getHealthMapProvenance();
         provenance.setLastRetrievedDate(retrievalDate);
         alertService.saveProvenance(provenance);
     }

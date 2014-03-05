@@ -63,13 +63,13 @@ public class HealthMapLookupDataTest {
         List<HealthMapDisease> diseases = Arrays.asList(healthMapDisease1, healthMapDisease2);
         when(diseaseService.getAllHealthMapDiseases()).thenReturn(diseases);
 
-        Map<String, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
-        expectedDiseaseMap.put("Test HealthMap disease 1", healthMapDisease1);
-        expectedDiseaseMap.put("Test HealthMap disease 2", healthMapDisease2);
+        Map<Long, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
+        expectedDiseaseMap.put(1L, healthMapDisease1);
+        expectedDiseaseMap.put(2L, healthMapDisease2);
 
         // Act
         HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
-        Map<String, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
+        Map<Long, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
 
         // Assert
         assertThat(actualDiseaseMap).isEqualTo(expectedDiseaseMap);
