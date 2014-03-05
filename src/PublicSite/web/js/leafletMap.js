@@ -10,18 +10,18 @@ var map = L.map('map', {
     zoomsliderControl: true,
     maxBounds: [ [-89,-179], [89, 179] ],
     maxZoom:10,
-    minZoom:2
+    minZoom:3
 }).setView([51.505, -0.09], 4);
 
-// #56 Add the simplified shapefile base layer with WMS GET request from localhost 1024 GeoServer
-var geoServerUrl = 'http://localhost:1024/geoserver/abraid/wms';
+// Add the simplified shapefile base layer with WMS GET request from localhost GeoServer
+var geoServerUrl = 'http://localhost:8081/geoserver/abraid/wms';
 var baseLayer = L.tileLayer.wms(geoServerUrl, {
     layers: ['abraid:simplified_base_layer'],
     format: 'image/png',
     reuseTiles: true
 }).addTo(map);
 
-// #45 Add disease occurrence points to map
+// Add disease occurrence points to map
 // First add empty geoJson layer to map, with styling options, then get JSON data using an AJAX request
 var locationLayer = L.geoJson([], {
     pointToLayer: locationLayerPoint
@@ -37,7 +37,7 @@ function locationLayerPoint(feature, latlng) {
 }
 
 // Get the GeoJSON Feature Collection and add the data to the geoJson layer
-// TODO: Get DiseaseOccurrence GeoJSON from HUDL's web service, instead of abraid database location table from localhost 1024 GeoServer
-$.getJSON('http://localhost:1024/geoserver/abraid/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=abraid:location&outputFormat=json', function(featureCollection) {
+// TODO: Get DiseaseOccurrence GeoJSON from HUDL's web service, instead of abraid database location table from localhost GeoServer
+$.getJSON('http://localhost:8081/geoserver/abraid/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=abraid:location&outputFormat=json', function(featureCollection) {
     locationLayer.addData(featureCollection);
 });
