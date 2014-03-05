@@ -43,6 +43,11 @@ public final class ParseUtils {
      * @return The parsed double, or null if it could not be parsed.
      */
     public static Double parseDouble(String toParse) {
+        // Null input causes Double.parseDouble to throw a NullPointerException, so handle this separately
+        if (toParse == null) {
+            return null;
+        }
+
         try {
             return Double.parseDouble(StringUtils.trimWhitespace(toParse));
         } catch (NumberFormatException e) {
