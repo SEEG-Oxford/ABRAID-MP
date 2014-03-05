@@ -22,7 +22,7 @@ EXIT=${PIPESTATUS[0]}
 # End of "Log" fold group
 echo -en 'travis_fold:end:Log\r'
 
-# Define a set of paterns to match in the build log for inclusion the summary output
+# Define a set of patterns to match in the build log for inclusion the summary output
 # 1. Lines marked as error output, 2. Lines marked as summary ouput, 3. Findbugs output, 4. Checkstyle output, 5. JUnit warnings
 INCLUDE_PATTERNS="\
 (^\ E\:)|\
@@ -34,8 +34,8 @@ INCLUDE_PATTERNS="\
 \[junit\](.*)FAILED|\
 Cannot\ execute"
 
-# Define a set of paterns to match in the build log for exclusion from the summary output
-# 1. Unnessary findbugs outputs (we only want the warnings), 2. Unnessary checkstyle outputs (we only want the warnings)
+# Define a set of patterns to match in the build log for exclusion from the summary output
+# 1. Unnecessary findbugs outputs (we only want the warnings), 2. Unnecessary checkstyle outputs (we only want the warnings)
 EXCLUDE_PATTERNS="\
 \[findbugs\]\ Executing\ findbugs|\
 \[findbugs\]\ Running\ FindBugs|\

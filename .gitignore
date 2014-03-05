@@ -8,3 +8,5 @@ TEST*.txt
 user.properties
 src/.idea/dictionaries/
 build.log
+lib
+lib-local
