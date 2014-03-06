@@ -1,10 +1,12 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Created by zool1112 on 05/03/14.
  */
-//@JsonSerialize
-public enum GeoJsonObjectType {
+@JsonSerialize(using = GeoJsonNamedEnumSerializer.class)
+public enum GeoJsonObjectType implements GeoJsonNamedEnum {
     POINT("Point"),
     //MULTI_POINT("MultiPoint"),
     //LINE_STRING("LineString"),
@@ -21,7 +23,7 @@ public enum GeoJsonObjectType {
         this.jsonName = jsonName;
     }
 
-    public String getJsonName() {
+    public String getGeoJsonName() {
         return jsonName;
     }
 }

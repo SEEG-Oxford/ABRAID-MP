@@ -1,6 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonCrs;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonFeature;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonGeometry;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonPointGeometry;
 
 /**
  * Created by zool1112 on 05/03/14.
@@ -10,7 +14,8 @@ public class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
         super(
                 extractId(occurrence),
                 extractGeometry(occurrence),
-                extractProperties(occurrence)
+                extractProperties(occurrence),
+                null, null
         );
     }
 
@@ -20,8 +25,9 @@ public class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
 
     private static GeoJsonGeometry extractGeometry(DiseaseOccurrence occurrence) {
         return new GeoJsonPointGeometry(
+                occurrence.getLocation().getGeom().getY(),
                 occurrence.getLocation().getGeom().getX(),
-                occurrence.getLocation().getGeom().getY());
+                null, null);
     }
 
     private static GeoJsonDiseaseOccurrenceFeatureProperties extractProperties(DiseaseOccurrence occurrence) {

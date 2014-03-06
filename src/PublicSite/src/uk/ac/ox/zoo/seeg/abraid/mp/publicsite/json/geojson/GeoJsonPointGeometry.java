@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class GeoJsonPointGeometry extends GeoJsonGeometry {
 
-    public GeoJsonPointGeometry(double longitude, double latitude) {
-        super(GeoJsonGeometryType.POINT, extractCoordinates(longitude, latitude));
+    public GeoJsonPointGeometry(double longitude, double latitude, GeoJsonCrs crs, List<Double> bbox) {
+        super(GeoJsonGeometryType.POINT, extractCoordinates(longitude, latitude), crs, bbox);
     }
 
     private static List<Double> extractCoordinates(double longitude, double latitude) {

@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.List;
 public abstract class GeoJsonGeometry extends GeoJsonObject {
     private final List<Double> coordinates;
 
-    public GeoJsonGeometry(GeoJsonGeometryType type, List<Double> coordinates) {
-        super(type.getGeoJsonObjectType());
+    public GeoJsonGeometry(GeoJsonGeometryType type, List<Double> coordinates, GeoJsonCrs crs, List<Double> bbox) {
+        super(type.getGeoJsonObjectType(), crs, bbox);
 
         this.coordinates = Collections.unmodifiableList(coordinates);
     }
