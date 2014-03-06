@@ -30,7 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String emailAddress) throws UsernameNotFoundException {
-
         Expert expert = expertService.getExpertByEmail(emailAddress);
         if (expert == null) {
             throw new UsernameNotFoundException("User not found");
@@ -40,13 +39,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private User buildUserFromExpert(Expert expert) {
-
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(ROLE_USER));
         if (expert.isAdministrator()) {
             authorities.add(new SimpleGrantedAuthority(ROLE_ADMINISTRATOR));
         }
 
-        return new PublicSiteUser(expert.getId(), expert.getEmail(), expert.getName(), expert.getPassword(), authorities);
+        return new PublicSiteUser(
+                expert.getId(),
+                expert.getEmail(),
+                expert.getName(),
+                expert.getPassword(),
+                authorities);
     }
 }

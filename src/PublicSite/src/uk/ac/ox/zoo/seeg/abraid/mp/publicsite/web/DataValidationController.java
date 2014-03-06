@@ -1,9 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,12 +45,29 @@ public class DataValidationController {
         return "datavalidation";
     }
 
-    @Secured("ROLE_USER")
-    @RequestMapping(value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences", method = RequestMethod.GET)
+    /**
+     * Returns the disease occurrence points in need of review by the current user for a given disease id.
+     * @param diseaseId The id of the disease to return occurrence points for.
+     * @return A GeoJSON DTO containing the occurrence points.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public GeoJsonFeatureCollection getDiseaseOccurrencesInNeedOfReviewForActiveUser(@PathVariable Integer diseaseId) {
+    public ResponseEntity<GeoJsonFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
+            @PathVariable Integer diseaseId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), diseaseId);
-        return new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences);
+        List<DiseaseOccurrence> occurrences = null;
+
+        try {
+            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), diseaseId);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<GeoJsonFeatureCollection>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<GeoJsonFeatureCollection>(
+                new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 }

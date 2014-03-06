@@ -43,11 +43,12 @@ public class UserDetailsServiceTest {
         authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
 
         UserDetails user = new PublicSiteUser(id, email, fullName, hashedPassword, authorities);
-        Expert expert = new Expert();
-        expert.setName(fullName);
-        expert.setEmail(email);
-        expert.setPassword(hashedPassword);
-        expert.setAdministrator(isAdministrator);
+        Expert expert = mock(Expert.class);
+        when(expert.getName()).thenReturn(fullName);
+        when(expert.getEmail()).thenReturn(email);
+        when(expert.getPassword()).thenReturn(hashedPassword);
+        when(expert.isAdministrator()).thenReturn(isAdministrator);
+        when(expert.getId()).thenReturn(id);
 
         when(expertDao.getByEmail(email)).thenReturn(expert);
         UserDetails testUser = userDetailsService.loadUserByUsername(email);

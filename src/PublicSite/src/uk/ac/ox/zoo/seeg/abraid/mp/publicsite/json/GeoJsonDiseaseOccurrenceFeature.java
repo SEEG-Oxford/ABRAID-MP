@@ -1,13 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonCrs;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonGeometry;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonPointGeometry;
 
 /**
- * Created by zool1112 on 05/03/14.
+ * A DTO for uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence expressed as a "Feature".
+ * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
     public GeoJsonDiseaseOccurrenceFeature(DiseaseOccurrence occurrence) {

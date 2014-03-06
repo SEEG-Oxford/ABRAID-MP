@@ -1,17 +1,17 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 
 import org.joda.time.DateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
 /**
- * Created by zool1112 on 05/03/14.
+ * A DTO for the properties on a uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence object.
+ * Structured to reflect the fields that should be serialized in GeoJSON server response.
+ * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseOccurrenceFeatureProperties {
     private final String locationName;
     private final String countryName;
     private final GeoJsonAlert alert;
-    //@JsonSerialize
     private final DateTime diseaseOccurrenceStartDate;
 
     public GeoJsonDiseaseOccurrenceFeatureProperties(DiseaseOccurrence occurrence) {

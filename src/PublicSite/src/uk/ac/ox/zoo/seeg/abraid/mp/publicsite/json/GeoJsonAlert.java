@@ -4,14 +4,15 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 
 /**
- * Created by zool1112 on 05/03/14.
+ * A DTO for uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert
+ * Structured to reflect the fields that should be serialized in GeoJSON server response.
+ * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonAlert {
     private final String title;
     private final String summary;
     private final String url;
     private final String feedName;
-    //@JsonSerialize
     private final DateTime publicationDate;
 
     public GeoJsonAlert(Alert alert) {

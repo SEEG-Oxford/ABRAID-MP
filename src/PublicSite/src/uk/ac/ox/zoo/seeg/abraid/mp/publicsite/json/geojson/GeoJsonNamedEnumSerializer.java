@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 
 /**
- * Created by zool1112 on 06/03/14.
+ * A Jackson serializer to correctly convert enum values to the appropriate string.
+ * Copyright (c) 2014 University of Oxford
  */
-public class  GeoJsonNamedEnumSerializer extends JsonSerializer<GeoJsonNamedEnum> {
+public class GeoJsonNamedEnumSerializer extends JsonSerializer<GeoJsonNamedEnum> {
     @Override
-    public void serialize(GeoJsonNamedEnum value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(GeoJsonNamedEnum value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+            throws IOException {
         jsonGenerator.writeString(value.getGeoJsonName());
     }
 }

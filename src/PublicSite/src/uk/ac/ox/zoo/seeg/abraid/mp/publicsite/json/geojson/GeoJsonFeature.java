@@ -3,14 +3,25 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 import java.util.List;
 
 /**
- * Created by zool1112 on 05/03/14.
+ * A DTO for "Feature" objects.
+ * Structured to reflect the fields that should be serialized in GeoJSON server response.
+ * Implements the specification available from http://geojson.org/geojson-spec.html#feature-objects
+ * Copyright (c) 2014 University of Oxford
  */
 public abstract class GeoJsonFeature extends GeoJsonObject {
-    private final int id;
+    private final Integer id;
     private final GeoJsonGeometry geometry;
     private final Object properties;
 
-    public GeoJsonFeature(int id, GeoJsonGeometry geometry, Object properties, GeoJsonCrs crs, List<Double> bbox) {
+    /**
+     * Create a new instance of GeoJsonFeature.
+     * @param id OPTIONAL: An identifier for the feature
+     * @param geometry The geometry of the feature
+     * @param properties The properties of the feature
+     * @param crs OPTIONAL: The coordinate reference system of the feature
+     * @param bbox OPTIONAL: The bounding box of the feature
+     */
+    public GeoJsonFeature(Integer id, GeoJsonGeometry geometry, Object properties, GeoJsonCrs crs, List<Double> bbox) {
         super(GeoJsonObjectType.FEATURE, crs, bbox);
 
         this.id = id;
@@ -18,8 +29,7 @@ public abstract class GeoJsonFeature extends GeoJsonObject {
         this.properties = properties;
     }
 
-    public int getId() {
-        // Technically the id attribute of a feature is optional, but as we should have it in all circumstances, we can treat it as mandatory.
+    public Integer getId() {
         return id;
     }
 

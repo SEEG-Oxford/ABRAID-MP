@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 import ch.lambdaj.Lambda;
 import ch.lambdaj.function.convert.Converter;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonCrs;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonNamedCrs;
@@ -11,7 +10,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonNamedCrs;
 import java.util.List;
 
 /**
- * Created by zool1112 on 05/03/14.
+ * A DTO for a list of uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence expressed as a "FeatureCollection".
+ * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseOccurrenceFeatureCollection extends GeoJsonFeatureCollection {
     public GeoJsonDiseaseOccurrenceFeatureCollection(List<DiseaseOccurrence> occurrences) {

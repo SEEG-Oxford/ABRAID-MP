@@ -3,10 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * Created by zool1112 on 05/03/14.
+ * Provides the valid GeoJSON object types.
+ * Copyright (c) 2014 University of Oxford
  */
 @JsonSerialize(using = GeoJsonNamedEnumSerializer.class)
 public enum GeoJsonObjectType implements GeoJsonNamedEnum {
+    /** A GeoJSON Point. */
     POINT("Point"),
     //MULTI_POINT("MultiPoint"),
     //LINE_STRING("LineString"),
@@ -14,7 +16,9 @@ public enum GeoJsonObjectType implements GeoJsonNamedEnum {
     //POLYGON("Polygon"),
     //MULTI_POLYGON("MultiPolygon"),
     //GEOMETRY_COLLECTION("GeometryCollection"),
+    /** A GeoJSON Feature. */
     FEATURE("Feature"),
+    /** A GeoJSON Feature Collection. */
     FEATURE_COLLECTION("FeatureCollection");
 
     private String jsonName;

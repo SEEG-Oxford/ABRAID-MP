@@ -1,16 +1,20 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 
 /**
- * Created by zool1112 on 06/03/14.
+ * A service to obtain the currently logged in user.
+ * Copyright (c) 2014 University of Oxford
  */
 public class CurrentUserServiceImpl implements CurrentUserService {
+    /**
+     * Obtains the currently logged in user.
+     * @return The currently logged in user or null if user is not logged in
+     */
     @Override
     public PublicSiteUser getCurrentUser() {
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return (user instanceof PublicSiteUser) ? (PublicSiteUser)user : null;
+        return (user instanceof PublicSiteUser) ? (PublicSiteUser) user : null;
     }
 }

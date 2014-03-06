@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 /**
- * Created by zool1112 on 06/03/14.
+ * A custom Jackson object mapper to ensure the JSON produced is GeoJSON compliant.
+ * Copyright (c) 2014 University of Oxford
  */
 public class JsonObjectMapper extends ObjectMapper {
-    public JsonObjectMapper(){
+    public JsonObjectMapper() {
         super();
         this.registerModule(new JodaModule());
         this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
