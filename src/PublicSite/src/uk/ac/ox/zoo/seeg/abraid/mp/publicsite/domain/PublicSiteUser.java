@@ -11,16 +11,23 @@ import java.util.Collection;
  */
 public class PublicSiteUser extends User {
 
+    private int id;
     private final String fullName;
 
-    public PublicSiteUser(String username, String fullName, String password,
+    public PublicSiteUser(Integer id, String username, String fullName, String password,
                           Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
+
+        this.id = id;
         this.fullName = fullName;
     }
 
     public String getFullName() {
         return fullName;
+    }
+
+    public int getId() {
+        return id;
     }
 
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
@@ -30,9 +37,10 @@ public class PublicSiteUser extends User {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        PublicSiteUser publicSiteUser = (PublicSiteUser) o;
+        PublicSiteUser that = (PublicSiteUser) o;
 
-        if (fullName != null ? !fullName.equals(publicSiteUser.fullName) : publicSiteUser.fullName != null) return false;
+        if (id != that.id) return false;
+        if (fullName != null ? !fullName.equals(that.fullName) : that.fullName != null) return false;
 
         return true;
     }
@@ -40,6 +48,7 @@ public class PublicSiteUser extends User {
     @Override
     public int hashCode() {
         int result = super.hashCode();
+        result = 31 * result + id;
         result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
         return result;
     }
