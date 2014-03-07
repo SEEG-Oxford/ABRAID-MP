@@ -13,7 +13,7 @@ import java.util.List;
  * A DTO for a list of uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence expressed as a "FeatureCollection".
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonDiseaseOccurrenceFeatureCollection extends GeoJsonFeatureCollection {
+public final class GeoJsonDiseaseOccurrenceFeatureCollection extends GeoJsonFeatureCollection {
     public GeoJsonDiseaseOccurrenceFeatureCollection(List<DiseaseOccurrence> occurrences) {
         super(extractOccurrenceFeatures(occurrences), GeoJsonNamedCrs.createEPSG4326(), null);
     }

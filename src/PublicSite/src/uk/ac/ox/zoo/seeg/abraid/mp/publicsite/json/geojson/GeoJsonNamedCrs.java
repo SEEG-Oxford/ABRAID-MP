@@ -10,7 +10,7 @@ public final class GeoJsonNamedCrs extends GeoJsonCrs {
     private static final String EPSG4326 = "urn:ogc:def:crs:EPSG::4326";
     private static final String CRS_TYPE = "name";
 
-    private GeoJsonNamedCrs(GeoJsonNamedCrsProperties properties) {
+    GeoJsonNamedCrs(GeoJsonNamedCrsProperties properties) {
         super(CRS_TYPE, properties);
     }
 

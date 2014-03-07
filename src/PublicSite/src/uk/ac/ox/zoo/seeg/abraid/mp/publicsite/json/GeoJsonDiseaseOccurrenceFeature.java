@@ -9,7 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonPointGeometry;
  * A DTO for uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence expressed as a "Feature".
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
+public final class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
     public GeoJsonDiseaseOccurrenceFeature(DiseaseOccurrence occurrence) {
         super(
                 extractId(occurrence),

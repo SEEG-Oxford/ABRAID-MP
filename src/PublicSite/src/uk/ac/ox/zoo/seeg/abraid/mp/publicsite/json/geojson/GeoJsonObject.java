@@ -26,7 +26,7 @@ public abstract class GeoJsonObject {
     public GeoJsonObject(GeoJsonObjectType type, GeoJsonCrs crs, List<Double> bbox) {
         this.type = type;
         this.crs = crs;
-        this.bbox = bbox == null ? null : Collections.unmodifiableList(bbox);
+        this.bbox = (bbox == null) ? null : Collections.unmodifiableList(bbox);
     }
 
     public GeoJsonObjectType getType() {

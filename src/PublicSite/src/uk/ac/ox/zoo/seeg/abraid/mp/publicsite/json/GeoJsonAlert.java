@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonAlert {
+public final class GeoJsonAlert {
     private final String title;
     private final String summary;
     private final String url;

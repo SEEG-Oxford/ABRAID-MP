@@ -10,7 +10,7 @@ import java.io.IOException;
  * A Jackson serializer to correctly convert enum values to the appropriate string.
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonNamedEnumSerializer extends JsonSerializer<GeoJsonNamedEnum> {
+public final class GeoJsonNamedEnumSerializer extends JsonSerializer<GeoJsonNamedEnum> {
     @Override
     public void serialize(GeoJsonNamedEnum value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException {

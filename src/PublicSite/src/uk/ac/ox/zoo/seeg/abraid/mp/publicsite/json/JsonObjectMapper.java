@@ -8,7 +8,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
  * A custom Jackson object mapper to ensure the JSON produced is GeoJSON compliant.
  * Copyright (c) 2014 University of Oxford
  */
-public class JsonObjectMapper extends ObjectMapper {
+public final class JsonObjectMapper extends ObjectMapper {
     public JsonObjectMapper() {
         super();
         this.registerModule(new JodaModule());

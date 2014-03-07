@@ -9,7 +9,7 @@ import java.util.List;
  * Implements the specification available from http://geojson.org/geojson-spec.html#point
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonPointGeometry extends GeoJsonGeometry {
+public final class GeoJsonPointGeometry extends GeoJsonGeometry {
 
     public GeoJsonPointGeometry(double longitude, double latitude, GeoJsonCrs crs, List<Double> bbox) {
         super(GeoJsonGeometryType.POINT, extractCoordinates(longitude, latitude), crs, bbox);

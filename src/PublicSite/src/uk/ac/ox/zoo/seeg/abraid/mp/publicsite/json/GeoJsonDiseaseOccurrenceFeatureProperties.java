@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonDiseaseOccurrenceFeatureProperties {
+public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     private final String locationName;
     private final String countryName;
     private final GeoJsonAlert alert;
