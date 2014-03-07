@@ -10,7 +10,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by zool1112 on 07/03/14.
+ * Base class to ease the setup of users in tests.
+ * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractAuthenticatingTests {
     @Before

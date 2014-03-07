@@ -9,16 +9,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by zool1112 on 07/03/14.
+ * Base class to ease the setup of mocks in disease occurrence GeoJSON tests.
+ * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
-    protected static Alert mockAlert(String title, String summary, String feedName, String url, DateTime publicationDate) {
+    protected static Alert mockAlert(String title, String summary, String feedName, String url, DateTime publication) {
         Alert alert = mock(Alert.class);
         Feed feed = mock(Feed.class);
         when(alert.getTitle()).thenReturn(title);
         when(alert.getSummary()).thenReturn(summary);
         when(alert.getUrl()).thenReturn(url);
-        when(alert.getPublicationDate()).thenReturn(publicationDate.toDate());
+        when(alert.getPublicationDate()).thenReturn(publication.toDate());
         when(alert.getFeed()).thenReturn(feed);
         when(feed.getName()).thenReturn(feedName);
         return alert;
@@ -45,21 +46,17 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockLocation(1.0, -1.0, "locationName", "countryName");
     }
 
-    protected static DiseaseOccurrence mockDiseaseOccurrence(int id, Location location, DateTime startDate, Alert alert) {
+    protected static DiseaseOccurrence mockDiseaseOccurrence(int id, Location location, DateTime start, Alert alert) {
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getId()).thenReturn(id);
         when(occurrence.getLocation()).thenReturn(location);
-        when(occurrence.getOccurrenceStartDate()).thenReturn(startDate.toDate());
+        when(occurrence.getOccurrenceStartDate()).thenReturn(start.toDate());
         when(occurrence.getAlert()).thenReturn(alert);
         return occurrence;
     }
 
     protected static DiseaseOccurrence defaultDiseaseOccurrence() {
-        return mockDiseaseOccurrence(
-                1,
-                defaultLocation(),
-                new DateTime(0, DateTimeZone.UTC),
-                defaultAlert());
+        return mockDiseaseOccurrence(1, defaultLocation(), new DateTime(0, DateTimeZone.UTC), defaultAlert());
     }
 
 }

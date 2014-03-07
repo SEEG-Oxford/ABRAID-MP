@@ -9,7 +9,8 @@ import java.io.OutputStream;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * Created by zool1112 on 07/03/14.
+ * Tests for GeoJsonObjectMapper.
+ * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonObjectMapperTest {
     @Test

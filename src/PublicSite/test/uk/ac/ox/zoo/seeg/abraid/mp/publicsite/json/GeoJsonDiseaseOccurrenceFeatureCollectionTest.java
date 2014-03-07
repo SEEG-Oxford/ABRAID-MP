@@ -11,7 +11,8 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * Created by zool1112 on 07/03/14.
+ * Tests for GeoJsonDiseaseOccurrenceFeatureCollection.
+ * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseOccurrenceFeatureCollectionTest extends AbstractDiseaseOccurrenceGeoJsonTests {
     @Test
