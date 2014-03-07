@@ -39,7 +39,7 @@
             <#-- If user logged in: display welcome and logout button -->
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id="hello">Hello <@security.authentication property="principal.fullName"/></li>
+                    <li id="welcomeMessage">Hello <@security.authentication property="principal.fullName"/></li>
                     <li><a href="j_spring_security_logout">Log out</a></li>
                 </ul>
             </@security.authorize>

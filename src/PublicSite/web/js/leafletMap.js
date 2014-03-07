@@ -11,7 +11,7 @@ var map = L.map('map', {
     maxBounds: [ [-89,-179], [89, 179] ],
     maxZoom:10,
     minZoom:3
-}).setView([51.505, -0.09], 4);
+}).fitWorld();
 
 // Add the simplified shapefile base layer with WMS GET request from localhost GeoServer
 var geoServerUrl = 'http://localhost:8081/geoserver/abraid/wms';
@@ -22,11 +22,41 @@ var baseLayer = L.tileLayer.wms(geoServerUrl, {
 }).addTo(map);
 
 // Add disease occurrence points to map
-// First add empty geoJson layer to map, with styling options, then get JSON data using an AJAX request
+// First add empty geoJson layer to map, with defined styling options, then get JSON data using an AJAX request
 var locationLayer = L.geoJson([], {
     pointToLayer: locationLayerPoint,
     style: locationLayerStyle
 }).addTo(map);
+
+// Get the GeoJSON Feature Collection and add the data to the geoJson layer
+// TODO: Get DiseaseOccurrence GeoJSON from HUDL's web service, instead of abraid database location table from localhost GeoServer
+$.getJSON('http://localhost:8081/geoserver/abraid/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=abraid:location&outputFormat=json', function(featureCollection) {
+    locationLayer.addData(featureCollection);
+    map.fitBounds(locationLayer.getBounds());
+});
+
+// Global colour variables
+var defaultColour = '#bb619b';
+var highlightColour = '#9e1e71';
+var strokeColour = '#c478a9';
+
+// Define default style for unselected points
+function locationLayerStyle() { return {
+    stroke: true,
+    fill: true,
+    color: strokeColour,
+    fillColor: defaultColour,
+    fillOpacity: 0.8,
+    radius: 8
+    };
+}
+
+// Reset to default style when a point is unselected (by clicking anywhere else on the map)
+// And clear the information box
+map.on('click', function() {
+    resetInformationPanel();
+    locationLayer.setStyle(locationLayerStyle);
+});
 
 // Define a circle, instead of the default leaflet marker, with listeners for mouse events
 function locationLayerPoint(feature, latlng) {
@@ -34,62 +64,39 @@ function locationLayerPoint(feature, latlng) {
         mouseover: highlightFeature,
         mouseout: resetHighlight,
         click: function() {
-            locationLayer.setStyle(locationLayerStyle);
-            this.setStyle({
-                color:'#84a872',
-                stroke: true,
-                radius: 7
-            });
-            $('#location').text(feature.properties.name);
-            $('#countryId').text(feature.properties.countryid);
+            selectFeature(this);
+            updateInformationPanel(feature.properties);
         }
     });
 }
 
-// Define default style for unselected points
-function locationLayerStyle() { return {
-    stroke: false,
-    fill: true,
-    color:'#9e1e71',
-    fillOpacity: 0.8,
-    radius: 4
-};
-}
-
-// Reset to default style when a point is unselected (by clicking anywhere else on the map)
-// And clear the information box
-map.on('click', function() {
-    resetSidePanelText();
-    locationLayer.setStyle(locationLayerStyle);
-});
-
-function resetSidePanelText() {
-    $('#location').text('');
-    $('#countryId').text('');
-}
-
 // Change a point's colour on roll-over
 function highlightFeature() {
-    this.setStyle({ color:'#84a872' });
+    this.setStyle({ color: highlightColour });
 }
 
 // Return to default colour
 function resetHighlight() {
-    this.setStyle({ color:'#9e1e71'});
+    this.setStyle({ color: defaultColour});
 }
 
-// Reset previous point to default style, so only one point can be selected at a time, and make selected point larger
-function selectFeature() {
+// Change the point's colour and size when clicked
+function selectFeature(marker) {
+    // Reset style of all other points, so only one point is selected at a time
     locationLayer.setStyle(locationLayerStyle);
-    this.setStyle({
-        color:'#84a872',
-        stroke: true,
-        radius: 7
+    marker.setStyle({
+        stroke: false,
+        fillColor: highlightColour,
+        radius: 11
     });
 }
 
-// Get the GeoJSON Feature Collection and add the data to the geoJson layer
-// TODO: Get DiseaseOccurrence GeoJSON from HUDL's web service, instead of abraid database location table from localhost GeoServer
-$.getJSON('http://localhost:8081/geoserver/abraid/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=abraid:location&outputFormat=json', function(featureCollection) {
-    locationLayer.addData(featureCollection);
-});
+// Update the information panel with a point is selected
+function updateInformationPanel(properties) {
+    $('#location').text(properties.name);
+    $('#countryId').text(properties.countryid);
+}
+function resetInformationPanel() {
+    $('#location').text('');
+    $('#countryId').text('');
+}
