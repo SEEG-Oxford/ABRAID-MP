@@ -33,12 +33,12 @@
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true" >
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-                <property name="objectMapper" ref="jsonObjectMapper" />
+                <property name="objectMapper" ref="geoJsonObjectMapper" />
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <bean id="jsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.JsonObjectMapper" />
+    <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonObjectMapper" />
 
     <mvc:default-servlet-handler/>
 
