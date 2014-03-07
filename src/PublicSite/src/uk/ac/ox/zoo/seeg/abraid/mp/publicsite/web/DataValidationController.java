@@ -14,7 +14,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
 @Controller
 public class DataValidationController {
 
-    /** Base URL for the geowiki */
+    /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
     private final ExpertService expertService;
     private final CurrentUserService currentUserService;
