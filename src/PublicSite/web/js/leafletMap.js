@@ -33,7 +33,16 @@ function locationLayerPoint(feature, latlng) {
     return L.circleMarker(latlng).on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: selectFeature
+        click: function() {
+            locationLayer.setStyle(locationLayerStyle);
+            this.setStyle({
+                color:'#84a872',
+                stroke: true,
+                radius: 7
+            });
+            $('#location').text(feature.properties.name);
+            $('#countryId').text(feature.properties.countryid);
+        }
     });
 }
 
@@ -48,11 +57,19 @@ function locationLayerStyle() { return {
 }
 
 // Reset to default style when a point is unselected (by clicking anywhere else on the map)
-map.on('click', function() { locationLayer.setStyle(locationLayerStyle); });
+// And clear the information box
+map.on('click', function() {
+    resetSidePanelText();
+    locationLayer.setStyle(locationLayerStyle);
+});
+
+function resetSidePanelText() {
+    $('#location').text('');
+    $('#countryId').text('');
+}
 
 // Change a point's colour on roll-over
 function highlightFeature() {
-    $("#source").innerHTML = feature.properties.name;
     this.setStyle({ color:'#84a872' });
 }
 
