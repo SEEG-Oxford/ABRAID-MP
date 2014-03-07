@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by zool1112 on 07/03/14.
  */
-public class AbstractAuthenticatingTests {
+public abstract class AbstractAuthenticatingTests {
     @Before
     public void setupSecurityContext() {
         SecurityContextHolder.setContext(new SecurityContextImpl());
