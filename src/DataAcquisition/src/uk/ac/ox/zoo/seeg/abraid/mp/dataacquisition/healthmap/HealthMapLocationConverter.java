@@ -25,9 +25,11 @@ public class HealthMapLocationConverter {
     private static final String IGNORING_COUNTRY_MESSAGE =
             "Ignoring HealthMap location in country \"%s\" as it is not of interest";
     private static final String GEONAMES_FCODE_NOT_IN_DATABASE =
-            "Feature code \"%s\" is not in the ABRAID database (GeoName ID %d) - assuming precise location";
+            "Feature code \"%s\" is not in the ABRAID database (GeoName ID %d) - attempting to use place_basic_type";
     private static final String GEONAMES_ID_NOT_FOUND =
-            "GeoNames ID %d was not found by the GeoNames web service - assuming precise location";
+            "GeoNames ID %d was not found by the GeoNames web service - attempting to use place_basic_type";
+    private static final String PLACE_BASIC_TYPE_NOT_FOUND =
+            "place_basic_type is missing - ignoring location (place name \"%s\")";
 
     private LocationService locationService;
     private HealthMapLookupData lookupData;
@@ -43,7 +45,7 @@ public class HealthMapLocationConverter {
     /**
      * Converts a HealthMap location into an ABRAID location.
      * @param healthMapLocation The HealthMap location.
-     * @return An ABRAID location, or null if the HealthMap location is invalid.
+     * @return An ABRAID location, or null if the HealthMap location could not be converted.
      */
     public Location convert(HealthMapLocation healthMapLocation) {
         Location location = null;
@@ -61,24 +63,22 @@ public class HealthMapLocationConverter {
     }
 
     /**
-     * Adds location precision to a location, if the location is new (i.e. unsaved). This is split out from the rest of
-     * the convert method, so that we only call GeoNames if necessary.
-     * @param location The location.
+     * Adds location precision to a location. This is split out from the rest of the convert method, so that we only
+     * call GeoNames if necessary.
      * @param healthMapLocation The HealthMap location.
+     * @param location The location.
      */
-    public void addPrecisionIfNewLocation(Location location, HealthMapLocation healthMapLocation) {
-        if (location.getId() == null) {
-            Integer geoNamesId = healthMapLocation.getGeoNameId();
+    public void addPrecision(HealthMapLocation healthMapLocation, Location location) {
+        Integer geoNamesId = healthMapLocation.getGeoNameId();
 
-            if (geoNamesId != null) {
-                addPrecisionUsingGeoNames(location, geoNamesId);
-            }
+        if (geoNamesId != null) {
+            addPrecisionUsingGeoNames(location, geoNamesId);
+        }
 
-            if (location.getGeoNamesId() == null) {
-                // Either the HealthMap location does not have a GeoNames ID, or the GeoNames web service couldn't
-                // find it. So use the "rough" location precision supplied in HealthMap's place_basic_type field.
-                addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
-            }
+        if (location.getPrecision() == null) {
+            // The precision could not be added using GeoNames for whatever reason. So use the "rough" location
+            // precision supplied in HealthMap's place_basic_type field.
+            addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
         }
     }
 
@@ -114,12 +114,13 @@ public class HealthMapLocationConverter {
     }
 
     private Location createLocation(HealthMapLocation healthMapLocation, Point point) {
-        Location location = new Location();
+        Location location = null;
 
         HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountryId());
         if (healthMapCountry.getCountry() == null) {
             LOGGER.warn(String.format(IGNORING_COUNTRY_MESSAGE, healthMapCountry.getName()));
         } else {
+            location = new Location();
             location.setCountry(healthMapCountry.getCountry());
             location.setGeom(point);
             location.setName(healthMapLocation.getPlaceName());
@@ -128,26 +129,30 @@ public class HealthMapLocationConverter {
         return location;
     }
 
-    private void addPrecisionUsingGeoNames(Location location, Integer geoNamesId) {
+    private void addPrecisionUsingGeoNames(Location location, int geoNamesId) {
+        location.setGeoNamesId(geoNamesId);
         String geoNamesFeatureCode = getGeoNamesFeatureCode(geoNamesId);
 
         if (geoNamesFeatureCode != null) {
             LocationPrecision precision = lookupData.getGeoNamesMap().get(geoNamesFeatureCode);
             if (precision == null) {
                 // We retrieved the GeoNames feature code from the web service, but the feature code is not in
-                // our mapping table. So assume that it's a precise location.
+                // our mapping table
                 LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, geoNamesFeatureCode, geoNamesId));
-                precision = LocationPrecision.PRECISE;
             }
 
-            location.setGeoNamesId(geoNamesId);
             location.setGeoNamesFeatureCode(geoNamesFeatureCode);
             location.setPrecision(precision);
         }
     }
 
     private void addPrecisionUsingHealthMapPlaceBasicType(Location location, HealthMapLocation healthMapLocation) {
-        location.setPrecision(findLocationPrecision(healthMapLocation));
+        LocationPrecision precision = findLocationPrecision(healthMapLocation);
+        if (precision != null) {
+            location.setPrecision(precision);
+        } else {
+            LOGGER.warn(String.format(PLACE_BASIC_TYPE_NOT_FOUND, healthMapLocation.getPlaceName()));
+        }
     }
 
     private LocationPrecision findLocationPrecision(HealthMapLocation healthMapLocation) {

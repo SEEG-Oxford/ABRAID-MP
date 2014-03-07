@@ -14,6 +14,14 @@ public class GeoName {
     private String featureCode;
     private GeoNameStatus status;
 
+    public GeoName() {
+    }
+
+    public GeoName(Integer geoNameId, String featureCode) {
+        this.geoNameId = geoNameId;
+        this.featureCode = featureCode;
+    }
+
     public Integer getGeoNameId() {
         return geoNameId;
     }
