@@ -20,13 +20,13 @@ public abstract class AbstractAuthenticatingTests {
         setupAnonymousUser();
     }
 
-    protected static void setupCurrentUser(PublicSiteUser user) {
+    public static void setupCurrentUser(PublicSiteUser user) {
         Authentication authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(user);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    protected static void setupAnonymousUser() {
+    public static void setupAnonymousUser() {
         Authentication authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn("anonymousUser"); // This is the documented behavior of spring
         SecurityContextHolder.getContext().setAuthentication(authentication);

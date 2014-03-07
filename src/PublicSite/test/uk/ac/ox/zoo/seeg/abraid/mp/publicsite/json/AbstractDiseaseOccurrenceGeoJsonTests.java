@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
-    protected static Alert mockAlert(String title, String summary, String feedName, String url, DateTime publication) {
+    public static Alert mockAlert(String title, String summary, String feedName, String url, DateTime publication) {
         Alert alert = mock(Alert.class);
         Feed feed = mock(Feed.class);
         when(alert.getTitle()).thenReturn(title);
@@ -25,11 +25,11 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return alert;
     }
 
-    protected static Alert defaultAlert() {
+    public static Alert defaultAlert() {
         return mockAlert("title", "summary", "feedName", "url", new DateTime(0, DateTimeZone.UTC));
     }
 
-    protected static Location mockLocation(double longitude, double latitude, String locationName, String countryName) {
+    public static Location mockLocation(double longitude, double latitude, String locationName, String countryName) {
         Location location = mock(Location.class);
         Point geom = mock(Point.class);
         when(location.getGeom()).thenReturn(geom);
@@ -42,11 +42,11 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return location;
     }
 
-    protected static Location defaultLocation() {
+    public static Location defaultLocation() {
         return mockLocation(1.0, -1.0, "locationName", "countryName");
     }
 
-    protected static DiseaseOccurrence mockDiseaseOccurrence(int id, Location location, DateTime start, Alert alert) {
+    public static DiseaseOccurrence mockDiseaseOccurrence(int id, Location location, DateTime start, Alert alert) {
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getId()).thenReturn(id);
         when(occurrence.getLocation()).thenReturn(location);
@@ -55,8 +55,66 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return occurrence;
     }
 
-    protected static DiseaseOccurrence defaultDiseaseOccurrence() {
+    public static DiseaseOccurrence defaultDiseaseOccurrence() {
         return mockDiseaseOccurrence(1, defaultLocation(), new DateTime(0, DateTimeZone.UTC), defaultAlert());
     }
 
+    public static String TWO_DISEASE_OCCURRENCE_FEATURES_AS_JSON = (
+        "{" +
+        "   \"type\":\"FeatureCollection\"," +
+        "   \"crs\":{" +
+        "      \"type\":\"name\"," +
+        "      \"properties\":{" +
+        "         \"name\":\"urn:ogc:def:crs:EPSG::4326\"" +
+        "      }" +
+        "   }," +
+        "   \"features\":[" +
+        "      {" +
+        "         \"type\":\"Feature\"," +
+        "         \"id\":1," +
+        "         \"geometry\":{" +
+        "            \"type\":\"Point\"," +
+        "            \"coordinates\":[" +
+        "               1.0," +
+        "               -1.0" +
+        "            ]" +
+        "         }," +
+        "         \"properties\":{" +
+        "            \"locationName\":\"locationName\"," +
+        "            \"countryName\":\"countryName\"," +
+        "            \"alert\":{" +
+        "               \"title\":\"title\"," +
+        "               \"summary\":\"summary\"," +
+        "               \"url\":\"url\"," +
+        "               \"feedName\":\"feedName\"," +
+        "               \"publicationDate\":\"1970-01-01T01:00:00.000+01:00\"" +
+        "            }," +
+        "            \"diseaseOccurrenceStartDate\":\"1970-01-01T01:00:00.000+01:00\"" +
+        "         }" +
+        "      }," +
+        "      {" +
+        "         \"type\":\"Feature\"," +
+        "         \"id\":1," +
+        "         \"geometry\":{" +
+        "            \"type\":\"Point\"," +
+        "            \"coordinates\":[" +
+        "               1.0," +
+        "               -1.0" +
+        "            ]" +
+        "         }," +
+        "         \"properties\":{" +
+        "            \"locationName\":\"locationName\"," +
+        "            \"countryName\":\"countryName\"," +
+        "            \"alert\":{" +
+        "               \"title\":\"title\"," +
+        "               \"summary\":\"summary\"," +
+        "               \"url\":\"url\"," +
+        "               \"feedName\":\"feedName\"," +
+        "               \"publicationDate\":\"1970-01-01T01:00:00.000+01:00\"" +
+        "            }," +
+        "            \"diseaseOccurrenceStartDate\":\"1970-01-01T01:00:00.000+01:00\"" +
+        "         }" +
+        "      }" +
+        "   ]" +
+        "}").replaceAll(" ", "");
 }

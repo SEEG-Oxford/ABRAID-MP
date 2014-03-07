@@ -22,70 +22,12 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
         List<DiseaseOccurrence> occurrences = Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence());
         GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
         OutputStream stream = new ByteArrayOutputStream();
-        String expectedJson =
-            "{" +
-            "   \"type\":\"FeatureCollection\"," +
-            "   \"crs\":{" +
-            "      \"type\":\"name\"," +
-            "      \"properties\":{" +
-            "         \"name\":\"urn:ogc:def:crs:EPSG::4326\"" +
-            "      }" +
-            "   }," +
-            "   \"features\":[" +
-            "      {" +
-            "         \"type\":\"Feature\"," +
-            "         \"id\":1," +
-            "         \"geometry\":{" +
-            "            \"type\":\"Point\"," +
-            "            \"coordinates\":[" +
-            "               1.0," +
-            "               -1.0" +
-            "            ]" +
-            "         }," +
-            "         \"properties\":{" +
-            "            \"locationName\":\"locationName\"," +
-            "            \"countryName\":\"countryName\"," +
-            "            \"alert\":{" +
-            "               \"title\":\"title\"," +
-            "               \"summary\":\"summary\"," +
-            "               \"url\":\"url\"," +
-            "               \"feedName\":\"feedName\"," +
-            "               \"publicationDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-            "            }," +
-            "            \"diseaseOccurrenceStartDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-            "         }" +
-            "      }," +
-            "      {" +
-            "         \"type\":\"Feature\"," +
-            "         \"id\":1," +
-            "         \"geometry\":{" +
-            "            \"type\":\"Point\"," +
-            "            \"coordinates\":[" +
-            "               1.0," +
-            "               -1.0" +
-            "            ]" +
-            "         }," +
-            "         \"properties\":{" +
-            "            \"locationName\":\"locationName\"," +
-            "            \"countryName\":\"countryName\"," +
-            "            \"alert\":{" +
-            "               \"title\":\"title\"," +
-            "               \"summary\":\"summary\"," +
-            "               \"url\":\"url\"," +
-            "               \"feedName\":\"feedName\"," +
-            "               \"publicationDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-            "            }," +
-            "            \"diseaseOccurrenceStartDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-            "         }" +
-            "      }" +
-            "   ]" +
-            "}";
 
         // Act
         objectMapper.writeValue(stream, new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences));
 
         // Assert
-        assertThat(stream.toString()).isEqualTo(expectedJson.replaceAll(" ", ""));
+        assertThat(stream.toString()).isEqualTo(TWO_DISEASE_OCCURRENCE_FEATURES_AS_JSON);
 
     }
 }

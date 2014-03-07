@@ -26,7 +26,8 @@ import java.util.List;
 @Controller
 public class DataValidationController {
 
-    private static final String GEOWIKI_BASE_URL = "/datavalidation";
+    /** Base URL for the geowiki */
+    public static final String GEOWIKI_BASE_URL = "/datavalidation";
     private final ExpertService expertService;
     private final CurrentUserService currentUserService;
 
@@ -56,7 +57,7 @@ public class DataValidationController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<GeoJsonFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
+    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer diseaseId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         List<DiseaseOccurrence> occurrences = null;
@@ -64,10 +65,10 @@ public class DataValidationController {
         try {
             occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), diseaseId);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<GeoJsonFeatureCollection>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<GeoJsonFeatureCollection>(
+        return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(
                 new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 }
