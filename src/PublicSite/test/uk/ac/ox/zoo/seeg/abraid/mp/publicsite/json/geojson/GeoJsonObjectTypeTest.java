@@ -21,7 +21,7 @@ public class GeoJsonObjectTypeTest {
 
     @Test
     public void serializationOfGeoJsonObjectTypePrintsName() throws Exception {
-        for(GeoJsonObjectType enumValue : GeoJsonObjectType.values()) {
+        for (GeoJsonObjectType enumValue : GeoJsonObjectType.values()) {
             // Arrange
             OutputStream stream = new ByteArrayOutputStream();
             GeoJsonObjectMapper target = new GeoJsonObjectMapper();
@@ -31,7 +31,7 @@ public class GeoJsonObjectTypeTest {
             String result = stream.toString();
 
             // Assert
-            assertThat(result).isEqualTo("\""+enumValue.getGeoJsonName()+"\"");
+            assertThat(result).isEqualTo("\"" + enumValue.getGeoJsonName() + "\"");
         }
     }
 }

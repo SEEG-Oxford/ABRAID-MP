@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +24,7 @@ public class GeoJsonGeometryTypeTest {
 
     @Test
     public void serializationOfGeoJsonGeometryTypePrintsName() throws Exception {
-        for(GeoJsonGeometryType enumValue : GeoJsonGeometryType.values()) {
+        for (GeoJsonGeometryType enumValue : GeoJsonGeometryType.values()) {
             // Arrange
             OutputStream stream = new ByteArrayOutputStream();
             GeoJsonObjectMapper target = new GeoJsonObjectMapper();
@@ -35,7 +34,7 @@ public class GeoJsonGeometryTypeTest {
             String result = stream.toString();
 
             // Assert
-            assertThat(result).isEqualTo("\""+enumValue.getGeoJsonName()+"\"");
+            assertThat(result).isEqualTo("\"" + enumValue.getGeoJsonName() + "\"");
         }
     }
 

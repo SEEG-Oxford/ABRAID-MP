@@ -25,7 +25,7 @@ public class GeoJsonDiseaseOccurrenceFeatureCollectionTest extends AbstractDisea
         // Assert
         assertThat(result.getBBox()).isNull();
         assertThat(result.getCrs().getType()).isEqualTo("name");
-        assertThat(((GeoJsonNamedCrsProperties)result.getCrs().getProperties()).getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
+        assertThat(((GeoJsonNamedCrsProperties) result.getCrs().getProperties()).getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
         assertThat(result.getType()).isEqualTo(GeoJsonObjectType.FEATURE_COLLECTION);
         assertThat(result.getFeatures()).hasSameSizeAs(occurrences);
         assertThat(result.getFeatures().get(0)).isInstanceOf(GeoJsonDiseaseOccurrenceFeature.class);

@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite;
 
-import org.junit.After;
 import org.junit.Before;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

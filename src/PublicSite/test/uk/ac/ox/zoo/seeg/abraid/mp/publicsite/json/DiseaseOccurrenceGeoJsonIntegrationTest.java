@@ -84,7 +84,7 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
         objectMapper.writeValue(stream, new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences));
 
         // Assert
-        assertThat(stream.toString()).isEqualTo(expectedJson.replaceAll(" ",""));
+        assertThat(stream.toString()).isEqualTo(expectedJson.replaceAll(" ", ""));
 
     }
 }

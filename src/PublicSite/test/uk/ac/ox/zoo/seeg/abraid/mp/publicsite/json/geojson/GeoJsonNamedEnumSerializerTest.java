@@ -1,11 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.json.JsonGeneratorImpl;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**

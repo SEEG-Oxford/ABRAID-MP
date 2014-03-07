@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 /**
  * Tests for GeoJsonNamedCrs.
@@ -29,6 +28,6 @@ public class GeoJsonNamedCrsTest {
         GeoJsonNamedCrs target = GeoJsonNamedCrs.createEPSG4326();
 
         // Assert
-        assertThat(((GeoJsonNamedCrsProperties)target.getProperties()).getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
+        assertThat(((GeoJsonNamedCrsProperties) target.getProperties()).getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
     }
 }

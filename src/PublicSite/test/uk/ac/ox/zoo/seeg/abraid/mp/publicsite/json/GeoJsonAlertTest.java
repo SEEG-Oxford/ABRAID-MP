@@ -3,12 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonNamedCrs;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonNamedCrsProperties;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**

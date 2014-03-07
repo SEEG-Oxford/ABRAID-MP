@@ -2,11 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonObjectType;
-
-import java.util.Arrays;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
