@@ -2,15 +2,12 @@
     Display information about each disease occurrence
 -->
 
-
 <div id="sidePanel">
     <div id="datapointInfo">
-        <h3>Disease Occurrence</h3>
-        <br><span>Location: </span><p id="location"></p>
-        <br><span>Country ID: </span><p id="countryId"></p>
-        <br>
-        <br>
-        <br>
+        <p id="datapointInfoTitle">Click on a point to view its details...</p>
+        <div id="locationDiv" style="display:none">
+            <i class="fa fa-map-marker"></i><span> </span><p id="locationText">Location</p>
+        </div>
         <button class="btn btn-large btn-block btn-primary" type="button">Log in to submit review</button>
     </div>
 

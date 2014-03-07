@@ -91,12 +91,15 @@ function selectFeature(marker) {
     });
 }
 
-// Update the information panel with a point is selected
+// Update the information panel when a point is selected
 function updateInformationPanel(properties) {
-    $('#location').text(properties.name);
-    $('#countryId').text(properties.countryid);
+//    $('#datapointInfoTitle').css('visibility','hidden');
+    $('#datapointInfoTitle').hide();
+    $('#locationText').text(properties.name);
+    $('#locationDiv').show();
 }
 function resetInformationPanel() {
-    $('#location').text('');
-    $('#countryId').text('');
+//    $('#datapointInfoTitle').css('visibility','visible');
+    $('#datapointInfoTitle').show();
+    $('#locationDiv').hide();
 }
