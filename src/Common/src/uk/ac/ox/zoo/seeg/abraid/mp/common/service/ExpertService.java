@@ -1,9 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service interface for experts.
@@ -34,6 +36,14 @@ public interface ExpertService {
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId);
+
+    /**
+     * Gets a list of the specified expert's disease interests.
+     *
+     * @param expertId The id of the specified expert.
+     * @return The list of disease groups the expert can validate.
+     */
+    Set<DiseaseGroup> getDiseaseInterests(Integer expertId);
 
     /**
      * Saves the specified expert.
