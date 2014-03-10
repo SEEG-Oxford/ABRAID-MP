@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.TimeZone;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -16,8 +18,9 @@ public class GeoJsonObjectMapperTest {
     @Test
     public void constructorForGeoJsonObjectMapperConfiguresJodaTimeSerialization() throws Exception {
         // Arrange
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         OutputStream stream = new ByteArrayOutputStream();
-        DateTime jodaTime = DateTime.now();
+        DateTime jodaTime = new DateTime(0);
 
         // Act
         GeoJsonObjectMapper target = new GeoJsonObjectMapper();
@@ -25,6 +28,6 @@ public class GeoJsonObjectMapperTest {
         String result = stream.toString();
 
         // Assert
-        assertThat(result).isEqualTo(jodaTime.toString("\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\""));
+        assertThat(result).isEqualTo("\"" + ISODateTimeFormat.dateTime().print(jodaTime) + "\"");
     }
 }

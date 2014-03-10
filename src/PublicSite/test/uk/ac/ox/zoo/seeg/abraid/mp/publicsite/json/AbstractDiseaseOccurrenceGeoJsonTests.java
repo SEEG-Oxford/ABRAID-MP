@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json;
 
 import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import static org.mockito.Mockito.mock;
@@ -26,7 +26,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static Alert defaultAlert() {
-        return mockAlert("title", "summary", "feedName", "url", new DateTime(0, DateTimeZone.UTC));
+        return mockAlert("title", "summary", "feedName", "url", new DateTime(0));
     }
 
     public static Location mockLocation(double longitude, double latitude, String locationName, String countryName) {
@@ -56,65 +56,65 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static DiseaseOccurrence defaultDiseaseOccurrence() {
-        return mockDiseaseOccurrence(1, defaultLocation(), new DateTime(0, DateTimeZone.UTC), defaultAlert());
+        return mockDiseaseOccurrence(1, defaultLocation(), new DateTime(0), defaultAlert());
     }
 
     public static String TWO_DISEASE_OCCURRENCE_FEATURES_AS_JSON = (
-        "{" +
-        "   \"type\":\"FeatureCollection\"," +
-        "   \"crs\":{" +
-        "      \"type\":\"name\"," +
-        "      \"properties\":{" +
-        "         \"name\":\"urn:ogc:def:crs:EPSG::4326\"" +
-        "      }" +
-        "   }," +
-        "   \"features\":[" +
-        "      {" +
-        "         \"type\":\"Feature\"," +
-        "         \"id\":1," +
-        "         \"geometry\":{" +
-        "            \"type\":\"Point\"," +
-        "            \"coordinates\":[" +
-        "               1.0," +
-        "               -1.0" +
-        "            ]" +
-        "         }," +
-        "         \"properties\":{" +
-        "            \"locationName\":\"locationName\"," +
-        "            \"countryName\":\"countryName\"," +
-        "            \"alert\":{" +
-        "               \"title\":\"title\"," +
-        "               \"summary\":\"summary\"," +
-        "               \"url\":\"url\"," +
-        "               \"feedName\":\"feedName\"," +
-        "               \"publicationDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-        "            }," +
-        "            \"diseaseOccurrenceStartDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-        "         }" +
-        "      }," +
-        "      {" +
-        "         \"type\":\"Feature\"," +
-        "         \"id\":1," +
-        "         \"geometry\":{" +
-        "            \"type\":\"Point\"," +
-        "            \"coordinates\":[" +
-        "               1.0," +
-        "               -1.0" +
-        "            ]" +
-        "         }," +
-        "         \"properties\":{" +
-        "            \"locationName\":\"locationName\"," +
-        "            \"countryName\":\"countryName\"," +
-        "            \"alert\":{" +
-        "               \"title\":\"title\"," +
-        "               \"summary\":\"summary\"," +
-        "               \"url\":\"url\"," +
-        "               \"feedName\":\"feedName\"," +
-        "               \"publicationDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-        "            }," +
-        "            \"diseaseOccurrenceStartDate\":\"1970-01-01T01:00:00.000+01:00\"" +
-        "         }" +
-        "      }" +
-        "   ]" +
-        "}").replaceAll(" ", "");
+            "{" +
+                    "   \"type\":\"FeatureCollection\"," +
+                    "   \"crs\":{" +
+                    "      \"type\":\"name\"," +
+                    "      \"properties\":{" +
+                    "         \"name\":\"urn:ogc:def:crs:EPSG::4326\"" +
+                    "      }" +
+                    "   }," +
+                    "   \"features\":[" +
+                    "      {" +
+                    "         \"type\":\"Feature\"," +
+                    "         \"id\":1," +
+                    "         \"geometry\":{" +
+                    "            \"type\":\"Point\"," +
+                    "            \"coordinates\":[" +
+                    "               1.0," +
+                    "               -1.0" +
+                    "            ]" +
+                    "         }," +
+                    "         \"properties\":{" +
+                    "            \"locationName\":\"locationName\"," +
+                    "            \"countryName\":\"countryName\"," +
+                    "            \"alert\":{" +
+                    "               \"title\":\"title\"," +
+                    "               \"summary\":\"summary\"," +
+                    "               \"url\":\"url\"," +
+                    "               \"feedName\":\"feedName\"," +
+                    "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "            }," +
+                    "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "         }" +
+                    "      }," +
+                    "      {" +
+                    "         \"type\":\"Feature\"," +
+                    "         \"id\":1," +
+                    "         \"geometry\":{" +
+                    "            \"type\":\"Point\"," +
+                    "            \"coordinates\":[" +
+                    "               1.0," +
+                    "               -1.0" +
+                    "            ]" +
+                    "         }," +
+                    "         \"properties\":{" +
+                    "            \"locationName\":\"locationName\"," +
+                    "            \"countryName\":\"countryName\"," +
+                    "            \"alert\":{" +
+                    "               \"title\":\"title\"," +
+                    "               \"summary\":\"summary\"," +
+                    "               \"url\":\"url\"," +
+                    "               \"feedName\":\"feedName\"," +
+                    "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "            }," +
+                    "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "         }" +
+                    "      }" +
+                    "   ]" +
+                    "}").replaceAll(" ", "");
 }

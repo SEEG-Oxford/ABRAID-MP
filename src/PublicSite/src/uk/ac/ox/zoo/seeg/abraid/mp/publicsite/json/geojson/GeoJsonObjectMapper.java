@@ -2,9 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import java.util.TimeZone;
 
 /**
  * A custom Jackson object mapper to ensure the JSON produced is GeoJSON compliant.
@@ -17,6 +16,6 @@ public final class GeoJsonObjectMapper extends ObjectMapper {
         super();
         this.registerModule(new JodaModule());
         this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        this.setTimeZone(TimeZone.getTimeZone(UTC));
+        this.setDateFormat(new ISO8601DateFormat());
     }
 }
