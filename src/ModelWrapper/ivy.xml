@@ -16,6 +16,7 @@
         <!-- External -->
         <dependency org="org.apache.commons" name="commons-exec" rev="1.2" conf="external->default"/>
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
 
         <!-- Spring -->
         <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" conf="external->default"/>
