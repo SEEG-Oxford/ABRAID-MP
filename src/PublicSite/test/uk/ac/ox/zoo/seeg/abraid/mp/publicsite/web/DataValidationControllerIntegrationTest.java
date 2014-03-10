@@ -56,7 +56,6 @@ public class DataValidationControllerIntegrationTest {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
                 .setMessageConverters(jackson)
-//                .setLocaleResolver(localeContextResolver)
                 .build();
 
         // Setup user
