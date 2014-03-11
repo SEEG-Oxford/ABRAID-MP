@@ -31,6 +31,10 @@ public class GeoNamesWebService {
     private static final Logger LOGGER = Logger.getLogger(GeoNamesWebService.class);
     private static final String GEONAMES_RETURNED_STATUS_MESSAGE = "GeoNames returned status code %d (\"%s\"). URL: %s";
 
+    // The status code returned when the GeoName does not exist
+    // A list of status codes is available at http://www.geonames.org/export/webservice-exception.html
+    private static final int GEONAME_DOES_NOT_EXIST_STATUS_CODE = 15;
+
     public GeoNamesWebService(WebServiceClient webServiceClient) {
         this.webServiceClient = webServiceClient;
     }
@@ -54,7 +58,8 @@ public class GeoNamesWebService {
     /**
      * Gets a GeoName by ID.
      * @param geoNameId The GeoName ID.
-     * @return The GeoName with the requested ID, or null if it does not exist.
+     * @return The GeoName with the requested ID, or null if the web service response indicated an error (including
+     * the GeoName not existing).
      * @throws WebServiceClientException If the web service call fails.
      * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
@@ -65,10 +70,16 @@ public class GeoNamesWebService {
 
         GeoNameStatus status = geoName.getStatus();
         if (status != null) {
-            // If the GeoName status exists, something went wrong (most probably the ID was not found). We have asked
-            // GeoNames for a list of status codes and messages, as we may need to throw an exception for some of
-            // these.
-            LOGGER.warn(String.format(GEONAMES_RETURNED_STATUS_MESSAGE, status.getValue(), status.getMessage(), url));
+            String errorMessage = String.format(GEONAMES_RETURNED_STATUS_MESSAGE, status.getValue(),
+                    status.getMessage(), url);
+
+            // Log a warning if the GeoName does not exist, otherwise log a fatal error
+            if (status.getValue() == GEONAME_DOES_NOT_EXIST_STATUS_CODE) {
+                LOGGER.warn(errorMessage);
+            } else {
+                LOGGER.fatal(errorMessage);
+            }
+
             return null;
         } else {
             return geoName;

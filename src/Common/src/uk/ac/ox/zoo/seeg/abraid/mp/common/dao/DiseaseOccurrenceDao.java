@@ -15,6 +15,12 @@ import java.util.List;
  */
 public interface DiseaseOccurrenceDao {
     /**
+     * Gets all disease occurrences.
+     * @return All disease occurrences.
+     */
+    List<DiseaseOccurrence> getAll();
+
+    /**
      * Gets a disease occurrence by ID.
      * @param id The disease occurrence ID.
      * @return The disease occurrence, or null if it does not exist.

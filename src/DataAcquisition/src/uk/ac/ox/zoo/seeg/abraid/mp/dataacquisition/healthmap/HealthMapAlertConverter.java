@@ -90,9 +90,11 @@ public class HealthMapAlertConverter {
     }
 
     private Feed retrieveFeed(HealthMapAlert healthMapAlert) {
-        Feed feed = lookupData.getFeedMap().get(healthMapAlert.getFeed());
-        if (feed == null) {
-            // If the feed name does not exist in the database, automatically add a new feed
+        Feed feed = lookupData.getFeedMap().get(healthMapAlert.getFeedId());
+        if (feed != null) {
+            renameFeedIfRequired(feed, healthMapAlert);
+        } else {
+            // If the feed ID does not exist in the database, automatically add a new feed
             feed = createFeed(healthMapAlert);
             LOGGER.fatal(String.format(FOUND_NEW_FEED, healthMapAlert.getFeed()));
         }
@@ -108,7 +110,7 @@ public class HealthMapAlertConverter {
         feed.setWeighting(provenance.getDefaultFeedWeighting());
 
         // Add the new feed to the cached feed map
-        lookupData.getFeedMap().put(feed.getName(), feed);
+        lookupData.getFeedMap().put(feed.getHealthMapFeedId(), feed);
         return feed;
     }
 
@@ -157,5 +159,13 @@ public class HealthMapAlertConverter {
         diseaseService.saveHealthMapDisease(healthMapDisease);
 
         return healthMapDisease;
+    }
+
+    private void renameFeedIfRequired(Feed feed, HealthMapAlert healthMapAlert) {
+        String feedName = healthMapAlert.getFeed();
+        if (!feed.getName().equals(feedName)) {
+            feed.setName(feedName);
+            // Feeds are saved with alerts, so no need to save it separately
+        }
     }
 }

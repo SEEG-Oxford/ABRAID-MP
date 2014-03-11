@@ -38,7 +38,7 @@ public class HealthMapDataAcquisition {
     @Transactional
     public void acquireData() {
         Date startDate = getStartDate();
-        Date endDate = Calendar.getInstance().getTime();
+        Date endDate = getEndDate(startDate);
 
         List<HealthMapLocation> healthMapLocations = retrieveData(startDate, endDate);
         if (healthMapLocations != null) {
@@ -74,5 +74,23 @@ public class HealthMapDataAcquisition {
             startDate.add(Calendar.DAY_OF_MONTH, -healthMapWebService.getDefaultStartDateDaysBeforeNow());
             return startDate.getTime();
         }
+    }
+
+    private Date getEndDate(Date startDate) {
+        Calendar endCalendar = Calendar.getInstance();
+
+        Integer endDateDaysAfterStartDate = healthMapWebService.getEndDateDaysAfterStartDate();
+        if (endDateDaysAfterStartDate != null) {
+            // Set the end date to the specified number of days after the start date, as long as this does not push
+            // the date into the future
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startDate);
+            calendar.add(Calendar.DAY_OF_MONTH, endDateDaysAfterStartDate);
+            if (calendar.compareTo(endCalendar) < 0) {
+                endCalendar = calendar;
+            }
+        }
+
+        return endCalendar.getTime();
     }
 }

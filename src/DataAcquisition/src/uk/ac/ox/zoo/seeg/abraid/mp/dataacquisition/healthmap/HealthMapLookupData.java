@@ -23,7 +23,7 @@ public class HealthMapLookupData {
 
     private Map<Long, HealthMapCountry> countryMap;
     private Map<Long, HealthMapDisease> diseaseMap;
-    private Map<String, Feed> feedMap;
+    private Map<Long, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
     private Provenance healthMapProvenance;
 
@@ -59,13 +59,13 @@ public class HealthMapLookupData {
     }
 
     /**
-     * Gets a list of HealthMap feeds, indexed by HealthMap feed name.
-     * @return A list of HealthMap feeds, indexed by HealthMap feed name.
+     * Gets a list of HealthMap feeds, indexed by HealthMap feed ID.
+     * @return A list of HealthMap feeds, indexed by HealthMap feed ID.
      */
-    public Map<String, Feed> getFeedMap() {
+    public Map<Long, Feed> getFeedMap() {
         if (feedMap == null) {
             List<Feed> feeds = alertService.getFeedsByProvenanceName(ProvenanceNames.HEALTHMAP);
-            feedMap = index(feeds, on(Feed.class).getName());
+            feedMap = index(feeds, on(Feed.class).getHealthMapFeedId());
         }
         return feedMap;
     }

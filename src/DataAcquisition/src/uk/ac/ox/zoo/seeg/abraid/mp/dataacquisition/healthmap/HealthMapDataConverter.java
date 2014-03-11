@@ -69,20 +69,22 @@ public class HealthMapDataConverter {
 
     private void convertAlert(HealthMapLocation healthMapLocation, Location location,
                               Set<Location> convertedLocations, Set<DiseaseOccurrence> convertedOccurrences) {
-        for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
-            DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, location);
-            if (occurrence != null) {
-                // Now that we know that there is at least one disease occurrence to save, continue location
-                // conversion
-                if (continueLocationConversion(healthMapLocation, location)) {
-                    // Location was converted successfully, so save it all. Note that the location is saved with the
-                    // disease occurrence.
-                    diseaseService.saveDiseaseOccurrence(occurrence);
-                    convertedLocations.add(location);
-                    convertedOccurrences.add(occurrence);
-                } else {
-                    // Location conversion failed, so do not convert any more of this location's alerts
-                    break;
+        if (healthMapLocation.getAlerts() != null) {
+            for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
+                DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, location);
+                if (occurrence != null) {
+                    // Now that we know that there is at least one disease occurrence to save, continue location
+                    // conversion
+                    if (continueLocationConversion(healthMapLocation, location)) {
+                        // Location was converted successfully, so save it all. Note that the location is saved with the
+                        // disease occurrence.
+                        diseaseService.saveDiseaseOccurrence(occurrence);
+                        convertedLocations.add(location);
+                        convertedOccurrences.add(occurrence);
+                    } else {
+                        // Location conversion failed, so do not convert any more of this location's alerts
+                        break;
+                    }
                 }
             }
         }

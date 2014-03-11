@@ -32,7 +32,10 @@ public class HealthMapWebService {
     private Date defaultStartDate;
 
     // If defaultStartDate is not specified, the start date is this number of days before now (i.e. the current date).
-    private int defaultStartDateDaysBeforeNow;
+    private Integer defaultStartDateDaysBeforeNow = null;
+
+    // If specified, this sets the end date to the number of days after the start date
+    private Integer endDateDaysAfterStartDate = null;
 
     // The date/time format used in both the request URL and the response JSON.
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
@@ -76,12 +79,20 @@ public class HealthMapWebService {
         }
     }
 
-    public int getDefaultStartDateDaysBeforeNow() {
+    public Integer getDefaultStartDateDaysBeforeNow() {
         return defaultStartDateDaysBeforeNow;
     }
 
-    public void setDefaultStartDateDaysBeforeNow(int defaultStartDateDaysBeforeNow) {
+    public void setDefaultStartDateDaysBeforeNow(Integer defaultStartDateDaysBeforeNow) {
         this.defaultStartDateDaysBeforeNow = defaultStartDateDaysBeforeNow;
+    }
+
+    public Integer getEndDateDaysAfterStartDate() {
+        return endDateDaysAfterStartDate;
+    }
+
+    public void setEndDateDaysAfterStartDate(Integer endDateDaysAfterStartDate) {
+        this.endDateDaysAfterStartDate = endDateDaysAfterStartDate;
     }
 
     public void setAuthorizationParameterName(String authorizationParameterName) {

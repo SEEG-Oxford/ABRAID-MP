@@ -43,6 +43,7 @@ public class HealthMapWebServiceTest {
                 "\"place_id\": \"733\"," +
                 "\"country_id\": \"155\"," +
                 "\"alerts\": [" +
+                // Alert 1
                 "{" +
                 "\"feed\": \"Food and Agriculture Org\"," +
                 "\"disease\": \"Avian Influenza H7N9\"," +
@@ -66,8 +67,10 @@ public class HealthMapWebServiceTest {
                 "\"summary_vi\": \"Xác nhận cúm - cúm gia cầm ở Quảng Đông Sheng, Trung Quốc - con người\"," +
                 "\"place_category\": []," +
                 "\"original_url\": \"http://empres-i.fao.org/empres-i/2/obd?idOutbreak=182133&rss=t\"," +
-                "\"disease_id\": \"271\"" +
+                "\"disease_id\": \"271\"," +
+                "\"feed_id\": \"10\"" +
                 "}," +
+                // Alert 2
                 "{" +
                 "\"feed\": \"Google News\"," +
                 "\"disease\": \"Avian Influenza H7N9\"," +
@@ -88,10 +91,12 @@ public class HealthMapWebServiceTest {
                 "\"original_url\": \"http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNFduJXlyPpcRmF2wzssn6vgeH6dIw&" +
                 "url=http://www.rttnews.com/2247181/two-new-cases-of-human-h7n9-infections-reported-in-china.aspx?type" +
                 "%3Dmsgn%26utm_source%3Dgoogle%26utm_campaign%3Dsitemap\"," +
-                "\"disease_id\": \"271\"" +
+                "\"disease_id\": \"271\"," +
+                "\"feed_id\": \"1\"" +
                 "}" +
                 "]" +
                 "}";
+
         // Location with a mixture of real and dummy data (1 alert)
         String jsonLocation2 = "{" +
                 "\"country\": null," +
@@ -102,6 +107,7 @@ public class HealthMapWebServiceTest {
                 "\"place_id\": null," +
                 "\"country_id\": \"107\"," +
                 "\"alerts\": [" +
+                // Alert 1
                 "{" +
                 "\"feed\": \"HM Community News Reports\"," +
                 "\"disease\": \"Meningitis\"," +
@@ -124,7 +130,8 @@ public class HealthMapWebServiceTest {
                 "\"summary_vi\": \"Konstaterte smittsom hjernehinnebetennelse på 2 aring-Folkebladet.no\"," +
                 "\"place_category\": []," +
                 "\"original_url\": \"http://www.folkebladet.no/nyheter/article8911579.ece\"," +
-                "\"disease_id\": \"84\"" +
+                "\"disease_id\": \"84\"," +
+                "\"feed_id\": \"20\"" +
                 "}" +
                 "]" +
                 "}";
@@ -162,6 +169,7 @@ public class HealthMapWebServiceTest {
         assertThat(location1Alert1.getSummary()).isEqualTo("Confirmed Influenza - Avian in Guangdong Sheng, China -" +
                 " human");
         assertThat(location1Alert1.getDiseaseId()).isEqualTo(271);
+        assertThat(location1Alert1.getFeedId()).isEqualTo(10);
 
         HealthMapAlert location1Alert2 = location1.getAlerts().get(1);
         assertThat(location1Alert2.getAlertId()).isEqualTo(2155089);
@@ -179,6 +187,7 @@ public class HealthMapWebServiceTest {
         assertThat(location1Alert2.getSummary()).isEqualTo("Two New Cases Of Human H7N9 Infections Reported In China" +
                 " - RTT News");
         assertThat(location1Alert2.getDiseaseId()).isEqualTo(271);
+        assertThat(location1Alert2.getFeedId()).isEqualTo(1);
 
         HealthMapLocation location2 = healthMapLocations.get(1);
         assertThat(location2.getCountry()).isNull();
@@ -201,6 +210,7 @@ public class HealthMapWebServiceTest {
         assertThat(location2Alert1.getSummary()).isEqualTo("Konstaterte smittsom hjernehinnebetennelse på 2-åring " +
                 "-Folkebladet.no");
         assertThat(location2Alert1.getDiseaseId()).isEqualTo(84);
+        assertThat(location2Alert1.getFeedId()).isEqualTo(20);
     }
 
     @Test
@@ -251,6 +261,33 @@ public class HealthMapWebServiceTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
+    }
+
+    @Test
+    public void setDefaultStartDateValid() {
+        // Arrange
+        Date startDate = getDate(2014, 4, 21, 14, 29, 3);
+        String startDateString = "2014-04-21 15:29:03+0100";
+
+        // Act
+        HealthMapWebService webService = new HealthMapWebService(new WebServiceClient());
+        webService.setDefaultStartDate(startDateString);
+
+        // Assert
+        assertThatDatesAreEqual(webService.getDefaultStartDate(), startDate);
+    }
+
+    @Test
+    public void setDefaultStartDateInvalid() {
+        // Arrange
+        String startDateString = "2014-04-21 15:29:03";
+
+        // Act
+        HealthMapWebService webService = new HealthMapWebService(new WebServiceClient());
+        catchException(webService).setDefaultStartDate(startDateString);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 
     private String getHealthMapBaseUrl() {

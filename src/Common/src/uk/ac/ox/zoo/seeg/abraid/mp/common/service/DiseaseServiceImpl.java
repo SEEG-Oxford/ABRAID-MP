@@ -71,7 +71,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     public boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence) {
         // These are not-null fields in the database, so if any of them are null then there cannot possibly be a
         // matching disease occurrence in the database
-        if (occurrence.getDiseaseGroup() == null || occurrence.getLocation() == null || occurrence.getAlert() == null) {
+        if (occurrence.getDiseaseGroup() == null
+                || occurrence.getDiseaseGroup().getId() == null
+                || occurrence.getLocation() == null
+                || occurrence.getLocation().getId() == null
+                || occurrence.getAlert() == null
+                || occurrence.getAlert().getId() == null) {
             return false;
         }
 

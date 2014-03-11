@@ -83,19 +83,19 @@ public class HealthMapLookupDataTest {
         DiseaseService diseaseService = mock(DiseaseService.class);
 
         Provenance provenance = new Provenance(ProvenanceNames.HEALTHMAP);
-        Feed feed1 = new Feed(1, "Test feed 1", provenance, 1);
-        Feed feed2 = new Feed(2, "Test feed 2", provenance, 1);
+        Feed feed1 = new Feed(10, "Test feed 1", provenance, 1, 1L);
+        Feed feed2 = new Feed(20, "Test feed 2", provenance, 1, 2L);
 
         List<Feed> feeds = Arrays.asList(feed1, feed2);
         when(alertService.getFeedsByProvenanceName(ProvenanceNames.HEALTHMAP)).thenReturn(feeds);
 
-        Map<String, Feed> expectedFeedMap = new HashMap<>();
-        expectedFeedMap.put("Test feed 1", feed1);
-        expectedFeedMap.put("Test feed 2", feed2);
+        Map<Long, Feed> expectedFeedMap = new HashMap<>();
+        expectedFeedMap.put(1L, feed1);
+        expectedFeedMap.put(2L, feed2);
 
         // Act
         HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
-        Map<String, Feed> actualFeedMap = lookupData.getFeedMap();
+        Map<Long, Feed> actualFeedMap = lookupData.getFeedMap();
 
         // Assert
         assertThat(actualFeedMap).isEqualTo(expectedFeedMap);
@@ -120,5 +120,23 @@ public class HealthMapLookupDataTest {
 
         // Assert
         assertThat(actualGeoNamesMap).isEqualTo(expectedGeoNamesMap);
+    }
+
+    @Test
+    public void getHealthMapProvenance() {
+        // Arrange
+        AlertService alertService = mock(AlertService.class);
+        LocationService locationService = mock(LocationService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+
+        Provenance expectedProvenance = new Provenance();
+        when(alertService.getProvenanceByName(ProvenanceNames.HEALTHMAP)).thenReturn(expectedProvenance);
+
+        // Act
+        HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
+        Provenance actualProvenance = lookupData.getHealthMapProvenance();
+
+        // Assert
+        assertThat(actualProvenance).isEqualTo(expectedProvenance);
     }
 }

@@ -19,6 +19,8 @@ public class HealthMapAlert {
     private static final Pattern ALERT_ID_REGEXP = Pattern.compile("http://healthmap.org/ln\\.php\\?(\\d+)");
 
     private String feed;
+    @JsonProperty("feed_id")
+    private Long feedId;
     private String disease;
     @JsonProperty("disease_id")
     private Long diseaseId;
@@ -33,9 +35,10 @@ public class HealthMapAlert {
     public HealthMapAlert() {
     }
 
-    public HealthMapAlert(String feed, String disease, Long diseaseId, String summary, Date date, String link,
-                          String description, String originalUrl) {
+    public HealthMapAlert(String feed, Long feedId, String disease, Long diseaseId, String summary, Date date,
+                          String link, String description, String originalUrl) {
         this.feed = feed;
+        this.feedId = feedId;
         this.disease = disease;
         this.diseaseId = diseaseId;
         this.summary = summary;
@@ -51,6 +54,14 @@ public class HealthMapAlert {
 
     public void setFeed(String feed) {
         this.feed = StringUtils.trimWhitespace(feed);
+    }
+
+    public Long getFeedId() {
+        return feedId;
+    }
+
+    public void setFeedId(String feedId) {
+        this.feedId = ParseUtils.parseLong(feedId);
     }
 
     public String getDisease() {
