@@ -34,8 +34,10 @@ public interface ExpertService {
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the diseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
+     * @throws java.lang.IllegalArgumentException if the expertId or diseaseGroupId cannot be found in the database.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId)
+            throws IllegalArgumentException;
 
     /**
      * Gets a list of the specified expert's disease interests.

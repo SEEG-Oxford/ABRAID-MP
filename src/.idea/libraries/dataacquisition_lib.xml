@@ -3,11 +3,11 @@
     <CLASSES>
       <root url="file://$PROJECT_DIR$/DataAcquisition/lib/external" />
       <root url="file://$PROJECT_DIR$/DataAcquisition/lib/test" />
-      <root url="file://$PROJECT_DIR$/DataAcquisition/lib-local" />
+      <root url="file://$PROJECT_DIR$/DataAcquisition/lib-local/external" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
-    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib-local" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib-local/external" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib/external" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/DataAcquisition/lib/test" recursive="false" />
   </library>

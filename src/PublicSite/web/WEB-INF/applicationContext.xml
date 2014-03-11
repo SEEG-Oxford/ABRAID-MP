@@ -5,8 +5,15 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 
+    <!-- Enable @Secured attribute -->
+    <security:global-method-security secured-annotations="enabled" />
 </beans>

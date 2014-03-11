@@ -5,6 +5,7 @@
 </dependency>
 <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
 <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
+<dependency org="joda-time" name="joda-time" rev="2.3" conf="external->default" />
 
 <!-- Testing -->
 <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
@@ -16,5 +17,4 @@
 
 <!-- Analysis -->
 <dependency org="com.google.code.findbugs" name="findbugs-ant" rev="2.0.3" conf="analysis->default" />
-<!--dependency org="net.sourceforge.findbugs" name="findbugs" rev="1.3.7" conf="analysis->default" /-->
 <dependency org="com.puppycrawl.tools" name="checkstyle" rev="5.6" conf="analysis->default" />

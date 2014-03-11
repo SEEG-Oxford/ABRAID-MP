@@ -11,7 +11,7 @@
     <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.common.dir}"/>
   </target>
   <target name="module.common.test">
-    <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.common.dir}"/>
+    <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.common.dir}"/>
   </target>
   <target name="module.common.full">
     <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.common.dir}"/>
@@ -26,7 +26,7 @@
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.dataacquisition.dir}"/>
   </target>
   <target name="module.dataacquisition.test">
-    <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.dataacquisition.dir}"/>
+    <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.dataacquisition.dir}"/>
   </target>
   <target name="module.dataacquisition.full">
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.dataacquisition.dir}"/>
@@ -41,7 +41,7 @@
     <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.diseaseextent.dir}"/>
   </target>
   <target name="module.diseaseextent.test">
-    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.diseaseextent.dir}"/>
+    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.diseaseextent.dir}"/>
   </target>
   <target name="module.diseaseextent.full">
     <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.diseaseextent.dir}"/>
@@ -56,7 +56,7 @@
     <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.publicsite.dir}"/>
   </target>
   <target name="module.publicsite.test">
-    <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.publicsite.dir}"/>
+    <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.publicsite.dir}"/>
   </target>
   <target name="module.publicsite.full">
     <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.publicsite.dir}"/>
@@ -71,7 +71,7 @@
     <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.modelwrapper.dir}"/>
   </target>
   <target name="module.modelwrapper.test">
-    <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test" dir="${module.modelwrapper.dir}"/>
+    <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.modelwrapper.dir}"/>
   </target>
   <target name="module.modelwrapper.full">
     <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.modelwrapper.dir}"/>
@@ -81,5 +81,5 @@
   <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.diseaseextent.clean, module.publicsite.clean, module.modelwrapper.clean" description="cleanup all"/>
   <target name="build" depends="module.common.build, module.dataacquisition.build, module.diseaseextent.build, module.publicsite.build, module.modelwrapper.build" description="build all modules"/>
   <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.diseaseextent.test, module.publicsite.test, module.modelwrapper.test" description="test all modules"/>
-  <target name="full" depends="module.common.full, module.dataacquisition.full, module.diseaseextent.full, module.publicsite.full, module.modelwrapper.full" description="build pipeline" />
+  <target name="full" depends="module.common.full, module.dataacquisition.full, module.publicsite.full, module.modelwrapper.full" description="build pipeline" />
 </project>

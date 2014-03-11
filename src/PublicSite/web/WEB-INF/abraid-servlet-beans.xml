@@ -27,6 +27,17 @@
         <property name="suffix" value=".ftl"/>
     </bean>
 
-    <mvc:annotation-driven />
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true" >
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" ref="geoJsonObjectMapper" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonObjectMapper" />
+
+    <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
+
     <mvc:default-servlet-handler/>
 </beans>

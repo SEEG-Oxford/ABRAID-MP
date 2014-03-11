@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:jacoco="antlib:org.jacoco.ant">
   <property environment="env"/>
 
   <basename property="module.name" file="${basedir}"/>
@@ -13,7 +13,10 @@
   <property name="doc.out.dir" value="${out.dir}/doc"/>
   <property name="report.out.dir" value="${out.dir}/report"/>
   <property name="lib.dir" value="${basedir}/lib"/>
-  <property name="lib-local.dir" value="${basedir}/lib-local" />
+  <property name="lib.local.dir" value="${basedir}/lib-local" />
+  <property name="lib.local.external.dir" value="${lib.local.dir}/external" />
+  <property name="lib.local.analysis.dir" value="${lib.local.dir}/analysis" />
+  <property name="test.run.dir" value="${project.root.dir}/src" /><!-- This is a silly place to run tests, but it's what IntelliJ uses -->
   <property name="src.dir" value="${basedir}/src"/>
   <property name="test.dir" value="${basedir}/test"/>
   <property name="web.dir" value="${basedir}/web"/>
@@ -44,15 +47,16 @@
   <echo>Ant running against repository verion: ${repository.version}</echo>
 
   <!-- Classpath -->
+  <property name="build.sysclasspath" value="ignore"/>
   <path id="build.classpath">
     <fileset dir="${lib.dir}/build" includes="*.jar"/>
-    <fileset dir="${lib-local.dir}" includes="*.jar"/>
+    <fileset dir="${lib.local.external.dir}" includes="*.jar"/>
   </path>
 
   <path id="test.classpath">
     <fileset dir="${lib.dir}/build" includes="*.jar"/>
     <fileset dir="${lib.dir}/test" includes="*.jar"/>
-    <fileset dir="${lib-local.dir}" includes="*.jar"/>
+    <fileset dir="${lib.local.external.dir}" includes="*.jar"/>
   </path>
 
   <path id="analysis.classpath">
@@ -60,7 +64,7 @@
   </path>
 
   <!-- CI targets -->
-  <target name="full" depends="print.start, clean, compile.production, compile.tests, unit.test, check.quality, publish.package, print.summary" description="Build pipeline"> <!-- Add generate.docs -->
+  <target name="full" depends="print.start, clean, compile.production, compile.tests, test.coverage, check.quality, generate.docs, publish.package, print.summary" description="Build pipeline">
     <fail message="Quality checks failed!" if="build.failure" />
   </target>
 
@@ -103,7 +107,7 @@
   <target name="compile.production" depends="retrieve.libs" description="Compile module; production classes">
     <mkdir dir="${module.out.dir}"/>
     <!-- Build -->
-    <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="build.classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+    <javac destdir="${module.out.dir}" srcdir="${src.dir}" classpathref="build.classpath" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
       <compilerarg line="${compiler.args}"/>
     </javac>
     <!-- Copy resources -->
@@ -121,7 +125,7 @@
   <target name="compile.tests" depends="compile.production" description="Compile module; test classes" unless="skip.tests">
     <mkdir dir="${test.out.dir}"/>
     <!-- Build -->
-    <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeantruntime="false">
+    <javac destdir="${test.out.dir}" srcdir="${test.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
       <classpath>
         <path refid="test.classpath"/>
         <dirset dir="${module.out.dir}"/>
@@ -155,6 +159,12 @@
     <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
   </target>
 
+  <target name="create.lib.dirs">
+    <mkdir dir="${lib.dir}" />
+    <mkdir dir="${lib.local.external.dir}" />
+    <mkdir dir="${lib.local.analysis.dir}" />
+  </target>
+
   <target name="init.ivy" depends="download.ivy">
     <path id="ivy.lib.path">
       <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
@@ -167,15 +177,42 @@
    <ivy:resolve log="download-only"/>
   </target>
 
-  <target name="retrieve.libs" depends="resolve.libs">
-    <mkdir dir="${lib.dir}" />
-    <mkdir dir="${lib-local.dir}" />
+  <target name="retrieve.libs" depends="create.lib.dirs, resolve.libs, retrieve.manual.libs">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
+  </target>
+
+  <target name="retrieve.manual.libs" depends="retrieve.jacoco" />
+
+  <!-- Get JaCoCo manually -->
+  <property name="jacoco.version" value="0.6.4.201312101107" />
+
+  <target name="retrieve.jacoco" depends="check.jacoco, resolve.jacoco" />
+
+  <target name="check.jacoco">
+    <condition property="needs-jacoco">
+      <not>
+        <available file="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
+      </not>
+    </condition>
+  </target>
+
+  <target name="resolve.jacoco" if="needs-jacoco">
+    <get skipexisting="true" src="http://search.maven.org/remotecontent?filepath=org/jacoco/jacoco/${jacoco.version}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" />
+    <unzip src="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}">
+      <patternset>
+        <include name="lib/jacocoant.jar"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </unzip>
+    <move file="${lib.local.analysis.dir}/jacocoant.jar" tofile="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
+    <delete file="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip"/>
   </target>
 
   <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
-    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure">
+    <property name="jacoco.coverage.agent" value=""/> <!-- Note this will have no effect if it's already set by jacoco:agent -->
+    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure" dir="${test.run.dir}">
+      <jvmarg value="${jacoco.coverage.agent}" />
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
@@ -186,9 +223,83 @@
         <dirset dir="${test.out.dir}"/>
       </classpath>
       <batchtest>
-        <fileset dir="${test.out.dir}" includes="**/*Test.class" />
+        <fileset dir="${test.out.dir}">
+          <include name="**/*Test.class"/>
+          <exclude name="**/*IntegrationTest.class"/>
+          <exclude name="**/*SystemTest.class"/>
+        </fileset>
       </batchtest>
     </junit>
+  </target>
+
+  <target name="integration.test" depends="compile.tests">
+    <property name="jacoco.coverage.agent" value=""/> <!-- Note this will have no effect if it's already set by jacoco:agent -->
+    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure" dir="${test.run.dir}">
+      <jvmarg value="${jacoco.coverage.agent}" />
+      <jvmarg value="-Xms128M"/>
+      <jvmarg value="-Xmn64M"/>
+      <jvmarg value="-Xmx512M"/>
+      <formatter type="brief" usefile="false"/>
+      <classpath>
+        <path refid="test.classpath"/>
+        <dirset dir="${module.out.dir}"/>
+        <dirset dir="${test.out.dir}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${test.out.dir}">
+          <include name="**/*IntegrationTest.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="run.tests" depends="unit.test, integration.test" />
+
+  <target name="test.coverage" depends="jacoco.agent, run.tests"> <!-- Using both unit and integration tests in coverage metric -->
+    <jacoco:report>
+      <executiondata>
+        <file file="${report.out.dir}/coverage/jacoco.exec"/>
+      </executiondata>
+      <structure name="${module.name} Coverage">
+        <classfiles>
+          <fileset dir="${module.out.dir}"/>
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="${src.dir}"/>
+        </sourcefiles>
+      </structure>
+      <html destdir="${report.out.dir}/coverage"/>
+      <xml destfile="${report.out.dir}/coverage/report.xml"/>
+    </jacoco:report>
+    <script language="javascript"><![CDATA[
+      // Read the xml coverage report and extract the net line coverage to echo into the ant log.
+      // Note: maybe switch to branch coverage?
+      importClass(java.io.File);
+      importClass(java.io.FileReader);
+      importClass(java.io.BufferedReader);
+
+      var file = new File(project.getProperty("report.out.dir")+"/coverage/report.xml");
+      fileReader = new FileReader(file);
+      bufferedReader = new BufferedReader(fileReader);
+      var text = bufferedReader.readLine(); // single line file
+
+      var counters = text.match(/\<counter\ type\=\"LINE\"\ missed\=\"([0-9]+)\"\ covered\=\"([0-9]+)\"\/\>/g);
+      var totalCounter = counters[counters.length - 1]; // The totals are the last counters in the file
+      var missed = parseInt(totalCounter.match(/missed\=\"([0-9]+)\"/)[1]);
+      var covered = parseInt(totalCounter.match(/covered\=\"([0-9]+)\"/)[1]);
+
+      echo = project.createTask("echo");
+      echo.setMessage("[Summary] "+project.getProperty("module.name")+" Line Coverage "+covered+"/"+(covered+missed)+" = "+(100*covered/(covered+missed)).toFixed(2)+"%");
+      echo.perform();
+    ]]></script>
+  </target>
+
+  <target name="jacoco.agent" depends="retrieve.libs">
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+      <classpath path="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
+    </taskdef>
+    <delete file="${report.out.dir}/coverage/jacoco.exec" />
+    <jacoco:agent property="jacoco.coverage.agent" destfile="${report.out.dir}/coverage/jacoco.exec" excludes="jersey.*" />
   </target>
 
   <!-- Package targets -->
@@ -216,7 +327,7 @@
         <exclude name="WEB-INF/web.xml" />
       </fileset>
       <lib dir="${lib.dir}/build" />
-      <lib dir="${lib-local.dir}" />
+      <lib dir="${lib.local.external.dir}" />
       <manifest>
         <attribute name="Version" value="${repository.version}"/>
         <attribute name="Built-On" value="${time.stamp}"/>
@@ -269,7 +380,7 @@
 
   <target name="clean.full" depends="clean">
     <delete dir="${lib.dir}"/>
-    <delete dir="${lib-local.dir}"/>
+    <delete dir="${lib.local.dir}"/>
     <delete dir="${out.dir}"/>
   </target>
 </project>
