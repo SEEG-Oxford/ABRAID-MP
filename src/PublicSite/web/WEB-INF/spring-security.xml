@@ -6,10 +6,11 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security.xsd">
+             xsi:schemaLocation="
+                http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/security
+                http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
     <http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
@@ -42,8 +43,6 @@
                 autowire="constructor"/>
 
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-
-    <beans:bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 
     <!-- The Authentication Filter bean from http custom-filter tag -->
     <beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
