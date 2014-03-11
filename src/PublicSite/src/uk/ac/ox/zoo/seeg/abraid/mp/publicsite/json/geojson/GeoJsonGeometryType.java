@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Provides the valid GeoJSON geometry object types.
+ * Commented out enum entries are parts of the GeoJSON, which are not yet supported.
  * Copyright (c) 2014 University of Oxford
  */
 @JsonSerialize(using = GeoJsonNamedEnumSerializer.class)

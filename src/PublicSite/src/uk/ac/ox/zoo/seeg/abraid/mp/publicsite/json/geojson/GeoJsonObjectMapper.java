@@ -10,8 +10,6 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
  * Copyright (c) 2014 University of Oxford
  */
 public final class GeoJsonObjectMapper extends ObjectMapper {
-    private static final String UTC = "UTC";
-
     public GeoJsonObjectMapper() {
         super();
         this.registerModule(new JodaModule());
