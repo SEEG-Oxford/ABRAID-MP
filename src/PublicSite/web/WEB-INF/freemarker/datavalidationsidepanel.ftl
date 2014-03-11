@@ -4,10 +4,15 @@
 
 <div id="sidePanel">
     <div id="datapointInfo">
-        <p id="datapointInfoTitle">Click on a point to view its details...</p>
-        <div id="locationDiv" style="display:none">
-            <i class="fa fa-map-marker"></i><span> </span><p id="locationText">Location</p>
-        </div>
+        <div data-bind="ifnot: hasSelectedPoint">Select a point to view more details...</div>
+        <ul id="locationDiv" data-bind="if: hasSelectedPoint" style="list-style-type: none; padding:0; margin:0;" >
+            <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.alert.title"></p></li>
+            <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.alert.summary"></p></li>
+            <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.alert.url"></p></li>
+            <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.alert.feedName"></p></li>
+            <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.alert.publicationDate"></p></li>
+            <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.countryName"></p></li>
+        </ul>
         <button class="btn btn-large btn-block btn-primary" type="button">Log in to submit review</button>
     </div>
 

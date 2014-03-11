@@ -2,7 +2,9 @@
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
  */
-(function () {
+
+// Limit the scope of variables to this file.
+var Map = (function () {
     // Initialise map at "map" div
     var map = L.map('map', {
         attributionControl: false,
@@ -17,6 +19,7 @@
     }).fitWorld();
 
     // Add the simplified shapefile base layer with WMS GET request from localhost GeoServer
+    // TODO: Set geoServerUrl as a config property
     var geoServerUrl = 'http://localhost:8081/geoserver/abraid/wms';
     L.tileLayer.wms(geoServerUrl, {
         layers: ['abraid:simplified_base_layer'],
@@ -43,12 +46,16 @@
     function highlightFeature() {
         this.setStyle({
             stroke: true,
-            color: highlightColour });
+            color: highlightColour
+        });
     }
 
     // Return to default colour
     function resetHighlight() {
-        this.setStyle({ color: defaultColour});
+        this.setStyle({
+            stroke: false,
+            color: defaultColour
+        });
     }
 
     // Change the point's colour and size when clicked
@@ -62,26 +69,14 @@
         });
     }
 
-    // Update the information panel when a point is selected
-    function updateInformationPanel(properties) {
-        $('#datapointInfoTitle').hide();
-        $('#locationText').text(properties.name);
-        $('#locationDiv').show();
-    }
-
-    function resetInformationPanel() {
-        $('#datapointInfoTitle').show();
-        $('#locationDiv').hide();
-    }
-
     // Define a circle, instead of the default leaflet marker, with listeners for mouse events
     function locationLayerPoint(feature, latlng) {
         return L.circleMarker(latlng).on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
             click: function () {
+                selectedPointViewModel.selectedPoint(feature);
                 selectFeature(this);
-                updateInformationPanel(feature.properties);
             }
         });
     }
@@ -94,16 +89,20 @@
     }).addTo(map);
 
     // Get the GeoJSON Feature Collection and add the data to the geoJson layer
-    // TODO: Get DiseaseOccurrence GeoJSON from HUDL's web service, instead of abraid database location table from localhost GeoServer
-    $.getJSON('http://localhost:8081/geoserver/abraid/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=abraid:location&outputFormat=json', function (featureCollection) {
-        locationLayer.addData(featureCollection);
-        map.fitBounds(locationLayer.getBounds());
-    });
+//    $.getJSON('datavalidation/diseases/' + layerSelectorViewModel.selectedDisease().id + '/occurrences', function (featureCollection) {
+//        locationLayer.addData(featureCollection);
+//        map.fitBounds(locationLayer.getBounds());
+//    });
 
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
     // And clear the information box
     map.on('click', function () {
-        resetInformationPanel();
+        selectedPointViewModel.clearSelectedPoint();
         locationLayer.setStyle(locationLayerStyle);
     });
+
+    return {
+        locationLayer : locationLayer,
+        map : map
+    };
 }());

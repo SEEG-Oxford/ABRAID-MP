@@ -7,26 +7,28 @@
 
     <#include "datavalidationsidepanel.ftl"/>
 
-    <div style="position:absolute; z-index:10; margin-left:50px;">
+    <script>
+        var diseaseInterests = [
+            <#list diseaseInterests as diseaseInterest>
+                { name: "${diseaseInterest.name}", id: "${diseaseInterest.id}" },
+            </#list>
+        ];
+    </script>
+
+    <div id="layerSelector">
         <h4>You are validating
-            <div class="btn-group">
-                <button data-toggle="dropdown" class="btn btn-xs dropdown-toggle transparent-btn"><h4>disease occurrences <span class="caret"></span></h4></button>
-                <ul class="dropdown-menu">
-                    <li>disease extent</li>
-                </ul>
-            </div>
+            <select class="layerSelectorDropDown" data-bind="options: validationTypes, value: selectedType"></select>
         of
-            <div class="btn-group">
-                <button data-toggle="dropdown" class="btn btn-xs dropdown-toggle transparent-btn"><h4>diseases <span class="caret"></span></h4></button>
-                <ul class="dropdown-menu">
-                <#list diseaseInterests as disease>
-                    <li><a href="#">${disease.name}</a></li>
-                </#list>
-                </ul>
-            </div>
+            <select class="layerSelectorDropDown" data-bind="options: diseaseInterests, optionsText: 'name', value: selectedDisease"></select>
         </h4>
     </div>
 
-    <div id="map" style="position:relative"></div>
+    <div id="map"></div>
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
+    <script src="js/L.Control.Zoomslider.js"></script>
+    <script src="js/ViewModels.js"></script>
+    <script src="js/leafletMap.js"></script>
 
 </@c.page>

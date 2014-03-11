@@ -21,10 +21,14 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/L.Control.Zoomslider.css">
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
+
 </head>
 <body>
 
     <#include "navbar.ftl"/>
+
 
 <div id="common">
     <#nested/>
@@ -33,14 +37,10 @@
     <#include "footer.html"/>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
 
 <script src="js/navbar.js"></script>
 <script src="js/login.js"></script>
-<script src="js/L.Control.Zoomslider.js"></script>
-<script src="js/leafletMap.js"></script>
 
 </body></html>
 </#macro>
