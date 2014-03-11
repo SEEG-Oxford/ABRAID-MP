@@ -3,8 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -12,7 +10,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 
 import static org.hamcrest.text.StringContains.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -36,9 +33,6 @@ public class IndexControllerIntegrationTest {
 
     @Before
     public void setup() {
-        // Process mock annotations
-        MockitoAnnotations.initMocks(this);
-
         // Setup Spring test in standalone mode
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
