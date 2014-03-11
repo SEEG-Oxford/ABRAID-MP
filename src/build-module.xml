@@ -16,6 +16,7 @@
   <property name="lib.local.dir" value="${basedir}/lib-local" />
   <property name="lib.local.external.dir" value="${lib.local.dir}/external" />
   <property name="lib.local.analysis.dir" value="${lib.local.dir}/analysis" />
+  <property name="test.run.dir" value="${project.root.dir}/src" /><!-- This is a silly place to run tests, but it's what IntelliJ uses -->
   <property name="src.dir" value="${basedir}/src"/>
   <property name="test.dir" value="${basedir}/test"/>
   <property name="web.dir" value="${basedir}/web"/>
@@ -210,7 +211,7 @@
   <!-- Test targets -->
   <target name="unit.test" depends="compile.tests">
     <property name="jacoco.coverage.agent" value=""/> <!-- Note this will have no effect if it's already set by jacoco:agent -->
-    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure">
+    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure" dir="${test.run.dir}">
       <jvmarg value="${jacoco.coverage.agent}" />
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
@@ -233,7 +234,7 @@
 
   <target name="integration.test" depends="compile.tests">
     <property name="jacoco.coverage.agent" value=""/> <!-- Note this will have no effect if it's already set by jacoco:agent -->
-    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure">
+    <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure" dir="${test.run.dir}">
       <jvmarg value="${jacoco.coverage.agent}" />
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
