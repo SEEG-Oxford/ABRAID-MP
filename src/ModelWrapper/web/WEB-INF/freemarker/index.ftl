@@ -1,5 +1,5 @@
 <#--
-    ModelWrapper's index/ landing page, to display model outputs.
+    ModelWrapper's index landing page, to display model outputs.
     Copyright (c) 2014 University of Oxford
 -->
 <#import "common.ftl" as c/>

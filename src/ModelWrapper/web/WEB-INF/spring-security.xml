@@ -20,8 +20,7 @@
     <authentication-manager>
         <authentication-provider>
             <user-service>
-                <!--user name="${auth.username}" authorities="ROLE_USER" password="${auth.password_hash}" /-->
-                <user name="user" authorities="ROLE_USER" password="$2a$10$yzKgitCB6ghjvbQ7TjfhsOPcx/2j2EOQA2EMM8SIEsHfxhFhFM7TG" />
+                <user name="${auth.username}" authorities="ROLE_USER" password="${auth.password_hash}" />
             </user-service>
             <password-encoder hash="bcrypt" />
         </authentication-provider>
