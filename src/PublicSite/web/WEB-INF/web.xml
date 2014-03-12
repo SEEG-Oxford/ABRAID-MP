@@ -16,7 +16,8 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                /WEB-INF/abraid-servlet-beans.xml
+                /WEB-INF/abraid-servlet-beans.xml,
+                /WEB-INF/spring-security-servlet.xml
             </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
