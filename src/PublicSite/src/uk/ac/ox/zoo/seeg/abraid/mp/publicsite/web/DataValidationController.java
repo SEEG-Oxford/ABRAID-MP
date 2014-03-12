@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +46,11 @@ public class DataValidationController {
      */
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showPage(Model model) {
-        Set<DiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(1);
+        PublicSiteUser user = currentUserService.getCurrentUser();
+        Set<DiseaseGroup> diseaseInterests = new HashSet<>();
+        if (user != null) {
+            diseaseInterests = expertService.getDiseaseInterests(user.getId());
+        }
         model.addAttribute("diseaseInterests", diseaseInterests);
         return "datavalidation";
     }
