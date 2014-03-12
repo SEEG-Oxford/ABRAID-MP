@@ -312,6 +312,41 @@ public class HealthMapAlertConverterTest {
     }
 
     @Test
+    public void healthMapDiseaseIsMissing() {
+        // Arrange
+        String feedName = "Test feed";
+        String summary = "Test summary";
+        String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
+        Long feedId = 1L;
+        Date publicationDate = Calendar.getInstance().getTime();
+        String link = "http://healthmap.org/ln.php?2154965";
+        String description = "Test description";
+        long healthMapAlertId = 2154965L;
+
+        Location location = new Location();
+        Alert alert = new Alert();
+        Feed feed = new Feed(feedName, null, 0, feedId);
+
+        HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, null, null, summary,
+                publicationDate, link, description, originalUrl);
+
+        // Prepare mock objects
+        AlertService alertService = mock(AlertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
+        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
+        mockOutGetFeed(lookupData, feed);
+        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+
+        // Act
+        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, lookupData);
+        DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, location);
+
+        // Assert
+        assertThat(occurrence).isNull();
+    }
+
+    @Test
     public void healthMapDiseaseIsNotOfInterest() {
         // Arrange
         String feedName = "Test feed";

@@ -13,6 +13,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAle
  */
 public class HealthMapAlertConverter {
     private static final Logger LOGGER = Logger.getLogger(HealthMapAlertConverter.class);
+    private static final String DISEASE_ID_NOT_FOUND = "HealthMap alert has no disease ID (disease name \"%s\","
+            + " alert ID %d)";
     private static final String ALERT_ID_NOT_FOUND = "Could not extract alert ID from link \"%s\"";
     private static final String DISEASE_NOT_OF_INTEREST_MESSAGE =
             "Disease occurrence not of interest (HealthMap disease \"%s\")";
@@ -116,6 +118,11 @@ public class HealthMapAlertConverter {
     }
 
     private DiseaseGroup retrieveDiseaseGroup(HealthMapAlert healthMapAlert) {
+        if (healthMapAlert.getDiseaseId() == null) {
+            LOGGER.warn(String.format(DISEASE_ID_NOT_FOUND, healthMapAlert.getDisease(), healthMapAlert.getAlertId()));
+            return null;
+        }
+
         HealthMapDisease healthMapDisease = retrieveHealthMapDisease(healthMapAlert);
         if (healthMapDisease != null) {
             renameHealthMapDiseaseIfRequired(healthMapDisease, healthMapAlert);

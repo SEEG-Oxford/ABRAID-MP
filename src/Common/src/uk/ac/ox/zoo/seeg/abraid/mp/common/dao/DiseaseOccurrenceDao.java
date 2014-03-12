@@ -8,8 +8,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import java.util.Date;
 import java.util.List;
 
-import java.util.List;
-
 /**
  * Interface for the DiseaseOccurrence entity's Data Access Object.
  *

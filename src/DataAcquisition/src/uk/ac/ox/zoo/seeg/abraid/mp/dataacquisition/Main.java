@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
@@ -15,6 +16,7 @@ public class Main {
      */
     public static final String APPLICATION_CONTEXT_LOCATION =
             "classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml";
+    private static final Logger LOGGER = Logger.getLogger(Main.class);
 
     private HealthMapDataAcquisition healthMapDataAcquisition;
 
@@ -23,8 +25,19 @@ public class Main {
      * @param args Command line arguments (unused).
      */
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
-        runMain(context);
+        try {
+            ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
+            runMain(context);
+        } catch (Throwable e) {
+            try {
+                // Ensure that top-level exceptions are logged
+                LOGGER.fatal(e);
+            } catch (Throwable e2) {
+                // But if the logger fails, throw the original exception
+                throw e;
+            }
+            throw e;
+        }
     }
 
     /**

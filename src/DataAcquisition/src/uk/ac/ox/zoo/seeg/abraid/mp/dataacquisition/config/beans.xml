@@ -8,11 +8,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- This ensures that if a file named dataacquisition.properties exists in the parent of the directory containing
-         the Data Acquisition JAR, it will override the default properties specified in the classpath files -->
+    <!-- This ensures that if a file named dataacquisition.properties exists in the current directory, it will
+         override the default properties specified in the classpath files -->
     <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
                                             classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties,
-                                            file:../dataacquisition.properties"
+                                            file:dataacquisition.properties"
                                   ignore-resource-not-found="true"/>
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
