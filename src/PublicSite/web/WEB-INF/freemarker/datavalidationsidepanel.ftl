@@ -1,5 +1,6 @@
 <#--
     Display information about each disease occurrence
+    Copyright (c) 2014 University of Oxford
 -->
 
 <div id="sidePanel">

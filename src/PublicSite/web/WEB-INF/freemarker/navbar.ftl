@@ -40,7 +40,7 @@
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right">
                     <li id="welcomeMessage">Hello <@security.authentication property="principal.fullName"/></li>
-                    <li><a href="j_spring_security_logout">Log out</a></li>
+                    <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
                 </ul>
             </@security.authorize>
 

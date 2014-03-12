@@ -3,25 +3,19 @@
  * Copyright (c) 2014 University of Oxford
  */
 
-// Limit the scope of variables to this file.
-var Map = (function () {
+var LeafletMap = (function () {
     // Initialise map at "map" div
     var map = L.map('map', {
         attributionControl: false,
         zoomControl: false,
         zoomsliderControl: true,
-        maxBounds: [
-            [-89, -179],
-            [89, 179]
-        ],
+        maxBounds: [ [-89, -179], [89, 179] ],
         maxZoom: 10,
         minZoom: 3
     }).fitWorld();
 
-    // Add the simplified shapefile base layer with WMS GET request from localhost GeoServer
-    // TODO: Set geoServerUrl as a config property
-    var geoServerUrl = 'http://localhost:8081/geoserver/abraid/wms';
-    L.tileLayer.wms(geoServerUrl, {
+    // Add the simplified shapefile base layer with WMS GET request
+    L.tileLayer.wms(wmsUrl, {
         layers: ['abraid:simplified_base_layer'],
         format: 'image/png',
         reuseTiles: true
@@ -33,7 +27,7 @@ var Map = (function () {
     var strokeColour = '#c478a9';
 
     // Define default style for unselected points
-    var locationLayerStyle = {
+    var diseaseOccurrenceLayerStyle = {
         stroke: false,
         fill: true,
         color: strokeColour,
@@ -60,8 +54,8 @@ var Map = (function () {
 
     // Change the point's colour and size when clicked
     function selectFeature(marker) {
-        // Reset style of all other points, so only one point is selected at a time
-        locationLayer.setStyle(locationLayerStyle);
+        // First, reset the style of all other points on layer, so only one point is animated as selected at a time
+        diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
         marker.setStyle({
             stroke: false,
             fillColor: highlightColour,
@@ -70,7 +64,7 @@ var Map = (function () {
     }
 
     // Define a circle, instead of the default leaflet marker, with listeners for mouse events
-    function locationLayerPoint(feature, latlng) {
+    function diseaseOccurrenceLayerPoint(feature, latlng) {
         return L.circleMarker(latlng).on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
@@ -83,26 +77,19 @@ var Map = (function () {
 
     // Add disease occurrence points to map
     // First add empty geoJson layer to map, with defined styling options, then get JSON data using an AJAX request
-    var locationLayer = L.geoJson([], {
-        pointToLayer: locationLayerPoint,
-        style: locationLayerStyle
+    var diseaseOccurrenceLayer = L.geoJson([], {
+        pointToLayer: diseaseOccurrenceLayerPoint,
+        style: diseaseOccurrenceLayerStyle
     }).addTo(map);
 
-    // Get the GeoJSON Feature Collection and add the data to the geoJson layer
-//    $.getJSON('datavalidation/diseases/' + layerSelectorViewModel.selectedDisease().id + '/occurrences', function (featureCollection) {
-//        locationLayer.addData(featureCollection);
-//        map.fitBounds(locationLayer.getBounds());
-//    });
-
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
-    // And clear the information box
     map.on('click', function () {
         selectedPointViewModel.clearSelectedPoint();
-        locationLayer.setStyle(locationLayerStyle);
+        diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
     });
 
     return {
-        locationLayer : locationLayer,
+        diseaseOccurrenceLayer : diseaseOccurrenceLayer,
         map : map
     };
 }());

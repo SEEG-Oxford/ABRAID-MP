@@ -22,7 +22,7 @@ html,body
     z-index:10;
     margin-left:50px;"
 }
-.layerSelectorDropDown
+#layerSelector > h4, select
 {
     background:none;
     color:rgb(51, 51, 51);

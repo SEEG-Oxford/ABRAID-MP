@@ -10,7 +10,7 @@ $(document).ready(function () {
 
             if (username && username !== "" && password && password !== "") {
                 $.ajax({
-                    url: "j_spring_security_check",
+                    url: baseUrl + "j_spring_security_check",
                     type: "POST",
                     data: {j_username:username, j_password:password},
                     dataType: "json",
