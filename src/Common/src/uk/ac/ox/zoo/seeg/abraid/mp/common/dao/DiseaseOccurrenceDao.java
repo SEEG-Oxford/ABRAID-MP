@@ -8,6 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import java.util.Date;
 import java.util.List;
 
+import java.util.List;
+
 /**
  * Interface for the DiseaseOccurrence entity's Data Access Object.
  *
@@ -26,6 +28,15 @@ public interface DiseaseOccurrenceDao {
      * @return The disease occurrence, or null if it does not exist.
      */
     DiseaseOccurrence getById(Integer id);
+
+    /**
+     * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
+     * submitted a review.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @return The list of disease occurrence points to be displayed to the expert on the map.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId);
 
     /**
      * Saves the specified disease occurrence.

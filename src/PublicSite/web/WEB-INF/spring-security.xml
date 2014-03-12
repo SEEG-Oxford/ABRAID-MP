@@ -6,13 +6,14 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security.xsd">
+             xsi:schemaLocation="
+                http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/security
+                http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
-    <http auto-config="false"  entry-point-ref="authenticationProcessingFilterEntryPoint" authentication-manager-ref="authenticationManager">
+    <http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
         <!-- Redirect to home atlas page at "/" on logout, instead of navigating to j_spring_security_logout -->
         <logout logout-success-url="/" />
 
@@ -25,12 +26,8 @@
         </session-management>
     </http>
 
-    <!-- The Filter Entry Point bean from http ref -->
-    <beans:bean id="authenticationProcessingFilterEntryPoint"
-                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-        <beans:property name="loginFormUrl" value="/" />
-        <beans:property name="forceHttps" value="false" />
-    </beans:bean>
+    <!-- The Filter Entry Point bean: failed auths should give 403  -->
+    <beans:bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
     <!-- The Authentication Manager bean from http ref, and its sub-beans -->
     <beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">

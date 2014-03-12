@@ -2,12 +2,11 @@
 <project name="module_dataacquisition" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
 
-  <target name="retrieve.libs" depends="module_build.retrieve.libs, retrieve.manual.libs"/>
+  <target name="retrieve.manual.libs" depends="module_build.retrieve.manual.libs, retrieve.hibernatespatial"/>
 
-  <target name="retrieve.manual.libs">
-    <mkdir dir="${lib.dir}"/>
+  <target name="retrieve.hibernatespatial">
     <!-- Retrieve Hibernate Spatial 4.3 (not currently released) -->
-    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib-local.dir}"/>
+    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib.local.external.dir}"/>
   </target>
   
   <target name="create.jar.manifest" depends="module_build.create.jar.manifest">

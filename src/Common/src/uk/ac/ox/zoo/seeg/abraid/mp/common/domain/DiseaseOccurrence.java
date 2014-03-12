@@ -22,6 +22,13 @@ import java.util.Date;
         )
 })
 @Entity
+@NamedQueries(
+    @NamedQuery(
+        name = "getDiseaseOccurrencesYetToBeReviewed",
+        query = "from DiseaseOccurrence where diseaseGroupId=:diseaseGroupId"
+              + " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"
+    )
+)
 public class DiseaseOccurrence {
     // The primary key.
     @Id

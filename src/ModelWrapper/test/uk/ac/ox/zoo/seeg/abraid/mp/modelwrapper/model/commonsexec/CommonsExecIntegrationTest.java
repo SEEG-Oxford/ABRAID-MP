@@ -36,7 +36,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunEmptyScript() throws Exception {
         // Arrange
-        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
+        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
@@ -59,7 +59,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunHelloWorldScript() throws Exception {
         // Arrange
-        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
+        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
@@ -84,7 +84,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunHelloErrorScript() throws Exception {
         // Arrange
-        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
+        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
@@ -109,7 +109,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunHelloNameScript() throws Exception {
         // Arrange
-        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
+        RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
@@ -142,7 +142,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToDoDryRunOfModel() throws Exception {
         // Arrange
-        final RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 1000);
+        final RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000);
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {

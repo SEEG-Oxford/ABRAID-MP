@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
@@ -14,7 +13,6 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-
 /**
  * Tests the DiseaseOccurrenceReviewDao class.
  *
@@ -22,19 +20,26 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
-    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
-    @Autowired
-    private ExpertDao expertDao;
-    @Autowired
-    private FeedDao feedDao;
-    @Autowired
     private AlertDao alertDao;
-    @Autowired
-    private DiseaseGroupDao diseaseGroupDao;
-    @Autowired
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
     @Autowired
     private CountryDao countryDao;
+
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+
+    @Autowired
+    private ExpertDao expertDao;
+
+    @Autowired
+    private FeedDao feedDao;
+
     @Autowired
     private LocationDao locationDao;
 
@@ -64,6 +69,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
     }
 
+    @Test
     public void getAllReviewsForExpertForOneDisease() {
         // Arrange
         Expert expert = createExpert();
@@ -88,6 +94,20 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         assertThat(review.getResponse()).isEqualTo(response);
         assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
         assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
+    }
+
+    @Test
+    public void getAllReviewsForExpertMustReturnEmptyListIfNoReviewsHaveBeenSubmitted() {
+        // Arrange
+        Integer expertId = 1;
+        DiseaseGroup diseaseGroup = createDiseaseGroup();
+
+        // Act
+        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroup.getId());
+
+        // Assert
+        assertThat(reviews).isNotNull();
+        assertThat(reviews).isEmpty();
     }
 
     private Expert createExpert() {
@@ -149,8 +169,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     private Location createLocation() {
         String countryName = "UK of Great Britain and Northern Ireland";
         String placeName = "Oxford";
-        String admin1 = "England";
-        String admin2 = "Oxfordshire";
         Country country = countryDao.getByName(countryName);
         double x = 51.75042;
         double y = -1.24759;
