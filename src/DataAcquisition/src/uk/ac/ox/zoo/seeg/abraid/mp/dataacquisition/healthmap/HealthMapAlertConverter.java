@@ -96,7 +96,7 @@ public class HealthMapAlertConverter {
         } else {
             // If the feed ID does not exist in the database, automatically add a new feed
             feed = createFeed(healthMapAlert);
-            LOGGER.fatal(String.format(FOUND_NEW_FEED, healthMapAlert.getFeed()));
+            LOGGER.error(String.format(FOUND_NEW_FEED, healthMapAlert.getFeed()));
         }
         return feed;
     }
@@ -122,7 +122,7 @@ public class HealthMapAlertConverter {
         } else {
             // HealthMap disease does not exist in database - create it and alert system administrator
             healthMapDisease = createAndSaveHealthMapDisease(healthMapAlert);
-            LOGGER.fatal(String.format(FOUND_NEW_DISEASE, healthMapAlert.getDisease(),
+            LOGGER.error(String.format(FOUND_NEW_DISEASE, healthMapAlert.getDisease(),
                     healthMapDisease.getDiseaseGroup().getName()));
         }
 

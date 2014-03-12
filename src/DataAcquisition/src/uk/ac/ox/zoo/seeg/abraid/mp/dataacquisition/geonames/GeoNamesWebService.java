@@ -73,11 +73,11 @@ public class GeoNamesWebService {
             String errorMessage = String.format(GEONAMES_RETURNED_STATUS_MESSAGE, status.getValue(),
                     status.getMessage(), url);
 
-            // Log a warning if the GeoName does not exist, otherwise log a fatal error
+            // Log a warning if the GeoName does not exist, otherwise log an error
             if (status.getValue() == GEONAME_DOES_NOT_EXIST_STATUS_CODE) {
                 LOGGER.warn(errorMessage);
             } else {
-                LOGGER.fatal(errorMessage);
+                LOGGER.error(errorMessage);
             }
 
             return null;

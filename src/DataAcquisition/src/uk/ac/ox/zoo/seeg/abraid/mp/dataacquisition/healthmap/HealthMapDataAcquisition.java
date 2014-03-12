@@ -50,7 +50,7 @@ public class HealthMapDataAcquisition {
         try {
             return healthMapWebService.sendRequest(startDate, endDate);
         } catch (WebServiceClientException|JsonParserException e) {
-            LOGGER.error(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
+            LOGGER.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
             return null;
         }
     }
