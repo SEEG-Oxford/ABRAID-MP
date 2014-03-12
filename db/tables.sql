@@ -124,5 +124,5 @@ CREATE TABLE Provenance (
     Name varchar(100) NOT NULL,
     DefaultFeedWeighting double precision NOT NULL,
     CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    LastRetrievedDate timestamp
+    LastRetrievalEndDate timestamp
 );

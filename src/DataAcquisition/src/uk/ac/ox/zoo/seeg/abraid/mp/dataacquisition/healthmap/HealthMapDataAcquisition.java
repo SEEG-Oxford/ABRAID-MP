@@ -57,7 +57,7 @@ public class HealthMapDataAcquisition {
 
     /**
      * Gets the start date for the HealthMap alerts retrieval. This is the first of these that is non-null:
-     * 1. The last retrieval date as stored in database field Provenance.LastRetrievalDate
+     * 1. The end date of the last retrieval, as stored in database field Provenance.LastRetrievalEndDate
      * 2. The default start date
      * 3. n days before now, where n is specified as the parameter "default start date days before now"
      * 4. 7 days before now
@@ -65,8 +65,8 @@ public class HealthMapDataAcquisition {
      */
     private Date getStartDate() {
         Provenance provenance = healthMapLookupData.getHealthMapProvenance();
-        if (provenance != null && provenance.getLastRetrievedDate() != null) {
-            return provenance.getLastRetrievedDate();
+        if (provenance != null && provenance.getLastRetrievalEndDate() != null) {
+            return provenance.getLastRetrievalEndDate();
         } else if (healthMapWebService.getDefaultStartDate() != null) {
             return healthMapWebService.getDefaultStartDate();
         } else {

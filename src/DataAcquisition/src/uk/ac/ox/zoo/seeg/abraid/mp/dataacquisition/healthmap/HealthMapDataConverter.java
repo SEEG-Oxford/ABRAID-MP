@@ -50,7 +50,7 @@ public class HealthMapDataConverter {
         Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
 
         convertLocations(healthMapLocations, convertedLocations, convertedOccurrences);
-        writeLastRetrievedDate(retrievalDate);
+        writeLastRetrievalEndDate(retrievalDate);
 
         LOGGER.info(String.format(COUNT_MESSAGE, convertedOccurrences.size(), convertedLocations.size()));
     }
@@ -104,9 +104,9 @@ public class HealthMapDataConverter {
         }
     }
 
-    private void writeLastRetrievedDate(Date retrievalDate) {
+    private void writeLastRetrievalEndDate(Date retrievalDate) {
         Provenance provenance = lookupData.getHealthMapProvenance();
-        provenance.setLastRetrievedDate(retrievalDate);
+        provenance.setLastRetrievalEndDate(retrievalDate);
         alertService.saveProvenance(provenance);
     }
 }

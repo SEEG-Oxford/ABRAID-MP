@@ -58,7 +58,7 @@ public class HealthMapDataConverterTest {
         healthMapDataConverter.convert(locations, retrievalDate);
 
         // Assert
-        verifyWriteLastRetrievalDate(retrievalDate);
+        verifyWriteLastRetrievalEndDate(retrievalDate);
     }
 
     @Test
@@ -309,8 +309,8 @@ public class HealthMapDataConverterTest {
     }
 
 
-    private void verifyWriteLastRetrievalDate(Date retrievalDate) {
-        assertThat(healthMapProvenance.getLastRetrievedDate()).isEqualTo(retrievalDate);
+    private void verifyWriteLastRetrievalEndDate(Date retrievalDate) {
+        assertThat(healthMapProvenance.getLastRetrievalEndDate()).isEqualTo(retrievalDate);
         verify(alertService, times(1)).saveProvenance(same(healthMapProvenance));
     }
 

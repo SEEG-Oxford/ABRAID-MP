@@ -32,9 +32,9 @@ public class Provenance {
     @Column
     private double defaultFeedWeighting;
 
-    // The date of the last online retrieval of this provenance (if relevant).
+    // The end date of the last online retrieval of this provenance (if relevant).
     @Column
-    private Date lastRetrievedDate;
+    private Date lastRetrievalEndDate;
 
     // The database row creation date.
     @Column(insertable = false, updatable = false)
@@ -72,12 +72,12 @@ public class Provenance {
         return createdDate;
     }
 
-    public Date getLastRetrievedDate() {
-        return lastRetrievedDate;
+    public Date getLastRetrievalEndDate() {
+        return lastRetrievalEndDate;
     }
 
-    public void setLastRetrievedDate(Date lastRetrievedDate) {
-        this.lastRetrievedDate = lastRetrievedDate;
+    public void setLastRetrievalEndDate(Date lastRetrievedDate) {
+        this.lastRetrievalEndDate = lastRetrievedDate;
     }
 
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
@@ -91,7 +91,7 @@ public class Provenance {
         if (Double.compare(that.defaultFeedWeighting, defaultFeedWeighting) != 0) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (lastRetrievedDate != null ? !lastRetrievedDate.equals(that.lastRetrievedDate) : that.lastRetrievedDate != null)
+        if (lastRetrievalEndDate != null ? !lastRetrievalEndDate.equals(that.lastRetrievalEndDate) : that.lastRetrievalEndDate != null)
             return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
@@ -106,7 +106,7 @@ public class Provenance {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         temp = Double.doubleToLongBits(defaultFeedWeighting);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (lastRetrievedDate != null ? lastRetrievedDate.hashCode() : 0);
+        result = 31 * result + (lastRetrievalEndDate != null ? lastRetrievalEndDate.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

@@ -100,7 +100,7 @@ public class HealthMapDataAcquisitionTest {
         int defaultStartDateDaysBeforeNow = 3;
         Date endDate = Calendar.getInstance().getTime();
         Provenance provenance = new Provenance();
-        provenance.setLastRetrievedDate(startDate);
+        provenance.setLastRetrievalEndDate(startDate);
         List<HealthMapLocation> locations = new ArrayList<>();
 
         when(webService.getDefaultStartDate()).thenReturn(defaultStartDate);
@@ -129,7 +129,7 @@ public class HealthMapDataAcquisitionTest {
         Date endDate = endCalendar.getTime();
 
         Provenance provenance = new Provenance();
-        provenance.setLastRetrievedDate(startDate);
+        provenance.setLastRetrievalEndDate(startDate);
         List<HealthMapLocation> locations = new ArrayList<>();
 
         when(webService.getDefaultStartDate()).thenReturn(null);
@@ -153,7 +153,7 @@ public class HealthMapDataAcquisitionTest {
         Date endDate = Calendar.getInstance().getTime();
 
         Provenance provenance = new Provenance();
-        provenance.setLastRetrievedDate(startDate);
+        provenance.setLastRetrievalEndDate(startDate);
 
         when(lookupData.getHealthMapProvenance()).thenReturn(provenance);
         when(webService.sendRequest(eq(startDate), approx(endDate))).thenThrow(new WebServiceClientException(""));
