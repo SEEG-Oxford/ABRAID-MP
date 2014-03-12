@@ -5,6 +5,7 @@
 </dependency>
 <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
 <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
+<dependency org="joda-time" name="joda-time" rev="2.3" conf="external->default" />
 
 <!-- Testing -->
 <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
