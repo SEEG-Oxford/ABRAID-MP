@@ -20,6 +20,8 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapAlertConverterTest {
+    private static final double DEFAULT_FEED_WEIGHTING = 0.5;
+
     @Test
     public void feedExistsAndAlertDoesNotExist() {
         // Arrange
@@ -201,6 +203,8 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getFeed().getName()).isEqualTo(feedName);
         assertThat(occurrence.getAlert().getFeed().getProvenance()).isNotNull();
         assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.HEALTHMAP);
+        assertThat(occurrence.getAlert().getFeed().getWeighting()).isEqualTo(DEFAULT_FEED_WEIGHTING);
+        assertThat(occurrence.getAlert().getFeed().getHealthMapFeedId()).isEqualTo(feedId);
         assertThat(occurrence.getAlert().getSummary()).isEqualTo(description);
         assertThat(occurrence.getAlert().getHealthMapAlertId()).isEqualTo(healthMapAlertId);
         assertThat(occurrence.getAlert().getPublicationDate()).isEqualTo(publicationDate);
@@ -436,6 +440,7 @@ public class HealthMapAlertConverterTest {
     private void mockOutGetHealthMapProvenance(HealthMapLookupData lookupData) {
         Provenance provenance = new Provenance();
         provenance.setName(ProvenanceNames.HEALTHMAP);
+        provenance.setDefaultFeedWeighting(DEFAULT_FEED_WEIGHTING);
         when(lookupData.getHealthMapProvenance()).thenReturn(provenance);
     }
 

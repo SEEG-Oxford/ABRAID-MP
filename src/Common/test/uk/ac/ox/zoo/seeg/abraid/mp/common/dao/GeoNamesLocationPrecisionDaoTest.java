@@ -21,6 +21,6 @@ public class GeoNamesLocationPrecisionDaoTest extends AbstractSpringIntegrationT
     @Test
     public void getAllGeoNamesLocationPrecisions() {
         List<GeoNamesLocationPrecision> list = geoNamesLocationPrecisionDao.getAll();
-        assertThat(list).hasSize(6);
+        assertThat(list).hasSize(196);
     }
 }

@@ -17,8 +17,8 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
-                query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
-                        "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
+                query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location "
+                        + "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
         )
 })
 @Entity

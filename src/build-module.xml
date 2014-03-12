@@ -21,7 +21,7 @@
   <!-- Compiler options -->
   <property name="compiler.debug" value="on"/>
   <property name="compiler.generate.no.warnings" value="off"/>
-  <property name="compiler.args" value=""/>
+  <property name="compiler.args" value="-encoding UTF8"/>
   <property name="compiler.max.memory" value="128m"/>
 
   <!-- JDK -->
@@ -189,20 +189,24 @@
   <!-- Package targets -->
   <target name="build.package" depends="build.jar" description="Builds a deployment package, default to building a JAR, override at module level to build WAR."/>
 
-  <target name="build.jar" depends="compile.production">
-    <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar">
+  <target name="build.jar" depends="compile.production, create.jar.manifest">
+    <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar" manifest="${dist.out.dir}/MANIFEST.MF">
       <fileset dir="${module.out.dir}">
         <include name="**/*.class"/>
         <include name="**/*.xml"/>
         <include name="**/*.properties"/>
       </fileset>
-      <manifest>
-        <attribute name="Version" value="${repository.version}"/>
-        <attribute name="Built-On" value="${time.stamp}"/>
-      </manifest>
     </jar>
+    <delete file="${dist.out.dir}/MANIFEST.MF"/>
   </target>
-
+  
+  <target name="create.jar.manifest">
+    <manifest file="${dist.out.dir}/MANIFEST.MF">
+      <attribute name="Version" value="${repository.version}"/>
+      <attribute name="Built-On" value="${time.stamp}"/>
+    </manifest>
+  </target>
+  
   <target name="build.war" depends="compile.production">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />

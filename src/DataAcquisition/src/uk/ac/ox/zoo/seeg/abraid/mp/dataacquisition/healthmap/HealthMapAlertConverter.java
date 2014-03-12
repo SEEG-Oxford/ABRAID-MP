@@ -17,8 +17,8 @@ public class HealthMapAlertConverter {
     private static final String DISEASE_NOT_OF_INTEREST_MESSAGE =
             "Disease occurrence not of interest (HealthMap disease \"%s\")";
     private static final String FOUND_NEW_FEED = "Found new HealthMap feed \"%s\" - adding it to the database";
-    private static final String FOUND_NEW_DISEASE = "Found new HealthMap disease \"%s\" - adding it to the database " +
-            "linked to a new disease cluster \"%s\" (please review)";
+    private static final String FOUND_NEW_DISEASE = "Found new HealthMap disease \"%s\" - adding it to the database "
+            + "linked to a new disease cluster \"%s\" (please review)";
     private static final String NEW_DISEASE_NAME = "NEW FROM HEALTHMAP: %s";
 
     private AlertService alertService;
@@ -108,6 +108,7 @@ public class HealthMapAlertConverter {
         feed.setName(healthMapAlert.getFeed());
         // The feed is given the default weighting for HealthMap feeds
         feed.setWeighting(provenance.getDefaultFeedWeighting());
+        feed.setHealthMapFeedId(healthMapAlert.getFeedId());
 
         // Add the new feed to the cached feed map
         lookupData.getFeedMap().put(feed.getHealthMapFeedId(), feed);

@@ -96,12 +96,8 @@ public class HealthMapDataConverter {
             // GeoNames if we know that we have at least one disease occurrence that was converted successfully.
             locationConverter.addPrecision(healthMapLocation, location);
 
-            if (location.getPrecision() != null) {
-                // NB: Call to data QC will go here
-                return true;
-            } else {
-                return false;
-            }
+            // NB: Call to data QC will go here (if this conditional is true)
+            return (location.getPrecision() != null);
         } else {
             // Location already exists, so conversion was successful
             return true;

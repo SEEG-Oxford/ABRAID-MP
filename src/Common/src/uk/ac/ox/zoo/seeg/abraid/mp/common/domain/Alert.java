@@ -60,6 +60,10 @@ public class Alert {
     public Alert() {
     }
 
+    public Alert(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

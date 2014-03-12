@@ -133,7 +133,10 @@
             <property name="max" value="120"/>
         </module>
         <module name="MethodLength"/>
-        <module name="ParameterNumber"/>
+        <module name="ParameterNumber">
+            <!-- Only check for methods (not constructors) -->
+            <property name="tokens" value="METHOD_DEF"/>
+        </module>
 
 
         <!-- Checks for whitespace                               -->

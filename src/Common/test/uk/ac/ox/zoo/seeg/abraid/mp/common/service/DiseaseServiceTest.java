@@ -64,9 +64,9 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     @Test
     public void diseaseOccurrenceExists() {
         // Arrange
-        Alert alert = new Alert();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
-        Location location = new Location();
+        Alert alert = new Alert(1);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
+        Location location = new Location(1);
         Date occurrenceStartDate = Calendar.getInstance().getTime();
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
@@ -90,9 +90,9 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     @Test
     public void diseaseOccurrenceDoesNotExist() {
         // Arrange
-        Alert alert = new Alert();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
-        Location location = new Location();
+        Alert alert = new Alert(1);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
+        Location location = new Location(1);
         Date occurrenceStartDate = Calendar.getInstance().getTime();
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
@@ -117,8 +117,8 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         // Arrange
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(null);
-        occurrence.setDiseaseGroup(new DiseaseGroup());
-        occurrence.setLocation(new Location());
+        occurrence.setDiseaseGroup(new DiseaseGroup(1));
+        occurrence.setLocation(new Location(1));
         occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
 
         // Act
@@ -132,9 +132,9 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     public void diseaseOccurrenceDoesNotExistBecauseDiseaseGroupIsNull() {
         // Arrange
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        occurrence.setAlert(new Alert());
+        occurrence.setAlert(new Alert(1));
         occurrence.setDiseaseGroup(null);
-        occurrence.setLocation(new Location());
+        occurrence.setLocation(new Location(1));
         occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
 
         // Act
@@ -148,9 +148,57 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     public void diseaseOccurrenceDoesNotExistBecauseLocationIsNull() {
         // Arrange
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        occurrence.setAlert(new Alert());
-        occurrence.setDiseaseGroup(new DiseaseGroup());
+        occurrence.setAlert(new Alert(1));
+        occurrence.setDiseaseGroup(new DiseaseGroup(1));
         occurrence.setLocation(null);
+        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExistBecauseAlertIdIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(new Alert());
+        occurrence.setDiseaseGroup(new DiseaseGroup(1));
+        occurrence.setLocation(new Location(1));
+        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExistBecauseDiseaseGroupIdIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(new Alert(1));
+        occurrence.setDiseaseGroup(new DiseaseGroup());
+        occurrence.setLocation(new Location(1));
+        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+
+        // Act
+        boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
+
+        // Assert
+        assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void diseaseOccurrenceDoesNotExistBecauseLocationIdIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setAlert(new Alert(1));
+        occurrence.setDiseaseGroup(new DiseaseGroup(1));
+        occurrence.setLocation(new Location());
         occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
 
         // Act

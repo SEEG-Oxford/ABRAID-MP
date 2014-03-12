@@ -7,6 +7,6 @@
   <target name="retrieve.manual.libs">
     <mkdir dir="${lib.dir}"/>
     <!-- Retrieve Hibernate Spatial 4.3 (not currently released) -->
-    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140106.200509-2.jar" dest="${lib-local.dir}"/>
+    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib-local.dir}"/>
   </target>
 </project>

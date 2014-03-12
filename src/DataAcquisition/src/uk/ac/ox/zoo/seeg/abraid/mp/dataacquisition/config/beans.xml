@@ -8,8 +8,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- TODO: Should there be one properties file per module i.e. this one and common.properties? -->
-    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties"/>
+    <context:property-placeholder location="dataacquisition.properties,
+                                            classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties,
+                                            classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties"
+                                  ignore-resource-not-found="true"/>
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 

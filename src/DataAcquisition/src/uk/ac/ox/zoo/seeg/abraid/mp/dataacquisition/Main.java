@@ -10,6 +10,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquis
  * Copyright (c) 2014 University of Oxford
  */
 public class Main {
+    /**
+     * The location of the application context.
+     */
     public static final String APPLICATION_CONTEXT_LOCATION =
             "classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml";
 
