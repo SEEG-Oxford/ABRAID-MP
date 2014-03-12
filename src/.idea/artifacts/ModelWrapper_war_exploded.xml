@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="ModelWrapper:war exploded">
+    <output-path>$PROJECT_DIR$/../out/artifacts/ModelWrapper_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="ModelWrapper" />
+          <element id="module-output" name="Common" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="modelwrapper-lib" />
+          <element id="library" level="project" name="common-lib" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="ModelWrapper/web/Web" />
+    </root>
+  </artifact>
+</component>

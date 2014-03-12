@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="module_modelwrapper" default="build">
-    <import file="${basedir}/../build-module.xml"/>
+  <import file="${basedir}/../build-module.xml"/>
+
+  <!-- Override the imported build.package task, to switch it from building a JAR to a WAR -->
+  <target name="build.package" depends="build.war"/>
 </project>

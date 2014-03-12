@@ -10,12 +10,24 @@
         &ivy-configurations;
     </configurations>
     <publications>
-        <artifact name="ABRAID-MP_ModelWrapper" type="jar" ext="jar" conf="build"/>
+        <artifact name="ABRAID-MP_ModelWrapper" type="war" ext="war" conf="build"/>
     </publications>
     <dependencies>
         <!-- External -->
         <dependency org="org.apache.commons" name="commons-exec" rev="1.2" conf="external->default"/>
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
+
+        <!-- Spring -->
+        <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-context-support" rev="4.0.2.RELEASE" conf="external->default"/>
+
+        <!-- Spring Security -->
+        <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework.security" name="spring-security-web" rev="3.2.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework.security" name="spring-security-config" rev="3.2.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework.security" name="spring-security-taglibs" rev="3.2.2.RELEASE" conf="external->default"/>
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
