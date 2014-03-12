@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Spring security beans specification.
+    Copyright (c) 2014 University of Oxford
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="
+                http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/security
+                http://www.springframework.org/schema/security/spring-security.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
+    <http realm="ABRAID-MP: ModelWrapper" >
+        <intercept-url pattern="/**" access="ROLE_USER" />
+        <http-basic />
+    </http>
+
+    <context:property-placeholder location="WEB-INF/modelwrapper.properties"/>
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="${auth.username}" authorities="ROLE_USER" password="${auth.password_hash}" />
+            </user-service>
+            <password-encoder hash="bcrypt" />
+        </authentication-provider>
+    </authentication-manager>
+</beans:beans>
