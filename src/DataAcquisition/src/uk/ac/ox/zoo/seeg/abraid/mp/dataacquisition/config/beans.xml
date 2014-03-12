@@ -24,6 +24,7 @@
     <bean id="healthMapWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapWebService" autowire="constructor">
         <property name="rootUrl" value="${healthmap.rootUrl}"/>
         <property name="authorizationCode" value="${healthmap.authorizationCode}"/>
+        <property name="stripHtml" value="${healthmap.stripHtml}"/>
         <!-- If specified, this value must have the format "yyyy-MM-dd HH:mm:ssZ" e.g. "2014-04-21 15:29:03+0100" -->
         <property name="defaultStartDate" value="${healthmap.defaultStartDate}"/>
         <!-- Note the default value of this property, after the colon in the value -->
@@ -31,6 +32,7 @@
         <property name="authorizationParameterName" value="${healthmap.authorizationParameterName}"/>
         <property name="startDateParameterName" value="${healthmap.startDateParameterName}"/>
         <property name="endDateParameterName" value="${healthmap.endDateParameterName}"/>
+        <property name="stripHtmlParameterName" value="${healthmap.stripHtmlParameterName}"/>
     </bean>
 
     <!-- HealthMap data processing beans -->

@@ -27,6 +27,9 @@ public class HealthMapWebService {
     // The authorization code obtained from HealthMap in order to use their web service.
     private String authorizationCode;
 
+    // Whether or not to strip HTML from the description field.
+    private boolean stripHtml;
+
     // The default start date. This is used if HealthMap has not previously been queried, according to the
     // Provenance.LastRetrievedDate field.
     private Date defaultStartDate;
@@ -44,6 +47,7 @@ public class HealthMapWebService {
     private String authorizationParameterName;
     private String startDateParameterName;
     private String endDateParameterName;
+    private String stripHtmlParameterName;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapWebService.class);
     private static final String CALLING_WEB_SERVICE_MESSAGE =
@@ -59,6 +63,10 @@ public class HealthMapWebService {
 
     public void setAuthorizationCode(String authorizationCode) {
         this.authorizationCode = authorizationCode;
+    }
+
+    public void setStripHtml(boolean stripHtml) {
+        this.stripHtml = stripHtml;
     }
 
     public Date getDefaultStartDate() {
@@ -107,6 +115,10 @@ public class HealthMapWebService {
         this.endDateParameterName = endDateParameterName;
     }
 
+    public void setStripHtmlParameterName(String stripHtmlParameterName) {
+        this.stripHtmlParameterName = stripHtmlParameterName;
+    }
+
     /**
      * Sends a request to the HealthMap web service.
      * @param startDate The start of the date range for HealthMap alert retrieval.
@@ -130,7 +142,9 @@ public class HealthMapWebService {
 
     private String buildUrl(String startDate, String endDate) {
         // The root URL and authorization code have already been set by the global configuration
-        UriBuilder builder = UriBuilder.fromUri(rootUrl).queryParam(authorizationParameterName, authorizationCode);
+        UriBuilder builder = UriBuilder.fromUri(rootUrl)
+                .queryParam(authorizationParameterName, authorizationCode)
+                .queryParam(stripHtmlParameterName, stripHtml);
         // Add the start date and end date if they are non-null
         addParameterIfNotNull(builder, startDateParameterName, startDate);
         addParameterIfNotNull(builder, endDateParameterName, endDate);

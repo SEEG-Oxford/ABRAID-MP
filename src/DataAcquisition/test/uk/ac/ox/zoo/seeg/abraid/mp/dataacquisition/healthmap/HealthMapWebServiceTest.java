@@ -291,7 +291,7 @@ public class HealthMapWebServiceTest {
     }
 
     private String getHealthMapBaseUrl() {
-        return "http://healthmap.org/HMapi.php?auth=testauthcode";
+        return "http://healthmap.org/HMapi.php?auth=testauthcode&striphtml=false";
     }
     
     private String addStartDate(String startDateString) {
@@ -309,6 +309,8 @@ public class HealthMapWebServiceTest {
         webService.setAuthorizationParameterName("auth");
         webService.setStartDateParameterName("sdate");
         webService.setEndDateParameterName("edate");
+        webService.setStripHtmlParameterName("striphtml");
+        webService.setStripHtml(false);
         return webService;
     }
 
