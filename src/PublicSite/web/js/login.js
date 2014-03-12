@@ -4,25 +4,7 @@
  */
 
 $(document).ready(function () {
-    $("#loginButton").click(function (e) {
-            var username = $("#username").val();
-            var password = $("#password").val();
-
-            if (username && username !== "" && password && password !== "") {
-                $.ajax({
-                    url: baseUrl + "j_spring_security_check",
-                    type: "POST",
-                    data: {j_username:username, j_password:password},
-                    dataType: "json",
-                    success: ajaxSuccess,
-                    error: ajaxError
-                });
-            } else {
-                inputError();
-            }
-            e.preventDefault();
-        }
-    );
+    'use strict';
 
     function ajaxSuccess(data, status, xhr) {
         // boolean success in JSON returned from authentication handler informs whether log in was successful
@@ -42,4 +24,23 @@ $(document).ready(function () {
     function inputError() {
         $("#logInMessage").text("Enter username and/or password");
     }
-})
+
+    $("#loginButton").click(function (e) {
+        var username = $("#username").val();
+        var password = $("#password").val();
+
+        if (username && username !== "" && password && password !== "") {
+            $.ajax({
+                url: baseUrl + "j_spring_security_check",
+                type: "POST",
+                data: {j_username: username, j_password: password},
+                dataType: "json",
+                success: ajaxSuccess,
+                error: ajaxError
+            });
+        } else {
+            inputError();
+        }
+        e.preventDefault();
+    });
+});

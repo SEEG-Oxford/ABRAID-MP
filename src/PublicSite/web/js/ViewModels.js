@@ -1,4 +1,10 @@
+/**
+ * Knockout view models to represent current state of map page.
+ * Copyright (c) 2014 University of Oxford
+ */
 var ViewModels = (function () {
+    'use strict';
+
     return {
         LayerSelectorViewModel: function () {
             this.validationTypes = ["disease occurrences", "disease extent"];
@@ -23,13 +29,15 @@ var ViewModels = (function () {
                 this.selectedPoint(null);
             };
         }
-    }
+    };
 }());
 
 var layerSelectorViewModel = new ViewModels.LayerSelectorViewModel();
 var selectedPointViewModel = new ViewModels.SelectedPointViewModel();
 
 $(document).ready(function () {
+    'use strict';
+
     ko.applyBindings(layerSelectorViewModel, $("#layerSelector")[0]);
     ko.applyBindings(selectedPointViewModel, $("#sidePanel")[0]);
 });

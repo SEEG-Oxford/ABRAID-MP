@@ -4,6 +4,8 @@
  */
 
 var LeafletMap = (function () {
+    'use strict';
+
     // Initialise map at "map" div
     var map = L.map('map', {
         attributionControl: false,
@@ -11,7 +13,8 @@ var LeafletMap = (function () {
         zoomsliderControl: true,
         maxBounds: [ [-89, -179], [89, 179] ],
         maxZoom: 10,
-        minZoom: 3
+        minZoom: 3,
+        animate: true
     }).fitWorld();
 
     // Add the simplified shapefile base layer with WMS GET request
@@ -22,9 +25,9 @@ var LeafletMap = (function () {
     }).addTo(map);
 
     // Global colour variables
-    var defaultColour = '#bb619b';
-    var highlightColour = '#9e1e71';
-    var strokeColour = '#c478a9';
+    var defaultColour = '#bb619b';      // Lighter pink/red
+    var highlightColour = '#9e1e71';    // The chosen pink/red compatible with colourblindness
+    var strokeColour = '#c478a9';       // Darker pink/red
 
     // Define default style for unselected points
     var diseaseOccurrenceLayerStyle = {

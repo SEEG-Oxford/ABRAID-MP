@@ -14,12 +14,14 @@
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
     var diseaseInterests = [
         <#list diseaseInterests as diseaseInterest>
-            { name: "${diseaseInterest.name}", id: "${diseaseInterest.id}" },
+            { name: "${diseaseInterest.name}".toLowerCase(), id: "${diseaseInterest.id}" },
         </#list>
     ];
 </#assign>
 
 <#assign endOfBodyContent>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/en-gb.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
     <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
     <script src="<@spring.url "/js/ViewModels.js"/>"></script>
