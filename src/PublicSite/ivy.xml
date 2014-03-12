@@ -17,13 +17,13 @@
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
         <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
-        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.0" conf="external->default" />
-        <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.0" conf="external->default" />
+        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.1" conf="external->default" />
+        <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.1" conf="external->default" />
 
         <!-- Spring -->
-        <dependency org="org.springframework" name="spring-web" rev="4.0.1.RELEASE" conf="external->default"/>
-        <dependency org="org.springframework" name="spring-webmvc" rev="4.0.1.RELEASE" conf="external->default"/>
-        <dependency org="org.springframework" name="spring-context-support" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-context-support" rev="4.0.2.RELEASE" conf="external->default"/>
 
         <!-- Spring Security -->
         <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.0.RELEASE" conf="external->default"/>
