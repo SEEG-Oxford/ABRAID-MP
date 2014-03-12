@@ -11,7 +11,7 @@ import java.util.List;
  * Implements the specification available from http://geojson.org/geojson-spec.html#geojson-objects
  * Copyright (c) 2014 University of Oxford
  */
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class GeoJsonObject {
     private final GeoJsonObjectType type;
     private final GeoJsonCrs crs;
