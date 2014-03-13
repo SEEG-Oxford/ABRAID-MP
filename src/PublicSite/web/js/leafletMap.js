@@ -78,12 +78,35 @@ var LeafletMap = (function () {
         });
     }
 
+    // Define a cluster icon, so that nearby occurrences are grouped into one marker.
+    // Text displays the number of points in the cluster. Styling in separate CSS file.
+    function clusterLayerPoint(cluster) {
+        return new L.DivIcon({
+            html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+            className: 'marker-cluster',
+            iconSize: new L.Point(40, 40)
+        });
+    }
+
     // Add disease occurrence points to map
-    // First add empty geoJson layer to map, with defined styling options, then get JSON data using an AJAX request
+    // First define styling options of the geoJson layer to which data (the feature collection) will be added later via AJAX request
     var diseaseOccurrenceLayer = L.geoJson([], {
         pointToLayer: diseaseOccurrenceLayerPoint,
         style: diseaseOccurrenceLayerStyle
-    }).addTo(map);
+    });
+
+    // Add this geoJson layer to the styled markerClusterGroup layer, so that nearby occurrences are grouped
+    var clusterLayer = L.markerClusterGroup({
+        maxClusterRadius: 10,
+        polygonOptions: {
+            color: highlightColour,
+            weight: 2,
+            fillColor: defaultColour,
+            dashArray: 3
+        },
+        spiderfyDistanceMultiplier: 2,
+        iconCreateFunction: clusterLayerPoint(cluster)
+    }).addLayer(diseaseOccurrenceLayer).addTo(map);
 
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
     map.on('click', function () {
@@ -93,6 +116,7 @@ var LeafletMap = (function () {
 
     return {
         diseaseOccurrenceLayer : diseaseOccurrenceLayer,
+        clusterLayer : clusterLayer,
         map : map
     };
 }());

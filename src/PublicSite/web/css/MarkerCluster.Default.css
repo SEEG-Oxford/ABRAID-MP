@@ -1,0 +1,29 @@
+/**
+ * Override styling of Leaflet plugin MarkerCluster icons to match ABRAID icons.
+ * Copyright (c) 2014 University of Oxford
+ */
+
+/*Outer circle*/
+.marker-cluster {
+    background-color: transparent;
+    background-clip: padding-box;
+    border-radius: 20px;
+}
+/*Inner circle*/
+.marker-cluster div {
+    background-color: #bb619b;
+    opacity: 0.8;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+
+    text-align: center;
+    border-radius: 15px;
+    font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    color: white;
+}
+/* The actual text - set to display the number of children in the cluster */
+.marker-cluster span {
+    line-height: 30px;
+}
