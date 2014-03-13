@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -197,21 +198,25 @@ public class HealthMapAlertConverterTest {
 
         // Assert
         assertThat(occurrence).isNotNull();
+        Alert newAlert = occurrence.getAlert();
+        Feed newFeed = newAlert.getFeed();
         assertThat(occurrence.getDiseaseGroup()).isSameAs(diseaseGroup);
-        assertThat(occurrence.getAlert()).isNotNull();
-        assertThat(occurrence.getAlert().getFeed()).isNotNull();
-        assertThat(occurrence.getAlert().getFeed().getName()).isEqualTo(feedName);
-        assertThat(occurrence.getAlert().getFeed().getProvenance()).isNotNull();
-        assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.HEALTHMAP);
-        assertThat(occurrence.getAlert().getFeed().getWeighting()).isEqualTo(DEFAULT_FEED_WEIGHTING);
-        assertThat(occurrence.getAlert().getFeed().getHealthMapFeedId()).isEqualTo(feedId);
-        assertThat(occurrence.getAlert().getSummary()).isEqualTo(description);
-        assertThat(occurrence.getAlert().getHealthMapAlertId()).isEqualTo(healthMapAlertId);
-        assertThat(occurrence.getAlert().getPublicationDate()).isEqualTo(publicationDate);
-        assertThat(occurrence.getAlert().getTitle()).isEqualTo(summary);
-        assertThat(occurrence.getAlert().getUrl()).isEqualTo(originalUrl);
+        assertThat(newAlert).isNotNull();
+        assertThat(newFeed).isNotNull();
+        assertThat(newFeed.getName()).isEqualTo(feedName);
+        assertThat(newFeed.getProvenance()).isNotNull();
+        assertThat(newFeed.getProvenance().getName()).isEqualTo(ProvenanceNames.HEALTHMAP);
+        assertThat(newFeed.getWeighting()).isEqualTo(DEFAULT_FEED_WEIGHTING);
+        assertThat(newFeed.getHealthMapFeedId()).isEqualTo(feedId);
+        assertThat(newAlert.getSummary()).isEqualTo(description);
+        assertThat(newAlert.getHealthMapAlertId()).isEqualTo(healthMapAlertId);
+        assertThat(newAlert.getPublicationDate()).isEqualTo(publicationDate);
+        assertThat(newAlert.getTitle()).isEqualTo(summary);
+        assertThat(newAlert.getUrl()).isEqualTo(originalUrl);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        verify(alertService, times(1)).saveFeed(same(newFeed));
+        assertThat(lookupData.getFeedMap().get(feedId)).isSameAs(newFeed);
     }
 
     @Test
@@ -309,6 +314,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
         verify(diseaseService, times(1)).saveHealthMapDisease(eq(newHealthMapDisease));
+        assertThat(lookupData.getDiseaseMap().get(diseaseId)).isEqualTo(newHealthMapDisease);
     }
 
     @Test

@@ -51,6 +51,18 @@ public class AlertServiceTest extends AbstractSpringUnitTests {
     }
 
     @Test
+    public void saveFeed() {
+        // Arrange
+        Feed feed = new Feed();
+
+        // Act
+        alertService.saveFeed(feed);
+
+        // Assert
+        verify(feedDao).save(eq(feed));
+    }
+
+    @Test
     public void getProvenanceByName() {
         // Arrange
         Provenance provenance = new Provenance();

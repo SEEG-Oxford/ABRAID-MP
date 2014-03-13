@@ -8,6 +8,7 @@
   <property name="project.root.dir" value="${basedir}/../.."/>
   <property name="out.dir" value="${basedir}/out"/>
   <property name="dist.out.dir" value="${out.dir}/dist"/>
+  <property name="artifacts.out.dir" value="${out.dir}/artifacts"/>
   <property name="module.out.dir" value="${out.dir}/production"/>
   <property name="test.out.dir" value="${out.dir}/test"/>
   <property name="doc.out.dir" value="${out.dir}/doc"/>
@@ -343,6 +344,11 @@
     <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="${repository.version}" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
   </target>
 
+  <target name="collate.artifacts">
+    <delete dir="${artifacts.out.dir}"/>
+    <mkdir dir="${artifacts.out.dir}"/>
+  </target>
+  
   <!-- Analysis targets -->
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>

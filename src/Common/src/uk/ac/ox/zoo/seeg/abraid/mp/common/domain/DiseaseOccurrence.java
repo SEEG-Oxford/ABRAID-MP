@@ -18,14 +18,14 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
-                query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location "
-                        + "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
+                query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
+                        "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
-                query = "from DiseaseOccurrence where diseaseGroupId=:diseaseGroupId"
-                        + " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where"
-                        + " expert.id=:expertId)"
+                query = "from DiseaseOccurrence where diseaseGroupId=:diseaseGroupId" +
+                        " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where" +
+                        " expert.id=:expertId)"
         )
 })
 public class DiseaseOccurrence {

@@ -10,6 +10,9 @@
   <target name="module.common.clean">
     <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.common.dir}"/>
   </target>
+  <target name="module.common.quality">
+    <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.common.dir}"/>
+  </target>
   <target name="module.common.test">
     <ant antfile="${module.common.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.common.dir}"/>
   </target>
@@ -24,6 +27,9 @@
   </target>
   <target name="module.dataacquisition.clean">
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.dataacquisition.dir}"/>
+  </target>
+  <target name="module.dataacquisition.quality">
+    <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.dataacquisition.dir}"/>
   </target>
   <target name="module.dataacquisition.test">
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.dataacquisition.dir}"/>
@@ -40,6 +46,9 @@
   <target name="module.diseaseextent.clean">
     <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.diseaseextent.dir}"/>
   </target>
+  <target name="module.diseaseextent.quality">
+    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.diseaseextent.dir}"/>
+  </target>
   <target name="module.diseaseextent.test">
     <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.diseaseextent.dir}"/>
   </target>
@@ -54,6 +63,9 @@
   </target>
   <target name="module.publicsite.clean">
     <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.publicsite.dir}"/>
+  </target>
+  <target name="module.publicsite.quality">
+    <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.publicsite.dir}"/>
   </target>
   <target name="module.publicsite.test">
     <ant antfile="${module.publicsite.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.publicsite.dir}"/>
@@ -70,6 +82,9 @@
   <target name="module.modelwrapper.clean">
     <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.modelwrapper.dir}"/>
   </target>
+  <target name="module.modelwrapper.quality">
+    <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.modelwrapper.dir}"/>
+  </target>
   <target name="module.modelwrapper.test">
     <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.modelwrapper.dir}"/>
   </target>
@@ -80,6 +95,7 @@
   <!-- Targets -->
   <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.diseaseextent.clean, module.publicsite.clean, module.modelwrapper.clean" description="cleanup all"/>
   <target name="build" depends="module.common.build, module.dataacquisition.build, module.diseaseextent.build, module.publicsite.build, module.modelwrapper.build" description="build all modules"/>
+  <target name="quality" depends="module.common.quality, module.dataacquisition.quality, module.diseaseextent.quality, module.publicsite.quality, module.modelwrapper.quality" description="check quality of all modules"/>
   <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.diseaseextent.test, module.publicsite.test, module.modelwrapper.test" description="test all modules"/>
   <target name="full" depends="module.common.full, module.dataacquisition.full, module.publicsite.full, module.modelwrapper.full" description="build pipeline" />
 </project>

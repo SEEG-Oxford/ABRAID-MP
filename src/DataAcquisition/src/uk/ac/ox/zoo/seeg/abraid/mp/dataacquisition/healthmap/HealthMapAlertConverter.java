@@ -13,14 +13,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAle
  */
 public class HealthMapAlertConverter {
     private static final Logger LOGGER = Logger.getLogger(HealthMapAlertConverter.class);
-    private static final String DISEASE_ID_NOT_FOUND = "HealthMap alert has no disease ID (disease name \"%s\","
-            + " alert ID %d)";
+    private static final String DISEASE_ID_NOT_FOUND = "HealthMap alert has no disease ID (disease name \"%s\"," +
+            " alert ID %d)";
     private static final String ALERT_ID_NOT_FOUND = "Could not extract alert ID from link \"%s\"";
     private static final String DISEASE_NOT_OF_INTEREST_MESSAGE =
-            "Disease occurrence not of interest (HealthMap disease \"%s\")";
+            "Disease occurrence not of interest (HealthMap disease \"%s\", alert ID %d)";
     private static final String FOUND_NEW_FEED = "Found new HealthMap feed \"%s\" - adding it to the database";
-    private static final String FOUND_NEW_DISEASE = "Found new HealthMap disease \"%s\" - adding it to the database "
-            + "linked to a new disease cluster \"%s\" (please review)";
+    private static final String FOUND_NEW_DISEASE = "Found new HealthMap disease \"%s\" - adding it to the database " +
+            "linked to a new disease cluster \"%s\" (please review)";
     private static final String NEW_DISEASE_NAME = "NEW FROM HEALTHMAP: %s";
 
     private AlertService alertService;
@@ -97,13 +97,13 @@ public class HealthMapAlertConverter {
             renameFeedIfRequired(feed, healthMapAlert);
         } else {
             // If the feed ID does not exist in the database, automatically add a new feed
-            feed = createFeed(healthMapAlert);
-            LOGGER.error(String.format(FOUND_NEW_FEED, healthMapAlert.getFeed()));
+            feed = createAndSaveFeed(healthMapAlert);
+            LOGGER.warn(String.format(FOUND_NEW_FEED, healthMapAlert.getFeed()));
         }
         return feed;
     }
 
-    private Feed createFeed(HealthMapAlert healthMapAlert) {
+    private Feed createAndSaveFeed(HealthMapAlert healthMapAlert) {
         Provenance provenance = lookupData.getHealthMapProvenance();
         Feed feed = new Feed();
         feed.setProvenance(provenance);
@@ -112,7 +112,11 @@ public class HealthMapAlertConverter {
         feed.setWeighting(provenance.getDefaultFeedWeighting());
         feed.setHealthMapFeedId(healthMapAlert.getFeedId());
 
-        // Add the new feed to the cached feed map
+        // Save the feed now rather than implicitly with the new alert, so that it's saved even if we don't end up
+        // saving the disease occurrence
+        alertService.saveFeed(feed);
+
+        // Add the new feed to the cached map
         lookupData.getFeedMap().put(feed.getHealthMapFeedId(), feed);
         return feed;
     }
@@ -135,7 +139,8 @@ public class HealthMapAlertConverter {
 
         if (healthMapDisease.getDiseaseGroup() == null) {
             // HealthMap disease is not linked to a disease group, which means that it is not of interest
-            LOGGER.warn(String.format(DISEASE_NOT_OF_INTEREST_MESSAGE, healthMapAlert.getDisease()));
+            LOGGER.warn(String.format(DISEASE_NOT_OF_INTEREST_MESSAGE, healthMapAlert.getDisease(),
+                    healthMapAlert.getAlertId()));
         }
 
         return healthMapDisease.getDiseaseGroup();
@@ -164,7 +169,12 @@ public class HealthMapAlertConverter {
         healthMapDisease.setId(healthMapAlert.getDiseaseId());
         healthMapDisease.setName(healthMapAlert.getDisease());
         healthMapDisease.setDiseaseGroup(diseaseGroup);
+
+        // This saves both the new HealthMap disease and the new disease cluster
         diseaseService.saveHealthMapDisease(healthMapDisease);
+
+        // Add the new HealthMap disease to the cached map
+        lookupData.getDiseaseMap().put(healthMapAlert.getDiseaseId(), healthMapDisease);
 
         return healthMapDisease;
     }
@@ -173,7 +183,7 @@ public class HealthMapAlertConverter {
         String feedName = healthMapAlert.getFeed();
         if (!feed.getName().equals(feedName)) {
             feed.setName(feedName);
-            // Feeds are saved with alerts, so no need to save it separately
+            alertService.saveFeed(feed);
         }
     }
 }

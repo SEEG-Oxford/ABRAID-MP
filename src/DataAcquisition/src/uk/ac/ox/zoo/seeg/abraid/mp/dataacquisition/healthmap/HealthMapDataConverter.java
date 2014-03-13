@@ -24,7 +24,7 @@ public class HealthMapDataConverter {
     private HealthMapLookupData lookupData;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
-    private static final String CONVERSION_MESSAGE = "Converting %d HealthMap location(s) with corresponding alerts";
+    private static final String CONVERSION_MESSAGE = "Converting %d HealthMap location(s) with %d alert(s)";
     private static final String COUNT_MESSAGE = "Saved %d HealthMap disease occurrence(s) in %d location(s)";
 
     public HealthMapDataConverter(HealthMapLocationConverter locationConverter,
@@ -41,18 +41,29 @@ public class HealthMapDataConverter {
     /**
      * Converts a list of HealthMap locations into ABRAID objects, and saves them to the database.
      * @param healthMapLocations A list of HealthMap locations.
-     * @param retrievalDate The date that the HealthMap locations were retrieved.
+     * @param endDate The end date for this HealthMap retrieval.
      */
-    public void convert(List<HealthMapLocation> healthMapLocations, Date retrievalDate) {
-        LOGGER.info(String.format(CONVERSION_MESSAGE, healthMapLocations.size()));
+    public void convert(List<HealthMapLocation> healthMapLocations, Date endDate) {
+        LOGGER.info(String.format(CONVERSION_MESSAGE, healthMapLocations.size(),
+                countHealthMapAlerts(healthMapLocations)));
 
         Set<Location> convertedLocations = new HashSet<>();
         Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
 
         convertLocations(healthMapLocations, convertedLocations, convertedOccurrences);
-        writeLastRetrievalEndDate(retrievalDate);
+        writeLastRetrievalEndDate(endDate);
 
         LOGGER.info(String.format(COUNT_MESSAGE, convertedOccurrences.size(), convertedLocations.size()));
+    }
+
+    private int countHealthMapAlerts(List<HealthMapLocation> healthMapLocations) {
+        int count = 0;
+        for (HealthMapLocation healthMapLocation : healthMapLocations) {
+            if (healthMapLocation.getAlerts() != null) {
+                count += healthMapLocation.getAlerts().size();
+            }
+        }
+        return count;
     }
 
     private void convertLocations(List<HealthMapLocation> healthMapLocations, Set<Location> convertedLocations,
