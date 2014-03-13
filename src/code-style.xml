@@ -203,7 +203,7 @@
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
         <!--module name="FinalParameters"/-->
-        <!-- module name="TodoComment"/ Enable once Ed's fixed his stuff -->
+        <module name="TodoComment"/>
         <module name="UpperEll"/>
     </module>
 </module>
