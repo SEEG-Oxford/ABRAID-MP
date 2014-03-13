@@ -306,7 +306,7 @@
   <!-- Package targets -->
   <target name="build.package" depends="build.jar" description="Builds a deployment package, default to building a JAR, override at module level to build WAR."/>
 
-  <target name="build.jar" depends="compile.production, create.jar.manifest">
+  <target name="build.jar" depends="compile.production, create.dist.dir, create.jar.manifest">
     <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar" manifest="${dist.out.dir}/MANIFEST.MF">
       <fileset dir="${module.out.dir}">
         <include name="**/*.class"/>
@@ -316,6 +316,11 @@
     </jar>
     <delete file="${dist.out.dir}/MANIFEST.MF"/>
   </target>
+
+  <target name="create.dist.dir">
+    <delete dir="${dist.out.dir}"/>
+    <mkdir dir="${dist.out.dir}"/>
+  </target>
   
   <target name="create.jar.manifest">
     <manifest file="${dist.out.dir}/MANIFEST.MF">
@@ -324,7 +329,7 @@
     </manifest>
   </target>
   
-  <target name="build.war" depends="compile.production">
+  <target name="build.war" depends="compile.production, create.dist.dir">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
