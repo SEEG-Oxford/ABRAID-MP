@@ -105,7 +105,7 @@ var LeafletMap = (function () {
             dashArray: 3
         },
         spiderfyDistanceMultiplier: 2,
-        iconCreateFunction: clusterLayerPoint(cluster)
+        iconCreateFunction: clusterLayerPoint
     }).addLayer(diseaseOccurrenceLayer).addTo(map);
 
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
