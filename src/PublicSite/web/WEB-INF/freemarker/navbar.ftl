@@ -5,7 +5,6 @@
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "/spring.ftl" as spring />
-
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
 

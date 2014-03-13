@@ -43,8 +43,6 @@
         ${endOfBodyScript}
         </script>
         ${endOfBody}
-
-
     </body>
 </html>
 </#macro>
