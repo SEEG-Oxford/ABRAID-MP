@@ -12,7 +12,7 @@ import java.util.TimeZone;
  * Copyright (c) 2014 University of Oxford
  */
 public final class GeoJsonObjectMapper extends ObjectMapper {
-    public static final String UTC = "UTC";
+    private static final String UTC = "UTC";
 
     public GeoJsonObjectMapper() {
         super();
