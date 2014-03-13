@@ -1,4 +1,5 @@
 @echo off
+echo Starting Data Acquisition...
 
 rem Ensure the working directory is the one that this script is in
 cd "%~dp0"
