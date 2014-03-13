@@ -109,10 +109,13 @@ var LeafletMap = (function () {
     }).addLayer(diseaseOccurrenceLayer).addTo(map);
 
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
-    map.on('click', function () {
+    map.on('click', function () { resetSelectedPoint() });
+    clusterLayer.on('clusterclick', function () { resetSelectedPoint() });
+
+    function resetSelectedPoint() {
         selectedPointViewModel.clearSelectedPoint();
         diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
-    });
+    }
 
     return {
         diseaseOccurrenceLayer : diseaseOccurrenceLayer,
