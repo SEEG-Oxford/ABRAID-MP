@@ -87,9 +87,9 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "               \"summary\":\"summary\"," +
                     "               \"url\":\"url\"," +
                     "               \"feedName\":\"feedName\"," +
-                    "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"" +
                     "            }," +
-                    "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"" +
                     "         }" +
                     "      }," +
                     "      {" +
@@ -110,9 +110,9 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "               \"summary\":\"summary\"," +
                     "               \"url\":\"url\"," +
                     "               \"feedName\":\"feedName\"," +
-                    "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"" +
                     "            }," +
-                    "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().print(new DateTime(0)) + "\"" +
+                    "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"" +
                     "         }" +
                     "      }" +
                     "   ]" +
