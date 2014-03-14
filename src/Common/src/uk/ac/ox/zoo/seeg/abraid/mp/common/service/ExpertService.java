@@ -40,7 +40,7 @@ public interface ExpertService {
             throws IllegalArgumentException;
 
     /**
-     * Gets a list of the specified expert's disease interests.
+     * Gets the specified expert's disease interests.
      *
      * @param expertId The id of the specified expert.
      * @return The list of disease groups the expert can validate.
