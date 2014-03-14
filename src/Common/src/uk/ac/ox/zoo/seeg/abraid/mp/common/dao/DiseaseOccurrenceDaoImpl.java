@@ -1,13 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      */
     public List<DiseaseOccurrence> getDiseaseOccurrencesForExistenceCheck(DiseaseGroup diseaseGroup,
                                                                           Location location, Alert alert,
-                                                                          Date occurrenceStartDate) {
+                                                                          DateTime occurrenceStartDate) {
         return listNamedQuery("getDiseaseOccurrencesForExistenceCheck",
                 "diseaseGroup", diseaseGroup, "location", location, "alert", alert,
                 "occurrenceStartDate", occurrenceStartDate);

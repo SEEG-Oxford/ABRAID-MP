@@ -1,10 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +25,7 @@ public class HealthMapAlert {
     @JsonProperty("disease_id")
     private Long diseaseId;
     private String summary;
-    private Date date;
+    private DateTime date;
     private String link;
     @JsonProperty("descr")
     private String description;
@@ -35,7 +35,7 @@ public class HealthMapAlert {
     public HealthMapAlert() {
     }
 
-    public HealthMapAlert(String feed, Long feedId, String disease, Long diseaseId, String summary, Date date,
+    public HealthMapAlert(String feed, Long feedId, String disease, Long diseaseId, String summary, DateTime date,
                           String link, String description, String originalUrl) {
         this.feed = feed;
         this.feedId = feedId;
@@ -88,11 +88,11 @@ public class HealthMapAlert {
         this.summary = StringUtils.trimWhitespace(summary);
     }
 
-    public Date getDate() {
+    public DateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(DateTime date) {
         this.date = date;
     }
 

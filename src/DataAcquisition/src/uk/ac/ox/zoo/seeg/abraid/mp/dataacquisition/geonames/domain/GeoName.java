@@ -1,6 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents a GeoName, as returned by the GeoNames web service.

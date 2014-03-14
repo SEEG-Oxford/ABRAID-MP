@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -13,7 +14,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -52,13 +55,13 @@ public class HealthMapDataConverterTest {
     public void convertNoLocations() {
         // Arrange
         List<HealthMapLocation> locations = new ArrayList<>();
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
-        verifyWriteLastRetrievalEndDate(retrievalDate);
+        verifyWriteLastRetrievalEndDate(retrievalEndDate);
     }
 
     @Test
@@ -75,7 +78,7 @@ public class HealthMapDataConverterTest {
         healthMapLocation2.setAlerts(Arrays.asList(healthMapAlert3, healthMapAlert4));
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1, healthMapLocation2);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is successfully converted into location1
         final Location location1 = new Location();
@@ -104,7 +107,7 @@ public class HealthMapDataConverterTest {
         when(alertConverter.convert(healthMapAlert4, location2)).thenReturn(diseaseOccurrence4);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, times(4)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -128,7 +131,7 @@ public class HealthMapDataConverterTest {
         healthMapLocation2.setAlerts(Arrays.asList(healthMapAlert3, healthMapAlert4));
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1, healthMapLocation2);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is not successfully converted into location1
         when(locationConverter.convert(healthMapLocation1)).thenReturn(null);
@@ -147,7 +150,7 @@ public class HealthMapDataConverterTest {
         when(alertConverter.convert(healthMapAlert4, location2)).thenReturn(diseaseOccurrence4);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, times(2)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -169,7 +172,7 @@ public class HealthMapDataConverterTest {
         healthMapLocation2.setAlerts(Arrays.asList(healthMapAlert3, healthMapAlert4));
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1, healthMapLocation2);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is successfully converted into location1
         final Location location1 = new Location();
@@ -188,7 +191,7 @@ public class HealthMapDataConverterTest {
         when(alertConverter.convert(healthMapAlert2, location1)).thenReturn(diseaseOccurrence2);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, times(2)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -204,7 +207,7 @@ public class HealthMapDataConverterTest {
         HealthMapLocation healthMapLocation2 = new HealthMapLocation();
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1, healthMapLocation2);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is successfully converted into location1
         final Location location1 = new Location();
@@ -215,7 +218,7 @@ public class HealthMapDataConverterTest {
         when(locationConverter.convert(healthMapLocation2)).thenReturn(location2);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -231,7 +234,7 @@ public class HealthMapDataConverterTest {
         healthMapLocation1.setAlerts(Arrays.asList(healthMapAlert1, healthMapAlert2));
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is successfully converted into location1
         final Location location1 = new Location();
@@ -246,7 +249,7 @@ public class HealthMapDataConverterTest {
         when(alertConverter.convert(healthMapAlert2, location1)).thenReturn(null);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, times(1)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -262,7 +265,7 @@ public class HealthMapDataConverterTest {
         healthMapLocation1.setAlerts(Arrays.asList(healthMapAlert1));
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is successfully converted into location1, but continuation fails (i.e. we do not call
         // mockAddPrecision)
@@ -274,7 +277,7 @@ public class HealthMapDataConverterTest {
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -289,7 +292,7 @@ public class HealthMapDataConverterTest {
         healthMapLocation1.setAlerts(Arrays.asList(healthMapAlert1));
         List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1);
 
-        Date retrievalDate = Calendar.getInstance().getTime();
+        DateTime retrievalEndDate = DateTime.now();
 
         // healthMapLocation1 is successfully converted into location1, which already exists (so no need to call
         // mockAddPrecision)
@@ -301,7 +304,7 @@ public class HealthMapDataConverterTest {
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // Act
-        healthMapDataConverter.convert(locations, retrievalDate);
+        healthMapDataConverter.convert(locations, retrievalEndDate);
 
         // Assert
         verify(diseaseService, times(1)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -309,8 +312,8 @@ public class HealthMapDataConverterTest {
     }
 
 
-    private void verifyWriteLastRetrievalEndDate(Date retrievalDate) {
-        assertThat(healthMapProvenance.getLastRetrievalEndDate()).isEqualTo(retrievalDate);
+    private void verifyWriteLastRetrievalEndDate(DateTime retrievalEndDate) {
+        assertThat(healthMapProvenance.getLastRetrievalEndDate()).isEqualTo(retrievalEndDate);
         verify(alertService, times(1)).saveProvenance(same(healthMapProvenance));
     }
 

@@ -2,9 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease
@@ -42,7 +43,8 @@ public class DiseaseGroup {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    private Date createdDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     public DiseaseGroup() {
     }
@@ -107,7 +109,7 @@ public class DiseaseGroup {
         return true;
     }
 
-    public Date getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 

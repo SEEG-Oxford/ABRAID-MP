@@ -18,7 +18,8 @@
 
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
         <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.6" conf="external->default"/>
-        <dependency org="org.glassfish.jersey.media" name="jersey-media-json-jackson" rev="2.6" conf="external->default"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.1" conf="external->default" />
+        <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.1" conf="external->default" />
 
         <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
 

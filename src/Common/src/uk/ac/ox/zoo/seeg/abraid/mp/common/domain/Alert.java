@@ -2,9 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Represents a report of a disease occurrence or occurrences, from a feed.
@@ -36,7 +37,8 @@ public class Alert {
     // The publication date of the alert. This may be different from the actual date that the disease occurred,
     // which if known is specified in DiseaseOccurrence.OccurrenceDate.
     @Column
-    private Date publicationDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime publicationDate;
 
     // The URL of the alert.
     @Column
@@ -53,7 +55,8 @@ public class Alert {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    private Date createdDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     public Alert() {
     }
@@ -82,11 +85,11 @@ public class Alert {
         this.title = title;
     }
 
-    public Date getPublicationDate() {
+    public DateTime getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(DateTime publicationDate) {
         this.publicationDate = publicationDate;
     }
 
@@ -114,7 +117,7 @@ public class Alert {
         this.healthMapAlertId = healthMapAlertId;
     }
 
-    public Date getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 

@@ -2,9 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Represents a provenance, i.e. the source of a group of feeds.
@@ -34,12 +35,14 @@ public class Provenance {
 
     // The end date of the last online retrieval of this provenance (if relevant).
     @Column
-    private Date lastRetrievalEndDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastRetrievalEndDate;
 
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    private Date createdDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     public Provenance() {
     }
@@ -68,15 +71,15 @@ public class Provenance {
         this.defaultFeedWeighting = defaultFeedWeighting;
     }
 
-    public Date getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 
-    public Date getLastRetrievalEndDate() {
+    public DateTime getLastRetrievalEndDate() {
         return lastRetrievalEndDate;
     }
 
-    public void setLastRetrievalEndDate(Date lastRetrievedDate) {
+    public void setLastRetrievalEndDate(DateTime lastRetrievedDate) {
         this.lastRetrievalEndDate = lastRetrievedDate;
     }
 

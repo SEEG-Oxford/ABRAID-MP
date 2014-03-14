@@ -2,9 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -52,7 +53,8 @@ public class Expert {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    private Date createdDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     // List of disease groups an expert has interest in and can validate.
     @ManyToMany(cascade = CascadeType.ALL)
@@ -121,7 +123,7 @@ public class Expert {
         this.weighting = weighting;
     }
 
-    public Date getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 

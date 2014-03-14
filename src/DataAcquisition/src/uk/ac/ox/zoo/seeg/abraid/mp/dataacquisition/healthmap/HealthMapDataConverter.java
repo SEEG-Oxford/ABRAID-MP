@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
@@ -43,7 +44,7 @@ public class HealthMapDataConverter {
      * @param healthMapLocations A list of HealthMap locations.
      * @param endDate The end date for this HealthMap retrieval.
      */
-    public void convert(List<HealthMapLocation> healthMapLocations, Date endDate) {
+    public void convert(List<HealthMapLocation> healthMapLocations, DateTime endDate) {
         LOGGER.info(String.format(CONVERSION_MESSAGE, healthMapLocations.size(),
                 countHealthMapAlerts(healthMapLocations)));
 
@@ -115,7 +116,7 @@ public class HealthMapDataConverter {
         }
     }
 
-    private void writeLastRetrievalEndDate(Date retrievalDate) {
+    private void writeLastRetrievalEndDate(DateTime retrievalDate) {
         Provenance provenance = lookupData.getHealthMapProvenance();
         provenance.setLastRetrievalEndDate(retrievalDate);
         alertService.saveProvenance(provenance);

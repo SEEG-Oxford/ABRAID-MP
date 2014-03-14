@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
@@ -67,7 +68,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         Alert alert = new Alert(1);
         DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Location location = new Location(1);
-        Date occurrenceStartDate = Calendar.getInstance().getTime();
+        DateTime occurrenceStartDate = DateTime.now();
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
@@ -93,7 +94,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         Alert alert = new Alert(1);
         DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Location location = new Location(1);
-        Date occurrenceStartDate = Calendar.getInstance().getTime();
+        DateTime occurrenceStartDate = DateTime.now();
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
@@ -119,7 +120,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         occurrence.setAlert(null);
         occurrence.setDiseaseGroup(new DiseaseGroup(1));
         occurrence.setLocation(new Location(1));
-        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+        occurrence.setOccurrenceStartDate(DateTime.now());
 
         // Act
         boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
@@ -135,7 +136,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         occurrence.setAlert(new Alert(1));
         occurrence.setDiseaseGroup(null);
         occurrence.setLocation(new Location(1));
-        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+        occurrence.setOccurrenceStartDate(DateTime.now());
 
         // Act
         boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
@@ -151,7 +152,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         occurrence.setAlert(new Alert(1));
         occurrence.setDiseaseGroup(new DiseaseGroup(1));
         occurrence.setLocation(null);
-        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+        occurrence.setOccurrenceStartDate(DateTime.now());
 
         // Act
         boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
@@ -167,7 +168,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         occurrence.setAlert(new Alert());
         occurrence.setDiseaseGroup(new DiseaseGroup(1));
         occurrence.setLocation(new Location(1));
-        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+        occurrence.setOccurrenceStartDate(DateTime.now());
 
         // Act
         boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
@@ -183,7 +184,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         occurrence.setAlert(new Alert(1));
         occurrence.setDiseaseGroup(new DiseaseGroup());
         occurrence.setLocation(new Location(1));
-        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+        occurrence.setOccurrenceStartDate(DateTime.now());
 
         // Act
         boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
@@ -199,7 +200,7 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         occurrence.setAlert(new Alert(1));
         occurrence.setDiseaseGroup(new DiseaseGroup(1));
         occurrence.setLocation(new Location());
-        occurrence.setOccurrenceStartDate(Calendar.getInstance().getTime());
+        occurrence.setOccurrenceStartDate(DateTime.now());
 
         // Act
         boolean doesDiseaseOccurrenceExist = diseaseService.doesDiseaseOccurrenceExist(occurrence);
