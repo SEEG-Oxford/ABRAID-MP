@@ -16,18 +16,21 @@
                 http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
-    <http realm="ABRAID-MP: ModelWrapper" >
+    <http realm="ABRAID-MP: ModelWrapper" authentication-manager-ref="authenticationManager">
         <intercept-url pattern="/**" access="ROLE_USER" />
         <http-basic />
     </http>
 
-    <context:property-placeholder location="WEB-INF/modelwrapper.properties"/>
-    <authentication-manager>
-        <authentication-provider>
-            <user-service>
-                <user name="${auth.username}" authorities="ROLE_USER" password="${auth.password_hash}" />
-            </user-service>
-            <password-encoder hash="bcrypt" />
-        </authentication-provider>
-    </authentication-manager>
+    <beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <beans:property name="providers" ref="daoAuthenticationProvider" />
+    </beans:bean>
+
+    <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="userDetailsService" ref="userDetailsService"/>
+        <beans:property name="passwordEncoder" ref="passwordEncoder" />
+    </beans:bean>
+
+    <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.UserDetailsServiceImpl" autowire="constructor" />
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 </beans:beans>

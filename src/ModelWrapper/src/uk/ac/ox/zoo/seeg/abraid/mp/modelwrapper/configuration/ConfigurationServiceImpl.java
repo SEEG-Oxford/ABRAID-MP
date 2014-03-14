@@ -32,4 +32,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         basicProperties.setProperty(USERNAME_KEY, username);
         basicProperties.setProperty(PASSWORD_KEY, passwordHash);
     }
+
+    /**
+     * Gets the current modelwrapper authentication username.
+     * @return The username
+     */
+    @Override
+    public String getAuthenticationUsername() {
+        return basicProperties.getString(USERNAME_KEY);
+    }
+
+    /**
+     * Gets the current modelwrapper authentication password hash.
+     * @return The password hash.
+     */
+    @Override
+    public String getAuthenticationPasswordHash() {
+        return basicProperties.getString(PASSWORD_KEY);
+    }
 }

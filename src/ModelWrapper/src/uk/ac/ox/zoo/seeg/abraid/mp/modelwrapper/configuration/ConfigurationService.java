@@ -11,4 +11,16 @@ public interface ConfigurationService {
      * @param passwordHash The bcrypt hash of the new password.
      */
     void setAuthenticationDetails(String username, String passwordHash);
+
+    /**
+     * Gets the current modelwrapper authentication username.
+     * @return The username.
+     */
+    String getAuthenticationUsername();
+
+    /**
+     * Gets the current modelwrapper authentication password hash.
+     * @return The password hash.
+     */
+    String getAuthenticationPasswordHash();
 }

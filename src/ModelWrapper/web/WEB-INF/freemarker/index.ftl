@@ -42,9 +42,9 @@
                         <input type="password" class="form-control" placeholder="New password" autocomplete="off" data-bind="value: password, valueUpdate:'afterkeydown'" >
                     </div></p><br>
                     <p><div class="input-group"><span class="input-group-addon glyphicon glyphicon-lock"></span>
-                        <input type="password" class="form-control" placeholder="New password (repeat)" autocomplete="off" data-bind="value: passwordDuplicate, valueUpdate:'afterkeydown'" >
+                        <input type="password" class="form-control" placeholder="New password (repeat)" autocomplete="off" data-bind="value: passwordConfirmation, valueUpdate:'afterkeydown'" >
                     </div></p><br>
-                    <p><a class="btn btn-primary" role="button" data-bind="click: submit, css: { 'disabled': !isValid() || saving }"><!-- ko ifnot: saving -->Save<!-- /ko --><!-- ko if: saving -->Saving<!-- /ko --></a></p>
+                    <p><a class="btn btn-primary" role="button" data-bind="click: submit, css: { 'disabled': !isValid() || saving }"><!-- ko ifnot: saving -->Save<!-- /ko --><!-- ko if: saving -->Saving...<!-- /ko --></a></p>
                 </form>
             </div>
         </div>
@@ -55,7 +55,7 @@
         <span class="input-group-addon bg-success-important"><i class="fa fa-check-circle text-success fa-lg"></i></span>
     <!-- /ko -->
     <!-- ko ifnot: field.isValid() -->
-        <span class="input-group-addon bg-danger-important" data-bind="tooltip: {title: field.error, placement: 'right'}"><i class="fa fa-exclamation-circle text-danger fa-lg"></i></span>
+        <span class="input-group-addon bg-danger-important" data-bind="tooltip: {title: field.error, placement: 'right'}" data-container="body"><i class="fa fa-exclamation-circle text-danger fa-lg"></i></span>
     <!-- /ko -->
 </script>
 </@c.page>
