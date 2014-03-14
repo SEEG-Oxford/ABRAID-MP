@@ -40,39 +40,48 @@ html,body
     height:100%;
     float:right;
 }
-#datapointInfo
-{
-    height:90%;
-    border:1px solid black;
-}
-#datapointInfo div
+.datapointInfo
 {
     padding:10px;
-    height:100%;
+    height:90%;
+    position:relative;
+}
+.datapointInfo h4
+{
+    min-height:57px;
+}
+#summary
+{
+    padding-left:5px;
+    max-height:680px;
     overflow-y:auto;
     word-wrap:break-word;
 }
-#datapointInfo ul
+#datapointInfoLowerPane
+{
+    position:absolute;
+    bottom:30px;
+}
+#counter
+{
+    height:10%;
+    position:absolute;
+    bottom:50px;
+}
+.datapointInfo ul
 {
     list-style-type: none;
     padding:0;
     margin:0;
 }
-#datapointInfo p
+.datapointInfo p
 {
     display:inline;
 }
-#datapointInfo button
+.datapointInfo button
 {
-    margin-top:10px;
-}
-#counter
-{
-    height:10%;
-    width:15%;
-    position:absolute;
-    bottom:50px;
-    border:1px solid black;
+    margin-top:5px;
+    width:165px;
 }
 #welcomeMessage
 {
