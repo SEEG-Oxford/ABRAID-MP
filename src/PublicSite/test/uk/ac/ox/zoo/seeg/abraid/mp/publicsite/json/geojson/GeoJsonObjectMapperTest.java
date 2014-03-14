@@ -33,7 +33,7 @@ public class GeoJsonObjectMapperTest {
         String result = stream.toString();
 
         // Assert
-        assertThat(result).isEqualTo("\"" + ISODateTimeFormat.dateTime().print(jodaTime) + "\"");
+        assertThat(result).isEqualTo("\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(jodaTime) + "\"");
     }
 
     @Test
