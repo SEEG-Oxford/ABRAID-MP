@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+echo Starting Data Acquisition...
 
 # Ensure the working directory is the one that this script is in
 cd `dirname $0`
