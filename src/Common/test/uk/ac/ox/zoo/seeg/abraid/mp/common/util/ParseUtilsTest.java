@@ -29,6 +29,12 @@ public class ParseUtilsTest {
     }
 
     @Test
+    public void parseNullInteger() {
+        Integer parsedInteger = ParseUtils.parseInteger(null);
+        assertThat(parsedInteger).isNull();
+    }
+
+    @Test
     public void parseValidDouble() {
         double parsedDouble = ParseUtils.parseDouble("1234.56789");
         assertThat(parsedDouble).isEqualTo(1234.56789);
@@ -47,6 +53,12 @@ public class ParseUtilsTest {
     }
 
     @Test
+    public void parseNullDouble() {
+        Double parsedDouble = ParseUtils.parseDouble(null);
+        assertThat(parsedDouble).isNull();
+    }
+
+    @Test
     public void parseValidLong() {
         long parsedLong = ParseUtils.parseLong("100000000000");
         assertThat(parsedLong).isEqualTo(100000000000L);
@@ -61,6 +73,12 @@ public class ParseUtilsTest {
     @Test
     public void parseInvalidLong() {
         Long parsedLong = ParseUtils.parseLong("undefined");
+        assertThat(parsedLong).isNull();
+    }
+
+    @Test
+    public void parseNullLong() {
+        Long parsedLong = ParseUtils.parseLong(null);
         assertThat(parsedLong).isNull();
     }
 }

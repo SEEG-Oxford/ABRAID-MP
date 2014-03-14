@@ -51,6 +51,17 @@ public class DiseaseGroup {
         this.name = name;
     }
 
+    public DiseaseGroup(Integer id) {
+        this.id = id;
+    }
+
+    public DiseaseGroup(Integer id, DiseaseGroup parentGroup, String name, DiseaseGroupType groupType) {
+        this.id = id;
+        this.parentGroup = parentGroup;
+        this.name = name;
+        this.groupType = groupType;
+    }
+
     public Integer getId() {
         return id;
     }

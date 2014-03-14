@@ -27,20 +27,27 @@ public class HealthMapWebService {
     // The authorization code obtained from HealthMap in order to use their web service.
     private String authorizationCode;
 
+    // Whether or not to strip HTML from the description field.
+    private boolean stripHtml;
+
     // The default start date. This is used if HealthMap has not previously been queried, according to the
     // Provenance.LastRetrievedDate field.
     private Date defaultStartDate;
 
     // If defaultStartDate is not specified, the start date is this number of days before now (i.e. the current date).
-    private int defaultStartDateDaysBeforeNow;
+    private Integer defaultStartDateDaysBeforeNow = null;
+
+    // If specified, this sets the end date to the number of days after the start date
+    private Integer endDateDaysAfterStartDate = null;
 
     // The date/time format used in both the request URL and the response JSON.
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
 
     // Web service parameter names
-    private static final String AUTHORIZATION_PARAMETER = "auth";
-    private static final String START_DATE_PARAMETER = "sdate";
-    private static final String END_DATE_PARAMETER = "edate";
+    private String authorizationParameterName;
+    private String startDateParameterName;
+    private String endDateParameterName;
+    private String stripHtmlParameterName;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapWebService.class);
     private static final String CALLING_WEB_SERVICE_MESSAGE =
@@ -56,6 +63,10 @@ public class HealthMapWebService {
 
     public void setAuthorizationCode(String authorizationCode) {
         this.authorizationCode = authorizationCode;
+    }
+
+    public void setStripHtml(boolean stripHtml) {
+        this.stripHtml = stripHtml;
     }
 
     public Date getDefaultStartDate() {
@@ -76,12 +87,36 @@ public class HealthMapWebService {
         }
     }
 
-    public int getDefaultStartDateDaysBeforeNow() {
+    public Integer getDefaultStartDateDaysBeforeNow() {
         return defaultStartDateDaysBeforeNow;
     }
 
-    public void setDefaultStartDateDaysBeforeNow(int defaultStartDateDaysBeforeNow) {
+    public void setDefaultStartDateDaysBeforeNow(Integer defaultStartDateDaysBeforeNow) {
         this.defaultStartDateDaysBeforeNow = defaultStartDateDaysBeforeNow;
+    }
+
+    public Integer getEndDateDaysAfterStartDate() {
+        return endDateDaysAfterStartDate;
+    }
+
+    public void setEndDateDaysAfterStartDate(Integer endDateDaysAfterStartDate) {
+        this.endDateDaysAfterStartDate = endDateDaysAfterStartDate;
+    }
+
+    public void setAuthorizationParameterName(String authorizationParameterName) {
+        this.authorizationParameterName = authorizationParameterName;
+    }
+
+    public void setStartDateParameterName(String startDateParameterName) {
+        this.startDateParameterName = startDateParameterName;
+    }
+
+    public void setEndDateParameterName(String endDateParameterName) {
+        this.endDateParameterName = endDateParameterName;
+    }
+
+    public void setStripHtmlParameterName(String stripHtmlParameterName) {
+        this.stripHtmlParameterName = stripHtmlParameterName;
     }
 
     /**
@@ -94,8 +129,8 @@ public class HealthMapWebService {
      */
     public List<HealthMapLocation> sendRequest(Date startDate, Date endDate)
             throws WebServiceClientException, JsonParserException {
-        String formattedStartDate = dateFormat.format(startDate);
-        String formattedEndDate = dateFormat.format(endDate);
+        String formattedStartDate = formatDateWithNullProtection(startDate);
+        String formattedEndDate = formatDateWithNullProtection(endDate);
 
         String url = buildUrl(formattedStartDate, formattedEndDate);
 
@@ -107,10 +142,12 @@ public class HealthMapWebService {
 
     private String buildUrl(String startDate, String endDate) {
         // The root URL and authorization code have already been set by the global configuration
-        UriBuilder builder = UriBuilder.fromUri(rootUrl).queryParam(AUTHORIZATION_PARAMETER, authorizationCode);
+        UriBuilder builder = UriBuilder.fromUri(rootUrl)
+                .queryParam(authorizationParameterName, authorizationCode)
+                .queryParam(stripHtmlParameterName, stripHtml);
         // Add the start date and end date if they are non-null
-        addParameterIfNotNull(builder, START_DATE_PARAMETER, startDate);
-        addParameterIfNotNull(builder, END_DATE_PARAMETER, endDate);
+        addParameterIfNotNull(builder, startDateParameterName, startDate);
+        addParameterIfNotNull(builder, endDateParameterName, endDate);
         return builder.build().toString();
     }
 
@@ -126,6 +163,10 @@ public class HealthMapWebService {
         // Because our desired type uses generics, we need to wrap it in a TypeReference
         // (we cannot use List<HealthMapLocation>.class)
         return parser.parse(json, new TypeReference<List<HealthMapLocation>>() { });
+    }
+
+    private String formatDateWithNullProtection(Date date) {
+        return (date != null) ? dateFormat.format(date) : null;
     }
 
     private void addParameterIfNotNull(UriBuilder builder, String parameterName, String parameterValue) {

@@ -4,14 +4,10 @@ import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -80,6 +76,25 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
 
     @Test
     public void getGeoNamesLocationPrecisionMappings() {
-        // TODO
+        // Arrange
+        List<GeoNamesLocationPrecision> precisionList = new ArrayList<>();
+        precisionList.add(new GeoNamesLocationPrecision("ADM1", LocationPrecision.ADMIN1));
+        precisionList.add(new GeoNamesLocationPrecision("ADM2", LocationPrecision.ADMIN2));
+        precisionList.add(new GeoNamesLocationPrecision("PPL", LocationPrecision.PRECISE));
+        precisionList.add(new GeoNamesLocationPrecision("PCLI", LocationPrecision.COUNTRY));
+
+        Map<String, LocationPrecision> precisionMap = new HashMap<>();
+        precisionMap.put("ADM2", LocationPrecision.ADMIN2);
+        precisionMap.put("PPL", LocationPrecision.PRECISE);
+        precisionMap.put("ADM1", LocationPrecision.ADMIN1);
+        precisionMap.put("PCLI", LocationPrecision.COUNTRY);
+
+        when(geoNamesLocationPrecisionDao.getAll()).thenReturn(precisionList);
+
+        // Act
+        Map<String, LocationPrecision> testPrecisionMap = locationService.getGeoNamesLocationPrecisionMappings();
+
+        // Assert
+        assertThat(testPrecisionMap).isEqualTo(precisionMap);
     }
 }

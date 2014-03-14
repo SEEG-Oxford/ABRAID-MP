@@ -25,6 +25,12 @@ public class HealthMapCountry {
     public HealthMapCountry() {
     }
 
+    public HealthMapCountry(Long id, String name, Country country) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
+    }
+
     public Long getId() {
         return id;
     }

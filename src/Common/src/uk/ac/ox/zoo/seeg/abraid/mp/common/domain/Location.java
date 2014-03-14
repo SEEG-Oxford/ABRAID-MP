@@ -65,6 +65,10 @@ public class Location {
     public Location() {
     }
 
+    public Location(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

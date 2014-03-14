@@ -21,6 +21,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
+    private AlertDao alertDao;
+    @Autowired
     private CountryDao countryDao;
 
     @Autowired
@@ -37,6 +39,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Autowired
     private FeedDao feedDao;
+    @Autowired
+    private LocationDao locationDao;
 
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
@@ -161,6 +165,55 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         assertThat(occurrence.getDiseaseGroup()).isNotNull();
         assertThat(occurrence.getDiseaseGroup().getId()).isNotNull();
         assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(occurrenceStartDate);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckExists() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceStartDate());
+        assertThat(occurrences).hasSize(1);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckDiseaseGroupDifferent() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                diseaseGroup, occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceStartDate());
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckLocationDifferent() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        Location location = locationDao.getById(10);
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), location, occurrence.getAlert(),
+                occurrence.getOccurrenceStartDate());
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckAlertDifferent() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        Alert alert = alertDao.getById(10);
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), alert,
+                occurrence.getOccurrenceStartDate());
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckOccurrenceStartDateDifferent() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        Date occurrenceStartDate = Calendar.getInstance().getTime();
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrenceStartDate);
+        assertThat(occurrences).hasSize(0);
     }
 
     private Alert createAlert() {

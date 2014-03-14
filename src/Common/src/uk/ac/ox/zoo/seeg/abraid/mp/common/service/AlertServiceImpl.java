@@ -46,6 +46,15 @@ public class AlertServiceImpl implements AlertService {
     }
 
     /**
+     * Saves a feed.
+     * @param feed The feed to save.
+     */
+    @Override
+    public void saveFeed(Feed feed) {
+        feedDao.save(feed);
+    }
+
+    /**
      * Gets a provenance by name.
      * @param name The name.
      * @return The provenance with the specified name, or null if non-existent.

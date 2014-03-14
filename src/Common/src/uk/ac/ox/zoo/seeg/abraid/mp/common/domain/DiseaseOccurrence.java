@@ -15,13 +15,19 @@ import java.util.Date;
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
-@NamedQueries(
-    @NamedQuery(
-        name = "getDiseaseOccurrencesYetToBeReviewed",
-        query = "from DiseaseOccurrence where diseaseGroupId=:diseaseGroupId"
-              + " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"
-    )
-)
+@NamedQueries({
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForExistenceCheck",
+                query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
+                        "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesYetToBeReviewed",
+                query = "from DiseaseOccurrence where diseaseGroupId=:diseaseGroupId" +
+                        " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where" +
+                        " expert.id=:expertId)"
+        )
+})
 public class DiseaseOccurrence {
     // The primary key.
     @Id
