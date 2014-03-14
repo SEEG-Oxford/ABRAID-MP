@@ -20,7 +20,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Copyright (c) 2014 University of Oxford
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("file:ModelWrapper/web/WEB-INF/abraid-servlet-beans.xml")
+@ContextConfiguration(locations = {
+        "file:ModelWrapper/web/WEB-INF/abraid-servlet-beans.xml",
+        "file:ModelWrapper/web/WEB-INF/applicationContext.xml"
+})
 @WebAppConfiguration("file:ModelWrapper/web")
 public class IndexControllerIntegrationTest {
     private MockMvc mockMvc;

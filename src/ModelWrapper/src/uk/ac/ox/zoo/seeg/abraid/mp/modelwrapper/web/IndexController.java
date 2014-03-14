@@ -20,7 +20,9 @@ import java.util.regex.Pattern;
 public class IndexController {
 
     private static final Pattern USERNAME_REGEX = Pattern.compile("^[a-z0-9_-]{3,15}$");
+    // CHECKSTYLE.OFF: LineLengthCheck
     private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=^[^\\s]{6,128}$)((?=.*?\\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[^\\w\\d\\s])(?=.*?[a-z])|(?=.*?[^\\w\\d\\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[A-Z])(?=.*?[^\\w\\d\\s]))^.*$");
+    // CHECKSTYLE:ON
 
     @Autowired
     private ConfigurationService configurationService;
