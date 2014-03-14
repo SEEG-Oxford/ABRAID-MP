@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -28,7 +27,6 @@ public class Alert {
     // The disease.
     @ManyToOne
     @JoinColumn(name = "feedId")
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Feed feed;
 
     // The title of the alert.
@@ -58,6 +56,10 @@ public class Alert {
     private Date createdDate;
 
     public Alert() {
+    }
+
+    public Alert(Integer id) {
+        this.id = id;
     }
 
     public Integer getId() {

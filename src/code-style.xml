@@ -133,7 +133,10 @@
             <property name="max" value="120"/>
         </module>
         <module name="MethodLength"/>
-        <module name="ParameterNumber"/>
+        <module name="ParameterNumber">
+            <!-- Only check for methods (not constructors) -->
+            <property name="tokens" value="METHOD_DEF"/>
+        </module>
 
 
         <!-- Checks for whitespace                               -->
@@ -143,7 +146,10 @@
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
-        <module name="OperatorWrap"/>
+        <module name="OperatorWrap">
+            <!-- Operators must be at the end of the line, not the start -->
+            <property name="option" value="eol"/>
+        </module>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
@@ -197,7 +203,7 @@
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
         <!--module name="FinalParameters"/-->
-        <!-- module name="TodoComment"/ Enable once Ed's fixed his stuff -->
+        <module name="TodoComment"/>
         <module name="UpperEll"/>
     </module>
 </module>

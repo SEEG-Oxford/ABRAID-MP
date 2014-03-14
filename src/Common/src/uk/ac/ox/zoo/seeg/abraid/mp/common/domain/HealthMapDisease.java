@@ -36,6 +36,12 @@ public class HealthMapDisease {
     public HealthMapDisease() {
     }
 
+    public HealthMapDisease(Long id, String name, DiseaseGroup diseaseGroup) {
+        this.id = id;
+        this.name = name;
+        this.diseaseGroup = diseaseGroup;
+    }
+
     public Long getId() {
         return id;
     }

@@ -27,6 +27,12 @@ public interface AlertService {
     List<Feed> getFeedsByProvenanceName(String provenanceName);
 
     /**
+     * Saves a feed.
+     * @param feed The feed to save.
+     */
+    void saveFeed(Feed feed);
+
+    /**
      * Gets a provenance by name.
      * @param name The name.
      * @return The provenance with the specified name, or null if non-existent.

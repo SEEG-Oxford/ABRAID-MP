@@ -24,7 +24,7 @@ public class AlertDaoTest extends AbstractSpringIntegrationTests {
     private FeedDao feedDao;
 
     @Test
-    public void saveThenGetByHealthMapAlertId() throws Exception {
+    public void saveThenGetByHealthMapAlertId() {
         // Arrange
         Feed feed = feedDao.getById(1);
         Calendar publicationCalendar = Calendar.getInstance();
@@ -57,5 +57,17 @@ public class AlertDaoTest extends AbstractSpringIntegrationTests {
         assertThat(alert.getTitle()).isEqualTo(title);
         assertThat(alert.getSummary()).isEqualTo(summary);
         assertThat(alert.getUrl()).isEqualTo(url);
+    }
+
+    @Test
+    public void getByAlertIdSuccessful() {
+        Alert alert = alertDao.getById(1);
+        assertThat(alert).isNotNull();
+    }
+
+    @Test
+    public void getByAlertIdDoesNotExist() {
+        Alert alert = alertDao.getById(-1);
+        assertThat(alert).isNull();
     }
 }

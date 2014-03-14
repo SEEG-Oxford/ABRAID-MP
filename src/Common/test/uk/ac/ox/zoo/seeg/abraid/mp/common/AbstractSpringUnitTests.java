@@ -43,6 +43,10 @@ public abstract class AbstractSpringUnitTests {
 
     @ReplaceWithMock
     @Autowired
+    protected GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected HealthMapCountryDao healthMapCountryDao;
 
     @ReplaceWithMock

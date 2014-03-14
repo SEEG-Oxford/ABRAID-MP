@@ -48,10 +48,19 @@ public class Feed {
     public Feed() {
     }
 
-    public Feed(String name, Provenance provenance, double weighting) {
+    public Feed(String name, Provenance provenance, double weighting, Long healthMapFeedId) {
         this.name = name;
         this.provenance = provenance;
         this.weighting = weighting;
+        this.healthMapFeedId = healthMapFeedId;
+    }
+
+    public Feed(Integer id, String name, Provenance provenance, double weighting, Long healthMapFeedId) {
+        this.id = id;
+        this.name = name;
+        this.provenance = provenance;
+        this.weighting = weighting;
+        this.healthMapFeedId = healthMapFeedId;
     }
 
     public Integer getId() {

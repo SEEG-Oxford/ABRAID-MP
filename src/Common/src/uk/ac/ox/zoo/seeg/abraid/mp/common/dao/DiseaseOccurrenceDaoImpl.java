@@ -2,8 +2,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,5 +31,23 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrencesYetToBeReviewed",
                 "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+    }
+
+
+    /**
+     * Get disease occurrences that match the specified disease group, location, alert and occurrence start date.
+     * Used to check for the existence of a disease occurrence.
+     * @param diseaseGroup The disease group.
+     * @param location The location.
+     * @param alert The alert.
+     * @param occurrenceStartDate The occurrence start date.
+     * @return A list of matching disease occurrences.
+     */
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForExistenceCheck(DiseaseGroup diseaseGroup,
+                                                                          Location location, Alert alert,
+                                                                          Date occurrenceStartDate) {
+        return listNamedQuery("getDiseaseOccurrencesForExistenceCheck",
+                "diseaseGroup", diseaseGroup, "location", location, "alert", alert,
+                "occurrenceStartDate", occurrenceStartDate);
     }
 }

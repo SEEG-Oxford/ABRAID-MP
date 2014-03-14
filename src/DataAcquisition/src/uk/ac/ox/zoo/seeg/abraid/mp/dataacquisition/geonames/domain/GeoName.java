@@ -1,27 +1,48 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /**
  * Represents a GeoName, as returned by the GeoNames web service.
  *
  * Copyright (c) 2014 University of Oxford
  */
 public class GeoName {
-    private Integer geonameId;
-    private String fcode;
+    @JsonProperty(value = "geonameId")
+    private Integer geoNameId;
+    @JsonProperty(value = "fcode")
+    private String featureCode;
+    private GeoNameStatus status;
 
-    public Integer getGeonameId() {
-        return geonameId;
+    public GeoName() {
     }
 
-    public void setGeonameId(Integer geonameId) {
-        this.geonameId = geonameId;
+    public GeoName(Integer geoNameId, String featureCode) {
+        this.geoNameId = geoNameId;
+        this.featureCode = featureCode;
     }
 
-    public String getFcode() {
-        return fcode;
+    public Integer getGeoNameId() {
+        return geoNameId;
     }
 
-    public void setFcode(String fcode) {
-        this.fcode = fcode;
+    public void setGeoNameId(Integer geoNameId) {
+        this.geoNameId = geoNameId;
+    }
+
+    public String getFeatureCode() {
+        return featureCode;
+    }
+
+    public void setFeatureCode(String featureCode) {
+        this.featureCode = featureCode;
+    }
+
+    public GeoNameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GeoNameStatus status) {
+        this.status = status;
     }
 }

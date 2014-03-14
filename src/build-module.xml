@@ -8,6 +8,7 @@
   <property name="project.root.dir" value="${basedir}/../.."/>
   <property name="out.dir" value="${basedir}/out"/>
   <property name="dist.out.dir" value="${out.dir}/dist"/>
+  <property name="artifacts.out.dir" value="${out.dir}/artifacts"/>
   <property name="module.out.dir" value="${out.dir}/production"/>
   <property name="test.out.dir" value="${out.dir}/test"/>
   <property name="doc.out.dir" value="${out.dir}/doc"/>
@@ -24,7 +25,7 @@
   <!-- Compiler options -->
   <property name="compiler.debug" value="on"/>
   <property name="compiler.generate.no.warnings" value="off"/>
-  <property name="compiler.args" value=""/>
+  <property name="compiler.args" value="-encoding UTF8"/>
   <property name="compiler.max.memory" value="128m"/>
 
   <!-- JDK -->
@@ -305,21 +306,30 @@
   <!-- Package targets -->
   <target name="build.package" depends="build.jar" description="Builds a deployment package, default to building a JAR, override at module level to build WAR."/>
 
-  <target name="build.jar" depends="compile.production">
-    <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar">
+  <target name="build.jar" depends="compile.production, create.dist.dir, create.jar.manifest">
+    <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar" manifest="${dist.out.dir}/MANIFEST.MF">
       <fileset dir="${module.out.dir}">
         <include name="**/*.class"/>
         <include name="**/*.xml"/>
         <include name="**/*.properties"/>
       </fileset>
-      <manifest>
-        <attribute name="Version" value="${repository.version}"/>
-        <attribute name="Built-On" value="${time.stamp}"/>
-      </manifest>
     </jar>
+    <delete file="${dist.out.dir}/MANIFEST.MF"/>
   </target>
 
-  <target name="build.war" depends="compile.production">
+  <target name="create.dist.dir">
+    <delete dir="${dist.out.dir}"/>
+    <mkdir dir="${dist.out.dir}"/>
+  </target>
+  
+  <target name="create.jar.manifest">
+    <manifest file="${dist.out.dir}/MANIFEST.MF">
+      <attribute name="Version" value="${repository.version}"/>
+      <attribute name="Built-On" value="${time.stamp}"/>
+    </manifest>
+  </target>
+  
+  <target name="build.war" depends="compile.production, create.dist.dir">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
@@ -339,6 +349,11 @@
     <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="${repository.version}" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
   </target>
 
+  <target name="collate.artifacts">
+    <delete dir="${artifacts.out.dir}"/>
+    <mkdir dir="${artifacts.out.dir}"/>
+  </target>
+  
   <!-- Analysis targets -->
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>

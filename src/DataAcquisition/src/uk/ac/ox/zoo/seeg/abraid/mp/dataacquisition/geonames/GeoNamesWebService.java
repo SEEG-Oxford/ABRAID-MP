@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoNameStatus;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -22,6 +24,17 @@ public class GeoNamesWebService {
     // The username for the GeoNames web service
     private String username;
 
+    // Web service parameter names
+    private String usernameParameterName;
+    private String geoNameIdParameterName;
+
+    private static final Logger LOGGER = Logger.getLogger(GeoNamesWebService.class);
+    private static final String GEONAMES_RETURNED_STATUS_MESSAGE = "GeoNames returned status code %d (\"%s\"). URL: %s";
+
+    // The status code returned when the GeoName does not exist
+    // A list of status codes is available at http://www.geonames.org/export/webservice-exception.html
+    private static final int GEONAME_DOES_NOT_EXIST_STATUS_CODE = 15;
+
     public GeoNamesWebService(WebServiceClient webServiceClient) {
         this.webServiceClient = webServiceClient;
     }
@@ -34,10 +47,19 @@ public class GeoNamesWebService {
         this.username = username;
     }
 
+    public void setUsernameParameterName(String usernameParameterName) {
+        this.usernameParameterName = usernameParameterName;
+    }
+
+    public void setGeoNameIdParameterName(String geoNameIdParameterName) {
+        this.geoNameIdParameterName = geoNameIdParameterName;
+    }
+
     /**
      * Gets a GeoName by ID.
      * @param geoNameId The GeoName ID.
-     * @return The GeoName with the requested ID, or null if it does not exist.
+     * @return The GeoName with the requested ID, or null if the web service response indicated an error (including
+     * the GeoName not existing).
      * @throws WebServiceClientException If the web service call fails.
      * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
@@ -45,14 +67,30 @@ public class GeoNamesWebService {
         String url = buildUrl(geoNameId);
         String json = webServiceClient.request(url);
         GeoName geoName = parseJson(json);
-        return (geoName.getGeonameId() == null) ? null : geoName;
+
+        GeoNameStatus status = geoName.getStatus();
+        if (status != null) {
+            String errorMessage = String.format(GEONAMES_RETURNED_STATUS_MESSAGE, status.getValue(),
+                    status.getMessage(), url);
+
+            // Log a warning if the GeoName does not exist, otherwise log an error
+            if (status.getValue() == GEONAME_DOES_NOT_EXIST_STATUS_CODE) {
+                LOGGER.warn(errorMessage);
+            } else {
+                LOGGER.error(errorMessage);
+            }
+
+            return null;
+        } else {
+            return geoName;
+        }
     }
 
     private String buildUrl(int geoNameId) {
         // The root URL and username have already been set by the global configuration
         return UriBuilder.fromUri(rootUrlGetJSON)
-                .queryParam("username", username)
-                .queryParam("geonameId", geoNameId)
+                .queryParam(usernameParameterName, username)
+                .queryParam(geoNameIdParameterName, geoNameId)
                 .build()
                 .toString();
     }

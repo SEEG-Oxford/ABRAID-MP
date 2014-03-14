@@ -1,4 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="module_dataacquisition" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
+
+  <target name="retrieve.manual.libs" depends="module_build.retrieve.manual.libs, retrieve.hibernatespatial"/>
+
+  <!-- Retrieve Hibernate Spatial 4.3 (not currently released) -->
+  <target name="retrieve.hibernatespatial">
+    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib.local.external.dir}"/>
+  </target>
+  
+  <!-- Collate artifacts for deployment -->
+  <target name="collate.artifacts" depends="module_build.collate.artifacts" description="Collates artifacts.">
+    <!-- Data Acquisition JAR -->
+    <copy todir="${artifacts.out.dir}/lib">
+      <fileset file="${dist.out.dir}/*.jar"/>
+    </copy>
+    
+    <!-- Dependent JARs -->
+    <copy todir="${artifacts.out.dir}/lib" flatten="true">
+      <path refid="build.classpath"/>
+    </copy>
+    
+    <!-- Main properties file (formed by concatenating the default properties files) -->
+    <concat destfile="${artifacts.out.dir}/dataacquisition.properties">
+      <filelist>
+        <file name="${project.root.dir}/src/Common/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties"/>
+        <file name="${src.dir}/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties"/>
+      </filelist>
+    </concat>
+
+    <copy todir="${artifacts.out.dir}" flatten="true">
+      <fileset dir="${src.dir}/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition">
+        <!-- log4j.properties -->
+        <include name="log4j.properties"/>
+
+        <!-- Batch scripts -->
+        <include name="config/dataacquisition.bat"/>
+        <include name="config/dataacquisition.sh"/>
+      </fileset>
+    </copy>
+  </target>
 </project>

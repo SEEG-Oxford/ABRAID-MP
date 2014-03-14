@@ -9,6 +9,9 @@
     <import resource="beans-database.xml"/>
     <import resource="beans-service.xml"/>
 
-    <bean id="webServiceClient" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient" autowire="constructor"/>
+    <bean id="webServiceClient" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient" autowire="constructor">
+        <property name="connectTimeoutMilliseconds" value="${webserviceclient.connectTimeoutMilliseconds}"/>
+        <property name="readTimeoutMilliseconds" value="${webserviceclient.readTimeoutMilliseconds}"/>
+    </bean>
 
 </beans>

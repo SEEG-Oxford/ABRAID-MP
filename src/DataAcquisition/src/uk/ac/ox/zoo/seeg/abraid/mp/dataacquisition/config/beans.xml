@@ -8,8 +8,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- TODO: Should there be one properties file per module i.e. this one and common.properties? -->
-    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties"/>
+    <!-- This ensures that if a file named dataacquisition.properties exists in the current directory, it will
+         override the default properties specified in the classpath files -->
+    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
+                                            classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties,
+                                            file:dataacquisition.properties"
+                                  ignore-resource-not-found="true"/>
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 
@@ -17,15 +21,23 @@
     <bean id="geoNamesWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.GeoNamesWebService" autowire="constructor">
         <property name="rootUrlGetJSON" value="${geonames.rootUrlGetJSON}"/>
         <property name="username" value="${geonames.username}"/>
+        <property name="usernameParameterName" value="${geonames.usernameParameterName}"/>
+        <property name="geoNameIdParameterName" value="${geonames.geoNameIdParameterName}"/>
     </bean>
 
     <bean id="healthMapWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapWebService" autowire="constructor">
         <property name="rootUrl" value="${healthmap.rootUrl}"/>
         <property name="authorizationCode" value="${healthmap.authorizationCode}"/>
+        <property name="stripHtml" value="${healthmap.stripHtml}"/>
         <!-- If specified, this value must have the format "yyyy-MM-dd HH:mm:ssZ" e.g. "2014-04-21 15:29:03+0100" -->
         <property name="defaultStartDate" value="${healthmap.defaultStartDate}"/>
         <!-- Note the default value of this property, after the colon in the value -->
         <property name="defaultStartDateDaysBeforeNow" value="${healthmap.defaultStartDateDaysBeforeNow:7}"/>
+        <property name="endDateDaysAfterStartDate" value="${healthmap.endDateDaysAfterStartDate}"/>
+        <property name="authorizationParameterName" value="${healthmap.authorizationParameterName}"/>
+        <property name="startDateParameterName" value="${healthmap.startDateParameterName}"/>
+        <property name="endDateParameterName" value="${healthmap.endDateParameterName}"/>
+        <property name="stripHtmlParameterName" value="${healthmap.stripHtmlParameterName}"/>
     </bean>
 
     <!-- HealthMap data processing beans -->

@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
  * Copyright (c) 2014 University of Oxford
  */
 @Repository
-public class AlertDaoImpl extends AbstractDao<Alert, Long> implements AlertDao {
+public class AlertDaoImpl extends AbstractDao<Alert, Integer> implements AlertDao {
     public AlertDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }

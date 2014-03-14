@@ -19,6 +19,8 @@
             <arg value="-q" />
             <arg value="-w" />
             <arg value="-v" />
+            <arg value="ON_ERROR_STOP=ON" />
+            <arg value="-v" />
             <arg value="database_name=${database.name}" />
             <arg value="-v" />
             <arg value="application_username=${application.username}" />
@@ -37,6 +39,8 @@
             <arg value="${superuser.name}" />
             <arg value="-q" />
             <arg value="-w" />
+            <arg value="-v" />
+            <arg value="ON_ERROR_STOP=ON" />
             <arg value="-f" />
             <arg value="testdata.sql" />
             <arg value="${database.name}" />

@@ -4,7 +4,7 @@
 --
 -- Copyright (c) 2014 University of Oxford
 
-\copy Provenance (Id, Name) FROM 'provenance.txt' (ENCODING utf8)
+\copy Provenance (Id, Name, DefaultFeedWeighting) FROM 'provenance.txt' (ENCODING utf8)
 \copy Feed (ProvenanceId, Name, Weighting, HealthMapFeedId) FROM 'feed.txt' (ENCODING utf8)
 \copy Country (Id, Name) FROM 'country.txt' (ENCODING utf8)
 \copy HealthMapCountry (Id, Name, CountryId) FROM 'healthmapcountry.txt' (ENCODING utf8)
