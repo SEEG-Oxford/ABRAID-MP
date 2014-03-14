@@ -6,7 +6,7 @@ jdk:
   - oraclejdk7
 services: postgresql
 # Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
-# Note: need to be carefull that the ivy-published version of common doesnt cache
+# Note: need to be careful that the ivy-published version of common doesn't cache
 #cache:
 #  apt: true
 #  directories:

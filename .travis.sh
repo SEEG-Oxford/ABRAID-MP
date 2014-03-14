@@ -6,8 +6,8 @@
 echo -en 'travis_fold:start:Log\r'
 
 echo "================= Full Log ================="
-# Check if "annotate-ouput" is available
-if command -v annotate-ouput >/dev/null 2>&1
+# Check if "annotate-output" is available
+if command -v annotate-output >/dev/null 2>&1
 then
     # Run "ant full" with an annotated log file
     annotate-output +"" ant full -k 2>&1 | tee build.log
@@ -23,7 +23,7 @@ EXIT=${PIPESTATUS[0]}
 echo -en 'travis_fold:end:Log\r'
 
 # Define a set of patterns to match in the build log for inclusion the summary output
-# 1. Lines marked as error output, 2. Lines marked as summary ouput, 3. Findbugs output, 4. Checkstyle output, 5. JUnit warnings
+# 1. Lines marked as error output, 2. Lines marked as summary output, 3. Findbugs output, 4. Checkstyle output, 5. JUnit warnings
 INCLUDE_PATTERNS="\
 (^\ E\:)|\
 \[Summary\]|\
@@ -50,8 +50,7 @@ EXCLUDE_PATTERNS="\
 \[findbugs\]\ (.*)FindBugs2\.main|\
 \[findbugs\]\ (.*)FileSystemPreferences.1\ run|\
 \[findbugs\]\ INFO\:\ Created\ user\ preferences\ directory|\
-\[checkstyle\]\ Running|\
-\[junit\]\ (.*)SKIPPED" # Remove once Ed's fixed his stuff
+\[checkstyle\]\ Running"
 
 # Copy a subset of the full log to the screen as a summary
 echo "================== Summary =================="
