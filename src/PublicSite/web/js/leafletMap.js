@@ -73,6 +73,7 @@ var LeafletMap = (function () {
             mouseout: resetHighlight,
             click: function () {
                 selectedPointViewModel.selectedPoint(feature);
+                selectedPointViewModel.userLoggedIn(true);
                 selectFeature(this);
             }
         });
@@ -109,13 +110,12 @@ var LeafletMap = (function () {
     }).addLayer(diseaseOccurrenceLayer).addTo(map);
 
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
-    map.on('click', function () { resetSelectedPoint() });
-    clusterLayer.on('clusterclick', function () { resetSelectedPoint() });
-
     function resetSelectedPoint() {
         selectedPointViewModel.clearSelectedPoint();
         diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
     }
+    map.on('click', function () { resetSelectedPoint(); });
+    clusterLayer.on('clusterclick', function () { resetSelectedPoint(); });
 
     return {
         diseaseOccurrenceLayer : diseaseOccurrenceLayer,

@@ -37,12 +37,12 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
         <script src="<@spring.url "/js/navbar.js" />"></script>
-        <script src="<@spring.url "/js/login.js" />"></script>
         <script>
             var baseUrl = "<@spring.url "/" />";
-        ${endOfBodyScript}
+            ${endOfBodyScript}
         </script>
         ${endOfBody}
+        <script src="<@spring.url "/js/login.js" />"></script>
     </body>
 </html>
 </#macro>

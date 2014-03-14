@@ -24,7 +24,13 @@
                 <a data-bind="attr: {href: selectedPoint().properties.alert.url}">
                     <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
                 </a>
-                <button class="btn btn-large btn-block btn-primary" type="button">Log in to submit review</button>
+                <div data-bind="ifnot: userLoggedIn">
+                    <button id="newLogIn" class="btn btn-block btn-primary" type="button">Log in to submit review</button>
+                </div>
+                <div class="btn-group" data-bind="if: userLoggedIn">
+                    <button type="button" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;Valid occurrence</button>
+                    <button type="button" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;Invalid occurrence</button>
+                </div>
             </div>
         </div>
     <!-- /ko -->
