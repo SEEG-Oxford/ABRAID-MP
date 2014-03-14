@@ -2,6 +2,7 @@
     The page template, including header and footer.
     Copyright (c) 2014 University of Oxford
 -->
+<#import "/spring.ftl" as spring />
 <#macro page title>
 <!DOCTYPE html>
 <html class="no-js">
@@ -13,7 +14,8 @@
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap-theme.css">
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+        <link rel="stylesheet" href="<@spring.url '/css/main.css'/>">
     </head>
     <body>
         <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
@@ -53,7 +55,11 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js"></script>
-        <script src="js/main.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-debug.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/knockout-bootstrap/0.2.1/knockout-bootstrap.js"></script>
+        <script src="<@spring.url '/js/knockout.validation.js'/>"></script>
+        <script> var baseURL = "<@spring.url '/'/>"; </script>
+        <script src="<@spring.url '/js/main.js'/>"></script>
     </body>
 </html>
 </#macro>

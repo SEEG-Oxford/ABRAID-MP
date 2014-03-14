@@ -43,3 +43,22 @@ code {
 #footer .links {
     float: right;
 }
+.input-group {
+    max-width: 450px;
+    min-width: 230px;
+}
+form {
+    margin: 10px 0 0 0;
+}
+.bg-success-important {
+    background-color: #DFF0D8 !important;
+}
+.bg-danger-important {
+    background-color: #F2DEDE !important;
+}
+.alert {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
