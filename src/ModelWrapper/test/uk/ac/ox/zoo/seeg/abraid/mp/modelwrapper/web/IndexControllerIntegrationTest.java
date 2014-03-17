@@ -108,8 +108,8 @@ public class IndexControllerIntegrationTest {
     @Before
     public void makeConfigBackup() throws IOException {
         Files.copy(
-                Paths.get("ModelWrapper/web/modelwrapper.properties"),
-                Paths.get("ModelWrapper/web/modelwrapper.properties.old"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
                 StandardCopyOption.REPLACE_EXISTING
                 );
     }
@@ -117,8 +117,8 @@ public class IndexControllerIntegrationTest {
     @After
     public void rollbackConfig() throws IOException {
         Files.copy(
-                Paths.get("ModelWrapper/web/modelwrapper.properties.old"),
-                Paths.get("ModelWrapper/web/modelwrapper.properties"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
                 StandardCopyOption.REPLACE_EXISTING
         );
     }
