@@ -67,7 +67,8 @@ public class IndexControllerIntegrationTest {
         this.mockMvc
                 .perform(post("/auth")
                         .param("username", "username")
-                        .param("password", "Password1"))
+                        .param("password", "Password1")
+                        .param("passwordConfirmation", "Password1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -76,7 +77,8 @@ public class IndexControllerIntegrationTest {
         this.mockMvc
                 .perform(post("/auth")
                         .param("username", "username")
-                        .param("password", "insufficientlycomplexpassword"))
+                        .param("password", "insufficientlycomplexpassword")
+                        .param("passwordConfirmation", "insufficientlycomplexpassword"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -92,6 +94,7 @@ public class IndexControllerIntegrationTest {
     private MockHttpServletRequestBuilder requestToAuth(HttpMethod method) {
         return request(method, "/auth")
                 .param("username", "username")
-                .param("password", "Password1");
+                .param("password", "Password1")
+                .param("passwordConfirmation", "Password1");
     }
 }
