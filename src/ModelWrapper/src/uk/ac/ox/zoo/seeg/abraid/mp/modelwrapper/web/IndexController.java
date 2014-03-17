@@ -24,8 +24,12 @@ public class IndexController {
     private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=^[^\\s]{6,128}$)((?=.*?\\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[^\\w\\d\\s])(?=.*?[a-z])|(?=.*?[^\\w\\d\\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[A-Z])(?=.*?[^\\w\\d\\s]))^.*$");
     // CHECKSTYLE:ON
 
-    @Autowired
     private ConfigurationService configurationService;
+
+    @Autowired
+    public IndexController(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
 
     /**
      * Request map for the index page.

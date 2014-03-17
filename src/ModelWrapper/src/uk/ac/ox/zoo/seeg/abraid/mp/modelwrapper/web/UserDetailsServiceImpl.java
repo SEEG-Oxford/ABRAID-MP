@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private ConfigurationService configurationService;
 
+    @Autowired
     public UserDetailsServiceImpl(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
