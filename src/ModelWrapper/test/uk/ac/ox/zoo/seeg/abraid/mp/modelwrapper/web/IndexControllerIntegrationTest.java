@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import static org.hamcrest.text.StringContains.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -96,5 +103,23 @@ public class IndexControllerIntegrationTest {
                 .param("username", "username")
                 .param("password", "Password1")
                 .param("passwordConfirmation", "Password1");
+    }
+
+    @Before
+    public void makeConfigBackup() throws IOException {
+        Files.copy(
+                Paths.get("ModelWrapper/web/modelwrapper.properties"),
+                Paths.get("ModelWrapper/web/modelwrapper.properties.old"),
+                StandardCopyOption.REPLACE_EXISTING
+                );
+    }
+
+    @After
+    public void rollbackConfig() throws IOException {
+        Files.copy(
+                Paths.get("ModelWrapper/web/modelwrapper.properties.old"),
+                Paths.get("ModelWrapper/web/modelwrapper.properties"),
+                StandardCopyOption.REPLACE_EXISTING
+        );
     }
 }
