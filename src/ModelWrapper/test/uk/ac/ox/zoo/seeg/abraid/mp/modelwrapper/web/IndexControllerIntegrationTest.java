@@ -110,8 +110,7 @@ public class IndexControllerIntegrationTest {
         Files.copy(
                 Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
                 Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
-                StandardCopyOption.REPLACE_EXISTING
-                );
+                StandardCopyOption.REPLACE_EXISTING);
     }
 
     @After
@@ -119,7 +118,7 @@ public class IndexControllerIntegrationTest {
         Files.copy(
                 Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
                 Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
-                StandardCopyOption.REPLACE_EXISTING
-        );
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.delete(Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"));
     }
 }
