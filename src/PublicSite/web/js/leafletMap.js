@@ -2,10 +2,9 @@
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
  */
+'use strict';
 
 var LeafletMap = (function () {
-    'use strict';
-
     // Initialise map at "map" div
     var map = L.map('map', {
         attributionControl: false,
@@ -72,8 +71,7 @@ var LeafletMap = (function () {
             mouseover: highlightFeature,
             mouseout: resetHighlight,
             click: function () {
-                selectedPointViewModel.selectedPoint(feature);
-                selectedPointViewModel.userLoggedIn(true);
+                DataValidationViewModels.selectedPointViewModel.selectedPoint(feature);
                 selectFeature(this);
             }
         });
@@ -111,15 +109,23 @@ var LeafletMap = (function () {
 
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
     function resetSelectedPoint() {
-        selectedPointViewModel.clearSelectedPoint();
+        DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
         diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
     }
-    map.on('click', function () { resetSelectedPoint(); });
-    clusterLayer.on('clusterclick', function () { resetSelectedPoint(); });
+    map.on('click', resetSelectedPoint);
+    clusterLayer.on('clusterclick', resetSelectedPoint);
+
+    function updateDiseaseLayer(diseaseId) {
+        clusterLayer.clearLayers();
+        diseaseOccurrenceLayer.clearLayers();
+        // Add the new feature collection to the clustered layer, and zoom to its bounds
+        $.getJSON(baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences', function (featureCollection) {
+            clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
+            map.fitBounds(diseaseOccurrenceLayer.getBounds());
+        });
+    }
 
     return {
-        diseaseOccurrenceLayer : diseaseOccurrenceLayer,
-        clusterLayer : clusterLayer,
-        map : map
+        updateDiseaseLayer: updateDiseaseLayer
     };
 }());

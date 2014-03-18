@@ -25,24 +25,20 @@
                 <li><a href="<@spring.url "/publications"/>">Publications</a></li>
             </ul>
 
-            <#-- If user not logged in: display login form -->
-            <@security.authorize  ifAnyGranted="ROLE_ANONYMOUS">
-                <form class="navbar-form navbar-right" action="">
-                    <p id="logInMessage"></p>
-                    <input type="text" id="username" placeholder="Email address">
-                    <input type="password" id="password" placeholder="Password">
-                    <input type="submit" id="loginButton" class="btn btn-primary" value="Log in">
-                </form>
-            </@security.authorize>
-
-            <#-- If user logged in: display welcome and logout button -->
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id="welcomeMessage">Hello <@security.authentication property="principal.fullName"/></li>
+                    <li><div>Hello <@security.authentication property="principal.fullName"/></div></li>
                     <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
                 </ul>
             </@security.authorize>
-
+            <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
+                <form class="navbar-form navbar-right" action="">
+                    <p data-bind="text: formAlert"></p>
+                    <input type="text" placeholder="Email address" data-bind="value: formUsername">
+                    <input type="password" placeholder="Password" data-bind="value: formPassword">
+                    <input type="submit" class="btn btn-primary" value="Log in" data-bind="click: attemptFormLogin">
+                </form>
+            </@security.authorize>
         </div> <!--/.navbar-collapse -->
     </div> <!--/.container -->
 </div>

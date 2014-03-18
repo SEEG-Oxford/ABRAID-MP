@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
 
 /**
  * Customise AuthenticationSuccessHandler to return a JSON instead of redirect.
- * This handler is used if the ajax request was successful, and login authentication was successful.
+ * This handler is used if the request was successfully handled, and login authentication was successful.
  * Copyright (c) 2014 University of Oxford
  */
 public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -24,12 +25,11 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
             throws IOException, ServletException {
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            response.getWriter().print(
-                    "{\"success\":true, \"targetUrl\":\"" + this.getTargetUrlParameter() + "\"}");
-            response.getWriter().flush();
-        } else {
-            super.onAuthenticationSuccess(request, response, auth);
-        }
+        response.setStatus(HttpStatus.NO_CONTENT.value());
+
+        // At some point we will probably return some json data here
+        // response.setStatus(HttpStatus.OK.value());
+        // response.getWriter().print(someJSON);
+        // response.getWriter().flush();
     }
 }

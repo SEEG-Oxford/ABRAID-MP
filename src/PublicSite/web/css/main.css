@@ -16,7 +16,7 @@ html,body
     margin: 0 auto -50px;
     overflow:auto;
 }
-#welcomeMessage
+.navbar-right div
 {
     padding-top:15px;
     padding-left:15px;
@@ -107,7 +107,7 @@ html,body
     padding-top:20px;
     background-color:rgb(51, 51, 51);
 }
-#logInMessage,
+.navbar-right p,
 .footer > .container > .links > a,
 .footer > .container > .links > p
 {

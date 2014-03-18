@@ -27,7 +27,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
     <script src="http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
     <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
-    <script src="<@spring.url "/js/ViewModels.js"/>"></script>
+    <script src="<@spring.url "/js/dataValidation.js"/>"></script>
     <script src="<@spring.url "/js/leafletMap.js"/>"></script>
 </#assign>
 
