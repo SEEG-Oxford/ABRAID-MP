@@ -4,10 +4,12 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service class for experts.
@@ -66,6 +68,16 @@ public class ExpertServiceImpl implements ExpertService {
         }
 
         return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+    }
+
+    /**
+     * Gets a set of the specified expert's disease interests.
+     * @param expertId The id of the specified expert.
+     * @return The list of disease groups the expert can validate.
+     */
+    @Override
+    public Set<DiseaseGroup> getDiseaseInterests(Integer expertId) {
+        return expertDao.getById(expertId).getDiseaseGroups();
     }
 
     /**
