@@ -7,7 +7,15 @@
 
 <script type="text/html" id="no-selected-point-template">
     <div class="datapointInfo">
-        Select a point on the map to view more details here...
+        <ul>
+            <li>
+                <div class="alert alert-info alert-dismissable" id="submitReviewSuccess" style="display:none">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    Review submitted!
+                </div>
+            </li>
+            <li>Select a point on the map to view more details here...</li>
+        </ul>
     </div>
 </script>
 <script type="text/html" id="selected-point-template">
@@ -27,11 +35,9 @@
             </a>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div class="btn-group">
-                <button type="button" class="btn btn-success"><i class="fa fa-check"></i>&nbsp;Valid occurrence</button>
-                <button type="button" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;Invalid occurrence</button>
-            </div>
-            <div id="counter">
-                Validated n points
+                <button type="button" class="btn btn-default" data-bind="click: submitReview('yes')"><i class="fa fa-check"></i>&nbsp;Valid occurrence</button>
+                <button type="button" class="btn btn-default" data-bind="click: submitReview('unsure')">Unsure<br /></button>
+                <button type="button" class="btn btn-default" data-bind="click: submitReview('no')"><i class="fa fa-times"></i>&nbsp;Invalid occurrence</button>
             </div>
         </@security.authorize>
         <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
@@ -40,5 +46,8 @@
             </div>
         </@security.authorize>
         </div>
+    </div>
+    <div id="counter">
+        <ul>You have validated XX points</ul>
     </div>
 </script>

@@ -80,4 +80,25 @@ public class DataValidationController {
         return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(
                 new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
+
+    /**
+     * Saves the expert's review to the database.
+     * @param diseaseId The id of the disease.
+     * @param occurrenceId The id of the disease occurrence being reviewed.
+     * @return A HTTP status code response entity.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences/{occurrenceId}/validate",
+            method = RequestMethod.POST)
+    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId) {
+        PublicSiteUser currentUser = currentUserService.getCurrentUser();
+        try {
+            currentUser.getId();
+//            expertService.submitDiseaseOccurrenceReview(currentUser.getId(), occurrenceId, review);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

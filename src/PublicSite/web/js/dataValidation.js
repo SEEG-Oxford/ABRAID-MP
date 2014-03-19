@@ -12,7 +12,7 @@ var DataValidationViewModels = (function() {
         this.selectedDisease = ko.observable();
         this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
-            LeafletMap.updateDiseaseLayer(this.selectedDisease().id);
+            LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
         }, this);
     };
 
@@ -23,6 +23,24 @@ var DataValidationViewModels = (function() {
         }, this);
         this.clearSelectedPoint = function () {
             this.selectedPoint(null);
+        };
+        this.submitReview = function(review) {
+            return function () {
+                var diseaseId = DataValidationViewModels.layerSelectorViewModel.selectedDisease().id;
+                var feature = DataValidationViewModels.selectedPointViewModel.selectedPoint();
+                var occurrenceId = feature.id;
+                var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
+                $.post(url, { review: review })
+                    .done(function(data, status, xhr) {
+                        // Status 2xx
+                        DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
+                        $("#reviewSubmittedAlert").fadeIn();
+                        LeafletMap.removeReviewedPoint(feature.id);
+                    })
+                    .fail(function (xhr) {
+                        alert("Something went wrong! Please try again " + xhr.responseText);
+                    });
+            };
         };
     };
 

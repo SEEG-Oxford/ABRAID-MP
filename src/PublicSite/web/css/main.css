@@ -44,11 +44,12 @@ html,body
     height:100%;
     width:15%;
     float:right;
+    background-color:rgb(214, 214, 214);
+    opacity:0.8;
 }
 .datapointInfo
 {
     height:90%;
-    /*padding:10px;*/
     position:relative;
 }
 .datapointInfo h4
@@ -67,10 +68,13 @@ html,body
 }
 #summary
 {
-    padding-left:5px;
+    margin:5px;
+    padding:10px;
     max-height:680px;
     overflow-y:auto;
     word-wrap:break-word;
+    background-color:rgb(234, 234, 234);
+    border-radius:25px;
 }
 #datapointInfoLowerPane
 {
@@ -89,7 +93,8 @@ html,body
 }
 #datapointInfoLowerPane .btn-group button
 {
-    width:50%;
+    width:33.3%;
+    height:54px;
     white-space:normal
 }
 #counter

@@ -87,11 +87,18 @@ var LeafletMap = (function () {
         });
     }
 
+    // Map from the id of a point (or feature) to its marker layer, for use in removeReviewedPoint.
+    var layerMap = {};
     // Add disease occurrence points to map
     // First define styling options of the geoJson layer to which data (the feature collection) will be added later via AJAX request
     var diseaseOccurrenceLayer = L.geoJson([], {
         pointToLayer: diseaseOccurrenceLayerPoint,
-        style: diseaseOccurrenceLayerStyle
+        style: diseaseOccurrenceLayerStyle,
+        onEachFeature: function(feature, layer) {
+            layer.on('add', function () {
+                layerMap[feature.id] = layer;
+            })
+        }
     });
 
     // Add this geoJson layer to the styled markerClusterGroup layer, so that nearby occurrences are grouped
@@ -115,17 +122,24 @@ var LeafletMap = (function () {
     map.on('click', resetSelectedPoint);
     clusterLayer.on('clusterclick', resetSelectedPoint);
 
-    function updateDiseaseLayer(diseaseId) {
+    // Add the new feature collection to the clustered layer, and zoom to its bounds
+    function switchDiseaseLayer(diseaseId) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.clearLayers();
-        // Add the new feature collection to the clustered layer, and zoom to its bounds
         $.getJSON(baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences', function (featureCollection) {
             clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
             map.fitBounds(diseaseOccurrenceLayer.getBounds());
         });
     }
 
+    function removeReviewedPoint(id) {
+        clusterLayer.clearLayers();
+        diseaseOccurrenceLayer.removeLayer(layerMap[id]);
+        clusterLayer.addLayer(diseaseOccurrenceLayer);
+    }
+
     return {
-        updateDiseaseLayer: updateDiseaseLayer
+        switchDiseaseLayer: switchDiseaseLayer,
+        removeReviewedPoint: removeReviewedPoint
     };
 }());
