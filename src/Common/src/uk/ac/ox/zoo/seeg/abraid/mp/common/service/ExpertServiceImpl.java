@@ -2,13 +2,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,12 +22,14 @@ public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseGroupDao diseaseGroupDao;
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
 
     public ExpertServiceImpl(ExpertDao expertDao, DiseaseOccurrenceDao diseaseOccurrenceDao,
-                             DiseaseGroupDao diseaseGroupDao) {
+                             DiseaseGroupDao diseaseGroupDao, DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
+        this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
     }
 
     /**
@@ -78,6 +81,23 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Set<DiseaseGroup> getDiseaseInterests(Integer expertId) {
         return expertDao.getById(expertId).getDiseaseGroups();
+    }
+
+    /**
+     * Saves the disease occurrence review.
+     * @param expertEmail The email address of the expert providing review.
+     * @param occurrenceId The id of the disease occurrence.
+     * @param response The expert's response.
+     */
+    @Override
+    public void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId,
+                                            DiseaseOccurrenceReviewResponse response) {
+        Expert expert = getExpertByEmail(expertEmail);
+        DiseaseOccurrence diseaseOccurrence = diseaseOccurrenceDao.getById(occurrenceId);
+
+        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview(expert, diseaseOccurrence,
+                response);
+        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
     }
 
     /**

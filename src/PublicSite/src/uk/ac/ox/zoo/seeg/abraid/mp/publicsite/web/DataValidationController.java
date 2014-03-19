@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
@@ -69,15 +70,15 @@ public class DataValidationController {
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer diseaseId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<DiseaseOccurrence> occurrences = null;
+        List<DiseaseOccurrence> occurrences;
 
         try {
             occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), diseaseId);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(
+        return new ResponseEntity<>(
                 new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 
@@ -91,11 +92,11 @@ public class DataValidationController {
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
-    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId) {
-        PublicSiteUser currentUser = currentUserService.getCurrentUser();
+    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId, String review) {
+        PublicSiteUser user = currentUserService.getCurrentUser();
         try {
-            currentUser.getId();
-//            expertService.submitDiseaseOccurrenceReview(currentUser.getId(), occurrenceId, review);
+            DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.valueOf(review);
+            expertService.saveDiseaseOccurrenceReview(user.getUsername(), occurrenceId, response);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }

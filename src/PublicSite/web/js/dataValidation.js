@@ -38,7 +38,7 @@ var DataValidationViewModels = (function() {
                         LeafletMap.removeReviewedPoint(feature.id);
                     })
                     .fail(function (xhr) {
-                        alert("Something went wrong! Please try again " + xhr.responseText);
+                        alert("Something went wrong. Please try again " + xhr.responseText);
                     });
             };
         };

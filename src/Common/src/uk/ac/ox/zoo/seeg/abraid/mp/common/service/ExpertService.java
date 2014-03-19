@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 import java.util.List;
@@ -46,6 +47,14 @@ public interface ExpertService {
      * @return The list of disease groups the expert can validate.
      */
     Set<DiseaseGroup> getDiseaseInterests(Integer expertId);
+
+    /**
+     * Saves the disease occurrence review.
+     * @param expertEmail The email address of the expert providing review.
+     * @param occurrenceId The id of the disease occurrence.
+     * @param response The expert's response.
+     */
+    void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId, DiseaseOccurrenceReviewResponse response);
 
     /**
      * Saves the specified expert.

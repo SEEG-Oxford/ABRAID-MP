@@ -49,6 +49,16 @@ public class DiseaseOccurrenceReview {
     @Generated(value = GenerationTime.INSERT)
     private Date createdDate;
 
+    public DiseaseOccurrenceReview() {
+    }
+
+    public DiseaseOccurrenceReview(Expert expert, DiseaseOccurrence diseaseOccurrence,
+                                   DiseaseOccurrenceReviewResponse response) {
+        this.expert = expert;
+        this.diseaseOccurrence = diseaseOccurrence;
+        this.response = response;
+    }
+
     public Integer getId() {
         return id;
     }
