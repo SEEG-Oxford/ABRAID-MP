@@ -13,7 +13,7 @@ import java.io.File;
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
-    private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("APPDATA") + "\\Local\\abraid\\modelwrapper";
+    private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
     private FileConfiguration basicProperties;
 
     private static final String USERNAME_KEY = "auth.username";

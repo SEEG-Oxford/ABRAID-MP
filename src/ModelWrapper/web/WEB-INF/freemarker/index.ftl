@@ -16,6 +16,9 @@
         <div class="panel-collapse collapse in" id="repo-body">
             <div class="panel-body">
                 <p>Use the fields below to update the repository details used obtain the niche model.</p> <br>
+                <#list modelVersions as modelVersion>
+                    ${modelVersion}, <br>
+                </#list>
                 <p><a class="btn btn-primary" role="button">Sync</a></p>
             </div>
         </div>

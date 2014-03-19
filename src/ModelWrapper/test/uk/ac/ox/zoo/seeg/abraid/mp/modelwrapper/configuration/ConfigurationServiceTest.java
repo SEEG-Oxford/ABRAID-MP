@@ -108,7 +108,7 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(result).isEqualTo(OS.isFamilyWindows() ?
-                System.getenv("APPDATA") + "\\Local\\abraid\\modelwrapper" :
+                System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper" :
                 "/var/lib/abraid/modelwrapper");
     }
 

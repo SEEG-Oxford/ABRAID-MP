@@ -5,10 +5,14 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -21,10 +25,10 @@ public class IndexControllerTest {
     @Test
     public void showIndexPageReturnsCorrectFreemarkerTemplateName() {
         // Arrange
-        IndexController target = new IndexController(null);
+        IndexController target = new IndexController(null, mock(SourceCodeManager.class));
 
         // Act
-        String result = target.showIndexPage();
+        String result = target.showIndexPage(mock(Model.class));
 
         // Assert
         assertThat(result).isEqualTo("index");
@@ -34,7 +38,7 @@ public class IndexControllerTest {
     public void updateAuthenticationDetailsCallConfigurationServiceWithCorrectParams() {
         // Arrange
         ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService);
+        IndexController target = new IndexController(mockConfService, null);
         String expectedPassword = "PasswordOne1";
         String expectedUser = "user";
 
@@ -55,7 +59,7 @@ public class IndexControllerTest {
         // Arrange
         List<String> invalidUserNames = Arrays.asList("", null, "u", "^273", "user name");
         ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService);
+        IndexController target = new IndexController(mockConfService, null);
 
         for (String username : invalidUserNames) {
             // Act
@@ -71,7 +75,7 @@ public class IndexControllerTest {
         // Arrange
         List<String> invalidPasswords = Arrays.asList("", null, "u", "^273", "user name");
         ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService);
+        IndexController target = new IndexController(mockConfService, null);
 
         for (String password : invalidPasswords) {
             // Act
