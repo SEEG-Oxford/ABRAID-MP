@@ -1,13 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import org.apache.commons.exec.OS;
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -23,7 +22,7 @@ public class ConfigurationServiceTest {
     public void setAuthenticationDetailsUpdatesFile() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
-        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2");
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3");
         ConfigurationService target = new ConfigurationServiceImpl(testFile);
 
         String expectedUserName = "foo";
@@ -33,14 +32,22 @@ public class ConfigurationServiceTest {
         target.setAuthenticationDetails(expectedUserName, expectedPasswordHash);
 
         // Assert
-        assertThat(testFile).hasContent("auth.username=" + expectedUserName + System.lineSeparator() +
+        assertThat(FileUtils.readFileToString(testFile)).contains("auth.username=" + expectedUserName + System.lineSeparator() +
                 "auth.password_hash=" + expectedPasswordHash);
     }
 
-    private void writeStandardSimpleProperties(File testFile, String defaultUsername, String defaultPasswordHash) throws FileNotFoundException, UnsupportedEncodingException {
+    private void writeStandardSimpleProperties(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl) throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writer = new PrintWriter(testFile, "UTF-8");
         writer.println("auth.username=" + defaultUsername);
         writer.println("auth.password_hash=" + defaultPasswordHash);
+        writer.println("model.repo.url=" + defaultRepoUrl);
+        writer.close();
+    }
+
+    private void writeStandardSimplePropertiesWithCacheDir(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultCacheDir) throws Exception {
+        writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl);
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
+        writer.println("cache.data.dir=" + defaultCacheDir);
         writer.close();
     }
 
@@ -49,7 +56,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         String expectedUserName = "foo";
-        writeStandardSimpleProperties(testFile, expectedUserName, "initialValue2");
+        writeStandardSimpleProperties(testFile, expectedUserName, "initialValue2", "initialValue3");
         ConfigurationService s = new ConfigurationServiceImpl(testFile);
 
         // Act
@@ -64,7 +71,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         String expectedPasswordHash = "foo";
-        writeStandardSimpleProperties(testFile, "initialValue1", expectedPasswordHash);
+        writeStandardSimpleProperties(testFile, "initialValue1", expectedPasswordHash, "initialValue3");
         ConfigurationService s = new ConfigurationServiceImpl(testFile);
 
         // Act
@@ -72,5 +79,51 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(result).isEqualTo(expectedPasswordHash);
+    }
+
+    @Test
+    public void getModelRepositoryUrlReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedUrl = "foo";
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", expectedUrl);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+
+        // Act
+        String result = s.getModelRepositoryUrl();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedUrl);
+    }
+
+    @Test
+    public void getCacheDirectoryReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3");
+        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+
+        // Act
+        String result = s.getCacheDirectory();
+
+        // Assert
+        assertThat(result).isEqualTo(OS.isFamilyWindows() ?
+                System.getenv("APPDATA") + "\\Local\\abraid\\modelwrapper" :
+                "/var/lib/abraid/modelwrapper");
+    }
+
+    @Test
+    public void getCacheDirectoryReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedDir = "foo";
+        writeStandardSimplePropertiesWithCacheDir(testFile, "initialValue1", "initialValue2", "initialValue3", expectedDir);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+
+        // Act
+        String result = s.getCacheDirectory();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedDir);
     }
 }
