@@ -8,4 +8,8 @@
     <bean id="workspaceProvisioner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisionerImpl" autowire="constructor"/>
     <bean id="modelRunner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl" autowire="constructor"/>
 
+    <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationServiceImpl" >
+        <constructor-arg name="basicProperties" value="WEB-INF/modelwrapper.properties"/>
+    </bean>
+
 </beans>
