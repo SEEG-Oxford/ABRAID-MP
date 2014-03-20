@@ -20,7 +20,7 @@ public final class GeoJsonAlert {
         this.summary = alert.getSummary();
         this.url = alert.getUrl();
         this.feedName = alert.getFeed().getName();
-        this.publicationDate = new DateTime(alert.getPublicationDate());
+        this.publicationDate = alert.getPublicationDate();
     }
 
     public String getTitle() {

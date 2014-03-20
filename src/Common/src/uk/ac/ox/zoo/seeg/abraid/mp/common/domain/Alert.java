@@ -37,7 +37,7 @@ public class Alert {
     // The publication date of the alert. This may be different from the actual date that the disease occurred,
     // which if known is specified in DiseaseOccurrence.OccurrenceDate.
     @Column
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime publicationDate;
 
     // The URL of the alert.
@@ -55,7 +55,7 @@ public class Alert {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
     public Alert() {

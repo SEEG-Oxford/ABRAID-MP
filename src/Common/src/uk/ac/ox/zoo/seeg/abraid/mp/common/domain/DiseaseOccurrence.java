@@ -55,7 +55,7 @@ public class DiseaseOccurrence {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
     // The weighting as calculated from experts' responses.
@@ -63,7 +63,7 @@ public class DiseaseOccurrence {
 
     // The start date of the disease occurrence (if known).
     @Column
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime occurrenceStartDate;
 
     public DiseaseOccurrence() {

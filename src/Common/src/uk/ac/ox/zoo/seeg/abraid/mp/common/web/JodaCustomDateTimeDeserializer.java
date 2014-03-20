@@ -18,7 +18,8 @@ import java.io.IOException;
  * Copyright (c) 2014 University of Oxford
  */
 public class JodaCustomDateTimeDeserializer extends DateTimeDeserializer {
-    private DateTimeFormatter dateTimeFormatter;
+    private static final long serialVersionUID = 4530909041442821333L;
+    private transient DateTimeFormatter dateTimeFormatter;
 
     @SuppressWarnings("unchecked")
     public JodaCustomDateTimeDeserializer(Class<? extends ReadableInstant> cls, DateTimeFormatter dateTimeFormatter) {
@@ -26,6 +27,13 @@ public class JodaCustomDateTimeDeserializer extends DateTimeDeserializer {
         this.dateTimeFormatter = dateTimeFormatter;
     }
 
+    /**
+     * Factory method for a JodaCustomDateTimeDeserializer.
+     * @param cls The class to deserialize.
+     * @param dateTimeFormatter The Joda Time formatter for DateTime objects.
+     * @param <T> The type to deserialize.
+     * @return A new JodaCustomDateTimeDeserializer.
+     */
     @SuppressWarnings("unchecked")
     public static <T extends ReadableInstant> JsonDeserializer<T> forType(Class<T> cls,
                                                                           DateTimeFormatter dateTimeFormatter) {

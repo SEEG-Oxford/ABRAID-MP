@@ -22,7 +22,7 @@ public class GeoJsonDiseaseOccurrenceFeaturePropertiesTest extends AbstractDisea
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getName()).thenReturn(expectedLocationName);
         when(occurrence.getLocation().getCountry().getName()).thenReturn(expectedCountryName);
-        when(occurrence.getOccurrenceStartDate()).thenReturn(expectedStartDate.toDate());
+        when(occurrence.getOccurrenceStartDate()).thenReturn(expectedStartDate);
 
         // Act
         GeoJsonDiseaseOccurrenceFeatureProperties result = new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);
