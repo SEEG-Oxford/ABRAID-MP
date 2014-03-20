@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -69,6 +70,44 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Act
         ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
                 target.getDiseaseOccurrencesForReviewByCurrentUser(1);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+     public void submitReviewReturnsHttpNoContentForValidInputs() {
+        // Arrange
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        when(diseaseService.doesDiseaseOccurrenceMatchDisease(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
+                expertService);
+
+        // Act
+        ResponseEntity result = target.submitReview(1, 1,"YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void submitReviewReturnsHttpBadRequestForInvalidInputs() {
+        // Arrange
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        when(diseaseService.doesDiseaseOccurrenceMatchDisease(anyInt(), anyInt())).thenReturn(false);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
+                expertService);
+
+        // Act
+        ResponseEntity result = target.submitReview(1, 1,"YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

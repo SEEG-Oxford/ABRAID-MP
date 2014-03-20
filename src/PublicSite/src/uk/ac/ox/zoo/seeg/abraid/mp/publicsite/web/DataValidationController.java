@@ -37,7 +37,7 @@ public class DataValidationController {
     private final ExpertService expertService;
 
     @Autowired
-    public DataValidationController(CurrentUserService currentUserService,DiseaseService diseaseService,
+    public DataValidationController(CurrentUserService currentUserService, DiseaseService diseaseService,
                                     ExpertService expertService) {
         this.currentUserService = currentUserService;
         this.diseaseService = diseaseService;
@@ -90,13 +90,15 @@ public class DataValidationController {
      * Saves the expert's review to the database.
      * @param diseaseId The id of the disease.
      * @param occurrenceId The id of the disease occurrence being reviewed.
+     * @param review The response string submitted by the expert, should only be YES, UNSURE or NO.
      * @return A HTTP status code response entity.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
-    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId, String review) {
+    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId,
+                                       String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Integer expertId = user.getId();
         String expertEmail = user.getUsername();

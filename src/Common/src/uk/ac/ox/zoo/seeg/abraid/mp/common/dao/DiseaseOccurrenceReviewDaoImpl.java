@@ -42,7 +42,8 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     }
 
     /**
-     * Determines whether a review for the specified disease occurrence, by the specified expert, already exists in the database.
+     * Determines whether a review for the specified disease occurrence, by the specified expert,
+     * already exists in the database.
      * @param diseaseOccurrenceId The id of the disease occurrence.
      * @param expertId The id of the specified expert.
      * @return True if the review already exists, otherwise false.

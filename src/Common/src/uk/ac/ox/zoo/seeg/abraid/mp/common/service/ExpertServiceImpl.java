@@ -82,6 +82,18 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets a list of the disease occurrence reviews the specified expert has submitted for the specified disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @return The list of disease occurrences reviews.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getAllReviewsForExpertIdAndDiseaseGroupId(Integer expertId,
+                                                                                   Integer diseaseGroupId) {
+        return diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+    }
+
+    /**
      * Saves the disease occurrence review.
      * @param expertEmail The email address of the expert providing review.
      * @param occurrenceId The id of the disease occurrence.
@@ -114,6 +126,7 @@ public class ExpertServiceImpl implements ExpertService {
      * @param expertId The id of the specified expert.
      * @return True if disease is an expert's interest, otherwise false.
      */
+    @Override
     public boolean isDiseaseGroupInExpertsDiseaseInterests(Integer diseaseGroupId, Integer expertId) {
         Set<DiseaseGroup> diseaseInterests = getDiseaseInterests(expertId);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
@@ -126,6 +139,7 @@ public class ExpertServiceImpl implements ExpertService {
      * @param expertId The id of the specified expert.
      * @return True if the review already exists, otherwise false.
      */
+    @Override
     public boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId) {
         return diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expertId, diseaseOccurrenceId);
     }

@@ -1,9 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 import java.util.Set;
@@ -49,12 +46,21 @@ public interface ExpertService {
     Set<DiseaseGroup> getDiseaseInterests(Integer expertId);
 
     /**
+     * Gets a list of the disease occurrence reviews the specified expert has submitted for the specified disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @return The list of disease occurrences reviews.
+     */
+    List<DiseaseOccurrenceReview> getAllReviewsForExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId);
+
+    /**
      * Saves the disease occurrence review.
      * @param expertEmail The email address of the expert providing review.
      * @param occurrenceId The id of the disease occurrence.
      * @param response The expert's response.
      */
-    void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId, DiseaseOccurrenceReviewResponse response);
+    void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId,
+                                     DiseaseOccurrenceReviewResponse response);
 
     /**
      * Saves the specified expert.
@@ -71,7 +77,8 @@ public interface ExpertService {
     boolean isDiseaseGroupInExpertsDiseaseInterests(Integer diseaseGroupId, Integer expertId);
 
     /**
-     * Determines whether a review for the specified disease occurrence, by the specified expert, already exists in the database.
+     * Determines whether a review for the specified disease occurrence, by the specified expert,
+     * already exists in the database.
      * @param expertId The id of the specified expert.
      * @param diseaseOccurrenceId The id of the disease occurrence.
      * @return True if the review already exists, otherwise false.
