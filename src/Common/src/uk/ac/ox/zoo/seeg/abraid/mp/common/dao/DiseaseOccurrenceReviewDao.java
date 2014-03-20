@@ -36,4 +36,13 @@ public interface DiseaseOccurrenceReviewDao {
      * @param diseaseOccurrenceReview The review to save.
      */
     void save(DiseaseOccurrenceReview diseaseOccurrenceReview);
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert,
+     * already exists in the database.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @param expertId The id of the specified expert.
+     * @return True if the review already exists, otherwise false.
+     */
+    boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
 }

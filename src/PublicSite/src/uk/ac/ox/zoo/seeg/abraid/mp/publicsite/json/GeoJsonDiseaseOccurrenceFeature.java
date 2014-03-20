@@ -25,8 +25,8 @@ public final class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
 
     private static GeoJsonGeometry extractGeometry(DiseaseOccurrence occurrence) {
         return new GeoJsonPointGeometry(
-                occurrence.getLocation().getGeom().getY(),
                 occurrence.getLocation().getGeom().getX(),
+                occurrence.getLocation().getGeom().getY(),
                 null, null);
     }
 

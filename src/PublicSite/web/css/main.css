@@ -16,6 +16,12 @@ html,body
     margin: 0 auto -50px;
     overflow:auto;
 }
+.navbar-right div
+{
+    padding-top:15px;
+    padding-left:15px;
+    color:rgb(153, 153, 153);
+}
 #layerSelector
 {
     position:absolute;
@@ -29,20 +35,20 @@ html,body
 }
 #map
 {
-    position:relative;
     height:100%;
     width:85%;
     float:left;
 }
 #sidePanel
 {
-    width:15%;
     height:100%;
+    width:15%;
     float:right;
+    background-color:rgb(214, 214, 214);
+    opacity:0.8;
 }
 .datapointInfo
 {
-    padding:10px;
     height:90%;
     position:relative;
 }
@@ -50,44 +56,52 @@ html,body
 {
     min-height:57px;
 }
-#summary
-{
-    padding-left:5px;
-    max-height:680px;
-    overflow-y:auto;
-    word-wrap:break-word;
-}
-#datapointInfoLowerPane
-{
-    position:absolute;
-    bottom:30px;
-}
-#counter
-{
-    height:10%;
-    position:absolute;
-    bottom:50px;
-}
 .datapointInfo ul
 {
     list-style-type: none;
-    padding:0;
+    padding:10px;
     margin:0;
 }
 .datapointInfo p
 {
     display:inline;
 }
-.datapointInfo button
+#summary
+{
+    margin:5px;
+    padding:10px;
+    max-height:600px;
+    overflow-y:auto;
+    word-wrap:break-word;
+    background-color:rgb(234, 234, 234);
+    border-radius:25px;
+}
+#datapointInfoLowerPane
+{
+    width:100%;
+    padding:10px;
+    position:absolute;
+    bottom:30px;
+}
+#datapointInfoLowerPane .btn-group
+{
+    width:100%;
+}
+#datapointInfoLowerPane button
 {
     margin-top:5px;
-    width:165px;
 }
-#welcomeMessage
+#datapointInfoLowerPane .btn-group button
 {
-    padding-top:15px;
-    padding-left:15px;
-    color:rgb(153, 153, 153);
+    width:33.3%;
+    height:54px;
+    white-space:normal
+}
+#counter
+{
+    height:10%;
+    position:absolute;
+    bottom:50px;
 }
 .footer
 {
@@ -98,7 +112,7 @@ html,body
     padding-top:20px;
     background-color:rgb(51, 51, 51);
 }
-#logInMessage,
+.navbar-right p,
 .footer > .container > .links > a,
 .footer > .container > .links > p
 {

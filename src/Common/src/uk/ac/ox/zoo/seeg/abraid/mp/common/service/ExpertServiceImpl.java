@@ -2,11 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 import java.util.Set;
@@ -21,12 +20,14 @@ public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseGroupDao diseaseGroupDao;
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
 
     public ExpertServiceImpl(ExpertDao expertDao, DiseaseOccurrenceDao diseaseOccurrenceDao,
-                             DiseaseGroupDao diseaseGroupDao) {
+                             DiseaseGroupDao diseaseGroupDao, DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
+        this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
     }
 
     /**
@@ -81,6 +82,35 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets a list of the disease occurrence reviews the specified expert has submitted for the specified disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @return The list of disease occurrences reviews.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getAllReviewsForExpertIdAndDiseaseGroupId(Integer expertId,
+                                                                                   Integer diseaseGroupId) {
+        return diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+    }
+
+    /**
+     * Saves the disease occurrence review.
+     * @param expertEmail The email address of the expert providing review.
+     * @param occurrenceId The id of the disease occurrence.
+     * @param response The expert's response.
+     */
+    @Override
+    public void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId,
+                                            DiseaseOccurrenceReviewResponse response) {
+        Expert expert = getExpertByEmail(expertEmail);
+        DiseaseOccurrence diseaseOccurrence = diseaseOccurrenceDao.getById(occurrenceId);
+
+        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview(expert, diseaseOccurrence,
+                response);
+        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
+    }
+
+    /**
      * Saves the specified expert.
      * @param expert The expert to save.
      */
@@ -88,5 +118,30 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     public void saveExpert(Expert expert) {
         expertDao.save(expert);
+    }
+
+    /**
+     * Determines whether specified disease group is in expert's set of disease interests.
+     * @param diseaseGroupId The id of the disease group.
+     * @param expertId The id of the specified expert.
+     * @return True if disease is an expert's interest, otherwise false.
+     */
+    @Override
+    public boolean isDiseaseGroupInExpertsDiseaseInterests(Integer diseaseGroupId, Integer expertId) {
+        Set<DiseaseGroup> diseaseInterests = getDiseaseInterests(expertId);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        return diseaseInterests.contains(diseaseGroup);
+    }
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert,
+     * already exists in the database.
+     * @param diseaseOccurrenceId The id of the disease group.
+     * @param expertId The id of the specified expert.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId) {
+        return diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expertId, diseaseOccurrenceId);
     }
 }

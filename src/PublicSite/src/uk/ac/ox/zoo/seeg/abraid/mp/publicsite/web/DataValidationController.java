@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
@@ -30,13 +32,16 @@ import java.util.Set;
 public class DataValidationController {
     /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
-    private final ExpertService expertService;
     private final CurrentUserService currentUserService;
+    private final DiseaseService diseaseService;
+    private final ExpertService expertService;
 
     @Autowired
-    public DataValidationController(ExpertService expertService, CurrentUserService currentUserService) {
-        this.expertService = expertService;
+    public DataValidationController(CurrentUserService currentUserService, DiseaseService diseaseService,
+                                    ExpertService expertService) {
         this.currentUserService = currentUserService;
+        this.diseaseService = diseaseService;
+        this.expertService = expertService;
     }
 
     /**
@@ -78,5 +83,43 @@ public class DataValidationController {
         }
 
         return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
+    }
+
+    /**
+     * Saves the expert's review to the database.
+     * @param diseaseId The id of the disease.
+     * @param occurrenceId The id of the disease occurrence being reviewed.
+     * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
+     * @return A HTTP status code response entity.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences/{occurrenceId}/validate",
+            method = RequestMethod.POST)
+    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId,
+                                       String review) {
+        PublicSiteUser user = currentUserService.getCurrentUser();
+        Integer expertId = user.getId();
+        String expertEmail = user.getUsername();
+
+        // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
+        // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
+        DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse;
+        try {
+             diseaseOccurrenceReviewResponse = DiseaseOccurrenceReviewResponse.valueOf(review);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        boolean validInputParameters = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(occurrenceId, diseaseId) &&
+                (expertService.isDiseaseGroupInExpertsDiseaseInterests(diseaseId, expertId)) &&
+                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
+
+        if (validInputParameters) {
+            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, diseaseOccurrenceReviewResponse);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 }

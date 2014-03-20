@@ -22,6 +22,11 @@ import javax.persistence.*;
         name = "getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
         query = "from DiseaseOccurrenceReview where expert.id=:expertId " +
                 "and diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
+    ),
+    @NamedQuery(
+            name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
+            query = "select 1 from DiseaseOccurrenceReview where expert.id=:expertId " +
+                    "and diseaseOccurrence.id=:diseaseOccurrenceId"
     )
 })
 public class DiseaseOccurrenceReview {
@@ -50,6 +55,16 @@ public class DiseaseOccurrenceReview {
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
+
+    public DiseaseOccurrenceReview() {
+    }
+
+    public DiseaseOccurrenceReview(Expert expert, DiseaseOccurrence diseaseOccurrence,
+                                   DiseaseOccurrenceReviewResponse response) {
+        this.expert = expert;
+        this.diseaseOccurrence = diseaseOccurrence;
+        this.response = response;
+    }
 
     public Integer getId() {
         return id;

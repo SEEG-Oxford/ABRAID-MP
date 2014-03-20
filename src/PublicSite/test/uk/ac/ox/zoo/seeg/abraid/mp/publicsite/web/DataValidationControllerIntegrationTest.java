@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
@@ -38,6 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration("file:PublicSite/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class DataValidationControllerIntegrationTest {
+    @Autowired
+    private DiseaseService diseaseService;
+
     @Autowired
     private ExpertService expertService;
 
@@ -112,5 +116,68 @@ public class DataValidationControllerIntegrationTest {
         this.mockMvc.perform(
                 patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void submitReviewAcceptsValidRequest() throws Exception {
+
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        this.mockMvc.perform(
+                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void submitReviewOnlyAcceptsPOST() throws Exception {
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        this.mockMvc.perform(
+                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isNoContent());
+
+        this.mockMvc.perform(
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void submitReviewRejectsInvalidNumericId() throws Exception {
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(false);
+
+        this.mockMvc.perform(
+                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "YES"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void submitReviewRejectsInvalidReviewParameterString() throws Exception {
+        this.mockMvc.perform(
+                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                .param("review", "InvalidReviewParameter"))
+                .andExpect(status().isBadRequest());
     }
 }

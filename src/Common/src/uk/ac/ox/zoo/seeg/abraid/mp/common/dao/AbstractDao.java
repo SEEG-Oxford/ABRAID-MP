@@ -198,7 +198,14 @@ public abstract class AbstractDao<E, I extends Serializable> {
         currentSession().save(entity);
     }
 
-    private Query getParameterisedNamedQuery(String namedQuery, Object[] parameterNamesAndValues) {
+    /**
+     * Gets a named query, and sets the specified parameters.
+     * @param namedQuery the named query.
+     * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
+     * @return the named query.
+     */
+    public Query getParameterisedNamedQuery(String namedQuery, Object... parameterNamesAndValues) {
         Query query = namedQuery(namedQuery);
         for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
             query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);

@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -61,6 +63,7 @@ public class Expert {
     @JoinTable(name = "ExpertDiseaseGroup",
             joinColumns = { @JoinColumn(name = "ExpertId") },
             inverseJoinColumns = { @JoinColumn(name = "DiseaseGroupId") })
+    @Fetch(FetchMode.SELECT)
     private Set<DiseaseGroup> diseaseGroups;
 
     public Integer getId() {

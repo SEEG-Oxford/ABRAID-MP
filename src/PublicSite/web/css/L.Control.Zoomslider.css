@@ -41,7 +41,7 @@
 }
 .leaflet-control-zoomslider-knob {
 	position: relative;
-	width: 12px;
+	width: 14px;
 	height: 4px;
 	background-color: black;
 	-webkit-border-radius: 2px;
@@ -89,14 +89,14 @@
 	font: bold 18px 'Lucida Console', Monaco, monospace;
 }
 .leaflet-control-zoomslider-in:after{
-    color:rgb(153, 153, 153);
+    color: black;
 	content:"+"
 }
 .leaflet-control-zoomslider-out {
     font: bold 22px 'Lucida Console', Monaco, monospace;
 }
 .leaflet-control-zoomslider-out:after{
-    color:rgb(153, 153, 153);
+    color:black;
 	content:"-"
 }
 .leaflet-control-zoomslider a.leaflet-control-zoomslider-disabled {
@@ -147,4 +147,9 @@
 }
 .leaflet-oldie .leaflet-control-zoomslider-out {
 	*zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '-');
+}
+
+.leaflet-control-zoomslider-wrap {
+    background-color: white;
+    color: black;
 }

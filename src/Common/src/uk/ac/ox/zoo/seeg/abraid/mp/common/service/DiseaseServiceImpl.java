@@ -86,4 +86,16 @@ public class DiseaseServiceImpl implements DiseaseService {
 
         return matchingOccurrences.size() > 0;
     }
+
+    /**
+     * Determines whether the occurrence's disease id matches the id of the disease group.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @param diseaseGroupId The id of the disease group.
+     * @return True if the occurrence and disease group refer to the same disease, otherwise false.
+     */
+    public boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId) {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        return occurrence.getDiseaseGroup() == diseaseGroup;
+    }
 }
