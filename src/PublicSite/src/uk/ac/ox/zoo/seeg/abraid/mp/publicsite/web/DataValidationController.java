@@ -69,15 +69,14 @@ public class DataValidationController {
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer diseaseId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<DiseaseOccurrence> occurrences = null;
+        List<DiseaseOccurrence> occurrences;
 
         try {
             occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), diseaseId);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>(
-                new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
+        return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 }
