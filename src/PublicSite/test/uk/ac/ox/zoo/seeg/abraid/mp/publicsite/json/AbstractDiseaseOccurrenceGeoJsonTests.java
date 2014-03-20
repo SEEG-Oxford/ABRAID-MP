@@ -75,8 +75,8 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "         \"geometry\":{" +
                     "            \"type\":\"Point\"," +
                     "            \"coordinates\":[" +
-                    "               1.0," +
-                    "               -1.0" +
+                    "               -1.0," +
+                    "               1.0" +
                     "            ]" +
                     "         }," +
                     "         \"properties\":{" +
@@ -98,8 +98,8 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "         \"geometry\":{" +
                     "            \"type\":\"Point\"," +
                     "            \"coordinates\":[" +
-                    "               1.0," +
-                    "               -1.0" +
+                    "               -1.0," +
+                    "               1.0" +
                     "            ]" +
                     "         }," +
                     "         \"properties\":{" +

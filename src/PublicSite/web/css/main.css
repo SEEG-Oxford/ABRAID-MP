@@ -70,7 +70,7 @@ html,body
 {
     margin:5px;
     padding:10px;
-    max-height:680px;
+    max-height:600px;
     overflow-y:auto;
     word-wrap:break-word;
     background-color:rgb(234, 234, 234);
