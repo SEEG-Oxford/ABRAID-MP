@@ -80,7 +80,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
-        when(diseaseService.doesDiseaseOccurrenceMatchDisease(anyInt(), anyInt())).thenReturn(true);
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
         when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
@@ -88,7 +88,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
                 expertService);
 
         // Act
-        ResponseEntity result = target.submitReview(1, 1,"YES");
+        ResponseEntity result = target.submitReview(1, 1, "YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -99,7 +99,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
-        when(diseaseService.doesDiseaseOccurrenceMatchDisease(anyInt(), anyInt())).thenReturn(false);
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(false);
         when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
@@ -107,7 +107,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
                 expertService);
 
         // Act
-        ResponseEntity result = target.submitReview(1, 1,"YES");
+        ResponseEntity result = target.submitReview(1, 1, "YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

@@ -90,7 +90,7 @@ public class DataValidationController {
      * Saves the expert's review to the database.
      * @param diseaseId The id of the disease.
      * @param occurrenceId The id of the disease occurrence being reviewed.
-     * @param review The response string submitted by the expert, should only be YES, UNSURE or NO.
+     * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
      * @return A HTTP status code response entity.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
@@ -103,17 +103,21 @@ public class DataValidationController {
         Integer expertId = user.getId();
         String expertEmail = user.getUsername();
 
-        DiseaseOccurrenceReviewResponse response;
+        // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
+        // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
+        DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse;
         try {
-             response = DiseaseOccurrenceReviewResponse.valueOf(review);
+             diseaseOccurrenceReviewResponse = DiseaseOccurrenceReviewResponse.valueOf(review);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        if (diseaseService.doesDiseaseOccurrenceMatchDisease(occurrenceId, diseaseId) &&
+        boolean validInputParameters = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(occurrenceId, diseaseId) &&
                 (expertService.isDiseaseGroupInExpertsDiseaseInterests(diseaseId, expertId)) &&
-                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId))) {
-            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, response);
+                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
+
+        if (validInputParameters) {
+            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, diseaseOccurrenceReviewResponse);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);

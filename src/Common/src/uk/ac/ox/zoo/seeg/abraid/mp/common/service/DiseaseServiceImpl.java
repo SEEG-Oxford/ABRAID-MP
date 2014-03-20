@@ -93,7 +93,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param diseaseGroupId The id of the disease group.
      * @return True if the occurrence and disease group refer to the same disease, otherwise false.
      */
-    public boolean doesDiseaseOccurrenceMatchDisease(Integer diseaseOccurrenceId, Integer diseaseGroupId) {
+    public boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         return occurrence.getDiseaseGroup() == diseaseGroup;

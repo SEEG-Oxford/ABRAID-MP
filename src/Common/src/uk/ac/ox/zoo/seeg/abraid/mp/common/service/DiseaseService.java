@@ -48,5 +48,5 @@ public interface DiseaseService {
      * @param diseaseGroupId The id of the disease group.
      * @return True if the occurrence and disease group refer to the same disease, otherwise false.
      */
-    boolean doesDiseaseOccurrenceMatchDisease(Integer diseaseOccurrenceId, Integer diseaseGroupId);
+    boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId);
 }

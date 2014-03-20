@@ -122,7 +122,7 @@ public class DataValidationControllerIntegrationTest {
     @Test
     public void submitReviewAcceptsValidRequest() throws Exception {
 
-        when(diseaseService.doesDiseaseOccurrenceMatchDisease(anyInt(), anyInt())).thenReturn(true);
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
         when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
@@ -171,10 +171,10 @@ public class DataValidationControllerIntegrationTest {
     }
 
     @Test
-    public void submitReviewRejectsInvalidReviewResponseString() throws Exception {
+    public void submitReviewRejectsInvalidReviewParameterString() throws Exception {
         this.mockMvc.perform(
                 post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
-                .param("review", "InvalidReviewResponse"))
+                .param("review", "InvalidReviewParameter"))
                 .andExpect(status().isBadRequest());
     }
 }
