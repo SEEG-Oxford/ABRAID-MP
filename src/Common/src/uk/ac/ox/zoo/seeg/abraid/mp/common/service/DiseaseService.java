@@ -41,4 +41,12 @@ public interface DiseaseService {
      * @return True if the occurrence already exists in the database, otherwise false.
      */
     boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence);
+
+    /**
+     * Determines whether the specified occurrence's disease id matches the id of the corresponding disease group.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @param diseaseGroupId The id of the disease group.
+     * @return True if the occurrence and disease group refer to the same disease, otherwise false.
+     */
+    boolean doesDiseaseOccurrenceMatchDisease(Integer diseaseOccurrenceId, Integer diseaseGroupId);
 }

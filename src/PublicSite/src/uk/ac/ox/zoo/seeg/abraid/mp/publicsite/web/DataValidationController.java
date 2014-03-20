@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
@@ -31,13 +32,16 @@ import java.util.Set;
 public class DataValidationController {
     /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
-    private final ExpertService expertService;
     private final CurrentUserService currentUserService;
+    private final DiseaseService diseaseService;
+    private final ExpertService expertService;
 
     @Autowired
-    public DataValidationController(ExpertService expertService, CurrentUserService currentUserService) {
-        this.expertService = expertService;
+    public DataValidationController(CurrentUserService currentUserService,DiseaseService diseaseService,
+                                    ExpertService expertService) {
         this.currentUserService = currentUserService;
+        this.diseaseService = diseaseService;
+        this.expertService = expertService;
     }
 
     /**
@@ -94,12 +98,23 @@ public class DataValidationController {
             method = RequestMethod.POST)
     public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId, String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
+        Integer expertId = user.getId();
+        String expertEmail = user.getUsername();
+
+        DiseaseOccurrenceReviewResponse response;
         try {
-            DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.valueOf(review);
-            expertService.saveDiseaseOccurrenceReview(user.getUsername(), occurrenceId, response);
+             response = DiseaseOccurrenceReviewResponse.valueOf(review);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(HttpStatus.OK);
+
+        if (diseaseService.doesDiseaseOccurrenceMatchDisease(occurrenceId, diseaseId) &&
+                (expertService.isDiseaseGroupInExpertsDiseaseInterests(diseaseId, expertId)) &&
+                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId))) {
+            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, response);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 }

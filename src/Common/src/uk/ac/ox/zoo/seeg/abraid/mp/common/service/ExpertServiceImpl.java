@@ -2,14 +2,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -108,5 +106,27 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     public void saveExpert(Expert expert) {
         expertDao.save(expert);
+    }
+
+    /**
+     * Determines whether specified disease group is in expert's set of disease interests.
+     * @param diseaseGroupId The id of the disease group.
+     * @param expertId The id of the specified expert.
+     * @return True if disease is an expert's interest, otherwise false.
+     */
+    public boolean isDiseaseGroupInExpertsDiseaseInterests(Integer diseaseGroupId, Integer expertId) {
+        Set<DiseaseGroup> diseaseInterests = getDiseaseInterests(expertId);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        return diseaseInterests.contains(diseaseGroup);
+    }
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert, already exists in the database.
+     * @param diseaseOccurrenceId The id of the disease group.
+     * @param expertId The id of the specified expert.
+     * @return True if the review already exists, otherwise false.
+     */
+    public boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId) {
+        return diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expertId, diseaseOccurrenceId);
     }
 }

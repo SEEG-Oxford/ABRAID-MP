@@ -61,4 +61,20 @@ public interface ExpertService {
      * @param expert The expert to save.
      */
     void saveExpert(Expert expert);
+
+    /**
+     * Determines whether specified disease group is in expert's set of disease interests.
+     * @param diseaseGroupId The id of the disease group.
+     * @param expertId The id of the specified expert.
+     * @return True if disease is an expert's interest, otherwise false.
+     */
+    boolean isDiseaseGroupInExpertsDiseaseInterests(Integer diseaseGroupId, Integer expertId);
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert, already exists in the database.
+     * @param expertId The id of the specified expert.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @return True if the review already exists, otherwise false.
+     */
+    boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
 }

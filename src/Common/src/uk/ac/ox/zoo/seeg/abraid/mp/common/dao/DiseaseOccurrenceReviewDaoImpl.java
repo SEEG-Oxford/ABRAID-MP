@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
@@ -38,5 +39,18 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     public List<DiseaseOccurrenceReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
                 "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert, already exists in the database.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @param expertId The id of the specified expert.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId) {
+        Query query = getParameterisedNamedQuery("getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
+                "expertId", expertId, "diseaseOccurrenceId", diseaseOccurrenceId);
+        return query.uniqueResult() != null;
     }
 }

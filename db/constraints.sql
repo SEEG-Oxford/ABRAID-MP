@@ -11,6 +11,9 @@ ALTER TABLE Alert
 
 ALTER TABLE DiseaseGroup
     ADD CONSTRAINT UQ_DiseaseGroup_Name_GroupType UNIQUE (Name, GroupType);
+	
+ALTER TABLE DiseaseOccurrenceReview
+	ADD CONSTRAINT UQ_DiseaseOccurrenceReview_ExpertId_DiseaseOccurrenceId UNIQUE (ExpertId, DiseaseOccurrenceId);
 
 ALTER TABLE Expert
     ADD CONSTRAINT UQ_Expert_Email UNIQUE (Email);
