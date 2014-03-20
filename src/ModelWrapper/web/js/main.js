@@ -4,6 +4,7 @@
  */
 (function (document, baseURL, ko, $) {
     (function configureKnockoutValidation() {
+        // Adapted from https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#are-same
         ko.validation.rules.areSame = {
             getValue: function (o) {
                 return (typeof o === 'function' ? o() : o);
@@ -14,6 +15,7 @@
             message: "Password fields must match"
         };
 
+        // Adapted from https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
         ko.validation.rules.passwordComplexity = {
             validator: function (val) {
                 return /(?=^[^\s]{6,128}$)((?=.*?\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\d)(?=.*?[^\w\d\s])(?=.*?[a-z])|(?=.*?[^\w\d\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\d)(?=.*?[A-Z])(?=.*?[^\w\d\s]))^.*/.test('' + val + '');
@@ -21,6 +23,7 @@
             message: 'Password must be between 6 and 128 characters long and contain three of the following 4 items: upper case letter, lower case letter, a symbol, a number'
         };
 
+        // Adapted from https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
         ko.validation.rules.usernameComplexity = {
             validator: function (val) {
                 return /^[a-z0-9_-]{3,15}$/.test('' + val + '');
