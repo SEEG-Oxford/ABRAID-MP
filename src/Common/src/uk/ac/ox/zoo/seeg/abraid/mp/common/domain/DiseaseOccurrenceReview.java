@@ -2,9 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Represents an expert's response to the validity of a disease occurrence point.
@@ -47,7 +48,8 @@ public class DiseaseOccurrenceReview {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    private Date createdDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     public Integer getId() {
         return id;
@@ -81,7 +83,7 @@ public class DiseaseOccurrenceReview {
         this.diseaseOccurrence = diseaseOccurrence;
     }
 
-    public Date getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 }

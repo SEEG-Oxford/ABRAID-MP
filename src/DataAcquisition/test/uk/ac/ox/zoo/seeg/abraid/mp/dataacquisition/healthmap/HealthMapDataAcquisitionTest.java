@@ -1,12 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -25,8 +28,8 @@ public class HealthMapDataAcquisitionTest {
     @Test
     public void firstRunDefaultStartDateSet() {
         // Arrange
-        Date defaultStartDate = getDate(2004, 2, 1, 1, 2, 3);
-        Date endDate = Calendar.getInstance().getTime();
+        DateTime defaultStartDate = new DateTime("2004-02-01T01:02:03+0000");
+        DateTime endDate = DateTime.now();
         Provenance provenance = new Provenance();
         List<HealthMapLocation> locations = new ArrayList<>();
 
@@ -47,11 +50,8 @@ public class HealthMapDataAcquisitionTest {
     public void firstRunDefaultStartDateDaysBeforeNowSet() {
         // Arrange
         int defaultStartDateDaysBeforeNow = 3;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, -3);
-
-        Date startDate = calendar.getTime();
-        Date endDate = Calendar.getInstance().getTime();
+        DateTime startDate = DateTime.now().minusDays(3);
+        DateTime endDate = DateTime.now();
 
         Provenance provenance = new Provenance();
         List<HealthMapLocation> locations = new ArrayList<>();
@@ -73,8 +73,8 @@ public class HealthMapDataAcquisitionTest {
     @Test
     public void firstRunDefaultStartDateAndDefaultStartDateDaysBeforeNowSet() {
         // Arrange
-        Date defaultStartDate = getDate(2004, 2, 1, 1, 2, 3);
-        Date endDate = Calendar.getInstance().getTime();
+        DateTime defaultStartDate = new DateTime("2004-02-01T01:02:03+0000");
+        DateTime endDate = DateTime.now();
         Provenance provenance = new Provenance();
         List<HealthMapLocation> locations = new ArrayList<>();
 
@@ -95,10 +95,10 @@ public class HealthMapDataAcquisitionTest {
     @Test
     public void alreadyRun() {
         // Arrange
-        Date startDate = getDate(2004, 2, 1, 1, 2, 3);
-        Date defaultStartDate = getDate(2006, 2, 1, 1, 2, 3);
+        DateTime startDate = new DateTime("2004-02-01T01:02:03+0000");
+        DateTime defaultStartDate = new DateTime("2006-02-01T01:02:03+0000");
         int defaultStartDateDaysBeforeNow = 3;
-        Date endDate = Calendar.getInstance().getTime();
+        DateTime endDate = DateTime.now();
         Provenance provenance = new Provenance();
         provenance.setLastRetrievalEndDate(startDate);
         List<HealthMapLocation> locations = new ArrayList<>();
@@ -120,13 +120,10 @@ public class HealthMapDataAcquisitionTest {
     @Test
     public void endDateDaysAfterStartDateSet() {
         // Arrange
-        Date startDate = getDate(2004, 2, 1, 1, 2, 3);
+        DateTime startDate = new DateTime("2004-02-01T01:02:03+0000");
 
         int endDateDaysAfterStartDate = 3;
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.setTime(startDate);
-        endCalendar.add(Calendar.DAY_OF_MONTH, endDateDaysAfterStartDate);
-        Date endDate = endCalendar.getTime();
+        DateTime endDate = DateTime.now().plusDays(endDateDaysAfterStartDate);
 
         Provenance provenance = new Provenance();
         provenance.setLastRetrievalEndDate(startDate);
@@ -149,8 +146,8 @@ public class HealthMapDataAcquisitionTest {
     @Test
     public void webServiceRequestFailed() {
         // Arrange
-        Date startDate = getDate(2004, 2, 1, 1, 2, 3);
-        Date endDate = Calendar.getInstance().getTime();
+        DateTime startDate = new DateTime("2004-02-01T01:02:03+0000");
+        DateTime endDate = DateTime.now();
 
         Provenance provenance = new Provenance();
         provenance.setLastRetrievalEndDate(startDate);
@@ -165,28 +162,19 @@ public class HealthMapDataAcquisitionTest {
 
         // Assert
         //noinspection unchecked
-        verify(dataConverter, never()).convert(anyList(), any(Date.class));
+        verify(dataConverter, never()).convert(anyList(), any(DateTime.class));
     }
 
-    private Date getDate(int year, int month, int date, int hourOfDay, int minute, int second) {
-        // The date's timezone is UTC (i.e. +0000)
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/UTC"));
-        //noinspection MagicConstant
-        calendar.set(year, month - 1, date, hourOfDay, minute, second);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
-    private Date approx(Date date) {
+    private DateTime approx(DateTime date) {
         return argThat(new ApproximatelyMatches(date));
     }
 
     // Matcher that compares two dates for approximate equality, for use with dates that rely on the current time
-    public class ApproximatelyMatches extends ArgumentMatcher<Date> {
-        private Date comparisonDate;
+    public class ApproximatelyMatches extends ArgumentMatcher<DateTime> {
+        private DateTime comparisonDate;
         private static final long TOLERANCE_MILLISECONDS = 1000;
 
-        public ApproximatelyMatches(Date comparisonDate) {
+        public ApproximatelyMatches(DateTime comparisonDate) {
             this.comparisonDate = comparisonDate;
         }
 
@@ -199,7 +187,7 @@ public class HealthMapDataAcquisitionTest {
                 return false;
             }
 
-            long differenceInMillis = Math.abs(comparisonDate.getTime() - ((Date)date).getTime());
+            long differenceInMillis = new Duration(comparisonDate, (DateTime)date).getMillis();
             return differenceInMillis < TOLERANCE_MILLISECONDS;
         }
     }

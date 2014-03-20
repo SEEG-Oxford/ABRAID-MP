@@ -1,11 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,5 +53,5 @@ public interface DiseaseOccurrenceDao {
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForExistenceCheck(DiseaseGroup diseaseGroup,
                                                                    Location location, Alert alert,
-                                                                   Date occurrenceStartDate);
+                                                                   DateTime occurrenceStartDate);
 }

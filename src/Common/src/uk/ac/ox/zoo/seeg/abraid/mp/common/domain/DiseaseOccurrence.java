@@ -1,13 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
-import java.util.Date;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * Represents an occurrence of a disease group, in a location, as reported by an alert.
@@ -55,14 +55,16 @@ public class DiseaseOccurrence {
     // The database row creation date.
     @Column(insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
-    private Date createdDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     // The weighting as calculated from experts' responses.
     private Double validationWeighting;
 
     // The start date of the disease occurrence (if known).
     @Column
-    private Date occurrenceStartDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime occurrenceStartDate;
 
     public DiseaseOccurrence() {
     }
@@ -95,7 +97,7 @@ public class DiseaseOccurrence {
         this.alert = alert;
     }
 
-    public Date getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 
@@ -107,11 +109,11 @@ public class DiseaseOccurrence {
         this.validationWeighting = validationWeighting;
     }
 
-    public Date getOccurrenceStartDate() {
+    public DateTime getOccurrenceStartDate() {
         return occurrenceStartDate;
     }
 
-    public void setOccurrenceStartDate(Date occurrenceStartDate) {
+    public void setOccurrenceStartDate(DateTime occurrenceStartDate) {
         this.occurrenceStartDate = occurrenceStartDate;
     }
 

@@ -1,6 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 

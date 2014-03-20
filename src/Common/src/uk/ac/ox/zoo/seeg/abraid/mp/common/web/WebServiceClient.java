@@ -1,17 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
+import org.apache.log4j.Logger;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import org.apache.log4j.Logger;
-
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Acts as a web service client.
@@ -54,7 +53,7 @@ public class WebServiceClient {
             client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 
-            Date startDate = Calendar.getInstance().getTime();
+            DateTime startDate = DateTime.now();
             LOGGER.debug(String.format(CALLING_WEB_SERVICE_MESSAGE, url));
             Response response = client.target(url).request().get();
 
@@ -66,8 +65,8 @@ public class WebServiceClient {
                 throw new WebServiceClientException(message);
             }
 
-            Date endDate = Calendar.getInstance().getTime();
-            long callDuration = endDate.getTime() - startDate.getTime();
+            DateTime endDate = DateTime.now();
+            long callDuration = new Duration(startDate, endDate).getMillis();
             LOGGER.debug(String.format(CALLED_WEB_SERVICE_MESSAGE, url, callDuration));
 
             return response.readEntity(String.class);
