@@ -57,7 +57,7 @@ public class Expert {
     private DateTime createdDate;
 
     // List of disease groups an expert has interest in and can validate.
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "ExpertDiseaseGroup",
             joinColumns = { @JoinColumn(name = "ExpertId") },
             inverseJoinColumns = { @JoinColumn(name = "DiseaseGroupId") })

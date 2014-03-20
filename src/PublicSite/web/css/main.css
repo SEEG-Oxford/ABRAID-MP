@@ -16,8 +16,20 @@ html,body
     margin: 0 auto -50px;
     overflow:auto;
 }
+#layerSelector
+{
+    position:absolute;
+    z-index:10;
+    margin-left:50px;"
+}
+#layerSelector > h4, select
+{
+    background:none;
+    color:rgb(51, 51, 51);
+}
 #map
 {
+    position:relative;
     height:100%;
     width:85%;
     float:left;
@@ -25,20 +37,51 @@ html,body
 #sidePanel
 {
     width:15%;
+    height:100%;
     float:right;
 }
-#datapointInfo
+.datapointInfo
 {
+    padding:10px;
     height:90%;
-    border:1px solid black;
+    position:relative;
+}
+.datapointInfo h4
+{
+    min-height:57px;
+}
+#summary
+{
+    padding-left:5px;
+    max-height:680px;
+    overflow-y:auto;
+    word-wrap:break-word;
+}
+#datapointInfoLowerPane
+{
+    position:absolute;
+    bottom:30px;
 }
 #counter
 {
     height:10%;
-    width:15%;
     position:absolute;
     bottom:50px;
-    border:1px solid black;
+}
+.datapointInfo ul
+{
+    list-style-type: none;
+    padding:0;
+    margin:0;
+}
+.datapointInfo p
+{
+    display:inline;
+}
+.datapointInfo button
+{
+    margin-top:5px;
+    width:165px;
 }
 #welcomeMessage
 {
@@ -55,12 +98,14 @@ html,body
     padding-top:20px;
     background-color:rgb(51, 51, 51);
 }
-.footer > .container > .links > a, p
+#logInMessage,
+.footer > .container > .links > a,
+.footer > .container > .links > p
 {
     color:rgb(153, 153, 153);
     display:inline;
 }
-.footer > .container > .links > a:link, a:visited {
+.footer > .container > .links > a:link a:visited {
     color:rgb(153, 153, 153);
     background-color: rgb(51, 51, 51);
     text-decoration:none;
@@ -77,6 +122,10 @@ html,body
 .links
 {
     float: left;
+}
+.fa-map-marker
+{
+    padding: 2px;
 }
 
 

@@ -5,7 +5,6 @@
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <#import "/spring.ftl" as spring />
-
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
 
@@ -40,7 +39,7 @@
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right">
                     <li id="welcomeMessage">Hello <@security.authentication property="principal.fullName"/></li>
-                    <li><a href="j_spring_security_logout">Log out</a></li>
+                    <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
                 </ul>
             </@security.authorize>
 
