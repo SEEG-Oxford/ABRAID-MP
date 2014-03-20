@@ -41,7 +41,7 @@ public class IndexController {
     }
 
     /**
-     * Updated the modelwrapper authentication details.
+     * Updates the modelwrapper authentication details.
      * @param username The new username.
      * @param password The new password.
      * @param passwordConfirmation Confirmation of the new password.
