@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -40,6 +39,7 @@ public class IndexController {
 
     /**
      * Request map for the index page.
+     * @param model The ftl data model.
      * @return The ftl index page name.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
