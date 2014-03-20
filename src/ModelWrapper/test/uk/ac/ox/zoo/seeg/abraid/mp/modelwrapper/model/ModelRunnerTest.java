@@ -39,7 +39,7 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, 0);
+        RunConfiguration config = new RunConfiguration(null, null, null, 0, "");
 
         // Act
         target.runModel(config);
@@ -62,7 +62,7 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, 0);
+        RunConfiguration config = new RunConfiguration(null, null, null, 0, "");
 
         // Act
         target.runModel(config);
@@ -89,7 +89,7 @@ public class ModelRunnerTest {
         File expectedR = new File("e1");
         File expectedBase = new File("base");
         int expectedTimeout = 10;
-        RunConfiguration config = new RunConfiguration(expectedR, expectedBase, null, expectedTimeout);
+        RunConfiguration config = new RunConfiguration(expectedR, expectedBase, null, expectedTimeout, "");
 
         // Act
         target.runModel(config);

@@ -42,7 +42,7 @@
     var authViewModel = ko.validatedObservable((function () {
         var username = ko.observable().extend({ required: true,  usernameComplexity: true });
         var password = ko.observable().extend({ required: true, passwordComplexity: true });
-        var passwordConfirmation = ko.observable().extend({ required: true, passwordComplexity: true, areSame: { params: password }});
+        var passwordConfirmation = ko.observable().extend({ required: true, passwordComplexity: true, areSame: password });
         var saving = ko.observable(false);
         var notices = ko.observableArray();
         var submit = function () {

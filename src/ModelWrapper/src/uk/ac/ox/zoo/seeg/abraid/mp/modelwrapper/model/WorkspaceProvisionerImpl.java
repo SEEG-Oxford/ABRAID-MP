@@ -13,10 +13,14 @@ import java.util.UUID;
  * Copyright (c) 2014 University of Oxford
  */
 public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
-    private final ScriptGenerator scriptGenerator;
+    private static final String MODEL_CODE_DIRECTORY_NAME = "model";
 
-    public WorkspaceProvisionerImpl(ScriptGenerator scriptGenerator) {
+    private final ScriptGenerator scriptGenerator;
+    private final SourceCodeManager sourceCodeManager;
+
+    public WorkspaceProvisionerImpl(ScriptGenerator scriptGenerator, SourceCodeManager sourceCodeManager) {
         this.scriptGenerator = scriptGenerator;
+        this.sourceCodeManager = sourceCodeManager;
     }
 
     /**
@@ -27,20 +31,25 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
      */
     @Override
     public File provisionWorkspace(RunConfiguration configuration) throws IOException {
-        // Create directory
+        // Create directories
         Path workingDirectoryPath = Paths.get(
                 configuration.getBaseDir().getAbsolutePath(),
                 configuration.getRunName() + "-" + UUID.randomUUID().toString());
 
         File workingDirectory = workingDirectoryPath.toFile();
-        boolean directoryCreated = workingDirectory.mkdirs();
+        boolean workingDirectoryCreated = workingDirectory.mkdirs();
 
-        if (!directoryCreated) {
-            throw new IOException("Directory could not be created.");
+        Path modelDirectoryPath = Paths.get(workingDirectoryPath.toString(), MODEL_CODE_DIRECTORY_NAME);
+        File modelDirectory = modelDirectoryPath.toFile();
+        boolean modelDirectoryCreated = modelDirectory.mkdir();
+
+        if (!workingDirectoryCreated || !modelDirectoryCreated) {
+            throw new IOException("Directory structure could not be created.");
         }
 
         // Copy input data
         // Copy model
+        sourceCodeManager.provisionVersion(configuration.getModelVersion(), modelDirectory);
 
         // Template script
         File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);

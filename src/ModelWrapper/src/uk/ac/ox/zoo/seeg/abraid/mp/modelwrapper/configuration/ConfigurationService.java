@@ -23,4 +23,16 @@ public interface ConfigurationService {
      * @return The password hash.
      */
     String getAuthenticationPasswordHash();
+
+    /**
+     * Get the current remote repository url to use as a source for the model.
+     * @return The repository url.
+     */
+    String getModelRepositoryUrl();
+
+    /**
+     * Gets the current directory to use for data caching.
+     * @return The cache directory.
+     */
+    String getCacheDirectory();
 }

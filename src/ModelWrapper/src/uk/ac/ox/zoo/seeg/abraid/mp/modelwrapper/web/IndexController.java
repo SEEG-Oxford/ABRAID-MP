@@ -5,11 +5,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -25,19 +29,31 @@ public class IndexController {
     private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=^[^\\s]{6,128}$)((?=.*?\\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[^\\w\\d\\s])(?=.*?[a-z])|(?=.*?[^\\w\\d\\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[A-Z])(?=.*?[^\\w\\d\\s]))^.*$");
     // CHECKSTYLE:ON
 
-    private ConfigurationService configurationService;
+    private final ConfigurationService configurationService;
+    private final SourceCodeManager sourceCodeManager;
 
     @Autowired
-    public IndexController(ConfigurationService configurationService) {
+    public IndexController(ConfigurationService configurationService, SourceCodeManager sourceCodeManager) {
         this.configurationService = configurationService;
+        this.sourceCodeManager = sourceCodeManager;
     }
 
     /**
      * Request map for the index page.
+     * @param model The ftl data model.
      * @return The ftl index page name.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String showIndexPage() {
+    public String showIndexPage(Model model) {
+        List<String> modelVersions;
+        try {
+            sourceCodeManager.updateRepository();
+            modelVersions = sourceCodeManager.getAvailableVersions();
+        } catch (Exception e) {
+            modelVersions = new ArrayList<>();
+            modelVersions.add("No versions found!");
+        }
+        model.addAttribute("modelVersions", modelVersions);
         return "index";
     }
 
