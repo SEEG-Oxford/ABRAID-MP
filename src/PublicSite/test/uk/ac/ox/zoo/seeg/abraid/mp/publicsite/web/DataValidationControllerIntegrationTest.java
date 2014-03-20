@@ -133,6 +133,10 @@ public class DataValidationControllerIntegrationTest {
 
     @Test
     public void submitReviewOnlyAcceptsPOST() throws Exception {
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
         this.mockMvc.perform(
                 post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
