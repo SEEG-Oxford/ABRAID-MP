@@ -49,6 +49,8 @@
         <exclude org="org.hibernate.javax.persistence" module="hibernate-jpa-2.0-api"/>
         <exclude org="org.apache.geronimo.specs" module="geronimo-jpa_2.0_spec"/>
 
+        <!-- JUnit should only be in the testing configuration, also the version usertype depends on clashes with the more recent version we use -->
+        <exclude org="junit" module="junit" conf="external" />
         &ivy-excludes;
     </dependencies>
 </ivy-module>
