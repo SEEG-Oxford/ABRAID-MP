@@ -38,10 +38,10 @@ code {
     text-decoration:none;
 }
 #footer .copyright {
-    float: left;
+    float: right;
 }
 #footer .links {
-    float: right;
+    float: left;
 }
 .input-group {
     max-width: 450px;
