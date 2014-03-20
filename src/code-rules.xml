@@ -2,8 +2,4 @@
     Provides a list of FindBugs rules which should not be applied to ABRAID-MP
     Copyright (c) 2014 University of Oxford
 -->
-<FindBugsFilter>
-     <Match>
-       <Bug code="EI,EI2" /> <!-- Enable once Ed's fixed his stuff -->
-     </Match>
-</FindBugsFilter>
+<FindBugsFilter/>

@@ -1,14 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,8 +36,8 @@ public class HealthMapDataAcquisition {
      */
     @Transactional
     public void acquireData() {
-        Date startDate = getStartDate();
-        Date endDate = getEndDate(startDate);
+        DateTime startDate = getStartDate();
+        DateTime endDate = getEndDate(startDate);
 
         List<HealthMapLocation> healthMapLocations = retrieveData(startDate, endDate);
         if (healthMapLocations != null) {
@@ -46,7 +45,7 @@ public class HealthMapDataAcquisition {
         }
     }
 
-    private List<HealthMapLocation> retrieveData(Date startDate, Date endDate) {
+    private List<HealthMapLocation> retrieveData(DateTime startDate, DateTime endDate) {
         try {
             return healthMapWebService.sendRequest(startDate, endDate);
         } catch (WebServiceClientException|JsonParserException e) {
@@ -63,34 +62,30 @@ public class HealthMapDataAcquisition {
      * 4. 7 days before now
      * @return The start date for the HealthMap alerts retrieval.
      */
-    private Date getStartDate() {
+    private DateTime getStartDate() {
         Provenance provenance = healthMapLookupData.getHealthMapProvenance();
         if (provenance != null && provenance.getLastRetrievalEndDate() != null) {
             return provenance.getLastRetrievalEndDate();
         } else if (healthMapWebService.getDefaultStartDate() != null) {
             return healthMapWebService.getDefaultStartDate();
         } else {
-            Calendar startDate = Calendar.getInstance();
-            startDate.add(Calendar.DAY_OF_MONTH, -healthMapWebService.getDefaultStartDateDaysBeforeNow());
-            return startDate.getTime();
+            return DateTime.now().minusDays(healthMapWebService.getDefaultStartDateDaysBeforeNow());
         }
     }
 
-    private Date getEndDate(Date startDate) {
-        Calendar endCalendar = Calendar.getInstance();
+    private DateTime getEndDate(DateTime startDate) {
+        DateTime endDate = DateTime.now();
 
         Integer endDateDaysAfterStartDate = healthMapWebService.getEndDateDaysAfterStartDate();
         if (endDateDaysAfterStartDate != null) {
             // Set the end date to the specified number of days after the start date, as long as this does not push
             // the date into the future
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(startDate);
-            calendar.add(Calendar.DAY_OF_MONTH, endDateDaysAfterStartDate);
-            if (calendar.compareTo(endCalendar) < 0) {
-                endCalendar = calendar;
+            DateTime endDateAfterStartDate = startDate.plusDays(endDateDaysAfterStartDate);
+            if (endDateAfterStartDate.isBefore(endDate)) {
+                endDate = endDateAfterStartDate;
             }
         }
 
-        return endCalendar.getTime();
+        return endDate;
     }
 }

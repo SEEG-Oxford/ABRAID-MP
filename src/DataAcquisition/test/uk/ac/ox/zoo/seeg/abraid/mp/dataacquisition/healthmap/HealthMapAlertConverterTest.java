@@ -1,13 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
@@ -79,7 +78,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/doesnotcontainalertid";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
@@ -127,7 +126,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
@@ -170,7 +169,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
@@ -227,7 +226,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String healthMapDiseaseNewName = "Test disease new name";
@@ -275,7 +274,7 @@ public class HealthMapAlertConverterTest {
         Long diseaseId = 1L;
         Long feedId = 1L;
         Long existingDiseaseId = 2L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String existingHealthMapDiseaseName = "Test existing disease";
@@ -324,7 +323,7 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String description = "Test description";
         long healthMapAlertId = 2154965L;
@@ -360,7 +359,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
@@ -399,7 +398,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
@@ -443,7 +442,7 @@ public class HealthMapAlertConverterTest {
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
-        Date publicationDate = Calendar.getInstance().getTime();
+        DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";

@@ -1,15 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import com.vividsolutions.jts.geom.Point;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -128,9 +126,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         Alert alert = createAlert();
         Location location = createLocation();
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
-        Calendar occurrenceStartCalendar = Calendar.getInstance();
-        occurrenceStartCalendar.add(Calendar.DAY_OF_YEAR, -5);
-        Date occurrenceStartDate = occurrenceStartCalendar.getTime();
+        DateTime occurrenceStartDate = DateTime.now().minusDays(5);
         double validationWeighting = 0.5;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
@@ -209,7 +205,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getDiseaseOccurrencesForExistenceCheckOccurrenceStartDateDifferent() {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
-        Date occurrenceStartDate = Calendar.getInstance().getTime();
+        DateTime occurrenceStartDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
                 occurrenceStartDate);
@@ -218,9 +214,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     private Alert createAlert() {
         Feed feed = feedDao.getById(1);
-        Calendar publicationCalendar = Calendar.getInstance();
-        publicationCalendar.add(Calendar.DAY_OF_YEAR, -5);
-        Date publicationDate = publicationCalendar.getTime();
+        DateTime publicationDate = DateTime.now().minusDays(5);
         long healthMapAlertId = 100L;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
         String summary = "This is a summary of the alert";

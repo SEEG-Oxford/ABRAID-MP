@@ -14,13 +14,14 @@
     </publications>
     <dependencies>
         <!-- Common -->
-        <dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
-        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-context" rev="4.0.2.RELEASE" conf="external->default"/>
+        <dependency org="org.springframework" name="spring-orm" rev="4.0.2.RELEASE" conf="external->default"/>
 
         <!-- Web services -->
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
         <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.6" conf="external->default"/>
-        <dependency org="org.glassfish.jersey.media" name="jersey-media-json-jackson" rev="2.6" conf="external->default"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.1" conf="external->default" />
+        <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.1" conf="external->default" />
 
         <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
         <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true" conf="external->default" />
@@ -32,6 +33,7 @@
         <dependency org="org.hibernate" name="hibernate-core" rev="4.3.1.Final" conf="external->default" />
         <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41" conf="external->default" />
         <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2" conf="external->default" />
+        <dependency org="org.jadira.usertype" name="usertype.core" rev="3.1.0.GA" conf="external->default" />
 
         <!-- TODO: When hibernate-spatial 4.3 is released: -->
         <!-- 1. Include this line (you may need to exclude org="postgresql" name="postgresql" if it is older than revision 9.3) -->
@@ -47,6 +49,8 @@
         <exclude org="org.hibernate.javax.persistence" module="hibernate-jpa-2.0-api"/>
         <exclude org="org.apache.geronimo.specs" module="geronimo-jpa_2.0_spec"/>
 
+        <!-- JUnit should only be in the testing configuration, also the version usertype depends on clashes with the more recent version we use -->
+        <exclude org="junit" module="junit" conf="external" />
         &ivy-excludes;
     </dependencies>
 </ivy-module>

@@ -20,18 +20,23 @@ public class RunConfiguration {
     // The maximum allowable model run time in ms
     private final int maxRuntime;
 
+    // The version of the model to use
+    private String modelVersion;
+
     /**
      * Creates a new RunConfiguration.
      * @param rPath The file path for the R binary to be executed.
      * @param baseDir The executable which should be run.
      * @param runName The name that should be used to identify the run.
      * @param maxRuntime The maximum allowed time (in ms) for which the model should be allow to run.
+     * @param modelVersion The version of the model to use.
      */
-    public RunConfiguration(File rPath, File baseDir, String runName, int maxRuntime) {
+    public RunConfiguration(File rPath, File baseDir, String runName, int maxRuntime, String modelVersion) {
         this.rPath = rPath;
         this.baseDir = baseDir;
         this.runName = runName;
         this.maxRuntime = maxRuntime;
+        this.modelVersion = modelVersion;
     }
 
     public String getRunName() {
@@ -48,5 +53,9 @@ public class RunConfiguration {
 
     public File getBaseDir() {
         return baseDir;
+    }
+
+    public String getModelVersion() {
+        return modelVersion;
     }
 }

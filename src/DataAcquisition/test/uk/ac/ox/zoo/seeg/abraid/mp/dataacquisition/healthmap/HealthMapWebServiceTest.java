@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
@@ -7,10 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -27,8 +25,8 @@ public class HealthMapWebServiceTest {
     @Test
     public void successfulHealthMapCall() {
         // Arrange
-        Date startDate = getDate(2014, 1, 6, 10, 1, 2);
-        Date endDate = getDate(2014, 1, 7, 13, 10, 59);
+        DateTime startDate = new DateTime("2014-01-06T10:01:02+0000");
+        DateTime endDate = new DateTime("2014-01-07T13:10:59+0000");
         String startDateUrl = "2014-01-06+10:01:02%2B0000";
         String endDateUrl = "2014-01-07+13:10:59%2B0000";
         
@@ -159,7 +157,7 @@ public class HealthMapWebServiceTest {
 
         HealthMapAlert location1Alert1 = location1.getAlerts().get(0);
         assertThat(location1Alert1.getAlertId()).isEqualTo(2161280);
-        assertThatDatesAreEqual(location1Alert1.getDate(), getDate(2014, 1, 7, 5, 0, 0));
+        assertThatDatesAreEqual(location1Alert1.getDate(), new DateTime("2014-01-07T05:00:00+0000"));
         assertThat(location1Alert1.getDescription()).isNull();
         assertThat(location1Alert1.getDisease()).isEqualTo("Avian Influenza H7N9");
         assertThat(location1Alert1.getFeed()).isEqualTo("Food and Agriculture Org");
@@ -173,7 +171,7 @@ public class HealthMapWebServiceTest {
 
         HealthMapAlert location1Alert2 = location1.getAlerts().get(1);
         assertThat(location1Alert2.getAlertId()).isEqualTo(2155089);
-        assertThatDatesAreEqual(location1Alert2.getDate(), getDate(2014, 1, 6, 21, 7, 33));
+        assertThatDatesAreEqual(location1Alert2.getDate(), new DateTime("2014-01-06T21:07:33+0000"));
         assertThat(location1Alert2.getDescription()).isEqualTo("The United Nations World Health Organization (WHO)" +
                 " revealed Monday that China&#39;s National Health and Family Planning Commission had notified it" +
                 " in mid-December of two new laboratory-confirmed cases of human infection with avian influenza" +
@@ -216,7 +214,7 @@ public class HealthMapWebServiceTest {
     @Test
     public void healthMapReturnsNoResults() {
         // Arrange
-        Date startDate = getDate(2014, 1, 6, 0, 0, 0);
+        DateTime startDate = new DateTime("2014-01-06T00:00:00+0000");
         String startDateUrl = "2014-01-06+00:00:00%2B0000";
         String json = "[]";
 
@@ -266,7 +264,7 @@ public class HealthMapWebServiceTest {
     @Test
     public void setDefaultStartDateValid() {
         // Arrange
-        Date startDate = getDate(2014, 4, 21, 14, 29, 3);
+        DateTime startDate = new DateTime("2014-04-21T14:29:03+0000");
         String startDateString = "2014-04-21 15:29:03+0100";
 
         // Act
@@ -319,18 +317,9 @@ public class HealthMapWebServiceTest {
         when(client.request(url)).thenReturn(json);
         return client;
     }
-    
-    private Date getDate(int year, int month, int date, int hourOfDay, int minute, int second) {
-        // The date's timezone is UTC (i.e. +0000)
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/UTC"));
-        //noinspection MagicConstant
-        calendar.set(year, month - 1, date, hourOfDay, minute, second);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
 
-    private void assertThatDatesAreEqual(Date date1, Date date2) {
-        // This compares milliseconds from the epoch (e.g. timezones differences are ignored)
-        assertThat(date1.getTime()).isEqualTo(date2.getTime());
+    private void assertThatDatesAreEqual(DateTime date1, DateTime date2) {
+        // This ensures that timezone differences are ignored
+        assertThat(date1.toLocalDateTime()).isEqualTo(date2.toLocalDateTime());
     }
 }

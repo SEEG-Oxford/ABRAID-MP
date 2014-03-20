@@ -26,7 +26,7 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
         when(alert.getSummary()).thenReturn(expectedSummary);
         when(alert.getFeed().getName()).thenReturn(expectedFeedName);
         when(alert.getUrl()).thenReturn(expectedUrl);
-        when(alert.getPublicationDate()).thenReturn(expectedPublicationDate.toDate());
+        when(alert.getPublicationDate()).thenReturn(expectedPublicationDate);
 
         // Act
         GeoJsonAlert result = new GeoJsonAlert(alert);

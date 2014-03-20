@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
@@ -71,7 +72,7 @@ public class MainTest {
         Alert occurrence1Alert = occurrences.get(0).getAlert();
         assertThat(occurrence1Alert.getFeed().getName()).isEqualTo("Eyewitness Reports");
         assertThat(occurrence1Alert.getFeed().getHealthMapFeedId()).isEqualTo(34);
-        assertThat(occurrence1Alert.getPublicationDate()).isEqualTo(getDate(2014, 3, 10, 4, 0, 0));
+        assertThat(occurrence1Alert.getPublicationDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
         assertThat(occurrence1Alert.getHealthMapAlertId()).isEqualTo(2324002);
         assertThat(occurrence1Alert.getUrl()).isEqualTo("onm.php?id=XX_ALERT_ID_XX");
         assertThat(occurrence1Alert.getSummary()).isNullOrEmpty();
@@ -81,7 +82,7 @@ public class MainTest {
         DiseaseGroup occurrence1DiseaseGroup = occurrences.get(0).getDiseaseGroup();
         assertThat(occurrence1DiseaseGroup.getName()).isEqualTo("Dengue");
         
-        assertThat(occurrences.get(0).getOccurrenceStartDate()).isEqualTo(getDate(2014, 3, 10, 4, 0, 0));
+        assertThat(occurrences.get(0).getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
         assertThat(occurrences.get(0).getCreatedDate()).isNotNull();
 
         // Location 2
@@ -99,7 +100,7 @@ public class MainTest {
         Alert occurrence2Alert = occurrences.get(1).getAlert();
         assertThat(occurrence2Alert.getFeed().getName()).isEqualTo("Google News");
         assertThat(occurrence2Alert.getFeed().getHealthMapFeedId()).isEqualTo(4);
-        assertThat(occurrence2Alert.getPublicationDate()).isEqualTo(getDate(2014, 3, 10, 2, 50, 58));
+        assertThat(occurrence2Alert.getPublicationDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
         assertThat(occurrence2Alert.getHealthMapAlertId()).isEqualTo(2323248);
         assertThat(occurrence2Alert.getUrl()).isEqualTo("http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNF4EFD" +
                 "nuQ1IvVKEkyHzR4WL8Uf0mQ&cid=c3a7d30bb8a4878e06b80cf16b898331&url=http://www.radionz.co.nz/interna" +
@@ -114,7 +115,7 @@ public class MainTest {
         DiseaseGroup occurrence2DiseaseGroup = occurrences.get(1).getDiseaseGroup();
         assertThat(occurrence2DiseaseGroup.getName()).isEqualTo("Dengue");
 
-        assertThat(occurrences.get(1).getOccurrenceStartDate()).isEqualTo(getDate(2014, 3, 10, 2, 50, 58));
+        assertThat(occurrences.get(1).getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
         assertThat(occurrences.get(1).getCreatedDate()).isNotNull();
     }
 
@@ -208,14 +209,5 @@ public class MainTest {
                 "\"fcode\": \"" + featureCode + "\",\n" +
                 "\"geonameId\": " + geoNameId.toString() + "\n" +
                 "}\n";
-    }
-
-    private Date getDate(int year, int month, int date, int hourOfDay, int minute, int second) {
-        // The date's timezone is UTC (i.e. +0000)
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/UTC"));
-        //noinspection MagicConstant
-        calendar.set(year, month - 1, date, hourOfDay, minute, second);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
     }
 }

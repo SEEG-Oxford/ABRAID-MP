@@ -30,7 +30,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatItHasCreated() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0);
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -46,7 +46,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatIsBasedOnTheCorrectTemplate() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0);
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -60,7 +60,7 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         String expectedRunName = "foobar4321";
-        RunConfiguration conf = new RunConfiguration(null, null, expectedRunName, 0);
+        RunConfiguration conf = new RunConfiguration(null, null, expectedRunName, 0, "");
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -73,7 +73,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfScriptCanNotBeWritten() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0);
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
 
         // Act
         catchException(target).generateScript(conf, new File("non-existent"), false);

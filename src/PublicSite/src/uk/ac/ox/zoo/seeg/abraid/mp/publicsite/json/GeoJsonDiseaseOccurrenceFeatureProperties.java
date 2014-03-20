@@ -17,7 +17,7 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     public GeoJsonDiseaseOccurrenceFeatureProperties(DiseaseOccurrence occurrence) {
         this.locationName = occurrence.getLocation().getName();
         this.countryName = occurrence.getLocation().getCountry().getName();
-        this.diseaseOccurrenceStartDate = new DateTime(occurrence.getOccurrenceStartDate());
+        this.diseaseOccurrenceStartDate = occurrence.getOccurrenceStartDate();
         this.alert = new GeoJsonAlert(occurrence.getAlert());
     }
 

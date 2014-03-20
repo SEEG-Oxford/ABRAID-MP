@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -36,15 +37,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
         "classpath:uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/mockServices.xml"})
 @WebAppConfiguration("file:PublicSite/web")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class DataValidationControllerIntegrationTest {
     @Autowired
     private DiseaseService diseaseService;
 
     @Autowired
     private ExpertService expertService;
-
-    @Autowired
-    private DataValidationController controller;
 
     private MockMvc mockMvc;
 

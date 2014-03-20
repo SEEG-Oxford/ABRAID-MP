@@ -1,16 +1,18 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.util.StringUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
 import javax.ws.rs.core.UriBuilder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,7 +34,7 @@ public class HealthMapWebService {
 
     // The default start date. This is used if HealthMap has not previously been queried, according to the
     // Provenance.LastRetrievedDate field.
-    private Date defaultStartDate;
+    private DateTime defaultStartDate;
 
     // If defaultStartDate is not specified, the start date is this number of days before now (i.e. the current date).
     private Integer defaultStartDateDaysBeforeNow = null;
@@ -41,7 +43,7 @@ public class HealthMapWebService {
     private Integer endDateDaysAfterStartDate = null;
 
     // The date/time format used in both the request URL and the response JSON.
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ssZ");
 
     // Web service parameter names
     private String authorizationParameterName;
@@ -69,7 +71,7 @@ public class HealthMapWebService {
         this.stripHtml = stripHtml;
     }
 
-    public Date getDefaultStartDate() {
+    public DateTime getDefaultStartDate() {
         return defaultStartDate;
     }
 
@@ -80,8 +82,8 @@ public class HealthMapWebService {
     public void setDefaultStartDate(String defaultStartDateString) {
         if (StringUtils.hasText(defaultStartDateString)) {
             try {
-                defaultStartDate = dateFormat.parse(defaultStartDateString);
-            } catch (ParseException e) {
+                defaultStartDate = dateTimeFormatter.parseDateTime(defaultStartDateString);
+            } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Cannot parse HealthMap default start date: " + defaultStartDateString);
             }
         }
@@ -127,7 +129,7 @@ public class HealthMapWebService {
      * @throws WebServiceClientException If the web service call fails.
      * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
-    public List<HealthMapLocation> sendRequest(Date startDate, Date endDate)
+    public List<HealthMapLocation> sendRequest(DateTime startDate, DateTime endDate)
             throws WebServiceClientException, JsonParserException {
         String formattedStartDate = formatDateWithNullProtection(startDate);
         String formattedEndDate = formatDateWithNullProtection(endDate);
@@ -153,20 +155,15 @@ public class HealthMapWebService {
 
     private List<HealthMapLocation> parseJson(String json) {
         // Sets the date format that we expect to receive in the JSON
-        JsonParser parser = new JsonParser(new ObjectMapperConfigurer() {
-            @Override
-            public void configure(ObjectMapper mapper) {
-                mapper.setDateFormat(dateFormat);
-            }
-        });
+        JsonParser parser = new JsonParser(dateTimeFormatter);
 
         // Because our desired type uses generics, we need to wrap it in a TypeReference
         // (we cannot use List<HealthMapLocation>.class)
         return parser.parse(json, new TypeReference<List<HealthMapLocation>>() { });
     }
 
-    private String formatDateWithNullProtection(Date date) {
-        return (date != null) ? dateFormat.format(date) : null;
+    private String formatDateWithNullProtection(DateTime date) {
+        return (date != null) ? dateTimeFormatter.print(date) : null;
     }
 
     private void addParameterIfNotNull(UriBuilder builder, String parameterName, String parameterValue) {

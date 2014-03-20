@@ -19,7 +19,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         when(alert.getTitle()).thenReturn(title);
         when(alert.getSummary()).thenReturn(summary);
         when(alert.getUrl()).thenReturn(url);
-        when(alert.getPublicationDate()).thenReturn(publication.toDate());
+        when(alert.getPublicationDate()).thenReturn(publication);
         when(alert.getFeed()).thenReturn(feed);
         when(feed.getName()).thenReturn(feedName);
         return alert;
@@ -50,7 +50,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getId()).thenReturn(id);
         when(occurrence.getLocation()).thenReturn(location);
-        when(occurrence.getOccurrenceStartDate()).thenReturn(start.toDate());
+        when(occurrence.getOccurrenceStartDate()).thenReturn(start);
         when(occurrence.getAlert()).thenReturn(alert);
         return occurrence;
     }

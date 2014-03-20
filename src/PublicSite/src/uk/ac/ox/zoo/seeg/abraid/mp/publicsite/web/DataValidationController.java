@@ -82,8 +82,7 @@ public class DataValidationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(
-                new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
+        return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 
     /**
