@@ -11,7 +11,7 @@ var LeafletMap = (function () {
         zoomControl: false,
         zoomsliderControl: true,
         maxBounds: [ [-89, -179], [89, 179] ],
-        maxZoom: 10,
+        maxZoom: 7,
         minZoom: 3,
         animate: true
     }).fitWorld();

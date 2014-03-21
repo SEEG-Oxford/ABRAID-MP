@@ -35,7 +35,7 @@
 }
 .leaflet-control-zoomslider-body {
 	width: 2px;
-	border-width: 0px 9px 0px 9px;
+	border-width: 0 9px 0 9px;
 	background-color: black;
 	margin: 0 auto;
 }
@@ -106,7 +106,7 @@
 
 /* Touch */
 .leaflet-touch .leaflet-control-zoomslider-body {
-	background-position: 10px 0px;
+	background-position: 10px 0;
 }
 .leaflet-touch .leaflet-control-zoomslider-knob {
 	width: 16px;
