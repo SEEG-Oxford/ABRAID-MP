@@ -10,25 +10,25 @@ DROP ROLE IF EXISTS :application_username;
 CREATE ROLE :application_username LOGIN PASSWORD :'application_password';
 
 -- Privileges for the ABRAID-MP application: tables
-GRANT SELECT, INSERT                ON Alert TO :application_username;
-GRANT SELECT                        ON Country TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON DiseaseGroup TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON DiseaseOccurrence TO :application_username;
-GRANT SELECT, INSERT                ON DiseaseOccurrenceReview TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON Expert TO :application_username;
-GRANT SELECT, INSERT,        DELETE ON ExpertDiseaseGroup TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON Feed TO :application_username;
-GRANT SELECT                        ON GeoNamesLocationPrecision TO :application_username;
-GRANT SELECT                        ON HealthMapCountry TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON HealthMapDisease TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON Location TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON Provenance TO :application_username;
+GRANT SELECT, INSERT                ON alert TO :application_username;
+GRANT SELECT                        ON country TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON disease_occurrence TO :application_username;
+GRANT SELECT, INSERT                ON disease_occurrence_review TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON expert TO :application_username;
+GRANT SELECT, INSERT,        DELETE ON expert_disease_group TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON feed TO :application_username;
+GRANT SELECT                        ON geonames_location_precision TO :application_username;
+GRANT SELECT                        ON healthmap_country TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON healthmap_disease TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON location TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON provenance TO :application_username;
 
 -- Privileges for the ABRAID-MP application: sequences (one per column of type serial)
 GRANT SELECT, UPDATE ON alert_id_seq TO :application_username;
-GRANT SELECT, UPDATE ON diseasegroup_id_seq TO :application_username;
-GRANT SELECT, UPDATE ON diseaseoccurrence_id_seq TO :application_username;
-GRANT SELECT, UPDATE ON diseaseoccurrencereview_id_seq TO :application_username;
+GRANT SELECT, UPDATE ON disease_group_id_seq TO :application_username;
+GRANT SELECT, UPDATE ON disease_occurrence_id_seq TO :application_username;
+GRANT SELECT, UPDATE ON disease_occurrence_review_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON expert_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON feed_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON location_id_seq TO :application_username;

@@ -27,7 +27,7 @@ public class Alert {
 
     // The disease.
     @ManyToOne
-    @JoinColumn(name = "feedId")
+    @JoinColumn(name = "feed_id")
     private Feed feed;
 
     // The title of the alert.
@@ -36,7 +36,7 @@ public class Alert {
 
     // The publication date of the alert. This may be different from the actual date that the disease occurred,
     // which if known is specified in DiseaseOccurrence.OccurrenceDate.
-    @Column
+    @Column(name = "publication_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime publicationDate;
 
@@ -49,11 +49,11 @@ public class Alert {
     private String summary;
 
     // The HealthMap alert ID (if this alert has originated in HealthMap).
-    @Column
+    @Column(name = "healthmap_alert_id")
     private Long healthMapAlertId;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;

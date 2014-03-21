@@ -30,16 +30,16 @@ public class Provenance {
     private String name;
 
     // The default weighting of feeds of this provenance. Used when creating a new feed.
-    @Column
+    @Column(name = "default_feed_weighting")
     private double defaultFeedWeighting;
 
     // The end date of the last online retrieval of this provenance (if relevant).
-    @Column
+    @Column(name = "last_retrieval_end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastRetrievalEndDate;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;

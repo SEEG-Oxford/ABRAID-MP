@@ -31,18 +31,18 @@ public class Feed {
 
     // The provenance of this feed.
     @ManyToOne
-    @JoinColumn(name = "provenanceId")
+    @JoinColumn(name = "provenance_id")
     private Provenance provenance;
 
     // The weighting given to this feed.
     private double weighting;
 
     // The feed ID used for this provenance in HealthMap.
-    @Column
+    @Column(name = "healthmap_feed_id")
     private Long healthMapFeedId;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
