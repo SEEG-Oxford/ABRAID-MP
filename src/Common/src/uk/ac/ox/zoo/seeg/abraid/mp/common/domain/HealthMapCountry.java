@@ -8,6 +8,7 @@ import javax.persistence.*;
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
+@Table(name = "healthmap_country")
 public class HealthMapCountry {
     // The country ID as used by HealthMap.
     @Id
@@ -19,7 +20,7 @@ public class HealthMapCountry {
 
     // The corresponding SEEG country.
     @ManyToOne
-    @JoinColumn(name = "countryId")
+    @JoinColumn(name = "country_id")
     private Country country;
 
     public HealthMapCountry() {

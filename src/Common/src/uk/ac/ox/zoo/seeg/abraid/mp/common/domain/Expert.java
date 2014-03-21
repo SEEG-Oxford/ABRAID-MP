@@ -36,16 +36,16 @@ public class Expert {
     private String email;
 
     // The expert's password
-    @Column(name = "HashedPassword")
+    @Column(name = "hashed_password")
     private String password;
 
     // Whether the expert has administrative control.
-    @Column
+    @Column(name = "is_administrator")
     private boolean isAdministrator;
 
     // Whether the expert should be displayed in list on public site.
     // For now this is Boolean to allow null values in test data, but should really be boolean with NOT NULL in DB
-    @Column
+    @Column(name = "is_publicly_visible")
     private Boolean isPubliclyVisible;
 
     // The expert's "score" determines the weighting of his response.
@@ -53,16 +53,16 @@ public class Expert {
     private Double weighting;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
     // List of disease groups an expert has interest in and can validate.
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "ExpertDiseaseGroup",
-            joinColumns = { @JoinColumn(name = "ExpertId") },
-            inverseJoinColumns = { @JoinColumn(name = "DiseaseGroupId") })
+    @JoinTable(name = "expert_disease_group",
+            joinColumns = { @JoinColumn(name = "expert_id") },
+            inverseJoinColumns = { @JoinColumn(name = "disease_group_id") })
     @Fetch(FetchMode.SELECT)
     private Set<DiseaseGroup> diseaseGroups;
 

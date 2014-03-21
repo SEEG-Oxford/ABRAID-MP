@@ -14,6 +14,7 @@ import javax.persistence.*;
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
+@Table(name = "healthmap_disease")
 public class HealthMapDisease {
     // The disease ID from HealthMap.
     @Id
@@ -26,11 +27,11 @@ public class HealthMapDisease {
     // The corresponding disease group as defined by SEEG.
     @ManyToOne
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "diseaseGroupId")
+    @JoinColumn(name = "disease_group_id")
     private DiseaseGroup diseaseGroup;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;

@@ -46,19 +46,19 @@ public class Location {
 
     // The country.
     @ManyToOne
-    @JoinColumn(name = "countryId")
+    @JoinColumn(name = "country_id")
     private Country country;
 
     // The GeoNames ID corresponding to this location.
-    @Column
+    @Column(name = "geonames_id")
     private Integer geoNamesId;
 
     // The GeoNames feature code obtained for this location. This indicates location precision.
-    @Column
+    @Column(name = "geonames_feature_code")
     private String geoNamesFeatureCode;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;

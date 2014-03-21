@@ -8,13 +8,13 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * Represents an occurrence of a disease group, in a location, as reported by an alert.
  *
  * Copyright (c) 2014 University of Oxford
  */
-@Entity
 @NamedQueries({
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
@@ -23,11 +23,13 @@ import javax.persistence.NamedQuery;
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
-                query = "from DiseaseOccurrence where diseaseGroupId=:diseaseGroupId" +
+                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId" +
                         " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where" +
                         " expert.id=:expertId)"
         )
 })
+@Entity
+@Table(name = "disease_occurrence")
 public class DiseaseOccurrence {
     // The primary key.
     @Id
@@ -37,32 +39,33 @@ public class DiseaseOccurrence {
     // The disease group that occurred.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "diseaseGroupId")
+    @JoinColumn(name = "disease_group_id")
     private DiseaseGroup diseaseGroup;
 
     // The location of this occurrence.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "locationId")
+    @JoinColumn(name = "location_id")
     private Location location;
 
     // The alert containing this occurrence.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "alertId")
+    @JoinColumn(name = "alert_id")
     private Alert alert;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
     // The weighting as calculated from experts' responses.
+    @Column(name = "validation_weighting")
     private Double validationWeighting;
 
     // The start date of the disease occurrence (if known).
-    @Column
+    @Column(name = "occurrence_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime occurrenceStartDate;
 

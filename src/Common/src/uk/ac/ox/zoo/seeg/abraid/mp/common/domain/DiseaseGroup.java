@@ -20,6 +20,7 @@ import javax.persistence.*;
         )
 })
 @Entity
+@Table(name = "disease_group")
 public class DiseaseGroup {
     // The primary key.
     @Id
@@ -28,7 +29,7 @@ public class DiseaseGroup {
 
     // The parent disease group, or null if this is a top-level group (i.e. a cluster).
     @ManyToOne
-    @JoinColumn(name = "parentId")
+    @JoinColumn(name = "parent_id")
     private DiseaseGroup parentGroup;
 
     // The disease group name.
@@ -36,12 +37,12 @@ public class DiseaseGroup {
     private String name;
 
     // The disease group type.
-    @Column
+    @Column(name = "group_type")
     @Enumerated(EnumType.STRING)
     private DiseaseGroupType groupType;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;

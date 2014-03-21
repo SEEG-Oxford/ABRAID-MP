@@ -12,7 +12,6 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@Entity
 @NamedQueries({
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewsByExpertId",
@@ -29,6 +28,8 @@ import javax.persistence.*;
                     "and diseaseOccurrence.id=:diseaseOccurrenceId"
     )
 })
+@Entity
+@Table(name = "disease_occurrence_review")
 public class DiseaseOccurrenceReview {
     // The id of the review.
     @Id
@@ -37,12 +38,12 @@ public class DiseaseOccurrenceReview {
 
     // The expert.
     @ManyToOne
-    @JoinColumn(name = "ExpertId")
+    @JoinColumn(name = "expert_id")
     private Expert expert;
 
     // The id of the disease occurrence.
     @ManyToOne
-    @JoinColumn(name = "DiseaseOccurrenceId")
+    @JoinColumn(name = "disease_occurrence_id")
     private DiseaseOccurrence diseaseOccurrence;
 
     // The expert's response.
@@ -51,7 +52,7 @@ public class DiseaseOccurrenceReview {
     private DiseaseOccurrenceReviewResponse response;
 
     // The database row creation date.
-    @Column(insertable = false, updatable = false)
+    @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;

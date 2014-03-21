@@ -10,13 +10,15 @@ import javax.persistence.*;
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
+@Table(name = "geonames_location_precision")
 @Immutable
 public class GeoNamesLocationPrecision {
     @Id
+    @Column(name = "geonames_feature_code")
     private String geoNamesFeatureCode;
 
     // The precision of this location.
-    @Column
+    @Column(name = "location_precision")
     @Enumerated(EnumType.STRING)
     private LocationPrecision locationPrecision;
 

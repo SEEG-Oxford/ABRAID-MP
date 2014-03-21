@@ -7,122 +7,122 @@
 
 -- List of tables:
 --
--- Alert: Represents a report of a disease occurrence or occurrences, from a feed.
--- Country: Represents a country as defined by SEEG.
--- DiseaseGroup: Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
--- DiseaseOccurrence: Represents an occurrence of a disease group, in a location, as reported by an alert.
--- DiseaseOccurrenceReview: Represents an expert's response on the validity of a disease occurrence point.
--- Expert: Represents a user of the PublicSite.
--- ExpertDiseaseGroup: Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
--- Feed: Represents a source of alerts.
--- GeoNamesLocationPrecision: Represents a mapping between a GeoNames feature code and a location precision.
--- HealthMapCountry: Represents a country as defined by HealthMap.
--- HealthMapDisease: Represents a disease as defined by HealthMap.
--- Location: Represents the location of a disease occurrence.
--- Provenance: Represents a provenance, i.e. the source of a group of feeds.
+-- alert:                       Represents a report of a disease occurrence or occurrences, from a feed.
+-- country:                     Represents a country as defined by SEEG.
+-- disease_group:               Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
+-- disease_occurrence:          Represents an occurrence of a disease group, in a location, as reported by an alert.
+-- disease_occurrence_review:   Represents an expert's response on the validity of a disease occurrence point.
+-- expert:                      Represents a user of the PublicSite.
+-- expert_disease_group:        Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
+-- feed:                        Represents a source of alerts.
+-- geonames_location_precision: Represents a mapping between a GeoNames feature code and a location precision.
+-- healthmap_country:           Represents a country as defined by HealthMap.
+-- healthmap_disease:           Represents a disease as defined by HealthMap.
+-- location:                    Represents the location of a disease occurrence.
+-- provenance:                  Represents a provenance, i.e. the source of a group of feeds.
 
 
-CREATE TABLE Alert (
-    Id serial NOT NULL,
-    FeedId integer NOT NULL,
-    Title text,
-    PublicationDate timestamp,
-    Url varchar(2000),
-    Summary text,
-    HealthMapAlertId bigint,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE alert (
+    id serial NOT NULL,
+    feed_id integer NOT NULL,
+    title text,
+    publication_date timestamp,
+    url varchar(2000),
+    summary text,
+    healthmap_alert_id bigint,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE Country (
-    Id integer NOT NULL,
-    Name varchar(100) NOT NULL
+CREATE TABLE country (
+    id integer NOT NULL,
+    name varchar(100) NOT NULL
 );
 
-CREATE TABLE DiseaseGroup (
-    Id serial NOT NULL,
-    ParentId integer,
-    Name varchar(100) NOT NULL,
-    GroupType varchar(15) NOT NULL,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE disease_group (
+    id serial NOT NULL,
+    parent_id integer,
+    name varchar(100) NOT NULL,
+    group_type varchar(15) NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE DiseaseOccurrence (
-    Id serial NOT NULL,
-    DiseaseGroupId integer NOT NULL,
-    LocationId integer NOT NULL,
-    AlertId integer NOT NULL,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    ValidationWeighting double precision,
-    OccurrenceStartDate timestamp
+CREATE TABLE disease_occurrence (
+    id serial NOT NULL,
+    disease_group_id integer NOT NULL,
+    location_id integer NOT NULL,
+    alert_id integer NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    occurrence_start_date timestamp,
+    validation_weighting double precision
 );
 
-CREATE TABLE DiseaseOccurrenceReview (
-    Id serial NOT NULL,
-    ExpertId integer NOT NULL,
-    DiseaseOccurrenceId integer NOT NULL,
-    Response varchar(6) NOT NULL,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE disease_occurrence_review (
+    id serial NOT NULL,
+    expert_id integer NOT NULL,
+    disease_occurrence_id integer NOT NULL,
+    response varchar(6) NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE Expert (
-    Id serial NOT NULL,
-    Name varchar(1000) NOT NULL,
-    Email varchar(320) NOT NULL,
-    HashedPassword varchar(60) NOT NULL,
-    IsAdministrator boolean NOT NULL,
-    Weighting double precision,
-    IsPubliclyVisible boolean,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE expert (
+    id serial NOT NULL,
+    name varchar(1000) NOT NULL,
+    email varchar(320) NOT NULL,
+    hashed_password varchar(60) NOT NULL,
+    is_administrator boolean NOT NULL,
+    weighting double precision,
+    is_publicly_visible boolean,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE ExpertDiseaseGroup (
-    ExpertId integer NOT NULL,
-    DiseaseGroupId integer NOT NULL
+CREATE TABLE expert_disease_group (
+    expert_id integer NOT NULL,
+    disease_group_id integer NOT NULL
 );
 
-CREATE TABLE Feed (
-    Id serial NOT NULL,
-    ProvenanceId integer NOT NULL,
-    Name varchar(100) NOT NULL,
-    Weighting double precision NOT NULL,
-    HealthMapFeedId bigint,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE feed (
+    id serial NOT NULL,
+    provenance_id integer NOT NULL,
+    name varchar(100) NOT NULL,
+    weighting double precision NOT NULL,
+    healthmap_feed_id bigint,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE GeoNamesLocationPrecision ( 
-    GeoNamesFeatureCode varchar(10) NOT NULL,
-    LocationPrecision varchar(10) NOT NULL
+CREATE TABLE geonames_location_precision (
+    geonames_feature_code varchar(10) NOT NULL,
+    location_precision varchar(10) NOT NULL
 );
 
-CREATE TABLE HealthMapCountry (
-    Id bigint NOT NULL,
-    Name varchar(100) NOT NULL,
-    CountryId integer
+CREATE TABLE healthmap_country (
+    id bigint NOT NULL,
+    name varchar(100) NOT NULL,
+    country_id integer
 );
 
-CREATE TABLE HealthMapDisease (
-    Id bigint NOT NULL,
-    Name varchar(100) NOT NULL,
-    DiseaseGroupId integer,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE healthmap_disease (
+    id bigint NOT NULL,
+    name varchar(100) NOT NULL,
+    disease_group_id integer,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE Location (
-    Id serial NOT NULL,
-    Name varchar(1000),
-    Geom geometry NOT NULL,
-    Precision varchar(10) NOT NULL,
-    CountryId integer NOT NULL,
-    GeoNamesId integer,
-    GeoNamesFeatureCode varchar(10),
-    ResolutionWeighting double precision,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+CREATE TABLE location (
+    id serial NOT NULL,
+    name varchar(1000),
+    geom geometry NOT NULL,
+    precision varchar(10) NOT NULL,
+    country_id integer NOT NULL,
+    geonames_id integer,
+    geonames_feature_code varchar(10),
+    resolution_weighting double precision,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE Provenance (
-    Id serial NOT NULL,
-    Name varchar(100) NOT NULL,
-    DefaultFeedWeighting double precision NOT NULL,
-    CreatedDate timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    LastRetrievalEndDate timestamp
+CREATE TABLE provenance (
+    id serial NOT NULL,
+    name varchar(100) NOT NULL,
+    default_feed_weighting double precision NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    last_retrieval_end_date timestamp
 );
