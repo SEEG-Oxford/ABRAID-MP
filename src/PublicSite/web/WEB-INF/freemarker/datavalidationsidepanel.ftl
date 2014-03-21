@@ -38,9 +38,9 @@
         <div id="datapointInfoLowerPane">
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div class="btn-group">
-                <button type="button" class="btn btn-default" data-bind="click: submitReview('YES')"><i class="fa fa-check"></i>&nbsp;Valid occurrence</button>
-                <button type="button" class="btn btn-default" data-bind="click: submitReview('UNSURE')">Unsure<br /></button>
-                <button type="button" class="btn btn-default" data-bind="click: submitReview('NO')"><i class="fa fa-times"></i>&nbsp;Invalid occurrence</button>
+                <button type="button" class="btn btn-primary" data-bind="click: submitReview('YES')"><i class="fa fa-check"></i>&nbsp;Valid</button>
+                <button type="button" class="btn btn-primary" data-bind="click: submitReview('UNSURE')">Unsure<br /></button>
+                <button type="button" class="btn btn-primary" data-bind="click: submitReview('NO')"><i class="fa fa-times"></i>&nbsp;Invalid</button>
             </div>
         </@security.authorize>
         <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">

@@ -11,7 +11,7 @@ var LeafletMap = (function () {
         zoomControl: false,
         zoomsliderControl: true,
         maxBounds: [ [-89, -179], [89, 179] ],
-        maxZoom: 10,
+        maxZoom: 7,
         minZoom: 3,
         animate: true
     }).fitWorld();
@@ -24,9 +24,9 @@ var LeafletMap = (function () {
     }).addTo(map);
 
     // Global colour variables
-    var defaultColour = '#bb619b';      // Lighter pink/red
+    var defaultColour = '#c478a9';      // Lighter pink/red
     var highlightColour = '#9e1e71';    // The chosen pink/red compatible with colourblindness
-    var strokeColour = '#c478a9';       // Darker pink/red
+    var strokeColour = '#ce8eb8';       // Darker pink/red
 
     // Define default style for unselected points
     var diseaseOccurrenceLayerStyle = {
@@ -61,7 +61,8 @@ var LeafletMap = (function () {
         marker.setStyle({
             stroke: false,
             fillColor: highlightColour,
-            radius: 11
+//            opacity: 1,
+            radius: 13
         });
     }
 

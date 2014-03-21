@@ -34,7 +34,7 @@ var DataValidationViewModels = (function() {
                     .done(function(data, status, xhr) {
                         // Status 2xx
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
-                        $("#reviewSubmittedAlert").fadeIn();
+                        $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
                     })
                     .fail(function (xhr) {
