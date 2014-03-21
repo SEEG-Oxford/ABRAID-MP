@@ -4,8 +4,8 @@
 --
 -- Copyright (c) 2014 University of Oxford
 
-CREATE INDEX ix_alert_feedid ON alert (feed_id);
-CREATE INDEX ix_disease_group_parentid ON disease_group (parent_id);
+CREATE INDEX ix_alert_feed_id ON alert (feed_id);
+CREATE INDEX ix_disease_group_parent_id ON disease_group (parent_id);
 CREATE INDEX ix_disease_occurrence_alert_id ON disease_occurrence (alert_id);
 CREATE INDEX ix_disease_occurrence_disease_group_id ON disease_occurrence (disease_group_id);
 CREATE INDEX ix_disease_occurrence_location_id ON disease_occurrence (location_id);
