@@ -3,21 +3,19 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 
 /**
  * Tests the ExpertService class.
@@ -29,9 +27,24 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     private ExpertService expertService;
 
     @Test
+    public void getDiseaseInterestsReturnsExpectedSet() {
+        // Arrange
+        Set<DiseaseGroup> testSet = new HashSet<>();
+        Expert expert = new Expert();
+        expert.setDiseaseGroups(testSet);
+        when(expertDao.getById(anyInt())).thenReturn(expert);
+
+        // Act
+        Set<DiseaseGroup> set = expertService.getDiseaseInterests(1);
+
+        // Assert
+        assertThat(set).isEqualTo(testSet);
+    }
+
+    @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustReturnExpectedList() {
         // Arrange
-        List<DiseaseOccurrence> testList = new ArrayList<DiseaseOccurrence>();
+        List<DiseaseOccurrence> testList = new ArrayList<>();
         when(expertDao.getById(anyInt())).thenReturn(new Expert());
         when(diseaseGroupDao.getById(anyInt())).thenReturn(new DiseaseGroup());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(anyInt(), anyInt())).thenReturn(testList);

@@ -4,14 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.AbstractDiseaseOccurrenceGeoJsonTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl;
 
 import java.util.ArrayList;
@@ -33,6 +34,25 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         setupSecurityContext();
         setupCurrentUser(user);
         when(user.getId()).thenReturn(1);
+    }
+
+    @Test
+    public void showPageReturnsDataValidationPageAndDiseaseInterests() {
+        // Arrange
+        CurrentUserService currentUserService = new CurrentUserServiceImpl();
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        Model model = mock(Model.class);
+
+        DataValidationController target = new DataValidationController(currentUserService, diseaseService,
+                expertService);
+
+        // Act
+        String result = target.showPage(model);
+
+        // Assert
+        assertThat(result).isEqualTo("datavalidation");
+        assertThat(model.containsAttribute("diseaseInterests"));
     }
 
     @Test
@@ -95,13 +115,51 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
     }
 
     @Test
-    public void submitReviewReturnsHttpBadRequestForInvalidInputs() {
+    public void submitReviewReturnsHttpBadRequestForInvalidInputOccurrenceDoesNotMatchDisease() {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
         when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(false);
         when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
+                expertService);
+
+        // Act
+        ResponseEntity result = target.submitReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void submitReviewReturnsHttpBadRequestForInvalidInputDiseaseNotAnExpertsInterest() {
+        // Arrange
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(false);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
+                expertService);
+
+        // Act
+        ResponseEntity result = target.submitReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void submitReviewReturnsHttpBadRequestForInvalidReviewAlreadyExists() {
+        // Arrange
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(false);
+        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(false);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(true);
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
                 expertService);
