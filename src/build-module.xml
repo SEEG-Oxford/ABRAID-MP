@@ -70,7 +70,7 @@
   </path>
 
   <!-- CI targets -->
-  <target name="full" depends="print.start, clean, compile.production, compile.tests, test.coverage, check.quality, generate.docs, publish.package, print.summary" description="Build pipeline">
+  <target name="full" depends="print.start, clean, compile.production, compile.tests, test.coverage, check.quality, generate.docs, publish.package, collate.artifacts, print.summary" description="Build pipeline">
     <fail message="Quality checks failed!" if="build.failure" />
   </target>
 
@@ -359,9 +359,12 @@
     <ivy:publish resolver="trunk" update="true" overwrite="true" pubrevision="${repository.version}" artifactspattern="${dist.out.dir}/[artifact].[ext]"/>
   </target>
 
-  <target name="collate.artifacts">
+  <target name="collate.artifacts" depends="build.package">
     <delete dir="${artifacts.out.dir}"/>
     <mkdir dir="${artifacts.out.dir}"/>
+    <copy todir="${artifacts.out.dir}">
+      <fileset file="${dist.out.dir}/*.war"/>
+    </copy>
   </target>
 
   <!-- Analysis targets -->

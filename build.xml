@@ -6,6 +6,7 @@
 <project name="abraid-mp" default="build">
   <property name="code.root" value="${basedir}/src"/>
   <property name="db.root" value="${basedir}/db"/>
+  <property name="artifacts.dir" value="${basedir}/artifacts" />
 
   <target name="build" description="build everything">
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${code.root}"/>
@@ -27,7 +28,36 @@
     <ant antfile="${db.root}/build.xml" inheritrefs="false" inheritall="false" target="create.test.database" dir="${db.root}"/>
   </target>
 
-  <target name="full" depends="create.test.database" description="Build pipeline">
+  <target name="full.src">
     <ant antfile="${code.root}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${code.root}"/>
+  </target>
+
+  <target name="full" depends="create.test.database, full.src, collate.artifacts" description="Build pipeline" />
+
+  <target name="collate.artifacts">
+    <delete dir="${artifacts.dir}"/>
+    <mkdir dir="${artifacts.dir}"/>
+    <copy todir="${artifacts.dir}">
+      <fileset dir="${code.root}/ModelWrapper/out/artifacts/">
+        <include name="*.war" />
+      </fileset>
+    </copy>
+    <copy todir="${artifacts.dir}">
+      <fileset dir="${code.root}/PublicSite/out/artifacts/">
+        <include name="*.war" />
+      </fileset>
+    </copy>
+    <mkdir dir="${artifacts.dir}/DataAcquisition"/>
+    <copy todir="${artifacts.dir}/DataAcquisition">
+      <fileset dir="${code.root}/DataAcquisition/out/artifacts/">
+        <include name="*" />
+      </fileset>
+    </copy>
+    <mkdir dir="${artifacts.dir}/Database"/>
+    <copy todir="${artifacts.dir}/Database">
+      <fileset dir="${db.root}">
+        <include name="**/*" />
+      </fileset>
+    </copy>
   </target>
 </project>
