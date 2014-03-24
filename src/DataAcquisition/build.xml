@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Ant build file for DataAcquisition.
+      Copyright (c) 2014 University of Oxford
+-->
 <project name="module_dataacquisition" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
 
@@ -8,19 +12,19 @@
   <target name="retrieve.hibernatespatial">
     <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib.local.external.dir}"/>
   </target>
-  
+
   <!-- Collate artifacts for deployment -->
   <target name="collate.artifacts" depends="module_build.collate.artifacts" description="Collates artifacts.">
     <!-- Data Acquisition JAR -->
     <copy todir="${artifacts.out.dir}/lib">
       <fileset file="${dist.out.dir}/*.jar"/>
     </copy>
-    
+
     <!-- Dependent JARs -->
     <copy todir="${artifacts.out.dir}/lib" flatten="true">
       <path refid="build.classpath"/>
     </copy>
-    
+
     <!-- Main properties file (formed by concatenating the default properties files) -->
     <concat destfile="${artifacts.out.dir}/dataacquisition.properties">
       <filelist>

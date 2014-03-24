@@ -1,3 +1,7 @@
+<!--
+      Ivy settings for ABRAID-MP.
+      Copyright (c) 2014 University of Oxford
+-->
 <ivysettings>
     <settings defaultResolver="chain-1"/>
 

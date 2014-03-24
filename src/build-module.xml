@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Genericized ant build file containing the targets to build any submodule of ABRAID-MP.
+      Copyright (c) 2014 University of Oxford
+-->
 <project name="module_build" default="build" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:jacoco="antlib:org.jacoco.ant">
   <property environment="env"/>
 
@@ -321,14 +325,14 @@
     <delete dir="${dist.out.dir}"/>
     <mkdir dir="${dist.out.dir}"/>
   </target>
-  
+
   <target name="create.jar.manifest">
     <manifest file="${dist.out.dir}/MANIFEST.MF">
       <attribute name="Version" value="${repository.version}"/>
       <attribute name="Built-On" value="${time.stamp}"/>
     </manifest>
   </target>
-  
+
   <target name="build.war" depends="compile.production, create.dist.dir">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
@@ -353,7 +357,7 @@
     <delete dir="${artifacts.out.dir}"/>
     <mkdir dir="${artifacts.out.dir}"/>
   </target>
-  
+
   <!-- Analysis targets -->
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
