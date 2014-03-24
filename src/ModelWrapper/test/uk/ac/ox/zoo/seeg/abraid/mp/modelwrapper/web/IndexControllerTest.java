@@ -10,9 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationServi
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;

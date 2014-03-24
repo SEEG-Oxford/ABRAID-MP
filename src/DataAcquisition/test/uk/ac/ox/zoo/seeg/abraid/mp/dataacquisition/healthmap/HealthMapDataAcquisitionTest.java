@@ -169,7 +169,7 @@ public class HealthMapDataAcquisitionTest {
         return argThat(new ApproximatelyMatches(date));
     }
 
-    // Matcher that compares two dates for approximate equality, for use with dates that rely on the current time
+    /** Matcher that compares two dates for approximate equality, for use with dates that rely on the current time. */
     public class ApproximatelyMatches extends ArgumentMatcher<DateTime> {
         private DateTime comparisonDate;
         private static final long TOLERANCE_MILLISECONDS = 1000;
@@ -187,7 +187,7 @@ public class HealthMapDataAcquisitionTest {
                 return false;
             }
 
-            long differenceInMillis = new Duration(comparisonDate, (DateTime)date).getMillis();
+            long differenceInMillis = new Duration(comparisonDate, (DateTime) date).getMillis();
             return differenceInMillis < TOLERANCE_MILLISECONDS;
         }
     }

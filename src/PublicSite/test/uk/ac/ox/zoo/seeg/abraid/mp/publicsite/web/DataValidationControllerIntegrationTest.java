@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
-        "classpath:uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/mockServices.xml"})
+        "classpath:uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/mockServices.xml" })
 @WebAppConfiguration("file:PublicSite/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class DataValidationControllerIntegrationTest {

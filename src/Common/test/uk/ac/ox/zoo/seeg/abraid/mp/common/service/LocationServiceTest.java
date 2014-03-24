@@ -13,12 +13,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
+ * Tests for LocationServiceImpl.
  * Copyright (c) 2014 University of Oxford
  */
 public class LocationServiceTest extends AbstractSpringUnitTests {
     @Autowired
     private LocationService locationService;
-    
+
     @Test
     public void getByGeoNamesId() {
         // Arrange

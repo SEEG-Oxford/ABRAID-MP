@@ -1,11 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import org.fest.util.Files;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec.CommonsExecProcessRunnerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +14,6 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.util.Files.contentOf;
-import static org.mockito.Mockito.mock;
 
 /**
  * Tests the FreemarkerScriptGenerator class.
@@ -24,7 +21,7 @@ import static org.mockito.Mockito.mock;
  */
 public class FreemarkerScriptGeneratorTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     @Test
     public void generateScriptShouldReturnAFileThatItHasCreated() throws Exception {

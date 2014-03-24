@@ -2,8 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 

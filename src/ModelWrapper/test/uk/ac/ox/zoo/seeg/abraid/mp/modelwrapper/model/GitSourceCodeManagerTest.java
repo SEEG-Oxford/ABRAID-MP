@@ -24,15 +24,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for GitSourceCodeManager
+ * Tests for GitSourceCodeManager.
  * Copyright (c) 2014 University of Oxford
  */
 public class GitSourceCodeManagerTest {
     @Rule
-    public TemporaryFolder workingDir = new TemporaryFolder();
+    public TemporaryFolder workingDir = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     @Rule
-    public TemporaryFolder cacheDir = new TemporaryFolder();
+    public TemporaryFolder cacheDir = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
 
     @Test
