@@ -178,7 +178,7 @@
    <ivy:resolve log="download-only"/>
   </target>
 
-  <target name="retrieve.libs" depends="create.lib.dirs, resolve.libs, retrieve.manual.libs">
+  <target name="retrieve.libs" depends="create.lib.dirs, resolve.libs, retrieve.manual.libs" unless="skip.libs">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
   </target>
 
@@ -321,14 +321,14 @@
     <delete dir="${dist.out.dir}"/>
     <mkdir dir="${dist.out.dir}"/>
   </target>
-  
+
   <target name="create.jar.manifest">
     <manifest file="${dist.out.dir}/MANIFEST.MF">
       <attribute name="Version" value="${repository.version}"/>
       <attribute name="Built-On" value="${time.stamp}"/>
     </manifest>
   </target>
-  
+
   <target name="build.war" depends="compile.production, create.dist.dir">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
@@ -353,7 +353,7 @@
     <delete dir="${artifacts.out.dir}"/>
     <mkdir dir="${artifacts.out.dir}"/>
   </target>
-  
+
   <!-- Analysis targets -->
   <target name="check.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
     <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
@@ -362,6 +362,16 @@
       <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
       <formatter type="plain" />
       <fileset dir="${src.dir}" includes="**/*.java"/>
+    </checkstyle>
+  </target>
+
+  <target name="check.test.style" depends="retrieve.libs" description="Generates a report of code convention violations in tests.">
+    <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
+    <mkdir dir="${report.out.dir}"/>
+    <checkstyle config="${project.root.dir}/src/code-style-tests.xml" failureProperty="style.failure" failOnViolation="false" classpathref="build.classpath">
+      <formatter type="xml" tofile="${report.out.dir}/checkstyle-report-tests.xml"/>
+      <formatter type="plain" />
+      <fileset dir="${test.dir}" includes="**/*.java"/>
     </checkstyle>
   </target>
 
@@ -375,7 +385,7 @@
     </findbugs>
   </target>
 
-  <target name="check.quality" depends="check.style, check.bugs"/>
+  <target name="check.quality" depends="check.style, check.test.style, check.bugs"/>
 
   <!-- Documentation targets -->
   <target name="generate.docs" depends="compile.production" description="Create the javadoc files">
