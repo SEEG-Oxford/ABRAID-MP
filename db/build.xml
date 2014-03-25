@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+      Ant build file for the database component of ABRAID-MP.
+      Copyright (c) 2014 University of Oxford
+-->
 <project name="Database" basedir="." default="create.test.database">
     <description>Creates the ABRAID-MP database.</description>
 
@@ -8,8 +12,8 @@
     <property file="database.properties.example" />
 
     <!-- Creates the database containing test data -->
-    <target name="create.test.database" depends="create.database, create.test.data" />   
-    
+    <target name="create.test.database" depends="create.database, create.test.data" />
+
     <!-- Creates the database -->
     <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="create.database">

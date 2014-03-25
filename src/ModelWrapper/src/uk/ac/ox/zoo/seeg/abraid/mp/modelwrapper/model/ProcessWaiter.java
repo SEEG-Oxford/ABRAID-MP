@@ -1,7 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 /**
- * Created by zool1112 on 13/02/14.
+ * Interface to define a mechanism for waiting for processes to complete.
+ * Copyright (c) 2014 University of Oxford
  */
 public interface ProcessWaiter {
     /**

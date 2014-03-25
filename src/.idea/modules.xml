@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Common/Common.iml" filepath="$PROJECT_DIR$/Common/Common.iml" />
       <module fileurl="file://$PROJECT_DIR$/DataAcquisition/DataAcquisition.iml" filepath="$PROJECT_DIR$/DataAcquisition/DataAcquisition.iml" />
-      <module fileurl="file://$PROJECT_DIR$/DiseaseExtent/DiseaseExtent.iml" filepath="$PROJECT_DIR$/DiseaseExtent/DiseaseExtent.iml" />
       <module fileurl="file://$PROJECT_DIR$/ModelWrapper/ModelWrapper.iml" filepath="$PROJECT_DIR$/ModelWrapper/ModelWrapper.iml" />
       <module fileurl="file://$PROJECT_DIR$/PublicSite/PublicSite.iml" filepath="$PROJECT_DIR$/PublicSite/PublicSite.iml" />
     </modules>

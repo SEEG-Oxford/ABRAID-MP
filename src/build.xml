@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Ant build file collating the targets for all submodules of ABRAID-MP.
+      Copyright (c) 2014 University of Oxford
+-->
 <project name="abraid-mp_src" default="build">
 
 

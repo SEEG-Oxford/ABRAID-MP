@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Ant build file for ModelWrapper.
+      Copyright (c) 2014 University of Oxford
+-->
 <project name="module_modelwrapper" default="build">
   <import file="${basedir}/../build-module.xml"/>
 

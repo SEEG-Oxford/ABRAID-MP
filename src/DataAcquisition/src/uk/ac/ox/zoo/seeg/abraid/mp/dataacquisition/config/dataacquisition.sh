@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Kickoff script for the data acquistion process of ABRAID-MP, targeting Unix enviroments.
+# Copyright (c) 2014 University of Oxford
+
 echo Starting Data Acquisition...
 
 # Ensure the working directory is the one that this script is in

@@ -1,3 +1,7 @@
+<!--
+      Ivy excludes for use in all ABRAID-MP submodules.
+      Copyright (c) 2014 University of Oxford
+-->
 <exclude type="source" ext="*" conf="*" />
 <exclude type="javadoc" ext="*" conf="*" />
 <exclude type="license" ext="*" conf="*" />

@@ -1,3 +1,7 @@
+<!--
+      Ivy configurations for use in all ABRAID-MP submodules.
+      Copyright (c) 2014 University of Oxford
+-->
 <conf name="external" description="external build dependencies (these are separated from internal ones, for better IntelliJ support)"/>
 <conf name="build" extends="external" description="all build dependencies"/>
 <conf name="test" visibility="private" description="unit testing dependencies"/>

@@ -12,7 +12,8 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * Created by zool1112 on 13/02/14.
+ * Tests for ModelProcessHandler.
+ * Copyright (c) 2014 University of Oxford
  */
 public class ModelProcessHandlerTest {
     @Test

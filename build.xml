@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Top-level ant build file for ABRAID-MP.
+      Copyright (c) 2014 University of Oxford
+-->
 <project name="abraid-mp" default="build">
   <property name="code.root" value="${basedir}/src"/>
   <property name="db.root" value="${basedir}/db"/>
@@ -18,7 +22,7 @@
   <target name="create.database" description="creates the database">
     <ant antfile="${db.root}/build.xml" inheritrefs="false" inheritall="false" target="create.database" dir="${db.root}"/>
   </target>
-  
+
   <target name="create.test.database" description="creates the database with test data">
     <ant antfile="${db.root}/build.xml" inheritrefs="false" inheritall="false" target="create.test.database" dir="${db.root}"/>
   </target>
