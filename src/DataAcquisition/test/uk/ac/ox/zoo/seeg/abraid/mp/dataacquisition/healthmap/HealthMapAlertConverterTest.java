@@ -491,7 +491,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
         verify(alertService, times(1)).saveFeed(same(feed));
     }
-    
+
     @Test
     public void occurrenceAlreadyExists() {
         // Arrange
