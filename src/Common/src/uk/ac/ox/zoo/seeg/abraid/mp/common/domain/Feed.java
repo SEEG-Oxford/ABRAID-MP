@@ -37,6 +37,10 @@ public class Feed {
     // The weighting given to this feed.
     private double weighting;
 
+    // The language of this feed.
+    // For HealthMap data, this is a code supplied by HealthMap in their feed_lang web service field.
+    private String language;
+
     // The feed ID used for this provenance in HealthMap.
     @Column(name = "healthmap_feed_id")
     private Long healthMapFeedId;
@@ -50,18 +54,21 @@ public class Feed {
     public Feed() {
     }
 
-    public Feed(String name, Provenance provenance, double weighting, Long healthMapFeedId) {
+    public Feed(String name, Provenance provenance, double weighting, String language, Long healthMapFeedId) {
         this.name = name;
         this.provenance = provenance;
         this.weighting = weighting;
+        this.language = language;
         this.healthMapFeedId = healthMapFeedId;
     }
 
-    public Feed(Integer id, String name, Provenance provenance, double weighting, Long healthMapFeedId) {
+    public Feed(Integer id, String name, Provenance provenance, String language, double weighting,
+                Long healthMapFeedId) {
         this.id = id;
         this.name = name;
         this.provenance = provenance;
         this.weighting = weighting;
+        this.language = language;
         this.healthMapFeedId = healthMapFeedId;
     }
 
@@ -93,6 +100,14 @@ public class Feed {
         this.weighting = weighting;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     public Long getHealthMapFeedId() {
         return healthMapFeedId;
     }
@@ -118,6 +133,7 @@ public class Feed {
         if (healthMapFeedId != null ? !healthMapFeedId.equals(feed.healthMapFeedId) : feed.healthMapFeedId != null)
             return false;
         if (id != null ? !id.equals(feed.id) : feed.id != null) return false;
+        if (language != null ? !language.equals(feed.language) : feed.language != null) return false;
         if (name != null ? !name.equals(feed.name) : feed.name != null) return false;
         if (provenance != null ? !provenance.equals(feed.provenance) : feed.provenance != null) return false;
 
@@ -133,6 +149,7 @@ public class Feed {
         result = 31 * result + (provenance != null ? provenance.hashCode() : 0);
         temp = Double.doubleToLongBits(weighting);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (language != null ? language.hashCode() : 0);
         result = 31 * result + (healthMapFeedId != null ? healthMapFeedId.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;

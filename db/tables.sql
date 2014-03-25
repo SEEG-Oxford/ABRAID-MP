@@ -85,6 +85,7 @@ CREATE TABLE feed (
     provenance_id integer NOT NULL,
     name varchar(100) NOT NULL,
     weighting double precision NOT NULL,
+    language varchar(4),
     healthmap_feed_id bigint,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

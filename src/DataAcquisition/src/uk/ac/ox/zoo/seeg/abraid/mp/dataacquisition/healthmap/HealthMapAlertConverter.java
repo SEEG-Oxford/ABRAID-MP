@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
@@ -95,6 +97,7 @@ public class HealthMapAlertConverter {
         Feed feed = lookupData.getFeedMap().get(healthMapAlert.getFeedId());
         if (feed != null) {
             renameFeedIfRequired(feed, healthMapAlert);
+            changeFeedLanguageIfRequired(feed, healthMapAlert);
         } else {
             // If the feed ID does not exist in the database, automatically add a new feed
             feed = createAndSaveFeed(healthMapAlert);
@@ -111,6 +114,9 @@ public class HealthMapAlertConverter {
         // The feed is given the default weighting for HealthMap feeds
         feed.setWeighting(provenance.getDefaultFeedWeighting());
         feed.setHealthMapFeedId(healthMapAlert.getFeedId());
+        if (StringUtils.hasText(healthMapAlert.getFeedLanguage())) {
+            feed.setLanguage(healthMapAlert.getFeedLanguage());
+        }
 
         // Save the feed now rather than implicitly with the new alert, so that it's saved even if we don't end up
         // saving the disease occurrence
@@ -183,6 +189,17 @@ public class HealthMapAlertConverter {
         String feedName = healthMapAlert.getFeed();
         if (!feed.getName().equals(feedName)) {
             feed.setName(feedName);
+            alertService.saveFeed(feed);
+        }
+    }
+
+    private void changeFeedLanguageIfRequired(Feed feed, HealthMapAlert healthMapAlert) {
+        String feedLanguage = healthMapAlert.getFeedLanguage();
+        if (ObjectUtils.nullSafeEquals(feedLanguage, "")) {
+            feedLanguage = null;
+        }
+        if (!ObjectUtils.nullSafeEquals(feed.getLanguage(), feedLanguage)) {
+            feed.setLanguage(feedLanguage);
             alertService.saveFeed(feed);
         }
     }
