@@ -32,7 +32,7 @@
                 </ul>
             </@security.authorize>
             <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-                <form class="navbar-form navbar-right" action="">
+                <form class="navbar-form navbar-right">
                     <p data-bind="text: formAlert"></p>
                     <input type="text" placeholder="Email address" data-bind="value: formUsername">
                     <input type="password" placeholder="Password" data-bind="value: formPassword">

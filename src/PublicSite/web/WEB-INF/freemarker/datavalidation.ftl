@@ -15,8 +15,12 @@
 <#assign endOfBodyScriptContent>
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
     var diseaseInterests = [
-        <#list diseaseInterests as diseaseInterest>
-            { name: "${diseaseInterest.name}".toLowerCase(), id: "${diseaseInterest.id}" },
+        <#list diseaseInterestsSet as pair>
+            {
+                name: "${pair.getKey().getName()?lower_case?js_string}",
+                id: ${pair.getKey().id?int},
+                reviewCount: ${pair.getValue()?int}
+            },
         </#list>
     ];
 </#assign>

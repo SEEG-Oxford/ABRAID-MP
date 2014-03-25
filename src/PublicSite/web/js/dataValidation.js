@@ -13,6 +13,7 @@ var DataValidationViewModels = (function() {
         this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
             LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
+            DataValidationViewModels.counterViewModel.reviewCount(this.selectedDisease().reviewCount);
         }, this);
     };
 
@@ -33,28 +34,37 @@ var DataValidationViewModels = (function() {
                 $.post(url, { review: review })
                     .done(function(data, status, xhr) {
                         // Status 2xx
+                        // Remove the point from the map and side panel, display a success alert, increment the counter
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
                         $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
+                        DataValidationViewModels.counterViewModel.reviewCount(DataValidationViewModels.counterViewModel.reviewCount() + 1);
                     })
                     .fail(function (xhr) {
-                        alert("Something went wrong. Please try again " + xhr.responseText);
+                        alert("Something went wrong. Please try again. " + xhr.responseText);
                     });
             };
         };
     };
 
+    var CounterViewModel = function() {
+        this.reviewCount = ko.observable();
+    }
+
     var layerSelectorViewModel = new LayerSelectorViewModel();
     var selectedPointViewModel = new SelectedPointViewModel();
+    var counterViewModel = new CounterViewModel();
 
     $(document).ready(function () {
         ko.applyBindings(layerSelectorViewModel, $("#layerSelector")[0]);
-        ko.applyBindings(selectedPointViewModel, $("#sidePanel")[0]);
+        ko.applyBindings(selectedPointViewModel, $("#datapointInfo")[0]);
+        ko.applyBindings(counterViewModel, $("#counter")[0]);
     });
 
     return {
         layerSelectorViewModel: layerSelectorViewModel,
-        selectedPointViewModel: selectedPointViewModel
+        selectedPointViewModel: selectedPointViewModel,
+        counterViewModel: counterViewModel
     }
 }());
 

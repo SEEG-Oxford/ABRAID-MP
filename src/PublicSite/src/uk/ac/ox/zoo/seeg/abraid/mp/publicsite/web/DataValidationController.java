@@ -20,9 +20,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Controller for the expert data validation map page.
@@ -45,18 +45,18 @@ public class DataValidationController {
     }
 
     /**
-     * Return the view to display.
+     * Return the view to display, and provide the currently logged in user's disease interests.
      * @param model The model map.
      * @return The ftl page name.
      */
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        Set<DiseaseGroup> diseaseInterests = new HashSet<>();
+        Map<DiseaseGroup, Integer> diseaseInterestsWithReviewCountMap = new HashMap<>();
         if (user != null) {
-            diseaseInterests = expertService.getDiseaseInterests(user.getId());
+            diseaseInterestsWithReviewCountMap = expertService.getDiseaseInterestsWithReviewCount(user.getId());
         }
-        model.addAttribute("diseaseInterests", diseaseInterests);
+        model.addAttribute("diseaseInterestsSet", diseaseInterestsWithReviewCountMap.entrySet());
         return "datavalidation";
     }
 

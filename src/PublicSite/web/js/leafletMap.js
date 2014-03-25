@@ -61,7 +61,6 @@ var LeafletMap = (function () {
         marker.setStyle({
             stroke: false,
             fillColor: highlightColour,
-//            opacity: 1,
             radius: 13
         });
     }

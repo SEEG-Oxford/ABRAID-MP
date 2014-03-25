@@ -47,22 +47,22 @@ html,body
     background-color:rgb(214, 214, 214);
     opacity:0.8;
 }
-.datapointInfo
+#datapointInfo
 {
     height:90%;
     position:relative;
 }
-.datapointInfo h4
+#datapointInfo h4
 {
     min-height:57px;
 }
-.datapointInfo ul
+#datapointInfo ul
 {
     list-style-type: none;
     padding:10px;
     margin:0;
 }
-.datapointInfo p
+#datapointInfo p
 {
     display:inline;
 }
