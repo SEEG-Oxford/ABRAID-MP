@@ -12,10 +12,10 @@ import java.io.IOException;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsArgAt;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.AdditionalAnswers.returnsArgAt;
 
 /**
  * Tests the WorkspaceProvisionerImpl class.
@@ -25,7 +25,7 @@ public class WorkspaceProvisionerTest {
     private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     @Test
     public void provisionWorkspaceShouldCreateDirectoryAtCorrectPath() throws Exception {
@@ -49,7 +49,7 @@ public class WorkspaceProvisionerTest {
     }
 
     @Test
-      public void provisionWorkspaceShouldGenerateRunScript() throws Exception {
+    public void provisionWorkspaceShouldGenerateRunScript() throws Exception {
         // Arrange
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         File expectedScript = new File("foobar");

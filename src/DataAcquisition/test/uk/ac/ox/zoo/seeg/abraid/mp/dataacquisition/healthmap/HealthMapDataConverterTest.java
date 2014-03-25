@@ -23,7 +23,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests the HealthMapDataConverter class.
- * 
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapDataConverterTest {
@@ -89,7 +88,7 @@ public class HealthMapDataConverterTest {
         final Location location2 = new Location();
         when(locationConverter.convert(healthMapLocation2)).thenReturn(location2);
         mockAddPrecision(healthMapLocation2, location2);
-        
+
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
         DiseaseOccurrence diseaseOccurrence1 = new DiseaseOccurrence();
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);

@@ -21,7 +21,7 @@ public class ParseUtilsTest {
         Integer parsedInteger = ParseUtils.parseInteger("    \t");
         assertThat(parsedInteger).isNull();
     }
-    
+
     @Test
     public void parseInvalidInteger() {
         Integer parsedInteger = ParseUtils.parseInteger("undefined");

@@ -12,7 +12,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class GeometryUtilsTest {
     @Test
     public void createPointHasCorrectPrecisionAndSRID() {
-        Point point = GeometryUtils.createPoint(-1.2824895,51.6743376);
+        Point point = GeometryUtils.createPoint(-1.2824895, 51.6743376);
         assertThat(point.getX()).isEqualTo(-1.28249);
         assertThat(point.getY()).isEqualTo(51.67434);
         assertThat(point.getSRID()).isEqualTo(4326);

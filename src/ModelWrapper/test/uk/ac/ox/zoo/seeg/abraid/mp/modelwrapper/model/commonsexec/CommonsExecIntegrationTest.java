@@ -25,13 +25,13 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class CommonsExecIntegrationTest {
-    private int SUCCESSFUL = 0;
+    private static final int SUCCESSFUL = 0;
 
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     /**
-     * Verifies that subprocesses can be started
+     * Verifies that subprocesses can be started.
      */
     @Test
     public void shouldBeAbleToRunEmptyScript() throws Exception {
@@ -41,7 +41,7 @@ public class CommonsExecIntegrationTest {
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testFolder, new String[] {""});
+                return createScript(testFolder, new String[]{""});
             }
         });
 
@@ -54,7 +54,7 @@ public class CommonsExecIntegrationTest {
     }
 
     /**
-     * Verifies that stdout is correctly wired
+     * Verifies that stdout is correctly wired.
      */
     @Test
     public void shouldBeAbleToRunHelloWorldScript() throws Exception {
@@ -64,7 +64,7 @@ public class CommonsExecIntegrationTest {
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testFolder, new String[] {"cat('Hello, world!\n')"});
+                return createScript(testFolder, new String[]{"cat('Hello, world!\n')"});
             }
         });
 
@@ -79,7 +79,7 @@ public class CommonsExecIntegrationTest {
     }
 
     /**
-     * Verifies that stderr is correctly wired
+     * Verifies that stderr is correctly wired.
      */
     @Test
     public void shouldBeAbleToRunHelloErrorScript() throws Exception {
@@ -89,7 +89,7 @@ public class CommonsExecIntegrationTest {
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testFolder, new String[] {"write('Hello, world!\n', stderr())"});
+                return createScript(testFolder, new String[]{"write('Hello, world!\n', stderr())"});
             }
         });
 
@@ -104,7 +104,7 @@ public class CommonsExecIntegrationTest {
     }
 
     /**
-     * Verifies that stdin is correctly wired
+     * Verifies that stdin is correctly wired.
      */
     @Test
     public void shouldBeAbleToRunHelloNameScript() throws Exception {
@@ -114,7 +114,7 @@ public class CommonsExecIntegrationTest {
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testFolder, new String[] {
+                return createScript(testFolder, new String[]{
                         "name <- readLines(file(\"stdin\"),1)",
                         "cat('Hello, ', name, '!\n', sep='')"});
             }
@@ -133,11 +133,11 @@ public class CommonsExecIntegrationTest {
 
         // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
-        assertThat(result).startsWith("Hello, "+expectedName+"!");
+        assertThat(result).startsWith("Hello, " + expectedName + "!");
     }
 
     /**
-     * Verifies that the generated modelRun script valid R and can be run
+     * Verifies that the generated modelRun script valid R and can be run.
      */
     @Test
     public void shouldBeAbleToDoDryRunOfModel() throws Exception {
@@ -178,7 +178,7 @@ public class CommonsExecIntegrationTest {
         File directory = baseDir.newFolder();
         File script = Files.createFile(Paths.get(directory.getPath(), "script.R")).toFile();
         PrintWriter writer = new PrintWriter(script);
-        for(String line : lines) {
+        for (String line : lines) {
             writer.println(line);
         }
         writer.close();

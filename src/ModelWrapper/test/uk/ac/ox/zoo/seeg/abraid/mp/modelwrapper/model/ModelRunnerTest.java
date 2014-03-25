@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  */
 public class ModelRunnerTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     @Test
     public void runModelProvisionsADirectoryForTheRun() throws Exception {

@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests the DiseaseService class.
- * 
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseServiceTest extends AbstractSpringUnitTests {

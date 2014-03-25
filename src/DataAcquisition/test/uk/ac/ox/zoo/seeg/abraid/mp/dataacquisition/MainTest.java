@@ -81,7 +81,7 @@ public class MainTest {
 
         DiseaseGroup occurrence1DiseaseGroup = occurrences.get(0).getDiseaseGroup();
         assertThat(occurrence1DiseaseGroup.getName()).isEqualTo("Dengue");
-        
+
         assertThat(occurrences.get(0).getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
         assertThat(occurrences.get(0).getCreatedDate()).isNotNull();
 
@@ -130,7 +130,7 @@ public class MainTest {
 
         int size = diseaseOccurrences.size();
         assertThat(size).isGreaterThanOrEqualTo(2);
-        return Arrays.asList(diseaseOccurrences.get(size-2), diseaseOccurrences.get(size-1));
+        return Arrays.asList(diseaseOccurrences.get(size - 2), diseaseOccurrences.get(size - 1));
     }
 
     private String getHealthMapJson() {

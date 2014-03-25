@@ -52,7 +52,7 @@ public abstract class AbstractSpringUnitTests {
     @ReplaceWithMock
     @Autowired
     protected HealthMapDiseaseDao healthMapDiseaseDao;
-    
+
     @ReplaceWithMock
     @Autowired
     protected LocationDao locationDao;

@@ -182,7 +182,7 @@
    <ivy:resolve log="download-only"/>
   </target>
 
-  <target name="retrieve.libs" depends="create.lib.dirs, resolve.libs, retrieve.manual.libs">
+  <target name="retrieve.libs" depends="create.lib.dirs, resolve.libs, retrieve.manual.libs" unless="skip.libs">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
   </target>
 
@@ -369,6 +369,16 @@
     </checkstyle>
   </target>
 
+  <target name="check.test.style" depends="retrieve.libs" description="Generates a report of code convention violations in tests.">
+    <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
+    <mkdir dir="${report.out.dir}"/>
+    <checkstyle config="${project.root.dir}/src/code-style-tests.xml" failureProperty="style.failure" failOnViolation="false" classpathref="build.classpath">
+      <formatter type="xml" tofile="${report.out.dir}/checkstyle-report-tests.xml"/>
+      <formatter type="plain" />
+      <fileset dir="${test.dir}" includes="**/*.java"/>
+    </checkstyle>
+  </target>
+
   <target name="check.bugs" depends="compile.production" description="Generates a Findbugs report">
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="analysis.classpath"/>
     <mkdir dir="${report.out.dir}"/>
@@ -379,7 +389,7 @@
     </findbugs>
   </target>
 
-  <target name="check.quality" depends="check.style, check.bugs"/>
+  <target name="check.quality" depends="check.style, check.test.style, check.bugs"/>
 
   <!-- Documentation targets -->
   <target name="generate.docs" depends="compile.production" description="Create the javadoc files">

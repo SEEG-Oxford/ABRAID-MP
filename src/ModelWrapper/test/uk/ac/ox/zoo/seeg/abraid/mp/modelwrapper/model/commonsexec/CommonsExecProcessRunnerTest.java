@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 public class CommonsExecProcessRunnerTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     @Test
     public void runCallsExecuteWithCorrectCommand() throws Exception {

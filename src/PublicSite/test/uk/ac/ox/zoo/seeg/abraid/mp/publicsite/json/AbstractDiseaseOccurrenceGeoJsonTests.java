@@ -59,7 +59,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockDiseaseOccurrence(1, defaultLocation(), new DateTime(0), defaultAlert());
     }
 
-    public static String TWO_DISEASE_OCCURRENCE_FEATURES_AS_JSON = (
+    public static final String TWO_DISEASE_OCCURRENCE_FEATURES_AS_JSON = (
             "{" +
                     "   \"type\":\"FeatureCollection\"," +
                     "   \"crs\":{" +

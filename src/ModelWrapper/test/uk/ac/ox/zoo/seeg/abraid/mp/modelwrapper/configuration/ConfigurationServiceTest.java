@@ -16,7 +16,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class ConfigurationServiceTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     @Test
     public void setAuthenticationDetailsUpdatesFile() throws Exception {

@@ -29,7 +29,7 @@ public class HealthMapWebServiceTest {
         DateTime endDate = new DateTime("2014-01-07T13:10:59+0000");
         String startDateUrl = "2014-01-06+10:01:02%2B0000";
         String endDateUrl = "2014-01-07+13:10:59%2B0000";
-        
+
         // Real location with 2 alerts
         String jsonLocation1 = "{" +
                 "\"country\": \"China\"," +
@@ -135,7 +135,7 @@ public class HealthMapWebServiceTest {
                 "}";
         String json = "[" + jsonLocation1 + "," + jsonLocation2 + "]";
 
-        String url = getHealthMapBaseUrl() + addStartDate(startDateUrl) + addEndDate(endDateUrl); 
+        String url = getHealthMapBaseUrl() + addStartDate(startDateUrl) + addEndDate(endDateUrl);
         WebServiceClient client = getMockWebServiceClient(url, json);
         HealthMapWebService webService = getHealthMapWebService(client);
 
@@ -291,7 +291,7 @@ public class HealthMapWebServiceTest {
     private String getHealthMapBaseUrl() {
         return "http://healthmap.org/HMapi.php?auth=testauthcode&striphtml=false";
     }
-    
+
     private String addStartDate(String startDateString) {
         return "&sdate=" + startDateString;
     }
@@ -299,7 +299,7 @@ public class HealthMapWebServiceTest {
     private String addEndDate(String endDateString) {
         return "&edate=" + endDateString;
     }
-    
+
     private HealthMapWebService getHealthMapWebService(WebServiceClient client) {
         HealthMapWebService webService = new HealthMapWebService(client);
         webService.setRootUrl("http://healthmap.org/HMapi.php");
