@@ -27,6 +27,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = null;
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -38,10 +39,10 @@ public class HealthMapAlertConverterTest {
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, "");
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -75,6 +76,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = "vi";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -86,10 +88,10 @@ public class HealthMapAlertConverterTest {
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -123,6 +125,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = "zh";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -135,10 +138,10 @@ public class HealthMapAlertConverterTest {
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -166,6 +169,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = "zh";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -179,7 +183,7 @@ public class HealthMapAlertConverterTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup();
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -205,6 +209,7 @@ public class HealthMapAlertConverterTest {
         assertThat(newFeed.getName()).isEqualTo(feedName);
         assertThat(newFeed.getProvenance()).isNotNull();
         assertThat(newFeed.getProvenance().getName()).isEqualTo(ProvenanceNames.HEALTHMAP);
+        assertThat(newFeed.getLanguage()).isEqualTo(feedLanguage);
         assertThat(newFeed.getWeighting()).isEqualTo(DEFAULT_FEED_WEIGHTING);
         assertThat(newFeed.getHealthMapFeedId()).isEqualTo(feedId);
         assertThat(newAlert.getSummary()).isEqualTo(description);
@@ -223,6 +228,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = "zh";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -236,10 +242,10 @@ public class HealthMapAlertConverterTest {
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseNewName, diseaseId,
-                summary, publicationDate, link, description, originalUrl);
+                summary, publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -270,6 +276,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = null;
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -285,10 +292,10 @@ public class HealthMapAlertConverterTest {
         Location location = new Location();
         DiseaseGroup existingDiseaseGroup = new DiseaseGroup();
         Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
         DiseaseGroup newDiseaseGroup = new DiseaseGroup(null, null, diseaseGroupName, DiseaseGroupType.CLUSTER);
         HealthMapDisease newHealthMapDisease = new HealthMapDisease(diseaseId, healthMapDiseaseName, newDiseaseGroup);
 
@@ -321,6 +328,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = "fr";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long feedId = 1L;
         DateTime publicationDate = DateTime.now();
@@ -330,10 +338,10 @@ public class HealthMapAlertConverterTest {
 
         Location location = new Location();
         Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, null, null, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -356,6 +364,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
+        String feedLanguage = "de";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
         Long feedId = 1L;
@@ -367,10 +376,10 @@ public class HealthMapAlertConverterTest {
 
         Location location = new Location();
         Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -394,6 +403,7 @@ public class HealthMapAlertConverterTest {
         // Arrange
         String feedName = "Test feed";
         String feedNewName = "Test feed new name";
+        String feedLanguage = "de";
         String summary = "Test summary";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
@@ -406,10 +416,10 @@ public class HealthMapAlertConverterTest {
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedNewName, feedId, healthMapDiseaseName, diseaseId,
-                summary, publicationDate, link, description, originalUrl);
+                summary, publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -432,12 +442,15 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getFeed().getName()).isSameAs(feedNewName);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        verify(alertService, times(1)).saveFeed(same(feed));
     }
 
     @Test
-    public void occurrenceAlreadyExists() {
+    public void healthMapFeedLanguageChanged() {
         // Arrange
         String feedName = "Test feed";
+        String feedLanguage = null;
+        String feedNewLanguage = "zh";
         String summary = "Test summary";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
         Long diseaseId = 1L;
@@ -450,11 +463,57 @@ public class HealthMapAlertConverterTest {
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
+
+        HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId,
+                summary, publicationDate, link, description, originalUrl, feedNewLanguage);
+
+        // Prepare mock objects
+        AlertService alertService = mock(AlertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
+        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetFeed(lookupData, feed);
+        mockOutGetExistingHealthMapDisease(lookupData, diseaseId, healthMapDiseaseName, diseaseGroup);
+        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+
+        // Act
+        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, lookupData);
+        DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, location);
+
+        // Assert
+        assertThat(occurrence).isNotNull();
+        assertThat(occurrence.getDiseaseGroup()).isSameAs(diseaseGroup);
+        assertThat(occurrence.getAlert()).isNotNull();
+        assertThat(occurrence.getAlert().getFeed()).isSameAs(feed);
+        assertThat(occurrence.getAlert().getFeed().getLanguage()).isSameAs(feedNewLanguage);
+        assertThat(occurrence.getLocation()).isSameAs(location);
+        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        verify(alertService, times(1)).saveFeed(same(feed));
+    }
+
+    @Test
+    public void occurrenceAlreadyExists() {
+        // Arrange
+        String feedName = "Test feed";
+        String summary = "Test summary";
+        String feedLanguage = "en";
+        String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
+        Long diseaseId = 1L;
+        Long feedId = 1L;
+        DateTime publicationDate = DateTime.now();
+        String link = "http://healthmap.org/ln.php?2154965";
+        String healthMapDiseaseName = "Test disease";
+        String description = "Test description";
+        long healthMapAlertId = 2154965L;
+
+        Location location = new Location();
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
         Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedId);
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl);
+                publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);

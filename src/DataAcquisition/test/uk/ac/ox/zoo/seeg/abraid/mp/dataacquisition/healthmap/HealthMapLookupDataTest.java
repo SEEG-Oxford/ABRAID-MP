@@ -83,8 +83,8 @@ public class HealthMapLookupDataTest {
         DiseaseService diseaseService = mock(DiseaseService.class);
 
         Provenance provenance = new Provenance(ProvenanceNames.HEALTHMAP);
-        Feed feed1 = new Feed(10, "Test feed 1", provenance, 1, 1L);
-        Feed feed2 = new Feed(20, "Test feed 2", provenance, 1, 2L);
+        Feed feed1 = new Feed(10, "Test feed 1", provenance, null, 1, 1L);
+        Feed feed2 = new Feed(20, "Test feed 2", provenance, "de", 1, 2L);
 
         List<Feed> feeds = Arrays.asList(feed1, feed2);
         when(alertService.getFeedsByProvenanceName(ProvenanceNames.HEALTHMAP)).thenReturn(feeds);

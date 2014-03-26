@@ -31,12 +31,14 @@ public class HealthMapAlert {
     private String description;
     @JsonProperty("original_url")
     private String originalUrl;
+    @JsonProperty("feed_lang")
+    private String feedLanguage;
 
     public HealthMapAlert() {
     }
 
     public HealthMapAlert(String feed, Long feedId, String disease, Long diseaseId, String summary, DateTime date,
-                          String link, String description, String originalUrl) {
+                          String link, String description, String originalUrl, String feedLanguage) {
         this.feed = feed;
         this.feedId = feedId;
         this.disease = disease;
@@ -46,6 +48,7 @@ public class HealthMapAlert {
         this.link = link;
         this.description = description;
         this.originalUrl = originalUrl;
+        this.feedLanguage = feedLanguage;
     }
 
     public String getFeed() {
@@ -118,6 +121,14 @@ public class HealthMapAlert {
 
     public void setOriginalUrl(String originalUrl) {
         this.originalUrl = StringUtils.trimWhitespace(originalUrl);
+    }
+
+    public String getFeedLanguage() {
+        return feedLanguage;
+    }
+
+    public void setFeedLanguage(String feedLanguage) {
+        this.feedLanguage = StringUtils.trimWhitespace(feedLanguage);
     }
 
     /**
