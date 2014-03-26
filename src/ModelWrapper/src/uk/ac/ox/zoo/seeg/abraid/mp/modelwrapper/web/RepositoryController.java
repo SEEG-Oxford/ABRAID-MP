@@ -38,6 +38,7 @@ public class RepositoryController {
 
         if (validRequest) {
             String oldUrl = configurationService.getModelRepositoryUrl();
+            configurationService.setModelRepositoryUrl(repositoryUrl);
 
             try {
                 sourceCodeManager.updateRepository();
@@ -71,6 +72,8 @@ public class RepositoryController {
             try {
                 if (sourceCodeManager.getAvailableVersions().contains(version)) {
                     configurationService.setModelRepositoryVersion(version);
+                } else {
+                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
                 }
 
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
