@@ -31,6 +31,24 @@ public interface ConfigurationService {
     String getModelRepositoryUrl();
 
     /**
+     * Set the current remote repository url to use as a source for the model.
+     * @param repositoryUrl The repository url.
+     */
+    void setModelRepositoryUrl(String repositoryUrl);
+
+    /**
+     * Get the current model version to use to run the model.
+     * @return The model version.
+     */
+    String getModelRepositoryVersion();
+
+    /**
+     * Set the current model version to use to run the model.
+     * @param version The model version.
+     */
+    void setModelRepositoryVersion(String version);
+
+    /**
      * Gets the current directory to use for data caching.
      * @return The cache directory.
      */

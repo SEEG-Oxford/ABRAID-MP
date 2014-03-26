@@ -20,6 +20,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String PASSWORD_KEY = "auth.password_hash";
     private static final String CACHE_DIR_KEY = "cache.data.dir";
     private static final String MODEL_REPOSITORY_KEY = "model.repo.url";
+    private static final String MODEL_VERSION_KEY = "model.repo.version";
 
     public ConfigurationServiceImpl(File basicProperties) throws ConfigurationException {
         this.basicProperties = new PropertiesConfiguration(basicProperties);
@@ -62,6 +63,33 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public String getModelRepositoryUrl() {
         return basicProperties.getString(MODEL_REPOSITORY_KEY);
+    }
+
+    /**
+     * Set the current remote repository url to use as a source for the model.
+     * @param repositoryUrl The repository url.
+     */
+    @Override
+    public void setModelRepositoryUrl(String repositoryUrl) {
+        basicProperties.setProperty(MODEL_REPOSITORY_KEY, repositoryUrl);
+    }
+
+    /**
+     * Get the current model version to use to run the model.
+     * @return The model version.
+     */
+    @Override
+    public String getModelRepositoryVersion() {
+        return basicProperties.getString(MODEL_VERSION_KEY);
+    }
+
+    /**
+     * Set the current model version to use to run the model.
+     * @param version The model version.
+     */
+    @Override
+    public void setModelRepositoryVersion(String version) {
+        basicProperties.setProperty(MODEL_VERSION_KEY, version);
     }
 
     /**
