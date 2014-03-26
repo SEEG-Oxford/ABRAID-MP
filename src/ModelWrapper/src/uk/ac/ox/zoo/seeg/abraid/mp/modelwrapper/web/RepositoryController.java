@@ -1,10 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +13,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 import java.util.List;
 
 /**
- * Created by zool1112 on 25/03/14.
+ * Controller for the ModelWrapper repository configuration forms.
+ * Copyright (c) 2014 University of Oxford
  */
 @Controller
 public class RepositoryController {
@@ -77,7 +76,7 @@ public class RepositoryController {
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
-                // fall through to 400 error
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
         }
 
