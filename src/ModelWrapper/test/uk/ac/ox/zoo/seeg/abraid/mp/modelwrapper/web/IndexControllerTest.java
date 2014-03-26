@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class IndexControllerTest {
+
     @Test
     public void showIndexPageReturnsCorrectFreemarkerTemplateName() {
         // Arrange

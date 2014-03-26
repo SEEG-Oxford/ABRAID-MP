@@ -1,14 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
-import org.apache.commons.exec.OS;
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the ConfigurationService class.
@@ -23,7 +25,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
 
         String expectedUserName = "foo";
         String expectedPasswordHash = "bar";
@@ -57,7 +59,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedUserName = "foo";
         writeStandardSimpleProperties(testFile, expectedUserName, "initialValue2", "initialValue3");
-        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile, null);
 
         // Act
         String result = s.getAuthenticationUsername();
@@ -72,7 +74,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedPasswordHash = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", expectedPasswordHash, "initialValue3");
-        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile, null);
 
         // Act
         String result = s.getAuthenticationPasswordHash();
@@ -87,7 +89,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedUrl = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", expectedUrl);
-        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile, null);
 
         // Act
         String result = s.getModelRepositoryUrl();
@@ -97,28 +99,46 @@ public class ConfigurationServiceTest {
     }
 
     @Test
-    public void getCacheDirectoryReturnsCorrectDefault() throws Exception {
+    public void getCacheDirectoryReturnsCorrectDefaultOnWindows() throws Exception {
         // Arrange
+        OSChecker osChecker = mock(OSChecker.class);
+        when(osChecker.isWindows()).thenReturn(true);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3");
-        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile, osChecker);
 
         // Act
         String result = s.getCacheDirectory();
 
         // Assert
-        assertThat(result).isEqualTo(OS.isFamilyWindows() ?
-                System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper" :
-                "/var/lib/abraid/modelwrapper");
+        // Note when this test runs on travis/linux the LOCALAPPDATA environment variable will be empty, but this shouldn't effect the test.
+        assertThat(result).isEqualTo(System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper");
+    }
+
+    @Test
+    public void getCacheDirectoryReturnsCorrectDefaultOnLinux() throws Exception {
+        // Arrange
+        OSChecker osChecker = mock(OSChecker.class);
+        when(osChecker.isWindows()).thenReturn(false);
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3");
+        ConfigurationService s = new ConfigurationServiceImpl(testFile, osChecker);
+
+        // Act
+        String result = s.getCacheDirectory();
+
+        // Assert
+        assertThat(result).isEqualTo("/var/lib/abraid/modelwrapper");
     }
 
     @Test
     public void getCacheDirectoryReturnsCorrectValue() throws Exception {
         // Arrange
+        OSChecker osChecker = mock(OSChecker.class);
         File testFile = testFolder.newFile();
         String expectedDir = "foo";
         writeStandardSimplePropertiesWithCacheDir(testFile, "initialValue1", "initialValue2", "initialValue3", expectedDir);
-        ConfigurationService s = new ConfigurationServiceImpl(testFile);
+        ConfigurationService s = new ConfigurationServiceImpl(testFile, osChecker);
 
         // Act
         String result = s.getCacheDirectory();

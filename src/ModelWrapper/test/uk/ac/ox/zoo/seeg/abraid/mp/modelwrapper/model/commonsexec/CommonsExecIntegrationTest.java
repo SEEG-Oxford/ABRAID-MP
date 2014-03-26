@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec;
 
-import org.apache.commons.exec.OS;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -8,6 +7,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -167,7 +168,8 @@ public class CommonsExecIntegrationTest {
      * @return The R executable
      */
     private static File findR() {
-        if (OS.isFamilyWindows()) {
+        OSChecker osChecker = new OSCheckerImpl();
+        if (osChecker.isWindows()) {
             return new File("C:\\Program Files\\R\\R-3.0.2\\bin\\x64\\R.exe");
         } else {
             return new File("/usr/bin/R");

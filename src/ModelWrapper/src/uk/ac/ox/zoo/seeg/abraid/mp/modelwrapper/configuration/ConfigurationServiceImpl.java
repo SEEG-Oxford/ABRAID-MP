@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.exec.OS;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
 
@@ -14,7 +14,6 @@ import java.io.File;
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
-    private FileConfiguration basicProperties;
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
@@ -22,9 +21,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String MODEL_REPOSITORY_KEY = "model.repo.url";
     private static final String MODEL_VERSION_KEY = "model.repo.version";
 
-    public ConfigurationServiceImpl(File basicProperties) throws ConfigurationException {
+    private final FileConfiguration basicProperties;
+    private final OSChecker osChecker;
+
+    public ConfigurationServiceImpl(File basicProperties, OSChecker osChecker) throws ConfigurationException {
         this.basicProperties = new PropertiesConfiguration(basicProperties);
         this.basicProperties.setAutoSave(true);
+        this.osChecker = osChecker;
     }
 
     /**
@@ -98,7 +101,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public String getCacheDirectory() {
-        String defaultDir = OS.isFamilyWindows() ? DEFAULT_WINDOWS_CACHE_DIR : DEFAULT_LINUX_CACHE_DIR;
+        String defaultDir = osChecker.isWindows() ? DEFAULT_WINDOWS_CACHE_DIR : DEFAULT_LINUX_CACHE_DIR;
         return basicProperties.getString(CACHE_DIR_KEY, defaultDir);
     }
 }
