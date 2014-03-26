@@ -9,9 +9,6 @@
 ALTER TABLE alert
     ADD CONSTRAINT uq_alert_healthmap_alert_id UNIQUE (healthmap_alert_id);
 
-ALTER TABLE country
-    ADD CONSTRAINT uq_country_name UNIQUE (name);
-
 ALTER TABLE disease_occurrence_review
     ADD CONSTRAINT uq_disease_occurrence_review_expert_id_disease_occurrence_id UNIQUE (expert_id, disease_occurrence_id);
 
@@ -32,11 +29,26 @@ ALTER TABLE provenance
 
 
 -- Primary keys
+ALTER TABLE admin_unit ADD CONSTRAINT pk_admin_unit
+    PRIMARY KEY (gaul_code);
+
+ALTER TABLE admin_unit_global ADD CONSTRAINT pk_admin_unit_tailored_simplified_tropical
+    PRIMARY KEY (gaul_code);
+
+ALTER TABLE admin_unit_simplified_global ADD CONSTRAINT pk_admin_unit_simplified_global
+    PRIMARY KEY (gaul_code);
+
+ALTER TABLE admin_unit_simplified_tropical ADD CONSTRAINT pk_admin_unit_simplified_tropical
+    PRIMARY KEY (gaul_code);
+
+ALTER TABLE admin_unit_tropical ADD CONSTRAINT pk_admin_unit_tailored_tropical
+    PRIMARY KEY (gaul_code);
+
 ALTER TABLE alert ADD CONSTRAINT pk_alert
     PRIMARY KEY (id);
 
 ALTER TABLE country ADD CONSTRAINT pk_country
-    PRIMARY KEY (id);
+    PRIMARY KEY (gaul_code);
 
 ALTER TABLE disease_group ADD CONSTRAINT pk_disease
     PRIMARY KEY (id);
@@ -61,6 +73,9 @@ ALTER TABLE geonames_location_precision ADD CONSTRAINT pk_geonames_location_prec
 
 ALTER TABLE healthmap_country ADD CONSTRAINT pk_healthmap_country
     PRIMARY KEY (id);
+
+ALTER TABLE healthmap_country_country ADD CONSTRAINT pk_healthmap_country_country
+    PRIMARY KEY (healthmap_country_id, gaul_code);
 
 ALTER TABLE healthmap_disease ADD CONSTRAINT pk_healthmap_disease
     PRIMARY KEY (id);
@@ -88,11 +103,11 @@ ALTER TABLE disease_occurrence ADD CONSTRAINT fk_disease_occurrence_disease
 ALTER TABLE disease_occurrence ADD CONSTRAINT fk_disease_occurrence_location
     FOREIGN KEY (location_id) REFERENCES location (id);
 
+ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurence_review_expert
+    FOREIGN KEY (expert_id) REFERENCES expert (id);
+
 ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurrence_review_disease_occurrence
     FOREIGN KEY (disease_occurrence_id) REFERENCES disease_occurrence (id);
-
-ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurrence_review_expert
-    FOREIGN KEY (expert_id) REFERENCES expert (id);
 
 ALTER TABLE expert_disease_group ADD CONSTRAINT fk_expert_disease_group_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
@@ -103,14 +118,14 @@ ALTER TABLE expert_disease_group ADD CONSTRAINT fk_expert_disease_group_expert
 ALTER TABLE feed ADD CONSTRAINT fk_feed_provenance
     FOREIGN KEY (provenance_id) REFERENCES provenance (id);
 
-ALTER TABLE healthmap_country ADD CONSTRAINT fk_healthmap_country_country
-    FOREIGN KEY (country_id) REFERENCES country (id);
+ALTER TABLE healthmap_country_country ADD CONSTRAINT fk_healthmap_country_country_country
+    FOREIGN KEY (gaul_code) REFERENCES country (gaul_code);
+
+ALTER TABLE healthmap_country_country ADD CONSTRAINT fk_healthmap_country_country_healthmap_country
+    FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
 
 ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
-
-ALTER TABLE location ADD CONSTRAINT fk_location_country
-    FOREIGN KEY (country_id) REFERENCES country (id);
 
 
 -- Check constraints

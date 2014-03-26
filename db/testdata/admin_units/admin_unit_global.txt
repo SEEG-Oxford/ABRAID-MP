@@ -1,0 +1,558 @@
+5	0	ASM	0	American Samoa	American Samoa
+33	0	BOL	0	Bolivia	Bolivia
+60	0	COK	0	Cook Islands	Cook Islands
+81	0	FLK	0	Falkland Islands (Malvinas)	Falkland Islands (Malvinas)
+87	0	PYF	0	French Polynesia	French Polynesia
+183	0	NIU	0	Niue	Niue
+194	0	PRY	0	Paraguay	Paraguay
+197	0	PCN	0	Pitcairn	Pitcairn
+207	0	SHN	0	Saint Helena	Saint Helena
+36	0	BVT	0	Bouvet Island	Bouvet Island
+212	0	WSM	0	Samoa	Samoa
+228	0	SGS	0	South Georgia and the South Sandwich Islands	South Georgia and the South Sandwich Islands
+245	0	TON	0	Tonga	Tonga
+260	0	URY	0	Uruguay	Uruguay
+3228	259	USA	1	Indiana	Indiana,USA
+3229	259	USA	1	Iowa	Iowa,USA
+3230	259	USA	1	Kansas	Kansas,USA
+3231	259	USA	1	Kentucky	Kentucky,USA
+3232	259	USA	1	Louisiana	Louisiana,USA
+3233	259	USA	1	Maine	Maine,USA
+3234	259	USA	1	Maryland	Maryland,USA
+3235	259	USA	1	Massachusetts	Massachusetts,USA
+3236	259	USA	1	Michigan	Michigan,USA
+3237	259	USA	1	Minnesota	Minnesota,USA
+3238	259	USA	1	Mississippi	Mississippi,USA
+3239	259	USA	1	Missouri	Missouri,USA
+3240	259	USA	1	Montana	Montana,USA
+3241	259	USA	1	Nebraska	Nebraska,USA
+3242	259	USA	1	Nevada	Nevada,USA
+266	0	WLF	0	Wallis and Futuna	Wallis and Futuna
+429	12	ARG	1	Buenos Aires	Buenos aires,Argentina
+430	12	ARG	1	Buenos Aires D.f.	Buenos aires d.f.,Argentina
+431	12	ARG	1	Catamarca	Catamarca,Argentina
+432	12	ARG	1	Chaco	Chaco,Argentina
+433	12	ARG	1	Chubut	Chubut,Argentina
+434	12	ARG	1	Cordoba	Cordoba,Argentina
+435	12	ARG	1	Corrientes	Corrientes,Argentina
+436	12	ARG	1	Entre Rios	Entre rios,Argentina
+437	12	ARG	1	Formosa	Formosa,Argentina
+438	12	ARG	1	Jujuy	Jujuy,Argentina
+439	12	ARG	1	La Pampa	La pampa,Argentina
+440	12	ARG	1	La Rioja	La rioja,Argentina
+441	12	ARG	1	Mendoza	Mendoza,Argentina
+442	12	ARG	1	Misiones	Misiones,Argentina
+443	12	ARG	1	Neuquen	Neuquen,Argentina
+444	12	ARG	1	Rio Negro	Rio negro,Argentina
+445	12	ARG	1	Salta	Salta,Argentina
+446	12	ARG	1	San Juan	San juan,Argentina
+447	12	ARG	1	San Luis	San luis,Argentina
+448	12	ARG	1	Santa Cruz	Santa cruz,Argentina
+449	12	ARG	1	Santa Fe	Santa fe,Argentina
+450	12	ARG	1	Santiago Del Estero	Santiago del estero,Argentina
+451	12	ARG	1	Tierra Del Fuego	Tierra del fuego,Argentina
+109	0	HMD	0	Heard Island and McDonald Islands	Heard Island and McDonald Islands
+8	0	AGO	0	Angola	Angola
+35	0	BWA	0	Botswana	Botswana
+3243	259	USA	1	New Hampshire	New hampshire,USA
+3244	259	USA	1	New Jersey	New jersey,USA
+3245	259	USA	1	New Mexico	New mexico,USA
+3246	259	USA	1	New York	New york,USA
+452	12	ARG	1	Tucuman	Tucuman,Argentina
+3247	259	USA	1	North Carolina	North carolina,USA
+3248	259	USA	1	North Dakota	North dakota,USA
+3249	259	USA	1	Ohio	Ohio,USA
+3250	259	USA	1	Oklahoma	Oklahoma,USA
+3251	259	USA	1	Oregon	Oregon,USA
+38	0	IOT	0	British Indian Ocean Territory	British Indian Ocean Territory
+54	0	CXR	0	Christmas Island	Christmas Island
+178	0	NCL	0	New Caledonia	New Caledonia
+184	0	NFK	0	Norfolk Island	Norfolk Island
+242	0	TLS	0	Timor-Leste	Timor-Leste
+262	0	VUT	0	Vanuatu	Vanuatu
+1011444	0	SLB	0	Solomon Islands	Solomon Islands
+9	0	AIA	0	Anguilla	Anguilla
+3252	259	USA	1	Pennsylvania	Pennsylvania,USA
+3253	259	USA	1	Rhode Island	Rhode island,USA
+3254	259	USA	1	South Carolina	South carolina,USA
+58	0	COM	0	Comoros	Comoros
+142	0	LSO	0	Lesotho	Lesotho
+150	0	MDG	0	Madagascar	Madagascar
+152	0	MWI	0	Malawi	Malawi
+3255	259	USA	1	South Dakota	South dakota,USA
+3256	259	USA	1	Tennessee	Tennessee,USA
+3257	259	USA	1	Texas	Texas,USA
+160	0	MUS	0	Mauritius	Mauritius
+30	0	BMU	0	Bermuda	Bermuda
+3261	259	USA	1	Washington	Washington,USA
+3262	259	USA	1	West Virginia	West virginia,USA
+3263	259	USA	1	Wisconsin	Wisconsin,USA
+161	0	MYT	0	Mayotte	Mayotte
+170	0	MOZ	0	Mozambique	Mozambique
+172	0	NAM	0	Namibia	Namibia
+206	0	REU	0	Réunion	Réunion
+2493	204	RUS	1	Astrakhanskaya Oblast	Astrakhanskaya oblast,Russian Federation
+2494	204	RUS	1	Bashkortostan Rep.	Bashkortostan rep.,Russian Federation
+2495	204	RUS	1	Belgorodskaya Oblast	Belgorodskaya oblast,Russian Federation
+2496	204	RUS	1	Bryanskaya Oblast	Bryanskaya oblast,Russian Federation
+2497	204	RUS	1	Buryatiya Rep.	Buryatiya rep.,Russian Federation
+2498	204	RUS	1	Chechnya Rep.	Chechnya rep.,Russian Federation
+2499	204	RUS	1	Chelyabinskaya Oblast	Chelyabinskaya oblast,Russian Federation
+235	0	SWZ	0	Swaziland	Swaziland
+270	0	ZMB	0	Zambia	Zambia
+271	0	ZWE	0	Zimbabwe	Zimbabwe
+1013965	0	ZAF	0	South Africa	South Africa
+220	0	SYC	0	Seychelles	Seychelles
+2500	204	RUS	1	Chitinskaya Oblast	Chitinskaya oblast,Russian Federation
+2502	204	RUS	1	Chuvashiya Rep.	Chuvashiya rep.,Russian Federation
+2503	204	RUS	1	Dagestan Rep.	Dagestan rep.,Russian Federation
+2504	204	RUS	1	Evenkiyskiy Okrug	Evenkiyskiy okrug,Russian Federation
+2505	204	RUS	1	Ingushetiya Rep.	Ingushetiya rep.,Russian Federation
+2506	204	RUS	1	Irkutskaya Oblast	Irkutskaya oblast,Russian Federation
+2507	204	RUS	1	Ivanovskaya Oblast	Ivanovskaya oblast,Russian Federation
+2508	204	RUS	1	Kabardino-balkariya Rep.	Kabardino-balkariya rep.,Russian Federation
+2509	204	RUS	1	Kaliningradskaya Oblast	Kaliningradskaya oblast,Russian Federation
+11	0	ATG	0	Antigua and Barbuda	Antigua and Barbuda
+14	0	ABW	0	Aruba	Aruba
+20	0	BHS	0	Bahamas	Bahamas
+24	0	BRB	0	Barbados	Barbados
+28	0	BLZ	0	Belize	Belize
+2510	204	RUS	1	Kalmykiya Rep.	Kalmykiya rep.,Russian Federation
+2511	204	RUS	1	Kaluzhskaya Oblast	Kaluzhskaya oblast,Russian Federation
+2512	204	RUS	1	Kamchatskaya Oblast	Kamchatskaya oblast,Russian Federation
+39	0	VGB	0	British Virgin Islands	British Virgin Islands
+47	0	CPV	0	Cape Verde	Cape Verde
+2513	204	RUS	1	Karatchayevo-cherkesiya Rep.	Karatchayevo-cherkesiya rep.,Russian Federation
+2514	204	RUS	1	Karelya Rep.	Karelya rep.,Russian Federation
+2515	204	RUS	1	Kemerovskaya Oblast	Kemerovskaya oblast,Russian Federation
+2516	204	RUS	1	Khabarovskiy Kray	Khabarovskiy kray,Russian Federation
+2517	204	RUS	1	Khakasiya Rep.	Khakasiya rep.,Russian Federation
+2518	204	RUS	1	Khanty-mansyiskiy Okrug	Khanty-mansyiskiy okrug,Russian Federation
+2519	204	RUS	1	Kirovskaya Oblast	Kirovskaya oblast,Russian Federation
+2520	204	RUS	1	Komi Rep.	Komi rep.,Russian Federation
+2521	204	RUS	1	Komi-permyatskiy Okrug	Komi-permyatskiy okrug,Russian Federation
+2522	204	RUS	1	Koryakskiy Okrug	Koryakskiy okrug,Russian Federation
+2523	204	RUS	1	Kostromskaya Oblast	Kostromskaya oblast,Russian Federation
+2524	204	RUS	1	Krasnodarskiy Kray	Krasnodarskiy kray,Russian Federation
+2525	204	RUS	1	Krasnoyarskiy Kray	Krasnoyarskiy kray,Russian Federation
+2526	204	RUS	1	Kurganskaya Oblast	Kurganskaya oblast,Russian Federation
+2527	204	RUS	1	Kurskaya Oblast	Kurskaya oblast,Russian Federation
+2529	204	RUS	1	Leningradskaya Oblast	Leningradskaya oblast,Russian Federation
+2530	204	RUS	1	Lipetskaya Oblast	Lipetskaya oblast,Russian Federation
+2531	204	RUS	1	Magadanskaya Oblast	Magadanskaya oblast,Russian Federation
+2532	204	RUS	1	Mariy-el Rep.	Mariy-el rep.,Russian Federation
+2533	204	RUS	1	Mordoviya Rep.	Mordoviya rep.,Russian Federation
+48	0	CYM	0	Cayman Islands	Cayman Islands
+61	0	CRI	0	Costa Rica	Costa Rica
+63	0	CUB	0	Cuba	Cuba
+66	0	CIV	0	Côte d'Ivoire	Côte d'Ivoire
+71	0	DMA	0	Dominica	Dominica
+72	0	DOM	0	Dominican Republic	Dominican Republic
+75	0	SLV	0	El Salvador	El Salvador
+82	0	FRO	0	Faroe Islands	Faroe Islands
+86	0	GUF	0	French Guiana	French Guiana
+90	0	GMB	0	Gambia	Gambia
+95	0	GIB	0	Gibraltar	Gibraltar
+98	0	GRL	0	Greenland	Greenland
+2534	204	RUS	1	Moskovskaya Oblast	Moskovskaya oblast,Russian Federation
+2535	204	RUS	1	Moskva	Moskva,Russian Federation
+2536	204	RUS	1	Murmanskaya Oblast	Murmanskaya oblast,Russian Federation
+2538	204	RUS	1	Nenetskiy Okrug	Nenetskiy okrug,Russian Federation
+2539	204	RUS	1	Nizhegorodskaya Oblast	Nizhegorodskaya oblast,Russian Federation
+2540	204	RUS	1	Novgorodskaya Oblast	Novgorodskaya oblast,Russian Federation
+2541	204	RUS	1	Novosibirskaya Oblast	Novosibirskaya oblast,Russian Federation
+2542	204	RUS	1	Omskaya Oblast	Omskaya oblast,Russian Federation
+2543	204	RUS	1	Orenburgskaya Oblast	Orenburgskaya oblast,Russian Federation
+2544	204	RUS	1	Orlovskaya Oblast	Orlovskaya oblast,Russian Federation
+2545	204	RUS	1	Penzenskaya Oblast	Penzenskaya oblast,Russian Federation
+2546	204	RUS	1	Permskaya Oblast	Permskaya oblast,Russian Federation
+2547	204	RUS	1	Primorskiy Kray	Primorskiy kray,Russian Federation
+2548	204	RUS	1	Pskovskaya Oblast	Pskovskaya oblast,Russian Federation
+2549	204	RUS	1	Rostovskaya Oblast	Rostovskaya oblast,Russian Federation
+2550	204	RUS	1	Ryazanskaya Oblast	Ryazanskaya oblast,Russian Federation
+99	0	GRD	0	Grenada	Grenada
+100	0	GLP	0	Guadeloupe	Guadeloupe
+103	0	GTM	0	Guatemala	Guatemala
+104	0	GGY	0	Guernsey	Guernsey
+105	0	GNB	0	Guinea-Bissau	Guinea-Bissau
+106	0	GIN	0	Guinea	Guinea
+107	0	GUY	0	Guyana	Guyana
+108	0	HTI	0	Haiti	Haiti
+111	0	HND	0	Honduras	Honduras
+114	0	ISL	0	Iceland	Iceland
+119	0	IRL	0	Ireland	Ireland
+209	0	LCA	0	Saint Lucia	Saint Lucia
+2551	204	RUS	1	Sakha Rep.	Sakha rep.,Russian Federation
+2552	204	RUS	1	Sakhalinskaya Oblast	Sakhalinskaya oblast,Russian Federation
+2553	204	RUS	1	Samarskaya Oblast	Samarskaya oblast,Russian Federation
+120	0	IMN	0	Isle of Man	Isle of Man
+123	0	JAM	0	Jamaica	Jamaica
+128	0	JEY	0	Jersey	Jersey
+134	0	XXX	0	Kingman Reef	Kingman Reef
+144	0	LBR	0	Liberia	Liberia
+101	0	GUM	0	Guam	Guam
+113	0	HUN	0	Hungary	Hungary
+117	0	IRN	0	Iran  (Islamic Republic of)	Iran, Islamic Republic of
+118	0	IRQ	0	Iraq	Iraq
+151	0	XXX	0	Madeira Islands	Madeira Islands
+210	0	SPM	0	Saint Pierre et Miquelon	Saint Pierre et Miquelon
+121	0	ISR	0	Israel	Israel
+122	0	ITA	0	Italy	Italy
+126	0	JPN	0	Japan	Japan
+130	0	JOR	0	Jordan	Jordan
+132	0	KAZ	0	Kazakhstan	Kazakhstan
+136	0	XXX	0	Kuril islands	Kuril islands
+137	0	KWT	0	Kuwait	Kuwait
+138	0	KGZ	0	Kyrgyzstan	Kyrgyzstan
+139	0	LAO	0	Lao People's Democratic Republic	Lao People's Democratic Republic
+140	0	LVA	0	Latvia	Latvia
+141	0	LBN	0	Lebanon	Lebanon
+145	0	LBY	0	Libya	Libya
+158	0	MTQ	0	Martinique	Martinique
+159	0	MRT	0	Mauritania	Mauritania
+168	0	MSR	0	Montserrat	Montserrat
+169	0	MAR	0	Morocco	Morocco
+146	0	LIE	0	Liechtenstein	Liechtenstein
+147	0	LTU	0	Lithuania	Lithuania
+148	0	LUX	0	Luxembourg	Luxembourg
+153	0	MYS	0	Malaysia	Malaysia
+176	0	ANT	0	Netherlands Antilles	Netherlands Antilles
+180	0	NIC	0	Nicaragua	Nicaragua
+191	0	PAN	0	Panama	Panama
+199	0	PRT	0	Portugal	Portugal
+200	0	PRI	0	Puerto Rico	Puerto Rico
+208	0	KNA	0	Saint Kitts and Nevis	Saint Kitts and Nevis
+1011446	0	AFG	0	Afghanistan	Afghanistan
+1012936	0	IND	0	Kashmir	Kashmir
+211	0	VCT	0	Saint Vincent and the Grenadines	Saint Vincent and the Grenadines
+217	0	SEN	0	Senegal	Senegal
+221	0	SLE	0	Sierra Leone	Sierra Leone
+233	0	SUR	0	Suriname	Suriname
+7	0	AND	0	Andorra	Andorra
+13	0	ARM	0	Armenia	Armenia
+15	0	IND	0	Arunachal Pradesh	Arunachal Pradesh
+18	0	AUT	0	Austria	Austria
+19	0	AZE	0	Azerbaijan	Azerbaijan
+196	0	PHL	0	Philippines	Philippines
+240	0	THA	0	Thailand	Thailand
+906	53	CHN	1	Hainan Sheng	Hainan sheng,China
+904	53	CHN	1	Guangxi Zhuangzu Zizhiqu	Guangxi zhuangzu zizhiqu,China
+246	0	TTO	0	Trinidad and Tobago	Trinidad and Tobago
+251	0	TCA	0	Turks and Caicos islands	Turks and Caicos islands
+79	0	ETH	0	Ethiopia	Ethiopia
+84	0	FIN	0	Finland	Finland
+91	0	XXX	0	Palestine	Palestinian Territories
+92	0	GEO	0	Georgia	Georgia
+93	0	DEU	0	Germany	Germany
+97	0	GRC	0	Greece	Greece
+258	0	VIR	0	United States Virgin Islands	United States Virgin Islands
+263	0	VEN	0	Venezuela	Venezuela
+268	0	ESH	0	Western Sahara	Western Sahara
+74578	0	PRT	0	Azores Islands	Azores Islands
+1006344	0	MEX	0	Mexico	Mexico
+825	46	CAN	1	Alberta	Alberta,Canada
+826	46	CAN	1	British Columbia	British columbia,Canada
+827	46	CAN	1	Manitoba	Manitoba,Canada
+828	46	CAN	1	New Brunswick	New brunswick,Canada
+829	46	CAN	1	Newfoundland and Labrador	Newfoundland and labrador,Canada
+830	46	CAN	1	Northwest Territories	Northwest territories,Canada
+831	46	CAN	1	Nova Scotia	Nova scotia,Canada
+832	46	CAN	1	Nunavut	Nunavut,Canada
+833	46	CAN	1	Ontario	Ontario,Canada
+834	46	CAN	1	Prince Edward Island	Prince edward island,Canada
+835	46	CAN	1	Quebec	Quebec,Canada
+836	46	CAN	1	Saskatchewan	Saskatchewan,Canada
+837	46	CAN	1	Yukon Territory	Yukon territory,Canada
+2	0	CHN	0	Aksai Chin	Aksai Chin
+3	0	ALB	0	Albania	Albania
+6	0	SDN	0	Sudan	Sudan
+929	53	CHN	1	Yunnan Sheng	Yunnan sheng,China
+928	53	CHN	1	Xizang Zizhiqu	Xizang zizhiqu,China
+903	53	CHN	1	Guangdong Sheng	Guangdong sheng,China
+901	53	CHN	1	Fujian Sheng	Fujian sheng,China
+925	53	CHN	1	Taiwan Sheng	Taiwan sheng,China
+927	53	CHN	1	Xinjiang Uygur Zizhiqu	Xinjiang uygur zizhiqu,China
+913	53	CHN	1	Jiangsu Sheng	Jiangsu sheng,China
+922	53	CHN	1	Shanghai Shi	Shanghai shi,China
+921	53	CHN	1	Shandong Sheng	Shandong sheng,China
+21	0	BHR	0	Bahrain	Bahrain
+23	0	BGD	0	Bangladesh	Bangladesh
+26	0	BLR	0	Belarus	Belarus
+27	0	BEL	0	Belgium	Belgium
+29	0	BEN	0	Benin	Benin
+31	0	BTN	0	Bhutan	Bhutan
+34	0	BIH	0	Bosnia and Herzegovina	Bosnia and Herzegovina
+40	0	BRN	0	Brunei Darussalam	Brunei Darussalam
+41	0	BGR	0	Bulgaria	Bulgaria
+44	0	KHM	0	Cambodia	Cambodia
+45	0	CMR	0	Cameroon	Cameroon
+49	0	CAF	0	Central African Republic	Central African Republic
+50	0	TCD	0	Chad	Chad
+52	0	CHN	0	China/India	China/India border areas
+62	0	HRV	0	Croatia	Croatia
+917	53	CHN	1	Neimenggu Zizhiqu	Neimenggu zizhiqu,China
+915	53	CHN	1	Jilin Sheng	Jilin sheng,China
+907	53	CHN	1	Hebei Sheng	Hebei sheng,China
+899	53	CHN	1	Beijing Shi	Beijing shi,China
+905	53	CHN	1	Guizhou Sheng	Guizhou sheng,China
+924	53	CHN	1	Sichuan Sheng	Sichuan sheng,China
+919	53	CHN	1	Qinghai Sheng	Qinghai sheng,China
+898	53	CHN	1	Anhui Sheng	Anhui sheng,China
+923	53	CHN	1	Shanxi Sheng	Shanxi sheng,China
+920	53	CHN	1	Shaanxi Sheng	Shaanxi sheng,China
+914	53	CHN	1	Jiangxi Sheng	Jiangxi sheng,China
+64	0	CYP	0	Cyprus	Cyprus
+65	0	CZE	0	Czech Republic	Czech Republic
+67	0	PRK	0	Dem People's Rep of Korea	Dem People's Rep of Korea
+69	0	DNK	0	Denmark	Denmark
+70	0	DJI	0	Djibouti	Djibouti
+74	0	SSD	0	South Sudan	South Sudan
+76	0	GNQ	0	Equatorial Guinea	Equatorial Guinea
+77	0	ERI	0	Eritrea	Eritrea
+78	0	EST	0	Estonia	Estonia
+156	0	MLT	0	Malta	Malta
+163	0	FSM	0	Micronesia (Federated States of)	Micronesia, Federated States of
+165	0	MDA	0	Moldova, Republic of	Moldova, Republic of
+167	0	MNG	0	Mongolia	Mongolia
+175	0	NPL	0	Nepal	Nepal
+177	0	NLD	0	Netherlands	Netherlands
+181	0	NER	0	Niger	Niger
+182	0	NGA	0	Nigeria	Nigeria
+902	53	CHN	1	Gansu Sheng	Gansu sheng,China
+909	53	CHN	1	Henan Sheng	Henan sheng,China
+900	53	CHN	1	Chongqing Shi	Chongqing shi,China
+918	53	CHN	1	Ningxia Huizu Zizhiqu	Ningxia huizu zizhiqu,China
+911	53	CHN	1	Hubei Sheng	Hubei sheng,China
+912	53	CHN	1	Hunan Sheng	Hunan sheng,China
+916	53	CHN	1	Liaoning Sheng	Liaoning sheng,China
+908	53	CHN	1	Heilongjiang Sheng	Heilongjiang sheng,China
+2630	215	SAU	1	Najran	Najran,Saudia Arabia
+185	0	MNP	0	Northern Mariana Islands	Northern Mariana Islands
+186	0	NOR	0	Norway	Norway
+187	0	OMN	0	Oman	Oman
+188	0	PAK	0	Pakistan	Pakistan
+189	0	PLW	0	Palau	Palau
+198	0	POL	0	Poland	Poland
+201	0	QAT	0	Qatar	Qatar
+203	0	ROU	0	Romania	Romania
+205	0	RWA	0	Rwanda	Rwanda
+685	37	BRA	1	Rio Grande Do Sul	Rio grande do sul,Brasil
+214	0	STP	0	Sao Tome and Principe	Sao Tome and Principe
+2623	215	SAU	1	Baha	Baha,Saudia Arabia
+2624	215	SAU	1	Eastern Province	Eastern province,Saudia Arabia
+686	37	BRA	1	Rondonia	Rondonia,Brasil
+688	37	BRA	1	Santa Catarina	Santa catarina,Brasil
+689	37	BRA	1	Sao Paulo	Sao paulo,Brasil
+690	37	BRA	1	Sergipe	Sergipe,Brasil
+691	37	BRA	1	Tocantins	Tocantins,Brasil
+475	17	AUS	1	Tasmania	Tasmania, Australia
+43	0	BDI	0	Burundi	Burundi
+59	0	COG	0	Congo	Congo
+222	0	SGP	0	Singapore	Singapore
+223	0	SVK	0	Slovakia	Slovakia
+224	0	SVN	0	Slovenia	Slovenia
+226	0	SOM	0	Somalia	Somalia
+231	0	LKA	0	Sri Lanka	Sri Lanka
+236	0	SWE	0	Sweden	Sweden
+237	0	CHE	0	Switzerland	Switzerland
+238	0	SYR	0	Syrian Arab Republic	Syrian Arab Republic
+239	0	TJK	0	Tajikistan	Tajikistan
+241	0	MKD	0	The former Yugoslav Republic of Macedonia	Macedonia, Republic of
+248	0	TUN	0	Tunisia	Tunisia
+249	0	TUR	0	Turkey	Turkey
+250	0	TKM	0	Turkmenistan	Turkmenistan
+253	0	UGA	0	Uganda	Uganda
+254	0	UKR	0	Ukraine	Ukraine
+255	0	ARE	0	United Arab Emirates	United Arab Emirates
+261	0	UZB	0	Uzbekistan	Uzbekistan
+269	0	YEM	0	Yemen	Yemen
+2647	0	MNE	0	Montenegro	Montenegro
+2648	0	SRB	0	Serbia	Serbia
+33364	0	HKG	0	Hong Kong	Hong Kong
+68	0	COD	0	Democratic Republic of the Congo	Democratic Republic of the Congo
+89	0	GAB	0	Gabon	Gabon
+257	0	TZA	0	United Republic of Tanzania	United Republic of Tanzania
+133	0	KEN	0	Kenya	Kenya
+1011441	0	PNG	0	Papua New Guinea	Papua New Guinea
+468	17	AUS	1	Australian Capital Territory	Australian Capital Territory, Australia
+470	17	AUS	1	New South Wales	New South Wales, Australia
+471	17	AUS	1	Northern Territory	Northern Territory, Australia
+472	17	AUS	1	Other Territories	Other Territories, Australia
+473	17	AUS	1	Queensland	Queensland, Australia
+474	17	AUS	1	South Australia	South Australia, Australia
+476	17	AUS	1	Victoria	Victoria, Australia
+477	17	AUS	1	Western Australia	Western Australia, Australia
+1013663	1013696	IDN	1	JAWA TIMUR	Jawa timur, Indonesia
+1013664	1013696	IDN	1	PAPUA BARAT	Papua barat, Indonesia
+1013668	1013696	IDN	1	SULAWESI TENGGARA	Sulawesi tenggara, Indonesia
+1013675	1013696	IDN	1	BANGKA BELITUNG	Bangka belitung, Indonesia
+40760	0	SDN	0	Hala'ib triangle	Hala'ib triangle
+40762	0	SDN	0	Ma'tan al-Sarra	Ma'tan al-Sarra
+40765	0	EGY	0	Egypt	Egypt
+61013	0	KEN	0	Ilemi triangle	Ilemi triangle
+102	0	SDN	0	Abyei	Abyei
+1011440	0	MMR	0	Myanmar	Myanmar
+1011447	0	VNM	0	Viet Nam	Viet Nam
+1012935	0	PAK	0	Jammu Kashmir	Jammu Kashmir
+1011443	0	KOR	0	Korea, Republic of	Korea, Republic of
+2622	215	SAU	1	Asir	Asir,Saudia Arabia
+1013679	1013696	IDN	1	MALUKU	Maluku, Indonesia
+1013680	1013696	IDN	1	JAWA BARAT	Jawa barat, Indonesia
+1013682	1013696	IDN	1	SUMATERA BARAT	Sumatera barat, Indonesia
+1013683	1013696	IDN	1	NUSA TENGGARA TIMUR	Nusa tenggara timur, Indonesia
+1013684	1013696	IDN	1	BENGKULU	Bengkulu, Indonesia
+1013685	1013696	IDN	1	KALIMANTAN SELATAN	Kalimantan selatan, Indonesia
+1013686	1013696	IDN	1	JAWA TENGAH	Jawa tengah, Indonesia
+1013690	1013696	IDN	1	SULAWESI TENGAH	Sulawesi tengah, Indonesia
+1013691	1013696	IDN	1	NUSA TENGGARA BARAT	Nusa tenggara barat, Indonesia
+1013667	1013696	IDN	1	KALIMANTAN TENGAH	Kalimantan tengah, Indonesia
+1013669	1013696	IDN	1	DI YOGYAKARTA	Di yogyakarta, Indonesia
+2625	215	SAU	1	Hail	Hail,Saudia Arabia
+1013673	1013696	IDN	1	LAMPUNG	Lampung, Indonesia
+1013676	1013696	IDN	1	DKI JAKARTA	Dki jakarta, Indonesia
+1013678	1013696	IDN	1	BALI	Bali, Indonesia
+2626	215	SAU	1	Jawf	Jawf,Saudia Arabia
+2627	215	SAU	1	Jizan	Jizan,Saudia Arabia
+2628	215	SAU	1	Madinah	Madinah,Saudia Arabia
+2629	215	SAU	1	Makkah	Makkah,Saudia Arabia
+1013688	1013696	IDN	1	BANTEN	Banten, Indonesia
+1013689	1013696	IDN	1	SULAWESI SELATAN	Sulawesi selatan, Indonesia
+1013692	1013696	IDN	1	SULAWESI BARAT	Sulawesi barat, Indonesia
+1013693	1013696	IDN	1	SUMATERA SELATAN	Sumatera selatan, Indonesia
+1013694	1013696	IDN	1	PAPUA	Papua, Indonesia
+2631	215	SAU	1	Northern Frontier	Northern frontier,Saudia Arabia
+4	0	DZA	0	Algeria	Algeria
+42	0	BFA	0	Burkina Faso	Burkina Faso
+85	0	FRA	0	France	France
+94	0	GHA	0	Ghana	Ghana
+155	0	MLI	0	Mali	Mali
+234	0	SJM	0	Svalbard and Jan Mayen Islands	Svalbard and Jan Mayen Islands
+243	0	TGO	0	Togo	Togo
+256	0	GBR	0	U.K. of Great Britain and Northern Ireland	UK
+667	37	BRA	1	Amapa	Amapa,Brasil
+687	37	BRA	1	Roraima	Roraima,Brasil
+2501	204	RUS	1	Chukotskiy Okrug	Chukotskiy okrug,Russian Federation
+3214	259	USA	1	Alabama	Alabama,USA
+3215	259	USA	1	Alaska	Alaska,USA
+3216	259	USA	1	Arizona	Arizona,USA
+3217	259	USA	1	Arkansas	Arkansas,USA
+3218	259	USA	1	California	California,USA
+3219	259	USA	1	Colorado	Colorado,USA
+3220	259	USA	1	Connecticut	Connecticut,USA
+3221	259	USA	1	Delaware	Delaware,USA
+2632	215	SAU	1	Quassim	Quassim,Saudia Arabia
+2633	215	SAU	1	Riyad	Riyad,Saudia Arabia
+2634	215	SAU	1	Tabuk	Tabuk,Saudia Arabia
+1500	115	IND	1	Manipur	Manipur,India
+1492	115	IND	1	Haryana	Haryana,India
+1502	115	IND	1	Mizoram	Mizoram,India
+1493	115	IND	1	Himachal Pradesh	Himachal pradesh,India
+1485	115	IND	1	Andhra Pradesh	Andhra pradesh,India
+70082	115	IND	1	Uttarakhand	Uttarakhand,India
+70080	115	IND	1	Puducherry	Puducherry,India
+1484	115	IND	1	Andaman and Nicobar	Andaman and nicobar,India
+1490	115	IND	1	Goa	Goa,India
+1511	115	IND	1	West Bengal	West bengal,India
+70078	115	IND	1	Jharkhand	Jharkhand,India
+1494	115	IND	1	Karnataka	Karnataka,India
+1503	115	IND	1	Nagaland	Nagaland,India
+70073	115	IND	1	Bihar	Bihar,India
+1496	115	IND	1	Lakshadweep	Lakshadweep,India
+1491	115	IND	1	Gujarat	Gujarat,India
+1504	115	IND	1	Orissa	Orissa,India
+70076	115	IND	1	Dadra and Nagar Haveli	Dadra and nagar haveli,India
+70081	115	IND	1	Uttar Pradesh	Uttar pradesh,India
+70079	115	IND	1	Madhya Pradesh	Madhya pradesh,India
+1506	115	IND	1	Rajasthan	Rajasthan,India
+1509	115	IND	1	Tripura	Tripura,India
+70074	115	IND	1	Chandigarh	Chandigarh,India
+70077	115	IND	1	Daman and Diu	Daman and diu,India
+1508	115	IND	1	Tamil Nadu	Tamil nadu,India
+1495	115	IND	1	Kerala	Kerala,India
+1498	115	IND	1	Maharashtra	Maharashtra,India
+1505	115	IND	1	Punjab	Punjab,India
+1507	115	IND	1	Sikkim	Sikkim,India
+1487	115	IND	1	Assam	Assam,India
+70075	115	IND	1	Chhattisgarh	Chhattisgarh,India
+1501	115	IND	1	Meghalaya	Meghalaya,India
+1489	115	IND	1	Delhi	Delhi,India
+57	0	COL	0	Colombia	Colombia
+83	0	FJI	0	Fiji	Fiji
+135	0	KIR	0	Kiribati	Kiribati
+179	0	NZL	0	New Zealand	New Zealand
+1011442	0	PER	0	Peru	Peru
+665	37	BRA	1	Acre	Acre,Brasil
+666	37	BRA	1	Alagoas	Alagoas,Brasil
+668	37	BRA	1	Amazonas	Amazonas,Brasil
+669	37	BRA	1	Bahia	Bahia,Brasil
+670	37	BRA	1	Ceara	Ceara,Brasil
+3222	259	USA	1	District Of Columbia	District of columbia,USA
+3223	259	USA	1	Florida	Florida,USA
+3224	259	USA	1	Georgia	Georgia,USA
+3226	259	USA	1	Idaho	Idaho,USA
+3227	259	USA	1	Illinois	Illinois,USA
+671	37	BRA	1	Distrito Federal	Distrito federal,Brasil
+672	37	BRA	1	Espirito Santo	Espirito santo,Brasil
+673	37	BRA	1	Goias	Goias,Brasil
+674	37	BRA	1	Maranhao	Maranhao,Brasil
+675	37	BRA	1	Mato Grosso	Mato grosso,Brasil
+676	37	BRA	1	Mato Grosso Do Sul	Mato grosso do sul,Brasil
+677	37	BRA	1	Minas Gerais	Minas gerais,Brasil
+678	37	BRA	1	Para	Para,Brasil
+679	37	BRA	1	Paraiba	Paraiba,Brasil
+680	37	BRA	1	Parana	Parana,Brasil
+681	37	BRA	1	Pernambuco	Pernambuco,Brasil
+682	37	BRA	1	Piaui	Piaui,Brasil
+683	37	BRA	1	Rio De Janeiro	Rio de janeiro,Brasil
+684	37	BRA	1	Rio Grande Do Norte	Rio grande do norte,Brasil
+3258	259	USA	1	Utah	Utah,USA
+3259	259	USA	1	Vermont	Vermont,USA
+3260	259	USA	1	Virginia	Virginia,USA
+3264	259	USA	1	Wyoming	Wyoming,USA
+2487	204	RUS	1	Adygeya Rep.	Adygeya rep.,Russian Federation
+2488	204	RUS	1	Aginskiy Buryatskiy A. Okrug	Aginskiy buryatskiy a. okrug,Russian Federation
+2489	204	RUS	1	Altay Rep.	Altay rep.,Russian Federation
+2490	204	RUS	1	Altayskiy Kray	Altayskiy kray,Russian Federation
+2491	204	RUS	1	Amurskaya Oblast	Amurskaya oblast,Russian Federation
+2492	204	RUS	1	Arkhangelskaya Oblast	Arkhangelskaya oblast,Russian Federation
+2554	204	RUS	1	Sankt-peterburg	Sankt-peterburg,Russian Federation
+2555	204	RUS	1	Saratovskaya Oblast	Saratovskaya oblast,Russian Federation
+2556	204	RUS	1	Severnaya Osetiya-alaniya Rep.	Severnaya osetiya-alaniya rep.,Russian Federation
+2557	204	RUS	1	Smolenskaya Oblast	Smolenskaya oblast,Russian Federation
+2558	204	RUS	1	Stavropolskiy Kray	Stavropolskiy kray,Russian Federation
+2559	204	RUS	1	Sverdlovskaya Oblast	Sverdlovskaya oblast,Russian Federation
+2560	204	RUS	1	Tambovskaya Oblast	Tambovskaya oblast,Russian Federation
+2561	204	RUS	1	Tatarstan Rep.	Tatarstan rep.,Russian Federation
+2562	204	RUS	1	Taymyrskiy Okrug	Taymyrskiy okrug,Russian Federation
+2563	204	RUS	1	Tomskaya Oblast	Tomskaya oblast,Russian Federation
+2564	204	RUS	1	Tulskaya Oblast	Tulskaya oblast,Russian Federation
+2565	204	RUS	1	Tverskaya Oblast	Tverskaya oblast,Russian Federation
+2566	204	RUS	1	Tyumenskaya Oblast	Tyumenskaya oblast,Russian Federation
+2567	204	RUS	1	Tyva Rep.	Tyva rep.,Russian Federation
+2568	204	RUS	1	Udmurtiya Rep.	Udmurtiya rep.,Russian Federation
+2569	204	RUS	1	Ulyanovskaya Oblast	Ulyanovskaya oblast,Russian Federation
+2570	204	RUS	1	Ustordynskiy Buryatskiy Okrug	Ustordynskiy buryatskiy okrug,Russian Federation
+2571	204	RUS	1	Vladimirskaya Oblast	Vladimirskaya oblast,Russian Federation
+2572	204	RUS	1	Volgogradskaya Oblast	Volgogradskaya oblast,Russian Federation
+2573	204	RUS	1	Vologodskaya Oblast	Vologodskaya oblast,Russian Federation
+2574	204	RUS	1	Voronezhskaya Oblast	Voronezhskaya oblast,Russian Federation
+2575	204	RUS	1	Yamalo-nenetskiy Okrug	Yamalo-nenetskiy okrug,Russian Federation
+2576	204	RUS	1	Yaroslavskaya Oblast	Yaroslavskaya oblast,Russian Federation
+2577	204	RUS	1	Yevreyskaya A. Oblast	Yevreyskaya a. oblast,Russian Federation
+1013665	1013696	IDN	1	KEPULAUAN RIAU	Kepulauan riau, Indonesia
+1013670	1013696	IDN	1	RIAU	Riau, Indonesia
+1013671	1013696	IDN	1	NANGGROE ACEH DARUSALAM	Nanggroe aceh darusalam, Indonesia
+1013674	1013696	IDN	1	GORONTALO	Gorontalo, Indonesia
+1013677	1013696	IDN	1	MALUKU UTARA	Maluku utara, Indonesia
+1013681	1013696	IDN	1	SUMATERA UTARA	Sumatera utara, Indonesia
+1013687	1013696	IDN	1	KALIMANTAN TIMUR	Kalimantan timur, Indonesia
+1013666	1013696	IDN	1	SULAWESI UTARA	Sulawesi utara, Indonesia
+1013672	1013696	IDN	1	JAMBI	Jambi, Indonesia
+1013695	1013696	IDN	1	KALIMANTAN BARAT	Kalimantan barat, Indonesia
+1143	0	ECU	0	Galapagos	Galapagos
+73	0	ECU	0	Ecuador	Ecuador (excl. Galapagos)
+894	0	CHL	0	Easter Island	Easter Island
+51	0	CHL	0	Chile	Chile (excl. Easter Island)
+3225	259	USA	1	Hawaii	Hawaii,USA
+229	0	ESP	0	Spain	Spain
+229010	0	ESP	0	Canary Islands	Canary Islands

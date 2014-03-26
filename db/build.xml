@@ -12,7 +12,7 @@
     <property file="database.properties.example" />
 
     <!-- Creates the database containing test data -->
-    <target name="create.test.database" depends="create.database, create.test.data" />
+    <target name="create.test.database" depends="create.database, create.test.admin.unit.data, create.data, create.test.data" />
 
     <!-- Creates the database -->
     <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
@@ -35,6 +35,38 @@
         </exec>
     </target>
 
+    <!-- Adds test data to an existing database -->
+    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
+    <target name="create.test.admin.unit.data">
+        <exec executable="psql" failonerror="true" dir="testdata/admin_units">
+            <arg value="-U" />
+            <arg value="${superuser.name}" />
+            <arg value="-q" />
+            <arg value="-w" />
+            <arg value="-v" />
+            <arg value="ON_ERROR_STOP=ON" />
+            <arg value="-f" />
+            <arg value="admin_units_testdata.sql" />
+            <arg value="${database.name}" />
+        </exec>
+    </target>
+    
+    <!-- Adds data to an existing database -->
+    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
+    <target name="create.data">
+        <exec executable="psql" failonerror="true" dir="data">
+            <arg value="-U" />
+            <arg value="${superuser.name}" />
+            <arg value="-q" />
+            <arg value="-w" />
+            <arg value="-v" />
+            <arg value="ON_ERROR_STOP=ON" />
+            <arg value="-f" />
+            <arg value="data.sql" />
+            <arg value="${database.name}" />
+        </exec>
+    </target>
+    
     <!-- Adds test data to an existing database -->
     <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="create.test.data">

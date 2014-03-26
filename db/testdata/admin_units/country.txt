@@ -1,0 +1,250 @@
+2	CHN	Aksai Chin
+3	ALB	Albania
+4	DZA	Algeria
+5	ASM	American Samoa
+6	SDN	Sudan
+7	AND	Andorra
+8	AGO	Angola
+9	AIA	Anguilla
+11	ATG	Antigua and Barbuda
+12	ARG	Argentina
+13	ARM	Armenia
+14	ABW	Aruba
+15	IND	Arunachal Pradesh
+17	AUS	Australia
+18	AUT	Austria
+19	AZE	Azerbaijan
+20	BHS	Bahamas
+21	BHR	Bahrain
+23	BGD	Bangladesh
+24	BRB	Barbados
+26	BLR	Belarus
+27	BEL	Belgium
+28	BLZ	Belize
+29	BEN	Benin
+30	BMU	Bermuda
+31	BTN	Bhutan
+33	BOL	Bolivia
+34	BIH	Bosnia and Herzegovina
+35	BWA	Botswana
+36	BVT	Bouvet Island
+37	BRA	Brazil
+38	IOT	British Indian Ocean Territory
+39	VGB	British Virgin Islands
+40	BRN	Brunei Darussalam
+41	BGR	Bulgaria
+42	BFA	Burkina Faso
+43	BDI	Burundi
+44	KHM	Cambodia
+45	CMR	Cameroon
+46	CAN	Canada
+47	CPV	Cape Verde
+91	XXX	Gaza Strip
+92	GEO	Georgia
+93	DEU	Germany
+94	GHA	Ghana
+48	CYM	Cayman Islands
+49	CAF	Central African Republic
+50	TCD	Chad
+52	CHN	China/India
+53	CHN	China
+54	CXR	Christmas Island
+57	COL	Colombia
+71	DMA	Dominica
+72	DOM	Dominican Republic
+74	SSD	South Sudan
+75	SLV	El Salvador
+76	GNQ	Equatorial Guinea
+77	ERI	Eritrea
+78	EST	Estonia
+79	ETH	Ethiopia
+81	FLK	Falkland Islands (Malvinas)
+82	FRO	Faroe Islands
+83	FJI	Fiji
+84	FIN	Finland
+86	GUF	French Guiana
+87	PYF	French Polynesia
+89	GAB	Gabon
+90	GMB	Gambia
+95	GIB	Gibraltar
+97	GRC	Greece
+98	GRL	Greenland
+58	COM	Comoros
+59	COG	Congo
+60	COK	Cook Islands
+61	CRI	Costa Rica
+62	HRV	Croatia
+63	CUB	Cuba
+65	CZE	Czech Republic
+66	CIV	Côte d'Ivoire
+67	PRK	Dem People's Rep of Korea
+68	COD	Democratic Republic of the Congo
+69	DNK	Denmark
+70	DJI	Djibouti
+136	XXX	Kuril islands
+137	KWT	Kuwait
+138	KGZ	Kyrgyzstan
+139	LAO	Lao People's Democratic Republic
+140	LVA	Latvia
+141	LBN	Lebanon
+142	LSO	Lesotho
+144	LBR	Liberia
+145	LBY	Libya
+99	GRD	Grenada
+100	GLP	Guadeloupe
+101	GUM	Guam
+103	GTM	Guatemala
+104	GGY	Guernsey
+105	GNB	Guinea-Bissau
+106	GIN	Guinea
+107	GUY	Guyana
+108	HTI	Haiti
+109	HMD	Heard Island and McDonald Islands
+111	HND	Honduras
+113	HUN	Hungary
+114	ISL	Iceland
+117	IRN	Iran  (Islamic Republic of)
+118	IRQ	Iraq
+119	IRL	Ireland
+120	IMN	Isle of Man
+121	ISR	Israel
+123	JAM	Jamaica
+126	JPN	Japan
+128	JEY	Jersey
+130	JOR	Jordan
+132	KAZ	Kazakhstan
+134	XXX	Kingman Reef
+135	KIR	Kiribati
+146	LIE	Liechtenstein
+147	LTU	Lithuania
+148	LUX	Luxembourg
+150	MDG	Madagascar
+151	XXX	Madeira Islands
+152	MWI	Malawi
+153	MYS	Malaysia
+155	MLI	Mali
+197	PCN	Pitcairn
+198	POL	Poland
+199	PRT	Portugal
+200	PRI	Puerto Rico
+156	MLT	Malta
+158	MTQ	Martinique
+159	MRT	Mauritania
+201	QAT	Qatar
+160	MUS	Mauritius
+203	ROU	Romania
+204	RUS	Russian Federation
+205	RWA	Rwanda
+206	REU	Réunion
+207	SHN	Saint Helena
+161	MYT	Mayotte
+163	FSM	Micronesia (Federated States of)
+165	MDA	Moldova, Republic of
+167	MNG	Mongolia
+168	MSR	Montserrat
+169	MAR	Morocco
+170	MOZ	Mozambique
+172	NAM	Namibia
+175	NPL	Nepal
+1011444	SLB	Solomon Islands
+1013696	IDN	Indonesia
+1011446	AFG	Afghanistan
+1011441	PNG	Papua New Guinea
+1012936	IND	Kashmir
+1013965	ZAF	South Africa
+196	PHL	Philippines
+240	THA	Thailand
+115	IND	India
+220	SYC	Seychelles
+257	TZA	United Republic of Tanzania
+133	KEN	Kenya
+73	ECU	Ecuador
+122	ITA	Italy
+259002	USA	United States of America
+110	VAT	Holy See
+176	ANT	Netherlands Antilles
+177	NLD	Netherlands
+178	NCL	New Caledonia
+179	NZL	New Zealand
+180	NIC	Nicaragua
+181	NER	Niger
+182	NGA	Nigeria
+183	NIU	Niue
+184	NFK	Norfolk Island
+185	MNP	Northern Mariana Islands
+186	NOR	Norway
+187	OMN	Oman
+188	PAK	Pakistan
+189	PLW	Palau
+191	PAN	Panama
+194	PRY	Paraguay
+208	KNA	Saint Kitts and Nevis
+209	LCA	Saint Lucia
+210	SPM	Saint Pierre et Miquelon
+211	VCT	Saint Vincent and the Grenadines
+213	SMR	San Marino
+64	CYP	Cyprus
+40763	CYP	Dhekelia and Akrotiri SBA
+85	FRA	France
+212	WSM	Samoa
+166	MCO	Monaco
+229	ESP	Spain
+229010	ESP	Canary Islands
+51	CHL	Chile
+214	STP	Sao Tome and Principe
+215	SAU	Saudi Arabia
+217	SEN	Senegal
+221	SLE	Sierra Leone
+894	CHL	Easter Island
+222	SGP	Singapore
+223	SVK	Slovakia
+224	SVN	Slovenia
+226	SOM	Somalia
+228	SGS	South Georgia and the South Sandwich Islands
+231	LKA	Sri Lanka
+233	SUR	Suriname
+234	SJM	Svalbard and Jan Mayen Islands
+235	SWZ	Swaziland
+236	SWE	Sweden
+237	CHE	Switzerland
+238	SYR	Syrian Arab Republic
+239	TJK	Tajikistan
+241	MKD	The former Yugoslav Republic of Macedonia
+242	TLS	Timor-Leste
+243	TGO	Togo
+245	TON	Tonga
+246	TTO	Trinidad and Tobago
+248	TUN	Tunisia
+249	TUR	Turkey
+250	TKM	Turkmenistan
+251	TCA	Turks and Caicos islands
+253	UGA	Uganda
+254	UKR	Ukraine
+255	ARE	United Arab Emirates
+256	GBR	U.K. of Great Britain and Northern Ireland
+258	VIR	United States Virgin Islands
+260	URY	Uruguay
+261	UZB	Uzbekistan
+262	VUT	Vanuatu
+263	VEN	Venezuela
+266	WLF	Wallis and Futuna
+267	XXX	West Bank
+268	ESH	Western Sahara
+269	YEM	Yemen
+270	ZMB	Zambia
+271	ZWE	Zimbabwe
+2647	MNE	Montenegro
+2648	SRB	Serbia
+33364	HKG	Hong Kong
+40760	SDN	Hala'ib triangle
+40762	SDN	Ma'tan al-Sarra
+40765	EGY	Egypt
+61013	KEN	Ilemi triangle
+74578	PRT	Azores Islands
+102	SDN	Abyei
+1006344	MEX	Mexico
+1011440	MMR	Myanmar
+1011447	VNM	Viet Nam
+1011442	PER	Peru
+1012935	PAK	Jammu Kashmir
+1011443	KOR	Korea, Republic of

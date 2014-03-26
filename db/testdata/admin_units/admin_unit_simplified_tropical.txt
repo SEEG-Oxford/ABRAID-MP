@@ -1,0 +1,460 @@
+95	Gibraltar	Gibraltar
+2	Aksai Chin	Aksai Chin
+3	Albania	Albania
+13	Armenia	Armenia
+197	Pitcairn	Pitcairn
+4	Algeria	Algeria
+3253	Rhode Island	Rhode island,USA
+6	Sudan	Sudan
+7	Andorra	Andorra
+40760	Hala'ib triangle	Hala'ib triangle
+40762	Ma'tan al-Sarra	Ma'tan al-Sarra
+15	Arunachal Pradesh	Arunachal Pradesh
+27	Belgium	Belgium
+18	Austria	Austria
+28	Belize	Belize
+440	La Rioja	La rioja,Argentina
+19	Azerbaijan	Azerbaijan
+20	Bahamas	Bahamas
+23	Bangladesh	Bangladesh
+26	Belarus	Belarus
+130	Jordan	Jordan
+132	Kazakhstan	Kazakhstan
+29	Benin	Benin
+31	Bhutan	Bhutan
+34	Bosnia and Herzegovina	Bosnia and Herzegovina
+33	Bolivia	Bolivia
+35	Botswana	Botswana
+40	Brunei Darussalam	Brunei Darussalam
+47	Cape Verde	Cape Verde
+49	Central African Republic	Central African Republic
+41	Bulgaria	Bulgaria
+61	Costa Rica	Costa Rica
+42	Burkina Faso	Burkina Faso
+43	Burundi	Burundi
+64	Cyprus	Cyprus
+44	Cambodia	Cambodia
+70	Djibouti	Djibouti
+71	Dominica	Dominica
+45	Cameroon	Cameroon
+50	Chad	Chad
+51	Chile	Chile (excl. Easter Island)
+52	China/India	China/India border areas
+57	Colombia	Colombia
+58	Comoros	Comoros
+59	Congo	Congo
+451	Tierra Del Fuego	Tierra del fuego,Argentina
+62	Croatia	Croatia
+63	Cuba	Cuba
+65	Czech Republic	Czech Republic
+72	Dominican Republic	Dominican Republic
+66	Côte d'Ivoire	Côte d'Ivoire
+67	Dem People's Rep of Korea	Dem People's Rep of Korea
+68	Democratic Republic of the Congo	Democratic Republic of the Congo
+76	Equatorial Guinea	Equatorial Guinea
+69	Denmark	Denmark
+73	Ecuador	Ecuador (excl. Galapagos)
+92	Georgia	Georgia
+93	Germany	Germany
+74	South Sudan	South Sudan
+75	El Salvador	El Salvador
+77	Eritrea	Eritrea
+140	Latvia	Latvia
+78	Estonia	Estonia
+141	Lebanon	Lebanon
+79	Ethiopia	Ethiopia
+142	Lesotho	Lesotho
+81	Falkland Islands (Malvinas)	Falkland Islands (Malvinas)
+82	Faroe Islands	Faroe Islands
+83	Fiji	Fiji
+84	Finland	Finland
+85	France	France
+86	French Guiana	French Guiana
+87	French Polynesia	French Polynesia
+158	Martinique	Martinique
+89	Gabon	Gabon
+90	Gambia	Gambia
+452	Tucuman	Tucuman,Argentina
+94	Ghana	Ghana
+97	Greece	Greece
+98	Greenland	Greenland
+100	Guadeloupe	Guadeloupe
+102	Abyei	Abyei
+103	Guatemala	Guatemala
+468	Australian Capital Territory	Australian Capital Territory, Australia
+470	New South Wales	New South Wales, Australia
+105	Guinea-Bissau	Guinea-Bissau
+111	Honduras	Honduras
+471	Northern Territory	Northern Territory, Australia
+473	Queensland	Queensland, Australia
+106	Guinea	Guinea
+107	Guyana	Guyana
+108	Haiti	Haiti
+113	Hungary	Hungary
+114	Iceland	Iceland
+117	Iran  (Islamic Republic of)	Iran, Islamic Republic of
+123	Jamaica	Jamaica
+126	Japan	Japan
+39	British Virgin Islands	British Virgin Islands
+118	Iraq	Iraq
+119	Ireland	Ireland
+120	Isle of Man	Isle of Man
+121	Israel	Israel
+122	Italy	Italy
+133	Kenya	Kenya
+136	Kuril islands	Kuril islands
+137	Kuwait	Kuwait
+138	Kyrgyzstan	Kyrgyzstan
+139	Lao People's Democratic Republic	Lao People's Democratic Republic
+99	Grenada	Grenada
+144	Liberia	Liberia
+145	Libya	Libya
+147	Lithuania	Lithuania
+148	Luxembourg	Luxembourg
+150	Madagascar	Madagascar
+151	Madeira Islands	Madeira Islands
+231	Sri Lanka	Sri Lanka
+152	Malawi	Malawi
+153	Malaysia	Malaysia
+178	New Caledonia	New Caledonia
+155	Mali	Mali
+179	New Zealand	New Zealand
+159	Mauritania	Mauritania
+160	Mauritius	Mauritius
+238	Syrian Arab Republic	Syrian Arab Republic
+165	Moldova, Republic of	Moldova, Republic of
+167	Mongolia	Mongolia
+169	Morocco	Morocco
+170	Mozambique	Mozambique
+172	Namibia	Namibia
+241	The former Yugoslav Republic of Macedonia	Macedonia, Republic of
+175	Nepal	Nepal
+242	Timor-Leste	Timor-Leste
+177	Netherlands	Netherlands
+180	Nicaragua	Nicaragua
+181	Niger	Niger
+212	Samoa	Samoa
+214	Sao Tome and Principe	Sao Tome and Principe
+243	Togo	Togo
+182	Nigeria	Nigeria
+186	Norway	Norway
+246	Trinidad and Tobago	Trinidad and Tobago
+187	Oman	Oman
+188	Pakistan	Pakistan
+223	Slovakia	Slovakia
+191	Panama	Panama
+194	Paraguay	Paraguay
+196	Philippines	Philippines
+224	Slovenia	Slovenia
+198	Poland	Poland
+666	Alagoas	Alagoas,Brasil
+199	Portugal	Portugal
+200	Puerto Rico	Puerto Rico
+201	Qatar	Qatar
+203	Romania	Romania
+205	Rwanda	Rwanda
+206	Réunion	Réunion
+217	Senegal	Senegal
+221	Sierra Leone	Sierra Leone
+226	Somalia	Somalia
+228	South Georgia and the South Sandwich Islands	South Georgia and the South Sandwich Islands
+229	Spain	Spain (excl. Canary Islands)
+1502	Mizoram	Mizoram,India
+233	Suriname	Suriname
+234	Svalbard and Jan Mayen Islands	Svalbard and Jan Mayen Islands
+235	Swaziland	Swaziland
+236	Sweden	Sweden
+237	Switzerland	Switzerland
+239	Tajikistan	Tajikistan
+240	Thailand	Thailand
+209	Saint Lucia	Saint Lucia
+248	Tunisia	Tunisia
+249	Turkey	Turkey
+253	Uganda	Uganda
+254	Ukraine	Ukraine
+250	Turkmenistan	Turkmenistan
+255	United Arab Emirates	United Arab Emirates
+256	U.K. of Great Britain and Northern Ireland	UK
+257	United Republic of Tanzania	United Republic of Tanzania
+260	Uruguay	Uruguay
+1503	Nagaland	Nagaland,India
+261	Uzbekistan	Uzbekistan
+262	Vanuatu	Vanuatu
+263	Venezuela	Venezuela
+267	Palestine	Palestinian territories
+268	Western Sahara	Western Sahara
+436	Entre Rios	Entre rios,Argentina
+269	Yemen	Yemen
+271	Zimbabwe	Zimbabwe
+270	Zambia	Zambia
+429	Buenos Aires	Buenos aires,Argentina
+431	Catamarca	Catamarca,Argentina
+432	Chaco	Chaco,Argentina
+433	Chubut	Chubut,Argentina
+434	Cordoba	Cordoba,Argentina
+435	Corrientes	Corrientes,Argentina
+437	Formosa	Formosa,Argentina
+438	Jujuy	Jujuy,Argentina
+439	La Pampa	La pampa,Argentina
+101	Guam	Guam
+441	Mendoza	Mendoza,Argentina
+442	Misiones	Misiones,Argentina
+672	Espirito Santo	Espirito santo,Brasil
+673	Goias	Goias,Brasil
+674	Maranhao	Maranhao,Brasil
+443	Neuquen	Neuquen,Argentina
+444	Rio Negro	Rio negro,Argentina
+665	Acre	Acre,Brasil
+445	Salta	Salta,Argentina
+446	San Juan	San juan,Argentina
+447	San Luis	San luis,Argentina
+448	Santa Cruz	Santa cruz,Argentina
+449	Santa Fe	Santa fe,Argentina
+450	Santiago Del Estero	Santiago del estero,Argentina
+430	Buenos Aires D.f.	Buenos aires d.f.,Argentina
+474	South Australia	South Australia, Australia
+2509	Kaliningradskaya Oblast	Kaliningradskaya oblast,Russian Federation
+475	Tasmania	Tasmania, Australia
+476	Victoria	Victoria, Australia
+477	Western Australia	Western Australia, Australia
+667	Amapa	Amapa,Brasil
+668	Amazonas	Amazonas,Brasil
+669	Bahia	Bahia,Brasil
+670	Ceara	Ceara,Brasil
+671	Distrito Federal	Distrito federal,Brasil
+675	Mato Grosso	Mato grosso,Brasil
+676	Mato Grosso Do Sul	Mato grosso do sul,Brasil
+677	Minas Gerais	Minas gerais,Brasil
+678	Para	Para,Brasil
+2622	Asir	Asir,Saudia Arabia
+679	Paraiba	Paraiba,Brasil
+683	Rio De Janeiro	Rio de janeiro,Brasil
+680	Parana	Parana,Brasil
+2623	Baha	Baha,Saudia Arabia
+681	Pernambuco	Pernambuco,Brasil
+684	Rio Grande Do Norte	Rio grande do norte,Brasil
+682	Piaui	Piaui,Brasil
+690	Sergipe	Sergipe,Brasil
+685	Rio Grande Do Sul	Rio grande do sul,Brasil
+686	Rondonia	Rondonia,Brasil
+899	Beijing Shi	Beijing shi,China
+687	Roraima	Roraima,Brasil
+906	Hainan Sheng	Hainan sheng,China
+907	Hebei Sheng	Hebei sheng,China
+688	Santa Catarina	Santa catarina,Brasil
+908	Heilongjiang Sheng	Heilongjiang sheng,China
+689	Sao Paulo	Sao paulo,Brasil
+922	Shanghai Shi	Shanghai shi,China
+691	Tocantins	Tocantins,Brasil
+825	Canada	Canada
+898	Anhui Sheng	Anhui sheng,China
+1143	Galapagos	Galapagos
+900	Chongqing Shi	Chongqing shi,China
+901	Fujian Sheng	Fujian sheng,China
+902	Gansu Sheng	Gansu sheng,China
+903	Guangdong Sheng	Guangdong sheng,China
+904	Guangxi Zhuangzu Zizhiqu	Guangxi zhuangzu zizhiqu,China
+2627	Jizan	Jizan,Saudia Arabia
+905	Guizhou Sheng	Guizhou sheng,China
+909	Henan Sheng	Henan sheng,China
+2632	Quassim	Quassim,Saudia Arabia
+911	Hubei Sheng	Hubei sheng,China
+912	Hunan Sheng	Hunan sheng,China
+913	Jiangsu Sheng	Jiangsu sheng,China
+2633	Riyad	Riyad,Saudia Arabia
+914	Jiangxi Sheng	Jiangxi sheng,China
+915	Jilin Sheng	Jilin sheng,China
+916	Liaoning Sheng	Liaoning sheng,China
+917	Neimenggu Zizhiqu	Neimenggu zizhiqu,China
+3216	Arizona	Arizona,USA
+918	Ningxia Huizu Zizhiqu	Ningxia huizu zizhiqu,China
+919	Qinghai Sheng	Qinghai sheng,China
+1484	Andaman and Nicobar	Andaman and nicobar,India
+1485	Andhra Pradesh	Andhra pradesh,India
+920	Shaanxi Sheng	Shaanxi sheng,China
+921	Shandong Sheng	Shandong sheng,China
+923	Shanxi Sheng	Shanxi sheng,China
+924	Sichuan Sheng	Sichuan sheng,China
+925	Taiwan Sheng	Taiwan sheng,China
+927	Xinjiang Uygur Zizhiqu	Xinjiang uygur zizhiqu,China
+928	Xizang Zizhiqu	Xizang zizhiqu,China
+929	Yunnan Sheng	Yunnan sheng,China
+1487	Assam	Assam,India
+1489	Delhi	Delhi,India
+1490	Goa	Goa,India
+1491	Gujarat	Gujarat,India
+1492	Haryana	Haryana,India
+1493	Himachal Pradesh	Himachal pradesh,India
+1494	Karnataka	Karnataka,India
+1495	Kerala	Kerala,India
+1498	Maharashtra	Maharashtra,India
+1500	Manipur	Manipur,India
+1501	Meghalaya	Meghalaya,India
+1504	Orissa	Orissa,India
+1013688	BANTEN	Banten, Indonesia
+1505	Punjab	Punjab,India
+1506	Rajasthan	Rajasthan,India
+1507	Sikkim	Sikkim,India
+2628	Madinah	Madinah,Saudia Arabia
+1508	Tamil Nadu	Tamil nadu,India
+1509	Tripura	Tripura,India
+1511	West Bengal	West bengal,India
+2487	Russian Fed	Russian Federation
+2624	Eastern Province	Eastern province,Saudia Arabia
+2625	Hail	Hail,Saudia Arabia
+2626	Jawf	Jawf,Saudia Arabia
+2629	Makkah	Makkah,Saudia Arabia
+2630	Najran	Najran,Saudia Arabia
+2631	Northern Frontier	Northern frontier,Saudia Arabia
+2634	Tabuk	Tabuk,Saudia Arabia
+2647	Montenegro	Montenegro
+3217	Arkansas	Arkansas,USA
+2648	Serbia	Serbia
+3214	Alabama	Alabama,USA
+3215	Alaska	Alaska,USA
+3218	California	California,USA
+3219	Colorado	Colorado,USA
+3220	Connecticut	Connecticut,USA
+3221	Delaware	Delaware,USA
+3223	Florida	Florida,USA
+3224	Georgia	Georgia,USA
+3225	Hawaii	Hawaii,USA
+3226	Idaho	Idaho,USA
+3227	Illinois	Illinois,USA
+3228	Indiana	Indiana,USA
+3229	Iowa	Iowa,USA
+3230	Kansas	Kansas,USA
+3231	Kentucky	Kentucky,USA
+3232	Louisiana	Louisiana,USA
+3235	Massachusetts	Massachusetts,USA
+3240	Montana	Montana,USA
+3233	Maine	Maine,USA
+3239	Missouri	Missouri,USA
+3234	Maryland	Maryland,USA
+3236	Michigan	Michigan,USA
+3241	Nebraska	Nebraska,USA
+3237	Minnesota	Minnesota,USA
+3238	Mississippi	Mississippi,USA
+3242	Nevada	Nevada,USA
+3243	New Hampshire	New hampshire,USA
+3244	New Jersey	New jersey,USA
+3245	New Mexico	New mexico,USA
+3250	Oklahoma	Oklahoma,USA
+104	Guernsey	Guernsey
+3246	New York	New york,USA
+3251	Oregon	Oregon,USA
+3252	Pennsylvania	Pennsylvania,USA
+3247	North Carolina	North carolina,USA
+3248	North Dakota	North dakota,USA
+3249	Ohio	Ohio,USA
+3254	South Carolina	South carolina,USA
+3255	South Dakota	South dakota,USA
+3256	Tennessee	Tennessee,USA
+3257	Texas	Texas,USA
+3258	Utah	Utah,USA
+146	Liechtenstein	Liechtenstein
+3259	Vermont	Vermont,USA
+3260	Virginia	Virginia,USA
+3222	District Of Columbia	District of columbia,USA
+3261	Washington	Washington,USA
+1013665	KEPULAUAN RIAU	Kepulauan riau, Indonesia
+3262	West Virginia	West virginia,USA
+3263	Wisconsin	Wisconsin,USA
+3264	Wyoming	Wyoming,USA
+33364	Hong Kong	Hong Kong
+40765	Egypt	Egypt
+61013	Ilemi triangle	Ilemi triangle
+48	Cayman Islands	Cayman Islands
+70073	Bihar	Bihar,India
+1013666	SULAWESI UTARA	Sulawesi utara, Indonesia
+70075	Chhattisgarh	Chhattisgarh,India
+1013673	LAMPUNG	Lampung, Indonesia
+70078	Jharkhand	Jharkhand,India
+70079	Madhya Pradesh	Madhya pradesh,India
+70081	Uttar Pradesh	Uttar pradesh,India
+1013674	GORONTALO	Gorontalo, Indonesia
+70082	Uttarakhand	Uttarakhand,India
+74578	Azores Islands	Azores Islands
+229010	Canary Islands	Canary Islands
+1011440	Myanmar	Myanmar
+1011441	Papua New Guinea	Papua New Guinea
+1011442	Peru	Peru
+1013675	BANGKA BELITUNG	Bangka belitung, Indonesia
+1013676	DKI JAKARTA	Dki jakarta, Indonesia
+1011443	Korea, Republic of	Korea, Republic of
+1011444	Solomon Islands	Solomon Islands
+1011446	Afghanistan	Afghanistan
+1011447	Viet Nam	Viet Nam
+1013685	KALIMANTAN SELATAN	Kalimantan selatan, Indonesia
+54	Christmas Island	Christmas Island
+1012935	Jammu Kashmir	Jammu Kashmir
+1012936	Kashmir	Kashmir
+1013663	JAWA TIMUR	Jawa timur, Indonesia
+1013667	KALIMANTAN TENGAH	Kalimantan tengah, Indonesia
+1013664	PAPUA BARAT	Papua barat, Indonesia
+1013668	SULAWESI TENGGARA	Sulawesi tenggara, Indonesia
+1013669	DI YOGYAKARTA	Di yogyakarta, Indonesia
+1013672	JAMBI	Jambi, Indonesia
+1013670	RIAU	Riau, Indonesia
+1013671	NANGGROE ACEH DARUSALAM	Nanggroe aceh darusalam, Indonesia
+1013677	MALUKU UTARA	Maluku utara, Indonesia
+1013678	BALI	Bali, Indonesia
+1013686	JAWA TENGAH	Jawa tengah, Indonesia
+1013679	MALUKU	Maluku, Indonesia
+1013680	JAWA BARAT	Jawa barat, Indonesia
+1013681	SUMATERA UTARA	Sumatera utara, Indonesia
+1013682	SUMATERA BARAT	Sumatera barat, Indonesia
+1013683	NUSA TENGGARA TIMUR	Nusa tenggara timur, Indonesia
+1013684	BENGKULU	Bengkulu, Indonesia
+1013687	KALIMANTAN TIMUR	Kalimantan timur, Indonesia
+1013689	SULAWESI SELATAN	Sulawesi selatan, Indonesia
+1013691	NUSA TENGGARA BARAT	Nusa tenggara barat, Indonesia
+60	Cook Islands	Cook Islands
+1013690	SULAWESI TENGAH	Sulawesi tengah, Indonesia
+1013692	SULAWESI BARAT	Sulawesi barat, Indonesia
+1013693	SUMATERA SELATAN	Sumatera selatan, Indonesia
+11	Antigua and Barbuda	Antigua and Barbuda
+14	Aruba	Aruba
+1013694	PAPUA	Papua, Indonesia
+91	Gaza Strip	Gaza Strip
+1013695	KALIMANTAN BARAT	Kalimantan barat, Indonesia
+1013965	South Africa	South Africa
+1006344	Mexico	Mexico
+8	Angola	Angola
+5	American Samoa	American Samoa
+9	Anguilla	Anguilla
+21	Bahrain	Bahrain
+24	Barbados	Barbados
+30	Bermuda	Bermuda
+36	Bouvet Island	Bouvet Island
+38	British Indian Ocean Territory	British Indian Ocean Territory
+109	Heard Island and McDonald Islands	Heard Island and McDonald Islands
+128	Jersey	Jersey
+134	Kingman Reef	Kingman Reef
+135	Kiribati	Kiribati
+156	Malta	Malta
+161	Mayotte	Mayotte
+176	Netherlands Antilles	Netherlands Antilles
+163	Micronesia (Federated States of)	Micronesia, Federated States of
+168	Montserrat	Montserrat
+183	Niue	Niue
+184	Norfolk Island	Norfolk Island
+185	Northern Mariana Islands	Northern Mariana Islands
+189	Palau	Palau
+207	Saint Helena	Saint Helena
+208	Saint Kitts and Nevis	Saint Kitts and Nevis
+210	Saint Pierre et Miquelon	Saint Pierre et Miquelon
+211	Saint Vincent and the Grenadines	Saint Vincent and the Grenadines
+220	Seychelles	Seychelles
+222	Singapore	Singapore
+70074	Chandigarh	Chandigarh,India
+245	Tonga	Tonga
+70076	Dadra and Nagar Haveli	Dadra and nagar haveli,India
+251	Turks and Caicos islands	Turks and Caicos islands
+258	United States Virgin Islands	United States Virgin Islands
+266	Wallis and Futuna	Wallis and Futuna
+472	Other Territories	Other Territories, Australia
+894	Easter Island	Easter Island
+70077	Daman and Diu	Daman and diu,India
+70080	Puducherry	Puducherry,India
+1496	Lakshadweep	Lakshadweep,India
