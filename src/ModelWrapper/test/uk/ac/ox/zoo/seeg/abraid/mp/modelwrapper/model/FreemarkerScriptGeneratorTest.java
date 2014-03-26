@@ -79,4 +79,18 @@ public class FreemarkerScriptGeneratorTest {
         // Assert
         assertThat(result).isInstanceOf(IOException.class);
     }
+
+    @Test
+    public void generateScriptShouldThrowIfWorkingDirectoryIsAFile() throws Exception {
+        // Arrange
+        ScriptGenerator target = new FreemarkerScriptGenerator();
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
+
+        // Act
+        catchException(target).generateScript(conf, testFolder.newFile(), false);
+        Exception result = caughtException();
+
+        // Assert
+        assertThat(result).isInstanceOf(IOException.class);
+    }
 }

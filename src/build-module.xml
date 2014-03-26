@@ -189,7 +189,7 @@
   <target name="retrieve.manual.libs" depends="retrieve.jacoco" />
 
   <!-- Get JaCoCo manually -->
-  <property name="jacoco.version" value="0.6.4.201312101107" />
+  <property name="jacoco.version" value="0.6.2.201301080920" />
 
   <target name="retrieve.jacoco" depends="check.jacoco, resolve.jacoco" />
 
@@ -202,7 +202,7 @@
   </target>
 
   <target name="resolve.jacoco" if="needs-jacoco">
-    <get skipexisting="true" src="http://search.maven.org/remotecontent?filepath=org/jacoco/jacoco/${jacoco.version}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" />
+    <get skipexisting="true" src="http://mchr3k-eclipse.appspot.com/files/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" />
     <unzip src="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}">
       <patternset>
         <include name="lib/jacocoant.jar"/>
