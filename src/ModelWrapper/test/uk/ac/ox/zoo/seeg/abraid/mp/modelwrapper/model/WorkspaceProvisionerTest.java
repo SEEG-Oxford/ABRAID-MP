@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -88,7 +89,7 @@ public class WorkspaceProvisionerTest {
     }
 
     @Test
-    public void provisionWorkspaceShouldThrowIfDirectoryCanNotBeCreated() throws Exception {
+    public void provisionWorkspaceShouldThrowIfWorkspaceDirectoryCanNotBeCreated() throws Exception {
         // Arrange
         File notAValidDirectory = testFolder.newFile();
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(mock(ScriptGenerator.class), mock(SourceCodeManager.class));
@@ -101,5 +102,4 @@ public class WorkspaceProvisionerTest {
         // Assert
         assertThat(result).isInstanceOf(IOException.class);
     }
-
 }
