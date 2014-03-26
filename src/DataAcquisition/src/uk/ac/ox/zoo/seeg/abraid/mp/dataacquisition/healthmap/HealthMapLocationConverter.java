@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
 import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
+import org.springframework.util.CollectionUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
@@ -125,11 +126,11 @@ public class HealthMapLocationConverter {
         Location location = null;
 
         HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountryId());
-        if (healthMapCountry.getCountry() == null) {
+        if (CollectionUtils.isEmpty(healthMapCountry.getCountries())) {
             LOGGER.warn(String.format(IGNORING_COUNTRY_MESSAGE, healthMapCountry.getName()));
         } else {
             location = new Location();
-            location.setCountry(healthMapCountry.getCountry());
+            location.setHealthMapCountry(healthMapCountry);
             location.setGeom(point);
             location.setName(healthMapLocation.getPlaceName());
         }

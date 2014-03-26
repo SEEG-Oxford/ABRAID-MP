@@ -18,9 +18,10 @@ import javax.persistence.*;
 @Entity
 @Immutable
 public class Country {
-    // The country's ID. This is the ID used in the SEEG's shapefiles.
+    // The country's GAUL (Global Administrative Unit Layers) code. This is used in the corresponding SEEG shapefile.
     @Id
-    private Integer id;
+    @Column(name = "gaul_code")
+    private Integer gaulCode;
 
     // The country's name.
     @Column
@@ -29,13 +30,13 @@ public class Country {
     public Country() {
     }
 
-    public Country(Integer id, String name) {
-        this.id = id;
+    public Country(Integer gaulCode, String name) {
+        this.gaulCode = gaulCode;
         this.name = name;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getGaulCode() {
+        return gaulCode;
     }
 
     public String getName() {
@@ -54,7 +55,7 @@ public class Country {
 
         Country country = (Country) o;
 
-        if (id != null ? !id.equals(country.id) : country.id != null) return false;
+        if (gaulCode != null ? !gaulCode.equals(country.gaulCode) : country.gaulCode != null) return false;
         if (name != null ? !name.equals(country.name) : country.name != null) return false;
 
         return true;
@@ -62,7 +63,7 @@ public class Country {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = gaulCode != null ? gaulCode.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }

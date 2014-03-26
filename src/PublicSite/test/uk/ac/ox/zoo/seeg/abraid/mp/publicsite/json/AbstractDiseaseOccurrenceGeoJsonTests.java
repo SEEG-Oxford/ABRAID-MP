@@ -29,21 +29,18 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockAlert("title", "summary", "feedName", "url", new DateTime(0));
     }
 
-    public static Location mockLocation(double longitude, double latitude, String locationName, String countryName) {
+    public static Location mockLocation(double longitude, double latitude, String locationName) {
         Location location = mock(Location.class);
         Point geom = mock(Point.class);
         when(location.getGeom()).thenReturn(geom);
         when(geom.getX()).thenReturn(latitude);
         when(geom.getY()).thenReturn(longitude);
         when(location.getName()).thenReturn(locationName);
-        Country country = mock(Country.class);
-        when(location.getCountry()).thenReturn(country);
-        when(country.getName()).thenReturn(countryName);
         return location;
     }
 
     public static Location defaultLocation() {
-        return mockLocation(1.0, -1.0, "locationName", "countryName");
+        return mockLocation(1.0, -1.0, "locationName");
     }
 
     public static DiseaseOccurrence mockDiseaseOccurrence(int id, Location location, DateTime start, Alert alert) {
@@ -81,7 +78,6 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "         }," +
                     "         \"properties\":{" +
                     "            \"locationName\":\"locationName\"," +
-                    "            \"countryName\":\"countryName\"," +
                     "            \"alert\":{" +
                     "               \"title\":\"title\"," +
                     "               \"summary\":\"summary\"," +
@@ -104,7 +100,6 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "         }," +
                     "         \"properties\":{" +
                     "            \"locationName\":\"locationName\"," +
-                    "            \"countryName\":\"countryName\"," +
                     "            \"alert\":{" +
                     "               \"title\":\"title\"," +
                     "               \"summary\":\"summary\"," +

@@ -50,7 +50,8 @@ public class HealthMapLocationConverterTest {
     private void setUpCountryMap() {
         Map<Long, HealthMapCountry> countryMap = new HashMap<>();
         mappedHealthMapCountry = new HealthMapCountry(4L, MAPPED_COUNTRY_NAME, new Country(12, MAPPED_COUNTRY_NAME));
-        unMappedHealthMapCountry = new HealthMapCountry(143L, UNMAPPED_COUNTRY_NAME, null);
+        unMappedHealthMapCountry = new HealthMapCountry(143L, UNMAPPED_COUNTRY_NAME);
+        unMappedHealthMapCountry.setCountries(new HashSet<Country>());
         countryMap.put(mappedHealthMapCountry.getId(), mappedHealthMapCountry);
         countryMap.put(unMappedHealthMapCountry.getId(), unMappedHealthMapCountry);
         when(lookupData.getCountryMap()).thenReturn(countryMap);
@@ -116,8 +117,8 @@ public class HealthMapLocationConverterTest {
         // Assert
         assertThat(location.getId()).isNull();
         assertThat(location.getName()).isEqualTo(MAPPED_COUNTRY_NAME);
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(MAPPED_COUNTRY_NAME);
+        assertThat(location.getHealthMapCountry()).isNotNull();
+        assertThat(location.getHealthMapCountry().getName()).isEqualTo(MAPPED_COUNTRY_NAME);
         assertThat(location.getGeom().getX()).isEqualTo(20);
         assertThat(location.getGeom().getY()).isEqualTo(10);
     }
@@ -136,8 +137,8 @@ public class HealthMapLocationConverterTest {
         // Assert
         assertThat(location.getId()).isNull();
         assertThat(location.getName()).isEqualTo(MAPPED_COUNTRY_NAME);
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(MAPPED_COUNTRY_NAME);
+        assertThat(location.getHealthMapCountry()).isNotNull();
+        assertThat(location.getHealthMapCountry().getName()).isEqualTo(MAPPED_COUNTRY_NAME);
         assertThat(location.getGeom().getX()).isEqualTo(20);
         assertThat(location.getGeom().getY()).isEqualTo(10);
     }

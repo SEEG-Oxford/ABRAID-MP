@@ -175,7 +175,8 @@ CREATE TABLE location (
     geonames_id integer,
     geonames_feature_code varchar(10),
     resolution_weighting double precision,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    healthmap_country_id bigint
 );
 
 CREATE TABLE provenance (

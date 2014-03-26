@@ -127,6 +127,9 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT fk_healthmap_country_countr
 ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
+ALTER TABLE location ADD CONSTRAINT FK_location_healthmap_country
+    FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
+
 
 -- Check constraints
 ALTER TABLE disease_group ADD CONSTRAINT ck_disease_group_group_type

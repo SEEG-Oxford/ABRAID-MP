@@ -44,11 +44,6 @@ public class Location {
     @Enumerated(EnumType.STRING)
     private LocationPrecision precision;
 
-    // The country.
-    @ManyToOne
-    @JoinColumn(name = "country_id")
-    private Country country;
-
     // The GeoNames ID corresponding to this location.
     @Column(name = "geonames_id")
     private Integer geoNamesId;
@@ -62,6 +57,11 @@ public class Location {
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
+
+    // The HealthMap country (if any).
+    @ManyToOne
+    @JoinColumn(name = "healthmap_country_id")
+    private HealthMapCountry healthMapCountry;
 
     public Location() {
     }
@@ -98,12 +98,12 @@ public class Location {
         this.precision = precision;
     }
 
-    public Country getCountry() {
-        return country;
+    public HealthMapCountry getHealthMapCountry() {
+        return healthMapCountry;
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setHealthMapCountry(HealthMapCountry healthMapCountry) {
+        this.healthMapCountry = healthMapCountry;
     }
 
     public DateTime getCreatedDate() {
@@ -134,7 +134,7 @@ public class Location {
 
         Location location = (Location) o;
 
-        if (country != null ? !country.equals(location.country) : location.country != null) return false;
+        if (healthMapCountry != null ? !healthMapCountry.equals(location.healthMapCountry) : location.healthMapCountry != null) return false;
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
         if (geoNamesId != null ? !geoNamesId.equals(location.geoNamesId) : location.geoNamesId != null) return false;
@@ -153,7 +153,7 @@ public class Location {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (geom != null ? geom.hashCode() : 0);
         result = 31 * result + (precision != null ? precision.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
+        result = 31 * result + (healthMapCountry != null ? healthMapCountry.hashCode() : 0);
         result = 31 * result + (geoNamesId != null ? geoNamesId.hashCode() : 0);
         result = 31 * result + (geoNamesFeatureCode != null ? geoNamesFeatureCode.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
