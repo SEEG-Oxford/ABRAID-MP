@@ -8,7 +8,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
