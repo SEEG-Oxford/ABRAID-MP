@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 import java.util.*;
@@ -39,6 +40,32 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(set).isEqualTo(testSet);
+    }
+
+    @Test
+    public void getDiseaseInterestsWithReviewCountReturnsExpectedMap() {
+        // Arrange
+        DiseaseGroup testDiseaseGroup = new DiseaseGroup();
+        Set<DiseaseGroup> testSet = new HashSet<>();
+        testSet.add(testDiseaseGroup);
+
+        Map<DiseaseGroup, Integer> testMap = new HashMap<>();
+        testMap.put(testDiseaseGroup, 0);
+
+        Expert expert = new Expert();
+        expert.setDiseaseGroups(testSet);
+        when(expertDao.getById(anyInt())).thenReturn(expert);
+
+        List<DiseaseOccurrenceReview> testList = new ArrayList<>();
+        when(diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(anyInt(), anyInt())).thenReturn(testList);
+
+        // Act
+        Map<DiseaseGroup, Integer> map = expertService.getDiseaseInterestsWithReviewCount(1);
+
+        // Assert
+        assertThat(map.keySet()).isEqualTo(testMap.keySet());
+        assertThat(map.values()).hasSize(1);
+        assertThat(map.values()).contains(0);
     }
 
     @Test
