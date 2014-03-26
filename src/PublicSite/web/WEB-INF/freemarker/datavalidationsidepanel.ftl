@@ -5,9 +5,10 @@
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
-    <div id="counter">
+    <div id="counterDiv">
         <@security.authorize ifAnyGranted="ROLE_USER">
-            <ul>You have validated <span data-bind="text: reviewCount()">0</span> point<span data-bind="if: reviewCount() != 1">s</span></ul>
+            <ul>Number of occurrences validated</ul>
+            <div id="counter" data-bind="counter: reviewCount"></div>
         </@security.authorize>
     </div>
 </div>
@@ -16,7 +17,7 @@
     <ul>
         <li>
             <div class="alert alert-info alert-dismissable" id="submitReviewSuccess" style="display:none">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 Review submitted.
             </div>
         </li>

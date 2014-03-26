@@ -4,6 +4,19 @@
  */
 'use strict';
 
+ko.bindingHandlers.counter = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var counter = $(element).FlipClock(ko.unwrap(valueAccessor()), {
+            clockFace: "Counter"
+        });
+        ko.utils.domData.set(element, "counter", counter);
+    },
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var counter = ko.utils.domData.get(element, "counter");
+        counter.setValue(ko.unwrap(valueAccessor()));
+    }
+};
+
 var DataValidationViewModels = (function() {
     var LayerSelectorViewModel = function () {
         this.validationTypes = ko.observableArray(["disease occurrences", "disease extent"]);
@@ -38,7 +51,7 @@ var DataValidationViewModels = (function() {
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
                         $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
-                        DataValidationViewModels.counterViewModel.reviewCount(DataValidationViewModels.counterViewModel.reviewCount() + 1);
+                        DataValidationViewModels.counterViewModel.incrementCount();
                     })
                     .fail(function (xhr) {
                         alert("Something went wrong. Please try again. " + xhr.responseText);
@@ -49,6 +62,9 @@ var DataValidationViewModels = (function() {
 
     var CounterViewModel = function() {
         this.reviewCount = ko.observable();
+        this.incrementCount = function () {
+            this.reviewCount(this.reviewCount() + 1);
+        };
     }
 
     var layerSelectorViewModel = new LayerSelectorViewModel();
@@ -58,7 +74,7 @@ var DataValidationViewModels = (function() {
     $(document).ready(function () {
         ko.applyBindings(layerSelectorViewModel, $("#layerSelector")[0]);
         ko.applyBindings(selectedPointViewModel, $("#datapointInfo")[0]);
-        ko.applyBindings(counterViewModel, $("#counter")[0]);
+        ko.applyBindings(counterViewModel, $("#counterDiv")[0]);
     });
 
     return {

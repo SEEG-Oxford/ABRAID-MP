@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
     <link rel="stylesheet" href="<@spring.url "/css/MarkerCluster.Default.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
 </#assign>
 
 <#assign endOfBodyScriptContent>
@@ -33,6 +34,9 @@
     <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
     <script src="<@spring.url "/js/dataValidation.js"/>"></script>
     <script src="<@spring.url "/js/leafletMap.js"/>"></script>
+    <script src="<@spring.url "/js/flipclock/libs/base.js"/>"></script>
+    <script src="<@spring.url "/js/flipclock/libs/flipclock.js"/>"></script>
+    <script src="<@spring.url "/js/flipclock/faces/counter.js"/>"></script>
 </#assign>
 
 <@c.page title="ABRAID MP" endOfHead=endOfHeadContent endOfBody=endOfBodyContent endOfBodyScript=endOfBodyScriptContent>
