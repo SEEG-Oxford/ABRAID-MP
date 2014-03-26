@@ -26,7 +26,7 @@
 <script type="text/html" id="selected-point-template">
     <ul>
         <li><h4 data-bind="text: selectedPoint().properties.alert.title"></h4></li>
-        <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.countryName"></p></li>
+        <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.locationName"></p></li>
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="text: moment(selectedPoint().properties.alert.publicationDate).lang('en-gb').format('LL')"></p></li>
         <li>
             <i class="fa fa-external-link"></i>
