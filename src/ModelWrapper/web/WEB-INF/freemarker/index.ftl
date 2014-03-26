@@ -15,11 +15,36 @@
         </div>
         <div class="panel-collapse collapse in" id="repo-body">
             <div class="panel-body">
-                <p>Use the fields below to update the repository details used obtain the niche model.</p> <br>
-                <#list modelVersions as modelVersion>
-                    ${modelVersion}, <br>
-                </#list>
-                <p><a class="btn btn-primary" role="button">Sync</a></p>
+                <p>Use the fields below to update the repository details used obtain the niche model.</p>
+                <form action="#">
+                    <p class="form-group">
+                        <label for="repo-url">Repository URL: </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-lg fa-github"></i>
+                            </span>
+                            <input id="repo-url" type="text" class="form-control" placeholder="Repository URL" autocomplete="off" data-bind="value: url, valueUpdate:'afterkeydown'" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <a class="btn btn-primary" data-bind="text: syncingRepo() ? 'Syncing ...' : (urlChanged() ? 'Save and Sync' : 'Sync'), css: { 'disabled': !url.isValid() || syncingRepo }, click: syncRepo"></a>
+                    </p>
+                    <p class="form-group">
+                        <label for="repo-version">Model Version: </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-tags"></i>
+                            </span>
+                            <select id="repo-version" class="form-control" data-bind="enable: enableVersion, options: availableVersions, value: version, optionsCaption: 'No version selected'" ></select>
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <a class="btn btn-primary" data-bind="css: { 'disabled': !enableVersion || !version.isValid() || savingVersion }, click: saveVersion">Save</a>
+                    </p>
+                    <div class="form-group" data-bind="foreach: notices">
+                        <div data-bind="alert: $data"></div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -33,32 +58,57 @@
         </div>
         <div class="panel-collapse collapse in" id="auth-body">
             <div class="panel-body">
-                <p>Use the fields below to update the authentication details used to connect to this site.</p><br>
-                <div data-bind="foreach: notices">
-                    <div data-bind="alert: $data"></div>
-                </div>
-                <form>
-                    <p><div class="input-group"><span class="input-group-addon glyphicon glyphicon-user"></span>
-                        <input type="text" class="form-control" placeholder="New username" autocomplete="off" data-bind="value: username, valueUpdate:'afterkeydown'" >
-                    </div></p><br>
-                    <p><div class="input-group"><span class="input-group-addon glyphicon glyphicon-lock"></span>
-                        <input type="password" class="form-control" placeholder="New password" autocomplete="off" data-bind="value: password, valueUpdate:'afterkeydown'" >
-                    </div></p><br>
-                    <p><div class="input-group"><span class="input-group-addon glyphicon glyphicon-lock"></span>
-                        <input type="password" class="form-control" placeholder="New password (repeat)" autocomplete="off" data-bind="value: passwordConfirmation, valueUpdate:'afterkeydown'" >
-                    </div></p><br>
-                    <p><a class="btn btn-primary" role="button" data-bind="click: submit, css: { 'disabled': !isValid() || saving }"><!-- ko ifnot: saving -->Save<!-- /ko --><!-- ko if: saving -->Saving...<!-- /ko --></a></p>
+                <p>Use the fields below to update the authentication details used to connect to this site.</p>
+                <form action="#">
+                    <p class="form-group">
+                        <label for="auth-username">Username: </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-user"></i>
+                            </span>
+                            <input id="auth-username" type="text" class="form-control" placeholder="New username" autocomplete="off" data-bind="value: username, valueUpdate:'afterkeydown', disable: saving" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <label for="auth-password">Password: </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-lock"></i>
+                            </span>
+                            <input id="auth-password" type="password" class="form-control" placeholder="New password" autocomplete="off" data-bind="value: password, valueUpdate:'afterkeydown', disable: saving" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <label for="auth-password-confirm">Password (confirm): </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-lock"></i>
+                            </span>
+                            <input id="auth-password-confirm" type="password" class="form-control" placeholder="New password (confirm)" autocomplete="off" data-bind="value: passwordConfirmation, valueUpdate:'afterkeydown', disable: saving" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
+                    </p>
+                    <div class="form-group" data-bind="foreach: notices">
+                        <div data-bind="alert: $data"></div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 <script type="text/html" id="validation-template">
-    <!-- ko if: field.isValid() -->
-        <span class="input-group-addon bg-success-important"><i class="fa fa-check-circle text-success fa-lg"></i></span>
-    <!-- /ko -->
-    <!-- ko ifnot: field.isValid() -->
-        <span class="input-group-addon bg-danger-important" data-bind="tooltip: {title: field.error, placement: 'right'}" data-container="body"><i class="fa fa-exclamation-circle text-danger fa-lg"></i></span>
-    <!-- /ko -->
+    <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
+        <i class="fa fa-lg" data-bind="css: field.isValid() ? 'text-success fa-check-circle' : 'text-danger fa-exclamation-circle'"></i>
+    </span>
+</script>
+<script>
+    // bootstrapped data for js viewmodels
+    var initialRepoData = {
+        url: "${repository_url?js_string}",
+        version: "${model_version?js_string}",
+        availableVersions: [<#list available_versions as version>"${version?js_string}"<#if version_has_next>,</#if></#list>]
+    };
 </script>
 </@c.page>

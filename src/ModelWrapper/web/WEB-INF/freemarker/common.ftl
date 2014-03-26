@@ -36,9 +36,7 @@
                 </div><!--/.nav-collapse -->
             </div>
         </div>
-        <div class="container">
-            <#nested/>
-        </div>
+        <#nested/>
         <div id="footer" class="text-muted">
             <div class="container">
                 <div class="links">
