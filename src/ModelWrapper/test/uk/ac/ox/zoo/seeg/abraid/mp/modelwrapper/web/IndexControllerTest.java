@@ -23,7 +23,7 @@ public class IndexControllerTest {
     @Test
     public void showIndexPageReturnsCorrectFreemarkerTemplateName() {
         // Arrange
-        IndexController target = new IndexController(null, mock(SourceCodeManager.class));
+        IndexController target = new IndexController(mock(ConfigurationService.class), mock(SourceCodeManager.class));
 
         // Act
         String result = target.showIndexPage(mock(Model.class));
