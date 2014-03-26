@@ -1,5 +1,5 @@
 @echo off
-rem Kickoff script for the data acquistion process of ABRAID-MP, targeting Windows enviroments.
+rem Kickoff script for the data acquisition process of ABRAID-MP, targeting Windows environments.
 rem Copyright (c) 2014 University of Oxford
 
 echo Starting Data Acquisition...

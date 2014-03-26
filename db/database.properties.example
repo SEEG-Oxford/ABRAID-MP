@@ -2,6 +2,7 @@
 # Copyright (c) 2014 University of Oxford
 
 # The name of a database superuser
+# NB: The superuser's password must be either empty or specified in file ~/.pgpass (Linux) or %APPDATA%\postgresql\pgpass.conf (Windows)
 superuser.name=postgres
 
 # The name of the ABRAID-MP database
@@ -12,3 +13,7 @@ application.username=abraid_mp_application
 
 # The password for the ABRAID-MP application user
 application.password=tessella
+
+# The path to a folder containing shapefiles to be imported into the database, e.g. shapefiles.path=C:/Users/zool1251/Documents/admin_units
+# If not specified, the shapefile tables will be populated with test data (this is the same as the shapefile data but with no geometries)
+# shapefiles.path=

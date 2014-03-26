@@ -2,6 +2,8 @@
 <!--
       Ant build file for the database component of ABRAID-MP.
       Copyright (c) 2014 University of Oxford
+      
+      NB: The script assumes that the database's superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows)
 -->
 <project name="Database" basedir="." default="create.test.database">
     <description>Creates the ABRAID-MP database.</description>
@@ -12,11 +14,13 @@
     <property file="database.properties.example" />
 
     <!-- Creates the database containing test data -->
-    <target name="create.test.database" depends="create.database, create.test.admin.unit.data, create.data, create.test.data" />
+    <target name="create.test.database" depends="create.database, create.test.data" />
 
-    <!-- Creates the database -->
-    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
-    <target name="create.database">
+    <!-- Creates the database containing production data only (and test admin unit data if the shapefiles are unavailable) -->
+    <target name="create.database" depends="create.schema, import.shapefiles, create.test.admin.unit.data, create.data" />
+    
+    <!-- Creates the database schema -->
+    <target name="create.schema">
         <exec executable="psql" failonerror="true">
             <arg value="-U" />
             <arg value="${superuser.name}" />
@@ -35,42 +39,71 @@
         </exec>
     </target>
 
-    <!-- Adds test data to an existing database -->
-    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
-    <target name="create.test.admin.unit.data">
-        <exec executable="psql" failonerror="true" dir="testdata/admin_units">
-            <arg value="-U" />
-            <arg value="${superuser.name}" />
-            <arg value="-q" />
-            <arg value="-w" />
-            <arg value="-v" />
-            <arg value="ON_ERROR_STOP=ON" />
-            <arg value="-f" />
-            <arg value="admin_units_testdata.sql" />
-            <arg value="${database.name}" />
-        </exec>
+    <!-- Imports shapefiles, if the property "shapefiles.path" is specified (this must be a valid path to the shapefiles folder) -->
+    <target name="import.shapefiles" if="shapefiles.path">
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="abraid_admin_0_1__simp_global.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="abraid_admin_0_1__simp_tropical.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="abraid_admin_0_1_global.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="abraid_admin_0_1_tropical.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="abraid_admin_0_simplified.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="admin2013_0.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="admin2013_1.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="admin2013_2.shp"/>
+        </antcall>
+        <echo>Migrating shapefiles to desired tables</echo>
+        <antcall target="run.database.script">
+            <param name="database.script.name" value="migrate_shapefiles.sql"/>
+            <param name="database.script.dir" value="."/>
+        </antcall>
+    </target>
+
+    <!-- Adds administrative unit test data to an existing database, unless the property "shapefiles.path" is specified.
+         This ensures that tests can still use the shapefile data (except for the geometries themselves) even if the shapefiles
+         cannot be accessed. -->
+    <target name="create.test.admin.unit.data" unless="shapefiles.path">
+        <antcall target="run.database.script">
+            <param name="database.script.name" value="admin_units_testdata.sql"/>
+            <param name="database.script.dir" value="testdata/admin_units"/>
+        </antcall>
     </target>
     
     <!-- Adds data to an existing database -->
-    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="create.data">
-        <exec executable="psql" failonerror="true" dir="data">
-            <arg value="-U" />
-            <arg value="${superuser.name}" />
-            <arg value="-q" />
-            <arg value="-w" />
-            <arg value="-v" />
-            <arg value="ON_ERROR_STOP=ON" />
-            <arg value="-f" />
-            <arg value="data.sql" />
-            <arg value="${database.name}" />
-        </exec>
+        <antcall target="run.database.script">
+            <param name="database.script.name" value="data.sql"/>
+            <param name="database.script.dir" value="data"/>
+        </antcall>
     </target>
     
     <!-- Adds test data to an existing database -->
-    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="create.test.data">
-        <exec executable="psql" failonerror="true" dir="testdata">
+        <antcall target="run.database.script">
+            <param name="database.script.name" value="testdata.sql"/>
+            <param name="database.script.dir" value="testdata"/>
+        </antcall>
+    </target>
+
+    <!-- SUB-TARGETS -->
+    
+    <!-- Runs a script, connected to the database -->
+    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
+    <target name="run.database.script">
+        <exec executable="psql" failonerror="true" dir="${database.script.dir}">
             <arg value="-U" />
             <arg value="${superuser.name}" />
             <arg value="-q" />
@@ -78,7 +111,26 @@
             <arg value="-v" />
             <arg value="ON_ERROR_STOP=ON" />
             <arg value="-f" />
-            <arg value="testdata.sql" />
+            <arg value="${database.script.name}" />
+            <arg value="${database.name}" />
+        </exec>
+    </target>
+
+    <!-- Imports a shapefile into the database -->
+    <!-- This calls a wrapper script for the appropriate operating system. Calling the commands (shp2pgsql and psql)
+         directly using exec was many times slower. -->
+    <target name="import.shapefile">
+        <echo>Importing shapefile "${shapefiles.path}/${shapefile.name}"</echo>
+        <echo/>
+        <exec executable="${basedir}/import_shapefile.bat" failonerror="true" osfamily="windows">
+            <arg value="${shapefiles.path}/${shapefile.name}" />
+            <arg value="${superuser.name}" />
+            <arg value="${database.name}" />
+        </exec>
+
+        <exec executable="${basedir}/import_shapefile.sh" failonerror="true" osfamily="unix">
+            <arg value="${shapefiles.path}/${shapefile.name}" />
+            <arg value="${superuser.name}" />
             <arg value="${database.name}" />
         </exec>
     </target>

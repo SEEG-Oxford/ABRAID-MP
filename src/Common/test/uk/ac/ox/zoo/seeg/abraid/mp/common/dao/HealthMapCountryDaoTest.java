@@ -58,7 +58,7 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
         assertThat(healthMapCountry.getName()).isEqualTo(healthMapCountryName);
         assertThat(healthMapCountry.getCountries()).isNotNull();
         assertThat(healthMapCountry.getCountries()).hasSize(1);
-        for(Country country : healthMapCountry.getCountries()) {
+        for (Country country : healthMapCountry.getCountries()) {
             assertThat(country.getGaulCode()).isEqualTo(246);
             assertThat(country.getName()).isEqualTo("Trinidad and Tobago");
         }
@@ -98,7 +98,7 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     }
 
     private Country findCountryByGaulCode(Set<Country> countries, int gaulCode) {
-        for(Country country : countries) {
+        for (Country country : countries) {
             if (country.getGaulCode() == gaulCode) {
                 return country;
             }
