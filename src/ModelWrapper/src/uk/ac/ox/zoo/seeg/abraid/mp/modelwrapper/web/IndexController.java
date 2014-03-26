@@ -46,14 +46,18 @@ public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String showIndexPage(Model model) {
         List<String> modelVersions;
+
+        boolean repoErrorState = false;
         try {
-            sourceCodeManager.updateRepository();
             modelVersions = sourceCodeManager.getAvailableVersions();
         } catch (Exception e) {
             modelVersions = new ArrayList<>();
-            modelVersions.add("No versions found!");
         }
-        model.addAttribute("modelVersions", modelVersions);
+
+        model.addAttribute("repository_url", configurationService.getModelRepositoryUrl());
+        model.addAttribute("model_version", configurationService.getModelRepositoryVersion());
+        model.addAttribute("available_versions", modelVersions);
+
         return "index";
     }
 
