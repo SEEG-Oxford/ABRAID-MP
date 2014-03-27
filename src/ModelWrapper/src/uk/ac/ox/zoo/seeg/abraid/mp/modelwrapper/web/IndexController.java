@@ -71,9 +71,9 @@ public class IndexController {
     @RequestMapping(value = "/auth", method  = RequestMethod.POST)
     public ResponseEntity updateAuthenticationDetails(String username, String password, String passwordConfirmation) {
         boolean validRequest =
-            username != null && !StringUtils.isEmpty(username) && USERNAME_REGEX.matcher(username).matches() &&
-            password != null && !StringUtils.isEmpty(password) && PASSWORD_REGEX.matcher(password).matches() &&
-            passwordConfirmation != null && passwordConfirmation.equals(password);
+            !StringUtils.isEmpty(username) && USERNAME_REGEX.matcher(username).matches() &&
+            !StringUtils.isEmpty(password) && PASSWORD_REGEX.matcher(password).matches() &&
+            password.equals(passwordConfirmation);
 
         if (validRequest) {
             String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());

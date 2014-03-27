@@ -34,7 +34,7 @@ public class RepositoryController {
      */
     @RequestMapping(value = "/repo/sync", method  = RequestMethod.POST)
     public ResponseEntity<List<String>> syncRepository(String repositoryUrl) {
-        boolean validRequest = repositoryUrl != null && !StringUtils.isEmpty(repositoryUrl);
+        boolean validRequest = !StringUtils.isEmpty(repositoryUrl);
 
         if (validRequest) {
             String oldUrl = configurationService.getModelRepositoryUrl();
@@ -66,7 +66,7 @@ public class RepositoryController {
      */
     @RequestMapping(value = "/repo/version", method  = RequestMethod.POST)
     public ResponseEntity setModelVersion(String version) {
-        boolean validRequest = version != null && !StringUtils.isEmpty(version);
+        boolean validRequest = !StringUtils.isEmpty(version);
 
         if (validRequest) {
             try {
