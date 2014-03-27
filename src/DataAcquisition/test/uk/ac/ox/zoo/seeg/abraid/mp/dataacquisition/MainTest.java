@@ -7,6 +7,7 @@ import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = SpringockitoContextLoader.class, locations = Main.APPLICATION_CONTEXT_LOCATION)
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainTest {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
@@ -43,22 +45,51 @@ public class MainTest {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Test
-    public void mainMethod() {
+    public void mainMethodAcquiresDataFromWebService() {
         // Arrange
+        mockHealthMapRequest();
+        mockGeoNamesRequests();
+
+        // Act
+        Main.runMain(applicationContext, new String[] {});
+
+        // Assert
+        List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
+        assertFirstLocation(occurrences.get(0));
+        assertSecondLocation(occurrences.get(1));
+    }
+
+    @Test
+    public void mainMethodAcquiresDataFromFiles() {
+        // Arrange
+        String[] fileNames = {
+                "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json1.txt",
+                "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json2.txt"
+        };
+        mockGeoNamesRequests();
+
+        // Act
+        Main.runMain(applicationContext, fileNames);
+
+        // Assert
+        List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
+        assertFirstLocation(occurrences.get(0));
+        assertSecondLocation(occurrences.get(1));
+    }
+
+    private void mockHealthMapRequest() {
         when(webServiceClient.request(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
+    }
+
+    private void mockGeoNamesRequests() {
         when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "1735161")))
                 .thenReturn(getGeoNamesJson(1735161, "PPLC"));
         when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "2186224")))
                 .thenReturn(getGeoNamesJson(2186224, "PCLI"));
+    }
 
-        // Act
-        Main.runMain(applicationContext);
-
-        // Assert
-        List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-
-        // Location 1
-        Location occurrence1Location = occurrences.get(0).getLocation();
+    private void assertFirstLocation(DiseaseOccurrence occurrence) {
+        Location occurrence1Location = occurrence.getLocation();
         assertThat(occurrence1Location.getName()).isEqualTo("Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia");
         assertThat(occurrence1Location.getGeom().getX()).isEqualTo(101.7);
         assertThat(occurrence1Location.getGeom().getY()).isEqualTo(3.16667);
@@ -69,7 +100,7 @@ public class MainTest {
         assertThat(occurrence1Location.getHealthMapCountry().getName()).isEqualTo("Malaysia");
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
 
-        Alert occurrence1Alert = occurrences.get(0).getAlert();
+        Alert occurrence1Alert = occurrence.getAlert();
         assertThat(occurrence1Alert.getFeed().getName()).isEqualTo("Eyewitness Reports");
         assertThat(occurrence1Alert.getFeed().getHealthMapFeedId()).isEqualTo(34);
         assertThat(occurrence1Alert.getFeed().getLanguage()).isEqualTo("my");
@@ -80,14 +111,15 @@ public class MainTest {
         assertThat(occurrence1Alert.getTitle()).isEqualTo("Dengue -- Kuala Lumpur, Malaysia");
         assertThat(occurrence1Alert.getCreatedDate()).isNotNull();
 
-        DiseaseGroup occurrence1DiseaseGroup = occurrences.get(0).getDiseaseGroup();
+        DiseaseGroup occurrence1DiseaseGroup = occurrence.getDiseaseGroup();
         assertThat(occurrence1DiseaseGroup.getName()).isEqualTo("Dengue");
 
-        assertThat(occurrences.get(0).getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
-        assertThat(occurrences.get(0).getCreatedDate()).isNotNull();
+        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
+        assertThat(occurrence.getCreatedDate()).isNotNull();
+    }
 
-        // Location 2
-        Location occurrence2Location = occurrences.get(1).getLocation();
+    private void assertSecondLocation(DiseaseOccurrence occurrence) {
+        Location occurrence2Location = occurrence.getLocation();
         assertThat(occurrence2Location.getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getGeom().getX()).isEqualTo(172.65939);
         assertThat(occurrence2Location.getGeom().getY()).isEqualTo(-42.42349);
@@ -98,7 +130,7 @@ public class MainTest {
         assertThat(occurrence2Location.getHealthMapCountry().getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
 
-        Alert occurrence2Alert = occurrences.get(1).getAlert();
+        Alert occurrence2Alert = occurrence.getAlert();
         assertThat(occurrence2Alert.getFeed().getName()).isEqualTo("Google News");
         assertThat(occurrence2Alert.getFeed().getHealthMapFeedId()).isEqualTo(4);
         assertThat(occurrence2Alert.getFeed().getLanguage()).isNull();
@@ -114,11 +146,11 @@ public class MainTest {
                 " Zealand");
         assertThat(occurrence2Alert.getCreatedDate()).isNotNull();
 
-        DiseaseGroup occurrence2DiseaseGroup = occurrences.get(1).getDiseaseGroup();
+        DiseaseGroup occurrence2DiseaseGroup = occurrence.getDiseaseGroup();
         assertThat(occurrence2DiseaseGroup.getName()).isEqualTo("Dengue");
 
-        assertThat(occurrences.get(1).getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
-        assertThat(occurrences.get(1).getCreatedDate()).isNotNull();
+        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
+        assertThat(occurrence.getCreatedDate()).isNotNull();
     }
 
     private List<DiseaseOccurrence> getLastTwoDiseaseOccurrences() {

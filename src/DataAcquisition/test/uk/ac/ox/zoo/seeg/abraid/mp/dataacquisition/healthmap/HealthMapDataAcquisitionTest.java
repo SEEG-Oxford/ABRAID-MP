@@ -26,7 +26,7 @@ public class HealthMapDataAcquisitionTest {
     private HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
 
     @Test
-    public void firstRunDefaultStartDateSet() {
+    public void acquiresDataFromWebServiceOnFirstRunWithDefaultStartDateSet() {
         // Arrange
         DateTime defaultStartDate = new DateTime("2004-02-01T01:02:03+0000");
         DateTime endDate = DateTime.now();
@@ -40,14 +40,14 @@ public class HealthMapDataAcquisitionTest {
 
         // Act
         HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
-        dataAcquisition.acquireData();
+        dataAcquisition.acquireDataFromWebService();
 
         // Assert
         verify(dataConverter, times(1)).convert(same(locations), approx(endDate));
     }
 
     @Test
-    public void firstRunDefaultStartDateDaysBeforeNowSet() {
+    public void acquiresDataFromWebServiceOnFirstRunWithDefaultStartDateDaysBeforeNowSet() {
         // Arrange
         int defaultStartDateDaysBeforeNow = 3;
         DateTime startDate = DateTime.now().minusDays(3);
@@ -64,14 +64,14 @@ public class HealthMapDataAcquisitionTest {
 
         // Act
         HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
-        dataAcquisition.acquireData();
+        dataAcquisition.acquireDataFromWebService();
 
         // Assert
         verify(dataConverter, times(1)).convert(same(locations), approx(endDate));
     }
 
     @Test
-    public void firstRunDefaultStartDateAndDefaultStartDateDaysBeforeNowSet() {
+    public void acquiresDataFromWebServiceOnFirstRunWithDefaultStartDateAndDefaultStartDateDaysBeforeNowSet() {
         // Arrange
         DateTime defaultStartDate = new DateTime("2004-02-01T01:02:03+0000");
         DateTime endDate = DateTime.now();
@@ -86,14 +86,14 @@ public class HealthMapDataAcquisitionTest {
 
         // Act
         HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
-        dataAcquisition.acquireData();
+        dataAcquisition.acquireDataFromWebService();
 
         // Assert
         verify(dataConverter, times(1)).convert(same(locations), approx(endDate));
     }
 
     @Test
-    public void alreadyRun() {
+    public void webServiceDoesNotDuplicateDataIfAlreadyRun() {
         // Arrange
         DateTime startDate = new DateTime("2004-02-01T01:02:03+0000");
         DateTime defaultStartDate = new DateTime("2006-02-01T01:02:03+0000");
@@ -111,14 +111,14 @@ public class HealthMapDataAcquisitionTest {
 
         // Act
         HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
-        dataAcquisition.acquireData();
+        dataAcquisition.acquireDataFromWebService();
 
         // Assert
         verify(dataConverter, times(1)).convert(same(locations), approx(endDate));
     }
 
     @Test
-    public void endDateDaysAfterStartDateSet() {
+    public void acquiresDataFromWebServiceWithEndDateDaysAfterStartDateSet() {
         // Arrange
         DateTime startDate = new DateTime("2004-02-01T01:02:03+0000");
 
@@ -137,14 +137,14 @@ public class HealthMapDataAcquisitionTest {
 
         // Act
         HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
-        dataAcquisition.acquireData();
+        dataAcquisition.acquireDataFromWebService();
 
         // Assert
         verify(dataConverter, times(1)).convert(same(locations), approx(endDate));
     }
 
     @Test
-    public void webServiceRequestFailed() {
+    public void doesNotAcquireDataIfWebServiceRequestFails() {
         // Arrange
         DateTime startDate = new DateTime("2004-02-01T01:02:03+0000");
         DateTime endDate = DateTime.now();
@@ -158,7 +158,7 @@ public class HealthMapDataAcquisitionTest {
 
         // Act
         HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
-        dataAcquisition.acquireData();
+        dataAcquisition.acquireDataFromWebService();
 
         // Assert
         //noinspection unchecked

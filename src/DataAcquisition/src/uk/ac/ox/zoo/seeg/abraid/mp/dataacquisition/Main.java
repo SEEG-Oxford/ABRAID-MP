@@ -22,18 +22,19 @@ public class Main {
 
     /**
      * Entry method for the DataAcquisition module.
-     * @param args Command line arguments (unused).
+     * @param args Command line arguments. If specified, these are interpreted as a list of file names containing
+     *             HealthMap JSON data to acquire.
      */
     public static void main(String[] args) {
         try {
             ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
-            runMain(context);
+            runMain(context, args);
         } catch (Throwable e) {
             try {
                 // Ensure that top-level exceptions are logged
-                LOGGER.fatal(e);
+                LOGGER.fatal(e.getMessage(), e);
             } catch (Throwable e2) {
-                // But if the logger fails, throw the original exception
+                // But if the logging fails, throw the original exception
                 throw e;
             }
             throw e;
@@ -43,10 +44,12 @@ public class Main {
     /**
      * Retrieves the main class from the application context, and runs its main method.
      * @param context The application context
+     * @param args Command line arguments. If specified, these are interpreted as a list of file names containing
+     *             HealthMap JSON data to acquire.
      */
-    public static void runMain(ApplicationContext context) {
+    public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
-        main.acquireData();
+        main.acquireData(args);
     }
 
     public Main(HealthMapDataAcquisition healthMapDataAcquisition) {
@@ -55,8 +58,16 @@ public class Main {
 
     /**
      * Acquires data from all sources.
+     * @param fileNames A list of file names containing HealthMap JSON data to acquire. If no file names are specified
+     * (or if null), the HealthMap web service will be called instead.
      */
-    public void acquireData() {
-        healthMapDataAcquisition.acquireData();
+    public void acquireData(String[] fileNames) {
+        if (fileNames != null && fileNames.length > 0) {
+            for (String fileName : fileNames) {
+                healthMapDataAcquisition.acquireDataFromFile(fileName);
+            }
+        } else {
+            healthMapDataAcquisition.acquireDataFromWebService();
+        }
     }
 }
