@@ -39,11 +39,14 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         File workingDirectory = workingDirectoryPath.toFile();
         boolean workingDirectoryCreated = workingDirectory.mkdirs();
 
-        Path modelDirectoryPath = Paths.get(workingDirectoryPath.toString(), MODEL_CODE_DIRECTORY_NAME);
-        File modelDirectory = modelDirectoryPath.toFile();
-        boolean modelDirectoryCreated = modelDirectory.mkdir();
+        File modelDirectory = null;
+        if (workingDirectoryCreated) {
+            Path modelDirectoryPath = Paths.get(workingDirectoryPath.toString(), MODEL_CODE_DIRECTORY_NAME);
+            modelDirectory = modelDirectoryPath.toFile();
+            workingDirectoryCreated = modelDirectory.mkdir();
+        }
 
-        if (!workingDirectoryCreated || !modelDirectoryCreated) {
+        if (!workingDirectoryCreated) {
             throw new IOException("Directory structure could not be created.");
         }
 

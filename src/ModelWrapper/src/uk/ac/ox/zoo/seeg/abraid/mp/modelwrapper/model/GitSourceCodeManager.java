@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
@@ -106,11 +107,15 @@ public class GitSourceCodeManager implements SourceCodeManager {
     public List<String> getAvailableVersions() throws IOException, UnsupportedOperationException {
         synchronized (GitSourceCodeManager.class) {
             try {
-                return convert(openRepository().tagList().call(), new Converter<Ref, String>() {
+                List<String> versions = convert(openRepository().tagList().call(), new Converter<Ref, String>() {
                     public String convert(Ref ref) {
                         return ref.getName().substring(TAG_PREFIX.length());
                     }
                 });
+
+                Collections.reverse(versions);
+
+                return versions;
             } catch (GitAPIException e) {
                 throw new UnsupportedOperationException(e);
             }
