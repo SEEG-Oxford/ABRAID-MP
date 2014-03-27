@@ -34,9 +34,7 @@
     <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
     <script src="<@spring.url "/js/dataValidation.js"/>"></script>
     <script src="<@spring.url "/js/leafletMap.js"/>"></script>
-    <script src="<@spring.url "/js/flipclock/libs/base.js"/>"></script>
-    <script src="<@spring.url "/js/flipclock/libs/flipclock.js"/>"></script>
-    <script src="<@spring.url "/js/flipclock/faces/counter.js"/>"></script>
+    <script src="<@spring.url "/js/flipclock.min.js"/>"></script>
 </#assign>
 
 <@c.page title="ABRAID MP" endOfHead=endOfHeadContent endOfBody=endOfBodyContent endOfBodyScript=endOfBodyScriptContent>
