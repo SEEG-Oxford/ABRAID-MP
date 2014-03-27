@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
 /**
  * Base class for Spring-enabled unit tests. Mocks out the Data Access Objects.
