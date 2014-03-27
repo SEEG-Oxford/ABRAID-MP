@@ -133,7 +133,7 @@ ALTER TABLE location ADD CONSTRAINT FK_location_healthmap_country
 
 -- Check constraints
 ALTER TABLE disease_group ADD CONSTRAINT ck_disease_group_group_type
-    CHECK (group_type IN ('CLUSTER', 'MICROCLUSTER', 'DISEASE'));
+    CHECK (group_type IN ('CLUSTER', 'MICROCLUSTER', 'SINGLE'));
 
 ALTER TABLE disease_occurrence_review ADD CONSTRAINT ck_disease_occurrence_review_response
     CHECK (response IN ('YES', 'NO', 'UNSURE'));
