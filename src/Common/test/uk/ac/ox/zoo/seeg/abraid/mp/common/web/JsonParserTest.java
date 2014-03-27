@@ -79,6 +79,19 @@ public class JsonParserTest {
     }
 
     @Test
+    public void parseIntoTypeReferenceInvalidJsonFormat() {
+        // Arrange
+        String json = "[ { \"name\": \"Boris Becker\", \"age\" 46 }, { \"name\": \"Pete Sampras\", \"age\": 42 } ]";
+        JsonParser parser = new JsonParser();
+
+        // Act
+        catchException(parser).parse(json, new TypeReference<List<JsonParserTestPerson>>() { });
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(JsonParserException.class);
+    }
+
+    @Test
     public void parseUsingISO8601DateFormat() {
         // Arrange
         String json = "{ \"name\": \"Boris Becker\", \"age\": 46, \"dateOfBirth\": \"1967-11-22T11:22:33+0400\" }";

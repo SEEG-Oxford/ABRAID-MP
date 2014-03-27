@@ -10,3 +10,4 @@ src/.idea/dictionaries/
 build.log
 lib
 lib-local
+db/database.properties
