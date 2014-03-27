@@ -5,6 +5,18 @@
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
+    <div id="google_translate_element"></div>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+//                    {pageLanguage: 'en'},
+                    'google_translate_element'
+            );
+            $('.goog-logo-link').css('display', 'none');
+            $('.goog-te-gadget').css('font-size', '0');
+        }
+    </script>
+    <script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <div id="counterDiv">
         <@security.authorize ifAnyGranted="ROLE_USER">
             You have validated <div id="counter" data-bind="counter: reviewCount"></div> point<span data-bind="if: reviewCount() != 1">s</span> for this disease.
@@ -38,6 +50,7 @@
         <li><div id="summary" data-bind="html: selectedPoint().properties.alert.summary"></div></li>
         <li><i class="fa fa-quote-right"></i></li>
     </ul>
+
     <div id="datapointInfoLowerPane">
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div class="btn-group">
