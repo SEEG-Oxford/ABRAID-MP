@@ -15,6 +15,7 @@
     </configurations>
     <publications>
         <artifact name="ABRAID-MP_Common" type="jar" ext="jar" conf="build"/>
+        <artifact name="ABRAID-MP_testutils" type="jar" ext="jar" conf="testutils"/>
     </publications>
     <dependencies>
         <!-- Common -->
