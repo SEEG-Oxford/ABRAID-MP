@@ -7,8 +7,7 @@
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
     <div id="counterDiv">
         <@security.authorize ifAnyGranted="ROLE_USER">
-            <ul>Number of occurrences validated</ul>
-            <div id="counter" data-bind="counter: reviewCount"></div>
+            You have validated <div id="counter" data-bind="counter: reviewCount"></div> point<span data-bind="if: reviewCount() != null">s</span> for this disease.
         </@security.authorize>
     </div>
 </div>

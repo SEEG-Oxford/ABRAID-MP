@@ -1,4 +1,4 @@
-<!--
+<#--
     Sticky footer containing links to associated groups' sites.
     Copyright (c) 2014 University of Oxford
 -->
