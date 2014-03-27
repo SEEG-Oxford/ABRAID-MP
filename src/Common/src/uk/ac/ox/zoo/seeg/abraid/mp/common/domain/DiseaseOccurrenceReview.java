@@ -23,9 +23,9 @@ import javax.persistence.*;
                 "and diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
     ),
     @NamedQuery(
-            name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
-            query = "select 1 from DiseaseOccurrenceReview where expert.id=:expertId " +
-                    "and diseaseOccurrence.id=:diseaseOccurrenceId"
+        name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
+        query = "select 1 from DiseaseOccurrenceReview where expert.id=:expertId " +
+                "and diseaseOccurrence.id=:diseaseOccurrenceId"
     )
 })
 @Entity

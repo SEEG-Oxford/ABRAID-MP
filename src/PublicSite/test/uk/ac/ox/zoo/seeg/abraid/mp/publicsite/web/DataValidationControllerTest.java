@@ -37,7 +37,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
     }
 
     @Test
-    public void showPageReturnsDataValidationPageAndDiseaseInterests() {
+    public void showPageReturnsDataValidationPageAndDiseaseInterestsSet() {
         // Arrange
         CurrentUserService currentUserService = new CurrentUserServiceImpl();
         DiseaseService diseaseService = mock(DiseaseService.class);
@@ -52,7 +52,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
         // Assert
         assertThat(result).isEqualTo("datavalidation");
-        assertThat(model.containsAttribute("diseaseInterests"));
+        assertThat(model.containsAttribute("diseaseInterestsSet"));
     }
 
     @Test

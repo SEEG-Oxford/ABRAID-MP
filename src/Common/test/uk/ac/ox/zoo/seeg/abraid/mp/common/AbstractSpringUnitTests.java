@@ -35,6 +35,10 @@ public abstract class AbstractSpringUnitTests {
 
     @ReplaceWithMock
     @Autowired
+    protected DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected ExpertDao expertDao;
 
     @ReplaceWithMock

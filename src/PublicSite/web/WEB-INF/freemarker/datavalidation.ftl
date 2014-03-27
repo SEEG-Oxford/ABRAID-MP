@@ -10,13 +10,18 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
     <link rel="stylesheet" href="<@spring.url "/css/MarkerCluster.Default.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
 </#assign>
 
 <#assign endOfBodyScriptContent>
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
     var diseaseInterests = [
-        <#list diseaseInterests as diseaseInterest>
-            { name: "${diseaseInterest.name}".toLowerCase(), id: "${diseaseInterest.id}" },
+        <#list diseaseInterestsSet as pair>
+            {
+                name: "${pair.getKey().getName()?lower_case?js_string}",
+                id: ${pair.getKey().id?int},
+                reviewCount: ${pair.getValue()?int}
+            },
         </#list>
     ];
 </#assign>
@@ -29,6 +34,7 @@
     <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
     <script src="<@spring.url "/js/dataValidation.js"/>"></script>
     <script src="<@spring.url "/js/leafletMap.js"/>"></script>
+    <script src="<@spring.url "/js/flipclock.min.js"/>"></script>
 </#assign>
 
 <@c.page title="ABRAID MP" endOfHead=endOfHeadContent endOfBody=endOfBodyContent endOfBodyScript=endOfBodyScriptContent>

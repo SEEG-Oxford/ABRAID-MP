@@ -4,6 +4,19 @@
  */
 'use strict';
 
+ko.bindingHandlers.counter = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var counter = $(element).FlipClock(ko.unwrap(valueAccessor()), {
+            clockFace: "Counter"
+        });
+        ko.utils.domData.set(element, "counter", counter);
+    },
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var counter = ko.utils.domData.get(element, "counter");
+        counter.setValue(ko.unwrap(valueAccessor()));
+    }
+};
+
 var DataValidationViewModels = (function() {
     var LayerSelectorViewModel = function () {
         this.validationTypes = ko.observableArray(["disease occurrences", "disease extent"]);
@@ -13,6 +26,7 @@ var DataValidationViewModels = (function() {
         this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
             LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
+            DataValidationViewModels.counterViewModel.reviewCount(this.selectedDisease().reviewCount);
         }, this);
     };
 
@@ -33,28 +47,40 @@ var DataValidationViewModels = (function() {
                 $.post(url, { review: review })
                     .done(function(data, status, xhr) {
                         // Status 2xx
+                        // Remove the point from the map and side panel, display a success alert, increment the counter
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
                         $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
+                        DataValidationViewModels.counterViewModel.incrementCount();
                     })
                     .fail(function (xhr) {
-                        alert("Something went wrong. Please try again " + xhr.responseText);
+                        alert("Something went wrong. Please try again. " + xhr.responseText);
                     });
             };
         };
     };
 
+    var CounterViewModel = function() {
+        this.reviewCount = ko.observable();
+        this.incrementCount = function () {
+            this.reviewCount(this.reviewCount() + 1);
+        };
+    }
+
     var layerSelectorViewModel = new LayerSelectorViewModel();
     var selectedPointViewModel = new SelectedPointViewModel();
+    var counterViewModel = new CounterViewModel();
 
     $(document).ready(function () {
         ko.applyBindings(layerSelectorViewModel, $("#layerSelector")[0]);
-        ko.applyBindings(selectedPointViewModel, $("#sidePanel")[0]);
+        ko.applyBindings(selectedPointViewModel, $("#datapointInfo")[0]);
+        ko.applyBindings(counterViewModel, $("#counterDiv")[0]);
     });
 
     return {
         layerSelectorViewModel: layerSelectorViewModel,
-        selectedPointViewModel: selectedPointViewModel
+        selectedPointViewModel: selectedPointViewModel,
+        counterViewModel: counterViewModel
     }
 }());
 

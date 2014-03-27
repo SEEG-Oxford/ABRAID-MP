@@ -30,7 +30,7 @@
             <#nested/>
         </div>
 
-        <#include "footer.html"/>
+        <#include "footer.ftl"/>
 
         <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>

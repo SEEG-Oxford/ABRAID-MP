@@ -61,7 +61,6 @@ var LeafletMap = (function () {
         marker.setStyle({
             stroke: false,
             fillColor: highlightColour,
-//            opacity: 1,
             radius: 13
         });
     }
@@ -128,8 +127,12 @@ var LeafletMap = (function () {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.clearLayers();
         $.getJSON(baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences', function (featureCollection) {
-            clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
-            map.fitBounds(diseaseOccurrenceLayer.getBounds());
+            if(featureCollection.features.length != 0) {
+                clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
+                map.fitBounds(diseaseOccurrenceLayer.getBounds());
+            } else {
+                map.fitWorld();
+            }
         });
     }
 

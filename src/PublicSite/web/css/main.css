@@ -43,26 +43,27 @@ html,body
 {
     height:100%;
     width:15%;
+    min-width:280px;
     float:right;
     background-color:rgb(214, 214, 214);
     opacity:0.8;
 }
-.datapointInfo
+#datapointInfo
 {
-    height:90%;
+    height:100%;
     position:relative;
 }
-.datapointInfo h4
+#datapointInfo h4
 {
     min-height:57px;
 }
-.datapointInfo ul
+#datapointInfo ul
 {
     list-style-type: none;
     padding:10px;
     margin:0;
 }
-.datapointInfo p
+#datapointInfo p
 {
     display:inline;
 }
@@ -81,7 +82,7 @@ html,body
     width:100%;
     padding:10px;
     position:absolute;
-    bottom:30px;
+    bottom:160px;
 }
 #datapointInfoLowerPane .btn-group
 {
@@ -96,11 +97,16 @@ html,body
     width:33.3%;
     height:50px;
 }
+#counterDiv
+{
+    height:150px;
+    position:absolute;
+    bottom:30px;
+    right:70px;
+}
 #counter
 {
-    height:10%;
-    position:absolute;
-    bottom:50px;
+    margin:0 auto;
 }
 .footer
 {
