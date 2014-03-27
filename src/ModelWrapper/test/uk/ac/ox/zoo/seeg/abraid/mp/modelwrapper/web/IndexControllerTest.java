@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,16 +21,60 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class IndexControllerTest {
+
     @Test
     public void showIndexPageReturnsCorrectFreemarkerTemplateName() {
         // Arrange
-        IndexController target = new IndexController(null, mock(SourceCodeManager.class));
+        IndexController target = new IndexController(mock(ConfigurationService.class), mock(SourceCodeManager.class));
 
         // Act
         String result = target.showIndexPage(mock(Model.class));
 
         // Assert
         assertThat(result).isEqualTo("index");
+    }
+
+    @Test
+    public void showIndexPageSetsCorrectModelData() throws Exception {
+        // Arrange
+        String expectedUrl = "foo1";
+        String expectedVersion = "foo2";
+        List<String> expectedVersions = Arrays.asList("1", "2", "3");
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
+
+        when(configurationService.getModelRepositoryUrl()).thenReturn(expectedUrl);
+        when(configurationService.getModelRepositoryVersion()).thenReturn(expectedVersion);
+        when(sourceCodeManager.getAvailableVersions()).thenReturn(expectedVersions);
+
+        Model model = mock(Model.class);
+        IndexController target = new IndexController(configurationService, sourceCodeManager);
+
+        // Act
+        target.showIndexPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("repository_url", expectedUrl);
+        verify(model, times(1)).addAttribute("model_version", expectedVersion);
+        verify(model, times(1)).addAttribute("available_versions", expectedVersions);
+    }
+
+    @Test
+    public void showIndexPageSetsEmptyVersionListIfRepositoryCheckFails() throws Exception {
+        // Arrange
+        SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
+        when(sourceCodeManager.getAvailableVersions()).thenThrow(new IOException());
+        Model model = mock(Model.class);
+        IndexController target = new IndexController(mock(ConfigurationService.class), sourceCodeManager);
+
+        // Act
+        target.showIndexPage(model);
+
+        // Assert
+        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+        verify(model, times(1)).addAttribute(eq("available_versions"), captor.capture());
+        assertThat(captor.getValue()).hasSize(0);
     }
 
     @Test
@@ -78,6 +123,22 @@ public class IndexControllerTest {
         for (String password : invalidPasswords) {
             // Act
             ResponseEntity result = target.updateAuthenticationDetails("username", password, password);
+
+            // Assert
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Test
+    public void updateAuthenticationDetailsRejectsInvalidPasswordConfirmation() {
+        // Arrange
+        List<String> invalidPasswordConfirmations = Arrays.asList(null, "not_a_match");
+        ConfigurationService mockConfService = mock(ConfigurationService.class);
+        IndexController target = new IndexController(mockConfService, null);
+
+        for (String passwordConfirmation : invalidPasswordConfirmations) {
+            // Act
+            ResponseEntity result = target.updateAuthenticationDetails("username", "Password1", passwordConfirmation);
 
             // Assert
             assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

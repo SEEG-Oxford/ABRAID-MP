@@ -49,7 +49,7 @@
   <tstamp>
     <format property="time.stamp" pattern="yyyy-MM-dd_HH:mm:ss"/>
   </tstamp>
-  <echo>Ant running against repository verion: ${repository.version}</echo>
+  <echo>Ant running against repository version: ${repository.version}</echo>
 
   <!-- Classpath -->
   <property name="build.sysclasspath" value="ignore"/>
@@ -189,7 +189,7 @@
   <target name="retrieve.manual.libs" depends="retrieve.jacoco" />
 
   <!-- Get JaCoCo manually -->
-  <property name="jacoco.version" value="0.6.4.201312101107" />
+  <property name="jacoco.version" value="0.6.2.201301080920" />
 
   <target name="retrieve.jacoco" depends="check.jacoco, resolve.jacoco" />
 
@@ -202,7 +202,7 @@
   </target>
 
   <target name="resolve.jacoco" if="needs-jacoco">
-    <get skipexisting="true" src="http://search.maven.org/remotecontent?filepath=org/jacoco/jacoco/${jacoco.version}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" />
+    <get skipexisting="true" src="http://mchr3k-eclipse.appspot.com/files/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" />
     <unzip src="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}">
       <patternset>
         <include name="lib/jacocoant.jar"/>
@@ -337,7 +337,7 @@
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
-        <!-- Need to exclude it since webxml is an attribute of the war tag above -->
+        <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
       </fileset>
       <lib dir="${lib.dir}/build" />

@@ -66,7 +66,8 @@ public class HealthMapWebServiceTest {
                 "\"place_category\": []," +
                 "\"original_url\": \"http://empres-i.fao.org/empres-i/2/obd?idOutbreak=182133&rss=t\"," +
                 "\"disease_id\": \"271\"," +
-                "\"feed_id\": \"10\"" +
+                "\"feed_id\": \"10\"," +
+                "\"feed_lang\": \"zh\"" +
                 "}," +
                 // Alert 2
                 "{" +
@@ -168,6 +169,7 @@ public class HealthMapWebServiceTest {
                 " human");
         assertThat(location1Alert1.getDiseaseId()).isEqualTo(271);
         assertThat(location1Alert1.getFeedId()).isEqualTo(10);
+        assertThat(location1Alert1.getFeedLanguage()).isEqualTo("zh");
 
         HealthMapAlert location1Alert2 = location1.getAlerts().get(1);
         assertThat(location1Alert2.getAlertId()).isEqualTo(2155089);
@@ -186,6 +188,7 @@ public class HealthMapWebServiceTest {
                 " - RTT News");
         assertThat(location1Alert2.getDiseaseId()).isEqualTo(271);
         assertThat(location1Alert2.getFeedId()).isEqualTo(1);
+        assertThat(location1Alert2.getFeedLanguage()).isNull();
 
         HealthMapLocation location2 = healthMapLocations.get(1);
         assertThat(location2.getCountry()).isNull();
@@ -209,6 +212,7 @@ public class HealthMapWebServiceTest {
                 "-Folkebladet.no");
         assertThat(location2Alert1.getDiseaseId()).isEqualTo(84);
         assertThat(location2Alert1.getFeedId()).isEqualTo(20);
+        assertThat(location2Alert1.getFeedLanguage()).isNull();
     }
 
     @Test

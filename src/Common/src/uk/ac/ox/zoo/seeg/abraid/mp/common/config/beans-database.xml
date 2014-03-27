@@ -12,6 +12,9 @@
 
     <!-- Data Access Objects -->
     <bean id="alertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDaoImpl" autowire="constructor" />
+    <bean id="adminUnitDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitDaoImpl" autowire="constructor" />
+    <bean id="adminUnitSimplifiedGlobalDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitSimplifiedGlobalDaoImpl" autowire="constructor" />
+    <bean id="adminUnitSimplifiedTropicalDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitSimplifiedTropicalDaoImpl" autowire="constructor" />
     <bean id="countryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDaoImpl" autowire="constructor" />
     <bean id="diseaseDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />

@@ -14,8 +14,6 @@
 DROP DATABASE IF EXISTS :database_name;
 CREATE DATABASE :database_name;
 
--- For later: Create a user that has minimal privileges, for use by the Java application
-
 -- Change context to the newly-created database
 \c :database_name
 
@@ -27,7 +25,3 @@ CREATE EXTENSION postgis;
 \i constraints.sql
 \i indexes.sql
 \i roles.sql
-
--- Create default data
-\cd data
-\i data.sql

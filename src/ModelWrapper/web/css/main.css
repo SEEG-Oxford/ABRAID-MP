@@ -18,6 +18,9 @@ body {
     height: 30px;
     background-color: #222;
 }
+#footer > .container {
+    background-color: #222;
+}
 body > .container {
     padding: 60px 15px 0;
 }
@@ -43,13 +46,6 @@ code {
 #footer .links {
     float: left;
 }
-.input-group {
-    max-width: 450px;
-    min-width: 230px;
-}
-form {
-    margin: 10px 0 0 0;
-}
 .bg-success-important {
     background-color: #DFF0D8 !important;
 }
@@ -61,4 +57,19 @@ form {
     padding-bottom: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.input-group {
+    max-width: 700px;
+}
+form {
+    margin-top: 15px;
+}
+.form-group {
+    display: block;
+}
+body {
+    min-width: 320px;
+}
+.navbar {
+    min-width: 320px;
 }

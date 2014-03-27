@@ -10,6 +10,11 @@ DROP ROLE IF EXISTS :application_username;
 CREATE ROLE :application_username LOGIN PASSWORD :'application_password';
 
 -- Privileges for the ABRAID-MP application: tables
+GRANT SELECT                        ON admin_unit TO :application_username;
+GRANT SELECT                        ON admin_unit_global TO :application_username;
+GRANT SELECT                        ON admin_unit_simplified_global TO :application_username;
+GRANT SELECT                        ON admin_unit_simplified_tropical TO :application_username;
+GRANT SELECT                        ON admin_unit_tropical TO :application_username;
 GRANT SELECT, INSERT                ON alert TO :application_username;
 GRANT SELECT                        ON country TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
@@ -20,6 +25,7 @@ GRANT SELECT, INSERT,        DELETE ON expert_disease_group TO :application_user
 GRANT SELECT, INSERT, UPDATE        ON feed TO :application_username;
 GRANT SELECT                        ON geonames_location_precision TO :application_username;
 GRANT SELECT                        ON healthmap_country TO :application_username;
+GRANT SELECT                        ON healthmap_country_country TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON healthmap_disease TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON location TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON provenance TO :application_username;

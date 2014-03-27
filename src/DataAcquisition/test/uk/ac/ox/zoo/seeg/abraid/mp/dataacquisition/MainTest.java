@@ -65,13 +65,14 @@ public class MainTest {
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
         assertThat(occurrence1Location.getGeoNamesFeatureCode()).isEqualTo("PPLC");
         assertThat(occurrence1Location.getGeoNamesId()).isEqualTo(1735161);
-        assertThat(occurrence1Location.getCountry()).isNotNull();
-        assertThat(occurrence1Location.getCountry().getName()).isEqualTo("Malaysia");
+        assertThat(occurrence1Location.getHealthMapCountry()).isNotNull();
+        assertThat(occurrence1Location.getHealthMapCountry().getName()).isEqualTo("Malaysia");
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
 
         Alert occurrence1Alert = occurrences.get(0).getAlert();
         assertThat(occurrence1Alert.getFeed().getName()).isEqualTo("Eyewitness Reports");
         assertThat(occurrence1Alert.getFeed().getHealthMapFeedId()).isEqualTo(34);
+        assertThat(occurrence1Alert.getFeed().getLanguage()).isEqualTo("my");
         assertThat(occurrence1Alert.getPublicationDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
         assertThat(occurrence1Alert.getHealthMapAlertId()).isEqualTo(2324002);
         assertThat(occurrence1Alert.getUrl()).isEqualTo("onm.php?id=XX_ALERT_ID_XX");
@@ -93,13 +94,14 @@ public class MainTest {
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
         assertThat(occurrence2Location.getGeoNamesFeatureCode()).isEqualTo("PCLI");
         assertThat(occurrence2Location.getGeoNamesId()).isEqualTo(2186224);
-        assertThat(occurrence2Location.getCountry()).isNotNull();
-        assertThat(occurrence2Location.getCountry().getName()).isEqualTo("New Zealand");
+        assertThat(occurrence2Location.getHealthMapCountry()).isNotNull();
+        assertThat(occurrence2Location.getHealthMapCountry().getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
 
         Alert occurrence2Alert = occurrences.get(1).getAlert();
         assertThat(occurrence2Alert.getFeed().getName()).isEqualTo("Google News");
         assertThat(occurrence2Alert.getFeed().getHealthMapFeedId()).isEqualTo(4);
+        assertThat(occurrence2Alert.getFeed().getLanguage()).isNull();
         assertThat(occurrence2Alert.getPublicationDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
         assertThat(occurrence2Alert.getHealthMapAlertId()).isEqualTo(2323248);
         assertThat(occurrence2Alert.getUrl()).isEqualTo("http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNF4EFD" +
@@ -162,7 +164,8 @@ public class MainTest {
                 "\"place_category\": [],\n" +
                 "\"original_url\": \"onm.php?id=XX_ALERT_ID_XX\",\n" +
                 "\"disease_id\": \"33\",\n" +
-                "\"feed_id\": \"34\"\n" +
+                "\"feed_id\": \"34\",\n" +
+                "\"feed_lang\": \"my\"\n" +
                 "}\n" +
                 "]\n" +
                 "},\n" +

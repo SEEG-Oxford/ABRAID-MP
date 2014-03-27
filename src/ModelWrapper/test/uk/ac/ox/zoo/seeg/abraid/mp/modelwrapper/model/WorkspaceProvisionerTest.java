@@ -88,7 +88,7 @@ public class WorkspaceProvisionerTest {
     }
 
     @Test
-    public void provisionWorkspaceShouldThrowIfDirectoryCanNotBeCreated() throws Exception {
+    public void provisionWorkspaceShouldThrowIfWorkspaceDirectoryCanNotBeCreated() throws Exception {
         // Arrange
         File notAValidDirectory = testFolder.newFile();
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(mock(ScriptGenerator.class), mock(SourceCodeManager.class));
@@ -101,5 +101,4 @@ public class WorkspaceProvisionerTest {
         // Assert
         assertThat(result).isInstanceOf(IOException.class);
     }
-
 }

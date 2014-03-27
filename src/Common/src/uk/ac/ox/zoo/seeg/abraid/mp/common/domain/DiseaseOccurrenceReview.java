@@ -102,4 +102,33 @@ public class DiseaseOccurrenceReview {
     public DateTime getCreatedDate() {
         return createdDate;
     }
+
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DiseaseOccurrenceReview that = (DiseaseOccurrenceReview) o;
+
+        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        if (diseaseOccurrence != null ? !diseaseOccurrence.equals(that.diseaseOccurrence) : that.diseaseOccurrence != null)
+            return false;
+        if (expert != null ? !expert.equals(that.expert) : that.expert != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (response != that.response) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (expert != null ? expert.hashCode() : 0);
+        result = 31 * result + (diseaseOccurrence != null ? diseaseOccurrence.hashCode() : 0);
+        result = 31 * result + (response != null ? response.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        return result;
+    }
+    // CHECKSTYLE.ON
 }

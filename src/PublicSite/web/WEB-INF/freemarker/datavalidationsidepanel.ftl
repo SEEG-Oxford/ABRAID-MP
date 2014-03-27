@@ -37,7 +37,6 @@
         <li><i class="fa fa-quote-left"></i></li>
         <li><div id="summary" data-bind="html: selectedPoint().properties.alert.summary"></div></li>
         <li><i class="fa fa-quote-right"></i></li>
-
     </ul>
     <div id="datapointInfoLowerPane">
     <@security.authorize ifAnyGranted="ROLE_USER">

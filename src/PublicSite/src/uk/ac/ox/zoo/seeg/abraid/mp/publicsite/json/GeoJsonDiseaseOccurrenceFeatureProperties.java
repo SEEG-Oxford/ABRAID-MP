@@ -10,13 +10,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
  */
 public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     private final String locationName;
-    private final String countryName;
     private final GeoJsonAlert alert;
     private final DateTime diseaseOccurrenceStartDate;
 
     public GeoJsonDiseaseOccurrenceFeatureProperties(DiseaseOccurrence occurrence) {
         this.locationName = occurrence.getLocation().getName();
-        this.countryName = occurrence.getLocation().getCountry().getName();
         this.diseaseOccurrenceStartDate = occurrence.getOccurrenceStartDate();
         this.alert = new GeoJsonAlert(occurrence.getAlert());
     }
@@ -31,9 +29,5 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
 
     public String getLocationName() {
         return locationName;
-    }
-
-    public String getCountryName() {
-        return countryName;
     }
 }

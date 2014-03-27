@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.exec.OS;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
 
@@ -14,16 +14,20 @@ import java.io.File;
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
-    private FileConfiguration basicProperties;
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
     private static final String CACHE_DIR_KEY = "cache.data.dir";
     private static final String MODEL_REPOSITORY_KEY = "model.repo.url";
+    private static final String MODEL_VERSION_KEY = "model.repo.version";
 
-    public ConfigurationServiceImpl(File basicProperties) throws ConfigurationException {
+    private final FileConfiguration basicProperties;
+    private final OSChecker osChecker;
+
+    public ConfigurationServiceImpl(File basicProperties, OSChecker osChecker) throws ConfigurationException {
         this.basicProperties = new PropertiesConfiguration(basicProperties);
         this.basicProperties.setAutoSave(true);
+        this.osChecker = osChecker;
     }
 
     /**
@@ -65,12 +69,39 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /**
+     * Set the current remote repository url to use as a source for the model.
+     * @param repositoryUrl The repository url.
+     */
+    @Override
+    public void setModelRepositoryUrl(String repositoryUrl) {
+        basicProperties.setProperty(MODEL_REPOSITORY_KEY, repositoryUrl);
+    }
+
+    /**
+     * Get the current model version to use to run the model.
+     * @return The model version.
+     */
+    @Override
+    public String getModelRepositoryVersion() {
+        return basicProperties.getString(MODEL_VERSION_KEY);
+    }
+
+    /**
+     * Set the current model version to use to run the model.
+     * @param version The model version.
+     */
+    @Override
+    public void setModelRepositoryVersion(String version) {
+        basicProperties.setProperty(MODEL_VERSION_KEY, version);
+    }
+
+    /**
      * Gets the current directory to use for data caching.
      * @return The cache directory.
      */
     @Override
     public String getCacheDirectory() {
-        String defaultDir = OS.isFamilyWindows() ? DEFAULT_WINDOWS_CACHE_DIR : DEFAULT_LINUX_CACHE_DIR;
+        String defaultDir = osChecker.isWindows() ? DEFAULT_WINDOWS_CACHE_DIR : DEFAULT_LINUX_CACHE_DIR;
         return basicProperties.getString(CACHE_DIR_KEY, defaultDir);
     }
 }

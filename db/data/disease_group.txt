@@ -1,11 +1,11 @@
-1	\N	Arbovirus	CLUSTER
-2	\N	Bacteria_food/water-borne	CLUSTER
-3	\N	HIV	CLUSTER
-4	\N	Nematode_food/soil	CLUSTER
-5	\N	Nematode_vector/water	CLUSTER
-6	\N	Parasite_vector-borne	CLUSTER
-7	\N	Platyhelminthes_trema	CLUSTER
-8	\N	Virus_faecal-oral	CLUSTER
+1		Arbovirus	CLUSTER
+2		Bacteria_food/water-borne	CLUSTER
+3		HIV	CLUSTER
+4		Nematode_food/soil	CLUSTER
+5		Nematode_vector/water	CLUSTER
+6		Parasite_vector-borne	CLUSTER
+7		Platyhelminthes_trema	CLUSTER
+8		Virus_faecal-oral	CLUSTER
 9	2	Bacteria_food/water-borne	MICROCLUSTER
 10	5	Filariasis	MICROCLUSTER
 11	1	Flaviviridae_mosquito	MICROCLUSTER

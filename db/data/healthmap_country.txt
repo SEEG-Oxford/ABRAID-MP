@@ -1,0 +1,224 @@
+1	Mongolia
+2	Samoa
+3	Tonga
+4	Argentina
+5	Bolivia
+6	Brazil
+7	Chile
+8	Ecuador
+9	Paraguay
+10	Peru
+11	Uruguay
+12	Canada
+13	Guatemala
+14	Mexico
+15	Cape Verde
+16	Colombia
+17	Costa Rica
+18	Panama
+19	Belize
+20	Cuba
+21	El Salvador
+22	Honduras
+23	Nicaragua
+24	Dominican Republic
+25	Haiti
+26	Jamaica
+27	Guyana
+28	Trinidad & Tobago
+29	Venezuela
+30	Antigua & Barbuda
+31	St. Kitts & Nevis
+32	Barbados
+33	Dominica
+34	Grenada
+35	St. Lucia
+36	St. Vincent & the Grenadines
+37	Suriname
+38	Iceland
+39	Ireland
+40	United Kingdom
+41	Morocco
+42	Portugal
+43	Spain
+44	Western Sahara
+45	Guinea
+46	Sierra Leone
+47	Guinea-Bissau
+48	Senegal
+49	Burkina Faso
+50	Mali
+51	Mauritania
+52	Cote d'Ivoire
+53	Ghana
+54	Liberia
+55	Egypt
+56	Kazakhstan
+57	Chad
+58	Niger
+59	Benin
+60	Equatorial Guinea
+61	Kiribati
+62	Nigeria
+63	Sao Tome & Principe
+64	Togo
+65	Cameroon
+66	Central African Republic
+67	Algeria
+68	Libya
+69	Andorra
+70	Monaco
+71	Tunisia
+72	Albania
+73	Bosnia & Herzegovina
+74	Croatia
+75	Italy
+76	Republic of Macedonia
+77	Malta
+78	San Marino
+79	Serbia
+80	Vatican City
+81	Bulgaria
+82	Cyprus
+83	Greece
+84	Republic of Georgia
+85	Lebanon
+86	Syria
+87	Turkey
+89	Iraq
+90	Israel
+91	Jordan
+92	Palestinian Authority
+93	Djibouti
+94	Eritrea
+95	Ethiopia
+96	Sudan
+97	Uganda
+98	Russia
+99	Belgium
+100	France
+101	Germany
+102	Liechtenstein
+103	Luxembourg
+104	Netherlands
+105	Switzerland
+106	United States
+107	Norway
+108	Sweden
+109	Austria
+110	Czech Republic
+111	Denmark
+112	Hungary
+113	Poland
+114	Slovakia
+115	Slovenia
+116	Belarus
+117	Estonia
+118	Finland
+119	Latvia
+120	Lithuania
+121	Moldova
+122	Romania
+123	Ukraine
+124	Oman
+125	Somalia
+126	Yemen
+127	Bahrain
+128	Iran
+129	Kuwait
+130	Qatar
+131	Saudi Arabia
+132	United Arab Emirates
+133	Armenia
+134	Azerbaijan
+135	Turkmenistan
+136	Uzbekistan
+137	Afghanistan
+138	Kyrgyzstan
+139	Nepal
+140	Pakistan
+141	Tajikistan
+142	India
+143	Maldives
+144	Sri Lanka
+145	Cambodia
+146	Laos
+147	Malaysia
+148	Myanmar
+149	Paracel Islands
+150	Singapore
+151	Thailand
+152	Vietnam
+153	Bangladesh
+154	Bhutan
+155	China
+156	Japan
+157	Brunei
+158	Philippines
+159	Spratly Islands
+160	Marshall Islands
+161	Micronesia
+162	Antarctica
+163	Namibia
+164	New Zealand
+165	Angola
+166	Republic of Congo
+167	Fiji
+168	Gabon
+169	Botswana
+170	Zambia
+171	Zimbabwe
+172	Burundi
+173	Rwanda
+174	Kenya
+175	Comoros
+176	Malawi
+177	Mozambique
+178	Lesotho
+179	South Africa
+180	Swaziland
+181	Madagascar
+182	Mauritius
+183	Seychelles
+184	Indonesia
+185	Timor Leste
+186	Australia
+187	Nauru
+188	Papua New Guinea
+189	Solomon Islands
+190	Tuvalu
+191	Vanuatu
+194	DR Congo
+195	South Korea
+196	North Korea
+200	Tanzania
+203	Canary Islands [Spain]
+366	Cook Islands
+377	Guam [USA]
+378	The Bahamas
+379	Easter Island [Chile]
+380	American Samoa [USA]
+381	Northern Mariana Islands [USA]
+382	Pays d'outre-mer de French Polynesia, France
+449	Cayman Islands [UK]
+459	Collectivité spéciale de New Caledonia, France
+476	Niue
+477	British Virgin Islands [UK]
+480	Montenegro
+481	Gambia
+517	Gibraltar [UK]
+519	Palau
+522	Saint Martin [France/Netherlands]
+523	Anguilla [UK]
+526	Greenland [Denmark]
+529	Saint Helena [UK]
+530	Tristan da Cunha [UK]
+531	Région d'outre-mer de Réunion, France
+572	Collectivité d'outre-mer de Saint Barthélemy, France
+573	Collectivité d'outre-mer de Wallis and Futuna, France
+574	Bermuda [UK]
+576	Région d'outre-mer de Mayotte, France
+577	Région d'outre-mer de French Guiana, France
+581	Midway Atoll [USA]
+584	Curaçao [Netherlands]
+8402	South Sudan
