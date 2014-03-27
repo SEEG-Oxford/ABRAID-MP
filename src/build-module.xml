@@ -49,7 +49,7 @@
   <tstamp>
     <format property="time.stamp" pattern="yyyy-MM-dd_HH:mm:ss"/>
   </tstamp>
-  <echo>Ant running against repository verion: ${repository.version}</echo>
+  <echo>Ant running against repository version: ${repository.version}</echo>
 
   <!-- Classpath -->
   <property name="build.sysclasspath" value="ignore"/>
@@ -337,7 +337,7 @@
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
-        <!-- Need to exclude it since webxml is an attribute of the war tag above -->
+        <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
       </fileset>
       <lib dir="${lib.dir}/build" />

@@ -20,8 +20,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private AlertDao alertDao;
-    @Autowired
-    private CountryDao countryDao;
 
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
@@ -231,14 +229,11 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     }
 
     private Location createLocation() {
-        String countryName = "Pakistan";
         String placeName = "Karachi";
-        Country country = countryDao.getByName(countryName);
         Point point = GeometryUtils.createPoint(25.0111455, 67.0647043);
 
         Location location = new Location();
         location.setGeom(point);
-        location.setCountry(country);
         location.setName(placeName);
         location.setPrecision(LocationPrecision.PRECISE);
         return location;

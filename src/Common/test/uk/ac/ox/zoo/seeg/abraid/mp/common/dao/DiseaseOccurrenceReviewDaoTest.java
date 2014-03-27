@@ -22,9 +22,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     private AlertDao alertDao;
 
     @Autowired
-    private CountryDao countryDao;
-
-    @Autowired
     private DiseaseGroupDao diseaseGroupDao;
 
     @Autowired
@@ -164,9 +161,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     }
 
     private Location createLocation() {
-        String countryName = "UK of Great Britain and Northern Ireland";
         String placeName = "Oxford";
-        Country country = countryDao.getByName(countryName);
         double x = 51.75042;
         double y = -1.24759;
         Point point = GeometryUtils.createPoint(x, y);
@@ -175,7 +170,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.PRECISE);
-        location.setCountry(country);
         locationDao.save(location);
 
         return location;

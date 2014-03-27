@@ -65,8 +65,8 @@ public class MainTest {
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
         assertThat(occurrence1Location.getGeoNamesFeatureCode()).isEqualTo("PPLC");
         assertThat(occurrence1Location.getGeoNamesId()).isEqualTo(1735161);
-        assertThat(occurrence1Location.getCountry()).isNotNull();
-        assertThat(occurrence1Location.getCountry().getName()).isEqualTo("Malaysia");
+        assertThat(occurrence1Location.getHealthMapCountry()).isNotNull();
+        assertThat(occurrence1Location.getHealthMapCountry().getName()).isEqualTo("Malaysia");
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
 
         Alert occurrence1Alert = occurrences.get(0).getAlert();
@@ -94,8 +94,8 @@ public class MainTest {
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
         assertThat(occurrence2Location.getGeoNamesFeatureCode()).isEqualTo("PCLI");
         assertThat(occurrence2Location.getGeoNamesId()).isEqualTo(2186224);
-        assertThat(occurrence2Location.getCountry()).isNotNull();
-        assertThat(occurrence2Location.getCountry().getName()).isEqualTo("New Zealand");
+        assertThat(occurrence2Location.getHealthMapCountry()).isNotNull();
+        assertThat(occurrence2Location.getHealthMapCountry().getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
 
         Alert occurrence2Alert = occurrences.get(1).getAlert();

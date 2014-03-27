@@ -16,12 +16,10 @@ public class GeoJsonDiseaseOccurrenceFeaturePropertiesTest extends AbstractDisea
     public void constructorForGeoJsonDiseaseOccurrenceFeaturePropertiesBindsParametersCorrectly() throws Exception {
         // Arrange
         String expectedLocationName = "foo1";
-        String expectedCountryName = "foo2";
         DateTime expectedStartDate = DateTime.now();
 
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getName()).thenReturn(expectedLocationName);
-        when(occurrence.getLocation().getCountry().getName()).thenReturn(expectedCountryName);
         when(occurrence.getOccurrenceStartDate()).thenReturn(expectedStartDate);
 
         // Act
@@ -30,7 +28,6 @@ public class GeoJsonDiseaseOccurrenceFeaturePropertiesTest extends AbstractDisea
         // Assert
         assertThat(result.getDiseaseOccurrenceStartDate()).isEqualTo(expectedStartDate);
         assertThat(result.getLocationName()).isEqualTo(expectedLocationName);
-        assertThat(result.getCountryName()).isEqualTo(expectedCountryName);
         assertThat(result.getAlert()).isNotNull();
     }
 }

@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -22,14 +22,14 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private LocationDao locationDao;
     @Autowired
-    private CountryDao countryDao;
+    private HealthMapCountryDao healthMapCountryDao;
 
     @Test
     public void saveAndReloadCountryLocation() {
         // Arrange
         String countryName = "Botswana";
         String placeName = "Botswana";
-        Country country = countryDao.getByName(countryName);
+        HealthMapCountry country = healthMapCountryDao.getByName(countryName);
         double x = -22.34284;
         double y = -24.6871;
         Point point = GeometryUtils.createPoint(x, y);
@@ -38,7 +38,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.COUNTRY);
-        location.setCountry(country);
+        location.setHealthMapCountry(country);
 
         // Act
         locationDao.save(location);
@@ -55,17 +55,17 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getGeom().getY()).isEqualTo(y);
         assertThat(location.getName()).isEqualTo(placeName);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getHealthMapCountry()).isNotNull();
+        assertThat(location.getHealthMapCountry().getName()).isEqualTo(countryName);
         assertThat(location.getCreatedDate()).isNotNull();
     }
 
     @Test
     public void saveAndReloadAdmin1LocationByGeoNamesId() {
         // Arrange
-        String countryName = "UK of Great Britain and Northern Ireland";
+        String countryName = "United Kingdom";
         String placeName = "England";
-        Country country = countryDao.getByName(countryName);
+        HealthMapCountry country = healthMapCountryDao.getByName(countryName);
         double x = 52.88496;
         double y = -1.97703;
         Point point = GeometryUtils.createPoint(x, y);
@@ -75,7 +75,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN1);
-        location.setCountry(country);
+        location.setHealthMapCountry(country);
         location.setGeoNamesId(geoNamesId);
 
         // Act
@@ -92,8 +92,8 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getGeom().getY()).isEqualTo(y);
         assertThat(location.getName()).isEqualTo(placeName);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getHealthMapCountry()).isNotNull();
+        assertThat(location.getHealthMapCountry().getName()).isEqualTo(countryName);
         assertThat(location.getCreatedDate()).isNotNull();
         assertThat(location.getGeoNamesId()).isEqualTo(geoNamesId);
     }
@@ -101,9 +101,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void saveAndReloadAdmin2Location() {
         // Arrange
-        String countryName = "UK of Great Britain and Northern Ireland";
         String placeName = "Oxfordshire";
-        Country country = countryDao.getByName(countryName);
         double x = 51.81394;
         double y = -1.29479;
         Point point = GeometryUtils.createPoint(x, y);
@@ -112,7 +110,6 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN2);
-        location.setCountry(country);
 
         // Act
         locationDao.save(location);
@@ -127,17 +124,16 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getGeom().getY()).isEqualTo(y);
         assertThat(location.getName()).isEqualTo(placeName);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN2);
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getHealthMapCountry()).isNull();
         assertThat(location.getCreatedDate()).isNotNull();
     }
 
     @Test
     public void saveAndReloadPreciseLocationByPoint() {
         // Arrange
-        String countryName = "UK of Great Britain and Northern Ireland";
+        String countryName = "United Kingdom";
         String placeName = "Oxford";
-        Country country = countryDao.getByName(countryName);
+        HealthMapCountry country = healthMapCountryDao.getByName(countryName);
         double x = 51.75042;
         double y = -1.24759;
         Point point = GeometryUtils.createPoint(x, y);
@@ -147,7 +143,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(precision);
-        location.setCountry(country);
+        location.setHealthMapCountry(country);
 
         // Act
         locationDao.save(location);
@@ -165,8 +161,8 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getGeom().getY()).isEqualTo(y);
         assertThat(location.getName()).isEqualTo(placeName);
         assertThat(location.getPrecision()).isEqualTo(precision);
-        assertThat(location.getCountry()).isNotNull();
-        assertThat(location.getCountry().getName()).isEqualTo(countryName);
+        assertThat(location.getHealthMapCountry()).isNotNull();
+        assertThat(location.getHealthMapCountry().getName()).isEqualTo(countryName);
         assertThat(location.getCreatedDate()).isNotNull();
     }
 
