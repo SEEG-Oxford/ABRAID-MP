@@ -7,7 +7,7 @@
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
     <div id="counterDiv">
         <@security.authorize ifAnyGranted="ROLE_USER">
-            You have validated <div id="counter" data-bind="counter: reviewCount"></div> point<span data-bind="if: reviewCount() != 1">s</span> for this disease.
+            You have validated<div id="counter" data-bind="counter: reviewCount"></div>point<span data-bind="if: reviewCount() != 1">s</span> for this disease
         </@security.authorize>
     </div>
 </div>
@@ -42,7 +42,7 @@
         </li>
         <li><i class="fa fa-quote-right"></i></li>
     </ul>
-    <div id="datapointInfoLowerPane">
+    <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div class="btn-group">
             <button type="button" class="btn btn-primary" data-bind="click: submitReview('YES')"><i class="fa fa-check"></i>&nbsp;Valid</button>

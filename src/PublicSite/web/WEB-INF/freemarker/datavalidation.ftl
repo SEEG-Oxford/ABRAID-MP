@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="<@spring.url "/css/MarkerCluster.Default.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </#assign>
 
 <#assign endOfBodyScriptContent>
@@ -38,6 +39,7 @@
 </#assign>
 
 <@c.page title="ABRAID MP" endOfHead=endOfHeadContent endOfBody=endOfBodyContent endOfBodyScript=endOfBodyScriptContent>
+<div id="dataValidation">
     <#include "datavalidationsidepanel.ftl"/>
 
     <div id="layerSelector">
@@ -49,5 +51,6 @@
     </div>
 
     <div id="map"></div>
+</div>
 </@c.page>
 
