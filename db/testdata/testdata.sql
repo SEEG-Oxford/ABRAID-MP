@@ -5,7 +5,8 @@
 -- Copyright (c) 2014 University of Oxford
 
 \copy expert (name, email, hashed_password, is_administrator) FROM 'expert.txt' (ENCODING utf8, NULL '')
-\copy location (id, name, geom, precision, geonames_id, geonames_feature_code) FROM 'location.txt' (ENCODING utf8, NULL '')
+\copy geoname (id, feature_code) FROM 'geoname.txt' (ENCODING utf8, NULL '')
+\copy location (id, name, geom, precision, geoname_id) FROM 'location.txt' (ENCODING utf8, NULL '')
 \copy alert (id, feed_id, title, publication_date, url, summary, healthmap_alert_id) FROM 'alert.txt' (ENCODING utf8, NULL '')
 \copy disease_occurrence (id, disease_group_id, location_id, alert_id, occurrence_start_date) FROM 'disease_occurrence.txt' (ENCODING utf8, NULL '')
 \copy expert_disease_group (expert_id, disease_group_id) FROM 'expert_disease_group.txt' (ENCODING utf8)

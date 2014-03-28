@@ -17,6 +17,7 @@
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoNamesLocationPrecision"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease"/>

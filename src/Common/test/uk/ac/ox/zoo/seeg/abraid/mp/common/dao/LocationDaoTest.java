@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
@@ -61,7 +62,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
     }
 
     @Test
-    public void saveAndReloadAdmin1LocationByGeoNamesId() {
+    public void saveAndReloadAdmin1LocationByGeoNameId() {
         // Arrange
         String countryName = "United Kingdom";
         String placeName = "England";
@@ -69,14 +70,16 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         double x = 52.88496;
         double y = -1.97703;
         Point point = GeometryUtils.createPoint(x, y);
-        int geoNamesId = 6269131;
+        int geoNameId = 6269131;
+        String geoNameFeatureCode = "ADM1";
+        GeoName geoName = new GeoName(geoNameId, geoNameFeatureCode);
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN1);
         location.setHealthMapCountry(country);
-        location.setGeoNamesId(geoNamesId);
+        location.setGeoName(geoName);
 
         // Act
         locationDao.save(location);
@@ -84,7 +87,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         flushAndClear();
 
         // Assert
-        location = locationDao.getByGeoNamesId(geoNamesId);
+        location = locationDao.getByGeoNameId(geoNameId);
         assertThat(location).isNotNull();
         assertThat(location.getId()).isEqualTo(id);
         assertThat(location.getGeom()).isNotNull();
@@ -95,7 +98,9 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getHealthMapCountry()).isNotNull();
         assertThat(location.getHealthMapCountry().getName()).isEqualTo(countryName);
         assertThat(location.getCreatedDate()).isNotNull();
-        assertThat(location.getGeoNamesId()).isEqualTo(geoNamesId);
+        assertThat(location.getGeoName()).isNotNull();
+        assertThat(location.getGeoName().getId()).isEqualTo(geoNameId);
+        assertThat(location.getGeoName().getFeatureCode()).isEqualTo(geoNameFeatureCode);
     }
 
     @Test

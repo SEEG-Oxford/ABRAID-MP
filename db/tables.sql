@@ -21,6 +21,7 @@
 -- expert:                         Represents a user of the PublicSite.
 -- expert_disease_group:           Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
 -- feed:                           Represents a source of alerts.
+-- geoname:                        Represents a GeoName.
 -- geonames_location_precision:    Represents a mapping between a GeoNames feature code and a location precision.
 -- healthmap_country:              Represents a country as defined by HealthMap.
 -- healthmap_country_country:      Represents a mapping between HealthMap countries and SEEG countries.
@@ -145,6 +146,11 @@ CREATE TABLE feed (
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
+CREATE TABLE geoname (
+    id integer NOT NULL,
+    feature_code varchar(10) NOT NULL
+);
+
 CREATE TABLE geonames_location_precision (
     geonames_feature_code varchar(10) NOT NULL,
     location_precision varchar(10) NOT NULL
@@ -172,8 +178,7 @@ CREATE TABLE location (
     name varchar(1000),
     geom geometry(POINT, 4326) NOT NULL,
     precision varchar(10) NOT NULL,
-    geonames_id integer,
-    geonames_feature_code varchar(10),
+    geoname_id integer,
     resolution_weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     healthmap_country_id bigint

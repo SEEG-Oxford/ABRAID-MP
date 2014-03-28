@@ -94,8 +94,9 @@ public class MainTest {
         assertThat(occurrence1Location.getGeom().getX()).isEqualTo(101.7);
         assertThat(occurrence1Location.getGeom().getY()).isEqualTo(3.16667);
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
-        assertThat(occurrence1Location.getGeoNamesFeatureCode()).isEqualTo("PPLC");
-        assertThat(occurrence1Location.getGeoNamesId()).isEqualTo(1735161);
+        assertThat(occurrence1Location.getGeoName()).isNotNull();
+        assertThat(occurrence1Location.getGeoName().getId()).isEqualTo(1735161);
+        assertThat(occurrence1Location.getGeoName().getFeatureCode()).isEqualTo("PPLC");
         assertThat(occurrence1Location.getHealthMapCountry()).isNotNull();
         assertThat(occurrence1Location.getHealthMapCountry().getName()).isEqualTo("Malaysia");
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
@@ -124,8 +125,9 @@ public class MainTest {
         assertThat(occurrence2Location.getGeom().getX()).isEqualTo(172.65939);
         assertThat(occurrence2Location.getGeom().getY()).isEqualTo(-42.42349);
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
-        assertThat(occurrence2Location.getGeoNamesFeatureCode()).isEqualTo("PCLI");
-        assertThat(occurrence2Location.getGeoNamesId()).isEqualTo(2186224);
+        assertThat(occurrence1Location.getGeoName()).isNotNull();
+        assertThat(occurrence1Location.getGeoName().getId()).isEqualTo(2186224);
+        assertThat(occurrence1Location.getGeoName().getFeatureCode()).isEqualTo("PCLI");
         assertThat(occurrence2Location.getHealthMapCountry()).isNotNull();
         assertThat(occurrence2Location.getHealthMapCountry().getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();

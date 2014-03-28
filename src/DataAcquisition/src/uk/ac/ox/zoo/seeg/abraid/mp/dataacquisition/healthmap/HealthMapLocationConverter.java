@@ -3,13 +3,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.GeoNamesWebService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
 import java.util.List;
@@ -71,10 +72,10 @@ public class HealthMapLocationConverter {
      * @param location The location.
      */
     public void addPrecision(HealthMapLocation healthMapLocation, Location location) {
-        Integer geoNamesId = healthMapLocation.getGeoNameId();
+        Integer geoNameId = healthMapLocation.getGeoNameId();
 
-        if (geoNamesId != null) {
-            addPrecisionUsingGeoNames(location, geoNamesId);
+        if (geoNameId != null) {
+            addPrecisionUsingGeoNames(location, geoNameId);
         }
 
         if (location.getPrecision() == null) {
@@ -99,7 +100,7 @@ public class HealthMapLocationConverter {
 
         if (healthMapLocation.getGeoNameId() != null) {
             // Query for an existing location at the specified GeoNames ID
-            location = locationService.getLocationByGeoNamesId(healthMapLocation.getGeoNameId());
+            location = locationService.getLocationByGeoNameId(healthMapLocation.getGeoNameId());
         } else {
             // Query for an existing location at the specified lat/long and location precision
             LocationPrecision precision = findLocationPrecision(healthMapLocation);
@@ -138,20 +139,21 @@ public class HealthMapLocationConverter {
         return location;
     }
 
-    private void addPrecisionUsingGeoNames(Location location, int geoNamesId) {
-        location.setGeoNamesId(geoNamesId);
-        String geoNamesFeatureCode = getGeoNamesFeatureCode(geoNamesId);
+    private void addPrecisionUsingGeoNames(Location location, int geoNameId) {
+        GeoName geoName = getGeoName(geoNameId);
 
-        if (geoNamesFeatureCode != null) {
-            LocationPrecision precision = lookupData.getGeoNamesMap().get(geoNamesFeatureCode);
-            if (precision == null) {
-                // We retrieved the GeoNames feature code from the web service, but the feature code is not in
-                // our mapping table
-                LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, geoNamesFeatureCode, geoNamesId));
+        if (geoName != null) {
+            String featureCode = geoName.getFeatureCode();
+            if (StringUtils.hasText(featureCode)) {
+                LocationPrecision precision = lookupData.getGeoNamesMap().get(featureCode);
+                if (precision == null) {
+                    // We retrieved the GeoName, but the feature code is not in our mapping table
+                    LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, featureCode, geoNameId));
+                }
+
+                location.setGeoName(geoName);
+                location.setPrecision(precision);
             }
-
-            location.setGeoNamesFeatureCode(geoNamesFeatureCode);
-            location.setPrecision(precision);
         }
     }
 
@@ -168,17 +170,22 @@ public class HealthMapLocationConverter {
         return LocationPrecision.findByHealthMapPlaceBasicType(healthMapLocation.getPlaceBasicType());
     }
 
-    private String getGeoNamesFeatureCode(int geoNamesId) {
-        String featureCode = null;
-        GeoName geoName = geoNamesWebService.getById(geoNamesId);
+    private GeoName getGeoName(int geoNameId) {
+        // Determine whether we already have this GeoName in our database
+        GeoName geoName = locationService.getGeoNameById(geoNameId);
 
         if (geoName != null) {
-            featureCode = geoName.getFeatureCode();
-        } else {
-            LOGGER.warn(String.format(GEONAMES_ID_NOT_FOUND, geoNamesId));
+            // We do not, so look it up using the GeoNames web service
+            uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName geoNameDTO =
+                    geoNamesWebService.getById(geoNameId);
+            if (geoNameDTO != null) {
+                geoName = new GeoName(geoNameDTO.getGeoNameId(), geoNameDTO.getFeatureCode());
+            } else {
+                LOGGER.warn(String.format(GEONAMES_ID_NOT_FOUND, geoNameId));
+            }
         }
 
-        return featureCode;
+        return geoName;
     }
 
     private Point createPointFromLatLong(HealthMapLocation healthMapLocation) {

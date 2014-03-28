@@ -22,7 +22,7 @@ ALTER TABLE healthmap_disease
     ADD CONSTRAINT uq_healthmap_disease_name UNIQUE (name);
 
 ALTER TABLE location
-    ADD CONSTRAINT uq_location_geonames_id UNIQUE (geonames_id);
+    ADD CONSTRAINT uq_location_geoname_id UNIQUE (geoname_id);
 
 ALTER TABLE provenance
     ADD CONSTRAINT uq_provenance_name UNIQUE (name);
@@ -68,6 +68,9 @@ ALTER TABLE expert_disease_group ADD CONSTRAINT pk_expert_disease_group
 ALTER TABLE feed ADD CONSTRAINT pk_feed
     PRIMARY KEY (id);
 
+ALTER TABLE geoname ADD CONSTRAINT pk_geoname
+    PRIMARY KEY (id);
+    
 ALTER TABLE geonames_location_precision ADD CONSTRAINT pk_geonames_location_precision
     PRIMARY KEY (geonames_feature_code);
 
@@ -127,7 +130,10 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT fk_healthmap_country_countr
 ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
-ALTER TABLE location ADD CONSTRAINT FK_location_healthmap_country
+ALTER TABLE location ADD CONSTRAINT fk_location_geoname
+    FOREIGN KEY (geoname_id) REFERENCES geoname (id);
+
+ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
     FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
 
 
