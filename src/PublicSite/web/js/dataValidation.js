@@ -41,8 +41,13 @@ var DataValidationViewModels = (function() {
         this.translationUrl = ko.computed(function () {
             if (this.hasSelectedPoint()) {
                 var googleTranslateUrl = "http://translate.google.com/"
+                var feedLanguage = this.selectedPoint().properties.alert.feedlanguage;
                 var encodedSummary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
+                if (feedLanguage != null) {
+                    return googleTranslateUrl + "?langpair=" + feedLanguage + "%7Cen&text=" + encodedSummary;
+                } else {
                     return googleTranslateUrl + "#auto/en/" + encodedSummary;
+                }
             }
         }, this);
         this.submitReview = function(review) {

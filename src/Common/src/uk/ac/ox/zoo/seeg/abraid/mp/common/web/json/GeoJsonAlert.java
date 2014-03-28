@@ -13,6 +13,7 @@ public final class GeoJsonAlert {
     private final String summary;
     private final String url;
     private final String feedName;
+    private final String feedLanguage;
     private final DateTime publicationDate;
 
     public GeoJsonAlert(Alert alert) {
@@ -20,6 +21,7 @@ public final class GeoJsonAlert {
         this.summary = alert.getSummary();
         this.url = alert.getUrl();
         this.feedName = alert.getFeed().getName();
+        this.feedLanguage = alert.getFeed().getLanguage();
         this.publicationDate = alert.getPublicationDate();
     }
 
@@ -37,6 +39,10 @@ public final class GeoJsonAlert {
 
     public String getFeedName() {
         return feedName;
+    }
+
+    public String getFeedLanguage() {
+        return feedLanguage;
     }
 
     public DateTime getPublicationDate() {
