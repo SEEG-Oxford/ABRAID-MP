@@ -4,18 +4,27 @@
  */
 'use strict';
 
+// Custom binding to set the value on the flipclock.js counter
 ko.bindingHandlers.counter = {
-    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    init: function(element, valueAccessor) {
         var counter = $(element).FlipClock(ko.unwrap(valueAccessor()), {
             clockFace: "Counter"
         });
         ko.utils.domData.set(element, "counter", counter);
     },
-    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    update: function(element, valueAccessor) {
         var counter = ko.utils.domData.get(element, "counter");
         counter.setValue(ko.unwrap(valueAccessor()));
     }
 };
+
+// Custom binding to format the datetime display with moment.js library
+ko.bindingHandlers.date = {
+    update: function(element, valueAccessor) {
+        var date = ko.unwrap(valueAccessor());
+        $(element).text(moment(date).lang('en-gb').format('LL'));
+    }
+}
 
 var DataValidationViewModels = (function() {
     var LayerSelectorViewModel = function () {
