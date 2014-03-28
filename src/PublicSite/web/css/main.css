@@ -77,6 +77,11 @@ html,body
     background-color:rgb(234, 234, 234);
     border-radius:25px;
 }
+#translationLink
+{
+    float:right;
+    padding-right:5px;
+}
 #datapointInfoLowerPane
 {
     width:100%;

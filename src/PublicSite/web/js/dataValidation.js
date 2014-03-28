@@ -38,6 +38,13 @@ var DataValidationViewModels = (function() {
         this.clearSelectedPoint = function () {
             this.selectedPoint(null);
         };
+        this.translationUrl = ko.computed(function () {
+            if (this.hasSelectedPoint()) {
+                var googleTranslateUrl = "http://translate.google.com/"
+                var encodedSummary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
+                    return googleTranslateUrl + "#auto/en/" + encodedSummary;
+            }
+        }, this);
         this.submitReview = function(review) {
             return function () {
                 var diseaseId = DataValidationViewModels.layerSelectorViewModel.selectedDisease().id;
