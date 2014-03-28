@@ -7,15 +7,18 @@ import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.startsWith;
@@ -29,7 +32,6 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = SpringockitoContextLoader.class, locations = Main.APPLICATION_CONTEXT_LOCATION)
 @Transactional
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainTest {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
@@ -43,6 +45,9 @@ public class MainTest {
 
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
+    private GeoNameDao geoNameDao;
 
     @Test
     public void mainMethodAcquiresDataFromWebService() {
@@ -94,12 +99,12 @@ public class MainTest {
         assertThat(occurrence1Location.getGeom().getX()).isEqualTo(101.7);
         assertThat(occurrence1Location.getGeom().getY()).isEqualTo(3.16667);
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
-        assertThat(occurrence1Location.getGeoName()).isNotNull();
-        assertThat(occurrence1Location.getGeoName().getId()).isEqualTo(1735161);
-        assertThat(occurrence1Location.getGeoName().getFeatureCode()).isEqualTo("PPLC");
+        assertThat(occurrence1Location.getGeoNameId()).isEqualTo(1735161);
         assertThat(occurrence1Location.getHealthMapCountry()).isNotNull();
         assertThat(occurrence1Location.getHealthMapCountry().getName()).isEqualTo("Malaysia");
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
+
+        assertThatGeoNameExists(1735161, "PPLC");
 
         Alert occurrence1Alert = occurrence.getAlert();
         assertThat(occurrence1Alert.getFeed().getName()).isEqualTo("Eyewitness Reports");
@@ -125,12 +130,12 @@ public class MainTest {
         assertThat(occurrence2Location.getGeom().getX()).isEqualTo(172.65939);
         assertThat(occurrence2Location.getGeom().getY()).isEqualTo(-42.42349);
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
-        assertThat(occurrence1Location.getGeoName()).isNotNull();
-        assertThat(occurrence1Location.getGeoName().getId()).isEqualTo(2186224);
-        assertThat(occurrence1Location.getGeoName().getFeatureCode()).isEqualTo("PCLI");
+        assertThat(occurrence2Location.getGeoNameId()).isEqualTo(2186224);
         assertThat(occurrence2Location.getHealthMapCountry()).isNotNull();
         assertThat(occurrence2Location.getHealthMapCountry().getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
+
+        assertThatGeoNameExists(2186224, "PCLI");
 
         Alert occurrence2Alert = occurrence.getAlert();
         assertThat(occurrence2Alert.getFeed().getName()).isEqualTo("Google News");
@@ -167,6 +172,13 @@ public class MainTest {
         int size = diseaseOccurrences.size();
         assertThat(size).isGreaterThanOrEqualTo(2);
         return Arrays.asList(diseaseOccurrences.get(size - 2), diseaseOccurrences.get(size - 1));
+    }
+
+    private void assertThatGeoNameExists(int id, String featureCode) {
+        GeoName geoName = geoNameDao.getById(id);
+        assertThat(geoName).isNotNull();
+        assertThat(geoName.getId()).isEqualTo(id);
+        assertThat(geoName.getFeatureCode()).isEqualTo(featureCode);
     }
 
     private String getHealthMapJson() {

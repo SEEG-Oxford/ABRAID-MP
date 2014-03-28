@@ -14,4 +14,10 @@ public interface GeoNameDao {
      * @return The GeoName, or null if not found.
      */
     GeoName getById(Integer geoNameId);
+
+    /**
+     * Saves a GeoName.
+     * @param geoName The GeoName to save.
+     */
+    void save(GeoName geoName);
 }

@@ -1,14 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import com.vividsolutions.jts.geom.Point;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 
 /**
  * Represents a location.
@@ -22,7 +20,7 @@ import javax.persistence.NamedQuery;
         ),
         @NamedQuery(
                 name = "getLocationByGeoNameId",
-                query = "from Location where geoName.id=:geoNameId"
+                query = "from Location where geoNameId=:geoNameId"
         )
 })
 @Entity
@@ -47,10 +45,8 @@ public class Location {
     private LocationPrecision precision;
 
     // The GeoName corresponding to this location.
-    @ManyToOne
-    @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "geoname_id")
-    private GeoName geoName;
+    @Column(name = "geoname_id")
+    private Integer geoNameId;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -110,12 +106,12 @@ public class Location {
         return createdDate;
     }
 
-    public GeoName getGeoName() {
-        return geoName;
+    public Integer getGeoNameId() {
+        return geoNameId;
     }
 
-    public void setGeoName(GeoName geoName) {
-        this.geoName = geoName;
+    public void setGeoNameId(Integer geoNameId) {
+        this.geoNameId = geoNameId;
     }
 
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
@@ -128,7 +124,7 @@ public class Location {
 
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
-        if (geoName != null ? !geoName.equals(location.geoName) : location.geoName != null) return false;
+        if (geoNameId != null ? !geoNameId.equals(location.geoNameId) : location.geoNameId != null) return false;
         if (geom != null ? !geom.equals(location.geom) : location.geom != null) return false;
         if (healthMapCountry != null ? !healthMapCountry.equals(location.healthMapCountry) : location.healthMapCountry != null)
             return false;
@@ -145,7 +141,7 @@ public class Location {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (geom != null ? geom.hashCode() : 0);
         result = 31 * result + (precision != null ? precision.hashCode() : 0);
-        result = 31 * result + (geoName != null ? geoName.hashCode() : 0);
+        result = 31 * result + (geoNameId != null ? geoNameId.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (healthMapCountry != null ? healthMapCountry.hashCode() : 0);
         return result;

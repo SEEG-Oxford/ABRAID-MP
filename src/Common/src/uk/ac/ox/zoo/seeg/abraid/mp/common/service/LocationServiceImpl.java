@@ -95,4 +95,13 @@ public class LocationServiceImpl implements LocationService {
     public GeoName getGeoNameById(int geoNameId) {
         return geoNameDao.getById(geoNameId);
     }
+
+    /**
+     * Saves a GeoName.
+     * @param geoName The GeoName to save.
+     */
+    @Override
+    public void save(GeoName geoName) {
+        geoNameDao.save(geoName);
+    }
 }

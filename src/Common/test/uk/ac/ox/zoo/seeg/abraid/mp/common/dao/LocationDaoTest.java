@@ -3,12 +3,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.util.List;
 
@@ -71,15 +70,13 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         double y = -1.97703;
         Point point = GeometryUtils.createPoint(x, y);
         int geoNameId = 6269131;
-        String geoNameFeatureCode = "ADM1";
-        GeoName geoName = new GeoName(geoNameId, geoNameFeatureCode);
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN1);
         location.setHealthMapCountry(country);
-        location.setGeoName(geoName);
+        location.setGeoNameId(geoNameId);
 
         // Act
         locationDao.save(location);
@@ -98,9 +95,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getHealthMapCountry()).isNotNull();
         assertThat(location.getHealthMapCountry().getName()).isEqualTo(countryName);
         assertThat(location.getCreatedDate()).isNotNull();
-        assertThat(location.getGeoName()).isNotNull();
-        assertThat(location.getGeoName().getId()).isEqualTo(geoNameId);
-        assertThat(location.getGeoName().getFeatureCode()).isEqualTo(geoNameFeatureCode);
+        assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
     }
 
     @Test

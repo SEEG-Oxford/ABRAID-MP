@@ -52,4 +52,10 @@ public interface LocationService {
      * @return The GeoName, or null if not found.
      */
     GeoName getGeoNameById(int geoNameId);
+
+    /**
+     * Saves a GeoName.
+     * @param geoName The GeoName to save.
+     */
+    void save(GeoName geoName);
 }

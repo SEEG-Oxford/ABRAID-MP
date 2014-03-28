@@ -27,12 +27,14 @@ public class HealthMapLocationConverter {
             "has no GeoNames ID. Arbitrarily using location ID %d.";
     private static final String IGNORING_COUNTRY_MESSAGE =
             "Ignoring HealthMap location in country \"%s\" as it is not of interest";
-    private static final String GEONAMES_FCODE_NOT_IN_DATABASE =
+    private static final String GEONAMES_FCODE_NOT_IN_DATABASE_MESSAGE =
             "Feature code \"%s\" is not in the ABRAID database (GeoName ID %d) - attempting to use place_basic_type";
-    private static final String GEONAMES_ID_NOT_FOUND =
+    private static final String GEONAMES_ID_NOT_FOUND_MESSAGE =
             "GeoNames ID %d was not found by the GeoNames web service - attempting to use place_basic_type";
-    private static final String PLACE_BASIC_TYPE_NOT_FOUND =
+    private static final String PLACE_BASIC_TYPE_NOT_FOUND_MESSAGE =
             "place_basic_type is missing - ignoring location (place name \"%s\")";
+    private static final String GEONAMES_ID_HAS_NO_FEATURE_CODE_MESSAGE =
+            "GeoNames ID %d was returned by the GeoNames web service but has no feature code";
 
     private LocationService locationService;
     private HealthMapLookupData lookupData;
@@ -140,20 +142,18 @@ public class HealthMapLocationConverter {
     }
 
     private void addPrecisionUsingGeoNames(Location location, int geoNameId) {
+        location.setGeoNameId(geoNameId);
         GeoName geoName = getGeoName(geoNameId);
 
         if (geoName != null) {
             String featureCode = geoName.getFeatureCode();
-            if (StringUtils.hasText(featureCode)) {
-                LocationPrecision precision = lookupData.getGeoNamesMap().get(featureCode);
-                if (precision == null) {
-                    // We retrieved the GeoName, but the feature code is not in our mapping table
-                    LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE, featureCode, geoNameId));
-                }
-
-                location.setGeoName(geoName);
-                location.setPrecision(precision);
+            LocationPrecision precision = lookupData.getGeoNamesMap().get(featureCode);
+            if (precision == null) {
+                // We retrieved the GeoName, but the feature code is not in our mapping table
+                LOGGER.warn(String.format(GEONAMES_FCODE_NOT_IN_DATABASE_MESSAGE, featureCode, geoNameId));
             }
+
+            location.setPrecision(precision);
         }
     }
 
@@ -162,7 +162,7 @@ public class HealthMapLocationConverter {
         if (precision != null) {
             location.setPrecision(precision);
         } else {
-            LOGGER.warn(String.format(PLACE_BASIC_TYPE_NOT_FOUND, healthMapLocation.getPlaceName()));
+            LOGGER.warn(String.format(PLACE_BASIC_TYPE_NOT_FOUND_MESSAGE, healthMapLocation.getPlaceName()));
         }
     }
 
@@ -174,17 +174,29 @@ public class HealthMapLocationConverter {
         // Determine whether we already have this GeoName in our database
         GeoName geoName = locationService.getGeoNameById(geoNameId);
 
-        if (geoName != null) {
+        if (geoName == null) {
             // We do not, so look it up using the GeoNames web service
             uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName geoNameDTO =
                     geoNamesWebService.getById(geoNameId);
+
             if (geoNameDTO != null) {
-                geoName = new GeoName(geoNameDTO.getGeoNameId(), geoNameDTO.getFeatureCode());
+                if (StringUtils.hasText(geoNameDTO.getFeatureCode())) {
+                    geoName = createAndSaveGeoName(geoNameDTO);
+                } else {
+                    LOGGER.warn(String.format(GEONAMES_ID_HAS_NO_FEATURE_CODE_MESSAGE, geoNameId));
+                }
             } else {
-                LOGGER.warn(String.format(GEONAMES_ID_NOT_FOUND, geoNameId));
+                LOGGER.warn(String.format(GEONAMES_ID_NOT_FOUND_MESSAGE, geoNameId));
             }
         }
 
+        return geoName;
+    }
+
+    private GeoName createAndSaveGeoName(
+            uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName geoNameDTO) {
+        GeoName geoName = new GeoName(geoNameDTO.getGeoNameId(), geoNameDTO.getFeatureCode());
+        locationService.save(geoName);
         return geoName;
     }
 
