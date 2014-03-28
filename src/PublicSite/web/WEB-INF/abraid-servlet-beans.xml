@@ -29,11 +29,13 @@
 
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true" >
-            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ViewAwareJsonMessageConverter">
                 <property name="objectMapper" ref="geoJsonObjectMapper" />
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+    <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.JsonViewSupportFactoryBean" />
+    <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support" />
 
     <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper" />
 

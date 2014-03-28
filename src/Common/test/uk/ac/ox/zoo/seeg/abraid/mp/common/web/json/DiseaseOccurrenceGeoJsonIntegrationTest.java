@@ -1,8 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.io.ByteArrayOutputStream;
@@ -18,17 +21,32 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccurrenceGeoJsonTests {
     @Test
-    public void serializingADiseaseOccurrenceCollectionGivesCorrectOutput() throws Exception {
+    public void serializingADiseaseOccurrenceCollectionGivesCorrectDisplayViewOutput() throws Exception {
         // Arrange
         List<DiseaseOccurrence> occurrences = Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence());
         GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
         OutputStream stream = new ByteArrayOutputStream();
+        ObjectWriter writer = objectMapper.writerWithView(DisplayJsonView.class);
 
         // Act
-        objectMapper.writeValue(stream, new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences));
+        writer.writeValue(stream, new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences));
 
         // Assert
-        assertThat(stream.toString()).isEqualTo(TWO_DISEASE_OCCURRENCE_FEATURES_AS_JSON);
+        assertThat(stream.toString()).isEqualTo(getTwoDiseaseOccurrenceFeaturesAsJson(DisplayJsonView.class));
+    }
 
+    @Test
+    public void serializingADiseaseOccurrenceCollectionGivesCorrectModellingViewOutput() throws Exception {
+        // Arrange
+        List<DiseaseOccurrence> occurrences = Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence());
+        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        OutputStream stream = new ByteArrayOutputStream();
+        ObjectWriter writer = objectMapper.writerWithView(ModellingJsonView.class);
+
+        // Act
+        writer.writeValue(stream, new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences));
+
+        // Assert
+        assertThat(stream.toString()).isEqualTo(getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class));
     }
 }
