@@ -44,9 +44,9 @@ var DataValidationViewModels = (function() {
                 var feedLanguage = this.selectedPoint().properties.alert.feedLanguage;
                 var encodedSummary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
                 if (feedLanguage != null) {
-                    return googleTranslateUrl + "?langpair=" + feedLanguage + "%7Cen&text=" + encodedSummary;
+                    return (googleTranslateUrl + "?langpair=" + feedLanguage + "%7Cen&text=" + encodedSummary).substring(0,2048);
                 } else {
-                    return googleTranslateUrl + "#auto/en/" + encodedSummary;
+                    return (googleTranslateUrl + "#auto/en/" + encodedSummary).substring(0,2048);
                 }
             }
         }, this);
