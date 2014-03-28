@@ -35,7 +35,7 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.json.geojson.GeoJsonObjectMapper" />
+    <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper" />
 
     <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 

@@ -14,9 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.SpringockitoWebContextLoader;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.util.Arrays;
 

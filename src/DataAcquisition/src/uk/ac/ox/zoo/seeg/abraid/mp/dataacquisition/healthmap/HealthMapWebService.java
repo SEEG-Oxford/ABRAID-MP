@@ -153,7 +153,13 @@ public class HealthMapWebService {
         return builder.build().toString();
     }
 
-    private List<HealthMapLocation> parseJson(String json) {
+    /**
+     * Parses the supplied HealthMap JSON into objects.
+     * @param json The HealthMap JSON.
+     * @return A list of HealthMapLocation objects.
+     * @throws JsonParserException If the JSON could not be parsed.
+     */
+    public List<HealthMapLocation> parseJson(String json) throws JsonParserException {
         // Sets the date format that we expect to receive in the JSON
         JsonParser parser = new JsonParser(dateTimeFormatter);
 

@@ -2,11 +2,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
 import java.util.*;
 

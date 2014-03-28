@@ -30,6 +30,9 @@
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
 
+        <!-- Internal Test -->
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="testutils"/>
+
         &ivy-project-dependencies;
 
         &ivy-excludes;

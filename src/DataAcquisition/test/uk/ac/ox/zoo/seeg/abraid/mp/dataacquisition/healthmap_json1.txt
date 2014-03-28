@@ -1,0 +1,34 @@
+[
+    {
+        "country": "Malaysia",
+        "place_name": "Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia",
+        "lat": "3.166667",
+        "lng": "101.699997",
+        "geonameid": "1735161",
+        "place_basic_type": "p",
+        "place_id": "3350",
+        "country_id": "147",
+        "alerts": [
+            {
+                "feed": "Eyewitness Reports",
+                "disease": "Dengue",
+                "summary": "Dengue -- Kuala Lumpur, Malaysia",
+                "date": "2014-03-10 00:00:00-0400",
+                "formatted_date": "10 March 2014 00:00:00 EDT",
+                "link": "http://healthmap.org/ln.php?2324002",
+                "descr": "",
+                "rating": {
+                    "count": 0,
+                    "rating": 3
+                },
+                "species_name": "Humans",
+                "dup_count": "0",
+                "place_category": [],
+                "original_url": "onm.php?id=XX_ALERT_ID_XX",
+                "disease_id": "33",
+                "feed_id": "34",
+                "feed_lang": "my"
+            }
+        ]
+    }
+]
