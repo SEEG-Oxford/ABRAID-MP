@@ -5,7 +5,7 @@
 -- Copyright (c) 2014 University of Oxford
 
 \copy provenance (id, name, default_feed_weighting) FROM 'provenance.txt' (ENCODING utf8, NULL '')
-\copy feed (provenance_id, name, weighting, healthmap_feed_id) FROM 'feed.txt' (ENCODING utf8, NULL '')
+\copy feed (provenance_id, name, weighting, language, healthmap_feed_id) FROM 'feed.txt' (ENCODING utf8, NULL '')
 \copy healthmap_country (id, name) FROM 'healthmap_country.txt' (ENCODING utf8, NULL '')
 \copy healthmap_country_country (healthmap_country_id, gaul_code) FROM 'healthmap_country_country.txt' (ENCODING utf8, NULL '')
 \copy disease_group (id, parent_id, name, group_type) FROM 'disease_group.txt' (ENCODING utf8, NULL '')
