@@ -1,0 +1,33 @@
+[
+    {
+        "country": "New Zealand",
+        "place_name": "New Zealand",
+        "lat": "-42.423489",
+        "lng": "172.659393",
+        "geonameid": "2186224",
+        "place_basic_type": "c",
+        "place_id": "164",
+        "country_id": "164",
+        "alerts": [
+            {
+                "feed": "Google News",
+                "disease": "Dengue",
+                "summary": "Regional dengue outbreak unprecedented - SPC - Radio New Zealand",
+                "date": "2014-03-09 22:50:58-0400",
+                "formatted_date": " 9 March 2014 22:50:58 EDT",
+                "link": "http://healthmap.org/ln.php?2323248",
+                "descr": "SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...",
+                "rating": {
+                    "count": 0,
+                    "rating": 3
+                },
+                "species_name": "Humans",
+                "dup_count": "0",
+                "place_category": [],
+                "original_url": "http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNF4EFDnuQ1IvVKEkyHzR4WL8Uf0mQ&cid=c3a7d30bb8a4878e06b80cf16b898331&url=http://www.radionz.co.nz/international/programmes/datelinepacific/audio/2588433/regional-dengue-outbreak-unprecedented-spc",
+                "disease_id": "33",
+                "feed_id": "4"
+            }
+        ]
+    }
+]

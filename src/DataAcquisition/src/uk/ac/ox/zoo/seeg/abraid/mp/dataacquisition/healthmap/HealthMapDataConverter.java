@@ -25,7 +25,8 @@ public class HealthMapDataConverter {
     private HealthMapLookupData lookupData;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
-    private static final String CONVERSION_MESSAGE = "Converting %d HealthMap location(s) with %d alert(s)";
+    private static final String CONVERSION_MESSAGE =
+            "Converting %d HealthMap location(s), with %d alert(s) and %d GeoNames ID(s)";
     private static final String COUNT_MESSAGE = "Saved %d HealthMap disease occurrence(s) in %d location(s)";
 
     public HealthMapDataConverter(HealthMapLocationConverter locationConverter,
@@ -46,7 +47,7 @@ public class HealthMapDataConverter {
      */
     public void convert(List<HealthMapLocation> healthMapLocations, DateTime endDate) {
         LOGGER.info(String.format(CONVERSION_MESSAGE, healthMapLocations.size(),
-                countHealthMapAlerts(healthMapLocations)));
+                countHealthMapAlerts(healthMapLocations), countGeoNamesIdOccurrences(healthMapLocations)));
 
         Set<Location> convertedLocations = new HashSet<>();
         Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
@@ -62,6 +63,16 @@ public class HealthMapDataConverter {
         for (HealthMapLocation healthMapLocation : healthMapLocations) {
             if (healthMapLocation.getAlerts() != null) {
                 count += healthMapLocation.getAlerts().size();
+            }
+        }
+        return count;
+    }
+
+    private int countGeoNamesIdOccurrences(List<HealthMapLocation> healthMapLocations) {
+        int count = 0;
+        for (HealthMapLocation healthMapLocation : healthMapLocations) {
+            if (healthMapLocation.getGeoNameId() != null) {
+                count++;
             }
         }
         return count;

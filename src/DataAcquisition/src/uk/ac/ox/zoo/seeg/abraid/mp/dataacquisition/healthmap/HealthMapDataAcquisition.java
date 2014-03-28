@@ -4,10 +4,13 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -22,6 +25,9 @@ public class HealthMapDataAcquisition {
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
 
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Could not read HealthMap web service response: %s";
+    private static final String FILE_ERROR_MESSAGE = "Could not read file \"%s\"";
+    private static final String JSON_ERROR_MESSAGE = "Could not read JSON from file \"%s\"";
+    private static final String RETRIEVING_FROM_FILE_MESSAGE = "Retrieving HealthMap data from file \"%s\"";
 
     public HealthMapDataAcquisition(HealthMapWebService healthMapWebService,
                                     HealthMapDataConverter healthMapDataConverter,
@@ -32,25 +38,56 @@ public class HealthMapDataAcquisition {
     }
 
     /**
-     * Acquires HealthMap data.
+     * Acquires HealthMap data from the HealthMap web service.
      */
     @Transactional
-    public void acquireData() {
+    public void acquireDataFromWebService() {
         DateTime startDate = getStartDate();
         DateTime endDate = getEndDate(startDate);
-
-        List<HealthMapLocation> healthMapLocations = retrieveData(startDate, endDate);
-        if (healthMapLocations != null) {
-            healthMapDataConverter.convert(healthMapLocations, endDate);
-        }
+        List<HealthMapLocation> healthMapLocations = retrieveDataFromWebService(startDate, endDate);
+        convert(healthMapLocations, endDate);
     }
 
-    private List<HealthMapLocation> retrieveData(DateTime startDate, DateTime endDate) {
+    /**
+     * Acquires HealthMap data from a file.
+     * @param fileName The name of a file that contains HealthMap JSON.
+     */
+    @Transactional
+    public void acquireDataFromFile(String fileName) {
+        LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, fileName));
+        List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(fileName);
+        convert(healthMapLocations, null);
+    }
+
+    private List<HealthMapLocation> retrieveDataFromWebService(DateTime startDate, DateTime endDate) {
         try {
             return healthMapWebService.sendRequest(startDate, endDate);
         } catch (WebServiceClientException|JsonParserException e) {
             LOGGER.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
             return null;
+        }
+    }
+
+    private List<HealthMapLocation> retrieveDataFromFile(String fileName) {
+        String json;
+        try {
+            json = FileUtils.loadFileIntoString(fileName, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            LOGGER.fatal(String.format(FILE_ERROR_MESSAGE, e.getMessage()), e);
+            return null;
+        }
+
+        try {
+            return healthMapWebService.parseJson(json);
+        } catch (JsonParserException e) {
+            LOGGER.fatal(String.format(JSON_ERROR_MESSAGE, e.getMessage()), e);
+            return null;
+        }
+    }
+
+    private void convert(List<HealthMapLocation> healthMapLocations, DateTime endDate) {
+        if (healthMapLocations != null) {
+            healthMapDataConverter.convert(healthMapLocations, endDate);
         }
     }
 

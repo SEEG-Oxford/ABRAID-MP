@@ -1,0 +1,1 @@
+This is a UTF-8 test file for use with FileUtilsTest. Some special characters: 华夏经纬

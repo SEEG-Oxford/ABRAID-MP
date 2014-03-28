@@ -15,7 +15,7 @@
         </div>
         <div class="panel-collapse collapse in" id="repo-body">
             <div class="panel-body">
-                <p>Use the fields below to update the repository details used obtain the niche model.</p>
+                <p>Use the fields below to update the repository details used to obtain the niche model.</p>
                 <form action="#">
                     <p class="form-group">
                         <label for="repo-url">Repository URL: </label>
