@@ -8,7 +8,7 @@
 <#assign endOfHeadContent>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
-    <link rel="stylesheet" href="<@spring.url "/css/MarkerCluster.Default.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
