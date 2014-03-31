@@ -2,14 +2,18 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonFeature;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonGeometry;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonPointGeometry;
 
 /**
  * A DTO for uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence expressed as a "Feature".
  * Copyright (c) 2014 University of Oxford
  */
-public final class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
+public final class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature
+        <GeoJsonDiseaseOccurrenceFeatureProperties, GeoJsonPointGeometry<GeoJsonNamedCrs>, GeoJsonNamedCrs> {
+    public GeoJsonDiseaseOccurrenceFeature() {
+    }
+
     public GeoJsonDiseaseOccurrenceFeature(DiseaseOccurrence occurrence) {
         super(
                 extractId(occurrence),
@@ -23,8 +27,8 @@ public final class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
         return occurrence.getId();
     }
 
-    private static GeoJsonGeometry extractGeometry(DiseaseOccurrence occurrence) {
-        return new GeoJsonPointGeometry(
+    private static GeoJsonPointGeometry<GeoJsonNamedCrs> extractGeometry(DiseaseOccurrence occurrence) {
+        return new GeoJsonPointGeometry<>(
                 occurrence.getLocation().getGeom().getX(),
                 occurrence.getLocation().getGeom().getY(),
                 null, null);
@@ -33,6 +37,4 @@ public final class GeoJsonDiseaseOccurrenceFeature extends GeoJsonFeature {
     private static GeoJsonDiseaseOccurrenceFeatureProperties extractProperties(DiseaseOccurrence occurrence) {
         return new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);
     }
-
-
 }

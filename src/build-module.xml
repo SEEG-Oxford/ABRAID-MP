@@ -263,6 +263,9 @@
 
   <target name="test.coverage" depends="jacoco.agent, run.tests"> <!-- Using both unit and integration tests in coverage metric -->
     <jacoco:report>
+      <options>
+        <sourcedirectives/>
+      </options>
       <executiondata>
         <file file="${report.out.dir}/coverage/jacoco.exec"/>
       </executiondata>

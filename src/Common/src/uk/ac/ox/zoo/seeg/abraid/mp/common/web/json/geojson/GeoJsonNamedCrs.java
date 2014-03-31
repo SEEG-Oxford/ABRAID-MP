@@ -6,9 +6,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson;
  * Implements the specification available from http://geojson.org/geojson-spec.html#named-crs
  * Copyright (c) 2014 University of Oxford
  */
-public final class GeoJsonNamedCrs extends GeoJsonCrs {
+public final class GeoJsonNamedCrs extends GeoJsonCrs<GeoJsonNamedCrsProperties> {
     private static final String EPSG4326 = "urn:ogc:def:crs:EPSG::4326";
     private static final String CRS_TYPE = "name";
+
+    public GeoJsonNamedCrs() {
+    }
 
     GeoJsonNamedCrs(GeoJsonNamedCrsProperties properties) {
         super(CRS_TYPE, properties);

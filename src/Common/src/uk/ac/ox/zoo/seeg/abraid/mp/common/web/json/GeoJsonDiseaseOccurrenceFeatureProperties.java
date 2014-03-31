@@ -14,26 +14,29 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
  */
 public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     @JsonView(DisplayJsonView.class)
-    private final String locationName;
+    private String locationName;
 
     @JsonView(DisplayJsonView.class)
-    private final GeoJsonAlert alert;
+    private GeoJsonAlert alert;
 
     @JsonView(DisplayJsonView.class)
-    private final DateTime diseaseOccurrenceStartDate;
+    private DateTime diseaseOccurrenceStartDate;
 
     @JsonView(ModellingJsonView.class)
-    private final LocationPrecision locationPrecision;
+    private LocationPrecision locationPrecision;
 
     @JsonView(ModellingJsonView.class)
-    private final double weighting;
+    private double weighting;
+
+    public GeoJsonDiseaseOccurrenceFeatureProperties() {
+    }
 
     public GeoJsonDiseaseOccurrenceFeatureProperties(DiseaseOccurrence occurrence) {
-        this.locationName = occurrence.getLocation().getName();
-        this.diseaseOccurrenceStartDate = occurrence.getOccurrenceStartDate();
-        this.alert = new GeoJsonAlert(occurrence.getAlert());
-        this.locationPrecision = occurrence.getLocation().getPrecision();
-        this.weighting = occurrence.getValidationWeighting();
+        setLocationName(occurrence.getLocation().getName());
+        setDiseaseOccurrenceStartDate(occurrence.getOccurrenceStartDate());
+        setAlert(new GeoJsonAlert(occurrence.getAlert()));
+        setLocationPrecision(occurrence.getLocation().getPrecision());
+        setWeighting(occurrence.getValidationWeighting());
     }
 
     public DateTime getDiseaseOccurrenceStartDate() {
@@ -55,4 +58,58 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     public double getWeighting() {
         return weighting;
     }
+
+    public void setDiseaseOccurrenceStartDate(DateTime diseaseOccurrenceStartDate) {
+        this.diseaseOccurrenceStartDate = diseaseOccurrenceStartDate;
+    }
+
+    public void setAlert(GeoJsonAlert alert) {
+        this.alert = alert;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public void setLocationPrecision(LocationPrecision locationPrecision) {
+        this.locationPrecision = locationPrecision;
+    }
+
+    public void setWeighting(double weighting) {
+        this.weighting = weighting;
+    }
+
+    ///COVERAGE:OFF generated code
+    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GeoJsonDiseaseOccurrenceFeatureProperties that = (GeoJsonDiseaseOccurrenceFeatureProperties) o;
+
+        if (Double.compare(that.weighting, weighting) != 0) return false;
+        if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
+        if (diseaseOccurrenceStartDate != null ? !diseaseOccurrenceStartDate.equals(that.diseaseOccurrenceStartDate) : that.diseaseOccurrenceStartDate != null)
+            return false;
+        if (locationName != null ? !locationName.equals(that.locationName) : that.locationName != null) return false;
+        if (locationPrecision != that.locationPrecision) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = locationName != null ? locationName.hashCode() : 0;
+        result = 31 * result + (alert != null ? alert.hashCode() : 0);
+        result = 31 * result + (diseaseOccurrenceStartDate != null ? diseaseOccurrenceStartDate.hashCode() : 0);
+        result = 31 * result + (locationPrecision != null ? locationPrecision.hashCode() : 0);
+        temp = Double.doubleToLongBits(weighting);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+    // CHECKSTYLE.ON
+    ///COVERAGE:ON
 }

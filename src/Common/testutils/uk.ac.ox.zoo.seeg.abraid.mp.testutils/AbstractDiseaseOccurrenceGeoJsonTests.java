@@ -2,10 +2,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.testutils;
 
 import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
+
+import java.util.TimeZone;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,7 +31,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static Alert defaultAlert() {
-        return mockAlert("title", "summary", "feedName", "url", new DateTime(0));
+        return mockAlert("title", "summary", "feedName", "url", (new DateTime(0)).withZone(DateTimeZone.UTC));
     }
 
     public static Location mockLocation(double longitude, double latitude, String locationName, LocationPrecision locationPrecision) {
@@ -57,7 +60,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static DiseaseOccurrence defaultDiseaseOccurrence() {
-        return mockDiseaseOccurrence(1, defaultLocation(), new DateTime(0), defaultAlert(), 0.5);
+        return mockDiseaseOccurrence(1, defaultLocation(), (new DateTime(0)).withZone(DateTimeZone.UTC), defaultAlert(), 0.5);
     }
 
     public static String getTwoDiseaseOccurrenceFeaturesAsJson(Class view) {
