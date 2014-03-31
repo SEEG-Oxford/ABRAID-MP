@@ -42,8 +42,10 @@ var DataValidationViewModels = (function() {
             if (this.hasSelectedPoint()) {
                 var googleTranslateUrl = "http://translate.google.com/";
                 var langPair = encodeURIComponent((this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto");
+//                var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "/auto";
                 var summary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
                 return (googleTranslateUrl + "?" + "langpair=" + langPair + "&" + "text=" + summary).substring(0,2048);
+//                return (googleTranslateUrl + "#" + langPair + "/" + summary).substring(0,2048);
             }
         }, this);
         this.submitReview = function(review) {
