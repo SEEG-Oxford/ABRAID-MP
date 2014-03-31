@@ -40,14 +40,10 @@ var DataValidationViewModels = (function() {
         };
         this.translationUrl = ko.computed(function () {
             if (this.hasSelectedPoint()) {
-                var googleTranslateUrl = "http://translate.google.com/"
-                var feedLanguage = this.selectedPoint().properties.alert.feedLanguage;
-                var encodedSummary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
-                if (feedLanguage != null) {
-                    return (googleTranslateUrl + "?langpair=" + feedLanguage + "%7Cen&text=" + encodedSummary).substring(0,2048);
-                } else {
-                    return (googleTranslateUrl + "#auto/en/" + encodedSummary).substring(0,2048);
-                }
+                var googleTranslateUrl = "http://translate.google.com/";
+                var langPair = encodeURIComponent((this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto");
+                var summary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
+                return (googleTranslateUrl + "?" + "langpair=" + langPair + "&" + "text=" + summary).substring(0,2048);
             }
         }, this);
         this.submitReview = function(review) {
