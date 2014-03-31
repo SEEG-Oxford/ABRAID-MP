@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Modified Spring's internal Return value handlers, and wires up a decorator to add support for @JsonView
+ * Adapted from https://github.com/martypitt/JsonViewExample.
+ *
+ * Modified Spring's internal Return value handlers, and wires up a decorator to add support for @JsonView.
  * @author martypitt
  */
 public class JsonViewSupportFactoryBean implements InitializingBean {

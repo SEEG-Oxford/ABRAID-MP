@@ -10,8 +10,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import java.io.IOException;
 
 /**
- * Adds support for Jackson's JsonView on methods
- * annotated with a {@link ResponseView} annotation
+ * Adapted from https://github.com/martypitt/JsonViewExample.
+ *
+ * Adds support for Jackson's JsonView on methods annotated with a {@link ResponseView} annotation.
  * @author martypitt
  */
 public class ViewAwareJsonMessageConverter extends
@@ -20,14 +21,14 @@ public class ViewAwareJsonMessageConverter extends
     @Override
     protected void writeInternal(Object object, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        if (object instanceof DataView && ((DataView) object).hasView()) {
+        if (object instanceof DataView) {
             writeView((DataView) object, outputMessage);
         } else {
             super.writeInternal(object, outputMessage);
         }
     }
 
-    protected void writeView(DataView view, HttpOutputMessage outputMessage)
+    private void writeView(DataView view, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         JsonEncoding encoding = getJsonEncoding(outputMessage.getHeaders().getContentType());
         ObjectWriter writer = getObjectMapper().writerWithView(view.getView());

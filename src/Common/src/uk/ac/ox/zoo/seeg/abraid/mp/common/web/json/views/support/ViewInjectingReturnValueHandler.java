@@ -7,10 +7,12 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
- * Decorator that detects a declared {@link ResponseView}, and injects support if required
+ * Adapted from https://github.com/martypitt/JsonViewExample.
+ *
+ * Decorator that detects a declared {@link ResponseView}, and injects support if required.
  * @author martypitt
  */
-public class ViewInjectingReturnValueHandler implements
+class ViewInjectingReturnValueHandler implements
         HandlerMethodReturnValueHandler {
 
     private final HandlerMethodReturnValueHandler delegate;

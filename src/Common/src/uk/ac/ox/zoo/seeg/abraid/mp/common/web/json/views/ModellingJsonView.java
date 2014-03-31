@@ -7,4 +7,4 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.BaseView;
  * Defines the "modelling" (transfer to model wrapper) view.
  * Copyright (c) 2014 University of Oxford
  */
-public interface ModellingJsonView extends BaseView {}
+public interface ModellingJsonView extends BaseView { }

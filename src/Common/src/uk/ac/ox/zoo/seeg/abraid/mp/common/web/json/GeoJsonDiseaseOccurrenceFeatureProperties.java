@@ -6,7 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.BaseView;
 
 /**
  * A DTO for the properties on a uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence object.
@@ -56,6 +55,4 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     public double getWeighting() {
         return weighting;
     }
-
-    public static interface FooJsonView extends BaseView {}
 }

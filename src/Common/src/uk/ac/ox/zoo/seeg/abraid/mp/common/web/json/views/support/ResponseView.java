@@ -3,7 +3,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * Adapted from https://github.com/martypitt/JsonViewExample.
+ *
+ * An annotation to specify the JsonView to use in a RequestMapping.
+ * @author martypitt
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResponseView {
-    public Class<? extends BaseView> value();
+    Class<? extends BaseView> value();
 }
