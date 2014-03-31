@@ -63,6 +63,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the disease group by its name.
+     * @param diseaseGroupName The name of the disease group.
+     * @return The disease group.
+     */
+    @Override
+    public DiseaseGroup getDiseaseGroupByName(String diseaseGroupName) {
+        return diseaseGroupDao.getByName(diseaseGroupName);
+    }
+
+    /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
      * occurrence exists with the same disease group, location, alert and occurrence start date.
      * @param occurrence The disease occurrence.

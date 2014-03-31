@@ -32,6 +32,8 @@ import java.util.Map;
 public class DataValidationController {
     /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
+    /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json */
+    private static final String DEFAULT_DISEASE_NAME = "Dengue";
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
     private final ExpertService expertService;
@@ -52,12 +54,23 @@ public class DataValidationController {
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        Map<DiseaseGroup, Integer> diseaseInterestsWithReviewCountMap = new HashMap<>();
-        if (user != null) {
+        Map<DiseaseGroup, Integer> diseaseInterestsWithReviewCountMap;
+        boolean userLoggedIn = (user != null);
+        if (userLoggedIn) {
             diseaseInterestsWithReviewCountMap = expertService.getDiseaseInterestsWithReviewCount(user.getId());
+        } else {
+            diseaseInterestsWithReviewCountMap = getDiseaseInterestsMapForAnonymousUser();
         }
         model.addAttribute("diseaseInterestsSet", diseaseInterestsWithReviewCountMap.entrySet());
+        model.addAttribute("userLoggedIn", userLoggedIn);
         return "datavalidation";
+    }
+
+    private Map<DiseaseGroup, Integer> getDiseaseInterestsMapForAnonymousUser() {
+        Map<DiseaseGroup, Integer> diseaseInterestsWithReviewCountMap = new HashMap<>();
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
+        diseaseInterestsWithReviewCountMap.put(diseaseGroup, 0);
+        return diseaseInterestsWithReviewCountMap;
     }
 
     /**

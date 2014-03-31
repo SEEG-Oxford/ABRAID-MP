@@ -16,6 +16,7 @@
 
 <#assign endOfBodyScriptContent>
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
+    var loggedIn = ${userLoggedIn?c};
     var diseaseInterests = [
         <#list diseaseInterestsSet as pair>
             {

@@ -24,6 +24,13 @@ public interface DiseaseGroupDao {
     DiseaseGroup getById(Integer id);
 
     /**
+     * Gets a disease group by its name.
+     * @param name The name of the disease.
+     * @return The disease group with the specified name, or null if not found.
+     */
+    DiseaseGroup getByName(String name);
+
+    /**
      * Saves the specified diseaseGroup.
      * @param diseaseGroup The diseaseGroup to save.
      */

@@ -126,7 +126,13 @@ var LeafletMap = (function () {
     function switchDiseaseLayer(diseaseId) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.clearLayers();
-        $.getJSON(baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences', function (featureCollection) {
+        var geoJsonRequestUrl = "";
+        if (loggedIn) {
+            geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
+        } else {
+            geoJsonRequestUrl = baseUrl + 'static/defaultDiseaseOccurrences.json';
+        }
+        $.getJSON(geoJsonRequestUrl, function (featureCollection) {
             if(featureCollection.features.length != 0) {
                 clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
                 map.fitBounds(diseaseOccurrenceLayer.getBounds());

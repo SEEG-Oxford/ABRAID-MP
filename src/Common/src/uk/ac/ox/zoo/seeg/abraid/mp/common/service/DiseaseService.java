@@ -23,6 +23,13 @@ public interface DiseaseService {
     List<DiseaseGroup> getAllDiseaseGroups();
 
     /**
+     * Gets the disease group by its name.
+     * @param diseaseGroupName The name of the disease group.
+     * @return The disease group.
+     */
+    DiseaseGroup getDiseaseGroupByName(String diseaseGroupName);
+
+    /**
      * Saves a disease occurrence.
      * @param diseaseOccurrence The disease occurrence to save.
      */
