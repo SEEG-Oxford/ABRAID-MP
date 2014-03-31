@@ -6,6 +6,7 @@
 #dataValidation
 {
     padding-right:280px;        /* Side panel width */
+    min-width:800px;            /* Side panel width + layer selector width */
     height:100%;
 }
 #layerSelector
