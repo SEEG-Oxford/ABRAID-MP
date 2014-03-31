@@ -76,7 +76,7 @@
     position:absolute;
     bottom:150px;
 }
-#reviewButtons .btn-group
+#reviewButtons .btn-group, #logIn .btn
 {
     width:100%;
 }
@@ -86,17 +86,29 @@
     width:33%;
     height:50px;
 }
+#logIn
+{
+    position:absolute;
+    bottom:200px;
+}
+#logIn p
+{
+    text-align: center;
+    padding:5px 10px;
+    margin: 0 auto;
+}
 #counterDiv
 {
     height:150px;
     position:absolute;
     bottom:30px;
-    right:70px;
+    right:50px;
     text-align:center;
 }
 #counter
 {
     margin:0 auto;
+    width:140px;
 }
 .fa-map-marker
 {

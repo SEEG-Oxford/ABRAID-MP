@@ -35,7 +35,7 @@
     }());
 
     $(document).ready(function () {
-        ko.applyBindings(logInViewModel, $(".navbar")[0]);
+        ko.applyBindings(logInViewModel, $("#logIn")[0]);
     });
 }());
 
