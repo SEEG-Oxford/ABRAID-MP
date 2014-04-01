@@ -36,7 +36,7 @@ extentData <- "${extent_file}"
 # Run the model
 result <- tryCatch({
     # seegSDM.run(outbreakData, extentData, covariants, verbosity, ${dry_run?c})
-    write(outbreakData, file="echo")
+    write(paste("I'm running the model using: ", outbreakData), file="echo")
     # Temp POC
     print(covariants)
     0 # return 0

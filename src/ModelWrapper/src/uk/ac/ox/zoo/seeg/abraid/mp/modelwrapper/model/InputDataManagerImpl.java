@@ -25,7 +25,7 @@ public class InputDataManagerImpl implements InputDataManager {
     @Override
     public void writeData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
             throws IOException {
-        if (occurrenceData.getCrs() != GeoJsonNamedCrs.createEPSG4326()) {
+        if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
             throw new IllegalArgumentException("Only EPSG4326 is supported.");
         }
 
@@ -45,6 +45,7 @@ public class InputDataManagerImpl implements InputDataManager {
                         occurrence.getProperties().getLocationPrecision().toString(),
                         occurrence.getProperties().getWeighting().toString()
                 }, ','));
+                writer.newLine();
             }
         } finally {
             if (writer != null) {
