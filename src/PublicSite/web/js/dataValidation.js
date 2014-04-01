@@ -44,25 +44,30 @@ ko.bindingHandlers.option = {
 var DataValidationViewModels = (function() {
 
     function Group(label, children) {
-        this.label = ko.observable(label);
+        this.groupLabel = ko.observable(label);
         this.children = ko.observableArray(children);
     }
 
     function Disease(diseaseInterest) {
-        this.label = ko.observable(diseaseInterest.name);
+        this.diseaseLabel = ko.observable(diseaseInterest.name);
         this.id = ko.observable(diseaseInterest.id);
         this.reviewCount = ko.observable(diseaseInterest.reviewCount);
+    }
+
+    function convertDiseaseInterestsToObservableDiseases() {
+        var list = [];
+        for (var i = 0; i < diseaseInterests.length; i++) {
+            list[i] = new Disease(diseaseInterests[i]);
+        }
+        return list;
     }
 
     var LayerSelectorViewModel = function () {
         this.validationTypes = ko.observableArray(["disease occurrences", "disease extent"]);
         this.selectedType = ko.observable();
         this.groups = ko.observableArray([
-            new Group("Your Disease Interests", [
-                new Disease(diseaseInterests[0])
-            ]),
-            new Group("Other Diseases", [
-            ])
+            new Group("Your Disease Interests", convertDiseaseInterestsToObservableDiseases ),
+            new Group("Other Diseases", [ ])
         ]);
         this.selectedDisease = ko.observable();
         this.selectedDisease.subscribe(function () {

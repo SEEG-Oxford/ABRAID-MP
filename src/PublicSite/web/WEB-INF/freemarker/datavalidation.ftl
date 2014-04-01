@@ -48,8 +48,8 @@
             <select data-bind="options: validationTypes, value: selectedType"></select>
         of
             <select data-bind="foreach: groups, value: selectedDisease">
-                <optgroup data-bind="attr: {label: label}, foreach: children">
-                    <option data-bind="text: label, option: $data"></option>
+                <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
+                    <option data-bind="text: diseaseLabel, option: $data"></option>
                 </optgroup>
             </select>
         </h4>
