@@ -27,10 +27,10 @@ public interface LocationDao {
 
     /**
      * Gets a location by GeoNames ID.
-     * @param geoNamesId The GeoNames ID.
+     * @param geoNameId The GeoNames ID.
      * @return The location, or null if not found.
      */
-    Location getByGeoNamesId(int geoNamesId);
+    Location getByGeoNameId(int geoNameId);
 
     /**
      * Gets locations by point and precision. This returns a list of locations as there may be several at the same

@@ -23,10 +23,16 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     public void saveAndReloadDiseaseCluster() {
         // Arrange
         String diseaseClusterName = "Test disease cluster";
+        String diseaseClusterPublicName = "Test disease cluster public name";
+        String diseaseClusterShortName = "Short name";
+        String diseaseClusterValidatorSet = "Name for Data Validator";
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
+        diseaseGroup.setPublicName(diseaseClusterPublicName);
+        diseaseGroup.setShortName(diseaseClusterShortName);
+        diseaseGroup.setValidatorSet(diseaseClusterValidatorSet);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -38,6 +44,9 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
         diseaseGroup = diseaseGroupDao.getById(id);
         assertThat(diseaseGroup).isNotNull();
         assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
+        assertThat(diseaseGroup.getPublicName()).isEqualTo(diseaseClusterPublicName);
+        assertThat(diseaseGroup.getShortName()).isEqualTo(diseaseClusterShortName);
+        assertThat(diseaseGroup.getValidatorSet()).isEqualTo(diseaseClusterValidatorSet);
         assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.CLUSTER);
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
@@ -72,30 +81,29 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void saveAndReloadDisease() {
         // Arrange
-        String diseaseClusterName = "Test disease";
-        DiseaseGroup diseaseMicroCluster = diseaseGroupDao.getById(16);
+        String diseaseName = "Test single disease";
+        String diseaseMicroClusterName = "Test microcluster";
         DiseaseGroup diseaseCluster = diseaseGroupDao.getById(5);
-
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
-        diseaseGroup.setName(diseaseClusterName);
-        diseaseGroup.setGroupType(DiseaseGroupType.DISEASE);
-        diseaseGroup.setParentGroup(diseaseMicroCluster);
+        DiseaseGroup diseaseMicroCluster = new DiseaseGroup(diseaseCluster, diseaseMicroClusterName,
+                DiseaseGroupType.MICROCLUSTER);
+        DiseaseGroup disease = new DiseaseGroup(diseaseMicroCluster, diseaseName, DiseaseGroupType.SINGLE);
 
         // Act
-        diseaseGroupDao.save(diseaseGroup);
-        Integer id = diseaseGroup.getId();
+        diseaseGroupDao.save(diseaseMicroCluster);
+        diseaseGroupDao.save(disease);
+        Integer id = disease.getId();
         flushAndClear();
 
         // Assert
-        diseaseGroup = diseaseGroupDao.getById(id);
-        assertThat(diseaseGroup).isNotNull();
-        assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
-        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.DISEASE);
-        assertThat(diseaseGroup.getParentGroup()).isNotNull();
-        assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseMicroCluster);
-        assertThat(diseaseGroup.getParentGroup().getParentGroup()).isNotNull();
-        assertThat(diseaseGroup.getParentGroup().getParentGroup()).isEqualTo(diseaseCluster);
-        assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        disease = diseaseGroupDao.getById(id);
+        assertThat(disease).isNotNull();
+        assertThat(disease.getName()).isEqualTo(diseaseName);
+        assertThat(disease.getGroupType()).isEqualTo(DiseaseGroupType.SINGLE);
+        assertThat(disease.getParentGroup()).isNotNull();
+        assertThat(disease.getParentGroup()).isEqualTo(diseaseMicroCluster);
+        assertThat(disease.getParentGroup().getParentGroup()).isNotNull();
+        assertThat(disease.getParentGroup().getParentGroup()).isEqualTo(diseaseCluster);
+        assertThat(disease.getCreatedDate()).isNotNull();
     }
 
     @Test
@@ -107,6 +115,6 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getAll();
-        assertThat(diseaseGroups).hasSize(51);
+        assertThat(diseaseGroups).hasSize(394);
     }
 }

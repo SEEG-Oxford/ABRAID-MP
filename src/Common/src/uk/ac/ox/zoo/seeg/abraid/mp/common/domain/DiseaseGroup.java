@@ -41,6 +41,18 @@ public class DiseaseGroup {
     @Enumerated(EnumType.STRING)
     private DiseaseGroupType groupType;
 
+    // The disease group public name (for display).
+    @Column(name = "public_name")
+    private String publicName;
+
+    // The disease group short name (for display).
+    @Column(name = "short_name")
+    private String shortName;
+
+    // A name allowing the disease groups to be grouped further, for display in DataValidator.
+    @Column(name = "validator_set")
+    private String validatorSet;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -56,6 +68,12 @@ public class DiseaseGroup {
 
     public DiseaseGroup(Integer id) {
         this.id = id;
+    }
+
+    public DiseaseGroup(DiseaseGroup parentGroup, String name, DiseaseGroupType groupType) {
+        this.parentGroup = parentGroup;
+        this.name = name;
+        this.groupType = groupType;
     }
 
     public DiseaseGroup(Integer id, DiseaseGroup parentGroup, String name, DiseaseGroupType groupType) {
@@ -93,6 +111,34 @@ public class DiseaseGroup {
         this.groupType = groupType;
     }
 
+    public String getPublicName() {
+        return publicName;
+    }
+
+    public void setPublicName(String publicName) {
+        this.publicName = publicName;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public String getValidatorSet() {
+        return validatorSet;
+    }
+
+    public void setValidatorSet(String validatorSet) {
+        this.validatorSet = validatorSet;
+    }
+
+    public DateTime getCreatedDate() {
+        return createdDate;
+    }
+
     // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -106,12 +152,11 @@ public class DiseaseGroup {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
+        if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
+        if (shortName != null ? !shortName.equals(that.shortName) : that.shortName != null) return false;
+        if (validatorSet != null ? !validatorSet.equals(that.validatorSet) : that.validatorSet != null) return false;
 
         return true;
-    }
-
-    public DateTime getCreatedDate() {
-        return createdDate;
     }
 
     @Override
@@ -120,6 +165,9 @@ public class DiseaseGroup {
         result = 31 * result + (parentGroup != null ? parentGroup.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (groupType != null ? groupType.hashCode() : 0);
+        result = 31 * result + (publicName != null ? publicName.hashCode() : 0);
+        result = 31 * result + (shortName != null ? shortName.hashCode() : 0);
+        result = 31 * result + (validatorSet != null ? validatorSet.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

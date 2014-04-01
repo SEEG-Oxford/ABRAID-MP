@@ -8,8 +8,6 @@
 <hibernate-configuration>
     <session-factory>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnit"/>
-        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitSimplifiedGlobal"/>
-        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitSimplifiedTropical"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup"/>
@@ -17,6 +15,7 @@
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoNamesLocationPrecision"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease"/>
