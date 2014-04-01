@@ -23,10 +23,16 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     public void saveAndReloadDiseaseCluster() {
         // Arrange
         String diseaseClusterName = "Test disease cluster";
+        String diseaseClusterPublicName = "Test disease cluster public name";
+        String diseaseClusterShortName = "Short name";
+        String diseaseClusterValidatorSet = "Name for Data Validator";
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
+        diseaseGroup.setPublicName(diseaseClusterPublicName);
+        diseaseGroup.setShortName(diseaseClusterShortName);
+        diseaseGroup.setValidatorSet(diseaseClusterValidatorSet);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -38,6 +44,9 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
         diseaseGroup = diseaseGroupDao.getById(id);
         assertThat(diseaseGroup).isNotNull();
         assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
+        assertThat(diseaseGroup.getPublicName()).isEqualTo(diseaseClusterPublicName);
+        assertThat(diseaseGroup.getShortName()).isEqualTo(diseaseClusterShortName);
+        assertThat(diseaseGroup.getValidatorSet()).isEqualTo(diseaseClusterValidatorSet);
         assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.CLUSTER);
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();

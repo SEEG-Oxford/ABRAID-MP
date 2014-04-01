@@ -6,22 +6,22 @@
 
 
 -- Shapefile A: abraid_admin_0_1_tropical.shp
-INSERT INTO admin_unit_tropical(gaul_code, parent_gaul_code, country_code, admin_level, name, display_name, geom)
+INSERT INTO admin_unit_tropical(gaul_code, parent_gaul_code, country_code, admin_level, name, public_name, geom)
 SELECT gaul, parent_id, country_id, admin_leve, name, pub_name, geom
 FROM abraid_admin_0_1_tropical;
 
 -- Shapefile B: abraid_admin_0_1_global.shp
-INSERT INTO admin_unit_global(gaul_code, parent_gaul_code, country_code, admin_level, name, display_name, geom)
+INSERT INTO admin_unit_global(gaul_code, parent_gaul_code, country_code, admin_level, name, public_name, geom)
 SELECT gaul, parent_id, country_id, admin_leve, name, pub_name, geom
 FROM abraid_admin_0_1_global;
 
 -- Shapefile C: abraid_admin_0_1__simp_tropical.shp
-INSERT INTO admin_unit_simplified_tropical(gaul_code, name, display_name, geom)
+INSERT INTO admin_unit_simplified_tropical(gaul_code, name, public_name, geom)
 SELECT gaul, name, pub_name, geom
 FROM abraid_admin_0_1__simp_tropical;
 
 -- Shapefile D: abraid_admin_0_1__simp_global.shp
-INSERT INTO admin_unit_simplified_global(gaul_code, name, display_name, geom)
+INSERT INTO admin_unit_simplified_global(gaul_code, name, public_name, geom)
 SELECT gaul, name, pub_name, geom
 FROM abraid_admin_0_1__simp_global;
 

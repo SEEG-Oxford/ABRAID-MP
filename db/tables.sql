@@ -48,21 +48,21 @@ CREATE TABLE admin_unit_global (
     country_code varchar(3) NOT NULL,
     admin_level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
-    display_name varchar(100) NOT NULL,
+    public_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_simplified_global (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
-    display_name varchar(100) NOT NULL,
+    public_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_simplified_tropical (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
-    display_name varchar(100) NOT NULL,
+    public_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE admin_unit_tropical (
     country_code varchar(3) NOT NULL,
     admin_level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
-    display_name varchar(100) NOT NULL,
+    public_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
@@ -99,6 +99,9 @@ CREATE TABLE disease_group (
     parent_id integer,
     name varchar(100) NOT NULL,
     group_type varchar(15) NOT NULL,
+    public_name varchar(100),
+    short_name varchar(100),
+    validator_set varchar(100),
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
