@@ -183,6 +183,6 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllLocations() {
         List<Location> locations = locationDao.getAll();
-        assertThat(locations).hasSize(30);
+        assertThat(locations).hasSize(54);
     }
 }
