@@ -120,7 +120,7 @@ public class DiseaseOccurrence {
         this.occurrenceStartDate = occurrenceStartDate;
     }
 
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -152,5 +152,5 @@ public class DiseaseOccurrence {
         result = 31 * result + (occurrenceStartDate != null ? occurrenceStartDate.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
 }

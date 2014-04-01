@@ -7,11 +7,15 @@ import java.util.List;
  * A DTO for "Point Geometry" objects.
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Implements the specification available from http://geojson.org/geojson-spec.html#point
+ * @param <TCrs> The type of crs.
+ *
  * Copyright (c) 2014 University of Oxford
  */
-public final class GeoJsonPointGeometry extends GeoJsonGeometry {
+public final class GeoJsonPointGeometry<TCrs extends GeoJsonCrs> extends GeoJsonGeometry<TCrs> {
+    public GeoJsonPointGeometry() {
+    }
 
-    public GeoJsonPointGeometry(double longitude, double latitude, GeoJsonCrs crs, List<Double> bbox) {
+    public GeoJsonPointGeometry(double longitude, double latitude, TCrs crs, List<Double> bbox) {
         super(GeoJsonGeometryType.POINT, extractCoordinates(longitude, latitude), crs, bbox);
     }
 

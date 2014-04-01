@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
@@ -8,8 +9,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * Copyright (c) 2014 University of Oxford
  */
 @JsonSerialize(using = GeoJsonNamedEnumSerializer.class)
+@JsonDeserialize(using = GeoJsonGeometryTypeDeserializer.class)
 public enum GeoJsonGeometryType implements GeoJsonNamedEnum {
-    /** A GeoJSON Point. */
+    /**
+     * A GeoJSON Point.
+     */
     POINT(GeoJsonObjectType.POINT);
     //MULTI_POINT(GeoJsonObjectType.MULTI_POINT),
     //LINE_STRING(GeoJsonObjectType.LINE_STRING),

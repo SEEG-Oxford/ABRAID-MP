@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
@@ -28,14 +29,17 @@ public class ModelRunnerImpl implements ModelRunner {
     /**
      * Starts a new model run with the given configuration.
      * @param configuration The model run configuration.
+     * @param occurrenceData The occurrence data to model with.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
      * @throws IOException Thrown if the workspace can not be correctly provisioned.
      */
     @Override
-    public ModelProcessHandler runModel(RunConfiguration configuration) throws ProcessException, IOException {
+    public ModelProcessHandler runModel(RunConfiguration configuration,
+                                        GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData)
+            throws ProcessException, IOException {
         // Provision workspace
-        File scriptFile = workspaceProvisioner.provisionWorkspace(configuration);
+        File scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData);
 
         // Run model
         HashMap<String, File> fileArguments = new HashMap<>();
