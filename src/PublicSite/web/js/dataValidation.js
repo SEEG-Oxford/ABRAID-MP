@@ -4,33 +4,66 @@
  */
 'use strict';
 
+ko.utils.recursiveUnwrap = function (func) {
+    if (typeof func != 'function') {
+        return func;
+    } else {
+        return ko.utils.recursiveUnwrap(func());
+    }
+};
+
 // Custom binding to set the value on the flipclock.js counter
 ko.bindingHandlers.counter = {
     init: function(element, valueAccessor) {
-        var counter = $(element).FlipClock(ko.unwrap(valueAccessor()), {
+        var counter = $(element).FlipClock(ko.utils.recursiveUnwrap(valueAccessor), {
             clockFace: "Counter"
         });
         ko.utils.domData.set(element, "counter", counter);
     },
     update: function(element, valueAccessor) {
         var counter = ko.utils.domData.get(element, "counter");
-        counter.setValue(ko.unwrap(valueAccessor()));
+        counter.setValue(ko.utils.recursiveUnwrap(valueAccessor));
     }
 };
 
 // Custom binding to format the datetime display with moment.js library
 ko.bindingHandlers.date = {
     update: function(element, valueAccessor) {
-        var date = ko.unwrap(valueAccessor());
+        var date = ko.utils.recursiveUnwrap(valueAccessor);
         $(element).text(moment(date).lang('en-gb').format('LL'));
     }
-}
+};
+
+ko.bindingHandlers.option = {
+    update: function(element, valueAccessor) {
+        var value = ko.utils.recursiveUnwrap(valueAccessor);
+        ko.selectExtensions.writeValue(element, value);
+    }
+};
 
 var DataValidationViewModels = (function() {
+
+    function Group(label, children) {
+        this.label = ko.observable(label);
+        this.children = ko.observableArray(children);
+    }
+
+    function Disease(diseaseInterest) {
+        this.label = ko.observable(diseaseInterest.name);
+        this.id = ko.observable(diseaseInterest.id);
+        this.reviewCount = ko.observable(diseaseInterest.reviewCount);
+    }
+
     var LayerSelectorViewModel = function () {
         this.validationTypes = ko.observableArray(["disease occurrences", "disease extent"]);
         this.selectedType = ko.observable();
-        this.diseaseInterests = ko.observableArray(diseaseInterests);
+        this.groups = ko.observableArray([
+            new Group("Your Disease Interests", [
+                new Disease(diseaseInterests[0])
+            ]),
+            new Group("Other Diseases", [
+            ])
+        ]);
         this.selectedDisease = ko.observable();
         this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();

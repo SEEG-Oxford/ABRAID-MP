@@ -44,10 +44,14 @@
     <#include "datavalidationsidepanel.ftl"/>
 
     <div id="layerSelector">
-            <h4>You are validating
+        <h4>You are validating
             <select data-bind="options: validationTypes, value: selectedType"></select>
         of
-            <select data-bind="options: diseaseInterests, optionsText: 'name', value: selectedDisease"></select>
+            <select data-bind="foreach: groups, value: selectedDisease">
+                <optgroup data-bind="attr: {label: label}, foreach: children">
+                    <option data-bind="text: label, option: $data"></option>
+                </optgroup>
+            </select>
         </h4>
     </div>
 
