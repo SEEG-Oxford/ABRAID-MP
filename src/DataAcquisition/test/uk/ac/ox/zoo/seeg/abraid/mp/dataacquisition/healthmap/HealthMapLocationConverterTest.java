@@ -16,8 +16,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLoc
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the HealthMapLocationConverter class.
@@ -71,13 +71,13 @@ public class HealthMapLocationConverterTest {
     }
 
     @Test
-    public void convertLocationAlreadyExistsWithGeoNamesId() {
+    public void convertLocationAlreadyExistsWithGeoNameId() {
         // Arrange
-        Integer geoNamesId = 123;
+        Integer geoNameId = 123;
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        healthMapLocation.setGeoNameId(geoNamesId.toString());
+        healthMapLocation.setGeoNameId(geoNameId.toString());
         Location existingLocation = new Location();
-        when(locationService.getLocationByGeoNamesId(123)).thenReturn(existingLocation);
+        when(locationService.getLocationByGeoNameId(123)).thenReturn(existingLocation);
 
         // Act
         Location location = converter.convert(healthMapLocation);
@@ -87,7 +87,7 @@ public class HealthMapLocationConverterTest {
     }
 
     @Test
-    public void convertLocationAlreadyExistsWithoutGeoNamesId() {
+    public void convertLocationAlreadyExistsWithoutGeoNameId() {
         // Arrange
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
         Point point = GeometryUtils.createPoint(20, 10);
@@ -104,12 +104,12 @@ public class HealthMapLocationConverterTest {
     }
 
     @Test
-    public void convertNewLocationWithGeoNamesId() {
+    public void convertNewLocationWithGeoNameId() {
         // Arrange
-        Integer geoNamesId = 123;
+        Integer geoNameId = 123;
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        healthMapLocation.setGeoNameId(geoNamesId.toString());
-        when(locationService.getLocationByGeoNamesId(123)).thenReturn(null);
+        healthMapLocation.setGeoNameId(geoNameId.toString());
+        when(locationService.getLocationByGeoNameId(123)).thenReturn(null);
 
         // Act
         Location location = converter.convert(healthMapLocation);
@@ -124,7 +124,7 @@ public class HealthMapLocationConverterTest {
     }
 
     @Test
-    public void convertNewLocationWithoutGeoNamesId() {
+    public void convertNewLocationWithoutGeoNameId() {
         // Arrange
         Point point = GeometryUtils.createPoint(20, 10);
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
@@ -146,12 +146,12 @@ public class HealthMapLocationConverterTest {
     @Test
     public void convertNewLocationWithoutAbraidCountry() {
         // Arrange
-        Integer geoNamesId = 123;
+        Integer geoNameId = 123;
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        healthMapLocation.setGeoNameId(geoNamesId.toString());
+        healthMapLocation.setGeoNameId(geoNameId.toString());
         healthMapLocation.setCountry(unMappedHealthMapCountry.getName());
         healthMapLocation.setCountryId(unMappedHealthMapCountry.getId().toString());
-        when(locationService.getLocationByGeoNamesId(123)).thenReturn(null);
+        when(locationService.getLocationByGeoNameId(123)).thenReturn(null);
 
         // Act
         Location location = converter.convert(healthMapLocation);
@@ -162,68 +162,121 @@ public class HealthMapLocationConverterTest {
     }
 
     @Test
-    public void addPrecisionWithGeoNamesId() {
+    public void addPrecisionWithGeoNameIdReturnedByDatabase() {
         // Arrange
-        Integer geoNamesId = 123;
+        Integer geoNameId = 123;
         String featureCode = "PPL";
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        healthMapLocation.setGeoNameId(geoNamesId.toString());
+        healthMapLocation.setGeoNameId(geoNameId.toString());
 
         Location location = new Location();
-        GeoName geoName = new GeoName(geoNamesId, featureCode);
-        when(geoNamesWebService.getById(geoNamesId)).thenReturn(geoName);
+        uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName geoName = new
+                uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName(geoNameId, featureCode);
+        when(locationService.getGeoNameById(geoNameId)).thenReturn(geoName);
 
         // Act
         converter.addPrecision(healthMapLocation, location);
 
         // Assert
-        assertThat(location.getGeoNamesId()).isEqualTo(geoNamesId);
-        assertThat(location.getGeoNamesFeatureCode()).isEqualTo(featureCode);
+        assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
+        verify(geoNamesWebService, never()).getById(geoNameId);
+    }
+
+    @Test
+    public void addPrecisionWithGeoNameIdReturnedByWebService() {
+        // Arrange
+        Integer geoNameId = 123;
+        String featureCode = "PPL";
+        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        healthMapLocation.setGeoNameId(geoNameId.toString());
+
+        Location location = new Location();
+        GeoName geoNameDTO = new GeoName(geoNameId, featureCode);
+        uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName geoName = new
+                uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName(geoNameId, featureCode);
+
+        when(locationService.getGeoNameById(geoNameId)).thenReturn(null);
+        when(geoNamesWebService.getById(geoNameId)).thenReturn(geoNameDTO);
+
+        // Act
+        converter.addPrecision(healthMapLocation, location);
+
+        // Assert
+        assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
+        verify(locationService, times(1)).save(eq(geoName));
     }
 
     @Test
     public void addPrecisionWithGeoNamesFeatureCodeNotInOurMapping() {
         // Arrange
-        Integer geoNamesId = 123;
+        Integer geoNameId = 123;
         String featureCode = "ISL";
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        healthMapLocation.setGeoNameId(geoNamesId.toString());
+        healthMapLocation.setGeoNameId(geoNameId.toString());
 
         Location location = new Location();
-        GeoName geoName = new GeoName(geoNamesId, featureCode);
-        when(geoNamesWebService.getById(geoNamesId)).thenReturn(geoName);
+        GeoName geoNameDTO = new GeoName(geoNameId, featureCode);
+        uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName geoName = new
+                uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName(geoNameId, featureCode);
+
+        when(locationService.getGeoNameById(geoNameId)).thenReturn(null);
+        when(geoNamesWebService.getById(geoNameId)).thenReturn(geoNameDTO);
 
         // Act
         converter.addPrecision(healthMapLocation, location);
 
         // Assert
-        assertThat(location.getGeoNamesId()).isEqualTo(geoNamesId);
-        assertThat(location.getGeoNamesFeatureCode()).isEqualTo(featureCode);
+        assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
+        verify(locationService, times(1)).save(eq(geoName));
     }
 
     @Test
     public void addPrecisionWithGeoNameNotFound() {
         // Arrange
-        Integer geoNamesId = 123;
+        Integer geoNameId = 123;
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        healthMapLocation.setGeoNameId(geoNamesId.toString());
+        healthMapLocation.setGeoNameId(geoNameId.toString());
 
         Location location = new Location();
-        when(geoNamesWebService.getById(geoNamesId)).thenReturn(null);
+        when(locationService.getGeoNameById(geoNameId)).thenReturn(null);
+        when(geoNamesWebService.getById(geoNameId)).thenReturn(null);
 
         // Act
         converter.addPrecision(healthMapLocation, location);
 
         // Assert
-        assertThat(location.getGeoNamesId()).isEqualTo(geoNamesId);
-        assertThat(location.getGeoNamesFeatureCode()).isNull();
+        assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
+        verify(locationService, never()).save(any(uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName.class));
     }
 
     @Test
-    public void addPrecisionWithoutGeoNamesId() {
+    public void addPrecisionWithGeoNameReturnedByWebServiceButNoFeatureCode() {
+        // Arrange
+        Integer geoNameId = 123;
+        String featureCode = "";
+        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        healthMapLocation.setGeoNameId(geoNameId.toString());
+
+        Location location = new Location();
+        GeoName geoNameDTO = new GeoName(geoNameId, featureCode);
+        when(locationService.getGeoNameById(geoNameId)).thenReturn(null);
+        when(geoNamesWebService.getById(geoNameId)).thenReturn(geoNameDTO);
+
+        // Act
+        converter.addPrecision(healthMapLocation, location);
+
+        // Assert
+        assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
+        verify(locationService, never()).save(any(uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName.class));
+    }
+
+    @Test
+    public void addPrecisionWithoutGeoNameId() {
         // Arrange
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
         Location location = new Location();
@@ -232,13 +285,12 @@ public class HealthMapLocationConverterTest {
         converter.addPrecision(healthMapLocation, location);
 
         // Assert
-        assertThat(location.getGeoNamesId()).isNull();
-        assertThat(location.getGeoNamesFeatureCode()).isNull();
+        assertThat(location.getGeoNameId()).isNull();
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
     }
 
     @Test
-    public void addPrecisionWithoutGeoNamesIdOrPlaceBasicType() {
+    public void addPrecisionWithoutGeoNameIdOrPlaceBasicType() {
         // Arrange
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
         healthMapLocation.setPlaceBasicType(null);
@@ -248,8 +300,7 @@ public class HealthMapLocationConverterTest {
         converter.addPrecision(healthMapLocation, location);
 
         // Assert
-        assertThat(location.getGeoNamesId()).isNull();
-        assertThat(location.getGeoNamesFeatureCode()).isNull();
+        assertThat(location.getGeoNameId()).isNull();
         assertThat(location.getPrecision()).isNull();
     }
 

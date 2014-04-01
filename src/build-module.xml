@@ -222,6 +222,7 @@
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>
@@ -245,6 +246,7 @@
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>

@@ -46,6 +46,7 @@ public class HealthMapDataAcquisition {
         DateTime endDate = getEndDate(startDate);
         List<HealthMapLocation> healthMapLocations = retrieveDataFromWebService(startDate, endDate);
         convert(healthMapLocations, endDate);
+        healthMapLookupData.clearLookups();
     }
 
     /**
@@ -57,6 +58,7 @@ public class HealthMapDataAcquisition {
         LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, fileName));
         List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(fileName);
         convert(healthMapLocations, null);
+        healthMapLookupData.clearLookups();
     }
 
     private List<HealthMapLocation> retrieveDataFromWebService(DateTime startDate, DateTime endDate) {

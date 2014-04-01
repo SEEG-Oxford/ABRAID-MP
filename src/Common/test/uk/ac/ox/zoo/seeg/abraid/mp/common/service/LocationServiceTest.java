@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests for LocationServiceImpl.
+ *
  * Copyright (c) 2014 University of Oxford
  */
 public class LocationServiceTest extends AbstractSpringUnitTests {
@@ -21,14 +22,14 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
     private LocationService locationService;
 
     @Test
-    public void getByGeoNamesId() {
+    public void getByGeoNameId() {
         // Arrange
-        int geoNamesId = 1000;
+        int geoNameId = 1000;
         Location location = new Location();
-        when(locationDao.getByGeoNamesId(geoNamesId)).thenReturn(location);
+        when(locationDao.getByGeoNameId(geoNameId)).thenReturn(location);
 
         // Act
-        Location testLocation = locationService.getLocationByGeoNamesId(geoNamesId);
+        Location testLocation = locationService.getLocationByGeoNameId(geoNameId);
 
         // Assert
         assertThat(testLocation).isSameAs(location);

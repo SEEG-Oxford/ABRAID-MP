@@ -59,7 +59,7 @@ public class AlertDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getByAlertIdSuccessful() {
-        Alert alert = alertDao.getById(1);
+        Alert alert = alertDao.getById(212855);
         assertThat(alert).isNotNull();
     }
 

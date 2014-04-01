@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 /**
- * The type of a disease group.
+ * The type of disease group.
  *
  * Copyright (c) 2014 University of Oxford
  */
@@ -15,7 +15,7 @@ public enum DiseaseGroupType {
      */
     MICROCLUSTER,
     /**
-     * An actual disease.
+     * A single disease.
      */
-    DISEASE
+    SINGLE
 }

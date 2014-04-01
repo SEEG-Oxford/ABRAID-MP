@@ -42,7 +42,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
         // Arrange
         Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
@@ -59,7 +59,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     public void getDiseaseOccurrencesYetToBeReviewedMustOnlyReturnSpecifiedDiseaseGroup() {
         // Arrange
         Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
@@ -78,17 +78,19 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     public void getDiseaseOccurrencesYetToBeReviewedMustHaveNoIntersectionWithExpertsReviewedList() {
         // Arrange
         Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
         // Act
         Integer expertId = expert.getId();
         Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
-        List<DiseaseOccurrence> occurrencesYetToBeReviewed = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+        List<DiseaseOccurrence> occurrencesYetToBeReviewed =
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
 
-        //Assert
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+        // Assert
+        List<DiseaseOccurrenceReview> reviews =
+                diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
         for (DiseaseOccurrenceReview review : reviews) {
             assertThat(occurrencesYetToBeReviewed).doesNotContain(review.getDiseaseOccurrence());
         }
@@ -97,25 +99,26 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustReturnOccurrencesForCorrectExpert() {
         // Arrange
-        // Two experts save reviews for different disease occurrences
+        // Two experts save reviews for different disease occurrences of the same disease group
         Expert expert0 = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence0 = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence0 = diseaseOccurrenceDao.getById(272829);
         DiseaseOccurrenceReviewResponse response0 = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert0, occurrence0, response0);
 
         Expert expert1 = expertDao.getByEmail("zool1251@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence1 = diseaseOccurrenceDao.getById(2);
+        DiseaseOccurrence occurrence1 = diseaseOccurrenceDao.getById(272830);
         DiseaseOccurrenceReviewResponse response1 = DiseaseOccurrenceReviewResponse.NO;
         createAndSaveDiseaseOccurrenceReview(expert1, occurrence1, response1);
 
         // Act
         Integer expertId = expert0.getId();
         Integer diseaseGroupId = occurrence0.getDiseaseGroup().getId();
-        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+        List<DiseaseOccurrence> occurrencesYetToBeReviewedByExpert0 =
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
 
         // Assert
-        assertThat(list).contains(occurrence1);
-        assertThat(list).doesNotContain(occurrence0);
+        assertThat(occurrencesYetToBeReviewedByExpert0).contains(occurrence1);
+        assertThat(occurrencesYetToBeReviewedByExpert0).doesNotContain(occurrence0);
     }
 
     @Test
@@ -163,7 +166,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getDiseaseOccurrencesForExistenceCheckExists() {
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
                 occurrence.getOccurrenceStartDate());
@@ -172,7 +175,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getDiseaseOccurrencesForExistenceCheckDiseaseGroupDifferent() {
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 diseaseGroup, occurrence.getLocation(), occurrence.getAlert(),
@@ -182,8 +185,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getDiseaseOccurrencesForExistenceCheckLocationDifferent() {
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
-        Location location = locationDao.getById(10);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        Location location = locationDao.getById(80);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), location, occurrence.getAlert(),
                 occurrence.getOccurrenceStartDate());
@@ -192,8 +195,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getDiseaseOccurrencesForExistenceCheckAlertDifferent() {
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
-        Alert alert = alertDao.getById(10);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        Alert alert = alertDao.getById(213235);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), alert,
                 occurrence.getOccurrenceStartDate());
@@ -202,7 +205,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getDiseaseOccurrencesForExistenceCheckOccurrenceStartDateDifferent() {
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(1);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DateTime occurrenceStartDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
@@ -239,7 +242,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         return location;
     }
 
-    private DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
+    private DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence,
+                                                                         DiseaseOccurrenceReviewResponse response) {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(expert);
         review.setDiseaseOccurrence(occurrence);

@@ -2,10 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import com.vividsolutions.jts.geom.Point;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapCountryDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.HashMap;
@@ -23,13 +20,16 @@ public class LocationServiceImpl implements LocationService {
     private HealthMapCountryDao healthMapCountryDao;
     private LocationDao locationDao;
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
+    private GeoNameDao geoNameDao;
 
     public LocationServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
-                               LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao) {
+                               LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
+                               GeoNameDao geoNameDao) {
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
         this.locationDao = locationDao;
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
+        this.geoNameDao = geoNameDao;
     }
 
     /**
@@ -52,12 +52,12 @@ public class LocationServiceImpl implements LocationService {
 
     /**
      * Gets a location by GeoNames ID.
-     * @param geoNamesId The GeoNames ID.
+     * @param geoNameId The GeoNames ID.
      * @return The location with the specified GeoNames ID, or null if not found.
      */
     @Override
-    public Location getLocationByGeoNamesId(int geoNamesId) {
-        return locationDao.getByGeoNamesId(geoNamesId);
+    public Location getLocationByGeoNameId(int geoNameId) {
+        return locationDao.getByGeoNameId(geoNameId);
     }
 
     /**
@@ -84,5 +84,24 @@ public class LocationServiceImpl implements LocationService {
             map.put(item.getGeoNamesFeatureCode(), item.getLocationPrecision());
         }
         return map;
+    }
+
+    /**
+     * Gets a GeoName by ID.
+     * @param geoNameId The GeoNames ID.
+     * @return The GeoName, or null if not found.
+     */
+    @Override
+    public GeoName getGeoNameById(int geoNameId) {
+        return geoNameDao.getById(geoNameId);
+    }
+
+    /**
+     * Saves a GeoName.
+     * @param geoName The GeoName to save.
+     */
+    @Override
+    public void save(GeoName geoName) {
+        geoNameDao.save(geoName);
     }
 }

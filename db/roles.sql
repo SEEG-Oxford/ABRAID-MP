@@ -23,6 +23,7 @@ GRANT SELECT, INSERT                ON disease_occurrence_review TO :application
 GRANT SELECT, INSERT, UPDATE        ON expert TO :application_username;
 GRANT SELECT, INSERT,        DELETE ON expert_disease_group TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON feed TO :application_username;
+GRANT SELECT, INSERT                ON geoname TO :application_username;
 GRANT SELECT                        ON geonames_location_precision TO :application_username;
 GRANT SELECT                        ON healthmap_country TO :application_username;
 GRANT SELECT                        ON healthmap_country_country TO :application_username;

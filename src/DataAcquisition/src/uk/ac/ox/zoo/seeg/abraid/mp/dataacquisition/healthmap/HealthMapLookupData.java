@@ -91,4 +91,15 @@ public class HealthMapLookupData {
         }
         return healthMapProvenance;
     }
+
+    /**
+     * Clear the lookups. This avoids stale Hibernate objects across transactions.
+     */
+    public void clearLookups() {
+        countryMap = null;
+        diseaseMap = null;
+        feedMap = null;
+        geoNamesMap = null;
+        healthMapProvenance = null;
+    }
 }
