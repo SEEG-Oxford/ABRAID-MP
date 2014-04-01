@@ -30,8 +30,8 @@ var DataValidationViewModels = (function() {
         }, this);
     };
 
-    function concatenateUrl(googleTranslateUrl, langPair, summary) {
-        return googleTranslateUrl + "?" + "langpair=" + langPair + "&" + "text=" + encodeURIComponent(summary);
+    function createUrl(langPair, summary) {
+        return "http://translate.google.com/?" + "langpair=" + langPair + "&" + "text=" + encodeURIComponent(summary);
     }
 
     var SelectedPointViewModel = function () {
@@ -44,16 +44,15 @@ var DataValidationViewModels = (function() {
         };
         this.translationUrl = ko.computed(function () {
             if (this.hasSelectedPoint()) {
-                var googleTranslateUrl = "http://translate.google.com/";
                 var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
                 var summary = this.selectedPoint().properties.alert.summary;
-                var url = concatenateUrl(googleTranslateUrl, langPair, summary);
+                var url = createUrl(langPair, summary);
 
                 // If the encoded URL is too long, remove the last word from the summary
                 while (url.length > 2048) {
                     var lastIndex = summary.lastIndexOf(" ");
                     summary = summary.substring(0, lastIndex);
-                    url = concatenateUrl(googleTranslateUrl, langPair, summary);
+                    url = createUrl(langPair, summary);
                 }
                 return url;
             }
