@@ -12,7 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Copyright (c) 2014 University of Oxford
  */
-public final class GeoJsonDiseaseOccurrenceFeatureProperties {
+public class GeoJsonDiseaseOccurrenceFeatureProperties {
     @JsonView(DisplayJsonView.class)
     private String locationName;
 
@@ -26,7 +26,7 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
     private LocationPrecision locationPrecision;
 
     @JsonView(ModellingJsonView.class)
-    private double weighting;
+    private Double weighting;
 
     public GeoJsonDiseaseOccurrenceFeatureProperties() {
     }
@@ -55,7 +55,7 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
         return locationPrecision;
     }
 
-    public double getWeighting() {
+    public Double getWeighting() {
         return weighting;
     }
 
@@ -75,7 +75,7 @@ public final class GeoJsonDiseaseOccurrenceFeatureProperties {
         this.locationPrecision = locationPrecision;
     }
 
-    public void setWeighting(double weighting) {
+    public void setWeighting(Double weighting) {
         this.weighting = weighting;
     }
 
