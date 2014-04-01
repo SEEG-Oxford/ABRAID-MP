@@ -26,7 +26,7 @@ public class InputDataManagerImpl implements InputDataManager {
     public void writeData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
             throws IOException {
         if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
-            throw new IllegalArgumentException("Only EPSG4326 is supported.");
+            throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
 
         File outbreakFile = Paths.get(dataDirectory.toString(), OUTBREAK_CSV).toFile();
@@ -39,12 +39,7 @@ public class InputDataManagerImpl implements InputDataManager {
                     throw new IllegalArgumentException("Feature level CRS are not supported.");
                 }
 
-                writer.write(StringUtils.join(new String[]{
-                        occurrence.getGeometry().getCoordinates().get(0).toString(),
-                        occurrence.getGeometry().getCoordinates().get(1).toString(),
-                        occurrence.getProperties().getLocationPrecision().toString(),
-                        occurrence.getProperties().getWeighting().toString()
-                }, ','));
+                writer.write(extractCsvLine(occurrence));
                 writer.newLine();
             }
         } finally {
@@ -52,5 +47,14 @@ public class InputDataManagerImpl implements InputDataManager {
                 writer.close();
             }
         }
+    }
+
+    private String extractCsvLine(GeoJsonDiseaseOccurrenceFeature occurrence) {
+        return StringUtils.join(new String[]{
+                occurrence.getGeometry().getCoordinates().get(0).toString(),
+                occurrence.getGeometry().getCoordinates().get(1).toString(),
+                occurrence.getProperties().getLocationPrecision().toString(),
+                occurrence.getProperties().getWeighting().toString()
+        }, ',');
     }
 }

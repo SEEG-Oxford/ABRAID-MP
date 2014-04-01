@@ -23,6 +23,6 @@ public class GeoJsonObjectTypeDeserializer extends JsonDeserializer<GeoJsonObjec
             }
         }
 
-        throw new IOException("No such value.");
+        throw new IOException(jsonValue + " is not defined in GeoJsonObjectType");
     }
 }

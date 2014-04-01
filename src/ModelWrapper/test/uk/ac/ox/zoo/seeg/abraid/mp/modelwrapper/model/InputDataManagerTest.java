@@ -56,7 +56,7 @@ public class InputDataManagerTest {
         catchException(target).writeData(data, dir);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Only EPSG4326 is supported.");
+        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Only EPSG:4326 is supported.");
     }
 
     @Test

@@ -5,12 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
@@ -19,6 +21,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.getTwoDiseaseOccurrenceFeaturesAsJson;
 
@@ -62,6 +65,28 @@ public class ModelRunControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class)))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void runRejectsInvalidRequest() throws Exception {
+        this.mockMvc
+                .perform(post("/model/run").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void runPageOnlyAcceptsPOST() throws Exception {
+        this.mockMvc.perform(createRequest(HttpMethod.GET)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.POST)).andExpect(status().isNoContent());
+        this.mockMvc.perform(createRequest(HttpMethod.PUT)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.DELETE)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.PATCH)).andExpect(status().isMethodNotAllowed());
+    }
+
+    private MockHttpServletRequestBuilder createRequest(HttpMethod method) {
+        return request(method, "/model/run")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class));
     }
 
 }

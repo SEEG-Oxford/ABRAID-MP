@@ -32,13 +32,13 @@ public class ModelRunController {
     /**
      * Triggers a new model run with the given occurrences.
      * @param occurrenceData A set of occurrences.
-     * @return 204 for success, 400 for invalid parameters or 500 if server can not start model run.
+     * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
     @RequestMapping(value = "/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<String> startRun(@RequestBody GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData) {
         if (occurrenceData == null) {
-            return new ResponseEntity<String>("Must be provided", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Occurrence data must be provided", HttpStatus.BAD_REQUEST);
         }
 
         try {
