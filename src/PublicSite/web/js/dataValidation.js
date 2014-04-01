@@ -30,6 +30,10 @@ var DataValidationViewModels = (function() {
         }, this);
     };
 
+    function concatenateUrl(googleTranslateUrl, langPair, summary) {
+        return googleTranslateUrl + "?" + "langpair=" + langPair + "&" + "text=" + encodeURIComponent(summary);
+    }
+
     var SelectedPointViewModel = function () {
         this.selectedPoint = ko.observable(null);
         this.hasSelectedPoint = ko.computed(function () {
@@ -41,11 +45,17 @@ var DataValidationViewModels = (function() {
         this.translationUrl = ko.computed(function () {
             if (this.hasSelectedPoint()) {
                 var googleTranslateUrl = "http://translate.google.com/";
-                var langPair = encodeURIComponent((this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto");
-//                var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "/auto";
-                var summary = encodeURIComponent(this.selectedPoint().properties.alert.summary);
-                return (googleTranslateUrl + "?" + "langpair=" + langPair + "&" + "text=" + summary).substring(0,2048);
-//                return (googleTranslateUrl + "#" + langPair + "/" + summary).substring(0,2048);
+                var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
+                var summary = this.selectedPoint().properties.alert.summary;
+                var url = concatenateUrl(googleTranslateUrl, langPair, summary);
+
+                // If the encoded URL is too long, remove the last word from the summary
+                while (url.length > 2048) {
+                    var lastIndex = summary.lastIndexOf(" ");
+                    summary = summary.substring(0, lastIndex);
+                    url = concatenateUrl(googleTranslateUrl, langPair, summary);
+                }
+                return url;
             }
         }, this);
         this.submitReview = function(review) {
@@ -93,7 +103,3 @@ var DataValidationViewModels = (function() {
         counterViewModel: counterViewModel
     }
 }());
-
-
-
-
