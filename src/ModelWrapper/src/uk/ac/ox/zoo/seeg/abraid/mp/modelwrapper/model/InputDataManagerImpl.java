@@ -9,7 +9,7 @@ import java.io.*;
 import java.nio.file.Paths;
 
 /**
- * Provides a mechanism for writing model input data into a the working directory.
+ * Provides a mechanism for writing model input data into the working directory.
  * Copyright (c) 2014 University of Oxford
  */
 public class InputDataManagerImpl implements InputDataManager {

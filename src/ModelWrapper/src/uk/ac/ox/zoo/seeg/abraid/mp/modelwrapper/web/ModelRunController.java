@@ -32,7 +32,7 @@ public class ModelRunController {
     /**
      * Triggers a new model run with the given occurrences.
      * @param occurrenceData A set of occurrences.
-     * @return 203 or 400.
+     * @return 204 for success, 400 for invalid parameters or 500 if server can not start model run.
      */
     @RequestMapping(value = "/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
