@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class ModelRunnerTest {
     public void runModelProvisionsADirectoryForTheRun() throws Exception {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class)))
                 .thenReturn(testFolder.getRoot());
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -42,17 +43,17 @@ public class ModelRunnerTest {
         RunConfiguration config = new RunConfiguration(null, null, null, 0, "");
 
         // Act
-        target.runModel(config);
+        target.runModel(config, null);
 
         // Assert
-        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config));
+        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class));
     }
 
     @Test
     public void runModelTriggersProcess() throws Exception {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class)))
                 .thenReturn(testFolder.getRoot());
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -65,7 +66,7 @@ public class ModelRunnerTest {
         RunConfiguration config = new RunConfiguration(null, null, null, 0, "");
 
         // Act
-        target.runModel(config);
+        target.runModel(config, null);
 
         // Assert
         verify(mockProcessRunner, times(1)).run(any(ModelProcessHandler.class));
@@ -76,7 +77,7 @@ public class ModelRunnerTest {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         File expectedScript = new File("foo/script");
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class)))
                 .thenReturn(expectedScript);
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -92,7 +93,7 @@ public class ModelRunnerTest {
         RunConfiguration config = new RunConfiguration(expectedR, expectedBase, null, expectedTimeout, "");
 
         // Act
-        target.runModel(config);
+        target.runModel(config, null);
 
         // Assert
         ArgumentCaptor<String[]> stringArgsCaptor = ArgumentCaptor.forClass(String[].class);

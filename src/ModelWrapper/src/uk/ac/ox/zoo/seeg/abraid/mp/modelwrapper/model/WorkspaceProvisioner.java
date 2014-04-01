@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
@@ -13,8 +14,10 @@ public interface WorkspaceProvisioner {
     /**
      * Sets up the directory in which a model will run.
      * @param configuration The model run configuration options.
+     * @param modelData The data to use in the model.
      * @throws IOException Thrown if the directory can not be correctly provisioned.
      * @return The model wrapper script file to run.
      */
-    File provisionWorkspace(RunConfiguration configuration) throws IOException;
+    File provisionWorkspace(RunConfiguration configuration, GeoJsonDiseaseOccurrenceFeatureCollection modelData)
+            throws IOException;
 }

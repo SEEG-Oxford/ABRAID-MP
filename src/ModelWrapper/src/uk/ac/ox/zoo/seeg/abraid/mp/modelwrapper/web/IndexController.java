@@ -47,7 +47,6 @@ public class IndexController {
     public String showIndexPage(Model model) {
         List<String> modelVersions;
 
-        boolean repoErrorState = false;
         try {
             modelVersions = sourceCodeManager.getAvailableVersions();
         } catch (Exception e) {

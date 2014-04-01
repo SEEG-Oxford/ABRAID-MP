@@ -40,14 +40,14 @@ public class CommonsExecIntegrationTest {
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000, "");
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
+        when(mockWorkspaceProvisioner.provisionWorkspace(config, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return createScript(testFolder, new String[]{""});
             }
         });
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config);
+        ProcessHandler processHandler = runner.runModel(config, null);
         int exitCode = processHandler.waitForCompletion();
 
         // Assert
@@ -63,14 +63,14 @@ public class CommonsExecIntegrationTest {
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000, "");
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
+        when(mockWorkspaceProvisioner.provisionWorkspace(config, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return createScript(testFolder, new String[]{"cat('Hello, world!\n')"});
             }
         });
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config);
+        ProcessHandler processHandler = runner.runModel(config, null);
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getOutputStream().toString();
 
@@ -88,14 +88,14 @@ public class CommonsExecIntegrationTest {
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000, "");
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
+        when(mockWorkspaceProvisioner.provisionWorkspace(config, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return createScript(testFolder, new String[]{"write('Hello, world!\n', stderr())"});
             }
         });
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config);
+        ProcessHandler processHandler = runner.runModel(config, null);
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getErrorStream().toString();
 
@@ -113,7 +113,7 @@ public class CommonsExecIntegrationTest {
         RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000, "");
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
+        when(mockWorkspaceProvisioner.provisionWorkspace(config, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return createScript(testFolder, new String[]{
                         "name <- readLines(file(\"stdin\"),1)",
@@ -124,7 +124,7 @@ public class CommonsExecIntegrationTest {
         PipedOutputStream writer = new PipedOutputStream();
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config);
+        ProcessHandler processHandler = runner.runModel(config, null);
         processHandler.getInputStream().connect(writer);
         writer.write(expectedName.getBytes());
         writer.flush();
@@ -146,7 +146,7 @@ public class CommonsExecIntegrationTest {
         final RunConfiguration config = new RunConfiguration(findR(), testFolder.getRoot(), "foo", 60000, "");
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config)).thenAnswer(new Answer<File>() {
+        when(mockWorkspaceProvisioner.provisionWorkspace(config, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
                 return scriptGenerator.generateScript(config, testFolder.getRoot(), true);
@@ -154,7 +154,7 @@ public class CommonsExecIntegrationTest {
         });
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config);
+        ProcessHandler processHandler = runner.runModel(config, null);
         int exitCode = processHandler.waitForCompletion();
         String output = processHandler.getOutputStream().toString();
 

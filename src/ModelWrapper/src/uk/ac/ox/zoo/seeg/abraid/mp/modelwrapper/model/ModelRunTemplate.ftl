@@ -31,11 +31,12 @@ extentData <- "${extent_file}"
 
 # Load the model
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
-# source(seegSDM.R)
+# source(model/seegSDM.R)
 
 # Run the model
 result <- tryCatch({
     # seegSDM.run(outbreakData, extentData, covariants, verbosity, ${dry_run?c})
+    write(outbreakData, file="echo")
     # Temp POC
     print(covariants)
     0 # return 0
