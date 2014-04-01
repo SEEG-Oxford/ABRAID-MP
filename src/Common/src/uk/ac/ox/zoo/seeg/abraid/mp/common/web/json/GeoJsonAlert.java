@@ -66,8 +66,8 @@ public class GeoJsonAlert {
         this.publicationDate = publicationDate;
     }
 
-    ///COVERAGE:OFF generated code
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,7 +94,6 @@ public class GeoJsonAlert {
         result = 31 * result + (publicationDate != null ? publicationDate.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
-    ///COVERAGE:ON
+    ///CHECKSTYLE:ON
     ///COVERAGE:ON
 }

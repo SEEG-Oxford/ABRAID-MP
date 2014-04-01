@@ -33,8 +33,8 @@ public abstract class GeoJsonFeatureCollection<TFeature extends GeoJsonFeature, 
         this.features = Collections.unmodifiableList(features);
     }
 
-    ///COVERAGE:OFF generated code
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,6 +54,6 @@ public abstract class GeoJsonFeatureCollection<TFeature extends GeoJsonFeature, 
         result = 31 * result + (features != null ? features.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
     ///COVERAGE:ON
 }

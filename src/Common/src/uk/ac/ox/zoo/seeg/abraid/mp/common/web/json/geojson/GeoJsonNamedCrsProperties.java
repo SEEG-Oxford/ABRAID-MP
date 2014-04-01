@@ -24,8 +24,8 @@ public final class GeoJsonNamedCrsProperties {
         this.name = name;
     }
 
-    ///COVERAGE:OFF generated code
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,6 +42,6 @@ public final class GeoJsonNamedCrsProperties {
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
     ///COVERAGE:ON
 }

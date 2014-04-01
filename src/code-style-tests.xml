@@ -45,17 +45,23 @@
     </module>
 
     <!-- Allows checkstyle suppression by commenting blocks. For example:
-            // CHECKSTYLE.OFF: IllegalCatch - Much more readable than catching 7 exceptions
+            ///CHECKSTYLE:OFF IllegalCatch - Much more readable than catching 7 exceptions
             catch (Exception e)
-            // CHECKSTYLE.ON
+            ///CHECKSTYLE:ON
     -->
     <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="CHECKSTYLE\.OFF\: ([\w\|]+)"/>
-        <property name="onCommentFormat" value="CHECKSTYLE\.ON"/>
+        <property name="offCommentFormat" value="/CHECKSTYLE:OFF ([\w\|]+)"/>
+        <property name="onCommentFormat" value="/CHECKSTYLE:ON"/>
         <property name="checkFormat" value="$1"/>
     </module>
 
-    <module name="SuppressWithNearbyCommentFilter" />
+    <!-- Allows checkstyle suppression for single lines. For example:
+            catch (Exception e) ///CHECKSTYLE.SUPPRESS: IllegalCatch - Much more readable than catching 7 exceptions
+    -->
+    <module name="SuppressWithNearbyCommentFilter">
+        <property name="commentFormat" value="/CHECKSTYLE:SUPPRESS ([\w\|]+)"/>
+        <property name="checkFormat" value="$1"/>
+    </module>
 
     <!-- Checks for Headers                                -->
     <!-- See http://checkstyle.sf.net/config_header.html   -->

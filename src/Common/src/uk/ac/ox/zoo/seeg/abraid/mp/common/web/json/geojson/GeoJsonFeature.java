@@ -61,8 +61,8 @@ public abstract class GeoJsonFeature<TProp, TGeom extends GeoJsonGeometry, TCrs 
         this.properties = properties;
     }
 
-    ///COVERAGE:OFF generated code
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,6 +86,6 @@ public abstract class GeoJsonFeature<TProp, TGeom extends GeoJsonGeometry, TCrs 
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
     ///COVERAGE:ON
 }

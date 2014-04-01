@@ -32,7 +32,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
     }
 
 
-    ///COVERAGE:OFF - temp
+    ///COVERAGE:OFF - - temp
     // CHECKSTYLE.OFF - temp
     private static String tempFindR() {
         OSChecker osChecker = new OSCheckerImpl();
@@ -42,6 +42,6 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
             return "/usr/bin/R";
         }
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
     //COVERAGE:ON
 }

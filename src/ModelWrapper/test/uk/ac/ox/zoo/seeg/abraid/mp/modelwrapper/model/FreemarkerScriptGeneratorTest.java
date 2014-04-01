@@ -21,7 +21,7 @@ import static org.fest.util.Files.contentOf;
  */
 public class FreemarkerScriptGeneratorTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Test
     public void generateScriptShouldReturnAFileThatItHasCreated() throws Exception {

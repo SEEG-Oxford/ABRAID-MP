@@ -23,7 +23,7 @@ import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeo
  */
 public class InputDataManagerTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Test
     public void writeDataCreatesCorrectCsv() throws Exception {

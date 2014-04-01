@@ -66,7 +66,7 @@ public class AdminUnitSimplifiedGlobal {
         this.geom = geom;
     }
 
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -90,5 +90,5 @@ public class AdminUnitSimplifiedGlobal {
         result = 31 * result + (geom != null ? geom.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
 }

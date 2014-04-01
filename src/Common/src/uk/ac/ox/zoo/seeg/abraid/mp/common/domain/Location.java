@@ -126,7 +126,7 @@ public class Location {
         this.geoNamesFeatureCode = geoNamesFeatureCode;
     }
 
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -159,5 +159,5 @@ public class Location {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
 }

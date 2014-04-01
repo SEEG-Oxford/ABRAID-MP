@@ -29,7 +29,7 @@ public class CommonsExecIntegrationTest {
     private static final int SUCCESSFUL = 0;
 
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     /**
      * Verifies that subprocesses can be started.

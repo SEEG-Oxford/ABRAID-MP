@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
  */
 public class ConfigurationServiceTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     private void writeStandardSimpleProperties(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion)
             throws FileNotFoundException, UnsupportedEncodingException {
