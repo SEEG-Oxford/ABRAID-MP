@@ -18,7 +18,7 @@
     var diseaseInterests = [
         <#list diseaseInterestsSet as pair>
             {
-                name: "${pair.getKey().getName()?lower_case?js_string}",
+                name: "${pair.getKey().getDisplayName()?lower_case?js_string}",
                 id: ${pair.getKey().id?int},
                 reviewCount: ${pair.getValue()?int}
             },
@@ -50,4 +50,3 @@
 
     <div id="map"></div>
 </@c.page>
-

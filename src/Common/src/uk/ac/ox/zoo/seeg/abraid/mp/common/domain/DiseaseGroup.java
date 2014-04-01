@@ -127,6 +127,11 @@ public class DiseaseGroup {
         this.shortName = shortName;
     }
 
+    public String getDisplayName() {
+        return (getShortName() != null ? getShortName() :
+                (getPublicName() != null ? getPublicName() : getName()));
+    }
+
     public String getValidatorSet() {
         return validatorSet;
     }
