@@ -86,7 +86,7 @@ public class AdminUnit {
         this.area = area;
     }
 
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,5 +119,5 @@ public class AdminUnit {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
 }
