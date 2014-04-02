@@ -22,45 +22,29 @@ html,body
     padding-left:15px;
     color:rgb(153, 153, 153);
 }
-.footer
+.navbar-fixed-bottom
 {
-    position: relative;
-    margin-top: -30px;
-    height: 30px;
-    clear:both;
-    color:rgb(153, 153, 153);
-    background-color:rgb(51, 51, 51);
+    min-height:30px;
 }
-.footer .container
+.navbar-fixed-bottom p
 {
-    padding-top:5px;
+    line-height:30px;
+    margin:auto;
 }
 .navbar-right p,
-.footer > .container > .links > a,
-.footer > .container > .links > p
+#links > a,
+#links > p
 {
     color:rgb(153, 153, 153);
     display:inline;
 }
-.footer > .container > .links > a:link a:visited {
+#links > a:link a:visited {
     color:rgb(153, 153, 153);
     background-color: rgb(51, 51, 51);
     text-decoration:none;
 }
-.footer > .container > .links > a:hover {
+#links > a:hover {
     color: #ffffff;
     background-color: rgb(51, 51, 51);
     text-decoration:none;
-}
-.copyright
-{
-    float: right;
-}
-.copyright p
-{
-    margin:0;
-}
-.links
-{
-    float: left;
 }
