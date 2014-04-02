@@ -128,7 +128,7 @@ var LeafletMap = (function () {
             fillColor: defaultColour,
             dashArray: 3
         },
-        spiderfyDistanceMultiplier: 2,
+        spiderfyDistanceMultiplier: 1.5,
         iconCreateFunction: clusterLayerPoint
     }).addLayer(diseaseOccurrenceLayer).addTo(map);
 

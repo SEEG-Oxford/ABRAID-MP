@@ -52,7 +52,7 @@
     <ul>
         <li><h4 data-bind="text: selectedPoint().properties.alert.title"></h4></li>
         <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.locationName"></p></li>
-        <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.alert.publicationDate"></p></li>
+        <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.diseaseOccurrenceStartDate"></p></li>
         <li>
             <i class="fa fa-external-link"></i>
             <a data-bind="attr: {href: selectedPoint().properties.alert.url}">
