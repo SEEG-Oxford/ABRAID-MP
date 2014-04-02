@@ -16,7 +16,6 @@
     <http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
         <!-- Redirect to home atlas page at "/" on logout, instead of navigating to j_spring_security_logout -->
         <logout logout-success-url="/" />
-        <!--<intercept-url pattern="/static" access="ROLE_ANONYMOUS" />-->
 
         <!-- Use custom Authentication Filter (bean below) instead of default, at this position in the Filter Chain -->
         <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
