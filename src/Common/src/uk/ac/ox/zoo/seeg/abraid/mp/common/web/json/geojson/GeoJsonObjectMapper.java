@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
@@ -22,5 +23,6 @@ public final class GeoJsonObjectMapper extends ObjectMapper {
         dateFormat.setTimeZone(TimeZone.getTimeZone(UTC));
         this.setDateFormat(dateFormat);
         this.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
+        this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 }
