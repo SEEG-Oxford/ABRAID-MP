@@ -35,7 +35,9 @@
     }());
 
     $(document).ready(function () {
-        ko.applyBindings(logInViewModel, $("#logIn")[0]);
+        if (!loggedIn) {
+            ko.applyBindings(logInViewModel, $("#logIn")[0]);
+        }
     });
 }());
 

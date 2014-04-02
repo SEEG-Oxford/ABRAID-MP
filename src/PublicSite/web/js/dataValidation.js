@@ -44,32 +44,23 @@ ko.bindingHandlers.option = {
 var DataValidationViewModels = (function() {
 
     function Group(label, children) {
-        this.groupLabel = ko.observable(label);
+        this.groupLabel = label;
         this.children = ko.observableArray(children);
-    }
-
-    function Disease(diseaseInterest) {
-        this.diseaseLabel = ko.observable(diseaseInterest.name);
-        this.id = ko.observable(diseaseInterest.id);
-        this.reviewCount = ko.observable(diseaseInterest.reviewCount);
-    }
-
-    function convertDiseaseInterestsToObservableDiseases() {
-        var list = [];
-        for (var i = 0; i < diseaseInterests.length; i++) {
-            list[i] = new Disease(diseaseInterests[i]);
-        }
-        return list;
     }
 
     var LayerSelectorViewModel = function () {
         this.validationTypes = ko.observableArray(["disease occurrences", "disease extent"]);
         this.selectedType = ko.observable();
         this.groups = ko.observableArray([
-            new Group("Your Disease Interests", convertDiseaseInterestsToObservableDiseases ),
+            new Group("Your Disease Interests", diseaseInterests ),
             new Group("Other Diseases", [ ])
         ]);
         this.selectedDisease = ko.observable();
+        this.selectedDisease.subscribe(function () {
+            if (this.selectedDisease() != null) {
+                this.selectedDisease().reviewCount = DataValidationViewModels.counterViewModel.reviewCount();
+            }
+        }, this, "beforeChange");
         this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
             LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
@@ -140,7 +131,9 @@ var DataValidationViewModels = (function() {
     $(document).ready(function () {
         ko.applyBindings(layerSelectorViewModel, $("#layerSelector")[0]);
         ko.applyBindings(selectedPointViewModel, $("#datapointInfo")[0]);
-        ko.applyBindings(counterViewModel, $("#counterDiv")[0]);
+        if (loggedIn) {
+            ko.applyBindings(counterViewModel, $("#counterDiv")[0]);
+        }
     });
 
     return {

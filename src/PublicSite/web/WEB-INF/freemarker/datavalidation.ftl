@@ -37,6 +37,7 @@
     <script src="<@spring.url "/js/dataValidation.js"/>"></script>
     <script src="<@spring.url "/js/leafletMap.js"/>"></script>
     <script src="<@spring.url "/js/flipclock.min.js"/>"></script>
+    <script src="<@spring.url "/js/login.js" />"></script>
 </#assign>
 
 <@c.page title="ABRAID MP" endOfHead=endOfHeadContent endOfBody=endOfBodyContent endOfBodyScript=endOfBodyScriptContent>
@@ -49,7 +50,7 @@
         of
             <select data-bind="foreach: groups, value: selectedDisease">
                 <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
-                    <option data-bind="text: diseaseLabel, option: $data"></option>
+                    <option data-bind="text: name, option: $data"></option>
                 </optgroup>
             </select>
         </h4>
