@@ -9,7 +9,6 @@
 1	Google News Français	1	fr	10
 1	Organisation mondiale de la Santé	1		11
 1	WHO Русский	1		13
-1	Google News Русский	1	ru	14
 1	ProMED MBDS	1		15
 1	世界卫生组织 (WHO ZH)	1		16
 1	Google 资讯	1	zh	17
@@ -27,7 +26,6 @@
 1	Eyewitness Reports	1		34
 1	موقع منظمة الصحة العالمي (WHO AR)	1		35
 1	GeoSentinel	1		36
-1	Google Meningitis Italian	1	it	55
 1	Baidu 新闻	1	zh	62
 1	SOSO资讯	1	zh	63
 1	Arabic RSS	1	ar	70
@@ -64,3 +62,5 @@
 1	Ministry of Health Sites Facebook Portuguese	1	pt	146
 1	HM Community News Reports ZH	1	zh	153
 1	Francophone News Agencies RSS Feed	1		157
+1	Google News Русский	1	ru	14
+1	Google Meningitis Italian	1	it	55
