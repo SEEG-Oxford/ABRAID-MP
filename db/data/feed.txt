@@ -1,22 +1,22 @@
-1	ProMED Mail	1	en	1
-1	World Health Organization	1	en	2
+1	ProMED Mail	1		1
+1	World Health Organization	1		2
 1	EuroSurveillance	1		3
-1	Google News	1	en	4
+1	Google News	1		4
 1	Moreover Technologies	1		5
 1	ProMED Español	1	es	7
 1	Organización Mundial de la Salud	1		8
 1	Google News Español	1	es	9
 1	Google News Français	1	fr	10
-1	Organisation mondiale de la Santé	1	fr	11
-1	WHO Русский	1	ru	13
+1	Organisation mondiale de la Santé	1		11
+1	WHO Русский	1		13
 1	ProMED MBDS	1		15
 1	世界卫生组织 (WHO ZH)	1		16
-1	Google 资讯	1		17
+1	Google 资讯	1	zh	17
 1	ProMED Français	1	fr	18
-1	Wildlife Disease Node	1	en	19
-1	HM Community News Reports	1	en	22
-1	ProMED Anglophone Africa	1	en	24
-1	Twitter	1	en	25
+1	Wildlife Disease Node	1		19
+1	HM Community News Reports	1		22
+1	ProMED Anglophone Africa	1		24
+1	Twitter	1		25
 1	ProMED Português	1	pt	26
 1	Google News Português	1	pt	28
 1	World Org. for Animal Health	1		30
@@ -24,10 +24,10 @@
 1	Org. Mundial de Sanidad Animal	1		32
 1	Org. Mondial de la Santé Animale	1		33
 1	Eyewitness Reports	1		34
-1	موقع منظمة الصحة العالمي (WHO AR)	1	ar	35
+1	موقع منظمة الصحة العالمي (WHO AR)	1		35
 1	GeoSentinel	1		36
-1	Baidu 新闻	1		62
-1	SOSO资讯	1		63
+1	Baidu 新闻	1	zh	62
+1	SOSO资讯	1	zh	63
 1	Arabic RSS	1	ar	70
 1	Local Media Surveillance	1		75
 1	Food and Agriculture Org	1		77
@@ -37,28 +37,30 @@
 1	Ministry of Health Sites French	1	fr	107
 1	Ministry of Health Sites Portuguese	1	pt	108
 1	Ministry of Health Sites Russian	1	ru	109
-1	Ministry of Health Sites Chinese	1		110
+1	Ministry of Health Sites Chinese	1	zh	110
 1	Ministry of Health Sites Arabic	1	ar	111
 1	Ministry of Health Sites German	1	de	112
 1	Ministry of Health Sites Italian	1	it	113
-1	Ministry of Health Sites Korean	1	ko	114
+1	Ministry of Health Sites Korean	1	kr	114
 1	Google News Vietnamese	1	vi	115
 1	Google News Japanese	1	ja	117
-1	Google News Bahasa	1		121
+1	Google News Bahasa	1	id	121
 1	Ministry of Health Sites Japanese	1	ja	129
-1	Ministry of Health Sites Bahasa	1		133
-1	Ministry of Health Sites Twitter	1	en	134
+1	Ministry of Health Sites Bahasa	1	id	133
+1	Ministry of Health Sites Twitter	1		134
 1	Ministry of Health Sites Twitter Spanish	1	es	135
 1	Ministry of Health Sites Twitter French	1	fr	136
 1	Ministry of Health Sites Twitter Arabic	1	ar	137
 1	Ministry of Health Sites Twitter Japanese	1	ja	138
-1	Ministry of Health Sites Twitter Korean	1	ko	139
+1	Ministry of Health Sites Twitter Korean	1	kr	139
 1	Ministry of Health Sites Twitter Portuguese	1	pt	140
-1	Ministry of Health Sites Twitter Russian	1	ru	141
-1	Ministry of Health Sites Facebook	1	en	142
+1	Ministry of Health Sites Twitter Russian	1		141
+1	Ministry of Health Sites Facebook	1		142
 1	Ministry of Health Sites Facebook Spanish	1	es	143
 1	Ministry of Health Sites Facebook Arabic	1	ar	144
-1	Ministry of Health Sites Facebook Korean	1	ko	145
+1	Ministry of Health Sites Facebook Korean	1	kr	145
 1	Ministry of Health Sites Facebook Portuguese	1	pt	146
-1	HM Community News Reports ZH	1		153
-1	Francophone News Agencies RSS Feed	1	fr	157
+1	HM Community News Reports ZH	1	zh	153
+1	Francophone News Agencies RSS Feed	1		157
+1	Google News Русский	1	ru	14
+1	Google Meningitis Italian	1	it	55

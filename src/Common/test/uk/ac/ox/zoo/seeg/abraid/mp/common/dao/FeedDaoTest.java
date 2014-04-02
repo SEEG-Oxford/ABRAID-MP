@@ -63,6 +63,6 @@ public class FeedDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getFeedsByProvenanceName() {
         List<Feed> feeds = feedDao.getByProvenanceName(ProvenanceNames.HEALTHMAP);
-        assertThat(feeds).hasSize(64);
+        assertThat(feeds).hasSize(66);
     }
 }

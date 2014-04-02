@@ -393,3 +393,4 @@
 393		Zika	SINGLE			
 394		Zygomycosis	SINGLE			
 395		Schistosomiasis	MICROCLUSTER	Schistosomiases	Schistosomiases	Schistosomiasis
+396		Prions	MICROCLUSTER			

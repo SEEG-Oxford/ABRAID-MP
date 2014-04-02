@@ -76,6 +76,6 @@ public class HealthMapDiseaseDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllHealthMapDiseases() {
         List<HealthMapDisease> healthMapDiseases = healthMapDiseaseDao.getAll();
-        assertThat(healthMapDiseases).hasSize(261);
+        assertThat(healthMapDiseases).hasSize(273);
     }
 }

@@ -31,6 +31,7 @@
 34	Diarrhea	30
 35	Diphtheria	92
 36	Diphyllobothriasis	93
+37	Dracunculiasis	96
 38	Dysentery	218
 39	E. coli	117
 40	Eastern Equine Encephalitis	97
@@ -38,10 +39,12 @@
 42	Echinococcosis	57
 43	Elephantiasis	218
 44	Encephalitis	384
+45	Enterobiasis	109
 47	Fascioliasis	118
 48	Fasciolopsiasis	119
 49	Filariasis	120
 50	Foodborne Illness	218
+51	Free Living Amoeba	10
 52	Giardiasis	131
 53	Glanders	132
 54	Gnathostomiasis	133
@@ -52,6 +55,7 @@
 59	H. pylori	29
 60	Hepatitis	218
 61	Herpes	149
+62	Herpes Zoster	150
 63	Histoplasmosis	152
 64	Hookworm	157
 65	HPV	159
@@ -59,6 +63,7 @@
 67	Influenza	165
 68	Avian Influenza	379
 69	Isosporiasis	171
+71	Kuru	396
 72	Lassa Fever	186
 73	Legionnaires'	187
 74	Leishmaniasis	188
@@ -72,6 +77,7 @@
 82	Measles	210
 83	Melioidosis	211
 84	Meningitis	218
+85	Meningococcemia	67
 86	Metagonimiasis	215
 87	MRSA	158
 88	Monkeypox	220
@@ -81,6 +87,7 @@
 92	Myiasis	230
 93	Norovirus	128
 94	Hospital-Related Infection	158
+95	Onchocerciasis	240
 96	Otitis media	248
 97	Parotitis	338
 98	Lice	258
@@ -91,11 +98,13 @@
 103	Pneumococcal Pneumonia	275
 104	Pneumonia	218
 105	Polio	277
+106	Prion	396
 107	Chlamydia	61
 108	Q Fever	284
 109	Rabies	286
 110	Respiratory Syncytial Virus	290
 111	Rheumatic Fever	294
+112	Ricin	
 113	Typhus	368
 114	River Blindness	240
 115	Rocky Mountain Spotted Fever	304
@@ -128,15 +137,18 @@
 145	Tularemia	362
 146	Valley Fever	372
 147	Venezuelan Equine Encephalitis	374
+149	Viral Encephalitis	384
 150	Gastroenteritis	218
 151	Hemorrhagic Fever	383
 152	Viral Meningitis	212
+153	Viral Pneumonia	382
 154	West Nile Virus	386
 155	Western Equine Encephalitis	387
 156	Yellow Fever	391
 157	Newcastle Disease	376
 158	Crimean-Congo Hemorrhagic Fever	79
 159	Equine Infectious Anemia	376
+160	Strep Group B	106
 161	Vibrio parahaemolyticus	377
 162	Undiagnosed	
 163	LGV	201
