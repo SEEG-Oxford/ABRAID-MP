@@ -29,9 +29,11 @@
             </p>
         </form>
     </@security.authorize>
+    <@security.authorize ifAnyGranted="ROLE_USER">
     <div id="counterDiv">
         You have validated<div id="counter" data-bind="counter: reviewCount"></div>occurrence<span data-bind="if: reviewCount() != 1">s</span> for this disease
     </div>
+    </@security.authorize>
 </div>
 
 <script type="text/html" id="no-selected-point-template">
