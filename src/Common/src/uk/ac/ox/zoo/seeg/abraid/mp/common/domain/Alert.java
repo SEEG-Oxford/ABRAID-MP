@@ -27,7 +27,7 @@ public class Alert {
 
     // The disease.
     @ManyToOne
-    @JoinColumn(name = "feed_id")
+    @JoinColumn(name = "feed_id", nullable = false)
     private Feed feed;
 
     // The title of the alert.

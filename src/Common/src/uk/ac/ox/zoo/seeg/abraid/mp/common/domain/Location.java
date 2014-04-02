@@ -35,7 +35,7 @@ public class Location {
     private String name;
 
     // The location point. This can be a precise location, or the centroid of an administrative unit or country.
-    @Column
+    @Column(nullable = false)
     @Type(type = "org.hibernate.spatial.GeometryType")
     private Point geom;
 

@@ -21,7 +21,7 @@ public class HealthMapDisease {
     private Long id;
 
     // The disease name.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     // The corresponding disease group as defined by SEEG.

@@ -23,8 +23,12 @@ import javax.persistence.Table;
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
-                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId" +
-                        " and id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where" +
+                query = "from DiseaseOccurrence as d" +
+                        " inner join fetch d.location" +
+                        " inner join fetch d.alert" +
+                        " inner join fetch d.alert.feed" +
+                        " where d.diseaseGroup.id=:diseaseGroupId" +
+                        " and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where" +
                         " expert.id=:expertId)"
         )
 })
@@ -39,19 +43,20 @@ public class DiseaseOccurrence {
     // The disease group that occurred.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "disease_group_id")
+    @JoinColumn(name = "disease_group_id", nullable = false)
+    @Fetch(FetchMode.JOIN)
     private DiseaseGroup diseaseGroup;
 
     // The location of this occurrence.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
     // The alert containing this occurrence.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "alert_id")
+    @JoinColumn(name = "alert_id", nullable = false)
     private Alert alert;
 
     // The database row creation date.

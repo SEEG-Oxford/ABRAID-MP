@@ -26,7 +26,7 @@ public class Provenance {
     private Integer id;
 
     // The name of the provenance.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     // The default weighting of feeds of this provenance. Used when creating a new feed.

@@ -16,7 +16,7 @@ public class GeoName {
     private Integer id;
 
     // The GeoNames feature code for this ID.
-    @Column(name = "feature_code")
+    @Column(name = "feature_code", nullable = false)
     private String featureCode;
 
     public GeoName() {

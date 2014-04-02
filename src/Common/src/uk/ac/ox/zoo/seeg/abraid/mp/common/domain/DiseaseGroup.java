@@ -33,11 +33,11 @@ public class DiseaseGroup {
     private DiseaseGroup parentGroup;
 
     // The disease group name.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     // The disease group type.
-    @Column(name = "group_type")
+    @Column(name = "group_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private DiseaseGroupType groupType;
 
