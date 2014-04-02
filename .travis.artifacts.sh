@@ -23,7 +23,7 @@ if $TRAVIS_SECURE_ENV_VARS; then
         rm ~/.ssh/id_rsa_base64
         rm ~/.ssh/id_rsa
     fi
-    # TBD "deloy" tags to test server?
-    # TBD "deloy" master to test server? (check TRAVIS_PULL_REQUEST as well as TRAVIS_BRANCH)
+    # TBD "deploy" tags to test server?
+    # TBD "deploy" master to test server? (check TRAVIS_PULL_REQUEST as well as TRAVIS_BRANCH)
 fi
 
