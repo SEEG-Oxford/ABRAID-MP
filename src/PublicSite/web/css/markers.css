@@ -21,7 +21,6 @@
 .marker-cluster span {
     line-height: 30px;
 }
-
 .marker-question div {
     background-color: #bb619b;
     opacity: 0.8;
@@ -36,7 +35,6 @@
 .marker-question span {
     line-height: 20px;
 }
-
 .marker-question-selected div {
     background-color: #9e1e71;
     width: 26px;

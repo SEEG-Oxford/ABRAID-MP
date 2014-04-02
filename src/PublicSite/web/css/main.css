@@ -3,12 +3,12 @@
  * Copyright (c) 2014 University of Oxford
  */
 
-html,body
-{
+html,body {
     height:100%;
+    min-height:800px;
+    min-width:1000px;
 }
-#common
-{
+#common {
     padding-top:50px;       /* Header height */
     padding-bottom:30px;    /* Footer height */
     min-height: 100%;
@@ -16,51 +16,31 @@ html,body
     margin: 0 auto -30px;
     overflow:auto;
 }
-.navbar-right div
-{
+.navbar-right div {
     padding-top:15px;
     padding-left:15px;
     color:rgb(153, 153, 153);
 }
-.footer
-{
-    position: relative;
-    margin-top: -30px;
-    height: 30px;
-    clear:both;
-    color:rgb(153, 153, 153);
-    background-color:rgb(51, 51, 51);
+.navbar-fixed-bottom {
+    min-height:30px;
 }
-.footer .container
-{
-    padding-top:5px;
+.navbar-fixed-bottom p {
+    line-height:30px;
+    margin:auto;
 }
 .navbar-right p,
-.footer > .container > .links > a,
-.footer > .container > .links > p
-{
+#links > a,
+#links > p {
     color:rgb(153, 153, 153);
     display:inline;
 }
-.footer > .container > .links > a:link a:visited {
+#links > a:link a:visited {
     color:rgb(153, 153, 153);
     background-color: rgb(51, 51, 51);
     text-decoration:none;
 }
-.footer > .container > .links > a:hover {
+#links > a:hover {
     color: #ffffff;
     background-color: rgb(51, 51, 51);
     text-decoration:none;
-}
-.copyright
-{
-    float: right;
-}
-.copyright p
-{
-    margin:0;
-}
-.links
-{
-    float: left;
 }
