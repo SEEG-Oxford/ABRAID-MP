@@ -11,3 +11,4 @@ build.log
 lib
 lib-local
 db/database.properties
+artifacts
