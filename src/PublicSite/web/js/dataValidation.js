@@ -30,6 +30,10 @@ var DataValidationViewModels = (function() {
         }, this);
     };
 
+    function createUrl(langPair, summary) {
+        return "http://translate.google.com/?" + "langpair=" + langPair + "&" + "text=" + encodeURIComponent(summary);
+    }
+
     var SelectedPointViewModel = function () {
         this.selectedPoint = ko.observable(null);
         this.hasSelectedPoint = ko.computed(function () {
@@ -38,6 +42,21 @@ var DataValidationViewModels = (function() {
         this.clearSelectedPoint = function () {
             this.selectedPoint(null);
         };
+        this.translationUrl = ko.computed(function () {
+            if (this.hasSelectedPoint()) {
+                var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
+                var summary = this.selectedPoint().properties.alert.summary;
+                var url = createUrl(langPair, summary);
+
+                // If the encoded URL is too long, remove the last word from the summary
+                while (url.length > 2048) {
+                    var lastIndex = summary.lastIndexOf(" ");
+                    summary = summary.substring(0, lastIndex);
+                    url = createUrl(langPair, summary);
+                }
+                return url;
+            }
+        }, this);
         this.submitReview = function(review) {
             return function () {
                 var diseaseId = DataValidationViewModels.layerSelectorViewModel.selectedDisease().id;
@@ -83,7 +102,3 @@ var DataValidationViewModels = (function() {
         counterViewModel: counterViewModel
     }
 }());
-
-
-
-

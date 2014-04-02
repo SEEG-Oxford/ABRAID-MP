@@ -8,22 +8,24 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonAlert {
+
+public final class GeoJsonAlert {
     private String title;
     private String summary;
     private String url;
     private String feedName;
+    private String feedLanguage;
     private DateTime publicationDate;
 
-    public GeoJsonAlert() {
-    }
+    public GeoJsonAlert() { }
 
     public GeoJsonAlert(Alert alert) {
-        setTitle(alert.getTitle());
-        setSummary(alert.getSummary());
-        setUrl(alert.getUrl());
-        setFeedName(alert.getFeed().getName());
-        setPublicationDate(alert.getPublicationDate());
+        this.title = alert.getTitle();
+        this.summary = alert.getSummary();
+        this.url = alert.getUrl();
+        this.feedName = alert.getFeed().getName();
+        this.feedLanguage = alert.getFeed().getLanguage();
+        this.publicationDate = alert.getPublicationDate();
     }
 
     public String getTitle() {
@@ -40,6 +42,10 @@ public class GeoJsonAlert {
 
     public String getFeedName() {
         return feedName;
+    }
+
+    public String getFeedLanguage() {
+        return feedLanguage;
     }
 
     public DateTime getPublicationDate() {

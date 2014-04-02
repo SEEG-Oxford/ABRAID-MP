@@ -107,7 +107,7 @@
 121	SARS	313
 122	Scabies	314
 123	Scarlet Fever	315
-124	Schistosomiasis	352
+124	Schistosomiasis	395
 125	Sexually Transmitted Infection	218
 126	Shigellosis	325
 127	Shingles	150

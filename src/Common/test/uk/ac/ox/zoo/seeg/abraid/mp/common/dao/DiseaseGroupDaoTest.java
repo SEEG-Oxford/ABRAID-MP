@@ -115,6 +115,6 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getAll();
-        assertThat(diseaseGroups).hasSize(394);
+        assertThat(diseaseGroups).hasSize(395);
     }
 }

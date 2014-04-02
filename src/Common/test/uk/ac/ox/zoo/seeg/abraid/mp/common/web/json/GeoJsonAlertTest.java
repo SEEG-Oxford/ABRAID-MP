@@ -19,13 +19,15 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
         String expectedTitle = "foo1";
         String expectedSummary = "foo2";
         String expectedFeedName = "foo3";
-        String expectedUrl = "foo4";
+        String expectedFeedLanguage = "foo4";
+        String expectedUrl = "foo5";
         DateTime expectedPublicationDate = DateTime.now();
 
         Alert alert = defaultAlert();
         when(alert.getTitle()).thenReturn(expectedTitle);
         when(alert.getSummary()).thenReturn(expectedSummary);
         when(alert.getFeed().getName()).thenReturn(expectedFeedName);
+        when(alert.getFeed().getLanguage()).thenReturn(expectedFeedLanguage);
         when(alert.getUrl()).thenReturn(expectedUrl);
         when(alert.getPublicationDate()).thenReturn(expectedPublicationDate);
 
@@ -34,6 +36,7 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
 
         // Assert
         assertThat(result.getFeedName()).isEqualTo(expectedFeedName);
+        assertThat(result.getFeedLanguage()).isEqualTo(expectedFeedLanguage);
         assertThat(result.getUrl()).isEqualTo(expectedUrl);
         assertThat(result.getPublicationDate()).isEqualTo(expectedPublicationDate);
         assertThat(result.getSummary()).isEqualTo(expectedSummary);
