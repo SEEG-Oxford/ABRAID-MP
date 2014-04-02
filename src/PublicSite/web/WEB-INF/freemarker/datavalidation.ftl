@@ -8,13 +8,15 @@
 <#assign endOfHeadContent>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
-    <link rel="stylesheet" href="<@spring.url "/css/MarkerCluster.Default.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </#assign>
 
 <#assign endOfBodyScriptContent>
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
+    var loggedIn = ${userLoggedIn?c};
     var diseaseInterests = [
         <#list diseaseInterestsSet as pair>
             {
@@ -35,18 +37,25 @@
     <script src="<@spring.url "/js/dataValidation.js"/>"></script>
     <script src="<@spring.url "/js/leafletMap.js"/>"></script>
     <script src="<@spring.url "/js/flipclock.min.js"/>"></script>
+    <script src="<@spring.url "/js/login.js" />"></script>
 </#assign>
 
 <@c.page title="ABRAID MP" endOfHead=endOfHeadContent endOfBody=endOfBodyContent endOfBodyScript=endOfBodyScriptContent>
+<div id="dataValidation">
     <#include "datavalidationsidepanel.ftl"/>
 
     <div id="layerSelector">
-            <h4>You are validating
+        <h4>You are validating
             <select data-bind="options: validationTypes, value: selectedType"></select>
         of
-            <select data-bind="options: diseaseInterests, optionsText: 'name', value: selectedDisease"></select>
+            <select data-bind="foreach: groups, value: selectedDisease">
+                <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
+                    <option data-bind="text: name, option: $data"></option>
+                </optgroup>
+            </select>
         </h4>
     </div>
 
     <div id="map"></div>
+</div>
 </@c.page>

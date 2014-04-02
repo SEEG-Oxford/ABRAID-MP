@@ -42,7 +42,6 @@
             ${endOfBodyScript}
         </script>
         ${endOfBody}
-        <script src="<@spring.url "/js/login.js" />"></script>
     </body>
 </html>
 </#macro>

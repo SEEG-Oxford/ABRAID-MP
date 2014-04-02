@@ -31,14 +31,6 @@
                     <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
                 </ul>
             </@security.authorize>
-            <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-                <form class="navbar-form navbar-right">
-                    <p data-bind="text: formAlert"></p>
-                    <input type="text" placeholder="Email address" data-bind="value: formUsername">
-                    <input type="password" placeholder="Password" data-bind="value: formPassword">
-                    <input type="submit" class="btn btn-primary" value="Log in" data-bind="click: attemptFormLogin">
-                </form>
-            </@security.authorize>
         </div> <!--/.navbar-collapse -->
     </div> <!--/.container -->
 </div>

@@ -14,4 +14,14 @@ public class DiseaseGroupDaoImpl extends AbstractDao<DiseaseGroup, Integer> impl
     public DiseaseGroupDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
+    /**
+     * Gets a disease group by its name.
+     * @param name The name of the disease.
+     * @return The disease group with the specified name, or null if not found.
+     */
+    @Override
+    public DiseaseGroup getByName(String name) {
+        return uniqueResultNamedQuery("getDiseaseGroupByName", "name", name);
+    }
 }

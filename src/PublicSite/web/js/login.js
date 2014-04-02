@@ -9,10 +9,10 @@
         var formUsername = ko.observable("");
         var formPassword = ko.observable("");
         var formAlert = ko.observable("");
-        var attemptFormLogin = function() {
+        var attemptFormLogin = function () {
             formAlert("");
             if (formUsername() !== "" && formPassword() !== "") {
-                $.post(baseUrl + "j_spring_security_check", {j_username: formUsername() , j_password: formPassword()})
+                $.post(baseUrl + "j_spring_security_check", {j_username: formUsername(), j_password: formPassword()})
                     .done(function () {
                         // Status 2xx
                         location.reload();
@@ -24,7 +24,7 @@
             } else {
                 formAlert("Enter username and/or password");
             }
-        }
+        };
 
         return {
             formUsername: formUsername,
@@ -35,7 +35,8 @@
     }());
 
     $(document).ready(function () {
-        ko.applyBindings(logInViewModel, $(".navbar")[0]);
+        if (!loggedIn) {
+            ko.applyBindings(logInViewModel, $("#logIn")[0]);
+        }
     });
 }());
-

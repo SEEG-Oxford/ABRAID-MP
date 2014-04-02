@@ -57,24 +57,42 @@ var LeafletMap = (function () {
     // Change the point's colour and size when clicked
     function selectFeature(marker) {
         // First, reset the style of all other points on layer, so only one point is animated as selected at a time
-        diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
-        marker.setStyle({
-            stroke: false,
-            fillColor: highlightColour,
-            radius: 13
-        });
+        resetLayerStyle();
+        if (loggedIn) {
+            marker.setStyle({
+                stroke: false,
+                fillColor: highlightColour,
+                radius: 13
+            });
+        } else {
+            marker._icon.classList.add('marker-question-selected');
+        }
     }
 
     // Define a circle, instead of the default leaflet marker, with listeners for mouse events
     function diseaseOccurrenceLayerPoint(feature, latlng) {
-        return L.circleMarker(latlng).on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
+        var marker;
+        if (loggedIn) {
+            marker = L.circleMarker(latlng).on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight
+            });
+        } else {
+            marker = L.marker(latlng, { icon:
+                L.divIcon({
+                    html: '<div><span>?</span></div>',
+                    className: 'marker-question',
+                    iconAnchor: [10, 10]
+                })
+            });
+        }
+        marker.on({
             click: function () {
                 DataValidationViewModels.selectedPointViewModel.selectedPoint(feature);
                 selectFeature(this);
             }
         });
+        return marker;
     }
 
     // Define a cluster icon, so that nearby occurrences are grouped into one marker.
@@ -94,7 +112,7 @@ var LeafletMap = (function () {
     var diseaseOccurrenceLayer = L.geoJson([], {
         pointToLayer: diseaseOccurrenceLayerPoint,
         style: diseaseOccurrenceLayerStyle,
-        onEachFeature: function(feature, layer) {
+        onEachFeature: function (feature, layer) {
             layer.on('add', function () {
                 layerMap[feature.id] = layer;
             })
@@ -114,11 +132,24 @@ var LeafletMap = (function () {
         iconCreateFunction: clusterLayerPoint
     }).addLayer(diseaseOccurrenceLayer).addTo(map);
 
+
+    // Reset the style of all markers on diseaseOccurrenceLayer
+    function resetLayerStyle() {
+        if (loggedIn) {
+            diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
+        } else {
+            Object.keys(layerMap).forEach(function (key) {
+                layerMap[key]._icon.classList.remove('marker-question-selected');
+            });
+        }
+    }
+
     // Reset to default style when a point is unselected (by clicking anywhere else on the map)
     function resetSelectedPoint() {
         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
-        diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
+        resetLayerStyle();
     }
+
     map.on('click', resetSelectedPoint);
     clusterLayer.on('clusterclick', resetSelectedPoint);
 
@@ -126,8 +157,14 @@ var LeafletMap = (function () {
     function switchDiseaseLayer(diseaseId) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.clearLayers();
-        $.getJSON(baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences', function (featureCollection) {
-            if(featureCollection.features.length != 0) {
+        var geoJsonRequestUrl = "";
+        if (loggedIn) {
+            geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
+        } else {
+            geoJsonRequestUrl = baseUrl + 'static/defaultDiseaseOccurrences.json';
+        }
+        $.getJSON(geoJsonRequestUrl, function (featureCollection) {
+            if (featureCollection.features.length != 0) {
                 clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
                 map.fitBounds(diseaseOccurrenceLayer.getBounds());
             } else {
