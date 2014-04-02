@@ -88,8 +88,8 @@
 }
 #logIn
 {
-    position:absolute;
-    bottom:30px;
+    position:relative;
+    bottom:150px;
 }
 #logIn p
 {
@@ -99,11 +99,10 @@
 }
 #counterDiv
 {
-    height:150px;
-    position:absolute;
-    bottom:30px;
-    right:50px;
+    position:relative;
+    margin:0 auto;
     text-align:center;
+    bottom:150px;
 }
 #counter
 {
