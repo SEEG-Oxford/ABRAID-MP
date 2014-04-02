@@ -34,7 +34,7 @@ import java.util.Map;
 public class DataValidationController {
     /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
-    /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json */
+    /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_DISEASE_NAME = "Dengue";
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;

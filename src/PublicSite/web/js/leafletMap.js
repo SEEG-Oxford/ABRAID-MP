@@ -82,7 +82,7 @@ var LeafletMap = (function () {
                 L.divIcon({
                     html: '<div><span>?</span></div>',
                     className: 'marker-question',
-                    iconAnchor: [10,10]
+                    iconAnchor: [10, 10]
                 })
             });
         }
@@ -112,7 +112,7 @@ var LeafletMap = (function () {
     var diseaseOccurrenceLayer = L.geoJson([], {
         pointToLayer: diseaseOccurrenceLayerPoint,
         style: diseaseOccurrenceLayerStyle,
-        onEachFeature: function(feature, layer) {
+        onEachFeature: function (feature, layer) {
             layer.on('add', function () {
                 layerMap[feature.id] = layer;
             })
@@ -164,7 +164,7 @@ var LeafletMap = (function () {
             geoJsonRequestUrl = baseUrl + 'static/defaultDiseaseOccurrences.json';
         }
         $.getJSON(geoJsonRequestUrl, function (featureCollection) {
-            if(featureCollection.features.length != 0) {
+            if (featureCollection.features.length != 0) {
                 clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
                 map.fitBounds(diseaseOccurrenceLayer.getBounds());
             } else {
