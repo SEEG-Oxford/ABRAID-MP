@@ -222,6 +222,7 @@
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>
@@ -245,6 +246,7 @@
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>
@@ -263,6 +265,9 @@
 
   <target name="test.coverage" depends="jacoco.agent, run.tests"> <!-- Using both unit and integration tests in coverage metric -->
     <jacoco:report>
+      <options>
+        <sourcedirectives/>
+      </options>
       <executiondata>
         <file file="${report.out.dir}/coverage/jacoco.exec"/>
       </executiondata>

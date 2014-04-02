@@ -1,261 +1,261 @@
-1	African Trypanosomiasis	38
-2	HIV/AIDS	29
-3	Amebiasis	
-4	Anthrax	
-5	Arenavirus	
-6	Ascariasis	30
-7	Aspergillosis	
-8	Babesiosis	
-9	Bacterial Meningitis	
-10	Blastomycosis	
-11	Botulism	
-12	BSE	
-13	Brucellosis	
-14	Campylobacter	
-15	Thrush	
-16	Cat Scratch Fever	
-17	Chagas	39
-18	Chicken Pox	
-19	Chikungunya	
-20	Cholera	28
-21	Liver Fluke	
-22	C. difficile	
-25	Cold	
-26	Conjunctivitis	
-27	CJD	
-28	Cryptococcosis	
-29	Cryptosporidium	
-31	Cysticercosis	
-32	Cytomegalovirus	
-33	Dengue	21
-34	Diarrhea	
-35	Diphtheria	
-36	Diphyllobothriasis	
-38	Dysentery	
-39	E. coli	
-40	Eastern Equine Encephalitis	
-41	Ebola	
-42	Echinococcosis	
-43	Elephantiasis	
-44	Encephalitis	
-47	Fascioliasis	
-48	Fasciolopsiasis	
-49	Filariasis	10
-50	Foodborne Illness	
-52	Giardiasis	
-53	Glanders	
-54	Gnathostomiasis	
-55	Gonorrhea	
-56	Guinea Worm	33
-57	Foot and Mouth	
-58	Hantavirus	
-59	H. pylori	
-60	Hepatitis	
-61	Herpes	
-63	Histoplasmosis	
-64	Hookworm	31
-65	HPV	
-66	Hymenolepiasis	
-67	Influenza	
-68	Avian Influenza	
-69	Isosporiasis	
-72	Lassa Fever	
-73	Legionnaires'	
-74	Leishmaniasis	13
-75	Leprosy	
-76	Leptospirosis	
-77	Listeriosis	
-78	Lyme Disease	
-79	Machupo Virus	
-80	Malaria	14
-81	Marburg Fever	
-82	Measles	
-83	Melioidosis	
-84	Meningitis	
-86	Metagonimiasis	
-87	MRSA	
-88	Monkeypox	
-89	Mononucleosis	
-90	Mucormycosis	
-91	Mumps	
-92	Myiasis	
-93	Norovirus	
-94	Hospital-Related Infection	
-96	Otitis media	
-97	Parotitis	
-98	Lice	
-99	Pelvic Inflammatory Disease	
-100	Whooping Cough	
-101	Pinworm	
-102	Plague	
-103	Pneumococcal Pneumonia	
-104	Pneumonia	
-105	Polio	51
-107	Chlamydia	
-108	Q Fever	
-109	Rabies	
-110	Respiratory Syncytial Virus	
-111	Rheumatic Fever	
-113	Typhus	
-114	River Blindness	34
-115	Rocky Mountain Spotted Fever	
-116	Roseola	
-117	Ross River Virus	
-118	Rubella	
-119	Salmonella	
-120	Typhoid	
-121	SARS	
-122	Scabies	
-123	Scarlet Fever	
-124	Schistosomiasis	19
-125	Sexually Transmitted Infection	
-126	Shigellosis	
-127	Shingles	
-128	Smallpox-Related	
-129	Staph	
-131	Strep	
-132	Syphilis	
-133	Taeniasis	
-134	Tetanus	
-135	Foot Fungus	
-137	Toxocariasis	
-138	Toxoplasmosis	
-139	Trachoma	
-141	Trichinosis	
-142	Trichuriasis	32
-143	Trypanosomiasis	20
-144	Tuberculosis	
-145	Tularemia	
-146	Valley Fever	
-147	Venezuelan Equine Encephalitis	
-150	Gastroenteritis	
-151	Hemorrhagic Fever	
-152	Viral Meningitis	
-154	West Nile Virus	25
-155	Western Equine Encephalitis	
-156	Yellow Fever	26
-157	Newcastle Disease	
-158	Crimean-Congo Hemorrhagic Fever	
-159	Equine Infectious Anemia	
-161	Vibrio parahaemolyticus	
+1	African Trypanosomiasis	359
+2	HIV/AIDS	154
+3	Amebiasis	12
+4	Anthrax	19
+5	Arenavirus	20
+6	Ascariasis	22
+7	Aspergillosis	23
+8	Babesiosis	26
+9	Bacterial Meningitis	214
+10	Blastomycosis	41
+11	Botulism	43
+12	BSE	376
+13	Brucellosis	48
+14	Campylobacter	52
+15	Thrush	53
+16	Cat Scratch Fever	35
+17	Chagas	360
+18	Chicken Pox	371
+19	Chikungunya	60
+20	Cholera	64
+21	Liver Fluke	352
+22	C. difficile	71
+25	Cold	76
+26	Conjunctivitis	77
+27	CJD	78
+28	Cryptococcosis	80
+29	Cryptosporidium	81
+31	Cysticercosis	84
+32	Cytomegalovirus	85
+33	Dengue	87
+34	Diarrhea	30
+35	Diphtheria	92
+36	Diphyllobothriasis	93
+38	Dysentery	218
+39	E. coli	117
+40	Eastern Equine Encephalitis	97
+41	Ebola	98
+42	Echinococcosis	57
+43	Elephantiasis	218
+44	Encephalitis	384
+47	Fascioliasis	118
+48	Fasciolopsiasis	119
+49	Filariasis	120
+50	Foodborne Illness	218
+52	Giardiasis	131
+53	Glanders	132
+54	Gnathostomiasis	133
+55	Gonorrhea	135
+56	Guinea Worm	96
+57	Foot and Mouth	376
+58	Hantavirus	49
+59	H. pylori	29
+60	Hepatitis	218
+61	Herpes	149
+63	Histoplasmosis	152
+64	Hookworm	157
+65	HPV	159
+66	Hymenolepiasis	57
+67	Influenza	165
+68	Avian Influenza	379
+69	Isosporiasis	171
+72	Lassa Fever	186
+73	Legionnaires'	187
+74	Leishmaniasis	188
+75	Leprosy	192
+76	Leptospirosis	193
+77	Listeriosis	194
+78	Lyme Disease	199
+79	Machupo Virus	42
+80	Malaria	202
+81	Marburg Fever	208
+82	Measles	210
+83	Melioidosis	211
+84	Meningitis	218
+86	Metagonimiasis	215
+87	MRSA	158
+88	Monkeypox	220
+89	Mononucleosis	164
+90	Mucormycosis	158
+91	Mumps	221
+92	Myiasis	230
+93	Norovirus	128
+94	Hospital-Related Infection	158
+96	Otitis media	248
+97	Parotitis	338
+98	Lice	258
+99	Pelvic Inflammatory Disease	218
+100	Whooping Cough	266
+101	Pinworm	109
+102	Plague	271
+103	Pneumococcal Pneumonia	275
+104	Pneumonia	218
+105	Polio	277
+107	Chlamydia	61
+108	Q Fever	284
+109	Rabies	286
+110	Respiratory Syncytial Virus	290
+111	Rheumatic Fever	294
+113	Typhus	368
+114	River Blindness	240
+115	Rocky Mountain Spotted Fever	304
+116	Roseola	305
+117	Ross River Virus	307
+118	Rubella	309
+119	Salmonella	310
+120	Typhoid	364
+121	SARS	313
+122	Scabies	314
+123	Scarlet Fever	315
+124	Schistosomiasis	395
+125	Sexually Transmitted Infection	218
+126	Shigellosis	325
+127	Shingles	150
+128	Smallpox-Related	328
+129	Staph	114
+131	Strep	106
+132	Syphilis	340
+133	Taeniasis	341
+134	Tetanus	343
+135	Foot Fungus	218
+137	Toxocariasis	349
+138	Toxoplasmosis	350
+139	Trachoma	351
+141	Trichinosis	353
+142	Trichuriasis	356
+143	Trypanosomiasis	358
+144	Tuberculosis	361
+145	Tularemia	362
+146	Valley Fever	372
+147	Venezuelan Equine Encephalitis	374
+150	Gastroenteritis	218
+151	Hemorrhagic Fever	383
+152	Viral Meningitis	212
+154	West Nile Virus	386
+155	Western Equine Encephalitis	387
+156	Yellow Fever	391
+157	Newcastle Disease	376
+158	Crimean-Congo Hemorrhagic Fever	79
+159	Equine Infectious Anemia	376
+161	Vibrio parahaemolyticus	377
 162	Undiagnosed	
-163	LGV	
-165	Acinetobacter baumannii	
-166	Mycobacteria, non-TB	
-167	Classical Swine Fever	
-168	Sepsis	
-169	Hand, Foot and Mouth Disease	
-170	Bluetongue	
-171	P. aeruginosa	
-172	Human Bocavirus	
-173	Equine Herpes Virus	
+163	LGV	201
+165	Acinetobacter baumannii	158
+166	Mycobacteria, non-TB	218
+167	Classical Swine Fever	376
+168	Sepsis	218
+169	Hand, Foot and Mouth Disease	380
+170	Bluetongue	376
+171	P. aeruginosa	158
+172	Human Bocavirus	382
+173	Equine Herpes Virus	376
 174	Not Yet Classified	
-175	Rift Valley Fever	
+175	Rift Valley Fever	302
 176	Poisoning	
-177	Chronic Wasting Disease	
-178	Epizootic Hemorrhagic Disease	
-179	Strangles	
-180	Parvovirus	
-181	Pasteurellosis	
-182	Sheep/Goat Pox	
-183	Bovine Pleuropneumonia	
-184	Vesicular Stomatitis	
-185	Porcine Circovirus	
-186	Lumpy Skin Disease	
-187	Japanese Encephalitis	22
-188	Paragonimus	
-189	Rotavirus	
-190	Peste des petits ruminants	
-191	African Horse Sickness	
-192	Avian Cholera	
-193	Enterococcus	
-194	Scrapie	
-195	Vibrio vulnificus	
-196	Rash	
+177	Chronic Wasting Disease	376
+178	Epizootic Hemorrhagic Disease	376
+179	Strangles	376
+180	Parvovirus	257
+181	Pasteurellosis	376
+182	Sheep/Goat Pox	376
+183	Bovine Pleuropneumonia	376
+184	Vesicular Stomatitis	376
+185	Porcine Circovirus	376
+186	Lumpy Skin Disease	376
+187	Japanese Encephalitis	173
+188	Paragonimus	255
+189	Rotavirus	308
+190	Peste des petits ruminants	376
+191	African Horse Sickness	376
+192	Avian Cholera	376
+193	Enterococcus	158
+194	Scrapie	376
+195	Vibrio vulnificus	6
+196	Rash	218
 197	Pests	
 198	Soybean Rust	
-199	Other Animal Disease	
+199	Other Animal Disease	376
 200	Other Plant Disease	
-201	Coronavirus	
+201	Coronavirus	382
 202	Chronic/Non-Infectious Disease	
-203	Algae	
-204	Bronchitis/Bronchiolitis	
-205	Blue Ear	
-206	African Swine Fever	
-207	Bite	
-208	Vaccine Complication	
+203	Algae	8
+204	Bronchitis/Bronchiolitis	185
+205	Blue Ear	376
+206	African Swine Fever	376
+207	Bite	106
+208	Vaccine Complication	158
 209	Waterborne Illness	
-210	Equine Influenza	
-211	Adenovirus	
-212	Respiratory Illness	
-213	Enterovirus	
-214	Nipah/Hendra Virus	
-215	Tick-borne disease	
-216	Fever	
-217	Psittacosis	
+210	Equine Influenza	376
+211	Adenovirus	4
+212	Respiratory Illness	218
+213	Enterovirus	111
+214	Nipah/Hendra Virus	234
+215	Tick-borne disease	373
+216	Fever	218
+217	Psittacosis	245
 218	Environmental	
 219	Conflict	
-220	Flea-borne disease	
-221	Amoeba	
-222	H. influenzae	
-223	White nose syndrome	
-224	Swine Flu H1N1	
-225	Rickettsia	
-226	Bovine TB	
-227	Meningitis - HiB	
-228	Meningitis - Strep/Pneumoccocal	
-229	Meningitis - Neisseria	
-230	Gnathostoma	
-231	Anisakis	
-232	Bartonella	
-233	Paracoccidioidomycosis	
-234	Sporotrichosis	
+220	Flea-borne disease	218
+221	Amoeba	106
+222	H. influenzae	218
+223	White nose syndrome	376
+224	Swine Flu H1N1	165
+225	Rickettsia	300
+226	Bovine TB	376
+227	Meningitis - HiB	214
+228	Meningitis - Strep/Pneumoccocal	214
+229	Meningitis - Neisseria	214
+230	Gnathostoma	133
+231	Anisakis	18
+232	Bartonella	34
+233	Paracoccidioidomycosis	254
+234	Sporotrichosis	331
 235	Colitis	
-236	St. Louis Encephalitis	24
-237	Vibrio, noncholera	
-238	Relapsing Fever	
-239	Tick-borne Encephalitis	
-240	La Crosse Encephalitis	
+236	St. Louis Encephalitis	332
+237	Vibrio, noncholera	167
+238	Relapsing Fever	289
+239	Tick-borne Encephalitis	346
+240	La Crosse Encephalitis	51
 241	Paralytic Shellfish Poisoning	
-242	Animal Die-off	
-243	Hepatitis A	
-244	Hepatitis B	
-245	Hepatitis C	
-246	Hepatitis D	
-247	Hepatitis E	
-248	Antibiotic resistance	
+242	Animal Die-off	376
+243	Hepatitis A	141
+244	Hepatitis B	142
+245	Hepatitis C	143
+246	Hepatitis D	144
+247	Hepatitis E	145
+248	Antibiotic resistance	158
 249	Other Human Disease	
-250	Schmallenberg	
-251	Scrub Typhus	
-253	Murray Valley encephalitis 	23
-254	Feline panleukopenia virus	
-255	Ringworm	
-256	Canine distemper	
-257	Feline leukemia virus	
-258	Feline immunodeficiency virus	
-259	Canine Influenza	
-260	Feline infectious peritonitis	
-261	Helminths, miscellaneous	
-262	Protozoa, miscellaneous	
-263	Eosinophilia	
-264	Guillain Barre	
-265	HFM-Enterovirus71	
-266	HFM-CoxsackieA	
-267	Food-related toxin	
-268	Swine Flu H3N2	
-269	Kawasaki Disease	
-270	Fungal Meningitis	
-271	Avian Influenza H7N9	
-272	Klebsiella pneumoniae	
-273	Enterobacter cloacae	
-274	Serratia marcescens	
-275	Citrobacter freundii	
-276	Proteus mirabilis	
-277	Stenotrophomonas maltophilia	
-278	Burkholderia cepacia	
-279	Vancomycin Resistant Enterococci (VRE)	
-280	Clostridium perfringens enterotoxin (CPE)	
-281	Carbapenem-resistant enterobacteriaceae (CRE)	
-282	Zika virus	27
-283	Avian Influenza H5N1	
-284	Powassan virus	
+250	Schmallenberg	376
+251	Scrub Typhus	367
+253	Murray Valley encephalitis 	222
+254	Feline panleukopenia virus	376
+255	Ringworm	376
+256	Canine distemper	376
+257	Feline leukemia virus	376
+258	Feline immunodeficiency virus	376
+259	Canine Influenza	376
+260	Feline infectious peritonitis	376
+261	Helminths, miscellaneous	218
+262	Protozoa, miscellaneous	218
+263	Eosinophilia	218
+264	Guillain Barre	218
+265	HFM-Enterovirus71	381
+266	HFM-CoxsackieA	381
+267	Food-related toxin	30
+268	Swine Flu H3N2	165
+269	Kawasaki Disease	176
+270	Fungal Meningitis	126
+271	Avian Influenza H7N9	379
+272	Klebsiella pneumoniae	106
+273	Enterobacter cloacae	158
+274	Serratia marcescens	158
+275	Citrobacter freundii	158
+276	Proteus mirabilis	158
+277	Stenotrophomonas maltophilia	158
+278	Burkholderia cepacia	158
+279	Vancomycin Resistant Enterococci (VRE)	158
+280	Clostridium perfringens enterotoxin (CPE)	158
+281	Carbapenem-resistant enterobacteriaceae (CRE)	158
+282	Zika virus	393
+283	Avian Influenza H5N1	25
+284	Powassan virus	278

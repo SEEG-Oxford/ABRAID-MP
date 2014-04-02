@@ -29,10 +29,10 @@ import static org.mockito.Mockito.when;
  */
 public class GitSourceCodeManagerTest {
     @Rule
-    public TemporaryFolder workingDir = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
+    public TemporaryFolder workingDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Rule
-    public TemporaryFolder cacheDir = new TemporaryFolder(); // SUPPRESS CHECKSTYLE VisibilityModifier
+    public TemporaryFolder cacheDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
 
     @Test

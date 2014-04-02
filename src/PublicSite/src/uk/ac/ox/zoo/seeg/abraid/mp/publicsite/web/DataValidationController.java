@@ -16,6 +16,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
@@ -83,6 +85,7 @@ public class DataValidationController {
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer diseaseId) {

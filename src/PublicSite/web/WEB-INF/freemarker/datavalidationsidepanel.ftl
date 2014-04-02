@@ -61,8 +61,10 @@
         </li>
         <li><i class="fa fa-quote-left"></i></li>
         <li>
-            <div id="summary" data-bind="html: selectedPoint().properties.alert.summary"></div>
-            <a id="translationLink" data-bind="attr: {href: translationUrl}" target="_blank">View translation</a>
+            <div id="summary" data-bind="text: selectedPoint().properties.alert.summary"></div>
+            <div data-bind="if: selectedPoint().properties.alert.summary != null">
+                <a id="translationLink" data-bind="attr: {href: translationUrl}" target="_blank">View translation</a>
+            <div>
         </li>
         <li><i class="fa fa-quote-right"></i></li>
     </ul>

@@ -21,11 +21,11 @@ public class LocationDaoImpl extends AbstractDao<Location, Integer> implements L
 
     /**
      * Gets a location by GeoNames ID.
-     * @param geoNamesId The GeoNames ID.
+     * @param geoNameId The GeoNames ID.
      * @return The location, or null if not found.
      */
-    public Location getByGeoNamesId(int geoNamesId) {
-        return uniqueResultNamedQuery("getLocationByGeoNamesId", "geoNamesId", geoNamesId);
+    public Location getByGeoNameId(int geoNameId) {
+        return uniqueResultNamedQuery("getLocationByGeoNameId", "geoNameId", geoNameId);
     }
 
     /**

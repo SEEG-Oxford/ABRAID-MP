@@ -130,7 +130,7 @@ public class Expert {
         return createdDate;
     }
 
-    // CHECKSTYLE.OFF: AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -164,5 +164,5 @@ public class Expert {
         result = 31 * result + (diseaseGroups != null ? diseaseGroups.hashCode() : 0);
         return result;
     }
-    // CHECKSTYLE.ON
+    ///CHECKSTYLE:ON
 }

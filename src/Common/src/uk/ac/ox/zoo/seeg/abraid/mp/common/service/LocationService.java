@@ -14,10 +14,10 @@ import java.util.Map;
 public interface LocationService {
     /**
      * Gets a location by GeoNames ID.
-     * @param geoNamesId The GeoNames ID.
+     * @param geoNameId The GeoNames ID.
      * @return The location with the specified GeoNames ID, or null if not found.
      */
-    Location getLocationByGeoNamesId(int geoNamesId);
+    Location getLocationByGeoNameId(int geoNameId);
 
     /**
      * Gets a list of locations that have the specified point and precision. This returns a list of locations as there
@@ -45,4 +45,17 @@ public interface LocationService {
      * @return A set of mappings.
      */
     Map<String, LocationPrecision> getGeoNamesLocationPrecisionMappings();
+
+    /**
+     * Gets a GeoName by ID.
+     * @param geoNameId The GeoNames ID.
+     * @return The GeoName, or null if not found.
+     */
+    GeoName getGeoNameById(int geoNameId);
+
+    /**
+     * Saves a GeoName.
+     * @param geoName The GeoName to save.
+     */
+    void save(GeoName geoName);
 }

@@ -75,9 +75,9 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("dry_run", dryRun);
         data.put("verbosity", 0);
         data.put("disease", "P.vivax");
-        data.put("model_version", "bbc934aefeabbd5579f65973a5aa90e180145176");
-        data.put("outbreak_file", "outbreakData.csv");
-        data.put("extent_file", "extentData.csv");
+        data.put("model_version", runConfiguration.getModelVersion());
+        data.put("outbreak_file", "data/outbreakData.csv");
+        data.put("extent_file", "data/extentData.csv");
         data.put("covariants", new String[] {"file1.csv", "file2.csv"});
         return data;
     }

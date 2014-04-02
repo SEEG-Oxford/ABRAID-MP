@@ -8,4 +8,4 @@ echo Starting Data Acquisition...
 cd `dirname $0`
 
 # Run the Data Acquisition main class, passing in any arguments provided to this script
-java -Dlog4j.configuration=file:log4j.properties -cp lib/* uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main $*
+java -Dlog4j.configuration=file:log4j.properties -cp "lib/*" uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main $*
