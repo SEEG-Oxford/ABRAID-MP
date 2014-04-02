@@ -7,6 +7,24 @@ jdk:
   - oraclejdk7
 env:
   - TERM=dumb
+  services:
+  - postgresql
+# Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
+# Note: need to be careful that the ivy-published version of common doesn't cache
+#cache:
+#  apt: true
+#  directories:
+#  - .ant/lib
+#  - .ivy2/cache
+before_install:
+  - sudo apt-get -y -q update
+install:
+  - sudo apt-get -y -q install r-base devscripts
+before_script:
+  - chmod +x .travis.*.sh
+script:
+  - ./.travis.main.sh
+after_success:
   # id_rsa_{0}
   - secure: "lf59RxRoSuxtq5EIQjIlmKU3CYw7VnJdUFGIdJ5T6rNF4I2k9jM6COy16B4Ino85r8AmMBEpaA5s5cQx/Mw78CkAuQPwd2ULDdhf09RNs8WlHVH1SG0Rmae5/nKJd1yV2kSi4G3cDkEUxLt1U2GF//ksv7rGoEvNCex/7KBgiig="
   - secure: "fpZD1n+Td7J6o/IDRDqERyQjKV60kEBn4bOQscIm76V8WpxkWPzQJ554CWxSbmAH1qRvwqeHAJ1PB+9GalnZt2AxI1RYPsC1/wTwnHyU9f2nTeF6zvgh0rXgDq5VPTPFwH6+/LQb3+SM0Mq6XBu+jWL4Nr15fTxQPHsSmOpHkDQ="
@@ -31,22 +49,4 @@ env:
   - secure: "RUG/oDdo6gXdnIvJvAeZYdeoYvsvyrW8RFVsAlmPIZLPNDh2f8yN62qeqHsz6W/0gi9U2SFhaZNZ+bPCqkoDfcIG5WaAfjVkoZz9b2RXQU44kxpz1YmFjXtF4YSm9gWvwW4wS6JOXjlSLjI5qCB2gNQIrclb7SthMeLm7YLLTqs="
   - secure: "mnga7y6Y7RR2sOT7hxgdGtu6m9r7dxdqy2n0/0e9GPKs+AeHbUbQJs6H0OEe96OWnNiXrQiiibfJLnr+UuXMqwCAb+Oas7dRp9nAv50SxorCexF637YsU3XbJaCZWBSJ99tUtq2F9RLpLGlYXgZY1FgAdWtQuznzVW0zXhN/m7U="
   - secure: "AHmNG6G3EAPxJ2+sEZKokYSwfXqsPXf9UkyL+7Ut99wZLtPn9HK8f2waNSfkv0vUvOjtSNWDNLWrDHxGGxBOjjqbOv1lM5TMTsfjbaAc27kEN/XlRbKdLdLXS67yxhBHrNihspC5MTwYtAAzJh808HKKrp+uLq9MOoLiI8N1KXY="
-services:
-  - postgresql
-# Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
-# Note: need to be careful that the ivy-published version of common doesn't cache
-#cache:
-#  apt: true
-#  directories:
-#  - .ant/lib
-#  - .ivy2/cache
-before_install:
-  - sudo apt-get -y -q update
-install:
-  - sudo apt-get -y -q install r-base devscripts
-before_script:
-  - chmod +x .travis.*.sh
-script:
-  - ./.travis.main.sh
-after_success:
   - ./.travis.artifacts.sh
