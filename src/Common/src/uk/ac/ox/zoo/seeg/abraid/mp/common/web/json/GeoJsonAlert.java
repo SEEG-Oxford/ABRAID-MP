@@ -17,6 +17,8 @@ public final class GeoJsonAlert {
     private String feedLanguage;
     private DateTime publicationDate;
 
+    public GeoJsonAlert() { }
+
     public GeoJsonAlert(Alert alert) {
         this.title = alert.getTitle();
         this.summary = alert.getSummary();
