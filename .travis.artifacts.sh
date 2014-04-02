@@ -2,12 +2,10 @@
 #   A project build script for use with travis-ci.org
 #   Copyright (c) 2014 University of Oxford
 
-
-if $TRAVIS_SECURE_ENV_VARS; then
+if $TRAVIS_SECURE_ENV_VARS && [[ $JAVA_HOME = *openjdk* ]]; then
+    # Only archive artifacts if we are on a tag
     if git describe --tags --exact-match HEAD &> /dev/null;
     then
-        # Only archive artifacts if we are on a tag
-
         # Setup key
         echo -n $id_rsa_{00..30} >> ~/.ssh/id_rsa_base64
         base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 > ~/.ssh/id_rsa
@@ -26,4 +24,3 @@ if $TRAVIS_SECURE_ENV_VARS; then
     # TBD "deploy" tags to test server?
     # TBD "deploy" master to test server? (check TRAVIS_PULL_REQUEST as well as TRAVIS_BRANCH)
 fi
-
