@@ -4,8 +4,7 @@
 
 
 if $TRAVIS_SECURE_ENV_VARS; then
-    #if git describe --tags --exact-match HEAD &> /dev/null;
-    if true
+    if git describe --tags --exact-match HEAD &> /dev/null;
     then
         # Only archive artifacts if we are on a tag
 
