@@ -2,15 +2,15 @@
  * The AJAX call to Spring Security when login button is clicked.
  * Copyright (c) 2014 University of Oxford
  */
-'use strict';
+(function (ko, $, baseUrl, loggedIn) {
+    'use strict';
 
-(function () {
     var logInViewModel = (function () {
         var formUsername = ko.observable("");
         var formPassword = ko.observable("");
-        var formAlert = ko.observable("");
+        var formAlert = ko.observable(" ");
         var attemptFormLogin = function () {
-            formAlert("");
+            formAlert(" ");
             if (formUsername() !== "" && formPassword() !== "") {
                 $.post(baseUrl + "j_spring_security_check", {j_username: formUsername(), j_password: formPassword()})
                     .done(function () {
@@ -39,4 +39,4 @@
             ko.applyBindings(logInViewModel, $("#logIn")[0]);
         }
     });
-}());
+}(ko, jQuery, baseUrl, loggedIn));
