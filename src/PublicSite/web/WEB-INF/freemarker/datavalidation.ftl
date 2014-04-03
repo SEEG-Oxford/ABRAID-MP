@@ -50,7 +50,7 @@
         of
             <select data-bind="foreach: groups, value: selectedDisease">
                 <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
-                    <option data-bind="text: name, option: $data"></option>
+                    <option data-bind="html: name, option: $data"></option>
                 </optgroup>
             </select>
         </h4>
