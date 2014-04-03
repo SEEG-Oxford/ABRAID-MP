@@ -50,7 +50,7 @@
     <mkdir dir="${artifacts.dir}/DataAcquisition"/>
     <copy todir="${artifacts.dir}/DataAcquisition">
       <fileset dir="${code.root}/DataAcquisition/out/artifacts/">
-        <include name="*" />
+        <include name="**/*" />
       </fileset>
     </copy>
     <mkdir dir="${artifacts.dir}/Database"/>
