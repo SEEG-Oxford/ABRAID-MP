@@ -74,12 +74,15 @@
 }
 #logIn {
     position:relative;
-    bottom:150px;
+    bottom:170px;
 }
 #logIn p {
     text-align: center;
     padding:5px 10px;
     margin: 0 auto;
+}
+#formAlert {
+    height:24px;
 }
 #counterDiv {
     position:relative;
