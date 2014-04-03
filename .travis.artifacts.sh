@@ -12,7 +12,7 @@ if $TRAVIS_SECURE_ENV_VARS && [[ $JAVA_HOME = *openjdk* ]]; then
         chmod 600 ~/.ssh/id_rsa
 
         # Get verison
-        VERSION=`git describe`
+        VERSION=`git describe --tags --exact-match HEAD`
 
         # Send data
         scp -oStrictHostKeyChecking=no -r artifacts abraid-travis@map1.zoo.ox.ac.uk:~/artifacts/$VERSION
