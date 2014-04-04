@@ -43,29 +43,20 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseInterestsWithReviewCountReturnsExpectedMap() {
+    public void getDiseaseOccurrenceReviewCountReturnsExpectedInteger() {
         // Arrange
-        DiseaseGroup testDiseaseGroup = new DiseaseGroup();
-        Set<DiseaseGroup> testSet = new HashSet<>();
-        testSet.add(testDiseaseGroup);
-
-        Map<DiseaseGroup, Integer> testMap = new HashMap<>();
-        testMap.put(testDiseaseGroup, 0);
-
-        Expert expert = new Expert();
-        expert.setDiseaseGroups(testSet);
-        when(expertDao.getById(anyInt())).thenReturn(expert);
-
-        List<DiseaseOccurrenceReview> testList = new ArrayList<>();
-        when(diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(anyInt(), anyInt())).thenReturn(testList);
+        int n = 2;
+        List<DiseaseOccurrenceReview> reviews = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            reviews.add(new DiseaseOccurrenceReview());
+        }
+        when(diseaseOccurrenceReviewDao.getByExpertId(anyInt())).thenReturn(reviews);
 
         // Act
-        Map<DiseaseGroup, Integer> map = expertService.getDiseaseInterestsWithReviewCount(1);
+        Integer reviewCount = expertService.getDiseaseOccurrenceReviewCount(1);
 
         // Assert
-        assertThat(map.keySet()).isEqualTo(testMap.keySet());
-        assertThat(map.values()).hasSize(1);
-        assertThat(map.values()).contains(0);
+        assertThat(reviewCount).isEqualTo(n);
     }
 
     @Test

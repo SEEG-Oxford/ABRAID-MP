@@ -86,6 +86,7 @@ public class AdminUnit {
         this.area = area;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -120,4 +121,5 @@ public class AdminUnit {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

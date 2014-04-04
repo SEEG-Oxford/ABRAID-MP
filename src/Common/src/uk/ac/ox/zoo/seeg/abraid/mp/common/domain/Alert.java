@@ -121,6 +121,7 @@ public class Alert {
         return createdDate;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -156,4 +157,5 @@ public class Alert {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }
