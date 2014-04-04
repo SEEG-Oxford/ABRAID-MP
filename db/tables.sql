@@ -39,6 +39,7 @@ CREATE TABLE admin_unit (
     centroid_latitude double precision NOT NULL,
     centroid_longitude double precision NOT NULL,
     area double precision NOT NULL,
+    max_centr_distance double precision,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
@@ -184,7 +185,8 @@ CREATE TABLE location (
     geoname_id integer,
     resolution_weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    healthmap_country_id bigint
+    healthmap_country_id bigint,
+    admin_unit_gaul_code integer
 );
 
 CREATE TABLE provenance (

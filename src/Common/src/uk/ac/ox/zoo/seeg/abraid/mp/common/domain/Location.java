@@ -59,6 +59,11 @@ public class Location {
     @JoinColumn(name = "healthmap_country_id")
     private HealthMapCountry healthMapCountry;
 
+    // The admin 1/2 unit (if any).
+    @ManyToOne
+    @JoinColumn(name = "admin_unit_gaul_code")
+    private AdminUnit adminUnit;
+
     public Location() {
     }
 
@@ -114,6 +119,14 @@ public class Location {
         this.geoNameId = geoNameId;
     }
 
+    public AdminUnit getAdminUnit() {
+        return adminUnit;
+    }
+
+    public void setAdminUnit(AdminUnit adminUnit) {
+        this.adminUnit = adminUnit;
+    }
+
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -122,6 +135,7 @@ public class Location {
 
         Location location = (Location) o;
 
+        if (adminUnit != null ? !adminUnit.equals(location.adminUnit) : location.adminUnit != null) return false;
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
         if (geoNameId != null ? !geoNameId.equals(location.geoNameId) : location.geoNameId != null) return false;
@@ -144,6 +158,7 @@ public class Location {
         result = 31 * result + (geoNameId != null ? geoNameId.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (healthMapCountry != null ? healthMapCountry.hashCode() : 0);
+        result = 31 * result + (adminUnit != null ? adminUnit.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

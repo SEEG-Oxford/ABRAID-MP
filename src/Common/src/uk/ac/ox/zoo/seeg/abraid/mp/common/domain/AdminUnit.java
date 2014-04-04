@@ -42,6 +42,10 @@ public class AdminUnit {
     @Column
     private double area;
 
+    // The admin unit's area.
+    @Column(name = "max_centr_distance")
+    private double maxDistanceFromCentroid;
+
     public Integer getGaulCode() {
         return gaulCode;
     }
@@ -86,6 +90,14 @@ public class AdminUnit {
         this.area = area;
     }
 
+    public double getMaxDistanceFromCentroid() {
+        return maxDistanceFromCentroid;
+    }
+
+    public void setMaxDistanceFromCentroid(double maxDistanceFromCentroid) {
+        this.maxDistanceFromCentroid = maxDistanceFromCentroid;
+    }
+
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -94,10 +106,11 @@ public class AdminUnit {
 
         AdminUnit adminUnit = (AdminUnit) o;
 
-        if (adminLevel != adminUnit.adminLevel) return false;
         if (Double.compare(adminUnit.area, area) != 0) return false;
         if (Double.compare(adminUnit.centroidLatitude, centroidLatitude) != 0) return false;
         if (Double.compare(adminUnit.centroidLongitude, centroidLongitude) != 0) return false;
+        if (adminLevel != adminUnit.adminLevel) return false;
+        if (Double.compare(adminUnit.maxDistanceFromCentroid, maxDistanceFromCentroid) != 0) return false;
         if (gaulCode != null ? !gaulCode.equals(adminUnit.gaulCode) : adminUnit.gaulCode != null) return false;
         if (name != null ? !name.equals(adminUnit.name) : adminUnit.name != null) return false;
 
@@ -116,6 +129,8 @@ public class AdminUnit {
         temp = Double.doubleToLongBits(centroidLongitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(area);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(maxDistanceFromCentroid);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
