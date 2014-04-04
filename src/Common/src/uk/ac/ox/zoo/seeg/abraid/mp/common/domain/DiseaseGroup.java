@@ -4,6 +4,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
@@ -49,9 +50,16 @@ public class DiseaseGroup {
     @Column(name = "short_name")
     private String shortName;
 
+    // The disease group abbreviated name.
+    private String abbreviation;
+
     // A name allowing the disease groups to be grouped further, for display in DataValidator.
     @Column(name = "validator_set")
     private String validatorSet;
+
+    // True if the disease group is global, false if tropical, null if unknown.
+    @Column(name = "is_global")
+    private Boolean isGlobal;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -127,9 +135,34 @@ public class DiseaseGroup {
         this.shortName = shortName;
     }
 
+    /**
+     * Gets the disease group name for display.
+     * @return The disease group name for display.
+     */
     public String getDisplayName() {
-        return (getShortName() != null ? getShortName() :
-                (getPublicName() != null ? getPublicName() : getName()));
+        if (StringUtils.hasText(getShortName())) {
+            return getShortName();
+        }
+        if (StringUtils.hasText(getPublicName())) {
+            return getPublicName();
+        }
+        return getName();
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public Boolean isGlobal() {
+        return isGlobal;
+    }
+
+    public void setGlobal(Boolean isGlobal) {
+        this.isGlobal = isGlobal;
     }
 
     public String getValidatorSet() {
@@ -152,9 +185,11 @@ public class DiseaseGroup {
 
         DiseaseGroup that = (DiseaseGroup) o;
 
+        if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (groupType != that.groupType) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
@@ -172,7 +207,9 @@ public class DiseaseGroup {
         result = 31 * result + (groupType != null ? groupType.hashCode() : 0);
         result = 31 * result + (publicName != null ? publicName.hashCode() : 0);
         result = 31 * result + (shortName != null ? shortName.hashCode() : 0);
+        result = 31 * result + (abbreviation != null ? abbreviation.hashCode() : 0);
         result = 31 * result + (validatorSet != null ? validatorSet.hashCode() : 0);
+        result = 31 * result + (isGlobal != null ? isGlobal.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
