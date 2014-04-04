@@ -263,6 +263,7 @@
     <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}">
       <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
     </condition>
+    <chmod file="${phantom.executable}" perm="o+r"/>
   </target>
 
   <target name="download.phantom" depends="determine.phantom.os.properties">
