@@ -31,7 +31,7 @@
     </@security.authorize>
     <@security.authorize ifAnyGranted="ROLE_USER">
     <div id="counterDiv">
-        You have validated<div id="counter" data-bind="counter: reviewCount"></div>occurrence<span data-bind="if: reviewCount() != 1">s</span> for this disease
+        You have validated<div id="counter" data-bind="counter: diseaseOccurrenceReviewCount"></div>occurrence<span data-bind="if: diseaseOccurrenceReviewCount() != 1">s</span>
     </div>
     </@security.authorize>
 </div>

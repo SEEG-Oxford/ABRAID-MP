@@ -17,12 +17,12 @@
 <#assign endOfBodyScriptContent>
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
     var loggedIn = ${userLoggedIn?c};
+    var diseaseOccurrenceReviewCount = ${diseaseOccurrenceReviewCount?int};
     var diseaseInterests = [
-        <#list diseaseInterestsSet as pair>
+        <#list diseaseInterests as disease>
             {
-                name: "${pair.getKey().getDisplayName()?lower_case?js_string}",
-                id: ${pair.getKey().id?int},
-                reviewCount: ${pair.getValue()?int}
+                name: "${disease.getDisplayName()?lower_case?js_string}",
+                id: ${disease.id?int},
             },
         </#list>
     ];
