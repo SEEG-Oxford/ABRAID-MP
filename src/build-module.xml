@@ -52,6 +52,26 @@
   </tstamp>
   <echo>Ant running against repository version: ${repository.version}</echo>
 
+  <!-- Get OS -->
+  <condition property="os-windows">
+    <os family="windows"/>
+  </condition>
+  <condition property="os-mac">
+    <os family="mac"/>
+  </condition>
+  <condition property="os-linux32">
+    <or>
+      <os name="Linux" arch="i386" />
+      <os name="Linux" arch="x86" />
+    </or>
+  </condition>
+  <condition property="os-linux64">
+    <or>
+      <os name="Linux" arch="AMD64" />
+      <os name="Linux" arch="x86_64" />
+    </or>
+  </condition>
+
   <!-- Classpath -->
   <property name="build.sysclasspath" value="ignore"/>
   <path id="build.classpath">
