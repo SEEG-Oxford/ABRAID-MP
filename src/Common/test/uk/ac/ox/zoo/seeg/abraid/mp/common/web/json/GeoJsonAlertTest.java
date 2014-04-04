@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
@@ -21,7 +20,6 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
         String expectedFeedName = "foo3";
         String expectedFeedLanguage = "foo4";
         String expectedUrl = "foo5";
-        DateTime expectedPublicationDate = DateTime.now();
 
         Alert alert = defaultAlert();
         when(alert.getTitle()).thenReturn(expectedTitle);
@@ -29,7 +27,6 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
         when(alert.getFeed().getName()).thenReturn(expectedFeedName);
         when(alert.getFeed().getLanguage()).thenReturn(expectedFeedLanguage);
         when(alert.getUrl()).thenReturn(expectedUrl);
-        when(alert.getPublicationDate()).thenReturn(expectedPublicationDate);
 
         // Act
         GeoJsonAlert result = new GeoJsonAlert(alert);
@@ -38,7 +35,6 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
         assertThat(result.getFeedName()).isEqualTo(expectedFeedName);
         assertThat(result.getFeedLanguage()).isEqualTo(expectedFeedLanguage);
         assertThat(result.getUrl()).isEqualTo(expectedUrl);
-        assertThat(result.getPublicationDate()).isEqualTo(expectedPublicationDate);
         assertThat(result.getSummary()).isEqualTo(expectedSummary);
         assertThat(result.getTitle()).isEqualTo(expectedTitle);
     }

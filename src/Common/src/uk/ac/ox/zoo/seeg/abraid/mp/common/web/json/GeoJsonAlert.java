@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
-import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 
 /**
@@ -15,7 +14,6 @@ public final class GeoJsonAlert {
     private String url;
     private String feedName;
     private String feedLanguage;
-    private DateTime publicationDate;
 
     public GeoJsonAlert() { }
 
@@ -25,7 +23,6 @@ public final class GeoJsonAlert {
         this.url = alert.getUrl();
         this.feedName = alert.getFeed().getName();
         this.feedLanguage = alert.getFeed().getLanguage();
-        this.publicationDate = alert.getPublicationDate();
     }
 
     public String getTitle() {
@@ -48,10 +45,6 @@ public final class GeoJsonAlert {
         return feedLanguage;
     }
 
-    public DateTime getPublicationDate() {
-        return publicationDate;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -68,10 +61,6 @@ public final class GeoJsonAlert {
         this.feedName = feedName;
     }
 
-    public void setPublicationDate(DateTime publicationDate) {
-        this.publicationDate = publicationDate;
-    }
-
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -82,8 +71,6 @@ public final class GeoJsonAlert {
         GeoJsonAlert that = (GeoJsonAlert) o;
 
         if (feedName != null ? !feedName.equals(that.feedName) : that.feedName != null) return false;
-        if (publicationDate != null ? !publicationDate.equals(that.publicationDate) : that.publicationDate != null)
-            return false;
         if (summary != null ? !summary.equals(that.summary) : that.summary != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
@@ -97,7 +84,6 @@ public final class GeoJsonAlert {
         result = 31 * result + (summary != null ? summary.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (feedName != null ? feedName.hashCode() : 0);
-        result = 31 * result + (publicationDate != null ? publicationDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON
