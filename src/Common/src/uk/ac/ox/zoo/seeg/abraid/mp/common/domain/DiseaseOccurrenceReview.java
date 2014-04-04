@@ -38,12 +38,12 @@ public class DiseaseOccurrenceReview {
 
     // The expert.
     @ManyToOne
-    @JoinColumn(name = "expert_id")
+    @JoinColumn(name = "expert_id", nullable = false)
     private Expert expert;
 
     // The id of the disease occurrence.
     @ManyToOne
-    @JoinColumn(name = "disease_occurrence_id")
+    @JoinColumn(name = "disease_occurrence_id", nullable = false)
     private DiseaseOccurrence diseaseOccurrence;
 
     // The expert's response.

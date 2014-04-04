@@ -24,7 +24,7 @@ public class Country {
     private Integer gaulCode;
 
     // The country's name.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     public Country() {

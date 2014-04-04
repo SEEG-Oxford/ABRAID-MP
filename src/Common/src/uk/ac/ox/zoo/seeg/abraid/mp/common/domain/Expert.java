@@ -28,19 +28,19 @@ public class Expert {
     private Integer id;
 
     // The expert's name.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     // The expert's email address.
-    @Column
+    @Column(nullable = false)
     private String email;
 
     // The expert's password
-    @Column(name = "hashed_password")
+    @Column(name = "hashed_password", nullable = false)
     private String password;
 
     // Whether the expert has administrative control.
-    @Column(name = "is_administrator")
+    @Column(name = "is_administrator", nullable = false)
     private boolean isAdministrator;
 
     // Whether the expert should be displayed in list on public site.

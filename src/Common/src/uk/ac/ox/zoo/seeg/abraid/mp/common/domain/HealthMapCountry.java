@@ -28,7 +28,7 @@ public class HealthMapCountry {
     private Long id;
 
     // The country's name.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     // The corresponding SEEG countries.

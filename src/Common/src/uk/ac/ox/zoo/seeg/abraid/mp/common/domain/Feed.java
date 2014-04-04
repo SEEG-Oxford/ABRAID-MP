@@ -26,12 +26,12 @@ public class Feed {
     private Integer id;
 
     // The name of this feed.
-    @Column
+    @Column(nullable = false)
     private String name;
 
     // The provenance of this feed.
     @ManyToOne
-    @JoinColumn(name = "provenance_id")
+    @JoinColumn(name = "provenance_id", nullable = false)
     private Provenance provenance;
 
     // The weighting given to this feed.
