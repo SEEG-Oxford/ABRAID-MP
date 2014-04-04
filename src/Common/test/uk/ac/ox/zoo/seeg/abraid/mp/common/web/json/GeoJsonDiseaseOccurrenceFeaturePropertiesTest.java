@@ -27,7 +27,7 @@ public class GeoJsonDiseaseOccurrenceFeaturePropertiesTest extends AbstractDisea
         GeoJsonDiseaseOccurrenceFeatureProperties result = new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);
 
         // Assert
-        assertThat(result.getDiseaseOccurrenceStartDate()).isEqualTo(expectedStartDate);
+        assertThat(result.getStartDate()).isEqualTo(expectedStartDate);
         assertThat(result.getLocationName()).isEqualTo(expectedLocationName);
         assertThat(result.getAlert()).isNotNull();
     }

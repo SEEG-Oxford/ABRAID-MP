@@ -20,7 +20,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
     private GeoJsonAlert alert;
 
     @JsonView(DisplayJsonView.class)
-    private DateTime diseaseOccurrenceStartDate;
+    private DateTime startDate;
 
     @JsonView(ModellingJsonView.class)
     private LocationPrecision locationPrecision;
@@ -33,14 +33,14 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
 
     public GeoJsonDiseaseOccurrenceFeatureProperties(DiseaseOccurrence occurrence) {
         setLocationName(occurrence.getLocation().getName());
-        setDiseaseOccurrenceStartDate(occurrence.getOccurrenceStartDate());
+        setStartDate(occurrence.getOccurrenceStartDate());
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
         setLocationPrecision(occurrence.getLocation().getPrecision());
         setWeighting(occurrence.getValidationWeighting());
     }
 
-    public DateTime getDiseaseOccurrenceStartDate() {
-        return diseaseOccurrenceStartDate;
+    public DateTime getStartDate() {
+        return startDate;
     }
 
     public GeoJsonAlert getAlert() {
@@ -59,8 +59,8 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         return weighting;
     }
 
-    public void setDiseaseOccurrenceStartDate(DateTime diseaseOccurrenceStartDate) {
-        this.diseaseOccurrenceStartDate = diseaseOccurrenceStartDate;
+    public void setStartDate(DateTime startDate) {
+        this.startDate = startDate;
     }
 
     public void setAlert(GeoJsonAlert alert) {
@@ -90,7 +90,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
 
         if (Double.compare(that.weighting, weighting) != 0) return false;
         if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
-        if (diseaseOccurrenceStartDate != null ? !diseaseOccurrenceStartDate.equals(that.diseaseOccurrenceStartDate) : that.diseaseOccurrenceStartDate != null)
+        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null)
             return false;
         if (locationName != null ? !locationName.equals(that.locationName) : that.locationName != null) return false;
         if (locationPrecision != that.locationPrecision) return false;
@@ -104,7 +104,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         long temp;
         result = locationName != null ? locationName.hashCode() : 0;
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
-        result = 31 * result + (diseaseOccurrenceStartDate != null ? diseaseOccurrenceStartDate.hashCode() : 0);
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (locationPrecision != null ? locationPrecision.hashCode() : 0);
         temp = Double.doubleToLongBits(weighting);
         result = 31 * result + (int) (temp ^ (temp >>> 32));

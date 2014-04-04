@@ -74,7 +74,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
            "               \"feedName\":\"feedName\"," +
            "               \"feedLanguage\":\"feedLanguage\"" +
            "            }," +
-           "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
+           "            \"startDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
 
         String modellingViewProperties =
            "            \"locationPrecision\":\"PRECISE\"," +
