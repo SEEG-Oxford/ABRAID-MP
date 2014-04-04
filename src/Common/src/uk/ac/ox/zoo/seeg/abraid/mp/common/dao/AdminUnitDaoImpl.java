@@ -12,4 +12,13 @@ public class AdminUnitDaoImpl extends AbstractDao<AdminUnit, Integer> implements
     public AdminUnitDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
+    /**
+     * Gets an administrative unit by GAUL code.
+     * @param gaulCode The GAUL code.
+     * @return The administrative unit with the specified GAUL code, or null if it does not exist.
+     */
+    public AdminUnit getByGaulCode(Integer gaulCode) {
+        return getById(gaulCode);
+    }
 }
