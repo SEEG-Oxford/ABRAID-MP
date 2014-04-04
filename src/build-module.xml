@@ -208,7 +208,7 @@
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
   </target>
 
-  <target name="retrieve.manual.libs" depends="retrieve.jacoco" />
+  <target name="retrieve.manual.libs" depends="retrieve.jacoco, retrieve.phantom" />
 
   <!-- Get JaCoCo manually -->
   <property name="jacoco.version" value="0.6.2.201301080920" />
@@ -233,6 +233,87 @@
     </unzip>
     <move file="${lib.local.analysis.dir}/jacocoant.jar" tofile="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
     <delete file="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip"/>
+  </target>
+
+  <!-- Get Phantom manually -->
+  <property name="phantom.version" value="1.9.7" />
+
+  <target name="retrieve.phantom" depends="check.phantom" if="needs-phantom">
+    <antcall target="resolve.phantom" />
+  </target>
+
+  <target name="check.phantom">
+    <condition property="needs-phantom">
+      <not>
+        <or>
+          <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
+          <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
+        </or>
+      </not>
+    </condition>
+  </target>
+
+  <target name="resolve.phantom" depends="determine.phantom.os.properties, download.phantom, unzip.phantom, untar.phantom">
+    <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" failonerror="false"/>
+    <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" failonerror="false"/>
+    <delete file="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}"/>
+    <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe">
+      <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
+    </condition>
+    <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}">
+      <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
+    </condition>
+  </target>
+
+  <target name="download.phantom" depends="determine.phantom.os.properties">
+    <get skipexisting="true" src="http://cdn.bitbucket.org/ariya/phantomjs/downloads/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" />
+  </target>
+
+  <target name="unzip.phantom" unless="phantom-is-tar">
+    <unzip src="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}">
+      <patternset>
+        <include name="${phantom.package.name}/${phantom.executable.path}"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </unzip>
+  </target>
+
+  <target name="untar.phantom" if="phantom-is-tar">
+    <untar compression="bzip2" src="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}">
+      <patternset>
+        <include name="${phantom.package.name}/${phantom.executable.path}"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </untar>
+  </target>
+
+  <target name="determine.phantom.os.properties" depends="determine.phantom.paths.win, determine.phantom.paths.lin64, determine.phantom.paths.lin32, determine.phantom.paths.mac" />
+
+  <target name="determine.phantom.paths.win" if="os-windows">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-windows"/>
+    <property name="phantom.package.extension" value="zip"/>
+    <property name="phantom.executable.path" value="phantomjs.exe"/>
+  </target>
+
+  <target name="determine.phantom.paths.mac" if="os-mac">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-mac"/>
+    <property name="phantom.package.extension" value="zip"/>
+    <property name="phantom.package.compression" value="zip"/>
+    <property name="phantom.executable.path" value="bin/phantomjs"/>
+  </target>
+
+  <target name="determine.phantom.paths.lin64" if="os-linux64">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-linux-x86_64"/>
+    <property name="phantom.package.extension" value="tar.bz2"/>
+    <property name="phantom.executable.path" value="bin/phantomjs"/>
+    <property name="phantom-is-tar" value="true" />
+  </target>
+
+  <target name="determine.phantom.paths.lin32" if="os-linux32">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-linux-i686"/>
+    <property name="phantom.package.extension" value="tar.bz2"/>
+    <property name="phantom.executable.path" value="bin/phantomjs"/>
+    <property name="phantom-is-tar" value="true" />
   </target>
 
   <!-- Test targets -->
