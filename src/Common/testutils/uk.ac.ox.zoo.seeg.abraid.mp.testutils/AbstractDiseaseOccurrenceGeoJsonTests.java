@@ -18,13 +18,12 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
-    public static Alert mockAlert(String title, String summary, String feedName, String feedLanguage, String url, DateTime publication) {
+    public static Alert mockAlert(String title, String summary, String feedName, String feedLanguage, String url) {
         Alert alert = mock(Alert.class);
         Feed feed = mock(Feed.class);
         when(alert.getTitle()).thenReturn(title);
         when(alert.getSummary()).thenReturn(summary);
         when(alert.getUrl()).thenReturn(url);
-        when(alert.getPublicationDate()).thenReturn(publication);
         when(alert.getFeed()).thenReturn(feed);
         when(feed.getName()).thenReturn(feedName);
         when(feed.getLanguage()).thenReturn(feedLanguage);
@@ -32,7 +31,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static Alert defaultAlert() {
-        return mockAlert("title", "summary", "feedName", "feedLanguage", "url", (new DateTime(0)).withZone(DateTimeZone.UTC));
+        return mockAlert("title", "summary", "feedName", "feedLanguage", "url");
     }
 
     public static Location mockLocation(double longitude, double latitude, String locationName, LocationPrecision locationPrecision) {
@@ -73,10 +72,9 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
            "               \"summary\":\"summary\"," +
            "               \"url\":\"url\"," +
            "               \"feedName\":\"feedName\"," +
-           "               \"feedLanguage\":\"feedLanguage\"," +
-           "               \"publicationDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"" +
+           "               \"feedLanguage\":\"feedLanguage\"" +
            "            }," +
-           "            \"diseaseOccurrenceStartDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
+           "            \"startDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
 
         String modellingViewProperties =
            "            \"locationPrecision\":\"PRECISE\"," +

@@ -2,9 +2,9 @@
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
  */
-'use strict';
+var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
+    'use strict';
 
-var LeafletMap = (function () {
     // Initialise map at "map" div
     var map = L.map('map', {
         attributionControl: false,
@@ -115,7 +115,7 @@ var LeafletMap = (function () {
         onEachFeature: function (feature, layer) {
             layer.on('add', function () {
                 layerMap[feature.id] = layer;
-            })
+            });
         }
     });
 
@@ -183,4 +183,4 @@ var LeafletMap = (function () {
         switchDiseaseLayer: switchDiseaseLayer,
         removeReviewedPoint: removeReviewedPoint
     };
-}());
+}(L, jQuery, DataValidationViewModels, wmsUrl, loggedIn));

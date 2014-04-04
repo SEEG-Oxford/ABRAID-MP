@@ -7,7 +7,7 @@
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
         <form id="logIn">
-            <p data-bind="text: formAlert"></p>
+            <p id="formAlert" data-bind="text: formAlert"></p>
             <p class="form-group">
                 <span class="input-group">
                     <span class="input-group-addon">
@@ -52,7 +52,7 @@
     <ul>
         <li><h4 data-bind="text: selectedPoint().properties.alert.title"></h4></li>
         <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.locationName"></p></li>
-        <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.diseaseOccurrenceStartDate"></p></li>
+        <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.startDate"></p></li>
         <li>
             <i class="fa fa-external-link"></i>
             <a data-bind="attr: {href: selectedPoint().properties.alert.url}">
