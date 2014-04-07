@@ -32,7 +32,8 @@ public class ViewAwareJsonMessageConverter extends
             throws IOException, HttpMessageNotWritableException {
         JsonEncoding encoding = getJsonEncoding(outputMessage.getHeaders().getContentType());
         ObjectWriter writer = getObjectMapper().writerWithView(view.getView());
-        JsonGenerator jsonGenerator = writer.getJsonFactory().createJsonGenerator(outputMessage.getBody(), encoding);
+        @SuppressWarnings("deprecation") JsonGenerator jsonGenerator =
+                writer.getJsonFactory().createJsonGenerator(outputMessage.getBody(), encoding);
         try {
             writer.writeValue(jsonGenerator, view.getData());
         } catch (IOException ex) {

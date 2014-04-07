@@ -101,7 +101,9 @@ CREATE TABLE disease_group (
     group_type varchar(15) NOT NULL,
     public_name varchar(100),
     short_name varchar(100),
+    abbreviation varchar(10),
     validator_set varchar(100),
+    is_global boolean,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
