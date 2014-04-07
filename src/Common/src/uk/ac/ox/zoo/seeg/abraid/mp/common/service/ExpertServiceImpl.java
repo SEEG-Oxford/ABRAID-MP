@@ -7,7 +7,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -89,6 +91,40 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Integer getDiseaseOccurrenceReviewCount(Integer expertId) {
         return diseaseOccurrenceReviewDao.getByExpertId(expertId).size();
+    }
+
+    /**
+     * Gets the number of disease occurrence reviews an expert has submitted, per disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseInterests The list of disease groups an expert can validate.
+     * @return The map from the id of the disease group to its corresponding diseaseOccurrenceReviewCount.
+     */
+    public Map<String, Integer> getDiseaseOccurrenceReviewCountPerDiseaseGroup(Integer expertId,
+                                                                                Set<DiseaseGroup> diseaseInterests) {
+        Map<String, Integer> map = new HashMap<>();
+        for (DiseaseGroup diseaseGroup : diseaseInterests) {
+            List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId,
+                    diseaseGroup.getId());
+            map.put(diseaseGroup.getDisplayName(), reviews.size());
+        }
+        return map;
+    }
+
+    /**
+     * Gets the number of disease occurrences, per disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseInterests The list of disease groups the expert can validate.
+     * @return The map from diseaseGroupId to its corresponding count of disease occurrences.
+     */
+    public Map<String, Integer> getDiseaseOccurrenceCountPerDiseaseGroup(Integer expertId,
+                                                                          Set<DiseaseGroup> diseaseInterests) {
+        Map<String, Integer> map = new HashMap<>();
+        for (DiseaseGroup diseaseGroup : diseaseInterests) {
+            List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesByDiseaseGroupId(
+                    diseaseGroup.getId());
+            map.put(diseaseGroup.getDisplayName(), occurrences.size());
+        }
+        return map;
     }
 
     /**

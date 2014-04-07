@@ -6,7 +6,7 @@
 <div id="sidePanel">
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-        <form id="logIn">
+        <form id="logIn" action="">
             <p id="formAlert" data-bind="text: formAlert"></p>
             <p class="form-group">
                 <span class="input-group">

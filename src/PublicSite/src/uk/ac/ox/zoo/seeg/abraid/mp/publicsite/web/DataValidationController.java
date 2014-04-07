@@ -55,18 +55,36 @@ public class DataValidationController {
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Set<DiseaseGroup> diseaseInterests = new HashSet<>();
-        Integer diseaseOccurrenceReviewCount = 0;
+        Map<String, Integer> reviewCountPerDiseaseGroup = new HashMap<>();
+        Map<String, Integer> occurrenceCountPerDiseaseGroup = new HashMap<>();
         boolean userLoggedIn = (user != null);
         if (userLoggedIn) {
             diseaseInterests = expertService.getDiseaseInterests(user.getId());
-            diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(user.getId());
+            reviewCountPerDiseaseGroup = expertService.getDiseaseOccurrenceReviewCountPerDiseaseGroup(user.getId(),
+                    diseaseInterests);
+            occurrenceCountPerDiseaseGroup = expertService.getDiseaseOccurrenceCountPerDiseaseGroup(user.getId(),
+                    diseaseInterests);
         } else {
-            diseaseInterests.add(diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME));
+            DiseaseGroup defaultDiseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
+            diseaseInterests.add(defaultDiseaseGroup);
+            reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 0);
+            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 10);
         }
+        Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values());
         model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
         model.addAttribute("diseaseInterests", diseaseInterests);
         model.addAttribute("userLoggedIn", userLoggedIn);
+        model.addAttribute("reviewCountPerDiseaseGroup", reviewCountPerDiseaseGroup);
+        model.addAttribute("occurrenceCountPerDiseaseGroup", occurrenceCountPerDiseaseGroup);
         return "datavalidation";
+    }
+
+    private int sum(Collection<Integer> c) {
+        int sum = 0;
+        for (int i : c) {
+            sum += i;
+        }
+        return sum;
     }
 
     /**
