@@ -21,7 +21,13 @@ ko.bindingHandlers.counter = {
     },
     update: function (element, valueAccessor) {
         var counter = ko.utils.domData.get(element, "counter");
-        counter.setValue(ko.utils.recursiveUnwrap(valueAccessor));
+        var value = ko.utils.recursiveUnwrap(valueAccessor);
+        if ((value > 999) && ($(element).width() != 280)) {
+            $(element).width(280);
+        } else if ((value > 99) && ($(element).width() != 210)) {
+            $(element).width(210);
+        }
+        counter.setValue(value);
     }
 };
 
@@ -56,14 +62,8 @@ var DataValidationViewModels = (function () {
         ]);
         this.selectedDisease = ko.observable();
         this.selectedDisease.subscribe(function () {
-            if (this.selectedDisease() != null) {
-                this.selectedDisease().reviewCount = DataValidationViewModels.counterViewModel.reviewCount();
-            }
-        }, this, "beforeChange");
-        this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
             LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
-            DataValidationViewModels.counterViewModel.reviewCount(this.selectedDisease().reviewCount);
         }, this);
     };
 
@@ -108,7 +108,7 @@ var DataValidationViewModels = (function () {
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
                         $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
-                        DataValidationViewModels.counterViewModel.incrementCount();
+                        DataValidationViewModels.counterViewModel.incrementDiseaseOccurrenceCount();
                     })
                     .fail(function (xhr) {
                         alert("Something went wrong. Please try again. " + xhr.responseText);
@@ -118,9 +118,9 @@ var DataValidationViewModels = (function () {
     };
 
     var CounterViewModel = function () {
-        this.reviewCount = ko.observable();
-        this.incrementCount = function () {
-            this.reviewCount(this.reviewCount() + 1);
+        this.diseaseOccurrenceReviewCount = ko.observable(diseaseOccurrenceReviewCount);
+        this.incrementDiseaseOccurrenceCount = function () {
+            this.diseaseOccurrenceReviewCount(this.diseaseOccurrenceReviewCount() + 1);
         };
     };
 

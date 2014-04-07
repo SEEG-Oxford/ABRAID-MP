@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,11 +46,11 @@ public interface ExpertService {
     Set<DiseaseGroup> getDiseaseInterests(Integer expertId);
 
     /**
-     * Gets the specified expert's disease interests, with the corresponding number of reviews per disease group.
+     * Gets the number of disease occurrence reviews an expert has submitted, across all disease groups.
      * @param expertId The id of the specified expert.
-     * @return The map, from an expert's disease interest, to the count of existing reviews for that disease group.
+     * @return The total number of disease occurrence reviews for the specified expert.
      */
-    Map<DiseaseGroup, Integer> getDiseaseInterestsWithReviewCount(Integer expertId);
+    Integer getDiseaseOccurrenceReviewCount(Integer expertId);
 
     /**
      * Gets a list of the disease occurrence reviews the specified expert has submitted for the specified disease group.

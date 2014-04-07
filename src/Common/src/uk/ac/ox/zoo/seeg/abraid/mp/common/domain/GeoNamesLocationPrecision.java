@@ -38,6 +38,7 @@ public class GeoNamesLocationPrecision {
         return locationPrecision;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -60,4 +61,5 @@ public class GeoNamesLocationPrecision {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

@@ -114,6 +114,7 @@ public class Location {
         this.geoNameId = geoNameId;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -147,4 +148,5 @@ public class Location {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

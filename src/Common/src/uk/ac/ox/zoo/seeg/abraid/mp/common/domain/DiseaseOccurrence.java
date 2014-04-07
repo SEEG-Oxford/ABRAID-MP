@@ -124,6 +124,7 @@ public class DiseaseOccurrence {
         this.occurrenceStartDate = occurrenceStartDate;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -157,4 +158,5 @@ public class DiseaseOccurrence {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

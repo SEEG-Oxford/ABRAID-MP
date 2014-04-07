@@ -177,6 +177,7 @@ public class DiseaseGroup {
         return createdDate;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -214,4 +215,5 @@ public class DiseaseGroup {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

@@ -7,9 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -84,20 +82,13 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
-     * Gets the specified expert's disease interests, with the corresponding number of reviews per disease group.
+     * Gets the number of disease occurrence reviews an expert has submitted, across all disease groups.
      * @param expertId The id of the specified expert.
-     * @return The map, from an expert's disease interest, to the count of existing reviews for that disease group.
+     * @return The total number of disease occurrence reviews for the specified expert.
      */
     @Override
-    public Map<DiseaseGroup, Integer> getDiseaseInterestsWithReviewCount(Integer expertId) {
-        Map<DiseaseGroup, Integer> diseaseGroupReviewCountMap = new HashMap<>();
-        Set<DiseaseGroup> diseaseInterests = getDiseaseInterests(expertId);
-        for (DiseaseGroup diseaseGroup : diseaseInterests) {
-            List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId,
-                    diseaseGroup.getId());
-            diseaseGroupReviewCountMap.put(diseaseGroup, reviews.size());
-        }
-        return diseaseGroupReviewCountMap;
+    public Integer getDiseaseOccurrenceReviewCount(Integer expertId) {
+        return diseaseOccurrenceReviewDao.getByExpertId(expertId).size();
     }
 
     /**
