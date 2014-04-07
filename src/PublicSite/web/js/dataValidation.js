@@ -22,11 +22,10 @@ ko.bindingHandlers.counter = {
     update: function (element, valueAccessor) {
         var counter = ko.utils.domData.get(element, "counter");
         var value = ko.utils.recursiveUnwrap(valueAccessor);
-        if (value > 99) {
-            $(element).css("width", 210);
-        }
         if (value > 999) {
             $(element).css("width", 280);
+        } else if (value > 99) {
+            $(element).css("width", 210);
         }
         counter.setValue(value);
     }
