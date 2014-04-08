@@ -35,6 +35,19 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="publicsite-lib" level="project" />
     <orderEntry type="module" module-name="Common" exported="" />
+    <orderEntry type="library" name="require" level="application" />
+    <orderEntry type="library" name="modernizr" level="application" />
+    <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="knockout-debug" level="application" />
+    <orderEntry type="library" name="knockout-bootstrap" level="application" />
+    <orderEntry type="library" name="knockout.validation" level="application" />
+    <orderEntry type="library" name="domReady" level="application" />
+    <orderEntry type="library" name="jasmine" level="application" />
+    <orderEntry type="library" name="leaflet.markercluster-src" level="application" />
+    <orderEntry type="library" name="leaflet" level="application" />
+    <orderEntry type="library" name="en-gb" level="application" />
+    <orderEntry type="library" name="moment" level="application" />
   </component>
 </module>
 
