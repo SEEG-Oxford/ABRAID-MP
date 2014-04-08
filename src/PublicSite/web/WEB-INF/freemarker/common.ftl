@@ -23,15 +23,11 @@
         <link rel="stylesheet" href="<@spring.url "/css/main.css" />">
     </head>
     <body>
-
         <#include "navbar.ftl"/>
-
         <div id="common">
             <#nested/>
         </div>
-
         <#include "footer.ftl"/>
-
         <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
@@ -41,6 +37,7 @@
             var baseUrl = "<@spring.url "/" />";
             ${endOfBodyScript}
         </script>
+        <#--<@-- script type="text/javascript" data-main="<@spring.url '${requireDataMain}'/>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>-->
         ${endOfBody}
     </body>
 </html>
