@@ -1,5 +1,4 @@
-/**
- * JS file for the model wrapper.
+/* An AMD defining the RepositoryViewModel to hold the state of the repository view.
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false*/

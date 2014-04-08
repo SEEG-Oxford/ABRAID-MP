@@ -1,4 +1,4 @@
-/* foo.
+/* An AMD defining the AuthViewModel to hold the state of the authorisation view.
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false*/
