@@ -159,7 +159,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         diseaseOccurrenceLayer.clearLayers();
         var geoJsonRequestUrl = "";
         if (loggedIn) {
-            geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
+            geoJsonRequestUrl = baseUrl + 'datavalidationcontent/diseases/' + diseaseId + '/occurrences';
         } else {
             geoJsonRequestUrl = baseUrl + 'static/defaultDiseaseOccurrences.json';
         }

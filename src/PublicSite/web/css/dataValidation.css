@@ -2,7 +2,6 @@
  * Styling for PublicSite Data Validation page
  * Copyright (c) 2014 University of Oxford
  */
-
 #dataValidation  {
     padding-right:280px;        /* Side panel width */
     min-width:800px;            /* Side panel width + layer selector width */
