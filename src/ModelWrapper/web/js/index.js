@@ -1,9 +1,11 @@
-/* foo.
+/* Kick-start JS for the index page.
  * Copyright (c) 2014 University of Oxford
  */
 /*global require:false, initialRepoData: false, baseUrl: false*/
 //Load base configuration, then load the app logic for this page.
 require(["require.conf"], function () {
+    "use strict";
+
     require(["ko",
              "app/RepositoryViewModel",
              "app/AuthViewModel",

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<!--
+    A test runner for the model wrapper component of ABRAID-MP.
+    Copyright (c) 2014 University of Oxford
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>ModelWrapper Spec Runner</title>
+
+        <link rel="shortcut icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine_favicon.png">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
+
+        <script type="text/javascript">
+            /*global require:false*/
+            var baseUrl = document.URL.substring(0, document.URL.indexOf("js/app/spec/SpecRunner.html"));
+
+            require([ baseUrl + 'js/app/spec/require.test.conf.js', baseUrl + 'js/require.conf.js' ], function() {
+
+                var specs = [
+                    "app/spec/AuthViewModelSpec"
+                ];
+
+                specs.push("domReady!");
+                require(specs, function($) {
+                    window.onload();
+                });
+            });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

@@ -5,6 +5,7 @@
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/AuthViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/RepositoryViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/knockout.validation.rules.js" libraries="{knockout.validation, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SpecRunner.html" libraries="{jquery}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/index.js" libraries="{knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
   </component>
