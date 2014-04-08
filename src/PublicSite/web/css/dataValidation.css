@@ -58,18 +58,22 @@
     float:right;
     padding-right:5px;
 }
+#submitReviewSuccess,
 #reviewButtons {
     width:100%;
     padding:10px;
     position:absolute;
-    bottom:150px;
+    bottom:130px;
 }
 #reviewButtons .btn-group, #logIn .btn {
     width:100%;
 }
 #reviewButtons .btn-group button {
-    margin-top:5px;
     width:33%;
+    height:50px;
+}
+#submitReviewSuccess button {
+    width:99%;
     height:50px;
 }
 #logIn {

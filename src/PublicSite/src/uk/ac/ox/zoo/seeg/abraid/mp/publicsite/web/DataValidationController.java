@@ -34,6 +34,7 @@ public class DataValidationController {
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_DISEASE_NAME = "Dengue";
+    private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
     private final ExpertService expertService;
@@ -68,11 +69,11 @@ public class DataValidationController {
             DiseaseGroup defaultDiseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
             diseaseInterests.add(defaultDiseaseGroup);
             reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 0);
-            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 10);
+            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), DEFAULT_DISEASE_OCCURRENCE_COUNT);
         }
         Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values());
-        model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
-        model.addAttribute("diseaseInterests", diseaseInterests);
+        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
+        model.addAttribute("diseaseInterests", convertSetToAlphabeticalList(diseaseInterests));
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("reviewCountPerDiseaseGroup", reviewCountPerDiseaseGroup);
         model.addAttribute("occurrenceCountPerDiseaseGroup", occurrenceCountPerDiseaseGroup);
@@ -85,6 +86,17 @@ public class DataValidationController {
             sum += i;
         }
         return sum;
+    }
+
+    private List<DiseaseGroup> convertSetToAlphabeticalList(Set<DiseaseGroup> set) {
+        List<DiseaseGroup> list = new ArrayList<>(set);
+        Collections.sort(list, new Comparator<DiseaseGroup>() {
+            @Override
+            public int compare(DiseaseGroup o1, DiseaseGroup o2) {
+                return o1.getDisplayName().compareTo(o2.getDisplayName());
+            }
+        });
+        return list;
     }
 
     /**

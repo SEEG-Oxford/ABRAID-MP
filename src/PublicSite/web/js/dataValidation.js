@@ -120,8 +120,8 @@ var DataValidationViewModels = (function () {
                     .done(function () {
                         // Status 2xx
                         // Remove the point from the map and side panel, display a success alert, increment the counter
+                        $("#submitReviewSuccess").fadeIn(1000);
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
-                        $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
                         incrementDiseaseOccurrenceReviewCount();
                     })
