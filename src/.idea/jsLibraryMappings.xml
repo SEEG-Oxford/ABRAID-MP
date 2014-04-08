@@ -5,9 +5,15 @@
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/AuthViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/RepositoryViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/knockout.validation.rules.js" libraries="{knockout.validation, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/AuthViewModelSpec.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SpecRunner.html" libraries="{jquery}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/require.test.conf.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/index.js" libraries="{knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/dataValidation.js" libraries="{jquery, knockout-debug, moment}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/leafletMap.js" libraries="{jquery, leaflet, leaflet.markercluster-src}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/login.js" libraries="{jquery, knockout-debug}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/navbar.js" libraries="{jquery}" />
   </component>
 </project>
 

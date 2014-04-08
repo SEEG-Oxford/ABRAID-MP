@@ -40,12 +40,7 @@
     <orderEntry type="library" name="knockout-debug" level="application" />
     <orderEntry type="library" name="knockout-bootstrap" level="application" />
     <orderEntry type="library" name="knockout.validation" level="application" />
-    <orderEntry type="library" name="domReady" level="application" />
     <orderEntry type="library" name="jasmine" level="application" />
-    <orderEntry type="library" name="leaflet.markercluster-src" level="application" />
-    <orderEntry type="library" name="leaflet" level="application" />
-    <orderEntry type="library" name="en-gb" level="application" />
-    <orderEntry type="library" name="moment" level="application" />
   </component>
 </module>
 

@@ -30,7 +30,7 @@
     require(['jasmine-boot' ], function(jasmine) {
         var ConsoleReporter = jasmineRequire.ConsoleReporter();
         var options = {
-            timer: new jasmine.Timer,
+            timer: new jasmine.Timer(),
             print: function () {
                 console.log.apply(console,arguments);
             },
