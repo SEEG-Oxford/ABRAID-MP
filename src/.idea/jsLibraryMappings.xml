@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/WEB-INF/freemarker/common.ftl" libraries="{bootstrap, jquery, knockout-bootstrap, knockout-debug, knockout.validation, modernizr, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/AuthViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/RepositoryViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/knockout.validation.rules.js" libraries="{knockout.validation, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/index.js" libraries="{knockout-debug, knockout.validation, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
+  </component>
+</project>
+

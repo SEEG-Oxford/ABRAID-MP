@@ -33,6 +33,13 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="modelwrapper-lib" level="project" />
     <orderEntry type="module" module-name="Common" />
+    <orderEntry type="library" name="require" level="application" />
+    <orderEntry type="library" name="modernizr" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="knockout-debug" level="application" />
+    <orderEntry type="library" name="knockout-bootstrap" level="application" />
+    <orderEntry type="library" name="knockout.validation" level="application" />
   </component>
 </module>
 
