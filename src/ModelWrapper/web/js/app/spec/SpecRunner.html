@@ -17,15 +17,19 @@
             /*global require:false*/
             var baseUrl = document.URL.substring(0, document.URL.indexOf("js/app/spec/SpecRunner.html"));
 
-            require([ baseUrl + 'js/app/spec/require.test.conf.js', baseUrl + 'js/require.conf.js' ], function() {
+            require([ baseUrl + 'js/require.conf.js' ], function() {
+                require([ "app/spec/require.test.conf" ], function() {
 
-                var specs = [
-                    "app/spec/AuthViewModelSpec"
-                ];
+                    var specs = [
+                        "app/spec/AuthViewModelSpec"
+                        // Add specs here
+                    ];
 
-                specs.push("domReady!");
-                require(specs, function($) {
-                    window.onload();
+
+                    specs.push("domReady!");
+                    require(specs, function($) {
+                        window.onload();
+                    });
                 });
             });
         </script>

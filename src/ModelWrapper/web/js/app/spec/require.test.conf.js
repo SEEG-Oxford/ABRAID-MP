@@ -41,20 +41,6 @@
         };
 
         var consoleReporter = new ConsoleReporter(options);
-
-        // Change the error details to not include a full stack trace
-        consoleReporter.specFailureDetails = function (result) {
-            print('\n');
-            print(result.fullName);
-
-            for (var i = 0; i < result.failedExpectations.length; i++) {
-                var failedExpectation = result.failedExpectations[i];
-                print(indent(failedExpectation.message, 2));
-            }
-
-            print('\n');
-        };
-
         jasmine.getEnv().addReporter(consoleReporter);
     });
 }());
