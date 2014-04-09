@@ -261,11 +261,10 @@
   </target>
 
   <target name="resolve.phantom" depends="determine.phantom.os.properties, download.phantom, unzip.phantom, untar.phantom">
-    <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" failonerror="false"/>
-    <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" failonerror="false"/>
+    <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" failonerror="false" quiet="true"/>
+    <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" failonerror="false" quiet="true"/>
     <delete file="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}"/>
     <antcall target="chmod.phantom" />
-
   </target>
 
   <target name="find.phantom">
