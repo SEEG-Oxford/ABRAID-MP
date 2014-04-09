@@ -74,6 +74,7 @@ public class HealthMapCountry {
         this.countries = countries;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -97,4 +98,5 @@ public class HealthMapCountry {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

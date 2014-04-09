@@ -23,13 +23,13 @@ import javax.persistence.Table;
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
-                query = "from DiseaseOccurrence as d" +
-                        " inner join fetch d.location" +
-                        " inner join fetch d.alert" +
-                        " inner join fetch d.alert.feed" +
-                        " where d.diseaseGroup.id=:diseaseGroupId" +
-                        " and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where" +
-                        " expert.id=:expertId)"
+                query = "from DiseaseOccurrence as d " +
+                        "inner join fetch d.location " +
+                        "inner join fetch d.alert " +
+                        "inner join fetch d.alert.feed " +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
+                        "expert.id=:expertId)"
         )
 })
 @Entity
@@ -44,7 +44,6 @@ public class DiseaseOccurrence {
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "disease_group_id", nullable = false)
-    @Fetch(FetchMode.JOIN)
     private DiseaseGroup diseaseGroup;
 
     // The location of this occurrence.
@@ -125,6 +124,7 @@ public class DiseaseOccurrence {
         this.occurrenceStartDate = occurrenceStartDate;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
@@ -158,4 +158,5 @@ public class DiseaseOccurrence {
         return result;
     }
     ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }

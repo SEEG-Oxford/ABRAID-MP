@@ -104,12 +104,12 @@ body #footer {
 }
 #counterDiv {
     position:relative;
-    margin:0 auto;
     text-align:center;
-    bottom:150px;
+    bottom:130px;
 }
 #counter {
     margin:0 auto;
+    zoom:0.8;
     width:140px;
 }
 .fa-map-marker {

@@ -22,9 +22,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller for the expert data validation map page.
@@ -56,23 +54,19 @@ public class DataValidationController {
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        Map<DiseaseGroup, Integer> diseaseInterestsWithReviewCountMap;
+        Set<DiseaseGroup> diseaseInterests = new HashSet<>();
+        Integer diseaseOccurrenceReviewCount = 0;
         boolean userLoggedIn = (user != null);
         if (userLoggedIn) {
-            diseaseInterestsWithReviewCountMap = expertService.getDiseaseInterestsWithReviewCount(user.getId());
+            diseaseInterests = expertService.getDiseaseInterests(user.getId());
+            diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(user.getId());
         } else {
-            diseaseInterestsWithReviewCountMap = getDiseaseInterestsMapForAnonymousUser();
+            diseaseInterests.add(diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME));
         }
-        model.addAttribute("diseaseInterestsSet", diseaseInterestsWithReviewCountMap.entrySet());
+        model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
+        model.addAttribute("diseaseInterests", diseaseInterests);
         model.addAttribute("userLoggedIn", userLoggedIn);
         return "datavalidation";
-    }
-
-    private Map<DiseaseGroup, Integer> getDiseaseInterestsMapForAnonymousUser() {
-        Map<DiseaseGroup, Integer> diseaseInterestsWithReviewCountMap = new HashMap<>();
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
-        diseaseInterestsWithReviewCountMap.put(diseaseGroup, 0);
-        return diseaseInterestsWithReviewCountMap;
     }
 
     /**
