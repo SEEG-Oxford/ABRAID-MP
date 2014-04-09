@@ -264,8 +264,8 @@
     <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" failonerror="false"/>
     <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" failonerror="false"/>
     <delete file="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}"/>
-    <antcall target="find.phantom" />
-    <chmod file="${phantom.executable}" perm="ugo+rx" failonerror="false"/>
+    <antcall target="chmod.phantom" />
+
   </target>
 
   <target name="find.phantom">
@@ -275,6 +275,10 @@
     <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}">
       <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
     </condition>
+  </target>
+
+  <target name="chmod.phantom" depends="find.phantom">
+    <chmod file="${phantom.executable}" perm="ugo+rx"/>
   </target>
 
   <target name="download.phantom" depends="determine.phantom.os.properties">
