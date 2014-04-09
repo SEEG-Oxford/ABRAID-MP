@@ -45,6 +45,7 @@
   <!-- Versioning -->
   <exec executable="git" outputproperty="repository.version">
     <arg value="describe"/>
+    <arg value="--tags"/>
     <arg value="--dirty"/>
   </exec>
   <tstamp>
