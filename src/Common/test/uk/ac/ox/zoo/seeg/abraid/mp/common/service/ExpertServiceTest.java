@@ -30,13 +30,19 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     @Test
     public void getDiseaseInterestsReturnsExpectedSet() {
         // Arrange
+        int expertId = 1;
+        DiseaseGroup group1 = new DiseaseGroup();
+        DiseaseGroup group2 = new DiseaseGroup();
+
         Set<DiseaseGroup> testSet = new HashSet<>();
-        Expert expert = new Expert();
-        expert.setDiseaseGroups(testSet);
-        when(expertDao.getById(anyInt())).thenReturn(expert);
+        testSet.add(group2);
+        testSet.add(group1);
+
+        List<DiseaseGroup> testList = Arrays.asList(group1, group2);
+        when(diseaseGroupDao.getByExpertId(eq(expertId))).thenReturn(testList);
 
         // Act
-        Set<DiseaseGroup> set = expertService.getDiseaseInterests(1);
+        Set<DiseaseGroup> set = expertService.getDiseaseInterests(expertId);
 
         // Assert
         assertThat(set).isEqualTo(testSet);

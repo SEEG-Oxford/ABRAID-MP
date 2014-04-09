@@ -1,0 +1,20 @@
+1	ascariasis
+2	CCHF
+3	cholera
+4	dengue
+5	Guinea worm
+6	HIV
+7	hookworm
+8	Japanese encephalitis
+9	leishmaniases
+10	loa loa
+11	lymphatic filariasis
+12	malaria (5 species)
+13	melioidosis
+14	onchocerciasis
+15	polio
+16	schistosomiasis
+17	scrub typhus
+18	trichuriasis
+19	trypanosomiases
+20	yellow fever

@@ -11,7 +11,7 @@ CREATE INDEX ix_disease_occurrence_disease_group_id ON disease_occurrence (disea
 CREATE INDEX ix_disease_occurrence_location_id ON disease_occurrence (location_id);
 CREATE INDEX ix_disease_occurrence_review_disease_occurrence_id ON disease_occurrence_review (disease_occurrence_id);
 CREATE INDEX ix_disease_occurrence_review_expert_id ON disease_occurrence_review (expert_id);
-CREATE INDEX ix_expert_disease_group_disease_group_id ON expert_disease_group (disease_group_id);
+CREATE INDEX ix_expert_validator_disease_group_validator_disease_group_id ON expert_validator_disease_group (validator_disease_group_id);
 CREATE INDEX ix_feed_provenance_id ON feed (provenance_id);
 CREATE INDEX ix_healthmap_disease_disease_group_id ON healthmap_disease (disease_group_id);
 CREATE INDEX ix_location_admin_unit_gaul_code ON location (admin_unit_gaul_code);

@@ -3,11 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -207,5 +208,27 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void doesDiseaseOccurrenceMatchDiseaseGroupReturnsExpectedResult() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+
+        int occurrenceId = 2;
+        DiseaseOccurrence occurrence = new DiseaseOccurrence(occurrenceId);
+        occurrence.setDiseaseGroup(diseaseGroup);
+        when(diseaseOccurrenceDao.getById(occurrenceId)).thenReturn(occurrence);
+
+        // Act
+        boolean diseaseOccurrenceMatches = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(
+                occurrenceId, diseaseGroupId);
+        boolean diseaseOccurrenceDoesNotMatch = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(
+                occurrenceId, 3);
+
+        // Assert
+        assertThat(diseaseOccurrenceMatches).isTrue();
+        assertThat(diseaseOccurrenceDoesNotMatch).isFalse();
     }
 }

@@ -8,4 +8,7 @@
 
   <!-- Override the imported build.package task, to switch it from building a JAR to a WAR -->
   <target name="build.package" depends="build.war"/>
+
+  <target name="check.extras" depends="module_build.check.extras, unit.test.js" />
+  <target name="retrieve.manual.libs" depends="module_build.retrieve.manual.libs, retrieve.phantom" />
 </project>

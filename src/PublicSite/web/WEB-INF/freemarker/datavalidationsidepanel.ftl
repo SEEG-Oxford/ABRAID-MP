@@ -6,7 +6,7 @@
 <div id="sidePanel">
     <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-        <form id="logIn">
+        <form id="logIn" action="">
             <p id="formAlert" data-bind="text: formAlert"></p>
             <p class="form-group">
                 <span class="input-group">
@@ -30,24 +30,21 @@
         </form>
     </@security.authorize>
     <@security.authorize ifAnyGranted="ROLE_USER">
-    <div id="counterDiv">
-        <span>You have validated</span>
-        <div id="counter" data-bind="counter: diseaseOccurrenceReviewCount"></div>
-        <span data-bind="text: diseaseOccurrenceReviewCount() == 1 ? 'occurrence' : 'occurrences'"></span>
-    </div>
+        <div id="counterDiv">
+            <span>You have validated</span>
+            <div id="counter" data-bind="counter: diseaseOccurrenceReviewCount"></div>
+            <span data-bind="text: diseaseOccurrenceReviewCount() == 1 ? 'occurrence' : 'occurrences'"></span>
+        </div>
     </@security.authorize>
 </div>
 
 <script type="text/html" id="no-selected-point-template">
     <ul>
-        <li>
-            <div class="alert alert-info alert-dismissable" id="submitReviewSuccess" style="display:none">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                Review submitted.
-            </div>
-        </li>
         <li>Select a point on the map to view more details here...</li>
     </ul>
+    <div id="submitReviewSuccess" style="display:none">
+        <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
+    </div>
 </script>
 
 <script type="text/html" id="selected-point-template">

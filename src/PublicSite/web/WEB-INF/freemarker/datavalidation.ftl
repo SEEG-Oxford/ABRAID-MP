@@ -17,12 +17,14 @@
 <#assign endOfBodyScriptContent>
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
     var loggedIn = ${userLoggedIn?c};
-    var diseaseOccurrenceReviewCount = ${diseaseOccurrenceReviewCount?int};
+    var diseaseOccurrenceReviewCount = ${reviewCount?int};
     var diseaseInterests = [
         <#list diseaseInterests as disease>
             {
                 name: "${disease.getDisplayName()?lower_case?js_string}",
                 id: ${disease.id?int},
+                reviewCount: ${reviewCountPerDiseaseGroup[disease.getDisplayName()]?int},
+                occurrenceCount: ${occurrenceCountPerDiseaseGroup[disease.getDisplayName()]?int}
             },
         </#list>
     ];
@@ -54,6 +56,9 @@
                 </optgroup>
             </select>
         </h4>
+        <div class="alert alert-info" data-bind="visible: noOccurrencesLeftToReview()" style="text-align: center">
+            There are no occurrences in need of review for this disease.
+        </div>
     </div>
 
     <div id="map"></div>

@@ -62,8 +62,23 @@ var DataValidationViewModels = (function () {
         ]);
         this.selectedDisease = ko.observable();
         this.selectedDisease.subscribe(function () {
+            if (this.selectedDisease() != null) {
+                this.selectedDisease().reviewCount = this.selectedDiseaseReviewCount();
+            }
+        }, this, "beforeChange");
+        this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
             LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
+            this.selectedDiseaseReviewCount(this.selectedDisease().reviewCount);
+        }, this);
+        this.selectedDiseaseReviewCount = ko.observable();
+        this.incrementSelectedDiseaseReviewCount = function () {
+            this.selectedDiseaseReviewCount(this.selectedDiseaseReviewCount() + 1);
+        };
+        this.noOccurrencesLeftToReview = ko.computed(function () {
+            if (this.selectedDisease() != null) {
+                return this.selectedDiseaseReviewCount() == this.selectedDisease().occurrenceCount;
+            }
         }, this);
     };
 
@@ -105,10 +120,10 @@ var DataValidationViewModels = (function () {
                     .done(function () {
                         // Status 2xx
                         // Remove the point from the map and side panel, display a success alert, increment the counter
+                        $("#submitReviewSuccess").fadeIn(1000);
                         DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
-                        $("#submitReviewSuccess").fadeIn();
                         LeafletMap.removeReviewedPoint(feature.id);
-                        DataValidationViewModels.counterViewModel.incrementDiseaseOccurrenceCount();
+                        incrementDiseaseOccurrenceReviewCount();
                     })
                     .fail(function (xhr) {
                         alert("Something went wrong. Please try again. " + xhr.responseText);
@@ -117,9 +132,14 @@ var DataValidationViewModels = (function () {
         };
     };
 
+    function incrementDiseaseOccurrenceReviewCount() {
+        DataValidationViewModels.layerSelectorViewModel.incrementSelectedDiseaseReviewCount();
+        DataValidationViewModels.counterViewModel.incrementDiseaseOccurrenceReviewCount();
+    }
+
     var CounterViewModel = function () {
         this.diseaseOccurrenceReviewCount = ko.observable(diseaseOccurrenceReviewCount);
-        this.incrementDiseaseOccurrenceCount = function () {
+        this.incrementDiseaseOccurrenceReviewCount = function () {
             this.diseaseOccurrenceReviewCount(this.diseaseOccurrenceReviewCount() + 1);
         };
     };

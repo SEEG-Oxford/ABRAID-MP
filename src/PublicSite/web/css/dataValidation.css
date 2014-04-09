@@ -3,10 +3,28 @@
  * Copyright (c) 2014 University of Oxford
  */
 
+html > body {
+    min-width: 430px !important;
+}
+body > #common {
+    overflow-x: auto;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    top: 50px;
+    bottom: 30px;
+}
+body #footer {
+    position: absolute;
+    bottom: 0;
+}
+
 #dataValidation  {
     padding-right:280px;        /* Side panel width */
-    min-width:800px;            /* Side panel width + layer selector width */
+    min-width: 800px;            /* Side panel width + layer selector width */
+    min-height: 550px;
     height:100%;
+    margin: 0;
 }
 #layerSelector {
     position:absolute;
@@ -58,18 +76,22 @@
     float:right;
     padding-right:5px;
 }
+#submitReviewSuccess,
 #reviewButtons {
     width:100%;
     padding:10px;
     position:absolute;
-    bottom:150px;
+    bottom:130px;
 }
 #reviewButtons .btn-group, #logIn .btn {
     width:100%;
 }
 #reviewButtons .btn-group button {
-    margin-top:5px;
     width:33%;
+    height:50px;
+}
+#submitReviewSuccess button {
+    width:99%;
     height:50px;
 }
 #logIn {
