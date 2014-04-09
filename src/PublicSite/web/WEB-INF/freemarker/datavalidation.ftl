@@ -21,10 +21,10 @@
     var diseaseInterests = [
         <#list diseaseInterests as disease>
             {
-                name: "${disease.getDisplayName()?lower_case?js_string}",
+                name: "${disease.getShortNameForDisplay()?lower_case?js_string}",
                 id: ${disease.id?int},
-                reviewCount: ${reviewCountPerDiseaseGroup[disease.getDisplayName()]?int},
-                occurrenceCount: ${occurrenceCountPerDiseaseGroup[disease.getDisplayName()]?int}
+                reviewCount: ${reviewCountPerDiseaseGroup[disease.getName()]?int},
+                occurrenceCount: ${occurrenceCountPerDiseaseGroup[disease.getName()]?int}
             },
         </#list>
     ];

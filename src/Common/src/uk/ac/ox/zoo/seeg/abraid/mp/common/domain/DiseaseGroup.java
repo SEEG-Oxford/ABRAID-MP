@@ -125,12 +125,21 @@ public class DiseaseGroup {
         this.groupType = groupType;
     }
 
-    public String getPublicName() {
-        return publicName;
-    }
+    public String getPublicName() { return publicName; }
 
     public void setPublicName(String publicName) {
         this.publicName = publicName;
+    }
+
+    /**
+     * Gets the disease group's public name for display, if it exists.
+     * @return The disease group's public name for display.
+     */
+    public String getPublicNameForDisplay() {
+        if (StringUtils.hasText(getPublicName())) {
+            return getPublicName();
+        }
+        return getName();
     }
 
     public String getShortName() {
@@ -142,10 +151,10 @@ public class DiseaseGroup {
     }
 
     /**
-     * Gets the disease group name for display.
-     * @return The disease group name for display.
+     * Gets the disease group's short name for display, if it exists.
+     * @return The disease group's short name for display.
      */
-    public String getDisplayName() {
+    public String getShortNameForDisplay() {
         if (StringUtils.hasText(getShortName())) {
             return getShortName();
         }

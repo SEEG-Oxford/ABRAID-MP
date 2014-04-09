@@ -114,7 +114,7 @@ public class ExpertServiceImpl implements ExpertService {
         for (DiseaseGroup diseaseGroup : diseaseInterests) {
             List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId,
                     diseaseGroup.getId());
-            map.put(diseaseGroup.getDisplayName(), reviews.size());
+            map.put(diseaseGroup.getName(), reviews.size());
         }
         return map;
     }
@@ -131,7 +131,7 @@ public class ExpertServiceImpl implements ExpertService {
         for (DiseaseGroup diseaseGroup : diseaseInterests) {
             List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesByDiseaseGroupId(
                     diseaseGroup.getId());
-            map.put(diseaseGroup.getDisplayName(), occurrences.size());
+            map.put(diseaseGroup.getName(), occurrences.size());
         }
         return map;
     }

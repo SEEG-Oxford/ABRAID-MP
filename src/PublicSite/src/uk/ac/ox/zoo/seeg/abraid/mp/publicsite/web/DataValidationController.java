@@ -69,8 +69,8 @@ public class DataValidationController {
         } else {
             DiseaseGroup defaultDiseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
             diseaseInterests.add(defaultDiseaseGroup);
-            reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 0);
-            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), DEFAULT_DISEASE_OCCURRENCE_COUNT);
+            reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getName(), 0);
+            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getName(), DEFAULT_DISEASE_OCCURRENCE_COUNT);
         }
         Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values()).intValue();
         model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
@@ -86,7 +86,7 @@ public class DataValidationController {
         Collections.sort(list, new Comparator<DiseaseGroup>() {
             @Override
             public int compare(DiseaseGroup o1, DiseaseGroup o2) {
-                return o1.getDisplayName().compareTo(o2.getDisplayName());
+                return o1.getPublicNameForDisplay().compareTo(o2.getPublicNameForDisplay());
             }
         });
         return list;
