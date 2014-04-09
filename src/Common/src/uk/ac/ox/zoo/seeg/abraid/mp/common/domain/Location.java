@@ -119,7 +119,6 @@ public class Location {
         this.geoNameId = geoNameId;
     }
 
-    ///COVERAGE:OFF - generated code
     public AdminUnit getAdminUnit() {
         return adminUnit;
     }
@@ -128,6 +127,7 @@ public class Location {
         this.adminUnit = adminUnit;
     }
 
+    ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
