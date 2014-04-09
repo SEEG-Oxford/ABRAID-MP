@@ -70,7 +70,7 @@ ALTER TABLE feed ADD CONSTRAINT pk_feed
 
 ALTER TABLE geoname ADD CONSTRAINT pk_geoname
     PRIMARY KEY (id);
-    
+
 ALTER TABLE geonames_location_precision ADD CONSTRAINT pk_geonames_location_precision
     PRIMARY KEY (geonames_feature_code);
 
@@ -81,6 +81,9 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT pk_healthmap_country_countr
     PRIMARY KEY (healthmap_country_id, gaul_code);
 
 ALTER TABLE healthmap_disease ADD CONSTRAINT pk_healthmap_disease
+    PRIMARY KEY (id);
+
+ALTER TABLE land_sea_border ADD CONSTRAINT pk_land_sea_border
     PRIMARY KEY (id);
 
 ALTER TABLE location ADD CONSTRAINT pk_location
