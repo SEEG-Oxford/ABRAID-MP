@@ -18,6 +18,11 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "getDiseaseGroupByName",
                 query = "from DiseaseGroup where name=:name"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupsByExpertId",
+                query = "from DiseaseGroup where validatorDiseaseGroup in " +
+                        "(select vdg from Expert e join e.validatorDiseaseGroups vdg where e.id=:expertId)"
         )
 })
 @Entity
@@ -53,13 +58,14 @@ public class DiseaseGroup {
     // The disease group abbreviated name.
     private String abbreviation;
 
-    // A name allowing the disease groups to be grouped further, for display in DataValidator.
-    @Column(name = "validator_set")
-    private String validatorSet;
-
     // True if the disease group is global, false if tropical, null if unknown.
     @Column(name = "is_global")
     private Boolean isGlobal;
+
+    // A link to a further grouping of diseases for use by experts in the Data Validator.
+    @ManyToOne
+    @JoinColumn(name = "validator_disease_group_id")
+    private ValidatorDiseaseGroup validatorDiseaseGroup;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -157,20 +163,20 @@ public class DiseaseGroup {
         this.abbreviation = abbreviation;
     }
 
+    public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
+        return validatorDiseaseGroup;
+    }
+
+    public void setValidatorDiseaseGroup(ValidatorDiseaseGroup validatorDiseaseGroup) {
+        this.validatorDiseaseGroup = validatorDiseaseGroup;
+    }
+
     public Boolean isGlobal() {
         return isGlobal;
     }
 
     public void setGlobal(Boolean isGlobal) {
         this.isGlobal = isGlobal;
-    }
-
-    public String getValidatorSet() {
-        return validatorSet;
-    }
-
-    public void setValidatorSet(String validatorSet) {
-        this.validatorSet = validatorSet;
     }
 
     public DateTime getCreatedDate() {
@@ -195,7 +201,8 @@ public class DiseaseGroup {
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
         if (shortName != null ? !shortName.equals(that.shortName) : that.shortName != null) return false;
-        if (validatorSet != null ? !validatorSet.equals(that.validatorSet) : that.validatorSet != null) return false;
+        if (validatorDiseaseGroup != null ? !validatorDiseaseGroup.equals(that.validatorDiseaseGroup) : that.validatorDiseaseGroup != null)
+            return false;
 
         return true;
     }
@@ -209,8 +216,8 @@ public class DiseaseGroup {
         result = 31 * result + (publicName != null ? publicName.hashCode() : 0);
         result = 31 * result + (shortName != null ? shortName.hashCode() : 0);
         result = 31 * result + (abbreviation != null ? abbreviation.hashCode() : 0);
-        result = 31 * result + (validatorSet != null ? validatorSet.hashCode() : 0);
         result = 31 * result + (isGlobal != null ? isGlobal.hashCode() : 0);
+        result = 31 * result + (validatorDiseaseGroup != null ? validatorDiseaseGroup.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

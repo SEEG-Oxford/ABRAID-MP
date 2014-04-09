@@ -19,7 +19,7 @@
 -- disease_occurrence:             Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- disease_occurrence_review:      Represents an expert's response on the validity of a disease occurrence point.
 -- expert:                         Represents a user of the PublicSite.
--- expert_disease_group:           Represents an expert's disease interest. These should be displayed to a user for review in the Data Validator.
+-- expert_validator_disease_group: Represents an expert's disease interest, in terms of a disease group used by the Data Validator.
 -- feed:                           Represents a source of alerts.
 -- geoname:                        Represents a GeoName.
 -- geonames_location_precision:    Represents a mapping between a GeoNames feature code and a location precision.
@@ -28,6 +28,7 @@
 -- healthmap_disease:              Represents a disease as defined by HealthMap.
 -- location:                       Represents the location of a disease occurrence.
 -- provenance:                     Represents a provenance, i.e. the source of a group of feeds.
+-- validator_disease_group:        Represents a grouping of diseases for use by the Data Validator.
 
 
 CREATE TABLE admin_unit (
@@ -102,8 +103,8 @@ CREATE TABLE disease_group (
     public_name varchar(100),
     short_name varchar(100),
     abbreviation varchar(10),
-    validator_set varchar(100),
     is_global boolean,
+    validator_disease_group_id integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -136,9 +137,10 @@ CREATE TABLE expert (
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE expert_disease_group (
+CREATE TABLE expert_validator_disease_group (
     expert_id integer NOT NULL,
-    disease_group_id integer NOT NULL
+    validator_disease_group_id integer NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE feed (
@@ -195,4 +197,10 @@ CREATE TABLE provenance (
     default_feed_weighting double precision NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     last_retrieval_end_date timestamp
+);
+
+CREATE TABLE validator_disease_group (
+    id serial NOT NULL,
+    name varchar(100) NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

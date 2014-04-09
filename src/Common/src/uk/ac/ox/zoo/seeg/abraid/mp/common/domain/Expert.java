@@ -1,7 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -59,12 +57,12 @@ public class Expert {
     private DateTime createdDate;
 
     // List of disease groups an expert has interest in and can validate.
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "expert_disease_group",
+    // NB: By default this is not populated.
+    @ManyToMany
+    @JoinTable(name = "expert_validator_disease_group",
             joinColumns = { @JoinColumn(name = "expert_id") },
-            inverseJoinColumns = { @JoinColumn(name = "disease_group_id") })
-    @Fetch(FetchMode.SELECT)
-    private Set<DiseaseGroup> diseaseGroups;
+            inverseJoinColumns = { @JoinColumn(name = "validator_disease_group_id") })
+    private Set<ValidatorDiseaseGroup> validatorDiseaseGroups;
 
     public Integer getId() {
         return id;
@@ -110,12 +108,12 @@ public class Expert {
         this.isPubliclyVisible = isPubliclyVisible;
     }
 
-    public Set<DiseaseGroup> getDiseaseGroups() {
-        return diseaseGroups;
+    public Set<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
+        return validatorDiseaseGroups;
     }
 
-    public void setDiseaseGroups(Set<DiseaseGroup> diseaseGroups) {
-        this.diseaseGroups = diseaseGroups;
+    public void setValidatorDiseaseGroups(Set<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+        this.validatorDiseaseGroups = validatorDiseaseGroups;
     }
 
     public Double getWeighting() {
@@ -141,7 +139,7 @@ public class Expert {
 
         if (isAdministrator != expert.isAdministrator) return false;
         if (createdDate != null ? !createdDate.equals(expert.createdDate) : expert.createdDate != null) return false;
-        if (diseaseGroups != null ? !diseaseGroups.equals(expert.diseaseGroups) : expert.diseaseGroups != null)
+        if (validatorDiseaseGroups != null ? !validatorDiseaseGroups.equals(expert.validatorDiseaseGroups) : expert.validatorDiseaseGroups != null)
             return false;
         if (email != null ? !email.equals(expert.email) : expert.email != null) return false;
         if (id != null ? !id.equals(expert.id) : expert.id != null) return false;
@@ -162,7 +160,7 @@ public class Expert {
         result = 31 * result + (isAdministrator ? 1 : 0);
         result = 31 * result + (isPubliclyVisible != null ? isPubliclyVisible.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
-        result = 31 * result + (diseaseGroups != null ? diseaseGroups.hashCode() : 0);
+        result = 31 * result + (validatorDiseaseGroups != null ? validatorDiseaseGroups.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

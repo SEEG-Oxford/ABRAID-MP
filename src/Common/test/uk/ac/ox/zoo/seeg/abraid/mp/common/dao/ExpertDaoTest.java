@@ -2,10 +2,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -94,5 +96,28 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
 
         // Assert
         assertThat(experts).hasSize(2);
+    }
+
+    @Test
+    public void getExpertByIdReturnsExpertIfItExists() {
+        // Act
+        Expert expert = expertDao.getById(1);
+
+        // Assert
+        assertThat(expert).isNotNull();
+        assertThat(expert.getId()).isEqualTo(1);
+        assertThat(expert.getName()).isEqualTo("Helena Patching");
+        // Upon execution of the next line, the lazily-loaded validatorDiseaseGroups set is actually loaded
+        Set<ValidatorDiseaseGroup> validatorDiseaseGroups = expert.getValidatorDiseaseGroups();
+        assertThat(validatorDiseaseGroups).hasSize(2);
+    }
+
+    @Test
+    public void getExpertByIdReturnsNullIfItDoesNotExist() {
+        // Act
+        Expert expert = expertDao.getById(-1);
+
+        // Assert
+        assertThat(expert).isNull();
     }
 }
