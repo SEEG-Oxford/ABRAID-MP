@@ -26,53 +26,49 @@
 -- healthmap_country:              Represents a country as defined by HealthMap.
 -- healthmap_country_country:      Represents a mapping between HealthMap countries and SEEG countries.
 -- healthmap_disease:              Represents a disease as defined by HealthMap.
+-- land_sea_border:                Represents a land-sea border to a 5km resolution as used by the model.
 -- location:                       Represents the location of a disease occurrence.
 -- provenance:                     Represents a provenance, i.e. the source of a group of feeds.
 
 
 CREATE TABLE admin_unit (
     gaul_code integer NOT NULL,
-    parent_gaul_code integer NOT NULL,
-    country_code varchar(3) NOT NULL,
-    admin_level varchar(1) NOT NULL,
+    level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
-    centroid_latitude double precision NOT NULL,
-    centroid_longitude double precision NOT NULL,
+    centr_lat double precision NOT NULL,
+    centr_lon double precision NOT NULL,
     area double precision NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
+    geom geometry(MULTIPOLYGON, 4326),
+    max_centr_distance double precision
 );
 
 CREATE TABLE admin_unit_global (
     gaul_code integer NOT NULL,
-    parent_gaul_code integer NOT NULL,
-    country_code varchar(3) NOT NULL,
-    admin_level varchar(1) NOT NULL,
+    level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
-    public_name varchar(100) NOT NULL,
+    pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_simplified_global (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
-    public_name varchar(100) NOT NULL,
+    pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_simplified_tropical (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
-    public_name varchar(100) NOT NULL,
+    pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_tropical (
     gaul_code integer NOT NULL,
-    parent_gaul_code integer NOT NULL,
-    country_code varchar(3) NOT NULL,
-    admin_level varchar(1) NOT NULL,
+    level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
-    public_name varchar(100) NOT NULL,
+    pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
@@ -89,7 +85,6 @@ CREATE TABLE alert (
 
 CREATE TABLE country (
     gaul_code integer NOT NULL,
-    country_code varchar(3) NOT NULL,
     name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
 );
@@ -176,6 +171,11 @@ CREATE TABLE healthmap_disease (
     name varchar(100) NOT NULL,
     disease_group_id integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+CREATE TABLE land_sea_border (
+    id integer NOT NULL,
+    geom geometry(MULTIPOLYGON, 4326) NOT NULL
 );
 
 CREATE TABLE location (
