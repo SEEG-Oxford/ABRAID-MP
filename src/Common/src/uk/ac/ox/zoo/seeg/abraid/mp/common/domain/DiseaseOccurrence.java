@@ -22,6 +22,10 @@ import javax.persistence.Table;
                         "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
         ),
         @NamedQuery(
+                name = "getDiseaseOccurrencesByDiseaseGroupId",
+                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
                 query = "from DiseaseOccurrence as d " +
                         "inner join fetch d.location " +
@@ -74,6 +78,10 @@ public class DiseaseOccurrence {
     private DateTime occurrenceStartDate;
 
     public DiseaseOccurrence() {
+    }
+
+    public DiseaseOccurrence(int id) {
+        this.id = id;
     }
 
     public Integer getId() {

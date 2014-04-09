@@ -105,7 +105,6 @@ public class DiseaseServiceImpl implements DiseaseService {
      */
     public boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
-        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        return occurrence.getDiseaseGroup() == diseaseGroup;
+        return diseaseGroupId.equals(occurrence.getDiseaseGroup().getId());
     }
 }

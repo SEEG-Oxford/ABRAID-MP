@@ -23,6 +23,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.*;
+import static ch.lambdaj.Lambda.*;
 
 /**
  * Controller for the expert data validation map page.
@@ -34,6 +35,7 @@ public class DataValidationController {
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_DISEASE_NAME = "Dengue";
+    private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
     private final ExpertService expertService;
@@ -55,18 +57,39 @@ public class DataValidationController {
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Set<DiseaseGroup> diseaseInterests = new HashSet<>();
-        Integer diseaseOccurrenceReviewCount = 0;
+        Map<String, Integer> reviewCountPerDiseaseGroup = new HashMap<>();
+        Map<String, Integer> occurrenceCountPerDiseaseGroup = new HashMap<>();
         boolean userLoggedIn = (user != null);
         if (userLoggedIn) {
             diseaseInterests = expertService.getDiseaseInterests(user.getId());
-            diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(user.getId());
+            reviewCountPerDiseaseGroup = expertService.getDiseaseOccurrenceReviewCountPerDiseaseGroup(user.getId(),
+                    diseaseInterests);
+            occurrenceCountPerDiseaseGroup = expertService.getDiseaseOccurrenceCountPerDiseaseGroup(user.getId(),
+                    diseaseInterests);
         } else {
-            diseaseInterests.add(diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME));
+            DiseaseGroup defaultDiseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
+            diseaseInterests.add(defaultDiseaseGroup);
+            reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 0);
+            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), DEFAULT_DISEASE_OCCURRENCE_COUNT);
         }
-        model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
-        model.addAttribute("diseaseInterests", diseaseInterests);
+        Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values()).intValue();
+        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
+        model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
         model.addAttribute("userLoggedIn", userLoggedIn);
+        model.addAttribute("reviewCountPerDiseaseGroup", reviewCountPerDiseaseGroup);
+        model.addAttribute("occurrenceCountPerDiseaseGroup", occurrenceCountPerDiseaseGroup);
         return "datavalidation";
+    }
+
+    private List<DiseaseGroup> sortByDisplayName(Set<DiseaseGroup> set) {
+        List<DiseaseGroup> list = new ArrayList<>(set);
+        Collections.sort(list, new Comparator<DiseaseGroup>() {
+            @Override
+            public int compare(DiseaseGroup o1, DiseaseGroup o2) {
+                return o1.getDisplayName().compareTo(o2.getDisplayName());
+            }
+        });
+        return list;
     }
 
     /**

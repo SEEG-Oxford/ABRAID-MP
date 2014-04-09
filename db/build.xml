@@ -42,33 +42,25 @@
     <!-- Imports shapefiles, if the property "shapefiles.path" is specified (this must be a valid path to the shapefiles folder) -->
     <target name="import.shapefiles" if="shapefiles.path">
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="abraid_admin_0_1__simp_global.shp"/>
+            <param name="shapefile.name" value="admin_unit.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="abraid_admin_0_1__simp_tropical.shp"/>
+            <param name="shapefile.name" value="admin_unit_global.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="abraid_admin_0_1_global.shp"/>
+            <param name="shapefile.name" value="admin_unit_tropical.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="abraid_admin_0_1_tropical.shp"/>
+            <param name="shapefile.name" value="admin_unit_simplified_global.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="abraid_admin_0_simplified.shp"/>
+            <param name="shapefile.name" value="admin_unit_simplified_tropical.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin2013_0.shp"/>
+            <param name="shapefile.name" value="country.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin2013_1.shp"/>
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin2013_2.shp"/>
-        </antcall>
-        <echo>Migrating shapefiles to desired tables</echo>
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="migrate_shapefiles.sql"/>
-            <param name="database.script.dir" value="."/>
+            <param name="shapefile.name" value="land_sea_border.shp"/>
         </antcall>
     </target>
 

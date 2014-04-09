@@ -83,6 +83,9 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT pk_healthmap_country_countr
 ALTER TABLE healthmap_disease ADD CONSTRAINT pk_healthmap_disease
     PRIMARY KEY (id);
 
+ALTER TABLE land_sea_border ADD CONSTRAINT pk_land_sea_border
+    PRIMARY KEY (id);
+
 ALTER TABLE location ADD CONSTRAINT pk_location
     PRIMARY KEY (id);
 
