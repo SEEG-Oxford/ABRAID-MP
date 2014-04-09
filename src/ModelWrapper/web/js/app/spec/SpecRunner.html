@@ -10,26 +10,41 @@
 
         <link rel="shortcut icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine_favicon.png">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine-html.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/console.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
-
+        <!-- Add specs here -->
         <script type="text/javascript">
-            /*global require:false*/
+            var specs = [
+                "app/spec/AuthViewModelSpec"
+            ];
+        </script>
+
+        <!-- Make Jasmine play nice with phantom, require and ant -->
+        <script type="text/javascript">
+            /*global specs:false, require:false, jasmine:false, jasmineRequire:false*/
             var baseUrl = document.URL.substring(0, document.URL.indexOf("js/app/spec/SpecRunner.html"));
-
             require([ baseUrl + 'js/require.conf.js' ], function() {
-                require([ "app/spec/require.test.conf" ], function() {
+                specs.push("domReady!"); // Dont load jasmine boot before domReady otherwise get two results sets (the real onload and the manual one), but one without specs.
+                specs.push("https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js");
+                require(specs, function() {
+                    var ConsoleReporter = jasmineRequire.ConsoleReporter();
+                    var options = {
+                        print: function () {
+                            console.log.apply(console, arguments);
+                        },
+                        onComplete: function(state) {
+                            // Stash this so we can get it elsewhere
+                            window.exitCode = state ? 0 : 1;
+                        }
+                    };
 
-                    var specs = [
-                        "app/spec/AuthViewModelSpec"
-                        // Add specs here
-                    ];
+                    var consoleReporter = new ConsoleReporter(options);
+                    jasmine.getEnv().addReporter(consoleReporter);
 
-
-                    specs.push("domReady!");
-                    require(specs, function($) {
-                        window.onload();
-                    });
+                    window.onload();
                 });
             });
         </script>

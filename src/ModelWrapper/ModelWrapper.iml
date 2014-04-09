@@ -41,6 +41,9 @@
     <orderEntry type="library" name="knockout-bootstrap" level="application" />
     <orderEntry type="library" name="knockout.validation" level="application" />
     <orderEntry type="library" name="jasmine" level="application" />
+    <orderEntry type="library" name="console" level="application" />
+    <orderEntry type="library" name="jasmine-html" level="application" />
+    <orderEntry type="library" name="boot" level="application" />
   </component>
 </module>
 

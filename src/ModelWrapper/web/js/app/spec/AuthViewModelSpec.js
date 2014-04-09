@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false, describe:false, it:false, expect:false, beforeEach:false*/
-define([ 'app/AuthViewModel', "jasmine" ], function(AuthViewModel) {
+define([ 'app/AuthViewModel' ], function(AuthViewModel) {
     "use strict";
 
     describe("The auth view model", function() {

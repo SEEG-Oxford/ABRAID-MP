@@ -525,8 +525,8 @@
   <target name="unit.test.js" depends="retrieve.libs, find.phantom">
     <echo>Running: ${phantom.executable}</echo>
     <exec executable="${phantom.executable}" resultproperty="js.test.result">
-      <arg value="web/js/app/spec/run-jasmine.js"/>
-      <arg value="web/js/app/spec/SpecRunner.html"/>
+      <arg value="${project.root.dir}/src/run-jasmine.js"/>
+      <arg value="${web.dir}/js/app/spec/SpecRunner.html"/>
     </exec>
     <condition property="js.test.failure">
       <not>
