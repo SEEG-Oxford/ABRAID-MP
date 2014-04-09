@@ -186,8 +186,7 @@ CREATE TABLE location (
     geoname_id integer,
     resolution_weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    healthmap_country_id bigint,
-    admin_unit_gaul_code integer
+    healthmap_country_id bigint
 );
 
 CREATE TABLE provenance (
