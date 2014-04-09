@@ -14,6 +14,7 @@
             'knockout': "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-debug",
             'knockout.validation': 'https://cdnjs.cloudflare.com/ajax/libs/knockout-validation/1.0.2/knockout.validation.min',
             'knockout.bootstrap': baseUrl + 'js/lib/knockout-bootstrap.min', // Move to cdn path when next version is published
+            'underscore': 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore',
             'domReady': 'https://cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady'
         },
         shim: {
