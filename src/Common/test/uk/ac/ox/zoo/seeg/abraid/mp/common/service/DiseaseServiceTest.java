@@ -10,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -207,5 +208,27 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(doesDiseaseOccurrenceExist).isFalse();
+    }
+
+    @Test
+    public void doesDiseaseOccurrenceMatchDiseaseGroupReturnsExpectedResult() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+
+        int occurrenceId = 2;
+        DiseaseOccurrence occurrence = new DiseaseOccurrence(occurrenceId);
+        occurrence.setDiseaseGroup(diseaseGroup);
+        when(diseaseOccurrenceDao.getById(occurrenceId)).thenReturn(occurrence);
+
+        // Act
+        boolean diseaseOccurrenceMatches = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(
+                occurrenceId, diseaseGroupId);
+        boolean diseaseOccurrenceDoesNotMatch = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(
+                occurrenceId, 3);
+
+        // Assert
+        assertThat(diseaseOccurrenceMatches).isTrue();
+        assertThat(diseaseOccurrenceDoesNotMatch).isFalse();
     }
 }

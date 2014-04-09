@@ -23,6 +23,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.*;
+import static ch.lambdaj.Lambda.*;
 
 /**
  * Controller for the expert data validation map page.
@@ -71,24 +72,16 @@ public class DataValidationController {
             reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 0);
             occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), DEFAULT_DISEASE_OCCURRENCE_COUNT);
         }
-        Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values());
+        Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values()).intValue();
         model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
-        model.addAttribute("diseaseInterests", convertSetToAlphabeticalList(diseaseInterests));
+        model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("reviewCountPerDiseaseGroup", reviewCountPerDiseaseGroup);
         model.addAttribute("occurrenceCountPerDiseaseGroup", occurrenceCountPerDiseaseGroup);
         return "datavalidation";
     }
 
-    private int sum(Collection<Integer> c) {
-        int sum = 0;
-        for (int i : c) {
-            sum += i;
-        }
-        return sum;
-    }
-
-    private List<DiseaseGroup> convertSetToAlphabeticalList(Set<DiseaseGroup> set) {
+    private List<DiseaseGroup> sortByDisplayName(Set<DiseaseGroup> set) {
         List<DiseaseGroup> list = new ArrayList<>(set);
         Collections.sort(list, new Comparator<DiseaseGroup>() {
             @Override
