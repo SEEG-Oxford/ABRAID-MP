@@ -21,5 +21,6 @@
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup"/>
     </session-factory>
 </hibernate-configuration>

@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
@@ -19,14 +20,18 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
 
+    @Autowired
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+
     @Test
     public void saveAndReloadDiseaseCluster() {
         // Arrange
         String diseaseClusterName = "Test disease cluster";
         String diseaseClusterPublicName = "Test disease cluster public name";
         String diseaseClusterShortName = "Short name";
-        String diseaseClusterValidatorSet = "Name for Data Validator";
         String diseaseClusterAbbreviation = "tdc";
+        int validatorDiseaseGroupId = 1;
+        ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
@@ -34,7 +39,7 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
         diseaseGroup.setPublicName(diseaseClusterPublicName);
         diseaseGroup.setShortName(diseaseClusterShortName);
         diseaseGroup.setAbbreviation(diseaseClusterAbbreviation);
-        diseaseGroup.setValidatorSet(diseaseClusterValidatorSet);
+        diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         diseaseGroup.setGlobal(true);
 
         // Act
@@ -49,7 +54,8 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
         assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
         assertThat(diseaseGroup.getPublicName()).isEqualTo(diseaseClusterPublicName);
         assertThat(diseaseGroup.getShortName()).isEqualTo(diseaseClusterShortName);
-        assertThat(diseaseGroup.getValidatorSet()).isEqualTo(diseaseClusterValidatorSet);
+        assertThat(diseaseGroup.getValidatorDiseaseGroup()).isNotNull();
+        assertThat(diseaseGroup.getValidatorDiseaseGroup().getId()).isEqualTo(validatorDiseaseGroupId);
         assertThat(diseaseGroup.isGlobal()).isTrue();
         assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.CLUSTER);
         assertThat(diseaseGroup.getParentGroup()).isNull();
@@ -120,5 +126,34 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
     public void getAllDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getAll();
         assertThat(diseaseGroups).hasSize(396);
+    }
+
+    @Test
+    public void getByExpertId() {
+        // Arrange
+        int expertId = 1;
+
+        // Act
+        List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getByExpertId(expertId);
+
+        // Assert
+        assertThat(diseaseGroups).hasSize(7);
+        assertThatContainsId(diseaseGroups, 87);
+        assertThatContainsId(diseaseGroups, 202);
+        assertThatContainsId(diseaseGroups, 249);
+        assertThatContainsId(diseaseGroups, 250);
+        assertThatContainsId(diseaseGroups, 251);
+        assertThatContainsId(diseaseGroups, 252);
+        assertThatContainsId(diseaseGroups, 253);
+    }
+
+    private boolean assertThatContainsId(List<DiseaseGroup> diseaseGroups, int id) {
+        for (DiseaseGroup diseaseGroup : diseaseGroups) {
+            if (diseaseGroup.getId() == id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

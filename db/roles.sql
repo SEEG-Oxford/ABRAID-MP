@@ -21,7 +21,7 @@ GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_occurrence TO :application_username;
 GRANT SELECT, INSERT                ON disease_occurrence_review TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON expert TO :application_username;
-GRANT SELECT, INSERT,        DELETE ON expert_disease_group TO :application_username;
+GRANT SELECT, INSERT,        DELETE ON expert_validator_disease_group TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON feed TO :application_username;
 GRANT SELECT, INSERT                ON geoname TO :application_username;
 GRANT SELECT                        ON geonames_location_precision TO :application_username;
@@ -30,6 +30,7 @@ GRANT SELECT                        ON healthmap_country_country TO :application
 GRANT SELECT, INSERT, UPDATE        ON healthmap_disease TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON location TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON provenance TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON validator_disease_group TO :application_username;
 
 -- Privileges for the ABRAID-MP application: sequences (one per column of type serial)
 GRANT SELECT, UPDATE ON alert_id_seq TO :application_username;
@@ -40,3 +41,4 @@ GRANT SELECT, UPDATE ON expert_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON feed_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON location_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON provenance_id_seq TO :application_username;
+GRANT SELECT, UPDATE ON validator_disease_group_id_seq TO :application_username;

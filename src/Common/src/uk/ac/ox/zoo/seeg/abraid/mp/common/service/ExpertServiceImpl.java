@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +81,15 @@ public class ExpertServiceImpl implements ExpertService {
      */
     @Override
     public Set<DiseaseGroup> getDiseaseInterests(Integer expertId) {
-        return expertDao.getById(expertId).getDiseaseGroups();
+        List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getByExpertId(expertId);
+
+        // Convert the list to a set
+        Set<DiseaseGroup> diseaseGroupSet = new HashSet<>();
+        for (DiseaseGroup diseaseGroup : diseaseGroups) {
+            diseaseGroupSet.add(diseaseGroup);
+        }
+
+        return diseaseGroupSet;
     }
 
     /**
