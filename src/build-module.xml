@@ -214,7 +214,7 @@
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
   </target>
 
-  <target name="retrieve.manual.libs" depends="retrieve.jacoco, retrieve.phantom" />
+  <target name="retrieve.manual.libs" depends="retrieve.jacoco" />
 
   <!-- Get JaCoCo manually -->
   <property name="jacoco.version" value="0.6.2.201301080920" />
