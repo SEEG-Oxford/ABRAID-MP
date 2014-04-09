@@ -23,7 +23,8 @@ public class AdminUnit {
     private Integer gaulCode;
 
     // The admin unit's level (1 or 2).
-    private char level;
+    @Column(name = "level")
+    private char adminLevel;
 
     // The admin unit's name.
     @Column
@@ -49,12 +50,12 @@ public class AdminUnit {
         return gaulCode;
     }
 
-    public char getLevel() {
-        return level;
+    public char getAdminLevel() {
+        return adminLevel;
     }
 
-    public void setLevel(char adminLevel) {
-        this.level = adminLevel;
+    public void setAdminLevel(char adminLevel) {
+        this.adminLevel = adminLevel;
     }
 
     public String getName() {
@@ -122,7 +123,7 @@ public class AdminUnit {
         int result;
         long temp;
         result = gaulCode != null ? gaulCode.hashCode() : 0;
-        result = 31 * result + (int) level;
+        result = 31 * result + (int) adminLevel;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         temp = Double.doubleToLongBits(centroidLatitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
