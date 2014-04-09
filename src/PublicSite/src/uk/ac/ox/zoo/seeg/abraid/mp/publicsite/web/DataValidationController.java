@@ -47,13 +47,17 @@ public class DataValidationController {
         this.expertService = expertService;
     }
 
+    /**
+     * Return the data validation page, in which the iframe (containing all page content) sits.
+     * @return The ftl page name.
+     */
     @RequestMapping(value = "/datavalidation", method = RequestMethod.GET)
     public String showTab() {
         return "datavalidation";
     }
 
     /**
-     * Return the view to display, and provide the currently logged in user's disease interests.
+     * Return the view to display within the iframe, and provide the currently logged in user's disease interests.
      * @param model The model map.
      * @return The ftl page name.
      */

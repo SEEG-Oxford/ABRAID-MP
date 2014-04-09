@@ -1,3 +1,8 @@
+<#--
+    The map page for an expert to view disease occurrences and extents, and to submit reviews.
+    This content will reside in an IFrame, on the ABRAID-MP public site and TGHN website.
+    Copyright (c) 2014 University of Oxford
+-->
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html class="no-js">
