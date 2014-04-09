@@ -2,14 +2,13 @@
  * Styling for ModelWrapper
  * Copyright (c) 2014 University of Oxford
  */
-
-/* Sticky footer styles */
 html {
     position: relative;
     min-height: 100%;
 }
 body {
     margin-bottom: 30px;
+    min-width: 320px;
 }
 #footer {
     position: absolute;
@@ -67,9 +66,10 @@ form {
 .form-group {
     display: block;
 }
-body {
+body .navbar {
     min-width: 320px;
+    margin: 0;
 }
-.navbar {
-    min-width: 320px;
+#common > .container {
+    padding-top: 70px;
 }

@@ -40,16 +40,38 @@
   <property file="${basedir}/build.properties"/>
   <property file="${project.root.dir}/user.properties"/>
   <property file="${project.root.dir}/build.properties"/>
+  <property name="home.dir" value="${user.home}"/>
 
   <!-- Versioning -->
   <exec executable="git" outputproperty="repository.version">
     <arg value="describe"/>
+    <arg value="--tags"/>
     <arg value="--dirty"/>
   </exec>
   <tstamp>
     <format property="time.stamp" pattern="yyyy-MM-dd_HH:mm:ss"/>
   </tstamp>
   <echo>Ant running against repository version: ${repository.version}</echo>
+
+  <!-- Get OS -->
+  <condition property="os-windows">
+    <os family="windows"/>
+  </condition>
+  <condition property="os-mac">
+    <os family="mac"/>
+  </condition>
+  <condition property="os-linux32">
+    <or>
+      <os name="Linux" arch="i386" />
+      <os name="Linux" arch="x86" />
+    </or>
+  </condition>
+  <condition property="os-linux64">
+    <or>
+      <os name="Linux" arch="AMD64" />
+      <os name="Linux" arch="x86_64" />
+    </or>
+  </condition>
 
   <!-- Classpath -->
   <property name="build.sysclasspath" value="ignore"/>
@@ -70,11 +92,11 @@
   </path>
 
   <!-- CI targets -->
-  <target name="full" depends="print.start, clean, compile.production, compile.tests, test.coverage, check.quality, generate.docs, publish.package, collate.artifacts, print.summary" description="Build pipeline">
+  <target name="full" depends="print.start, clean, compile.production, compile.tests, test.coverage, check.quality, check.extras, generate.docs, publish.package, collate.artifacts, print.summary" description="Build pipeline">
     <fail message="Quality checks failed!" if="build.failure" />
   </target>
 
-  <target name="print.summary" depends="test.summary, style.summary, bug.summary, combine.results, composite.summary" />
+  <target name="print.summary" depends="test.summary, js.test.summary, style.summary, bug.summary, combine.results, composite.summary" />
 
   <target name="print.start">
     <echo message="[Summary]" />
@@ -83,6 +105,10 @@
 
   <target name="test.summary" if="test.failure">
     <echo>[Summary] ${module.name}: Tests unsuccessful!</echo>
+  </target>
+
+  <target name="js.test.summary" if="js.test.failure">
+    <echo>[Summary] ${module.name}: JS tests unsuccessful!</echo>
   </target>
 
   <target name="style.summary" if="style.failure">
@@ -97,6 +123,7 @@
     <condition property="build.failure">
         <or>
           <isset property="test.failure"/>
+          <isset property="js.test.failure"/>
           <isset property="style.failure"/>
           <isset property="bug.failure"/>
        </or>
@@ -155,7 +182,7 @@
   <condition property="ivy.home" value="${env.IVY_HOME}">
     <isset property="env.IVY_HOME" />
   </condition>
-  <property name="ivy.home" value="${user.home}/.ant" />
+  <property name="ivy.home" value="${home.dir}/.ant" />
   <property name="ivy.jar.dir" value="${ivy.home}/lib" />
   <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 
@@ -212,6 +239,96 @@
     </unzip>
     <move file="${lib.local.analysis.dir}/jacocoant.jar" tofile="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
     <delete file="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip"/>
+  </target>
+
+  <!-- Get Phantom manually -->
+  <property name="phantom.version" value="1.9.7" />
+
+  <target name="retrieve.phantom" depends="check.phantom" if="needs-phantom">
+    <antcall target="resolve.phantom" />
+  </target>
+
+  <target name="check.phantom">
+    <condition property="needs-phantom">
+      <not>
+        <or>
+          <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
+          <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
+        </or>
+      </not>
+    </condition>
+    <antcall target="find.phantom" />
+  </target>
+
+  <target name="resolve.phantom" depends="determine.phantom.os.properties, download.phantom, unzip.phantom, untar.phantom">
+    <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" failonerror="false" quiet="true"/>
+    <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" failonerror="false" quiet="true"/>
+    <delete file="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}"/>
+    <antcall target="chmod.phantom" />
+  </target>
+
+  <target name="find.phantom">
+    <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe">
+      <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
+    </condition>
+    <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}">
+      <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
+    </condition>
+  </target>
+
+  <target name="chmod.phantom" depends="find.phantom">
+    <chmod file="${phantom.executable}" perm="ugo+rx"/>
+  </target>
+
+  <target name="download.phantom" depends="determine.phantom.os.properties">
+    <get skipexisting="true" src="http://cdn.bitbucket.org/ariya/phantomjs/downloads/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" />
+  </target>
+
+  <target name="unzip.phantom" unless="phantom-is-tar">
+    <unzip src="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}">
+      <patternset>
+        <include name="${phantom.package.name}/${phantom.executable.path}"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </unzip>
+  </target>
+
+  <target name="untar.phantom" if="phantom-is-tar">
+    <untar compression="bzip2" src="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}">
+      <patternset>
+        <include name="${phantom.package.name}/${phantom.executable.path}"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </untar>
+  </target>
+
+  <target name="determine.phantom.os.properties" depends="determine.phantom.paths.win, determine.phantom.paths.lin64, determine.phantom.paths.lin32, determine.phantom.paths.mac" />
+
+  <target name="determine.phantom.paths.win" if="os-windows">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-windows"/>
+    <property name="phantom.package.extension" value="zip"/>
+    <property name="phantom.executable.path" value="phantomjs.exe"/>
+  </target>
+
+  <target name="determine.phantom.paths.mac" if="os-mac">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-mac"/>
+    <property name="phantom.package.extension" value="zip"/>
+    <property name="phantom.package.compression" value="zip"/>
+    <property name="phantom.executable.path" value="bin/phantomjs"/>
+  </target>
+
+  <target name="determine.phantom.paths.lin64" if="os-linux64">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-linux-x86_64"/>
+    <property name="phantom.package.extension" value="tar.bz2"/>
+    <property name="phantom.executable.path" value="bin/phantomjs"/>
+    <property name="phantom-is-tar" value="true" />
+  </target>
+
+  <target name="determine.phantom.paths.lin32" if="os-linux32">
+    <property name="phantom.package.name" value="phantomjs-${phantom.version}-linux-i686"/>
+    <property name="phantom.package.extension" value="tar.bz2"/>
+    <property name="phantom.executable.path" value="bin/phantomjs"/>
+    <property name="phantom-is-tar" value="true" />
   </target>
 
   <!-- Test targets -->
@@ -345,6 +462,7 @@
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
+        <exclude name="js/app/spec/*" />
       </fileset>
       <lib dir="${lib.dir}/build" />
       <lib dir="${lib.local.external.dir}" />
@@ -399,6 +517,22 @@
   </target>
 
   <target name="check.quality" depends="check.style, check.test.style, check.bugs"/>
+
+  <!-- JS targets -->
+  <target name="check.extras" />
+
+  <target name="unit.test.js" depends="retrieve.libs, find.phantom">
+    <echo>Running: ${phantom.executable}</echo>
+    <exec executable="${phantom.executable}" resultproperty="js.test.result">
+      <arg value="${project.root.dir}/src/run-jasmine.js"/>
+      <arg value="${web.dir}/js/app/spec/SpecRunner.html"/>
+    </exec>
+    <condition property="js.test.failure">
+      <not>
+        <equals arg1="${js.test.result}" arg2="0" />
+      </not>
+    </condition>
+  </target>
 
   <!-- Documentation targets -->
   <target name="generate.docs" depends="compile.production" description="Create the javadoc files">
