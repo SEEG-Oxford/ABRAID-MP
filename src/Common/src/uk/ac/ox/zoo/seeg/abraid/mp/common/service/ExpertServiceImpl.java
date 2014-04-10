@@ -141,7 +141,7 @@ public class ExpertServiceImpl implements ExpertService {
      * @param validatorDiseaseGroups The validator disease groups to input to the map as keys.
      * @return The map from validator disease group name to an integer count.
      */
-    Map<String, Integer> initialiseValidatorDiseaseGroupsMap(List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+    private Map<String, Integer> initialiseValidatorDiseaseGroupsMap(List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
         Map<String, Integer> map = new HashMap<>();
         for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
             map.put(validatorDiseaseGroup.getName(), 0);

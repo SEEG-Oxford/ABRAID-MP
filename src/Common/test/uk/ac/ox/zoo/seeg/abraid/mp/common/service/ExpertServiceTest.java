@@ -92,9 +92,9 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustThrowExceptionIfDiseaseGroupDoesNotExist() {
-        // Arrange
-        when(diseaseGroupDao.getById(anyInt())).thenReturn(null); // For any diseaseGroupId, act as if the group does not exist
+    public void getDiseaseOccurrencesYetToBeReviewedMustThrowExceptionIfValidatorDiseaseGroupDoesNotExist() {
+        // Arrange - For any validatorDiseaseGroupId, act as if the group does not exist
+        when(validatorDiseaseGroupDao.getById(anyInt())).thenReturn(null);
 
         // Act
         catchException(expertService).getDiseaseOccurrencesYetToBeReviewed(0, 0);
@@ -102,6 +102,64 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
         // Assert
         assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    public void getDiseaseOccurrenceReviewCountPerValidatorDiseaseGroupWithNoReviewsMustReturnInitialMap() {
+        // Arrange
+        int expertId = 1;
+        Expert expert = new Expert();
+        setDiseaseInterests(expert);
+        when(expertDao.getById(expertId)).thenReturn(expert);
+
+        List<ValidatorDiseaseGroup> diseaseInterests = expert.getValidatorDiseaseGroups();
+        Set<String> diseaseInterestsNames = new HashSet<>();
+        for (ValidatorDiseaseGroup diseaseGroup : diseaseInterests) {
+            diseaseInterestsNames.add(diseaseGroup.getName());
+        }
+
+        // Act
+        Map<String, Integer> map = expertService.getDiseaseOccurrenceReviewCountPerValidatorDiseaseGroup(expertId,
+                diseaseInterests);
+
+        // Assert
+        assertThat(map.keySet()).isEqualTo(diseaseInterestsNames);
+        assertThat(map.values()).containsOnly(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrenceCountPerValidatorDiseaseGroupWithNoOccurrencesMustReturnInitialMap() {
+        // Arrange
+        ValidatorDiseaseGroup group1 = new ValidatorDiseaseGroup();
+        group1.setName("Group1");
+        ValidatorDiseaseGroup group2 = new ValidatorDiseaseGroup();
+        group2.setName("Group2");
+        List<ValidatorDiseaseGroup> groups = new ArrayList<>();
+        groups.add(group1);
+        groups.add(group2);
+        Set<String> names = new HashSet<>();
+        for (ValidatorDiseaseGroup diseaseGroup : groups) {
+            names.add(diseaseGroup.getName());
+        }
+
+        // Act
+        Map<String, Integer> map = expertService.getDiseaseOccurrenceCountPerValidatorDiseaseGroup(groups);
+
+        // Assert
+        assertThat(map.keySet()).isEqualTo(names);
+        assertThat(map.values()).containsOnly(0);
+    }
+
+    private void setDiseaseInterests(Expert expert) {
+        ValidatorDiseaseGroup group1 = new ValidatorDiseaseGroup();
+        group1.setName("Group1");
+        ValidatorDiseaseGroup group2 = new ValidatorDiseaseGroup();
+        group2.setName("Group2");
+        List<ValidatorDiseaseGroup> groups = new ArrayList<>();
+        groups.add(group1);
+        groups.add(group2);
+        expert.setValidatorDiseaseGroups(groups);
+    }
+
     @Test
     public void getAllExperts() {
         // Arrange
@@ -127,6 +185,31 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testExpert).isSameAs(expert);
+    }
+
+    @Test
+    public void doesDiseaseOccurrenceReviewExistReturnsExpectedResult() {
+        // Arrange
+        when(diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(1, 1)).thenReturn(true);
+        when(diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(2, 2)).thenReturn(false);
+
+        // Act
+        boolean result1 = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(1, 1);
+        boolean result2 = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(2, 2);
+
+        // Assert
+        assertThat(result1).isTrue();
+        assertThat(result2).isFalse();
+    }
+
+    @Test
+    public void saveDiseaseOccurrenceReview() {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(new Expert());
+        review.setDiseaseOccurrence(new DiseaseOccurrence());
+        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
+        diseaseOccurrenceReviewDao.save(review);
+        verify(diseaseOccurrenceReviewDao).save(eq(review));
     }
 
     @Test
