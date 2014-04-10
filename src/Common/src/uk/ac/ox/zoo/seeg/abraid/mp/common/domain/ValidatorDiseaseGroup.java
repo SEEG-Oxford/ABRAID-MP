@@ -57,6 +57,10 @@ public class ValidatorDiseaseGroup {
         this.name = name;
     }
 
+    public DateTime getCreatedDate() {
+        return createdDate;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override

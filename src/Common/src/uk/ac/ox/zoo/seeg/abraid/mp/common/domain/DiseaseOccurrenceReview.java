@@ -103,6 +103,11 @@ public class DiseaseOccurrenceReview {
         return createdDate;
     }
 
+    /**
+     * Get the name of the validator disease group to which the occurrence's disease group belongs.
+     * @return The name if the occurrence has a disease group, and the disease group has a parent validator disease
+     * group, otherwise null.
+     */
     public String getValidatorDiseaseGroupName() {
         String name;
         try {

@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.*;
-import static ch.lambdaj.Lambda.*;
+
+import static ch.lambdaj.Lambda.sum;
 
 /**
  * Controller for the expert data validation map page.
@@ -35,7 +35,7 @@ public class DataValidationController {
     /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
-    private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "Dengue";
+    private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
     private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;

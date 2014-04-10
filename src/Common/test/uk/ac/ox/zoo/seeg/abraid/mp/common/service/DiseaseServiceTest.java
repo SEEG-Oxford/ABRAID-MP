@@ -24,6 +24,20 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     private DiseaseService diseaseService;
 
     @Test
+    public void saveDiseaseOccurrence() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        diseaseService.saveDiseaseOccurrence(occurrence);
+        verify(diseaseOccurrenceDao).save(eq(occurrence));
+    }
+
+    @Test
+    public void saveHealthMapDisease() {
+        HealthMapDisease disease = new HealthMapDisease();
+        diseaseService.saveHealthMapDisease(disease);
+        verify(healthMapDiseaseDao).save(eq(disease));
+    }
+
+    @Test
     public void getAllHealthMapDiseases() {
         // Arrange
         List<HealthMapDisease> diseases = Arrays.asList(new HealthMapDisease());
@@ -47,20 +61,6 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testDiseaseGroups).isSameAs(diseaseGroups);
-    }
-
-    @Test
-    public void saveDiseaseOccurrence() {
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        diseaseService.saveDiseaseOccurrence(occurrence);
-        verify(diseaseOccurrenceDao).save(eq(occurrence));
-    }
-
-    @Test
-    public void saveHealthMapDisease() {
-        HealthMapDisease disease = new HealthMapDisease();
-        diseaseService.saveHealthMapDisease(disease);
-        verify(healthMapDiseaseDao).save(eq(disease));
     }
 
     @Test
