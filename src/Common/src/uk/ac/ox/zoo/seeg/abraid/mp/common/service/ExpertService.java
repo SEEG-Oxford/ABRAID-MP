@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Service interface for experts.
@@ -33,7 +35,8 @@ public interface ExpertService {
      * @param expertId The id of the specified expert.
      * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
-     * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the database.
+     * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the
+     * database.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer validatorDiseaseGroupId)
             throws IllegalArgumentException;
@@ -67,7 +70,8 @@ public interface ExpertService {
      * @param diseaseInterests The list of validator disease groups the expert can validate.
      * @return The map from validator disease group name to its corresponding count of disease occurrences.
      */
-    Map<String, Integer> getDiseaseOccurrenceCountPerValidatorDiseaseGroup(List<ValidatorDiseaseGroup> diseaseInterests);
+    Map<String, Integer> getDiseaseOccurrenceCountPerValidatorDiseaseGroup(List<ValidatorDiseaseGroup>
+                                                                                   diseaseInterests);
 
     /**
      * Saves the disease occurrence review.

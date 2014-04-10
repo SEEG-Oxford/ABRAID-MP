@@ -18,8 +18,10 @@ public class DiseaseServiceImpl implements DiseaseService {
     private HealthMapDiseaseDao healthMapDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
-    public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao, DiseaseGroupDao diseaseGroupDao,
-                              HealthMapDiseaseDao healthMapDiseaseDao, ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
+    public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
+                              DiseaseGroupDao diseaseGroupDao,
+                              HealthMapDiseaseDao healthMapDiseaseDao,
+                              ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;

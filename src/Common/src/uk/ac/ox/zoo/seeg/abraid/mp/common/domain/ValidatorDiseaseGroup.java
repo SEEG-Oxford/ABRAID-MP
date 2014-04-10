@@ -13,6 +13,12 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries(
+        @NamedQuery(
+                name = "getValidatorDiseaseGroupByName",
+                query = "from ValidatorDiseaseGroup where name=:name"
+        )
+)
 @Entity
 @Table(name = "validator_disease_group")
 public class ValidatorDiseaseGroup {
@@ -31,11 +37,11 @@ public class ValidatorDiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
-    public ValidatorDiseaseGroup () {
+    public ValidatorDiseaseGroup() {
 
     }
 
-    public ValidatorDiseaseGroup (int id) {
+    public ValidatorDiseaseGroup(int id) {
         this.id = id;
     }
 

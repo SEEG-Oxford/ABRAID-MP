@@ -5,10 +5,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Service class for experts.
@@ -19,18 +17,15 @@ import java.util.Set;
 public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
-    private DiseaseGroupDao diseaseGroupDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     public ExpertServiceImpl(ExpertDao expertDao,
                              DiseaseOccurrenceDao diseaseOccurrenceDao,
-                             DiseaseGroupDao diseaseGroupDao,
                              DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
                              ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
-        this.diseaseGroupDao = diseaseGroupDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
     }
@@ -61,7 +56,8 @@ public class ExpertServiceImpl implements ExpertService {
      * @param expertId The id of the specified expert.
      * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
-     * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the database.
+     * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the
+     * database.
      */
     @Override
     public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
@@ -112,8 +108,10 @@ public class ExpertServiceImpl implements ExpertService {
         int count;
         for (DiseaseOccurrenceReview review : allReviews) {
             String validatorDiseaseGroupName = review.getValidatorDiseaseGroupName();
-            count = map.containsKey(validatorDiseaseGroupName) ? map.get(validatorDiseaseGroupName) : 0;
-            map.put(validatorDiseaseGroupName, count + 1);
+            if (validatorDiseaseGroupName != null) {
+                count = map.containsKey(validatorDiseaseGroupName) ? map.get(validatorDiseaseGroupName) : 0;
+                map.put(validatorDiseaseGroupName, count + 1);
+            }
         }
         return map;
     }

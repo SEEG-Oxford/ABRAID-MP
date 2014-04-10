@@ -117,9 +117,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         Integer expertId = expert0.getId();
-        Integer diseaseGroupId = occurrence0.getDiseaseGroup().getId();
+        Integer validatorDiseaseGroupId = occurrence0.getValidatorDiseaseGroup().getId();
         List<DiseaseOccurrence> occurrencesYetToBeReviewedByExpert0 =
-                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
 
         // Assert
         assertThat(occurrencesYetToBeReviewedByExpert0).contains(occurrence1);

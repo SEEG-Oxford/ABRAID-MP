@@ -36,7 +36,8 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
         testList.add(group2);
         testList.add(group1);
 
-        when(expert.getValidatorDiseaseGroups()).thenReturn(testList);
+        expert.setValidatorDiseaseGroups(testList);
+        when(expertDao.getById(expertId)).thenReturn(expert);
 
         // Act
         List<ValidatorDiseaseGroup> list = expertService.getDiseaseInterests(expertId);
@@ -67,7 +68,7 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
         // Arrange
         List<DiseaseOccurrence> testList = new ArrayList<>();
         when(expertDao.getById(anyInt())).thenReturn(new Expert());
-        when(diseaseGroupDao.getById(anyInt())).thenReturn(new DiseaseGroup());
+        when(validatorDiseaseGroupDao.getById(anyInt())).thenReturn(new ValidatorDiseaseGroup());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(anyInt(), anyInt())).thenReturn(testList);
 
         // Act

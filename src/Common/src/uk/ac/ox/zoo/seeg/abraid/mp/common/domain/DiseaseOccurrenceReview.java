@@ -103,9 +103,14 @@ public class DiseaseOccurrenceReview {
         return createdDate;
     }
 
-    // TODO: null protection
     public String getValidatorDiseaseGroupName() {
-        return diseaseOccurrence.getDiseaseGroup().getValidatorDiseaseGroup().getName();
+        String name;
+        try {
+            name = diseaseOccurrence.getDiseaseGroup().getValidatorDiseaseGroup().getName();
+        } catch (NullPointerException e) {
+            return null;
+        }
+        return name;
     }
 
     ///COVERAGE:OFF - generated code

@@ -4,8 +4,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
-import java.util.List;
-
 /**
  * The DiseaseGroup entity's Data Access Object.
  *

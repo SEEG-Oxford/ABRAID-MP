@@ -2,12 +2,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

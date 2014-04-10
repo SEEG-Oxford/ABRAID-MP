@@ -3,8 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
-import java.util.List;
-
 /**
  * The ValidatorDiseaseGroup entity's Data Access Object.
  *
@@ -23,6 +21,6 @@ public class ValidatorDiseaseGroupDaoImpl extends AbstractDao<ValidatorDiseaseGr
      */
     @Override
     public ValidatorDiseaseGroup getByName(String name) {
-        return uniqueResultNamedQuery("getValidatorDiseaseGroup", "name", name);
+        return uniqueResultNamedQuery("getValidatorDiseaseGroupByName", "name", name);
     }
 }
