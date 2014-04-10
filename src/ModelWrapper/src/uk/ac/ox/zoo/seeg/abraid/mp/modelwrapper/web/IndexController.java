@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
  */
 @Controller
 public class IndexController {
+    private static final Logger LOGGER = Logger.getLogger(IndexController.class);
 
     private static final Pattern USERNAME_REGEX = Pattern.compile("^[a-z0-9_-]{3,15}$");
     ///CHECKSTYLE:OFF LineLengthCheck
@@ -50,6 +52,8 @@ public class IndexController {
         try {
             modelVersions = sourceCodeManager.getAvailableVersions();
         } catch (Exception e) {
+            LOGGER.warn("Failed to get repository versions.");
+            LOGGER.error(e);
             modelVersions = new ArrayList<>();
         }
 

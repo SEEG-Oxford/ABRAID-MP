@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ import java.util.List;
  */
 @Controller
 public class RepositoryController {
+    private static final Logger LOGGER = Logger.getLogger(RepositoryController.class);
+
     private final ConfigurationService configurationService;
     private final SourceCodeManager sourceCodeManager;
 
@@ -38,7 +41,10 @@ public class RepositoryController {
 
         if (validRequest) {
             String oldUrl = configurationService.getModelRepositoryUrl();
-            configurationService.setModelRepositoryUrl(repositoryUrl);
+            LOGGER.info("Trying to sync repository url: " + repositoryUrl);
+            if (!repositoryUrl.equals(oldUrl)) {
+                configurationService.setModelRepositoryUrl(repositoryUrl);
+            }
 
             try {
                 sourceCodeManager.updateRepository();
@@ -46,13 +52,20 @@ public class RepositoryController {
 
                 if (!repositoryUrl.equals(oldUrl)) {
                     // Version numbers from the old repository are clearly not valid
+                    LOGGER.info("Clearing model version (due to new repo url)");
                     configurationService.setModelRepositoryVersion("");
                 }
 
+                LOGGER.info("Sync repo successful");
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity<List<String>>(versions, HttpStatus.OK);
             } catch (Exception e) {
-                configurationService.setModelRepositoryUrl(oldUrl);
+                LOGGER.warn("Sync repo failed.");
+                LOGGER.error(e);
+                if (!repositoryUrl.equals(oldUrl)) {
+                    LOGGER.info("Reverting model repository url.");
+                    configurationService.setModelRepositoryUrl(oldUrl);
+                }
             }
         }
 
@@ -70,15 +83,22 @@ public class RepositoryController {
 
         if (validRequest) {
             try {
+                if (!version.equals(configurationService.getModelRepositoryVersion())) {
+                    return new ResponseEntity(HttpStatus.NO_CONTENT);
+                }
+
                 if (sourceCodeManager.getAvailableVersions().contains(version)) {
                     configurationService.setModelRepositoryVersion(version);
                 } else {
+                    LOGGER.info("Rejecting model version, as not present in repository.");
                     return new ResponseEntity(HttpStatus.BAD_REQUEST);
                 }
 
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
+                LOGGER.info("Failed to get list of versions from repository. Version configuration not updated.");
+                LOGGER.error(e);
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
         }
