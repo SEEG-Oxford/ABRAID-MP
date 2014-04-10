@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
@@ -12,6 +13,8 @@ import java.io.File;
  * Copyright (c) 2014 University of Oxford
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
+    private static final Logger LOGGER = Logger.getLogger(ConfigurationServiceImpl.class);
+
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
 
@@ -25,6 +28,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private final OSChecker osChecker;
 
     public ConfigurationServiceImpl(File basicProperties, OSChecker osChecker) throws ConfigurationException {
+        LOGGER.info("Loading configuration file " + basicProperties.toString());
         this.basicProperties = new PropertiesConfiguration(basicProperties);
         this.basicProperties.setAutoSave(true);
         this.osChecker = osChecker;
@@ -37,6 +41,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setAuthenticationDetails(String username, String passwordHash) {
+        LOGGER.info("Updating auth configuration: " + username + " " + passwordHash);
         basicProperties.setProperty(USERNAME_KEY, username);
         basicProperties.setProperty(PASSWORD_KEY, passwordHash);
     }
@@ -74,6 +79,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setModelRepositoryUrl(String repositoryUrl) {
+        LOGGER.info("Updating repository url configuration: " + repositoryUrl);
         basicProperties.setProperty(MODEL_REPOSITORY_KEY, repositoryUrl);
     }
 
@@ -92,6 +98,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setModelRepositoryVersion(String version) {
+        LOGGER.info("Updating repository version configuration: " + version);
         basicProperties.setProperty(MODEL_VERSION_KEY, version);
     }
 
