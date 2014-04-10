@@ -22,8 +22,8 @@ import javax.persistence.Table;
                         "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesByDiseaseGroupId",
-                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId"
+                name = "getDiseaseOccurrencesByValidatorDiseaseGroups",
+                query = "from DiseaseOccurrence where diseaseGroup.validatorDiseaseGroup in :validatorDiseaseGroups"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
@@ -31,7 +31,7 @@ import javax.persistence.Table;
                         "inner join fetch d.location " +
                         "inner join fetch d.alert " +
                         "inner join fetch d.alert.feed " +
-                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
                         "expert.id=:expertId)"
         )
@@ -92,6 +92,10 @@ public class DiseaseOccurrence {
         return diseaseGroup;
     }
 
+    public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
+        return diseaseGroup.getValidatorDiseaseGroup();
+    }
+
     public void setDiseaseGroup(DiseaseGroup diseaseGroup) {
         this.diseaseGroup = diseaseGroup;
     }
@@ -130,6 +134,10 @@ public class DiseaseOccurrence {
 
     public void setOccurrenceStartDate(DateTime occurrenceStartDate) {
         this.occurrenceStartDate = occurrenceStartDate;
+    }
+
+    public String getValidatorDiseaseGroupName() {
+        return diseaseGroup.getValidatorDiseaseGroup().getName();
     }
 
     ///COVERAGE:OFF - generated code

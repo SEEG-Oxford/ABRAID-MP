@@ -18,9 +18,9 @@ import javax.persistence.*;
         query = "from DiseaseOccurrenceReview where expert.id=:expertId"
     ),
     @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
+        name = "getDiseaseOccurrenceReviewsByExpertIdAndValidatorDiseaseGroups",
         query = "from DiseaseOccurrenceReview where expert.id=:expertId " +
-                "and diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
+                "and diseaseOccurrence.diseaseGroup.validatorDiseaseGroup in :validatorDiseaseGroups"
     ),
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
@@ -87,6 +87,10 @@ public class DiseaseOccurrenceReview {
         return diseaseOccurrence;
     }
 
+    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
+        this.diseaseOccurrence = diseaseOccurrence;
+    }
+
     public DiseaseOccurrenceReviewResponse getResponse() {
         return response;
     }
@@ -95,12 +99,13 @@ public class DiseaseOccurrenceReview {
         this.response = response;
     }
 
-    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
-        this.diseaseOccurrence = diseaseOccurrence;
-    }
-
     public DateTime getCreatedDate() {
         return createdDate;
+    }
+
+    // TODO: null protection
+    public String getValidatorDiseaseGroupName() {
+        return diseaseOccurrence.getDiseaseGroup().getValidatorDiseaseGroup().getName();
     }
 
     ///COVERAGE:OFF - generated code

@@ -16,12 +16,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseGroupDao diseaseGroupDao;
     private HealthMapDiseaseDao healthMapDiseaseDao;
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao, DiseaseGroupDao diseaseGroupDao,
-                              HealthMapDiseaseDao healthMapDiseaseDao) {
+                              HealthMapDiseaseDao healthMapDiseaseDao, ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
+        this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
     }
 
     /**
@@ -63,13 +65,13 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets the disease group by its name.
-     * @param diseaseGroupName The name of the disease group.
-     * @return The disease group.
+     * Gets the validator disease group by its name.
+     * @param validatorDiseaseGroupName The name of the validator disease group.
+     * @return The validator disease group.
      */
     @Override
-    public DiseaseGroup getDiseaseGroupByName(String diseaseGroupName) {
-        return diseaseGroupDao.getByName(diseaseGroupName);
+    public ValidatorDiseaseGroup getValidatorDiseaseGroupByName(String validatorDiseaseGroupName) {
+        return validatorDiseaseGroupDao.getByName(validatorDiseaseGroupName);
     }
 
     /**
@@ -98,13 +100,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Determines whether the occurrence's disease id matches the id of the disease group.
+     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
      * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param diseaseGroupId The id of the disease group.
-     * @return True if the occurrence and disease group refer to the same disease, otherwise false.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
-    public boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId) {
+    public boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
+                                                          Integer validatorDiseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
-        return diseaseGroupId.equals(occurrence.getDiseaseGroup().getId());
+        return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
     }
 }

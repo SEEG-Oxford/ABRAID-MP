@@ -108,7 +108,7 @@ public class ExpertDaoTest extends AbstractSpringIntegrationTests {
         assertThat(expert.getId()).isEqualTo(1);
         assertThat(expert.getName()).isEqualTo("Helena Patching");
         // Upon execution of the next line, the lazily-loaded validatorDiseaseGroups set is actually loaded
-        Set<ValidatorDiseaseGroup> validatorDiseaseGroups = expert.getValidatorDiseaseGroups();
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = expert.getValidatorDiseaseGroups();
         assertThat(validatorDiseaseGroups).hasSize(2);
     }
 

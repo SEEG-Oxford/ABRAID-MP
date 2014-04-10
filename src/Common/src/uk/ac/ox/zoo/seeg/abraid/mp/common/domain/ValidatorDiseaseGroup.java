@@ -31,6 +31,14 @@ public class ValidatorDiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
+    public ValidatorDiseaseGroup () {
+
+    }
+
+    public ValidatorDiseaseGroup (int id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

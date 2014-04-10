@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -62,7 +63,7 @@ public class Expert {
     @JoinTable(name = "expert_validator_disease_group",
             joinColumns = { @JoinColumn(name = "expert_id") },
             inverseJoinColumns = { @JoinColumn(name = "validator_disease_group_id") })
-    private Set<ValidatorDiseaseGroup> validatorDiseaseGroups;
+    private List<ValidatorDiseaseGroup> validatorDiseaseGroups;
 
     public Integer getId() {
         return id;
@@ -108,11 +109,11 @@ public class Expert {
         this.isPubliclyVisible = isPubliclyVisible;
     }
 
-    public Set<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
+    public List<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
         return validatorDiseaseGroups;
     }
 
-    public void setValidatorDiseaseGroups(Set<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+    public void setValidatorDiseaseGroups(List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
         this.validatorDiseaseGroups = validatorDiseaseGroups;
     }
 

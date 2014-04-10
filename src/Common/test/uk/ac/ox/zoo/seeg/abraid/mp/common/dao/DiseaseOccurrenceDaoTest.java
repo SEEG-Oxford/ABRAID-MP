@@ -35,8 +35,12 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
     @Autowired
     private FeedDao feedDao;
+
     @Autowired
     private LocationDao locationDao;
+
+    @Autowired
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
@@ -84,13 +88,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
 
         // Act
         Integer expertId = expert.getId();
-        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        Integer validatorDiseaseGroupId = occurrence.getValidatorDiseaseGroup().getId();
         List<DiseaseOccurrence> occurrencesYetToBeReviewed =
-                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
 
         // Assert
         List<DiseaseOccurrenceReview> reviews =
-                diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+                diseaseOccurrenceReviewDao.getByExpertIdAndValidatorDiseaseGroups(expertId,
+                        expert.getValidatorDiseaseGroups());
         for (DiseaseOccurrenceReview review : reviews) {
             assertThat(occurrencesYetToBeReviewed).doesNotContain(review.getDiseaseOccurrence());
         }

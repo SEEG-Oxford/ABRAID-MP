@@ -2,10 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
 import java.util.*;
@@ -28,24 +25,24 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     private ExpertService expertService;
 
     @Test
-    public void getDiseaseInterestsReturnsExpectedSet() {
+    public void getDiseaseInterestsReturnsExpectedList() {
         // Arrange
         int expertId = 1;
-        DiseaseGroup group1 = new DiseaseGroup();
-        DiseaseGroup group2 = new DiseaseGroup();
+        Expert expert = new Expert();
+        ValidatorDiseaseGroup group1 = new ValidatorDiseaseGroup();
+        ValidatorDiseaseGroup group2 = new ValidatorDiseaseGroup();
 
-        Set<DiseaseGroup> testSet = new HashSet<>();
-        testSet.add(group2);
-        testSet.add(group1);
+        List<ValidatorDiseaseGroup> testList = new ArrayList<>();
+        testList.add(group2);
+        testList.add(group1);
 
-        List<DiseaseGroup> testList = Arrays.asList(group1, group2);
-        when(diseaseGroupDao.getByExpertId(eq(expertId))).thenReturn(testList);
+        when(expert.getValidatorDiseaseGroups()).thenReturn(testList);
 
         // Act
-        Set<DiseaseGroup> set = expertService.getDiseaseInterests(expertId);
+        List<ValidatorDiseaseGroup> list = expertService.getDiseaseInterests(expertId);
 
         // Assert
-        assertThat(set).isEqualTo(testSet);
+        assertThat(list).isEqualTo(testList);
     }
 
     @Test
