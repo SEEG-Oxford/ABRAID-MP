@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
@@ -14,6 +15,8 @@ import java.util.UUID;
  * Copyright (c) 2014 University of Oxford
  */
 public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
+    private static final Logger LOGGER = Logger.getLogger(WorkspaceProvisionerImpl.class);
+
     private static final String MODEL_CODE_DIRECTORY_NAME = "model";
     private static final String MODEL_DATA_DIRECTORY_NAME = "data";
 
@@ -42,6 +45,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         Path workingDirectoryPath = Paths.get(
                 configuration.getBaseDir().getAbsolutePath(),
                 configuration.getRunName() + "-" + UUID.randomUUID().toString());
+        LOGGER.info("Provisioning workspace at "+workingDirectoryPath.toString());
 
         File workingDirectory = workingDirectoryPath.toFile();
         boolean workingDirectoryCreated = workingDirectory.mkdirs();
@@ -61,6 +65,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         }
 
         if (!workingDirectoryCreated) {
+            LOGGER.warn("Workspace directory structure could not be created at " + workingDirectoryPath.toString());
             throw new IOException("Directory structure could not be created.");
         }
 
@@ -72,6 +77,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
 
         // Template script
         File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);
+
+        LOGGER.info("Workspace successfully provisioned at "+workingDirectoryPath.toString());
         return runScript;
     }
 }

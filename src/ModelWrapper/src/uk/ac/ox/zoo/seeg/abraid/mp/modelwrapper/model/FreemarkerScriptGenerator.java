@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.*;
@@ -16,6 +17,8 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 public class FreemarkerScriptGenerator implements ScriptGenerator {
+    private static final Logger LOGGER = Logger.getLogger(FreemarkerScriptGenerator.class);
+
     private static final String SCRIPT_FILE_NAME = "modelRun.R";
     private static final String TEMPLATE_FILE_NAME = "ModelRunTemplate.ftl";
     private static final String ASCII = "US-ASCII";
@@ -31,6 +34,8 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
     @Override
     public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun)
             throws IOException {
+        LOGGER.info("Adding script file to workspace at " + workingDirectory.toString());
+
         //Load template from source folder
         Template template = loadTemplate();
 
@@ -40,6 +45,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         // File output
         File scriptFile = applyTemplate(workingDirectory, template, data);
 
+        LOGGER.info("Script file added to workspace at " + workingDirectory.toString());
         return scriptFile;
     }
 
@@ -48,10 +54,12 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         File scriptFile = Paths.get(workingDirectory.getAbsolutePath(), SCRIPT_FILE_NAME).toFile();
         Writer fileWriter = null;
         try {
+            LOGGER.info("Applying freemarker script template");
             fileWriter = new OutputStreamWriter(new FileOutputStream(scriptFile), Charset.forName(ASCII).newEncoder());
             template.process(data, fileWriter);
             fileWriter.flush();
         } catch (TemplateException e) {
+            LOGGER.warn("Applying freemarker script template failed!");
             throw new IOException("Either could not read the template file or the file was invalid.", e);
         } finally {
             if (fileWriter != null) {
