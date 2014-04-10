@@ -260,24 +260,25 @@
     <antcall target="find.phantom" />
   </target>
 
-  <target name="resolve.phantom" depends="determine.phantom.os.properties, download.phantom, unzip.phantom, untar.phantom">
-    <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" failonerror="false" quiet="true"/>
-    <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" failonerror="false" quiet="true"/>
+  <target name="resolve.phantom" depends="determine.phantom.os.properties, download.phantom, unzip.phantom, untar.phantom, move.phantom.exe, move.phantom.bin, chmod.phantom">
     <delete file="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}"/>
-    <antcall target="chmod.phantom" />
   </target>
 
   <target name="find.phantom">
-    <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe">
-      <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
-    </condition>
-    <condition property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}">
-      <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
-    </condition>
+    <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
+    <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}" property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
   </target>
 
   <target name="chmod.phantom" depends="find.phantom">
     <chmod file="${phantom.executable}" perm="ugo+rx"/>
+  </target>
+
+  <target name="move.phantom.exe" if="phantom-is-exe">
+    <move file="${lib.local.analysis.dir}/phantomjs.exe" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" />
+  </target>
+
+  <target name="move.phantom.bin" unless="phantom-is-exe">
+    <move file="${lib.local.analysis.dir}/phantomjs" tofile="${lib.local.analysis.dir}/phantomjs-${phantom.version}" />
   </target>
 
   <target name="download.phantom" depends="determine.phantom.os.properties">
@@ -308,6 +309,7 @@
     <property name="phantom.package.name" value="phantomjs-${phantom.version}-windows"/>
     <property name="phantom.package.extension" value="zip"/>
     <property name="phantom.executable.path" value="phantomjs.exe"/>
+    <property name="phantom-is-exe" value="true"/>
   </target>
 
   <target name="determine.phantom.paths.mac" if="os-mac">
