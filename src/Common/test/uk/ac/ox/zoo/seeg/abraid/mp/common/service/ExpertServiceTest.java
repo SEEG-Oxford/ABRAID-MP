@@ -194,8 +194,8 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
         when(diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(2, 2)).thenReturn(false);
 
         // Act
-        boolean result1 = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(1, 1);
-        boolean result2 = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(2, 2);
+        boolean result1 = expertService.doesDiseaseOccurrenceReviewExist(1, 1);
+        boolean result2 = expertService.doesDiseaseOccurrenceReviewExist(2, 2);
 
         // Assert
         assertThat(result1).isTrue();
