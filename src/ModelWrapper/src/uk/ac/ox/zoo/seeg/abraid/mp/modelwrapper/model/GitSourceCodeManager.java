@@ -58,7 +58,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
     public void provisionVersion(String versionIdentifier, File workspace)
             throws IllegalArgumentException, IOException, UnsupportedOperationException {
         synchronized (GitSourceCodeManager.class) {
-            LOGGER.info("Provisioning model code '" + versionIdentifier + "' at "+ workspace.getParent());
+            LOGGER.info("Provisioning model code '" + versionIdentifier + "' at " + workspace.getParent());
             try {
                 List<String> tags = getAvailableVersions();
                 if (!tags.contains(versionIdentifier)) {

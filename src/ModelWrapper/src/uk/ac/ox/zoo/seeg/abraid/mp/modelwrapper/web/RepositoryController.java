@@ -83,7 +83,7 @@ public class RepositoryController {
 
         if (validRequest) {
             try {
-                if (!version.equals(configurationService.getModelRepositoryVersion())) {
+                if (version.equals(configurationService.getModelRepositoryVersion())) {
                     return new ResponseEntity(HttpStatus.NO_CONTENT);
                 }
 

@@ -28,8 +28,8 @@ public class InputDataManagerImpl implements InputDataManager {
     @Override
     public void writeData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
             throws IOException {
-        LOGGER.warn("Writing " + occurrenceData.getFeatures().size()
-                + " occurrence data points to workspace at " + dataDirectory.getParent());
+        LOGGER.warn("Writing " + occurrenceData.getFeatures().size() +
+                " occurrence data points to workspace at " + dataDirectory.getParent());
         if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
             LOGGER.warn("Aborted writing occurrence data due to incorrect CRS.");
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");

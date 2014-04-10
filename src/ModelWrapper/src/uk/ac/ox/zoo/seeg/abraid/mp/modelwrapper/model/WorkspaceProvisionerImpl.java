@@ -45,7 +45,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         Path workingDirectoryPath = Paths.get(
                 configuration.getBaseDir().getAbsolutePath(),
                 configuration.getRunName() + "-" + UUID.randomUUID().toString());
-        LOGGER.info("Provisioning workspace at "+workingDirectoryPath.toString());
+        LOGGER.info("Provisioning workspace at " + workingDirectoryPath.toString());
 
         File workingDirectory = workingDirectoryPath.toFile();
         boolean workingDirectoryCreated = workingDirectory.mkdirs();
@@ -78,7 +78,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         // Template script
         File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);
 
-        LOGGER.info("Workspace successfully provisioned at "+workingDirectoryPath.toString());
+        LOGGER.info("Workspace successfully provisioned at " + workingDirectoryPath.toString());
         return runScript;
     }
 }
