@@ -58,31 +58,4 @@ public class ValidatorDiseaseGroupDaoTest extends AbstractSpringIntegrationTests
         return selectUnique(validatorDiseaseGroups,
                 having(on(ValidatorDiseaseGroup.class).getId(), IsEqual.equalTo(id)));
     }
-
-    @Test
-    public void getByNameReturnsCorrectValidatorDiseaseGroup() {
-        // Arrange
-        String name = "VDG";
-        ValidatorDiseaseGroup testGroup = new ValidatorDiseaseGroup();
-        testGroup.setName(name);
-        validatorDiseaseGroupDao.save(testGroup);
-
-        // Act
-        ValidatorDiseaseGroup group = validatorDiseaseGroupDao.getByName(name);
-
-        // Assert
-        assertThat(group).isEqualTo(testGroup);
-    }
-
-    @Test
-    public void getByNameReturnsNullForInvalidValidatorDiseaseGroupName() {
-        // Arrange
-        String invalidName = "No VDG";
-
-        // Act
-        ValidatorDiseaseGroup group = validatorDiseaseGroupDao.getByName(invalidName);
-
-        // Assert
-        assertThat(group).isNull();
-    }
 }

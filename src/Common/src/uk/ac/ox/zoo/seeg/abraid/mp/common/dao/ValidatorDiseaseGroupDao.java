@@ -24,13 +24,6 @@ public interface ValidatorDiseaseGroupDao {
     ValidatorDiseaseGroup getById(Integer id);
 
     /**
-     * Gets a validator disease group by name.
-     * @param name The name.
-     * @return The validator disease group with the specified name, or null if not found.
-     */
-    ValidatorDiseaseGroup getByName(String name);
-
-    /**
      * Saves the specified validatorDiseaseGroup.
      * @param validatorDiseaseGroup The validatorDiseaseGroup to save.
      */

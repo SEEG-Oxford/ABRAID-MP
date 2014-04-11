@@ -14,12 +14,6 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries({
-        @NamedQuery(
-                name = "getDiseaseGroupByName",
-                query = "from DiseaseGroup where name=:name"
-        )
-})
 @Entity
 @Table(name = "disease_group")
 public class DiseaseGroup {

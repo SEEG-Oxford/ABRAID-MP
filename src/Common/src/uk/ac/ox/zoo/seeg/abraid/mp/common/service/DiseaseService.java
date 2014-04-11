@@ -26,13 +26,6 @@ public interface DiseaseService {
     List<DiseaseGroup> getAllDiseaseGroups();
 
     /**
-     * Gets the validator disease group by its name.
-     * @param validatorDiseaseGroupName The name of the validator disease group.
-     * @return The validator disease group.
-     */
-    ValidatorDiseaseGroup getValidatorDiseaseGroupByName(String validatorDiseaseGroupName);
-
-    /**
      * Gets all the validator disease groups.
      * @return A list of all validator disease groups.
      */

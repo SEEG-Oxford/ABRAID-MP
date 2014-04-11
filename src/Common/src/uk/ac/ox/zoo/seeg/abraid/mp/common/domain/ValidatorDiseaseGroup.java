@@ -13,12 +13,6 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries(
-        @NamedQuery(
-                name = "getValidatorDiseaseGroupByName",
-                query = "from ValidatorDiseaseGroup where name=:name"
-        )
-)
 @Entity
 @Table(name = "validator_disease_group")
 public class ValidatorDiseaseGroup {
