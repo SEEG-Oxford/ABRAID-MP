@@ -65,7 +65,7 @@ var DataValidationViewModels = (function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
             LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
         }, this);
-        this.noOccurrencesLeftToReview = ko.observable(false);
+        this.noOccurrencesToReview = ko.observable(false);
     };
 
     function createUrl(langPair, summary) {
