@@ -1,17 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Service class for experts.
@@ -22,15 +17,17 @@ import java.util.Set;
 public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
-    private DiseaseGroupDao diseaseGroupDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
-    public ExpertServiceImpl(ExpertDao expertDao, DiseaseOccurrenceDao diseaseOccurrenceDao,
-                             DiseaseGroupDao diseaseGroupDao, DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
+    public ExpertServiceImpl(ExpertDao expertDao,
+                             DiseaseOccurrenceDao diseaseOccurrenceDao,
+                             DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
+                             ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
-        this.diseaseGroupDao = diseaseGroupDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
+        this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
     }
 
     /**
@@ -57,39 +54,34 @@ public class ExpertServiceImpl implements ExpertService {
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
-     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
-     * @throws java.lang.IllegalArgumentException if the expertId or diseaseGroupId cannot be found in the database.
+     * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the
+     * database.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId)
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
+                                                                        Integer validatorDiseaseGroupId)
             throws IllegalArgumentException {
         if (expertDao.getById(expertId) == null) {
             throw new IllegalArgumentException("Expert does not exist in database.");
         }
-        if (diseaseGroupDao.getById(diseaseGroupId) == null) {
-            throw new IllegalArgumentException("Disease Group does not exist in database.");
+        if (validatorDiseaseGroupDao.getById(validatorDiseaseGroupId) == null) {
+            throw new IllegalArgumentException("Validator Disease Group does not exist in database.");
         }
 
-        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, diseaseGroupId);
+        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
     }
 
     /**
      * Gets a set of the specified expert's disease interests.
      * @param expertId The id of the specified expert.
-     * @return The list of disease groups the expert can validate.
+     * @return The list of validator disease groups the expert can validate.
      */
     @Override
-    public Set<DiseaseGroup> getDiseaseInterests(Integer expertId) {
-        List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getByExpertId(expertId);
-
-        // Convert the list to a set
-        Set<DiseaseGroup> diseaseGroupSet = new HashSet<>();
-        for (DiseaseGroup diseaseGroup : diseaseGroups) {
-            diseaseGroupSet.add(diseaseGroup);
-        }
-
-        return diseaseGroupSet;
+    public List<ValidatorDiseaseGroup> getDiseaseInterests(Integer expertId) {
+        Expert expert = expertDao.getById(expertId);
+        return expert.getValidatorDiseaseGroups();
     }
 
     /**
@@ -103,49 +95,59 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
-     * Gets the number of disease occurrence reviews an expert has submitted, per disease group.
+     * Gets the number of disease occurrence reviews an expert has submitted, per validator disease group.
      * @param expertId The id of the specified expert.
-     * @param diseaseInterests The list of disease groups an expert can validate.
-     * @return The map from the id of the disease group to its corresponding diseaseOccurrenceReviewCount.
+     * @param validatorDiseaseGroups The list of an expert's disease interests.
+     * @return The map from the name of the validator disease group to its corresponding diseaseOccurrenceReviewCount.
      */
-    public Map<String, Integer> getDiseaseOccurrenceReviewCountPerDiseaseGroup(Integer expertId,
-                                                                                Set<DiseaseGroup> diseaseInterests) {
-        Map<String, Integer> map = new HashMap<>();
-        for (DiseaseGroup diseaseGroup : diseaseInterests) {
-            List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId,
-                    diseaseGroup.getId());
-            map.put(diseaseGroup.getDisplayName(), reviews.size());
+    public Map<String, Integer> getDiseaseOccurrenceReviewCountPerValidatorDiseaseGroup(Integer expertId,
+                                                                   List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+        Map<String, Integer> map = initialiseValidatorDiseaseGroupsMap(validatorDiseaseGroups);
+        List<DiseaseOccurrenceReview> allReviews = diseaseOccurrenceReviewDao.getByExpertIdAndValidatorDiseaseGroups(
+                expertId, validatorDiseaseGroups);
+        int count;
+        for (DiseaseOccurrenceReview review : allReviews) {
+            String validatorDiseaseGroupName = review.getValidatorDiseaseGroupName();
+            if (validatorDiseaseGroupName != null) {
+                count = map.get(validatorDiseaseGroupName);
+                map.put(validatorDiseaseGroupName, count + 1);
+            }
         }
         return map;
     }
 
     /**
-     * Gets the number of disease occurrences, per disease group.
-     * @param expertId The id of the specified expert.
-     * @param diseaseInterests The list of disease groups the expert can validate.
-     * @return The map from diseaseGroupId to its corresponding count of disease occurrences.
+     * Gets the number of disease occurrences, per validator disease group.
+     * @param validatorDiseaseGroups The list of an expert's disease interests.
+     * @return The map from validatorDiseaseGroupName to its corresponding count of disease occurrences.
      */
-    public Map<String, Integer> getDiseaseOccurrenceCountPerDiseaseGroup(Integer expertId,
-                                                                          Set<DiseaseGroup> diseaseInterests) {
-        Map<String, Integer> map = new HashMap<>();
-        for (DiseaseGroup diseaseGroup : diseaseInterests) {
-            List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesByDiseaseGroupId(
-                    diseaseGroup.getId());
-            map.put(diseaseGroup.getDisplayName(), occurrences.size());
+    public Map<String, Integer> getDiseaseOccurrenceCountPerValidatorDiseaseGroup(List<ValidatorDiseaseGroup>
+                                                                                          validatorDiseaseGroups) {
+        Map<String, Integer> map = initialiseValidatorDiseaseGroupsMap(validatorDiseaseGroups);
+        List<DiseaseOccurrence> allOccurrences =
+                diseaseOccurrenceDao.getByValidatorDiseaseGroups(validatorDiseaseGroups);
+        int count;
+        for (DiseaseOccurrence occurrence : allOccurrences) {
+            String validatorDiseaseGroupName = occurrence.getValidatorDiseaseGroupName();
+            count = map.containsKey(validatorDiseaseGroupName) ? map.get(validatorDiseaseGroupName) : 0;
+            map.put(validatorDiseaseGroupName, count + 1);
         }
         return map;
     }
 
     /**
-     * Gets a list of the disease occurrence reviews the specified expert has submitted for the specified disease group.
-     * @param expertId The id of the specified expert.
-     * @param diseaseGroupId The id of the diseaseGroup of interest.
-     * @return The list of disease occurrences reviews.
+     * Create a map where the key is the name of each validator disease group provided,
+     * and its corresponding value is initialised to 0.
+     * @param validatorDiseaseGroups The validator disease groups to input to the map as keys.
+     * @return The map from validator disease group name to an integer count.
      */
-    @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsForExpertIdAndDiseaseGroupId(Integer expertId,
-                                                                                   Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+    private Map<String, Integer> initialiseValidatorDiseaseGroupsMap(List<ValidatorDiseaseGroup>
+                                                                             validatorDiseaseGroups) {
+        Map<String, Integer> map = new HashMap<>();
+        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
+            map.put(validatorDiseaseGroup.getName(), 0);
+        }
+        return map;
     }
 
     /**
@@ -173,19 +175,6 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     public void saveExpert(Expert expert) {
         expertDao.save(expert);
-    }
-
-    /**
-     * Determines whether specified disease group is in expert's set of disease interests.
-     * @param diseaseGroupId The id of the disease group.
-     * @param expertId The id of the specified expert.
-     * @return True if disease is an expert's interest, otherwise false.
-     */
-    @Override
-    public boolean isDiseaseGroupInExpertsDiseaseInterests(Integer diseaseGroupId, Integer expertId) {
-        Set<DiseaseGroup> diseaseInterests = getDiseaseInterests(expertId);
-        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        return diseaseInterests.contains(diseaseGroup);
     }
 
     /**

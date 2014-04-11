@@ -18,9 +18,9 @@ import javax.persistence.*;
         query = "from DiseaseOccurrenceReview where expert.id=:expertId"
     ),
     @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
+        name = "getDiseaseOccurrenceReviewsByExpertIdAndValidatorDiseaseGroups",
         query = "from DiseaseOccurrenceReview where expert.id=:expertId " +
-                "and diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
+                "and diseaseOccurrence.diseaseGroup.validatorDiseaseGroup in :validatorDiseaseGroups"
     ),
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
@@ -87,6 +87,10 @@ public class DiseaseOccurrenceReview {
         return diseaseOccurrence;
     }
 
+    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
+        this.diseaseOccurrence = diseaseOccurrence;
+    }
+
     public DiseaseOccurrenceReviewResponse getResponse() {
         return response;
     }
@@ -95,12 +99,23 @@ public class DiseaseOccurrenceReview {
         this.response = response;
     }
 
-    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
-        this.diseaseOccurrence = diseaseOccurrence;
-    }
-
     public DateTime getCreatedDate() {
         return createdDate;
+    }
+
+    /**
+     * Get the name of the validator disease group to which the occurrence's disease group belongs.
+     * @return The name if the occurrence has a disease group, and the disease group has a parent validator disease
+     * group, otherwise null.
+     */
+    public String getValidatorDiseaseGroupName() {
+        String name;
+        try {
+            name = diseaseOccurrence.getDiseaseGroup().getValidatorDiseaseGroup().getName();
+        } catch (NullPointerException e) {
+            return null;
+        }
+        return name;
     }
 
     ///COVERAGE:OFF - generated code

@@ -128,28 +128,9 @@ public class DiseaseGroupDaoTest extends AbstractSpringIntegrationTests {
         assertThat(diseaseGroups).hasSize(396);
     }
 
-    @Test
-    public void getByExpertId() {
-        // Arrange
-        int expertId = 1;
-
-        // Act
-        List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getByExpertId(expertId);
-
-        // Assert
-        assertThat(diseaseGroups).hasSize(7);
-        assertThatContainsId(diseaseGroups, 87);
-        assertThatContainsId(diseaseGroups, 202);
-        assertThatContainsId(diseaseGroups, 249);
-        assertThatContainsId(diseaseGroups, 250);
-        assertThatContainsId(diseaseGroups, 251);
-        assertThatContainsId(diseaseGroups, 252);
-        assertThatContainsId(diseaseGroups, 253);
-    }
-
-    private boolean assertThatContainsId(List<DiseaseGroup> diseaseGroups, int id) {
-        for (DiseaseGroup diseaseGroup : diseaseGroups) {
-            if (diseaseGroup.getId() == id) {
+    private boolean assertThatContainsId(List<ValidatorDiseaseGroup> validatorDiseaseGroups, int id) {
+        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
+            if (validatorDiseaseGroup.getId() == id) {
                 return true;
             }
         }

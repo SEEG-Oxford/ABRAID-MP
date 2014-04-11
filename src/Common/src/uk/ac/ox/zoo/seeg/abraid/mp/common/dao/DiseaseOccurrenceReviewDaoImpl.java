@@ -4,6 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -30,15 +31,19 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     }
 
     /**
-     * Gets all reviews by the specified expert, for the specified disease group.
+     * Gets all reviews by the specified expert, for the specified validator disease group (corresponding to many
+     * disease groups).
      * @param expertId The expert's Id.
-     * @param diseaseGroupId The disease group's Id.
+     * @param validatorDiseaseGroups The expert's disease interests.
      * @return A list of the expert's reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
-                "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getByExpertIdAndValidatorDiseaseGroups(Integer expertId,
+                                                                   List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+        Query query = namedQuery("getDiseaseOccurrenceReviewsByExpertIdAndValidatorDiseaseGroups");
+        query.setParameter("expertId", expertId);
+        query.setParameterList("validatorDiseaseGroups", validatorDiseaseGroups);
+        return list(query);
     }
 
     /**

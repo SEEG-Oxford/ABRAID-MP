@@ -13,4 +13,14 @@ public class ValidatorDiseaseGroupDaoImpl extends AbstractDao<ValidatorDiseaseGr
     public ValidatorDiseaseGroupDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
+    /**
+     * Gets a validator disease group by name.
+     * @param name The name.
+     * @return The validator disease group with the specified name, or null if not found.
+     */
+    @Override
+    public ValidatorDiseaseGroup getByName(String name) {
+        return uniqueResultNamedQuery("getValidatorDiseaseGroupByName", "name", name);
+    }
 }

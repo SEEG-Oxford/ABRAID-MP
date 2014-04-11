@@ -49,9 +49,10 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockLocation(1.0, -1.0, "locationName", LocationPrecision.PRECISE);
     }
 
-    public static DiseaseOccurrence mockDiseaseOccurrence(int id, Location location, DateTime start, Alert alert, double weighting) {
+    public static DiseaseOccurrence mockDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Location location, DateTime start, Alert alert, double weighting) {
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getId()).thenReturn(id);
+        when(occurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
         when(occurrence.getLocation()).thenReturn(location);
         when(occurrence.getOccurrenceStartDate()).thenReturn(start);
         when(occurrence.getAlert()).thenReturn(alert);
@@ -60,12 +61,23 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static DiseaseOccurrence defaultDiseaseOccurrence() {
-        return mockDiseaseOccurrence(1, defaultLocation(), (new DateTime(0)).withZone(DateTimeZone.UTC), defaultAlert(), 0.5);
+        return mockDiseaseOccurrence(1, defaultDiseaseGroup(),defaultLocation(), (new DateTime(0)).withZone(DateTimeZone.UTC), defaultAlert(), 0.5);
+    }
+
+    private static DiseaseGroup defaultDiseaseGroup() {
+        return mockDiseaseGroup("diseaseGroupPublicName");
+    }
+
+    private static DiseaseGroup mockDiseaseGroup(String diseaseGroupPublicName) {
+        DiseaseGroup mockDiseaseGroup = mock(DiseaseGroup.class);
+        when(mockDiseaseGroup.getPublicNameForDisplay()).thenReturn(diseaseGroupPublicName);
+        return mockDiseaseGroup;
     }
 
     public static String getTwoDiseaseOccurrenceFeaturesAsJson(Class view) {
 
         String displayViewProperties =
+           "            \"diseaseGroupPublicName\":\"diseaseGroupPublicName\"," +
            "            \"locationName\":\"locationName\"," +
            "            \"alert\":{" +
            "               \"title\":\"title\"," +

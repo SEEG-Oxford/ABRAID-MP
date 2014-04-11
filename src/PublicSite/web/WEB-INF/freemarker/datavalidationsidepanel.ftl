@@ -50,6 +50,7 @@
 <script type="text/html" id="selected-point-template">
     <ul>
         <li><h4 data-bind="text: selectedPoint().properties.alert.title"></h4></li>
+        <li><i class="fa fa-medkit"></i>&nbsp;<p data-bind="html: selectedPoint().properties.diseaseGroupPublicName"></p></li>
         <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.locationName"></p></li>
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.startDate"></p></li>
         <li>

@@ -1,10 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
@@ -28,20 +25,20 @@ public interface DiseaseOccurrenceDao {
     DiseaseOccurrence getById(Integer id);
 
     /**
-     * Gets a list of occurrence points, for the specified disease group.
-     * @param diseaseGroupId The id of the disease group of interest.
-     * @return The list of disease occurrence points for one disease group.
+     * Gets a list of occurrence points, for the specified validator disease groups.
+     * @param validatorDiseaseGroups The validator disease groups of interest.
+     * @return The list of disease occurrence points for the validator disease groups.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getByValidatorDiseaseGroups(List<ValidatorDiseaseGroup> validatorDiseaseGroups);
 
     /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
-     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer validatorDiseaseGroupId);
 
     /**
      * Saves the specified disease occurrence.

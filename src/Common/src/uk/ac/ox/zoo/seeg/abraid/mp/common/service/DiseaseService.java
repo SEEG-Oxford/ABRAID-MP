@@ -23,11 +23,11 @@ public interface DiseaseService {
     List<DiseaseGroup> getAllDiseaseGroups();
 
     /**
-     * Gets the disease group by its name.
-     * @param diseaseGroupName The name of the disease group.
-     * @return The disease group.
+     * Gets the validator disease group by its name.
+     * @param validatorDiseaseGroupName The name of the validator disease group.
+     * @return The validator disease group.
      */
-    DiseaseGroup getDiseaseGroupByName(String diseaseGroupName);
+    ValidatorDiseaseGroup getValidatorDiseaseGroupByName(String validatorDiseaseGroupName);
 
     /**
      * Saves a disease occurrence.
@@ -50,10 +50,11 @@ public interface DiseaseService {
     boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence);
 
     /**
-     * Determines whether the specified occurrence's disease id matches the id of the corresponding disease group.
+     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
      * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param diseaseGroupId The id of the disease group.
-     * @return True if the occurrence and disease group refer to the same disease, otherwise false.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
-    boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId);
+    boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
+                                                                           Integer validatorDiseaseGroupId);
 }

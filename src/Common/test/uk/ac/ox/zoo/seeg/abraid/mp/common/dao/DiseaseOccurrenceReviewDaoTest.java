@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -39,6 +40,9 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     @Autowired
     private LocationDao locationDao;
 
+    @Autowired
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+
     @Test
     public void getAllReviewsForExpert() {
         // Arrange
@@ -66,40 +70,17 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     }
 
     @Test
-    public void getAllReviewsForExpertForOneDisease() {
-        // Arrange
-        Expert expert = createExpert();
-        DiseaseOccurrence diseaseOccurrence = createDiseaseOccurrence();
-        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
-
-        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview();
-        diseaseOccurrenceReview.setExpert(expert);
-        diseaseOccurrenceReview.setDiseaseOccurrence(diseaseOccurrence);
-        diseaseOccurrenceReview.setResponse(response);
-
-        // Act
-        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
-        flushAndClear();
-
-        // Assert
-        DiseaseGroup diseaseGroup = diseaseOccurrenceReview.getDiseaseOccurrence().getDiseaseGroup();
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expert.getId(), diseaseGroup.getId());
-        assertThat(reviews).hasSize(1);
-
-        DiseaseOccurrenceReview review = reviews.get(0);
-        assertThat(review.getResponse()).isEqualTo(response);
-        assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
-        assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
-    }
-
-    @Test
     public void getAllReviewsForExpertMustReturnEmptyListIfNoReviewsHaveBeenSubmitted() {
         // Arrange
         Integer expertId = 1;
-        DiseaseGroup diseaseGroup = createDiseaseGroup();
+        ValidatorDiseaseGroup validatorDiseaseGroup = createValidatorDiseaseGroup();
+
+        List<ValidatorDiseaseGroup> groups = new ArrayList<>();
+        groups.add(validatorDiseaseGroup);
 
         // Act
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroup.getId());
+        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndValidatorDiseaseGroups(
+                expertId, groups);
 
         // Assert
         assertThat(reviews).isNotNull();
@@ -158,6 +139,13 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
         diseaseGroupDao.save(diseaseGroup);
         return diseaseGroup;
+    }
+
+    private ValidatorDiseaseGroup createValidatorDiseaseGroup() {
+        ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup();
+        validatorDiseaseGroup.setName("Test validator disease group");
+        validatorDiseaseGroupDao.save(validatorDiseaseGroup);
+        return validatorDiseaseGroup;
     }
 
     private Location createLocation() {
