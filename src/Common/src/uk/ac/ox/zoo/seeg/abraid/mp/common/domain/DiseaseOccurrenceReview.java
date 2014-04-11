@@ -18,11 +18,6 @@ import javax.persistence.*;
         query = "select count(*) from DiseaseOccurrenceReview where expert.id=:expertId"
     ),
     @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertIdAndValidatorDiseaseGroups",
-        query = "from DiseaseOccurrenceReview where expert.id=:expertId " +
-                "and diseaseOccurrence.diseaseGroup.validatorDiseaseGroup in :validatorDiseaseGroups"
-    ),
-    @NamedQuery(
         name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
         query = "select 1 from DiseaseOccurrenceReview where expert.id=:expertId " +
                 "and diseaseOccurrence.id=:diseaseOccurrenceId"

@@ -22,10 +22,6 @@ import javax.persistence.Table;
                         "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesByValidatorDiseaseGroups",
-                query = "from DiseaseOccurrence where diseaseGroup.validatorDiseaseGroup in :validatorDiseaseGroups"
-        ),
-        @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
                 query = "from DiseaseOccurrence as d " +
                         "inner join fetch d.location " +

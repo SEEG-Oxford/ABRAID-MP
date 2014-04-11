@@ -4,7 +4,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -19,16 +18,13 @@ public class ExpertServiceImpl implements ExpertService {
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
-    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     public ExpertServiceImpl(ExpertDao expertDao,
                              DiseaseOccurrenceDao diseaseOccurrenceDao,
-                             DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
-                             ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
+                             DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
-        this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
     }
 
     /**

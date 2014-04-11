@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -85,15 +83,16 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
 
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustThrowExceptionIfExpertDoesNotExist() {
+    public void getDiseaseOccurrencesYetToBeReviewedMustReturnEmptyListIfExpertDoesNotExist() {
         // Arrange
         when(expertDao.getById(anyInt())).thenReturn(null); // For any expertId, act as if the expert does not exist
 
         // Act
-        catchException(expertService).getDiseaseOccurrencesYetToBeReviewed(0, 0);
+        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(0, 0);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(occurrences.size()).isEqualTo(0);
+        assertThat(occurrences.isEmpty());
     }
 
     @Test
@@ -102,10 +101,10 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
         when(diseaseGroupDao.getById(anyInt())).thenReturn(null); // For any diseaseGroupId, act as if the group does not exist
 
         // Act
-        catchException(expertService).getDiseaseOccurrencesYetToBeReviewed(0, 0);
+        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(0, 0);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(occurrences.isEmpty());
     }
 
     @Test

@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 
 import java.util.List;
 
@@ -19,17 +21,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         super(sessionFactory);
     }
 
-    /**
-     * Gets a list of occurrence points, for the specified validator disease groups.
-     * @param validatorDiseaseGroups The validator disease groups of interest.
-     * @return The list of disease occurrence points for the validator disease groups.
-     */
-    public List<DiseaseOccurrence> getByValidatorDiseaseGroups(List<ValidatorDiseaseGroup>
-                                                                                 validatorDiseaseGroups) {
-        Query query = namedQuery("getDiseaseOccurrencesByValidatorDiseaseGroups");
-        query.setParameterList("validatorDiseaseGroups", validatorDiseaseGroups);
-        return list(query);
-    }
 
     /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet

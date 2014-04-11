@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
@@ -30,11 +29,10 @@ public class UserDetailsServiceTest {
 
         ExpertDao expertDao = mock(ExpertDao.class);
         DiseaseOccurrenceDao diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
-        ValidatorDiseaseGroupDao validatorDiseaseGroupDao = mock(ValidatorDiseaseGroupDao.class);
         DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
 
         UserDetailsService userDetailsService = new UserDetailsServiceImpl(new ExpertServiceImpl(expertDao,
-                diseaseOccurrenceDao, diseaseOccurrenceReviewDao, validatorDiseaseGroupDao));
+                diseaseOccurrenceDao, diseaseOccurrenceReviewDao));
 
         String fullName = "Helena Patching";
         String email = "zool1250@zoo.ox.ac.uk";

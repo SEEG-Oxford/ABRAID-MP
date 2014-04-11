@@ -1,7 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 
 import java.util.List;
 
@@ -23,13 +26,6 @@ public interface DiseaseOccurrenceDao {
      * @return The disease occurrence, or null if it does not exist.
      */
     DiseaseOccurrence getById(Integer id);
-
-    /**
-     * Gets a list of occurrence points, for the specified validator disease groups.
-     * @param validatorDiseaseGroups The validator disease groups of interest.
-     * @return The list of disease occurrence points for the validator disease groups.
-     */
-    List<DiseaseOccurrence> getByValidatorDiseaseGroups(List<ValidatorDiseaseGroup> validatorDiseaseGroups);
 
     /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
