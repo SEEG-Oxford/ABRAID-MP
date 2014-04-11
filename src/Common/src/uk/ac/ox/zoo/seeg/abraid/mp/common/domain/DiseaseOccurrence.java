@@ -33,6 +33,7 @@ import javax.persistence.Table;
                         "inner join fetch d.alert.feed " +
                         "inner join fetch d.alert.feed.provenance " +
                         "inner join fetch d.diseaseGroup " +
+                        "left outer join fetch d.diseaseGroup.validatorDiseaseGroup " +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
                         "expert.id=:expertId)"

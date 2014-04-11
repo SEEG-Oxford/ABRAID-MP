@@ -62,15 +62,7 @@ public class ExpertServiceImpl implements ExpertService {
      */
     @Override
     public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
-                                                                        Integer validatorDiseaseGroupId)
-            throws IllegalArgumentException {
-        if (expertDao.getById(expertId) == null) {
-            throw new IllegalArgumentException("Expert does not exist in database.");
-        }
-        if (validatorDiseaseGroupDao.getById(validatorDiseaseGroupId) == null) {
-            throw new IllegalArgumentException("Validator Disease Group does not exist in database.");
-        }
-
+                                                                        Integer validatorDiseaseGroupId) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
     }
 
