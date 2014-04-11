@@ -2,7 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -17,15 +20,18 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseGroupDao diseaseGroupDao;
     private HealthMapDiseaseDao healthMapDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseGroupDao diseaseGroupDao,
                               HealthMapDiseaseDao healthMapDiseaseDao,
-                              ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
+                              ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
+                              DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
+        this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
     }
 
     /**
@@ -74,6 +80,15 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public ValidatorDiseaseGroup getValidatorDiseaseGroupByName(String validatorDiseaseGroupName) {
         return validatorDiseaseGroupDao.getByName(validatorDiseaseGroupName);
+    }
+
+    /**
+     * Gets all the validator disease groups.
+     * @return A list of all validator disease groups.
+     */
+    @Override
+    public List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups() {
+        return validatorDiseaseGroupDao.getAll();
     }
 
     /**

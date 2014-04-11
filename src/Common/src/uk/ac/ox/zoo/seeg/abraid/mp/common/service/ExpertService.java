@@ -6,7 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service interface for experts.
@@ -54,24 +53,7 @@ public interface ExpertService {
      * @param expertId The id of the specified expert.
      * @return The total number of disease occurrence reviews for the specified expert.
      */
-    Integer getDiseaseOccurrenceReviewCount(Integer expertId);
-
-    /**
-     * Gets the number of disease occurrence reviews an expert has submitted, per validator disease group.
-     * @param expertId The id of the specified expert.
-     * @param diseaseInterests The list of validator disease groups the expert can validate.
-     * @return The map from validator disease group name to its corresponding diseaseOccurrenceReviewCount.
-     */
-    Map<String, Integer> getDiseaseOccurrenceReviewCountPerValidatorDiseaseGroup(Integer expertId,
-                                                                         List<ValidatorDiseaseGroup> diseaseInterests);
-
-    /**
-     * Gets the number of disease occurrences, per validator disease group.
-     * @param diseaseInterests The list of validator disease groups the expert can validate.
-     * @return The map from validator disease group name to its corresponding count of disease occurrences.
-     */
-    Map<String, Integer> getDiseaseOccurrenceCountPerValidatorDiseaseGroup(List<ValidatorDiseaseGroup>
-                                                                                   diseaseInterests);
+    Long getDiseaseOccurrenceReviewCount(Integer expertId);
 
     /**
      * Saves the disease occurrence review.

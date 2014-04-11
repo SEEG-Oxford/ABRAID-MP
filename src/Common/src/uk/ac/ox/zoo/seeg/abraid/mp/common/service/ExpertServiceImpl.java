@@ -1,12 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service class for experts.
@@ -90,63 +91,8 @@ public class ExpertServiceImpl implements ExpertService {
      * @return The total number of disease occurrence reviews for the specified expert.
      */
     @Override
-    public Integer getDiseaseOccurrenceReviewCount(Integer expertId) {
-        return diseaseOccurrenceReviewDao.getByExpertId(expertId).size();
-    }
-
-    /**
-     * Gets the number of disease occurrence reviews an expert has submitted, per validator disease group.
-     * @param expertId The id of the specified expert.
-     * @param validatorDiseaseGroups The list of an expert's disease interests.
-     * @return The map from the name of the validator disease group to its corresponding diseaseOccurrenceReviewCount.
-     */
-    public Map<String, Integer> getDiseaseOccurrenceReviewCountPerValidatorDiseaseGroup(Integer expertId,
-                                                                   List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
-        Map<String, Integer> map = initialiseValidatorDiseaseGroupsMap(validatorDiseaseGroups);
-        List<DiseaseOccurrenceReview> allReviews = diseaseOccurrenceReviewDao.getByExpertIdAndValidatorDiseaseGroups(
-                expertId, validatorDiseaseGroups);
-        int count;
-        for (DiseaseOccurrenceReview review : allReviews) {
-            String validatorDiseaseGroupName = review.getValidatorDiseaseGroupName();
-            if (validatorDiseaseGroupName != null) {
-                count = map.get(validatorDiseaseGroupName);
-                map.put(validatorDiseaseGroupName, count + 1);
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Gets the number of disease occurrences, per validator disease group.
-     * @param validatorDiseaseGroups The list of an expert's disease interests.
-     * @return The map from validatorDiseaseGroupName to its corresponding count of disease occurrences.
-     */
-    public Map<String, Integer> getDiseaseOccurrenceCountPerValidatorDiseaseGroup(List<ValidatorDiseaseGroup>
-                                                                                          validatorDiseaseGroups) {
-        Map<String, Integer> map = initialiseValidatorDiseaseGroupsMap(validatorDiseaseGroups);
-        List<DiseaseOccurrence> allOccurrences =
-                diseaseOccurrenceDao.getByValidatorDiseaseGroups(validatorDiseaseGroups);
-        int count;
-        for (DiseaseOccurrence occurrence : allOccurrences) {
-            String validatorDiseaseGroupName = occurrence.getValidatorDiseaseGroupName();
-            count = map.containsKey(validatorDiseaseGroupName) ? map.get(validatorDiseaseGroupName) : 0;
-            map.put(validatorDiseaseGroupName, count + 1);
-        }
-        return map;
-    }
-
-    /**
-     * Create a map where the key is the name of each validator disease group provided,
-     * and its corresponding value is initialised to 0.
-     * @param validatorDiseaseGroups The validator disease groups to input to the map as keys.
-     * @return The map from validator disease group name to an integer count.
-     */
-    Map<String, Integer> initialiseValidatorDiseaseGroupsMap(List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
-        Map<String, Integer> map = new HashMap<>();
-        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
-            map.put(validatorDiseaseGroup.getName(), 0);
-        }
-        return map;
+    public Long getDiseaseOccurrenceReviewCount(Integer expertId) {
+        return diseaseOccurrenceReviewDao.getCountByExpertId(expertId);
     }
 
     /**

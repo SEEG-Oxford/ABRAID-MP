@@ -14,8 +14,8 @@ import javax.persistence.*;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertId",
-        query = "from DiseaseOccurrenceReview where expert.id=:expertId"
+        name = "getDiseaseOccurrenceReviewCountByExpertId",
+        query = "select count(*) from DiseaseOccurrenceReview where expert.id=:expertId"
     ),
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewsByExpertIdAndValidatorDiseaseGroups",

@@ -22,9 +22,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
-import java.util.*;
-
-import static ch.lambdaj.Lambda.sum;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Controller for the expert data validation map page.
@@ -57,30 +57,28 @@ public class DataValidationController {
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<ValidatorDiseaseGroup> diseaseInterests = new ArrayList<>();
-        Map<String, Integer> reviewCountPerDiseaseGroup = new HashMap<>();
-        Map<String, Integer> occurrenceCountPerDiseaseGroup = new HashMap<>();
         boolean userLoggedIn = (user != null);
+        Integer diseaseOccurrenceReviewCount = 0;
         if (userLoggedIn) {
-            diseaseInterests = expertService.getDiseaseInterests(user.getId());
-            reviewCountPerDiseaseGroup = expertService.getDiseaseOccurrenceReviewCountPerValidatorDiseaseGroup(
-                    user.getId(), diseaseInterests);
-            occurrenceCountPerDiseaseGroup = expertService.getDiseaseOccurrenceCountPerValidatorDiseaseGroup(
-                    diseaseInterests);
+            int expertId = user.getId();
+            diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
+            List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
+            model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
+            model.addAttribute("allOtherDiseases",
+                    sortByDisplayName(getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests)));
         } else {
-            ValidatorDiseaseGroup defaultDiseaseGroup =
-                    diseaseService.getValidatorDiseaseGroupByName(DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
-            diseaseInterests.add(defaultDiseaseGroup);
-            reviewCountPerDiseaseGroup.put(DEFAULT_VALIDATOR_DISEASE_GROUP_NAME, 0);
-            occurrenceCountPerDiseaseGroup.put(DEFAULT_VALIDATOR_DISEASE_GROUP_NAME, DEFAULT_DISEASE_OCCURRENCE_COUNT);
+            model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
         }
-        Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values()).intValue();
-        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
-        model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
         model.addAttribute("userLoggedIn", userLoggedIn);
-        model.addAttribute("reviewCountPerDiseaseGroup", reviewCountPerDiseaseGroup);
-        model.addAttribute("occurrenceCountPerDiseaseGroup", occurrenceCountPerDiseaseGroup);
+        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
         return "datavalidation";
+    }
+
+    private List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroupsExcludingDiseaseInterests(
+            List<ValidatorDiseaseGroup> diseaseInterests) {
+        List<ValidatorDiseaseGroup> list = diseaseService.getAllValidatorDiseaseGroups();
+        list.removeAll(diseaseInterests);
+        return list;
     }
 
     private List<ValidatorDiseaseGroup> sortByDisplayName(List<ValidatorDiseaseGroup> list) {

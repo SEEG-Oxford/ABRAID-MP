@@ -18,16 +18,34 @@
     var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
     var loggedIn = ${userLoggedIn?c};
     var diseaseOccurrenceReviewCount = ${reviewCount?c};
-    var diseaseInterests = [
-        <#list diseaseInterests as disease>
+    <#if diseaseInterests??>
+        var diseaseInterests = [
+            <#list diseaseInterests as disease>
+                {
+                    name: "${disease.getName()?lower_case?js_string}",
+                    id: ${disease.id?c}
+                },
+            </#list>
+        ];
+    <#else>
+        var diseaseInterests = [
             {
-                name: "${disease.getName()?lower_case?js_string}",
-                id: ${disease.id?c},
-                reviewCount: ${reviewCountPerDiseaseGroup[disease.getName()]?c},
-                occurrenceCount: ${occurrenceCountPerDiseaseGroup[disease.getName()]?c}
-            },
-        </#list>
+                name: "${defaultValidatorDiseaseGroupName}",
+                id: 0
+            }
+        ];
+    </#if>
+    var allOtherDiseases = [
+        <#if allOtherDiseases??>
+            <#list allOtherDiseases as disease>
+                {
+                    name: "${disease.getName()?lower_case?js_string}",
+                    id: ${disease.id?c}
+                },
+            </#list>
+        </#if>
     ];
+
 </#assign>
 
 <#assign endOfBodyContent>

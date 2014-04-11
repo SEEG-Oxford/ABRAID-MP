@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -18,21 +17,11 @@ public interface DiseaseOccurrenceReviewDao {
     List<DiseaseOccurrenceReview> getAll();
 
     /**
-     * Gets all reviews by the specified expert.
+     * Gets the total number of reviews submitted by the specified expert.
      * @param expertId The expert's Id.
-     * @return A list of the expert's reviews.
+     * @return The count of the expert's reviews.
      */
-    List<DiseaseOccurrenceReview> getByExpertId(Integer expertId);
-
-    /**
-     * Gets all reviews by the specified expert, for the specified validator disease group (corresponding to many
-     * disease groups).
-     * @param expertId The expert's Id.
-     * @param validatorDiseaseGroups The expert's disease interests.
-     * @return A list of the expert's reviews.
-     */
-    List<DiseaseOccurrenceReview> getByExpertIdAndValidatorDiseaseGroups(Integer expertId,
-                                                                    List<ValidatorDiseaseGroup> validatorDiseaseGroups);
+    Long getCountByExpertId(Integer expertId);
 
     /**
      * Saves the specified review.

@@ -4,12 +4,9 @@ import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -44,47 +41,14 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     @Test
-    public void getAllReviewsForExpert() {
+    public void getCountByExpertId() {
         // Arrange
-        Expert expert = createExpert();
-        DiseaseOccurrence diseaseOccurrence = createDiseaseOccurrence();
-        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
-
-        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview();
-        diseaseOccurrenceReview.setExpert(expert);
-        diseaseOccurrenceReview.setDiseaseOccurrence(diseaseOccurrence);
-        diseaseOccurrenceReview.setResponse(response);
 
         // Act
-        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
-        flushAndClear();
+        Long count = diseaseOccurrenceReviewDao.getCountByExpertId(1);
 
         // Assert
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertId(expert.getId());
-        assertThat(reviews).hasSize(1);
-
-        DiseaseOccurrenceReview review = reviews.get(0);
-        assertThat(review.getResponse()).isEqualTo(response);
-        assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
-        assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
-    }
-
-    @Test
-    public void getAllReviewsForExpertMustReturnEmptyListIfNoReviewsHaveBeenSubmitted() {
-        // Arrange
-        Integer expertId = 1;
-        ValidatorDiseaseGroup validatorDiseaseGroup = createValidatorDiseaseGroup();
-
-        List<ValidatorDiseaseGroup> groups = new ArrayList<>();
-        groups.add(validatorDiseaseGroup);
-
-        // Act
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndValidatorDiseaseGroups(
-                expertId, groups);
-
-        // Assert
-        assertThat(reviews).isNotNull();
-        assertThat(reviews).isEmpty();
+        assertThat(count).isEqualTo(0);
     }
 
     private Expert createExpert() {

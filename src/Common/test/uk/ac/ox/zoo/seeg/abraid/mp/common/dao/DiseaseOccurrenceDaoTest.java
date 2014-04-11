@@ -4,9 +4,9 @@ import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.util.List;
 
@@ -75,29 +75,6 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         // Assert
         for (DiseaseOccurrence item : list) {
             assertThat(item.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
-        }
-    }
-
-    @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustHaveNoIntersectionWithExpertsReviewedList() {
-        // Arrange
-        Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
-        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
-        createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
-
-        // Act
-        Integer expertId = expert.getId();
-        Integer validatorDiseaseGroupId = occurrence.getValidatorDiseaseGroup().getId();
-        List<DiseaseOccurrence> occurrencesYetToBeReviewed =
-                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
-
-        // Assert
-        List<DiseaseOccurrenceReview> reviews =
-                diseaseOccurrenceReviewDao.getByExpertIdAndValidatorDiseaseGroups(expertId,
-                        expert.getValidatorDiseaseGroups());
-        for (DiseaseOccurrenceReview review : reviews) {
-            assertThat(occurrencesYetToBeReviewed).doesNotContain(review.getDiseaseOccurrence());
         }
     }
 

@@ -1,6 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -28,6 +31,12 @@ public interface DiseaseService {
      * @return The validator disease group.
      */
     ValidatorDiseaseGroup getValidatorDiseaseGroupByName(String validatorDiseaseGroupName);
+
+    /**
+     * Gets all the validator disease groups.
+     * @return A list of all validator disease groups.
+     */
+    List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups();
 
     /**
      * Saves a disease occurrence.

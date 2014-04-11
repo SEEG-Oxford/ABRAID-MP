@@ -165,9 +165,11 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         }
         $.getJSON(geoJsonRequestUrl, function (featureCollection) {
             if (featureCollection.features.length != 0) {
+                DataValidationViewModels.layerSelectorViewModel.noOccurrencesLeftToReview(false);
                 clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
                 map.fitBounds(diseaseOccurrenceLayer.getBounds());
             } else {
+                DataValidationViewModels.layerSelectorViewModel.noOccurrencesLeftToReview(true);
                 map.fitWorld();
             }
         });
