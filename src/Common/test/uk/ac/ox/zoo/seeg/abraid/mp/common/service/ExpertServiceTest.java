@@ -2,10 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
 import java.util.ArrayList;
@@ -50,13 +47,13 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseOccurrenceReviewCountReturnsExpectedInteger() {
+    public void getDiseaseOccurrenceReviewCountReturnsExpectedLong() {
         // Arrange
-        Long n = 2L;
         List<DiseaseOccurrenceReview> reviews = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < 3; i++) {
             reviews.add(new DiseaseOccurrenceReview());
         }
+        Long n = (long) reviews.size();
         when(diseaseOccurrenceReviewDao.getCountByExpertId(anyInt())).thenReturn(n);
 
         // Act
@@ -96,7 +93,7 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustThrowExceptionIfDiseaseGroupDoesNotExist() {
+    public void getDiseaseOccurrencesYetToBeReviewedMustReturnEmptyListIfDiseaseGroupDoesNotExist() {
         // Arrange
         when(diseaseGroupDao.getById(anyInt())).thenReturn(null); // For any diseaseGroupId, act as if the group does not exist
 
@@ -132,6 +129,16 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testExpert).isSameAs(expert);
+    }
+
+    @Test
+    public void saveDiseaseOccurrenceReview() {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(new Expert());
+        review.setDiseaseOccurrence(new DiseaseOccurrence());
+        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
+        diseaseOccurrenceReviewDao.save(review);
+        verify(diseaseOccurrenceReviewDao).save(eq(review));
     }
 
     @Test

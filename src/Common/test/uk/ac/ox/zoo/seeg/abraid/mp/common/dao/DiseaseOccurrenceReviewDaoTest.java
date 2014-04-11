@@ -42,13 +42,49 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
 
     @Test
     public void getCountByExpertId() {
-        // Arrange
+        // Arrange - no reviews in the database
 
         // Act
         Long count = diseaseOccurrenceReviewDao.getCountByExpertId(1);
 
         // Assert
         assertThat(count).isEqualTo(0);
+    }
+
+    @Test
+    public void doesDiseaseOccurrenceReviewExistReturnsTrueWhenExpected() {
+        // Arrange
+        Expert expert = createExpert();
+        DiseaseOccurrence occurrence = createDiseaseOccurrence();
+        createDiseaseOccurrenceReview(expert, occurrence);
+
+        // Act
+        boolean result = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expert.getId(), occurrence.getId());
+
+        // Assert
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void doesDiseaseOccurrenceReviewExistReturnsFalseWhenReviewDoesNotExist() {
+        // Arrange
+        Expert expert = createExpert();
+        DiseaseOccurrence occurrence = createDiseaseOccurrence();
+
+        // Act
+        boolean result = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expert.getId(), occurrence.getId());
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    private DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence) {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(expert);
+        review.setDiseaseOccurrence(occurrence);
+        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
+        diseaseOccurrenceReviewDao.save(review);
+        return review;
     }
 
     private Expert createExpert() {

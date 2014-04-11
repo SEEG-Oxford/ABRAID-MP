@@ -52,7 +52,6 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
         // Assert
         assertThat(result).isEqualTo("datavalidation");
-        assertThat(model.containsAttribute("diseaseInterestsSet"));
     }
 
     @Test
