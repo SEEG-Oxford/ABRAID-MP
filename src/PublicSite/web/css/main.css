@@ -7,8 +7,16 @@ html {
     min-height: 100%;
 }
 body {
+    margin-top:50px;
     margin-bottom: 30px;
     min-width: 320px;
+}
+.navbar-right div {
+    padding:15px;
+}
+.navbar {
+    min-width: 320px;
+    margin: 0;
 }
 #footer {
     position: absolute;
@@ -20,15 +28,6 @@ body {
 #footer > .container {
     background-color: #222;
 }
-body > .container {
-    padding: 60px 15px 0;
-}
-.container .text-muted {
-    margin: 20px 0;
-}
-code {
-    font-size: 80%;
-}
 #footer > .container {
     padding-top: 5px;
 }
@@ -37,6 +36,10 @@ code {
 }
 #footer .links > a:link, a:visited {
     color:rgb(153, 153, 153);
+    text-decoration:none;
+}
+#footer .links > a:hover {
+    color:white;
     text-decoration:none;
 }
 #footer .copyright {
@@ -65,11 +68,4 @@ form {
 }
 .form-group {
     display: block;
-}
-body .navbar {
-    min-width: 320px;
-    margin: 0;
-}
-#common > .container {
-    padding-top: 70px;
 }
