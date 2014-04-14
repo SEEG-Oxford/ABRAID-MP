@@ -2,10 +2,27 @@
  * Styling for PublicSite Data Validation page
  * Copyright (c) 2014 University of Oxford
  */
+html > body {
+    min-width: 430px !important;
+}
+body > #common {
+    overflow-x: auto;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    top: 50px;
+    bottom: 30px;
+}
+body #footer {
+    position: absolute;
+    bottom: 0;
+}
 #dataValidation  {
     padding-right:280px;        /* Side panel width */
-    min-width:800px;            /* Side panel width + layer selector width */
+    min-width: 800px;            /* Side panel width + layer selector width */
+    min-height: 550px;
     height:100%;
+    margin: 0;
 }
 #layerSelector {
     position:absolute;

@@ -80,6 +80,10 @@ public class DiseaseOccurrence {
     public DiseaseOccurrence() {
     }
 
+    public DiseaseOccurrence(int id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

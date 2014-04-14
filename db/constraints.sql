@@ -62,15 +62,15 @@ ALTER TABLE disease_occurrence_review ADD CONSTRAINT pk_expert_review
 ALTER TABLE expert ADD CONSTRAINT pk_expert
     PRIMARY KEY (id);
 
-ALTER TABLE expert_disease_group ADD CONSTRAINT pk_expert_disease_group
-    PRIMARY KEY (expert_id, disease_group_id);
+ALTER TABLE expert_validator_disease_group ADD CONSTRAINT pk_expert_validator_disease_group
+    PRIMARY KEY (expert_id, validator_disease_group_id);
 
 ALTER TABLE feed ADD CONSTRAINT pk_feed
     PRIMARY KEY (id);
 
 ALTER TABLE geoname ADD CONSTRAINT pk_geoname
     PRIMARY KEY (id);
-    
+
 ALTER TABLE geonames_location_precision ADD CONSTRAINT pk_geonames_location_precision
     PRIMARY KEY (geonames_feature_code);
 
@@ -83,10 +83,16 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT pk_healthmap_country_countr
 ALTER TABLE healthmap_disease ADD CONSTRAINT pk_healthmap_disease
     PRIMARY KEY (id);
 
+ALTER TABLE land_sea_border ADD CONSTRAINT pk_land_sea_border
+    PRIMARY KEY (id);
+
 ALTER TABLE location ADD CONSTRAINT pk_location
     PRIMARY KEY (id);
 
 ALTER TABLE provenance ADD CONSTRAINT pk_provenance
+    PRIMARY KEY (id);
+
+ALTER TABLE validator_disease_group ADD CONSTRAINT pk_validator_disease_group
     PRIMARY KEY (id);
 
 
@@ -96,6 +102,9 @@ ALTER TABLE alert ADD CONSTRAINT fk_alert_feed
 
 ALTER TABLE disease_group ADD CONSTRAINT fk_disease_group_disease_group
     FOREIGN KEY (parent_id) REFERENCES disease_group (id);
+
+ALTER TABLE disease_group ADD CONSTRAINT fk_disease_group_validator_disease_group
+    FOREIGN KEY (validator_disease_group_id) REFERENCES validator_disease_group (id);
 
 ALTER TABLE disease_occurrence ADD CONSTRAINT fk_disease_occurrence_alert
     FOREIGN KEY (alert_id) REFERENCES alert (id);
@@ -112,10 +121,10 @@ ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurence_review
 ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurrence_review_disease_occurrence
     FOREIGN KEY (disease_occurrence_id) REFERENCES disease_occurrence (id);
 
-ALTER TABLE expert_disease_group ADD CONSTRAINT fk_expert_disease_group_disease_group
-    FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
+ALTER TABLE expert_validator_disease_group ADD CONSTRAINT fk_expert_validator_disease_group_validator_disease_group
+    FOREIGN KEY (validator_disease_group_id) REFERENCES validator_disease_group (id);
 
-ALTER TABLE expert_disease_group ADD CONSTRAINT fk_expert_disease_group_expert
+ALTER TABLE expert_validator_disease_group ADD CONSTRAINT fk_expert_validator_disease_group_expert
     FOREIGN KEY (expert_id) REFERENCES expert (id);
 
 ALTER TABLE feed ADD CONSTRAINT fk_feed_provenance
