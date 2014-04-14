@@ -33,7 +33,7 @@ import java.util.List;
 @Controller
 public class DataValidationController {
     /** Base URL for the geowiki. */
-    public static final String GEOWIKI_BASE_URL = "/datavalidationcontent";
+    public static final String GEOWIKI_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
     private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
@@ -53,7 +53,7 @@ public class DataValidationController {
      * Return the data validation page, in which the iframe (containing all page content) sits.
      * @return The ftl page name.
      */
-    @RequestMapping(value = "/datavalidation", method = RequestMethod.GET)
+    @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showTab() {
         return "datavalidation";
     }
@@ -63,7 +63,7 @@ public class DataValidationController {
      * @param model The model map.
      * @return The ftl page name.
      */
-    @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
+    @RequestMapping(value = GEOWIKI_BASE_URL + "/content", method = RequestMethod.GET)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);

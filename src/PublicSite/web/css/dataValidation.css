@@ -3,12 +3,15 @@
  * Copyright (c) 2014 University of Oxford
  */
 
+html, body, #dataValidation {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
 #dataValidation  {
     padding-right:280px;        /* Side panel width */
     min-width: 800px;            /* Side panel width + layer selector width */
     min-height: 550px;
-    height:100%;
-    margin: 0;
 }
 #layerSelector {
     position:absolute;
@@ -80,7 +83,7 @@
 }
 #logIn {
     position:relative;
-    bottom:0;
+    bottom:160px;
 }
 #logIn p {
     text-align: center;
@@ -93,7 +96,7 @@
 #counterDiv {
     position:relative;
     text-align:center;
-    bottom:0;
+    bottom:125px;
 }
 #counter {
     margin:0 auto;

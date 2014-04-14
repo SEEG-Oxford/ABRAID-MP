@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/main.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </head>
 <body>
@@ -38,7 +37,7 @@
                     </optgroup>
                 </select>
             </h4>
-            <div class="alert alert-info" data-bind="visible: noOccurrencesToReview()" style="text-align: center">
+            <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview" style="text-align: center">
                 There are no occurrences in need of review for this disease.
             </div>
         </div>
@@ -51,6 +50,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/en-gb.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
     <script src="http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
     <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
     <script src="<@spring.url "/js/flipclock.min.js"/>"></script>

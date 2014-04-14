@@ -162,7 +162,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         // Clear the record of markers on the layer; the new markers are added to layerMap on addLayer thanks to onEachFeature
         var geoJsonRequestUrl = "";
         if (loggedIn) {
-            geoJsonRequestUrl = baseUrl + 'datavalidationcontent/diseases/' + diseaseId + '/occurrences';
+            geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
         } else {
             geoJsonRequestUrl = baseUrl + 'static/defaultDiseaseOccurrences.json';
         }
@@ -182,7 +182,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.removeLayer(layerMap[id]);
         delete layerMap[id];
-        if (_.size(layerMap) == 0) {
+        if (_(layerMap).isEmpty()) {
             DataValidationViewModels.layerSelectorViewModel.noOccurrencesToReview(true);
         } else {
             clusterLayer.addLayer(diseaseOccurrenceLayer);
