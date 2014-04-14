@@ -162,7 +162,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         // Clear the record of markers on the layer; the new markers are added to layerMap on addLayer thanks to onEachFeature
         var geoJsonRequestUrl = "";
         if (loggedIn) {
-            geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
+            geoJsonRequestUrl = baseUrl + 'datavalidationcontent/diseases/' + diseaseId + '/occurrences';
         } else {
             geoJsonRequestUrl = baseUrl + 'static/defaultDiseaseOccurrences.json';
         }

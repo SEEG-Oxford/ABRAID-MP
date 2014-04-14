@@ -33,7 +33,7 @@ import java.util.List;
 @Controller
 public class DataValidationController {
     /** Base URL for the geowiki. */
-    public static final String GEOWIKI_BASE_URL = "/datavalidation";
+    public static final String GEOWIKI_BASE_URL = "/datavalidationcontent";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
     private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
@@ -50,7 +50,16 @@ public class DataValidationController {
     }
 
     /**
-     * Return the view to display, and provide the currently logged in user's disease interests.
+     * Return the data validation page, in which the iframe (containing all page content) sits.
+     * @return The ftl page name.
+     */
+    @RequestMapping(value = "/datavalidation", method = RequestMethod.GET)
+    public String showTab() {
+        return "datavalidation";
+    }
+
+    /**
+     * Return the view to display within the iframe, and provide the currently logged in user's disease interests.
      * @param model The model map.
      * @return The ftl page name.
      */
@@ -71,7 +80,7 @@ public class DataValidationController {
         }
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
-        return "datavalidation";
+        return "datavalidationcontent";
     }
 
     private List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroupsExcludingDiseaseInterests(
