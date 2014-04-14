@@ -2,53 +2,74 @@
  * Styling for PublicSite
  * Copyright (c) 2014 University of Oxford
  */
-iframe {
-    width:100%;
-    height:100%;
-    position:absolute;
-    top:50px;
-    bottom:30px;
-    left:0;
-    right:0;
+html {
+    position: relative;
+    min-height: 100%;
 }
-html,body {
-    height:100%;
-    min-height:800px;
-    min-width:1000px;
+body {
+    margin-bottom: 30px;
+    min-width: 320px;
 }
 #common {
-    padding-top:50px;       /* Header height */
-    padding-bottom:30px;    /* Footer height */
-    min-height: 100%;
-    height: 100%;
-    margin: 0 auto -30px;
-    overflow:auto;
+    padding-top:50px;
+    padding-bottom:30px;
+}
+body .navbar {
+    min-width: 320px;
+    margin: 0;
 }
 .navbar-right div {
     padding-top:15px;
     padding-left:15px;
     color:rgb(153, 153, 153);
 }
-.navbar-fixed-bottom {
-    min-height:30px;
+#footer {
+    position: absolute;
+    bottom:0;
+    width: 100%;
+    height: 30px;
+    background-color: #222;
 }
-.navbar-fixed-bottom p {
-    line-height:30px;
-    margin:auto;
+code {
+    font-size: 80%;
 }
-.navbar-right p,
-#links > a,
-#links > p {
-    color:rgb(153, 153, 153);
+#footer > .container {
+    padding-top: 5px;
+}
+#footer .links > a, p {
     display:inline;
 }
-#links > a:link a:visited {
-    color:rgb(153, 153, 153);
-    background-color: rgb(51, 51, 51);
+#footer .links > a:link, a:visited {
     text-decoration:none;
 }
-#links > a:hover {
-    color: #ffffff;
-    background-color: rgb(51, 51, 51);
+#footer .links > a:hover {
     text-decoration:none;
+    color:white;
+}
+#footer .links {
+    float: left;
+}
+#footer .copyright {
+    float: right;
+}
+.bg-success-important {
+    background-color: #DFF0D8 !important;
+}
+.bg-danger-important {
+    background-color: #F2DEDE !important;
+}
+.alert {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.input-group {
+    max-width: 700px;
+}
+form {
+    margin-top: 15px;
+}
+.form-group {
+    display: block;
 }

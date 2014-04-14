@@ -26,7 +26,7 @@
             </ul>
 
             <@security.authorize ifAnyGranted="ROLE_USER">
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right text-muted">
                     <li><div>Hello <@security.authentication property="principal.fullName"/></div></li>
                     <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
                 </ul>
