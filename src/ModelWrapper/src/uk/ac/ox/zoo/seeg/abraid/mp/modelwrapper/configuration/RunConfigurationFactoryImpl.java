@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.joda.time.LocalDateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
@@ -10,7 +12,9 @@ import java.nio.file.Paths;
  * Copyright (c) 2014 University of Oxford
  */
 public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
-    private static final String DEFAULT_RUN_NAME = "run";
+    // This the max file name length (255) minus reserved space for a GUID (36), a datetime (19) and separators (2)
+    private static final int MAX_DISEASE_NAME_LENGTH = 195;
+
     private final ConfigurationService configurationService;
 
     public RunConfigurationFactoryImpl(ConfigurationService configurationService) {
@@ -22,26 +26,20 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      * @return The new RunConfiguration
      */
     @Override
-    public RunConfiguration createDefaultConfiguration() {
+    public RunConfiguration createDefaultConfiguration(String diseaseName) throws ConfigurationException {
         return new RunConfiguration(
-                Paths.get(tempFindR()).toFile(), // move to conf service
+                Paths.get(configurationService.getRExecutablePath()).toFile(),
                 Paths.get(configurationService.getCacheDirectory()).toFile(),
-                DEFAULT_RUN_NAME, // move to conf service
-                Integer.MAX_VALUE, // move to conf service
+                buildRunName(diseaseName),
+                configurationService.getMaxModelRunDuration(),
                 configurationService.getModelRepositoryVersion());
     }
 
-
-    ///COVERAGE:OFF - - temp
-    // CHECKSTYLE.OFF - temp
-    private static String tempFindR() {
-        OSChecker osChecker = new OSCheckerImpl();
-        if (osChecker.isWindows()) {
-            return "C:\\Program Files\\R\\R-3.0.2\\bin\\x64\\R.exe";
-        } else {
-            return "/usr/bin/R";
+    private String buildRunName(String diseaseName) {
+        String safeDiseaseName = diseaseName.replaceAll("[^A-Za-z0-9]", "-");
+        if (safeDiseaseName.length() > MAX_DISEASE_NAME_LENGTH) {
+            safeDiseaseName = safeDiseaseName.substring(0, MAX_DISEASE_NAME_LENGTH);
         }
+        return safeDiseaseName + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss");
     }
-    ///CHECKSTYLE:ON
-    //COVERAGE:ON
 }

@@ -1,5 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import org.apache.commons.configuration.ConfigurationException;
+
+import java.io.File;
+
 /**
  * Service interface for configuration data.
  * Copyright (c) 2014 University of Oxford
@@ -53,4 +57,16 @@ public interface ConfigurationService {
      * @return The cache directory.
      */
     String getCacheDirectory();
+
+    /**
+     * Gets the current path to the R executable binary.
+     * @return The R path.
+     */
+    String getRExecutablePath() throws ConfigurationException;
+
+    /**
+     * Gets the current maximum model run duration.
+     * @return The max duration.
+     */
+    int getMaxModelRunDuration();
 }

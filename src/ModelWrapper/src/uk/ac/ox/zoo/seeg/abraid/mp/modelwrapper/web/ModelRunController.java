@@ -42,7 +42,7 @@ public class ModelRunController {
         }
 
         try {
-            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration();
+            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration("foo");
             modelRunner.runModel(runConfiguration, occurrenceData); // Ignore result for now
         } catch (Exception e) {
             return new ResponseEntity<String>("Could not start model run.", HttpStatus.INTERNAL_SERVER_ERROR);

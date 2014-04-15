@@ -1,11 +1,20 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import freemarker.template.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.project;
 
 /**
  * Service class for configuration data.
@@ -20,6 +29,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String CACHE_DIR_KEY = "cache.data.dir";
     private static final String MODEL_REPOSITORY_KEY = "model.repo.url";
     private static final String MODEL_VERSION_KEY = "model.repo.version";
+    private static final String R_EXECUTABLE_KEY = "r.executable.path";
+    private static final String R_MAX_DURATION_KEY = "r.max.duration";
 
     private final FileConfiguration basicProperties;
     private final OSChecker osChecker;
@@ -103,6 +114,44 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public String getCacheDirectory() {
         String defaultDir = osChecker.isWindows() ? DEFAULT_WINDOWS_CACHE_DIR : DEFAULT_LINUX_CACHE_DIR;
         return basicProperties.getString(CACHE_DIR_KEY, defaultDir);
+    }
+
+    /**
+     * Gets the current path to the R executable binary.
+     * @return The R path.
+     */
+    @Override
+    public String getRExecutablePath() throws ConfigurationException {
+        if (basicProperties.containsKey(R_EXECUTABLE_KEY)) {
+            return basicProperties.getString(R_EXECUTABLE_KEY);
+        } else {
+            return findDefaultR();
+        }
+    }
+
+    /**
+     * Gets the current maximum model run duration.
+     * @return The max duration.
+     */
+    @Override
+    public int getMaxModelRunDuration() {
+        return basicProperties.getInt(R_MAX_DURATION_KEY, Integer.MAX_VALUE);
+    }
+
+    private String findDefaultR() throws ConfigurationException {
+        File r = null;
+        if (osChecker.isWindows()) {
+            String rHome = System.getenv("R_HOME");
+            r = Paths.get(rHome, "bin/R.exe").toFile();
+        } else {
+            r = new File("/usr/bin/R");
+        }
+
+        if (r.exists() && r.canExecute()) {
+            return r.getAbsolutePath();
+        } else {
+            throw new ConfigurationException("Could not find R.");
+        }
     }
 }
 

@@ -37,7 +37,7 @@ public class ModelRunControllerTest {
         RunConfigurationFactory mockFactory = mock(RunConfigurationFactory.class);
         RunConfiguration mockConf = mock(RunConfiguration.class);
         ModelRunner mockRunner = mock(ModelRunner.class);
-        when(mockFactory.createDefaultConfiguration()).thenReturn(mockConf);
+        when(mockFactory.createDefaultConfiguration(anyString())).thenReturn(mockConf);
 
         ModelRunController target = new ModelRunController(mockFactory, mockRunner);
 
