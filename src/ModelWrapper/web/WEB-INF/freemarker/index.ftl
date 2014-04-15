@@ -97,6 +97,54 @@
             </div>
         </div>
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">
+                <a data-toggle="collapse" href="#misc-body">
+                    Misc Settings
+                </a>
+            </h2>
+        </div>
+        <div class="panel-collapse collapse" id="misc-body">
+            <div class="panel-body">
+                <p>Use the fields below to update .</p>
+                <form action="#" data-bind="with: RExecutableViewModel">
+                    <p class="form-group">
+                        <label for="r-exe">R executable path: </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-lg fa-terminal"></i>
+                            </span>
+                            <input id="r-exe" type="text" class="form-control" placeholder="R executable path" autocomplete="off" data-bind="value: value, valueUpdate:'afterkeydown', disable: saving" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
+                    </p>
+                    <div class="form-group" data-bind="foreach: notices">
+                        <div data-bind="alert: $data"></div>
+                    </div>
+                </form>
+                <form action="#" data-bind="with: ModelDurationViewModel">
+                    <p class="form-group">
+                        <label for="max-duration">Model run duration limit (ms): </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-dashboard"></i>
+                            </span>
+                            <input id="max-duration" type="text" class="form-control" placeholder="Model run duration limit" autocomplete="off" data-bind="value: value, valueUpdate:'afterkeydown', disable: saving" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
+                    </p>
+                    <div class="form-group" data-bind="foreach: notices">
+                        <div data-bind="alert: $data"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/html" id="validation-template">
     <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
@@ -109,6 +157,10 @@
         url: "${repository_url?js_string}",
         version: "${model_version?js_string}",
         availableVersions: [<#list available_versions as version>"${version?js_string}"<#if version_has_next>,</#if></#list>]
+    };
+    var initialMiscData = {
+        rPath: "${r_path?js_string}",
+        runDuration: "${run_duration?js_string}"
     };
 </script>
 </@c.page>

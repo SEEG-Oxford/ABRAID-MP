@@ -39,7 +39,7 @@ body {
 #footer .links > a, p {
     display:inline;
 }
-#footer .links > a:link, a:visited {
+#footer .links > a:link, #footer .links > a:visited {
     color:rgb(153, 153, 153);
     text-decoration:none;
 }
