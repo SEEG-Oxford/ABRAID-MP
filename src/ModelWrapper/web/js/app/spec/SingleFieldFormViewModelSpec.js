@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false, describe:false, it:false, expect:false, beforeEach:false, afterEach:false, jasmine:false*/
-define([ 'app/SingleFieldFormViewModel', 'ko', 'underscore', 'app/spec/ruleMatcher', 'app/spec/observableMatcher' ], function(SingleFieldFormViewModel, ko, _, ruleMatcher, observableMatcher) {
+define([ 'app/SingleFieldFormViewModel', 'ko', 'underscore', 'app/spec/util/ruleMatcher', 'app/spec/util/observableMatcher' ], function(SingleFieldFormViewModel, ko, _, ruleMatcher, observableMatcher) {
     "use strict";
 
     describe("A single field form view model", function() {

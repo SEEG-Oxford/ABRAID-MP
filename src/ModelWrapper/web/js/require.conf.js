@@ -25,7 +25,7 @@
         }
     });
 
-    define("ko", ["knockout", "knockout.bootstrap", "knockout.validation", "app/knockout.validation.rules"], function(ko) {
+    define("ko", ["knockout", "knockout.bootstrap", "knockout.validation", "app/KoCustomRules"], function(ko) {
         // Bundle up all the knockout stuff
         return ko;
     });

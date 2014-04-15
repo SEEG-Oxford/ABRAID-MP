@@ -19,34 +19,53 @@
         <script type="text/javascript">
             var specs = [
                 "app/spec/AuthViewModelSpec",
+                "app/spec/KoCustomRulesSpec",
+                "app/spec/MiscViewModelSpec",
+                "app/spec/RepositoryViewModelSpec",
                 "app/spec/SingleFieldFormViewModelSpec"
             ];
         </script>
 
         <!-- Make Jasmine play nice with phantom, require and ant -->
         <script type="text/javascript">
-            /*global specs:false, require:false, jasmine:false, jasmineRequire:false*/
+            /*global specs:false, require:false, jasmine:false, jasmineRequire:false, document:false*/
             var baseUrl = document.URL.substring(0, document.URL.indexOf("js/app/spec/SpecRunner.html"));
+            var includeCoverage = document.URL.indexOf("coverage=true") !== -1;
+            var includeConsole = document.URL.indexOf("console=true") !== -1;;
+
             require([ baseUrl + 'js/require.conf.js' ], function() {
-                specs.push("domReady!"); // Dont load jasmine boot before domReady otherwise get two results sets (the real onload and the manual one), but one without specs.
-                specs.push("https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js");
-                specs.push("https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/2.0.0/mock-ajax.js");
-                require(specs, function() {
-                    var ConsoleReporter = jasmineRequire.ConsoleReporter();
-                    var options = {
-                        print: function () {
-                            console.log.apply(console, arguments);
-                        },
-                        onComplete: function(state) {
-                            // Stash this so we can get it elsewhere
-                            window.exitCode = state ? 0 : 1;
+                require(["domReady!", "https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js"], function() {
+                    var beforeSpecs = [ "https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/2.0.0/mock-ajax.js" ];
+                    if (includeCoverage) {
+                        beforeSpecs.push("https://cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.js");
+                        beforeSpecs.push("app/spec/util/coverage-reporter");
+                    }
+
+                    require(beforeSpecs, function() {
+                        if (includeCoverage) {
+                            blanket.options({ filter: baseUrl+"js/app", antifilter: baseUrl+"js/app/spec" });
+                            jasmine.getEnv().addReporter(new jasmine.BlanketReporter());
                         }
-                    };
 
-                    var consoleReporter = new ConsoleReporter(options);
-                    jasmine.getEnv().addReporter(consoleReporter);
+                        if (includeConsole) {
+                            var ConsoleReporter = jasmineRequire.ConsoleReporter();
+                            var options = {
+                                print: function () {
+                                    console.log.apply(console, arguments);
+                                },
+                                onComplete: function(state) {
+                                    // Stash these so we can get them elsewhere
+                                    window.coverage = includeCoverage ? document.getElementById("blanket-main").lastChild.childNodes[1].innerHTML : "NOT RUN!"; // Ugly
+                                    window.exitCode = state ? 0 : 1;
+                                }
+                            };
+                            jasmine.getEnv().addReporter(new ConsoleReporter(options));
+                        }
 
-                    window.onload();
+                        require(specs, function() {
+                            window.onload(); // Run the tests
+                        });
+                    });
                 });
             });
         </script>
@@ -54,3 +73,4 @@
     <body>
     </body>
 </html>
+

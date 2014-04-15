@@ -68,6 +68,10 @@
                 var exitCode = page.evaluate(function(){
                     return window.exitCode;
                 });
+                var coverage = page.evaluate(function(){
+                    return window.coverage;
+                });
+                console.log("[Summary] JS Line Coverage " + coverage);
                 phantom.exit(exitCode);
             });
         }
