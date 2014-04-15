@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,9 +54,18 @@ public class IndexController {
             modelVersions = new ArrayList<>();
         }
 
+        String rPath = null;
+        try {
+            rPath = configurationService.getRExecutablePath();
+        } catch (ConfigurationException e) {
+            rPath = "";
+        }
+
         model.addAttribute("repository_url", configurationService.getModelRepositoryUrl());
         model.addAttribute("model_version", configurationService.getModelRepositoryVersion());
         model.addAttribute("available_versions", modelVersions);
+        model.addAttribute("run_duration", configurationService.getMaxModelRunDuration());
+        model.addAttribute("r_path", rPath);
 
         return "index";
     }
