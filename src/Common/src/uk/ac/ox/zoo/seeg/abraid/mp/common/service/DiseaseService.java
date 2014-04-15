@@ -1,6 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -23,11 +26,10 @@ public interface DiseaseService {
     List<DiseaseGroup> getAllDiseaseGroups();
 
     /**
-     * Gets the disease group by its name.
-     * @param diseaseGroupName The name of the disease group.
-     * @return The disease group.
+     * Gets all the validator disease groups.
+     * @return A list of all validator disease groups.
      */
-    DiseaseGroup getDiseaseGroupByName(String diseaseGroupName);
+    List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups();
 
     /**
      * Saves a disease occurrence.
@@ -50,10 +52,11 @@ public interface DiseaseService {
     boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence);
 
     /**
-     * Determines whether the specified occurrence's disease id matches the id of the corresponding disease group.
+     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
      * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param diseaseGroupId The id of the disease group.
-     * @return True if the occurrence and disease group refer to the same disease, otherwise false.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
-    boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId);
+    boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
+                                                                           Integer validatorDiseaseGroupId);
 }
