@@ -62,10 +62,6 @@
         <antcall target="import.shapefile">
             <param name="shapefile.name" value="land_sea_border.shp"/>
         </antcall>
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="process_shapefile_data.sql"/>
-            <param name="database.script.dir" value="."/>
-        </antcall>
     </target>
 
     <!-- Adds administrative unit test data to an existing database, unless the property "shapefiles.path" is specified.
@@ -75,10 +71,6 @@
         <antcall target="run.database.script">
             <param name="database.script.name" value="admin_units_testdata.sql"/>
             <param name="database.script.dir" value="testdata/admin_units"/>
-        </antcall>
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="process_shapefile_data.sql"/>
-            <param name="database.script.dir" value="."/>
         </antcall>
     </target>
     

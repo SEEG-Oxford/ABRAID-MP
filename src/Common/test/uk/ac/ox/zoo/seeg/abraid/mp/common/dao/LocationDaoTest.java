@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnit;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
@@ -23,6 +24,8 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
     private LocationDao locationDao;
     @Autowired
     private HealthMapCountryDao healthMapCountryDao;
+    @Autowired
+    private AdminUnitDao adminUnitDao;
 
     @Test
     public void saveAndReloadCountryLocation() {
@@ -105,11 +108,15 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         double x = 51.81394;
         double y = -1.29479;
         Point point = GeometryUtils.createPoint(x, y);
+        AdminUnit adminUnit = adminUnitDao.getByGaulCode(29863);
+        int passedQCStage = 3;
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN2);
+        location.setAdminUnit(adminUnit);
+        location.setPassedQCStage(passedQCStage);
 
         // Act
         locationDao.save(location);
@@ -126,6 +133,8 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN2);
         assertThat(location.getHealthMapCountry()).isNull();
         assertThat(location.getCreatedDate()).isNotNull();
+        assertThat(location.getAdminUnit()).isEqualTo(adminUnit);
+        assertThat(location.getPassedQCStage()).isEqualTo(passedQCStage);
     }
 
     @Test

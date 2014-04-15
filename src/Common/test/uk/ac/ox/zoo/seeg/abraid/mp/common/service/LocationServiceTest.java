@@ -99,4 +99,17 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
         // Assert
         assertThat(testPrecisionMap).isEqualTo(precisionMap);
     }
+
+    @Test
+    public void getAllAdminUnits() {
+        // Arrange
+        List<AdminUnit> adminUnits = Arrays.asList(new AdminUnit());
+        when(adminUnitDao.getAll()).thenReturn(adminUnits);
+
+        // Act
+        List<AdminUnit> testAdminUnits = locationService.getAllAdminUnits();
+
+        // Assert
+        assertThat(testAdminUnits).isSameAs(adminUnits);
+    }
 }

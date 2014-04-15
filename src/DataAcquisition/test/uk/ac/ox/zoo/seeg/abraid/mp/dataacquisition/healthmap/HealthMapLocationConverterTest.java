@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
@@ -90,11 +91,10 @@ public class HealthMapLocationConverterTest {
     public void convertLocationAlreadyExistsWithoutGeoNameId() {
         // Arrange
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        Point point = GeometryUtils.createPoint(20, 10);
+        Point point = GeometryUtils.createPoint(20.0, 10.0);
         Location existingLocation = new Location();
         List<Location> existingLocations = Arrays.asList(existingLocation);
-        when(locationService.getLocationsByPointAndPrecision(point, LocationPrecision.COUNTRY))
-                .thenReturn(existingLocations);
+        mockGetLocationsByPointAndPrecision(point, LocationPrecision.ADMIN1, existingLocations);
 
         // Act
         Location location = converter.convert(healthMapLocation);
@@ -107,7 +107,7 @@ public class HealthMapLocationConverterTest {
     public void convertNewLocationWithGeoNameId() {
         // Arrange
         Integer geoNameId = 123;
-        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        HealthMapLocation healthMapLocation = createDefaultHealthMapCountryLocation();
         healthMapLocation.setGeoNameId(geoNameId.toString());
         when(locationService.getLocationByGeoNameId(123)).thenReturn(null);
 
@@ -127,9 +127,9 @@ public class HealthMapLocationConverterTest {
     public void convertNewLocationWithoutGeoNameId() {
         // Arrange
         Point point = GeometryUtils.createPoint(20, 10);
-        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
-        when(locationService.getLocationsByPointAndPrecision(point, LocationPrecision.COUNTRY))
-                .thenReturn(new ArrayList<Location>());
+        HealthMapLocation healthMapLocation = createDefaultHealthMapCountryLocation();
+        ArrayList<Location> locations = new ArrayList<>();
+        mockGetLocationsByPointAndPrecision(point, LocationPrecision.COUNTRY, locations);
 
         // Act
         Location location = converter.convert(healthMapLocation);
@@ -147,7 +147,7 @@ public class HealthMapLocationConverterTest {
     public void convertNewLocationWithoutAbraidCountry() {
         // Arrange
         Integer geoNameId = 123;
-        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        HealthMapLocation healthMapLocation = createDefaultHealthMapCountryLocation();
         healthMapLocation.setGeoNameId(geoNameId.toString());
         healthMapLocation.setCountry(unMappedHealthMapCountry.getName());
         healthMapLocation.setCountryId(unMappedHealthMapCountry.getId().toString());
@@ -205,7 +205,7 @@ public class HealthMapLocationConverterTest {
         // Assert
         assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
-        verify(locationService, times(1)).save(eq(geoName));
+        verify(locationService, times(1)).saveGeoName(eq(geoName));
     }
 
     @Test
@@ -229,8 +229,8 @@ public class HealthMapLocationConverterTest {
 
         // Assert
         assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
-        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
-        verify(locationService, times(1)).save(eq(geoName));
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+        verify(locationService, times(1)).saveGeoName(eq(geoName));
     }
 
     @Test
@@ -249,8 +249,8 @@ public class HealthMapLocationConverterTest {
 
         // Assert
         assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
-        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
-        verify(locationService, never()).save(any(uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName.class));
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+        verify(locationService, never()).saveGeoName(any(uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName.class));
     }
 
     @Test
@@ -271,14 +271,29 @@ public class HealthMapLocationConverterTest {
 
         // Assert
         assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
-        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
-        verify(locationService, never()).save(any(uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName.class));
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+        verify(locationService, never()).saveGeoName(any(uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName.class));
     }
 
     @Test
     public void addPrecisionWithoutGeoNameId() {
         // Arrange
         HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        Location location = new Location();
+
+        // Act
+        converter.addPrecision(healthMapLocation, location);
+
+        // Assert
+        assertThat(location.getGeoNameId()).isNull();
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+    }
+
+    @Test
+    public void addCountryPrecisionIfPlaceNameIsAHealthMapCountryName() {
+        // Arrange
+        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        healthMapLocation.setPlaceName(UNMAPPED_COUNTRY_NAME);
         Location location = new Location();
 
         // Act
@@ -310,8 +325,37 @@ public class HealthMapLocationConverterTest {
         location.setLatitude("10");
         location.setCountryId(mappedHealthMapCountry.getId().toString());
         location.setCountry(MAPPED_COUNTRY_NAME);
+        location.setPlaceBasicType("l");
+        location.setPlaceName("Test place name");
+        return location;
+    }
+
+    private HealthMapLocation createDefaultHealthMapCountryLocation() {
+        HealthMapLocation location = createDefaultHealthMapLocation();
         location.setPlaceBasicType("c");
         location.setPlaceName(MAPPED_COUNTRY_NAME);
         return location;
+    }
+
+    private void mockGetLocationsByPointAndPrecision(Point point, LocationPrecision precision,
+                                                     List<Location> existingLocations) {
+        when(locationService.getLocationsByPointAndPrecision(argThat(new PointMatcher(point)),
+                eq(precision))).thenReturn(existingLocations);
+    }
+
+    /**
+     * Uses Point.equalsExact() instead of Point.equals() (the latter seems unreliable).
+     */
+    static class PointMatcher extends ArgumentMatcher<Point> {
+        private final Point expected;
+
+        public PointMatcher(Point expected) {
+            this.expected = expected;
+        }
+
+        @Override
+        public boolean matches(Object actual) {
+            return expected.equalsExact((Point) actual);
+        }
     }
 }

@@ -38,10 +38,9 @@ public class AdminUnitDaoTest extends AbstractSpringIntegrationTests {
         assertThat(adminUnit.getGaulCode()).isEqualTo(gaulCode);
         assertThat(adminUnit.getName()).isEqualTo("Umbria");
         assertThat(adminUnit.getAdminLevel()).isEqualTo('1');
-        assertThat(adminUnit.getCentroidLatitude()).isEqualTo(42.96577);
-        assertThat(adminUnit.getCentroidLongitude()).isEqualTo(12.49014);
+        assertThat(adminUnit.getCentroidLatitude()).isEqualTo(42.96577, offset(0.00005));
+        assertThat(adminUnit.getCentroidLongitude()).isEqualTo(12.49014, offset(0.00005));
         assertThat(adminUnit.getArea()).isEqualTo(8455.63701766);
-        assertThat(adminUnit.getMaxDistanceFromCentroid()).isEqualTo(101.149991553972, offset(0.0000000005));
     }
 
     @Test

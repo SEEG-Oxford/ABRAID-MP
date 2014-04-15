@@ -30,21 +30,30 @@ public class AdminUnit {
     @Column
     private String name;
 
-    // The latitude component of the admin unit's centroid.
-    @Column(name = "centr_lat")
-    private double centroidLatitude;
-
     // The longitude component of the admin unit's centroid.
     @Column(name = "centr_lon")
     private double centroidLongitude;
+
+    // The latitude component of the admin unit's centroid.
+    @Column(name = "centr_lat")
+    private double centroidLatitude;
 
     // The admin unit's area.
     @Column
     private double area;
 
-    // The admin unit's area.
-    @Column(name = "max_centr_distance")
-    private double maxDistanceFromCentroid;
+    public AdminUnit() {
+    }
+
+    public AdminUnit(Integer gaulCode, char adminLevel, String name, double centroidLongitude, double centroidLatitude,
+                     double area) {
+        this.gaulCode = gaulCode;
+        this.adminLevel = adminLevel;
+        this.name = name;
+        this.centroidLatitude = centroidLatitude;
+        this.centroidLongitude = centroidLongitude;
+        this.area = area;
+    }
 
     public Integer getGaulCode() {
         return gaulCode;
@@ -90,14 +99,6 @@ public class AdminUnit {
         this.area = area;
     }
 
-    public double getMaxDistanceFromCentroid() {
-        return maxDistanceFromCentroid;
-    }
-
-    public void setMaxDistanceFromCentroid(double maxDistanceFromCentroid) {
-        this.maxDistanceFromCentroid = maxDistanceFromCentroid;
-    }
-
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -111,7 +112,6 @@ public class AdminUnit {
         if (Double.compare(adminUnit.centroidLatitude, centroidLatitude) != 0) return false;
         if (Double.compare(adminUnit.centroidLongitude, centroidLongitude) != 0) return false;
         if (adminLevel != adminUnit.adminLevel) return false;
-        if (Double.compare(adminUnit.maxDistanceFromCentroid, maxDistanceFromCentroid) != 0) return false;
         if (gaulCode != null ? !gaulCode.equals(adminUnit.gaulCode) : adminUnit.gaulCode != null) return false;
         if (name != null ? !name.equals(adminUnit.name) : adminUnit.name != null) return false;
 
@@ -130,8 +130,6 @@ public class AdminUnit {
         temp = Double.doubleToLongBits(centroidLongitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(area);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(maxDistanceFromCentroid);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
