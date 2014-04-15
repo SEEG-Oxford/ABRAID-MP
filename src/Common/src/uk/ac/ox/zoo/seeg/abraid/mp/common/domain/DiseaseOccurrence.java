@@ -136,7 +136,11 @@ public class DiseaseOccurrence {
     }
 
     public String getValidatorDiseaseGroupName() {
-        return diseaseGroup.getValidatorDiseaseGroup().getName();
+        String name = null;
+        if (diseaseGroup.getValidatorDiseaseGroup() != null) {
+            name = diseaseGroup.getValidatorDiseaseGroup().getName();
+        }
+        return name;
     }
 
     ///COVERAGE:OFF - generated code

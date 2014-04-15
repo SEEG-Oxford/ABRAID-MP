@@ -104,11 +104,9 @@ public class DiseaseOccurrenceReview {
      * group, otherwise null.
      */
     public String getValidatorDiseaseGroupName() {
-        String name;
-        try {
+        String name = null;
+        if ((diseaseOccurrence.getDiseaseGroup() != null) && (diseaseOccurrence.getValidatorDiseaseGroup() != null)) {
             name = diseaseOccurrence.getDiseaseGroup().getValidatorDiseaseGroup().getName();
-        } catch (NullPointerException e) {
-            return null;
         }
         return name;
     }
