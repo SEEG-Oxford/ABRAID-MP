@@ -12,8 +12,8 @@
             'jquery': 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery',
             'bootstrap': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap',
             'knockout': "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-debug",
-            'knockout.validation': 'https://cdnjs.cloudflare.com/ajax/libs/knockout-validation/1.0.2/knockout.validation.min',
-            'knockout.bootstrap': baseUrl + 'js/lib/knockout-bootstrap.min', // Move to cdn path when next version is published
+            'knockout.validation': baseUrl + 'js/lib/knockout-validation.min', // Move to cdn path when next version is published (error template refreshing bug)
+            'knockout.bootstrap': baseUrl + 'js/lib/knockout-bootstrap.min', // Move to cdn path when next version is published (AMD support)
             'underscore': 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore',
             'domReady': 'https://cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady'
         },
