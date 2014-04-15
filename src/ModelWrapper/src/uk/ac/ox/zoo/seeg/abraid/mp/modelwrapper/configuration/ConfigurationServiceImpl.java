@@ -14,6 +14,10 @@ import java.io.File;
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger LOGGER = Logger.getLogger(ConfigurationServiceImpl.class);
+    private static final String LOG_LOADING_CONFIGURATION_FILE = "Loading configuration file %s";
+    private static final String LOG_UPDATING_AUTH_CONFIGURATION = "Updating auth configuration: %s %s";
+    private static final String LOG_UPDATING_REPOSITORY_URL_CONFIGURATION = "Updating repository url configuration: %s";
+    private static final String LOG_UPDATING_VERSION_CONFIGURATION = "Updating repository version configuration: %s";
 
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
@@ -28,7 +32,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private final OSChecker osChecker;
 
     public ConfigurationServiceImpl(File basicProperties, OSChecker osChecker) throws ConfigurationException {
-        LOGGER.info("Loading configuration file " + basicProperties.toString());
+        LOGGER.info(String.format(LOG_LOADING_CONFIGURATION_FILE, basicProperties.toString()));
         this.basicProperties = new PropertiesConfiguration(basicProperties);
         this.basicProperties.setAutoSave(true);
         this.osChecker = osChecker;
@@ -41,7 +45,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setAuthenticationDetails(String username, String passwordHash) {
-        LOGGER.info("Updating auth configuration: " + username + " " + passwordHash);
+        LOGGER.info(String.format(LOG_UPDATING_AUTH_CONFIGURATION, username, passwordHash));
         basicProperties.setProperty(USERNAME_KEY, username);
         basicProperties.setProperty(PASSWORD_KEY, passwordHash);
     }
@@ -79,7 +83,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setModelRepositoryUrl(String repositoryUrl) {
-        LOGGER.info("Updating repository url configuration: " + repositoryUrl);
+        LOGGER.info(String.format(LOG_UPDATING_REPOSITORY_URL_CONFIGURATION, repositoryUrl));
         basicProperties.setProperty(MODEL_REPOSITORY_KEY, repositoryUrl);
     }
 
@@ -98,7 +102,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setModelRepositoryVersion(String version) {
-        LOGGER.info("Updating repository version configuration: " + version);
+        LOGGER.info(String.format(LOG_UPDATING_VERSION_CONFIGURATION, version));
         basicProperties.setProperty(MODEL_VERSION_KEY, version);
     }
 

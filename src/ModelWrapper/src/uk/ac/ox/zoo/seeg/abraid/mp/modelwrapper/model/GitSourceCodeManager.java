@@ -32,6 +32,14 @@ import static ch.lambdaj.Lambda.convert;
  */
 public class GitSourceCodeManager implements SourceCodeManager {
     private static final Logger LOGGER = Logger.getLogger(GitSourceCodeManager.class);
+    private static final String LOG_ATTEMPTING_CLONE_REPOSITORY = "Attempting to clone repository to local cache: %s";
+    private static final String LOG_RETRIEVING_VERSIONS = "Retrieving versions from local repository cache";
+    private static final String LOG_PROVISIONING_MODEL_CODE = "Provisioning model code '%s' at %s";
+    private static final String LOG_UPDATING_LOCAL_REPOSITORY_CACHE = "Updating local repository cache";
+    private static final String LOG_RETURNING_TO_HEAD_OF_MASTER = "Returning to HEAD of master.";
+    private static final String LOG_COPYING_MODEL_SOURCE_FILES = "Copying model source files";
+    private static final String LOG_CHECKING_OUT_REPO_VERSION = "Checking out repo version ";
+    private static final String LOG_PROVISIONING_FAILED = "Provisioning model code failed as version not in repository";
 
     private static final String GIT_CONFIG_DIRECTORY = ".git";
     private static final String MASTER_BRANCH_NAME = "master";
@@ -58,19 +66,19 @@ public class GitSourceCodeManager implements SourceCodeManager {
     public void provisionVersion(String versionIdentifier, File workspace)
             throws IllegalArgumentException, IOException, UnsupportedOperationException {
         synchronized (GitSourceCodeManager.class) {
-            LOGGER.info("Provisioning model code '" + versionIdentifier + "' at " + workspace.getParent());
+            LOGGER.info(String.format(LOG_PROVISIONING_MODEL_CODE, versionIdentifier, workspace.getParent()));
             try {
                 List<String> tags = getAvailableVersions();
                 if (!tags.contains(versionIdentifier)) {
-                    LOGGER.warn("Provisioning model code failed as version not in repository");
+                    LOGGER.warn(LOG_PROVISIONING_FAILED);
                     throw new IllegalArgumentException("No such version");
                 }
                 Git repository = openRepository();
 
-                LOGGER.warn("Checking out repo version " + versionIdentifier);
+                LOGGER.info(LOG_CHECKING_OUT_REPO_VERSION + versionIdentifier);
                 repository.checkout().setName(versionIdentifier).call();
 
-                LOGGER.warn("Copying model source files");
+                LOGGER.info(LOG_COPYING_MODEL_SOURCE_FILES);
                 FileUtils.copyDirectory(
                         getRepositoryDirectory().toFile(),
                         workspace,
@@ -78,7 +86,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
                                 new NameFileFilter(GIT_CONFIG_DIRECTORY),
                                 DirectoryFileFilter.DIRECTORY)));
 
-                LOGGER.warn("Returning to HEAD of master.");
+                LOGGER.info(LOG_RETURNING_TO_HEAD_OF_MASTER);
                 repository.checkout().setName(MASTER_BRANCH_NAME).call();
             } catch (GitAPIException e) {
                 throw new UnsupportedOperationException(e);
@@ -98,7 +106,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
                 if (!Files.exists(getRepositoryDirectory())) {
                     cloneRepository();
                 } else {
-                    LOGGER.info("Updating local repository cache");
+                    LOGGER.info(LOG_UPDATING_LOCAL_REPOSITORY_CACHE);
                     openRepository().pull().call();
                 }
             } catch (GitAPIException e) {
@@ -117,7 +125,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
     public List<String> getAvailableVersions() throws IOException, UnsupportedOperationException {
         synchronized (GitSourceCodeManager.class) {
             try {
-                LOGGER.info("Retrieving versions from local repository cache");
+                LOGGER.info(LOG_RETRIEVING_VERSIONS);
                 List<String> versions = convert(openRepository().tagList().call(), new Converter<Ref, String>() {
                     public String convert(Ref ref) {
                         return ref.getName().substring(TAG_PREFIX.length());
@@ -177,7 +185,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
     private void cloneRepository() throws IOException, GitAPIException {
         String repositoryUrl = configurationService.getModelRepositoryUrl();
 
-        LOGGER.info("Attempting to clone repository to local cache: " + repositoryUrl);
+        LOGGER.info(String.format(LOG_ATTEMPTING_CLONE_REPOSITORY, repositoryUrl));
 
         Git.cloneRepository()
                 .setURI(repositoryUrl)

@@ -18,6 +18,10 @@ import java.util.Map;
  */
 public class FreemarkerScriptGenerator implements ScriptGenerator {
     private static final Logger LOGGER = Logger.getLogger(FreemarkerScriptGenerator.class);
+    private static final String LOG_APPLYING_FREEMARKER_SCRIPT_TEMPLATE = "Applying freemarker script template";
+    private static final String LOG_APPLYING_FREEMARKER_TEMPLATE_FAILED = "Applying freemarker script template failed!";
+    private static final String LOG_ADDING_SCRIPT_FILE_TO_WORKSPACE = "Adding script file to workspace at %s";
+    private static final String LOG_SCRIPT_FILE_ADDED_TO_WORKSPACE = "Script file added to workspace at %s";
 
     private static final String SCRIPT_FILE_NAME = "modelRun.R";
     private static final String TEMPLATE_FILE_NAME = "ModelRunTemplate.ftl";
@@ -34,7 +38,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
     @Override
     public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun)
             throws IOException {
-        LOGGER.info("Adding script file to workspace at " + workingDirectory.toString());
+        LOGGER.info(String.format(LOG_ADDING_SCRIPT_FILE_TO_WORKSPACE, workingDirectory.toString()));
 
         //Load template from source folder
         Template template = loadTemplate();
@@ -45,7 +49,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         // File output
         File scriptFile = applyTemplate(workingDirectory, template, data);
 
-        LOGGER.info("Script file added to workspace at " + workingDirectory.toString());
+        LOGGER.info(String.format(LOG_SCRIPT_FILE_ADDED_TO_WORKSPACE, workingDirectory.toString()));
         return scriptFile;
     }
 
@@ -54,12 +58,12 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         File scriptFile = Paths.get(workingDirectory.getAbsolutePath(), SCRIPT_FILE_NAME).toFile();
         Writer fileWriter = null;
         try {
-            LOGGER.info("Applying freemarker script template");
+            LOGGER.info(LOG_APPLYING_FREEMARKER_SCRIPT_TEMPLATE);
             fileWriter = new OutputStreamWriter(new FileOutputStream(scriptFile), Charset.forName(ASCII).newEncoder());
             template.process(data, fileWriter);
             fileWriter.flush();
         } catch (TemplateException e) {
-            LOGGER.warn("Applying freemarker script template failed!");
+            LOGGER.warn(LOG_APPLYING_FREEMARKER_TEMPLATE_FAILED);
             throw new IOException("Either could not read the template file or the file was invalid.", e);
         } finally {
             if (fileWriter != null) {

@@ -16,6 +16,7 @@ import java.util.UUID;
  */
 public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
     private static final Logger LOGGER = Logger.getLogger(WorkspaceProvisionerImpl.class);
+    private static final String LOG_DIRECTORY_ERROR = "Workspace directory structure could not be created at %s";
 
     private static final String MODEL_CODE_DIRECTORY_NAME = "model";
     private static final String MODEL_DATA_DIRECTORY_NAME = "data";
@@ -65,7 +66,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         }
 
         if (!workingDirectoryCreated) {
-            LOGGER.warn("Workspace directory structure could not be created at " + workingDirectoryPath.toString());
+            LOGGER.warn(String.format(LOG_DIRECTORY_ERROR, workingDirectoryPath.toString()));
             throw new IOException("Directory structure could not be created.");
         }
 

@@ -22,6 +22,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 @Controller
 public class ModelRunController {
     private static final Logger LOGGER = Logger.getLogger(ModelRunController.class);
+    private static final String LOG_STARTING_NEW_BACKGROUND_MODEL_RUN = "Starting new background model run";
 
     private final RunConfigurationFactory runConfigurationFactory;
     private final ModelRunner modelRunner;
@@ -45,7 +46,7 @@ public class ModelRunController {
         }
 
         try {
-            LOGGER.info("Starting new background model run");
+            LOGGER.info(LOG_STARTING_NEW_BACKGROUND_MODEL_RUN);
             RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration();
             modelRunner.runModel(runConfiguration, occurrenceData); // Ignore result for now
         } catch (Exception e) {

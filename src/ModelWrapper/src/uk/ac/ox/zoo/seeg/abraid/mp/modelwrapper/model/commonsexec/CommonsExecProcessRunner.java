@@ -16,8 +16,13 @@ import java.util.Map;
  */
 class CommonsExecProcessRunner implements ProcessRunner {
     private static final Logger LOGGER = Logger.getLogger(CommonsExecProcessRunner.class);
+    private static final String LOG_BG_START = "Starting background process:";
+    private static final String LOG_BG_DIRECTORY = "-> directory: %s";
+    private static final String LOG_BG_COMMAND = "-> command: %s";
+    private static final String LOG_BG_TIMEOUT = "-> timeout: %d";
 
-    public static final int SUCCESS = 0;
+    private static final int SUCCESS = 0;
+
     private final Executor executor;
 
     // The command used to start the process.
@@ -56,10 +61,10 @@ class CommonsExecProcessRunner implements ProcessRunner {
             throw new ProcessException(new Throwable("Can not use same process runner twice"));
         }
 
-        LOGGER.info("Starting background process:");
-        LOGGER.info("-> directory: " + workspace.toString());
-        LOGGER.info("-> command: " + commandLine.toString());
-        LOGGER.info("-> timeout: " + timeout);
+        LOGGER.info(LOG_BG_START);
+        LOGGER.info(String.format(LOG_BG_DIRECTORY, workspace.toString()));
+        LOGGER.info(String.format(LOG_BG_COMMAND, commandLine.toString()));
+        LOGGER.info(String.format(LOG_BG_TIMEOUT, timeout));
 
         hasRun = true;
 
