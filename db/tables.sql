@@ -9,6 +9,7 @@
 --
 -- admin_unit:                     Represents an admin 1/2 area. Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
 -- admin_unit_global:              Represents an admin 0/1 area. As admin_unit_tropical, except ten large countries have been divided into admin 1 areas, to use for global diseases.
+-- admin_unit_review:              Represents an expert's response to the presence or absence of a disease group across an admin unit.
 -- admin_unit_simplified_global:   Represents an admin 0/1 area. As admin_unit_global, except with simplified borders to improve rendering performance.
 -- admin_unit_simplified_tropical: Represents an admin 0/1 area. As admin_unit_tropical, except with simplified borders to improve rendering performance.
 -- admin_unit_tropical:            Represents an admin 0/1 area. Tailored for ABRAID-MP by separating non-contiguous parts of countries, absorbing tiny countries, removing smaller
@@ -49,6 +50,15 @@ CREATE TABLE admin_unit_global (
     name varchar(100) NOT NULL,
     pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
+);
+
+CREATE TABLE admin_unit_review ( 
+    id serial NOT NULL,
+    expert_id integer NOT NULL,
+    admin_unit_gaul_code integer NOT NULL,
+    disease_group_id integer NOT NULL,
+    response varchar(6) NOT NULL,
+    created_date timestamp
 );
 
 CREATE TABLE admin_unit_simplified_global (

@@ -35,6 +35,9 @@ ALTER TABLE admin_unit ADD CONSTRAINT pk_admin_unit
 ALTER TABLE admin_unit_global ADD CONSTRAINT pk_admin_unit_tailored_simplified_tropical
     PRIMARY KEY (gaul_code);
 
+ALTER TABLE admin_unit_review ADD CONSTRAINT pk_admin_unit_review
+    PRIMARY KEY (id);
+
 ALTER TABLE admin_unit_simplified_global ADD CONSTRAINT pk_admin_unit_simplified_global
     PRIMARY KEY (gaul_code);
 
@@ -99,6 +102,15 @@ ALTER TABLE validator_disease_group ADD CONSTRAINT pk_validator_disease_group
 -- Foreign keys
 ALTER TABLE alert ADD CONSTRAINT fk_alert_feed
     FOREIGN KEY (feed_id) REFERENCES feed (id);
+ 
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit 
+    FOREIGN KEY (admin_unit_gaul_code) REFERENCES admin_unit (gaul_code);
+
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_disease_group 
+    FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
+
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_expert 
+    FOREIGN KEY (expert_id) REFERENCES expert (id);
 
 ALTER TABLE disease_group ADD CONSTRAINT fk_disease_group_disease_group
     FOREIGN KEY (parent_id) REFERENCES disease_group (id);
@@ -144,6 +156,9 @@ ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
 
 
 -- Check constraints
+ALTER TABLE admin_unit_review ADD CONSTRAINT ck_admin_unit_review_response
+    CHECK (response IN ('YES', 'NO', 'UNSURE'));
+
 ALTER TABLE disease_group ADD CONSTRAINT ck_disease_group_group_type
     CHECK (group_type IN ('CLUSTER', 'MICROCLUSTER', 'SINGLE'));
 
