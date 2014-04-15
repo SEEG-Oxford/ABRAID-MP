@@ -135,14 +135,6 @@ public class DiseaseOccurrence {
         this.occurrenceStartDate = occurrenceStartDate;
     }
 
-    public String getValidatorDiseaseGroupName() {
-        String name = null;
-        if (diseaseGroup.getValidatorDiseaseGroup() != null) {
-            name = diseaseGroup.getValidatorDiseaseGroup().getName();
-        }
-        return name;
-    }
-
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
