@@ -18,7 +18,8 @@
         <!-- Add specs here -->
         <script type="text/javascript">
             var specs = [
-                "app/spec/AuthViewModelSpec"
+                "app/spec/AuthViewModelSpec",
+                "app/spec/SingleFieldFormViewModelSpec"
             ];
         </script>
 
@@ -29,6 +30,7 @@
             require([ baseUrl + 'js/require.conf.js' ], function() {
                 specs.push("domReady!"); // Dont load jasmine boot before domReady otherwise get two results sets (the real onload and the manual one), but one without specs.
                 specs.push("https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js");
+                specs.push("https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/2.0.0/mock-ajax.js");
                 require(specs, function() {
                     var ConsoleReporter = jasmineRequire.ConsoleReporter();
                     var options = {

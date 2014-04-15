@@ -7,7 +7,9 @@
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/SingleFieldFormViewModel.js" libraries="{jquery, knockout-debug}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/knockout.validation.rules.js" libraries="{knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/AuthViewModelSpec.js" libraries="{jasmine, knockout-bootstrap, knockout-debug, knockout.validation}" />
-    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SpecRunner.html" libraries="{boot, console, jasmine, jasmine-html, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SingleFieldFormViewModelSpec.js" libraries="{jasmine, mock-ajax, underscore}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SpecRunner.html" libraries="{boot, console, jasmine, jasmine-html, mock-ajax, require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/observableMatcher.js" libraries="{knockout-debug}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/index.js" libraries="{knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/dataValidation.js" libraries="{jquery, knockout-debug, moment}" />
