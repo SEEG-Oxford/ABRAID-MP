@@ -65,8 +65,20 @@ public interface ConfigurationService {
     String getRExecutablePath() throws ConfigurationException;
 
     /**
+     * Sets the current path to the R executable binary.
+     * @param path The R path.
+     */
+    void setRExecutablePath(String path);
+
+    /**
      * Gets the current maximum model run duration.
      * @return The max duration.
      */
     int getMaxModelRunDuration();
+
+    /**
+     * Sets the current maximum model run duration.
+     * @param value The max duration.
+     */
+    void setMaxModelRunDuration(int value);
 }

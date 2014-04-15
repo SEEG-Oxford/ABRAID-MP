@@ -130,12 +130,30 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /**
+     * Sets the current path to the R executable binary.
+     * @param path The R path.
+     */
+    @Override
+    public void setRExecutablePath(String path) {
+        basicProperties.setProperty(R_EXECUTABLE_KEY, path);
+    }
+
+    /**
      * Gets the current maximum model run duration.
      * @return The max duration.
      */
     @Override
     public int getMaxModelRunDuration() {
         return basicProperties.getInt(R_MAX_DURATION_KEY, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Sets the current maximum model run duration.
+     * @param value The max duration.
+     */
+    @Override
+    public void setMaxModelRunDuration(int value) {
+        basicProperties.setProperty(R_MAX_DURATION_KEY, value);
     }
 
     private String findDefaultR() throws ConfigurationException {
