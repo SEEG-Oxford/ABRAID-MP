@@ -32,7 +32,7 @@ public class RepositoryController {
      * @param repositoryUrl The remote repository url
      * @return 200 for success (with versions), 400 for failure.
      */
-    @RequestMapping(value = "/repo/sync", method  = RequestMethod.POST)
+    @RequestMapping(value = "/repo/sync", method = RequestMethod.POST)
     public ResponseEntity<List<String>> syncRepository(String repositoryUrl) {
         boolean validRequest = !StringUtils.isEmpty(repositoryUrl);
 
@@ -64,7 +64,7 @@ public class RepositoryController {
      * @param version The repository version
      * @return 204 for success, 400 for failure.
      */
-    @RequestMapping(value = "/repo/version", method  = RequestMethod.POST)
+    @RequestMapping(value = "/repo/version", method = RequestMethod.POST)
     public ResponseEntity setModelVersion(String version) {
         boolean validRequest = !StringUtils.isEmpty(version);
 

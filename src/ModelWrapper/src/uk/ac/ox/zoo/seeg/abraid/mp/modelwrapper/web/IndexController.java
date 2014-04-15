@@ -77,7 +77,7 @@ public class IndexController {
      * @param passwordConfirmation Confirmation of the new password.
      * @return 204 for success, 400 for failure.
      */
-    @RequestMapping(value = "/auth", method  = RequestMethod.POST)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public ResponseEntity updateAuthenticationDetails(String username, String password, String passwordConfirmation) {
         boolean validRequest =
             !StringUtils.isEmpty(username) && USERNAME_REGEX.matcher(username).matches() &&

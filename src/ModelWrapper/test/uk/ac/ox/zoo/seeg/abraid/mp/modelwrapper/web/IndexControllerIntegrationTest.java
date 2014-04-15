@@ -75,11 +75,15 @@ public class IndexControllerIntegrationTest {
         // Arrange
         when(configurationService.getModelRepositoryUrl()).thenReturn("foo1");
         when(configurationService.getModelRepositoryVersion()).thenReturn("foo2");
+        when(configurationService.getRExecutablePath()).thenReturn("foo3");
+        when(configurationService.getMaxModelRunDuration()).thenReturn(123);
         when(sourceCodeManager.getAvailableVersions()).thenReturn(Arrays.asList("1", "2", "3"));
         List<String> expectedJavaScript = Arrays.asList(
                 "url: \"foo1\"",
                 "version: \"foo2\"",
-                "availableVersions: [\"1\",\"2\",\"3\"]");
+                "availableVersions: [\"1\",\"2\",\"3\"]",
+                "rPath: \"foo3\"",
+                "runDuration: 123");
 
         // Act
         ResultActions sendRequest = this.mockMvc.perform(get("/"));
@@ -96,6 +100,8 @@ public class IndexControllerIntegrationTest {
     public void indexPageOnlyAcceptsGET() throws Exception {
         when(configurationService.getModelRepositoryUrl()).thenReturn("");
         when(configurationService.getModelRepositoryVersion()).thenReturn("");
+        when(configurationService.getRExecutablePath()).thenReturn("");
+        when(configurationService.getMaxModelRunDuration()).thenReturn(0);
         when(sourceCodeManager.getAvailableVersions()).thenReturn(new ArrayList<String>());
 
         this.mockMvc.perform(get("/")).andExpect(status().isOk());

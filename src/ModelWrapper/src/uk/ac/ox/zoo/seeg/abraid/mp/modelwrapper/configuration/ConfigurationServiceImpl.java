@@ -1,20 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
-import freemarker.template.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.project;
 
 /**
  * Service class for configuration data.
@@ -23,6 +15,8 @@ import static ch.lambdaj.Lambda.project;
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
+    private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
+    private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\R.exe";
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
@@ -119,6 +113,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Gets the current path to the R executable binary.
      * @return The R path.
+     * @throws ConfigurationException When a value for the R path is not set and R is not present in default locations.
      */
     @Override
     public String getRExecutablePath() throws ConfigurationException {
@@ -157,14 +152,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     private String findDefaultR() throws ConfigurationException {
-        File r = null;
-        if (osChecker.isWindows()) {
-            String rHome = System.getenv("R_HOME");
-            r = Paths.get(rHome, "bin/R.exe").toFile();
-        } else {
-            r = new File("/usr/bin/R");
-        }
-
+        File r = Paths.get(osChecker.isWindows() ? DEFAULT_WINDOWS_R_PATH : DEFAULT_LINUX_R_PATH).toFile();
         if (r.exists() && r.canExecute()) {
             return r.getAbsolutePath();
         } else {

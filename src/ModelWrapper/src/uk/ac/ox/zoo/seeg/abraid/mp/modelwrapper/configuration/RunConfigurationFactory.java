@@ -11,6 +11,7 @@ public interface RunConfigurationFactory {
      * Creates a new RunConfiguration using the current defaults.
      * @param diseaseName The disease name
      * @return The new RunConfiguration
+     * @throws ConfigurationException When the R executable can not be found.
      */
     RunConfiguration createDefaultConfiguration(String diseaseName) throws ConfigurationException;
 }

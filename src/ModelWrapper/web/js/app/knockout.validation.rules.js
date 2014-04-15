@@ -1,7 +1,7 @@
 /* An AMD defining and registering a set of custom knockout validation rules.
  * Copyright (c) 2014 University of Oxford
  */
- /*global define:false*/
+/*global define:false*/
 define(["knockout", "knockout.validation"], function (ko) {
     "use strict";
 

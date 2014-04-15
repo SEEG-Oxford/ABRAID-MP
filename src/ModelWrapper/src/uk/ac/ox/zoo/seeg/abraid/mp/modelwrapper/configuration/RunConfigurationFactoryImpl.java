@@ -2,8 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.joda.time.LocalDateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.nio.file.Paths;
 
@@ -23,7 +21,9 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
 
     /**
      * Creates a new RunConfiguration using the current defaults.
+     * @param diseaseName The disease name
      * @return The new RunConfiguration
+     * @throws ConfigurationException When the R executable can not be found.
      */
     @Override
     public RunConfiguration createDefaultConfiguration(String diseaseName) throws ConfigurationException {

@@ -23,7 +23,12 @@ public class MiscController {
         this.configurationService = configurationService;
     }
 
-    @RequestMapping(value = "/misc/rpath", method  = RequestMethod.POST)
+    /**
+     * Updates the path to use for the R executable when performing model runs.
+     * @param value The path to the R executable.
+     * @return 204 for success, 400 for failure.
+     */
+    @RequestMapping(value = "/misc/rpath", method = RequestMethod.POST)
     public ResponseEntity updateRExecutablePath(String value) {
         if (StringUtils.isEmpty(value)) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -44,7 +49,12 @@ public class MiscController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/misc/runduration", method  = RequestMethod.POST)
+    /**
+     * Updates the max run duration to use when performing model runs.
+     * @param value The max run duration
+     * @return 204 for success.
+     */
+    @RequestMapping(value = "/misc/runduration", method = RequestMethod.POST)
     public ResponseEntity updateMaxRunDuration(int value) {
         if (value != configurationService.getMaxModelRunDuration()) {
             configurationService.setMaxModelRunDuration(value);

@@ -214,6 +214,7 @@ public class RepositoryControllerTest {
     }
 
     private String valueCache;
+
     private void setupGetAndSetForRepositoryURL(ConfigurationService configurationService, String initialValue) {
         doAnswer(new Answer<String>() {
             public String answer(InvocationOnMock invocation) {

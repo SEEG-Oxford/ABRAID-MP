@@ -32,8 +32,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
      * Sets up the directory in which a model will run.
      * @param configuration The model run configuration options.
      * @param modelData The data to use in the model.
-     * @throws IOException Thrown if the directory can not be correctly provisioned.
      * @return The model wrapper script file to run.
+     * @throws IOException Thrown if the directory can not be correctly provisioned.
      */
     @Override
     public File provisionWorkspace(RunConfiguration configuration, GeoJsonDiseaseOccurrenceFeatureCollection modelData)

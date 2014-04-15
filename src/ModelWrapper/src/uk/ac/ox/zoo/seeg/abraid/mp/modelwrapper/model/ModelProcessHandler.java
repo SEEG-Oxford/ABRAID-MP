@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
 
 /**
  * Provides callbacks for model completion and datastreams for model io.

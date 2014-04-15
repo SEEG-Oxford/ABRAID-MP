@@ -160,7 +160,7 @@
     };
     var initialMiscData = {
         rPath: "${r_path?js_string}",
-        runDuration: "${run_duration?js_string}"
+        runDuration: ${run_duration?c}
     };
 </script>
 </@c.page>

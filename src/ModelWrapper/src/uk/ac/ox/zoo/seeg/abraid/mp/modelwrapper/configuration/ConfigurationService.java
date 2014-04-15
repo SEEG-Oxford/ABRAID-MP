@@ -2,8 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import java.io.File;
-
 /**
  * Service interface for configuration data.
  * Copyright (c) 2014 University of Oxford
@@ -61,6 +59,7 @@ public interface ConfigurationService {
     /**
      * Gets the current path to the R executable binary.
      * @return The R path.
+     * @throws ConfigurationException When a value for the R path is not set and R is not present in default locations.
      */
     String getRExecutablePath() throws ConfigurationException;
 

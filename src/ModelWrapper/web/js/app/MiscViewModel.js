@@ -5,7 +5,7 @@
 define(["ko", "jquery", "app/SingleFieldFormViewModel"], function (ko, $, SingleFieldFormViewModel) {
     "use strict";
 
-    return function(initialData, basePath) {
+    return function (initialData, basePath) {
         var self = this;
         self.RExecutableViewModel = ko.validatedObservable(
             new SingleFieldFormViewModel(basePath, "misc/rpath", initialData.rPath, { required: true }));

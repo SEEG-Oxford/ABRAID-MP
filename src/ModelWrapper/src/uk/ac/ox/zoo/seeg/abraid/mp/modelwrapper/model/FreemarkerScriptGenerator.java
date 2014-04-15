@@ -78,7 +78,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("model_version", runConfiguration.getModelVersion());
         data.put("outbreak_file", "data/outbreakData.csv");
         data.put("extent_file", "data/extentData.csv");
-        data.put("covariants", new String[] {"file1.csv", "file2.csv"});
+        data.put("covariants", new String[]{"file1.csv", "file2.csv"});
         return data;
     }
 }
