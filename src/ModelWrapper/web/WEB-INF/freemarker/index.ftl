@@ -107,7 +107,7 @@
         </div>
         <div class="panel-collapse collapse" id="misc-body">
             <div class="panel-body">
-                <p>Use the fields below to update .</p>
+                <p>Use the fields below to update advanced model wrapper configuration options.</p>
                 <form action="#" data-bind="with: RExecutableViewModel">
                     <p class="form-group">
                         <label for="r-exe">R executable path: </label>
