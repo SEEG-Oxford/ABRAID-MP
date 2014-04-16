@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,10 +19,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationServi
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @WebAppConfiguration("file:ModelWrapper/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class IndexControllerIntegrationTest {
+
+public class IndexControllerIntegrationTest extends BaseWebIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
@@ -145,22 +141,5 @@ public class IndexControllerIntegrationTest {
                 .param("username", "username")
                 .param("password", "Password1")
                 .param("passwordConfirmation", "Password1");
-    }
-
-    @Before
-    public void makeConfigBackup() throws IOException {
-        Files.copy(
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
-                StandardCopyOption.REPLACE_EXISTING);
-    }
-
-    @After
-    public void rollbackConfig() throws IOException {
-        Files.copy(
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
-                StandardCopyOption.REPLACE_EXISTING);
-        Files.delete(Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"));
     }
 }
