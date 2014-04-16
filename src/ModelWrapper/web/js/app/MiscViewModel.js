@@ -1,4 +1,4 @@
-/* foo.
+/* An AMD defining the MiscViewModel to hold the state of misc configuration objects.
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false*/

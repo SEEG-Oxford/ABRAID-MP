@@ -11,7 +11,7 @@ define([ 'app/MiscViewModel', 'ko', 'underscore', 'app/spec/util/ruleMatcher', '
             jasmine.addMatchers({ toBeObservable: observableMatcher });
         };
 
-        describe("composes two a sub view models which", function() {
+        describe("composes two sub view models which", function() {
             beforeEach(addCustomMatchers);
 
             it("are SingleFieldFormViewModel with the correct properties", function (done) {

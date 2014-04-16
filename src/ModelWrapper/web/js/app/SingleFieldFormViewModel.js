@@ -1,4 +1,4 @@
-/* foo.
+/* An AMD defining the SingleFieldFormViewModel, a vm to back single field forms that hold a single value.
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false*/
