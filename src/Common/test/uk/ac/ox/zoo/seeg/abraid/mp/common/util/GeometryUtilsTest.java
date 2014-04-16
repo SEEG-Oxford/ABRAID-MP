@@ -1,7 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
@@ -142,5 +149,141 @@ public class GeometryUtilsTest {
 
         // Assert
         assertThat(distance).isEqualTo(expectedDistance, offset(MAXIMUM_SPHERICAL_DISTANCE_OFFSET));
+    }
+
+    @Test
+    public void concatenateMultiPolygonsReturnsAnEmptyMultiPolygonIfNoneSpecified() {
+        // Arrange
+        List<MultiPolygon> multiPolygonList = new ArrayList<>();
+
+        // Act
+        MultiPolygon concatenation = GeometryUtils.concatenate(multiPolygonList);
+
+        // Assert
+        assertThat(concatenation.getNumGeometries()).isEqualTo(0);
+    }
+
+    @Test
+    public void concatenateMultiPolygons() {
+        // Arrange
+        MultiPolygon onePolygon = GeometryUtils.createMultiPolygon(new Polygon[] { getTriangle() });
+        MultiPolygon twoPolygons = GeometryUtils.createMultiPolygon(
+                new Polygon[] { getSquare(), getFivePointedPolygon()});
+
+        List<MultiPolygon> multiPolygonList = Arrays.asList(onePolygon, null, twoPolygons);
+
+        // Act
+        MultiPolygon concatenation = GeometryUtils.concatenate(multiPolygonList);
+
+        // Assert
+        assertThat(concatenation.getNumGeometries()).isEqualTo(3);
+        assertThat(concatenation.getGeometryN(0).equalsExact(getTriangle())).isTrue();
+        assertThat(concatenation.getGeometryN(1).equalsExact(getSquare())).isTrue();
+        assertThat(concatenation.getGeometryN(2).equalsExact(getFivePointedPolygon())).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometryWhenRunOnItselfReturnsItself() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(10, 20);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(point, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(point)).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometryWhenRunOnAPointReturnsThatPoint() {
+        // Arrange
+        Point point1 = GeometryUtils.createPoint(10, 20);
+        Point point2 = GeometryUtils.createPoint(40, 60);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(point1, point2);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(point1)).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometryReturnsVertex() {
+        // Arrange
+        Geometry geometry = getSquare();
+        Point point = GeometryUtils.createPoint(20, 20);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(point)).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometryReturnsInsidePoint() {
+        // Arrange
+        Geometry geometry = getSquare();
+        Point point = GeometryUtils.createPoint(20, 20);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(point)).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometrySnapsOutsidePointToVertex() {
+        // Arrange
+        Geometry geometry = getSquare();
+        Point point = GeometryUtils.createPoint(26, 24);
+        Point expectedClosestPoint = GeometryUtils.createPoint(20, 20);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(expectedClosestPoint)).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometrySnapsOutsidePointToClosestInterpolatedPoint() {
+        // Arrange
+        Geometry geometry = getSquare();
+        Point point = GeometryUtils.createPoint(25, 11);
+        Point expectedClosestPoint = GeometryUtils.createPoint(20, 11);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(expectedClosestPoint)).isTrue();
+    }
+
+    @Test
+    public void findClosestPointOnGeometrySnapsDistantOutsidePointToClosestInterpolatedPoint() {
+        // Arrange
+        Geometry geometry = getSquare();
+        Point point = GeometryUtils.createPoint(15, -89.9);
+        Point expectedClosestPoint = GeometryUtils.createPoint(15, 10);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(expectedClosestPoint)).isTrue();
+    }
+
+    private Polygon getTriangle() {
+        return GeometryUtils.createPolygon(1, 1, 3, 2, 2, 3, 1, 1);
+    }
+
+    private Polygon getSquare() {
+        return GeometryUtils.createPolygon(10, 10, 10, 20, 20, 20, 20, 10, 10, 10);
+    }
+
+    private Polygon getFivePointedPolygon() {
+        return GeometryUtils.createPolygon(3, 4, 5, 11, 12, 8, 9, 5, 5, 6, 3, 4);
     }
 }

@@ -22,6 +22,13 @@ public class LandSeaBorder {
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon geom;
 
+    public LandSeaBorder() {
+    }
+
+    public LandSeaBorder(MultiPolygon geom) {
+        this.geom = geom;
+    }
+
     public Integer getId() {
         return id;
     }
