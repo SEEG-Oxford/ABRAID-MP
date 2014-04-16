@@ -7,11 +7,9 @@ html {
     min-height: 100%;
 }
 body {
+    margin-top: 50px;
     margin-bottom: 30px;
     min-width: 320px;
-}
-#common {
-    padding-top: 50px;
 }
 #common .container {
     padding-top: 20px;

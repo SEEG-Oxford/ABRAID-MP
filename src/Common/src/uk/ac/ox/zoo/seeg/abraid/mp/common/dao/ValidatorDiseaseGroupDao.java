@@ -22,4 +22,10 @@ public interface ValidatorDiseaseGroupDao {
      * @return The validator disease group with the specified ID, or null if not found.
      */
     ValidatorDiseaseGroup getById(Integer id);
+
+    /**
+     * Saves the specified validatorDiseaseGroup.
+     * @param validatorDiseaseGroup The validatorDiseaseGroup to save.
+     */
+    void save(ValidatorDiseaseGroup validatorDiseaseGroup);
 }

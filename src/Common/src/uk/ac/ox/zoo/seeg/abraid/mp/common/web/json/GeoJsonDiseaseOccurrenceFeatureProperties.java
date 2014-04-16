@@ -14,6 +14,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
  */
 public class GeoJsonDiseaseOccurrenceFeatureProperties {
     @JsonView(DisplayJsonView.class)
+    private String diseaseGroupPublicName;
+
+    @JsonView(DisplayJsonView.class)
     private String locationName;
 
     @JsonView(DisplayJsonView.class)
@@ -32,11 +35,16 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
     }
 
     public GeoJsonDiseaseOccurrenceFeatureProperties(DiseaseOccurrence occurrence) {
+        setDiseaseGroupPublicName(occurrence.getDiseaseGroup().getPublicNameForDisplay());
         setLocationName(occurrence.getLocation().getName());
         setStartDate(occurrence.getOccurrenceStartDate());
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
         setLocationPrecision(occurrence.getLocation().getPrecision());
         setWeighting(occurrence.getValidationWeighting());
+    }
+
+    public String getDiseaseGroupPublicName() {
+        return diseaseGroupPublicName;
     }
 
     public DateTime getStartDate() {
@@ -57,6 +65,10 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
 
     public Double getWeighting() {
         return weighting;
+    }
+
+    public void setDiseaseGroupPublicName(String diseaseGroupPublicName) {
+        this.diseaseGroupPublicName = diseaseGroupPublicName;
     }
 
     public void setStartDate(DateTime startDate) {
@@ -84,30 +96,29 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof GeoJsonDiseaseOccurrenceFeatureProperties)) return false;
 
         GeoJsonDiseaseOccurrenceFeatureProperties that = (GeoJsonDiseaseOccurrenceFeatureProperties) o;
 
-        if (Double.compare(that.weighting, weighting) != 0) return false;
         if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
-        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null)
+        if (diseaseGroupPublicName != null ? !diseaseGroupPublicName.equals(that.diseaseGroupPublicName) : that.diseaseGroupPublicName != null)
             return false;
         if (locationName != null ? !locationName.equals(that.locationName) : that.locationName != null) return false;
         if (locationPrecision != that.locationPrecision) return false;
+        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null) return false;
+        if (weighting != null ? !weighting.equals(that.weighting) : that.weighting != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = locationName != null ? locationName.hashCode() : 0;
+        int result = diseaseGroupPublicName != null ? diseaseGroupPublicName.hashCode() : 0;
+        result = 31 * result + (locationName != null ? locationName.hashCode() : 0);
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (locationPrecision != null ? locationPrecision.hashCode() : 0);
-        temp = Double.doubleToLongBits(weighting);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

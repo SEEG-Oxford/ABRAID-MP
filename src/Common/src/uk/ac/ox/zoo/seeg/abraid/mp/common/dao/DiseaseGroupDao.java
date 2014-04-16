@@ -24,20 +24,6 @@ public interface DiseaseGroupDao {
     DiseaseGroup getById(Integer id);
 
     /**
-     * Gets a disease group by its name.
-     * @param name The name of the disease.
-     * @return The disease group with the specified name, or null if not found.
-     */
-    DiseaseGroup getByName(String name);
-
-    /**
-     * Gets a list of disease groups by expert ID.
-     * @param expertId The expert ID.
-     * @return A list of disease groups associated with the expert ID (via ValidatorDiseaseGroup).
-     */
-    List<DiseaseGroup> getByExpertId(int expertId);
-
-    /**
      * Saves the specified diseaseGroup.
      * @param diseaseGroup The diseaseGroup to save.
      */

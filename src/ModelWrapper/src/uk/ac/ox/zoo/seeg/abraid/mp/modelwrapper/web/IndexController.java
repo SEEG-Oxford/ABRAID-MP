@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,13 @@ import java.util.regex.Pattern;
  */
 @Controller
 public class IndexController {
+    private static final Logger LOGGER = Logger.getLogger(IndexController.class);
+    private static final String LOG_FAILED_TO_GET_REPOSITORY_VERSIONS = "Failed to get repository versions.";
 
     private static final Pattern USERNAME_REGEX = Pattern.compile("^[a-z0-9_-]{3,15}$");
-    ///CHECKSTYLE:OFF LineLengthCheck
-    // Regex taken from https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
-    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=^[^\\s]{6,128}$)((?=.*?\\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[^\\w\\d\\s])(?=.*?[a-z])|(?=.*?[^\\w\\d\\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[A-Z])(?=.*?[^\\w\\d\\s]))^.*$");
-    // CHECKSTYLE:ON
+
+    // Regex from http://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=^[^\\s]{6,128}$)((?=.*?\\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[^\\w\\d\\s])(?=.*?[a-z])|(?=.*?[^\\w\\d\\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[A-Z])(?=.*?[^\\w\\d\\s]))^.*$"); ///CHECKSTYLE:SUPPRESS LineLengthCheck
 
     private final ConfigurationService configurationService;
     private final SourceCodeManager sourceCodeManager;
@@ -51,6 +53,7 @@ public class IndexController {
         try {
             modelVersions = sourceCodeManager.getAvailableVersions();
         } catch (Exception e) {
+            LOGGER.error(LOG_FAILED_TO_GET_REPOSITORY_VERSIONS, e);
             modelVersions = new ArrayList<>();
         }
 

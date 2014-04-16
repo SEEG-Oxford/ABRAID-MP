@@ -1,12 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.joda.time.DateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import java.util.List;
 
 /**
  * Represents a user of the PublicSite.
@@ -57,12 +59,12 @@ public class Expert {
     private DateTime createdDate;
 
     // List of disease groups an expert has interest in and can validate.
-    // NB: By default this is not populated.
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "expert_validator_disease_group",
             joinColumns = { @JoinColumn(name = "expert_id") },
             inverseJoinColumns = { @JoinColumn(name = "validator_disease_group_id") })
-    private Set<ValidatorDiseaseGroup> validatorDiseaseGroups;
+    @Fetch(FetchMode.SELECT)
+    private List<ValidatorDiseaseGroup> validatorDiseaseGroups;
 
     public Integer getId() {
         return id;
@@ -108,11 +110,11 @@ public class Expert {
         this.isPubliclyVisible = isPubliclyVisible;
     }
 
-    public Set<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
+    public List<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
         return validatorDiseaseGroups;
     }
 
-    public void setValidatorDiseaseGroups(Set<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+    public void setValidatorDiseaseGroups(List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
         this.validatorDiseaseGroups = validatorDiseaseGroups;
     }
 
