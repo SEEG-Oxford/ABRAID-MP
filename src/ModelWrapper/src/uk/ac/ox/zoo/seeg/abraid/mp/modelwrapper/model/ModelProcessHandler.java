@@ -11,6 +11,7 @@ import java.io.*;
 public class ModelProcessHandler implements ProcessHandler {
     private static final Logger LOGGER = Logger.getLogger(ModelProcessHandler.class);
     private static final String LOG_MODEL_RUN_FAILED = "Model run failed.";
+    private static final String LOG_MODEL_RUN_COMPLETE = "Model run complete.";
 
     private final OutputStream outputStream = new ByteArrayOutputStream();
     private final OutputStream errorStream = new ByteArrayOutputStream();
@@ -23,7 +24,7 @@ public class ModelProcessHandler implements ProcessHandler {
      */
     @Override
     public void onProcessComplete(int exitValue) {
-        LOGGER.info("Model run complete.");
+        LOGGER.info(LOG_MODEL_RUN_COMPLETE);
     }
 
     /**

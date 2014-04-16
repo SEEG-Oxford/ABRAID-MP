@@ -52,8 +52,7 @@ public class IndexController {
         try {
             modelVersions = sourceCodeManager.getAvailableVersions();
         } catch (Exception e) {
-            LOGGER.warn(LOG_FAILED_TO_GET_REPOSITORY_VERSIONS);
-            LOGGER.error(e);
+            LOGGER.error(LOG_FAILED_TO_GET_REPOSITORY_VERSIONS, e);
             modelVersions = new ArrayList<>();
         }
 

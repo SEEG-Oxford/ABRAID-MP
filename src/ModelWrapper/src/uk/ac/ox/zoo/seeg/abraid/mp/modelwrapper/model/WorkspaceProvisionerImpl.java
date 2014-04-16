@@ -20,6 +20,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
 
     private static final String MODEL_CODE_DIRECTORY_NAME = "model";
     private static final String MODEL_DATA_DIRECTORY_NAME = "data";
+    private static final String LOG_PROVISIONING_WORKSPACE = "Provisioning workspace at %s";
+    public static final String LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED = "Workspace successfully provisioned at %s";
 
     private final ScriptGenerator scriptGenerator;
     private final SourceCodeManager sourceCodeManager;
@@ -46,7 +48,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         Path workingDirectoryPath = Paths.get(
                 configuration.getBaseDir().getAbsolutePath(),
                 configuration.getRunName() + "-" + UUID.randomUUID().toString());
-        LOGGER.info("Provisioning workspace at " + workingDirectoryPath.toString());
+        LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
 
         File workingDirectory = workingDirectoryPath.toFile();
         boolean workingDirectoryCreated = workingDirectory.mkdirs();
@@ -79,7 +81,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         // Template script
         File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);
 
-        LOGGER.info("Workspace successfully provisioned at " + workingDirectoryPath.toString());
+        LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectoryPath.toString()));
         return runScript;
     }
 }

@@ -68,8 +68,7 @@ public class RepositoryController {
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity<List<String>>(versions, HttpStatus.OK);
             } catch (Exception e) {
-                LOGGER.warn(LOG_SYNC_REPO_FAILED);
-                LOGGER.error(e);
+                LOGGER.error(LOG_SYNC_REPO_FAILED, e);
                 if (!repositoryUrl.equals(oldUrl)) {
                     LOGGER.info(LOG_REVERTING_MODEL_REPOSITORY_URL);
                     configurationService.setModelRepositoryUrl(oldUrl);
@@ -105,9 +104,8 @@ public class RepositoryController {
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
-                LOGGER.info(LOG_FAILED_TO_GET_LIST_OF_VERSIONS);
+                LOGGER.error(LOG_FAILED_TO_GET_LIST_OF_VERSIONS, e);
                 LOGGER.info(LOG_VERSION_CONFIGURATION_NOT_UPDATED);
-                LOGGER.error(e);
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
         }
