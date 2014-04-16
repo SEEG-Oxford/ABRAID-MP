@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,7 +8,10 @@ import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.*;
+import java.nio.file.Paths;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,10 +27,10 @@ public class ConfigurationServiceTest {
     private void writeStandardSimpleProperties(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion)
             throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writer = new PrintWriter(testFile, "UTF-8");
-        writer.println("auth.username=" + defaultUsername);
-        writer.println("auth.password_hash=" + defaultPasswordHash);
-        writer.println("model.repo.url=" + defaultRepoUrl);
-        writer.println("model.repo.version=" + defaultModelVersion);
+        writer.println("auth.username = " + defaultUsername);
+        writer.println("auth.password_hash = " + defaultPasswordHash);
+        writer.println("model.repo.url = " + defaultRepoUrl);
+        writer.println("model.repo.version = " + defaultModelVersion);
         writer.close();
     }
 
@@ -34,7 +38,23 @@ public class ConfigurationServiceTest {
             throws IOException {
         writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
-        writer.println("cache.data.dir=" + defaultCacheDir);
+        writer.println("cache.data.dir = " + defaultCacheDir);
+        writer.close();
+    }
+
+    private void writeStandardSimplePropertiesWithRPath(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, String defaultRPath)
+            throws IOException {
+        writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
+        writer.println("r.executable.path = " + defaultRPath);
+        writer.close();
+    }
+
+    private void writeStandardSimplePropertiesWithRunDuration(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, String defaultRunDuration)
+            throws IOException {
+        writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
+        writer.println("r.max.duration = " + defaultRunDuration);
         writer.close();
     }
 
@@ -52,8 +72,8 @@ public class ConfigurationServiceTest {
         target.setAuthenticationDetails(expectedUserName, expectedPasswordHash);
 
         // Assert
-        assertThat(FileUtils.readFileToString(testFile)).contains("auth.username=" + expectedUserName + System.lineSeparator() +
-                "auth.password_hash=" + expectedPasswordHash);
+        assertThat(FileUtils.readFileToString(testFile)).contains("auth.username = " + expectedUserName + System.lineSeparator() +
+                "auth.password_hash = " + expectedPasswordHash);
     }
 
     @Test
@@ -69,7 +89,7 @@ public class ConfigurationServiceTest {
         target.setModelRepositoryUrl(expectedUrl);
 
         // Assert
-        assertThat(FileUtils.readFileToString(testFile)).contains("model.repo.url=" + expectedUrl);
+        assertThat(FileUtils.readFileToString(testFile)).contains("model.repo.url = " + expectedUrl);
     }
 
     @Test
@@ -85,7 +105,7 @@ public class ConfigurationServiceTest {
         target.setModelRepositoryVersion(expectedVersion);
 
         // Assert
-        assertThat(FileUtils.readFileToString(testFile)).contains("model.repo.version=" + expectedVersion);
+        assertThat(FileUtils.readFileToString(testFile)).contains("model.repo.version = " + expectedVersion);
     }
 
     @Test
@@ -195,5 +215,127 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(result).isEqualTo(expectedDir);
+    }
+
+    @Test
+    public void getRPathReturnsCorrectDefaultOnLinux() throws Exception {
+        // Arrange
+        OSChecker osChecker = mock(OSChecker.class);
+        when(osChecker.isWindows()).thenReturn(false);
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        if (Paths.get("/usr/bin/R").toFile().exists()) {
+            // Act
+            String result = target.getRExecutablePath();
+
+            // Assert
+            assertThat(result).isEqualTo("/usr/bin/R");
+        } else {
+            // Act
+            catchException(target).getRExecutablePath();
+
+            // Assert
+            assertThat(caughtException()).isInstanceOf(ConfigurationException.class);
+        }
+    }
+
+    @Test
+    public void getRPathReturnsCorrectDefaultOnWindows() throws Exception {
+        // Arrange
+        OSChecker osChecker = mock(OSChecker.class);
+        when(osChecker.isWindows()).thenReturn(true);
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        if (Paths.get(System.getenv("R_HOME") + "\\bin\\R.exe").toFile().exists()) {
+            // Act
+            String result = target.getRExecutablePath();
+
+            // Assert
+            assertThat(result).isEqualTo(System.getenv("R_HOME") + "\\bin\\R.exe");
+        } else {
+            // Act
+            catchException(target).getRExecutablePath();
+
+            // Assert
+            assertThat(caughtException()).isInstanceOf(ConfigurationException.class);
+        }
+    }
+
+    @Test
+    public void getRPathReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedValue = "foo";
+        writeStandardSimplePropertiesWithRPath(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+
+        // Act
+        String result = target.getRExecutablePath();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void setRExecutablePathUpdatesFile() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+
+        String expectedValue = "foo";
+
+        // Act
+        target.setRExecutablePath(expectedValue);
+
+        // Assert
+        assertThat(FileUtils.readFileToString(testFile)).contains("r.executable.path = " + expectedValue);
+    }
+
+    @Test
+    public void getMaxModelRunDurationReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+
+        // Act
+        int result = target.getMaxModelRunDuration();
+
+        // Assert
+        assertThat(result).isEqualTo(Integer.MAX_VALUE);
+    }
+
+    @Test
+    public void getMaxModelRunDurationReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        int expectedValue = 1234;
+        writeStandardSimplePropertiesWithRunDuration(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+
+        // Act
+        int result = target.getMaxModelRunDuration();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void setMaxModelRunDurationUpdatesFile() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+
+        int expectedValue = 123;
+
+        // Act
+        target.setMaxModelRunDuration(expectedValue);
+
+        // Assert
+        assertThat(FileUtils.readFileToString(testFile)).contains("r.max.duration = " + expectedValue);
     }
 }
