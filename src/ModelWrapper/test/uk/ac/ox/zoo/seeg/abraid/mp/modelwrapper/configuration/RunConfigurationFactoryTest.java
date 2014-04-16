@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -28,7 +29,7 @@ public class RunConfigurationFactoryTest {
         RunConfiguration result = target.createDefaultConfiguration("foo");
 
         // Assert
-        assertThat(result.getRunName()).isEqualTo("foo_1970-01-01-01-00-00");
+        assertThat(result.getRunName()).isEqualTo("foo_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
         assertThat(result.getBaseDir().getName()).isEqualTo("expectation1");
         assertThat(result.getMaxRuntime()).isEqualTo(12345);
         assertThat(result.getModelVersion()).isEqualTo("expectation2");
@@ -50,6 +51,7 @@ public class RunConfigurationFactoryTest {
         RunConfiguration result = target.createDefaultConfiguration(longName);
 
         // Assert
-        assertThat(result.getRunName()).isEqualTo(longName.substring(0, 195) + "_1970-01-01-01-00-00");
+        assertThat(result.getRunName()).isEqualTo(
+                longName.substring(0, 195) + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
     }
 }
