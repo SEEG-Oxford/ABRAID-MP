@@ -112,4 +112,17 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
         // Assert
         assertThat(testAdminUnits).isSameAs(adminUnits);
     }
+
+    @Test
+    public void getAllLandSeaBorders() {
+        // Arrange
+        List<LandSeaBorder> LandSeaBorders = Arrays.asList(new LandSeaBorder());
+        when(landSeaBorderDao.getAll()).thenReturn(LandSeaBorders);
+
+        // Act
+        List<LandSeaBorder> testLandSeaBorders = locationService.getAllLandSeaBorders();
+
+        // Assert
+        assertThat(testLandSeaBorders).isSameAs(LandSeaBorders);
+    }
 }

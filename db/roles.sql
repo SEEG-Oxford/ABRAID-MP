@@ -28,6 +28,7 @@ GRANT SELECT                        ON geonames_location_precision TO :applicati
 GRANT SELECT                        ON healthmap_country TO :application_username;
 GRANT SELECT                        ON healthmap_country_country TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON healthmap_disease TO :application_username;
+GRANT SELECT                        ON land_sea_border TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON location TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON provenance TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON validator_disease_group TO :application_username;

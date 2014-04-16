@@ -176,7 +176,7 @@ CREATE TABLE healthmap_disease (
 
 CREATE TABLE land_sea_border (
     id integer NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326) NOT NULL
+    geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE location (

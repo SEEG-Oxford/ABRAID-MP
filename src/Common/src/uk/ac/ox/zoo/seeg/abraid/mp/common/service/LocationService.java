@@ -47,6 +47,12 @@ public interface LocationService {
     List<AdminUnit> getAllAdminUnits();
 
     /**
+     * Gets all land-sea borders.
+     * @return All land-sea borders.
+     */
+    List<LandSeaBorder> getAllLandSeaBorders();
+
+    /**
      * Gets mappings between GeoNames feature codes and location precision.
      * @return A set of mappings.
      */

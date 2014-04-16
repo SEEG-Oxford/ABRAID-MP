@@ -19,6 +19,7 @@
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoNamesLocationPrecision"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup"/>

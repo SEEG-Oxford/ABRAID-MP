@@ -64,6 +64,10 @@ public abstract class AbstractSpringUnitTests {
 
     @ReplaceWithMock
     @Autowired
+    protected LandSeaBorderDao landSeaBorderDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected LocationDao locationDao;
 
     @ReplaceWithMock
