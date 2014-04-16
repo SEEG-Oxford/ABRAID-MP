@@ -1,3 +1,11 @@
+/*=============================================================================
+  Author:     Merrick Christensen - https://github.com/iammerrick
+  License:    MIT (http://opensource.org/licenses/mit-license.php)
+
+  Description:  Dependency injector for testing Require.js modules.
+                https://github.com/iammerrick/Squire.js
+===============================================================================
+*/
 define(function() {
   
   /**

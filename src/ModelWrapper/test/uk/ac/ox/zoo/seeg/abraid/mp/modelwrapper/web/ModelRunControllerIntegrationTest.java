@@ -36,7 +36,7 @@ import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeo
 })
 @WebAppConfiguration("file:ModelWrapper/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTest {
+public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     private MockMvc mockMvc;
 
     @ReplaceWithMock

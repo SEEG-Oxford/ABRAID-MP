@@ -38,7 +38,7 @@ public class MiscControllerTest {
         String value = "value";
         ConfigurationService configurationService = mock(ConfigurationService.class);
         MiscController target = new MiscController(configurationService);
-        when(configurationService.getRExecutablePath()).thenReturn("not"+value);
+        when(configurationService.getRExecutablePath()).thenReturn("not" + value);
 
         // Act
         ResponseEntity result = target.updateRExecutablePath(value);

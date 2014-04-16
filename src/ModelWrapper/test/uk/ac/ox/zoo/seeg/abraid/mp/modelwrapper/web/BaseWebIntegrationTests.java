@@ -12,7 +12,7 @@ import java.nio.file.StandardCopyOption;
  * Base class for model wrapper WAC based integration tests.
  * Copyright (c) 2014 University of Oxford
  */
-public abstract class BaseWebIntegrationTest {
+public abstract class BaseWebIntegrationTests {
     @Before
     public void makeConfigBackup() throws IOException {
         Files.copy(

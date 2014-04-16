@@ -51,7 +51,7 @@ define([ 'app/SingleFieldFormViewModel', 'ko', 'underscore', 'app/spec/util/rule
             });
         });
 
-        describe("holds a field for user notices", function() {
+        describe("holds a field for user notices which", function() {
             var vm = {};
             beforeEach(function() {
                 vm = new SingleFieldFormViewModel("", "", "", {});

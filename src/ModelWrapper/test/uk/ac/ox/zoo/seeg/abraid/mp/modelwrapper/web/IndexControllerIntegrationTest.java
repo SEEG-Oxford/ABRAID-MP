@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration("file:ModelWrapper/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 
-public class IndexControllerIntegrationTest extends BaseWebIntegrationTest {
+public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
     private MockMvc mockMvc;
 
     @Autowired
