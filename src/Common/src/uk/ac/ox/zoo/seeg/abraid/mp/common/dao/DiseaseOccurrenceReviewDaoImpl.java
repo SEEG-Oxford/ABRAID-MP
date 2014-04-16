@@ -5,8 +5,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
-import java.util.List;
-
 /**
  * The DiseaseOccurrenceReview entity's Data Access Object.
  *
@@ -20,25 +18,14 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     }
 
     /**
-     * Gets all reviews by the specified expert.
+     * Gets the total number of reviews submitted by the specified expert.
      * @param expertId The expert's Id.
-     * @return A list of the expert's reviews.
+     * @return The count of the expert's reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getByExpertId(Integer expertId) {
-        return listNamedQuery("getDiseaseOccurrenceReviewsByExpertId", "expertId", expertId);
-    }
-
-    /**
-     * Gets all reviews by the specified expert, for the specified disease group.
-     * @param expertId The expert's Id.
-     * @param diseaseGroupId The disease group's Id.
-     * @return A list of the expert's reviews.
-     */
-    @Override
-    public List<DiseaseOccurrenceReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
-                "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+    public Long getCountByExpertId(Integer expertId) {
+        Query query = getParameterisedNamedQuery("getDiseaseOccurrenceReviewCountByExpertId", "expertId", expertId);
+        return (Long) query.uniqueResult();
     }
 
     /**

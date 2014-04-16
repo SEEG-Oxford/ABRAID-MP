@@ -122,8 +122,8 @@ public class DataValidationControllerIntegrationTest {
     @Test
     public void submitReviewAcceptsValidRequest() throws Exception {
 
-        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
-        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
+                .thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         this.mockMvc.perform(
@@ -134,8 +134,8 @@ public class DataValidationControllerIntegrationTest {
 
     @Test
     public void submitReviewOnlyAcceptsPOST() throws Exception {
-        when(diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(anyInt(), anyInt())).thenReturn(true);
-        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(true);
+        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
+                .thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         this.mockMvc.perform(
@@ -162,16 +162,6 @@ public class DataValidationControllerIntegrationTest {
                 patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isMethodNotAllowed());
-    }
-
-    @Test
-    public void submitReviewRejectsInvalidNumericId() throws Exception {
-        when(expertService.isDiseaseGroupInExpertsDiseaseInterests(anyInt(), anyInt())).thenReturn(false);
-
-        this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
-                .param("review", "YES"))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

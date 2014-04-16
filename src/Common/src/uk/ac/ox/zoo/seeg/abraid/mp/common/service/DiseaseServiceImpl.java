@@ -1,8 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapDiseaseDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -16,12 +22,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseGroupDao diseaseGroupDao;
     private HealthMapDiseaseDao healthMapDiseaseDao;
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
-    public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao, DiseaseGroupDao diseaseGroupDao,
-                              HealthMapDiseaseDao healthMapDiseaseDao) {
+    public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
+                              DiseaseGroupDao diseaseGroupDao,
+                              HealthMapDiseaseDao healthMapDiseaseDao,
+                              ValidatorDiseaseGroupDao validatorDiseaseGroupDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
+        this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
     }
 
     /**
@@ -63,13 +73,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets the disease group by its name.
-     * @param diseaseGroupName The name of the disease group.
-     * @return The disease group.
+     * Gets all the validator disease groups.
+     * @return A list of all validator disease groups.
      */
     @Override
-    public DiseaseGroup getDiseaseGroupByName(String diseaseGroupName) {
-        return diseaseGroupDao.getByName(diseaseGroupName);
+    public List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups() {
+        return validatorDiseaseGroupDao.getAll();
     }
 
     /**
@@ -98,13 +107,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Determines whether the occurrence's disease id matches the id of the disease group.
+     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
      * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param diseaseGroupId The id of the disease group.
-     * @return True if the occurrence and disease group refer to the same disease, otherwise false.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
-    public boolean doesDiseaseOccurrenceMatchDiseaseGroup(Integer diseaseOccurrenceId, Integer diseaseGroupId) {
+    public boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
+                                                          Integer validatorDiseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
-        return diseaseGroupId.equals(occurrence.getDiseaseGroup().getId());
+        return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
     }
 }

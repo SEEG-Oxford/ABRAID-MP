@@ -2,16 +2,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -28,38 +25,39 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
     private ExpertService expertService;
 
     @Test
-    public void getDiseaseInterestsReturnsExpectedSet() {
+    public void getDiseaseInterestsReturnsExpectedList() {
         // Arrange
         int expertId = 1;
-        DiseaseGroup group1 = new DiseaseGroup();
-        DiseaseGroup group2 = new DiseaseGroup();
+        Expert expert = new Expert();
+        ValidatorDiseaseGroup group1 = new ValidatorDiseaseGroup();
+        ValidatorDiseaseGroup group2 = new ValidatorDiseaseGroup();
 
-        Set<DiseaseGroup> testSet = new HashSet<>();
-        testSet.add(group2);
-        testSet.add(group1);
+        List<ValidatorDiseaseGroup> testList = new ArrayList<>();
+        testList.add(group2);
+        testList.add(group1);
 
-        List<DiseaseGroup> testList = Arrays.asList(group1, group2);
-        when(diseaseGroupDao.getByExpertId(eq(expertId))).thenReturn(testList);
+        expert.setValidatorDiseaseGroups(testList);
+        when(expertDao.getById(expertId)).thenReturn(expert);
 
         // Act
-        Set<DiseaseGroup> set = expertService.getDiseaseInterests(expertId);
+        List<ValidatorDiseaseGroup> list = expertService.getDiseaseInterests(expertId);
 
         // Assert
-        assertThat(set).isEqualTo(testSet);
+        assertThat(list).isEqualTo(testList);
     }
 
     @Test
-    public void getDiseaseOccurrenceReviewCountReturnsExpectedInteger() {
+    public void getDiseaseOccurrenceReviewCountReturnsExpectedLong() {
         // Arrange
-        int n = 2;
         List<DiseaseOccurrenceReview> reviews = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < 3; i++) {
             reviews.add(new DiseaseOccurrenceReview());
         }
-        when(diseaseOccurrenceReviewDao.getByExpertId(anyInt())).thenReturn(reviews);
+        Long n = (long) reviews.size();
+        when(diseaseOccurrenceReviewDao.getCountByExpertId(anyInt())).thenReturn(n);
 
         // Act
-        Integer reviewCount = expertService.getDiseaseOccurrenceReviewCount(1);
+        Long reviewCount = expertService.getDiseaseOccurrenceReviewCount(1);
 
         // Assert
         assertThat(reviewCount).isEqualTo(n);
@@ -70,7 +68,7 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
         // Arrange
         List<DiseaseOccurrence> testList = new ArrayList<>();
         when(expertDao.getById(anyInt())).thenReturn(new Expert());
-        when(diseaseGroupDao.getById(anyInt())).thenReturn(new DiseaseGroup());
+        when(validatorDiseaseGroupDao.getById(anyInt())).thenReturn(new ValidatorDiseaseGroup());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(anyInt(), anyInt())).thenReturn(testList);
 
         // Act
@@ -82,28 +80,30 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
 
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustThrowExceptionIfExpertDoesNotExist() {
+    public void getDiseaseOccurrencesYetToBeReviewedMustReturnEmptyListIfExpertDoesNotExist() {
         // Arrange
         when(expertDao.getById(anyInt())).thenReturn(null); // For any expertId, act as if the expert does not exist
 
         // Act
-        catchException(expertService).getDiseaseOccurrencesYetToBeReviewed(0, 0);
+        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(0, 0);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(occurrences.size()).isEqualTo(0);
+        assertThat(occurrences.isEmpty());
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustThrowExceptionIfDiseaseGroupDoesNotExist() {
+    public void getDiseaseOccurrencesYetToBeReviewedMustReturnEmptyListIfDiseaseGroupDoesNotExist() {
         // Arrange
         when(diseaseGroupDao.getById(anyInt())).thenReturn(null); // For any diseaseGroupId, act as if the group does not exist
 
         // Act
-        catchException(expertService).getDiseaseOccurrencesYetToBeReviewed(0, 0);
+        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(0, 0);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(occurrences.isEmpty());
     }
+
     @Test
     public void getAllExperts() {
         // Arrange
@@ -129,6 +129,16 @@ public class ExpertServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testExpert).isSameAs(expert);
+    }
+
+    @Test
+    public void saveDiseaseOccurrenceReview() {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(new Expert());
+        review.setDiseaseOccurrence(new DiseaseOccurrence());
+        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
+        diseaseOccurrenceReviewDao.save(review);
+        verify(diseaseOccurrenceReviewDao).save(eq(review));
     }
 
     @Test

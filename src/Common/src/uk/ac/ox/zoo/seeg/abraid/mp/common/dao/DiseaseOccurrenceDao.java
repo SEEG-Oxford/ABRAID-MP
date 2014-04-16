@@ -28,20 +28,13 @@ public interface DiseaseOccurrenceDao {
     DiseaseOccurrence getById(Integer id);
 
     /**
-     * Gets a list of occurrence points, for the specified disease group.
-     * @param diseaseGroupId The id of the disease group of interest.
-     * @return The list of disease occurrence points for one disease group.
-     */
-    List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(Integer diseaseGroupId);
-
-    /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
-     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer validatorDiseaseGroupId);
 
     /**
      * Saves the specified disease occurrence.

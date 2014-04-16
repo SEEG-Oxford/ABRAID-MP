@@ -11,19 +11,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
-import java.util.*;
-import static ch.lambdaj.Lambda.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Controller for the expert data validation map page.
@@ -34,7 +35,7 @@ public class DataValidationController {
     /** Base URL for the geowiki. */
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
-    private static final String DEFAULT_DISEASE_NAME = "Dengue";
+    private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
     private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
@@ -49,44 +50,51 @@ public class DataValidationController {
     }
 
     /**
-     * Return the view to display, and provide the currently logged in user's disease interests.
-     * @param model The model map.
+     * Return the data validation page, in which the iframe (containing all page content) sits.
      * @return The ftl page name.
      */
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
-    public String showPage(Model model) {
-        PublicSiteUser user = currentUserService.getCurrentUser();
-        Set<DiseaseGroup> diseaseInterests = new HashSet<>();
-        Map<String, Integer> reviewCountPerDiseaseGroup = new HashMap<>();
-        Map<String, Integer> occurrenceCountPerDiseaseGroup = new HashMap<>();
-        boolean userLoggedIn = (user != null);
-        if (userLoggedIn) {
-            diseaseInterests = expertService.getDiseaseInterests(user.getId());
-            reviewCountPerDiseaseGroup = expertService.getDiseaseOccurrenceReviewCountPerDiseaseGroup(user.getId(),
-                    diseaseInterests);
-            occurrenceCountPerDiseaseGroup = expertService.getDiseaseOccurrenceCountPerDiseaseGroup(user.getId(),
-                    diseaseInterests);
-        } else {
-            DiseaseGroup defaultDiseaseGroup = diseaseService.getDiseaseGroupByName(DEFAULT_DISEASE_NAME);
-            diseaseInterests.add(defaultDiseaseGroup);
-            reviewCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), 0);
-            occurrenceCountPerDiseaseGroup.put(defaultDiseaseGroup.getDisplayName(), DEFAULT_DISEASE_OCCURRENCE_COUNT);
-        }
-        Integer diseaseOccurrenceReviewCount = sum(reviewCountPerDiseaseGroup.values()).intValue();
-        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
-        model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
-        model.addAttribute("userLoggedIn", userLoggedIn);
-        model.addAttribute("reviewCountPerDiseaseGroup", reviewCountPerDiseaseGroup);
-        model.addAttribute("occurrenceCountPerDiseaseGroup", occurrenceCountPerDiseaseGroup);
+    public String showTab() {
         return "datavalidation";
     }
 
-    private List<DiseaseGroup> sortByDisplayName(Set<DiseaseGroup> set) {
-        List<DiseaseGroup> list = new ArrayList<>(set);
-        Collections.sort(list, new Comparator<DiseaseGroup>() {
+    /**
+     * Return the view to display within the iframe, and provide the currently logged in user's disease interests.
+     * @param model The model map.
+     * @return The ftl page name.
+     */
+    @RequestMapping(value = GEOWIKI_BASE_URL + "/content", method = RequestMethod.GET)
+    public String showPage(Model model) {
+        PublicSiteUser user = currentUserService.getCurrentUser();
+        boolean userLoggedIn = (user != null);
+        Integer diseaseOccurrenceReviewCount = 0;
+        if (userLoggedIn) {
+            int expertId = user.getId();
+            diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
+            List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
+            model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
+            model.addAttribute("allOtherDiseases",
+                    sortByDisplayName(getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests)));
+        } else {
+            model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
+        }
+        model.addAttribute("userLoggedIn", userLoggedIn);
+        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
+        return "datavalidationcontent";
+    }
+
+    private List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroupsExcludingDiseaseInterests(
+            List<ValidatorDiseaseGroup> diseaseInterests) {
+        List<ValidatorDiseaseGroup> list = diseaseService.getAllValidatorDiseaseGroups();
+        list.removeAll(diseaseInterests);
+        return list;
+    }
+
+    private List<ValidatorDiseaseGroup> sortByDisplayName(List<ValidatorDiseaseGroup> list) {
+        Collections.sort(list, new Comparator<ValidatorDiseaseGroup>() {
             @Override
-            public int compare(DiseaseGroup o1, DiseaseGroup o2) {
-                return o1.getDisplayName().compareTo(o2.getDisplayName());
+            public int compare(ValidatorDiseaseGroup o1, ValidatorDiseaseGroup o2) {
+                return o1.getName().compareTo(o2.getName());
             }
         });
         return list;
@@ -94,23 +102,23 @@ public class DataValidationController {
 
     /**
      * Returns the disease occurrence points in need of review by the current user for a given disease id.
-     * @param diseaseId The id of the disease to return occurrence points for.
+     * @param validatorDiseaseGroupId The id of the validator disease group to return occurrence points for.
      * @return A GeoJSON DTO containing the occurrence points.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences",
+            value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
-            @PathVariable Integer diseaseId) {
+            @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         List<DiseaseOccurrence> occurrences;
 
         try {
-            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), diseaseId);
+            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), validatorDiseaseGroupId);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -120,16 +128,17 @@ public class DataValidationController {
 
     /**
      * Saves the expert's review to the database.
-     * @param diseaseId The id of the disease.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
      * @param occurrenceId The id of the disease occurrence being reviewed.
      * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
      * @return A HTTP status code response entity.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{diseaseId}/occurrences/{occurrenceId}/validate",
+            value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
-    public ResponseEntity submitReview(@PathVariable Integer diseaseId, @PathVariable Integer occurrenceId,
+    public ResponseEntity submitReview(@PathVariable Integer validatorDiseaseGroupId,
+                                       @PathVariable Integer occurrenceId,
                                        String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Integer expertId = user.getId();
@@ -144,8 +153,9 @@ public class DataValidationController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        boolean validInputParameters = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(occurrenceId, diseaseId) &&
-                (expertService.isDiseaseGroupInExpertsDiseaseInterests(diseaseId, expertId)) &&
+        boolean validInputParameters =
+                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
+                        validatorDiseaseGroupId) &&
                 (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
 
         if (validInputParameters) {

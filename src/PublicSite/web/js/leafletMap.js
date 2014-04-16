@@ -105,7 +105,8 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         });
     }
 
-    // Map from the id of a point (or feature) to its marker layer, for use in removeReviewedPoint.
+    // Map from the id of a point (or feature) to its marker layer, so the actual layer object can be used in removeReviewedPoint.
+    // Also serves to keep track of the number of markers on the diseaseOccurrenceLayer (for the selected disease).
     var layerMap = {};
     // Add disease occurrence points to map
     // First define styling options of the geoJson layer to which data (the feature collection) will be added later via AJAX request
@@ -157,6 +158,8 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
     function switchDiseaseLayer(diseaseId) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.clearLayers();
+        layerMap = {};
+        // Clear the record of markers on the layer; the new markers are added to layerMap on addLayer thanks to onEachFeature
         var geoJsonRequestUrl = "";
         if (loggedIn) {
             geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
@@ -165,9 +168,11 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         }
         $.getJSON(geoJsonRequestUrl, function (featureCollection) {
             if (featureCollection.features.length != 0) {
+                DataValidationViewModels.layerSelectorViewModel.noOccurrencesToReview(false);
                 clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
                 map.fitBounds(diseaseOccurrenceLayer.getBounds());
             } else {
+                DataValidationViewModels.layerSelectorViewModel.noOccurrencesToReview(true);
                 map.fitWorld();
             }
         });
@@ -176,7 +181,12 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
     function removeReviewedPoint(id) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.removeLayer(layerMap[id]);
-        clusterLayer.addLayer(diseaseOccurrenceLayer);
+        delete layerMap[id];
+        if (_(layerMap).isEmpty()) {
+            DataValidationViewModels.layerSelectorViewModel.noOccurrencesToReview(true);
+        } else {
+            clusterLayer.addLayer(diseaseOccurrenceLayer);
+        }
     }
 
     return {
