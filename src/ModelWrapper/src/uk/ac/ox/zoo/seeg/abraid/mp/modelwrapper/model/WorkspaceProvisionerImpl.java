@@ -21,7 +21,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
     private static final String MODEL_CODE_DIRECTORY_NAME = "model";
     private static final String MODEL_DATA_DIRECTORY_NAME = "data";
     private static final String LOG_PROVISIONING_WORKSPACE = "Provisioning workspace at %s";
-    public static final String LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED = "Workspace successfully provisioned at %s";
+    private static final String LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED = "Workspace successfully provisioned at %s";
 
     private final ScriptGenerator scriptGenerator;
     private final SourceCodeManager sourceCodeManager;
