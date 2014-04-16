@@ -1,13 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
-<<<<<<< HEAD
 import org.apache.commons.configuration.ConfigurationException;
 import org.joda.time.LocalDateTime;
-=======
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
->>>>>>> master
 
 import java.nio.file.Paths;
 
