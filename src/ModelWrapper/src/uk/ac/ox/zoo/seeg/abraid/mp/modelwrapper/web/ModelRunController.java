@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +21,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
  */
 @Controller
 public class ModelRunController {
+    private static final Logger LOGGER = Logger.getLogger(ModelRunController.class);
+    private static final String LOG_STARTING_NEW_BACKGROUND_MODEL_RUN = "Starting new background model run";
+    private static final String LOG_EXCEPTION_STARTING_MODEL_RUN = "Exception starting model run.";
+
     private final RunConfigurationFactory runConfigurationFactory;
     private final ModelRunner modelRunner;
 
@@ -42,9 +47,11 @@ public class ModelRunController {
         }
 
         try {
+            LOGGER.info(LOG_STARTING_NEW_BACKGROUND_MODEL_RUN);
             RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration();
             modelRunner.runModel(runConfiguration, occurrenceData); // Ignore result for now
         } catch (Exception e) {
+            LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return new ResponseEntity<String>("Could not start model run.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

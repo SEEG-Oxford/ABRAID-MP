@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,16 @@ import java.util.List;
  */
 @Controller
 public class RepositoryController {
+    private static final Logger LOGGER = Logger.getLogger(RepositoryController.class);
+    private static final String LOG_REJECTING_MODEL_VERSION = "Rejecting model version, as not present in repository.";
+    private static final String LOG_FAILED_TO_GET_LIST_OF_VERSIONS = "Failed to get list of versions from repository.";
+    private static final String LOG_TRYING_TO_SYNC_REPOSITORY = "Trying to sync repository url: %s";
+    private static final String LOG_CLEARING_MODEL_VERSION = "Clearing model version (due to new repo url)";
+    private static final String LOG_SYNC_REPO_SUCCESSFUL = "Sync repo successful";
+    private static final String LOG_SYNC_REPO_FAILED = "Sync repo failed.";
+    private static final String LOG_REVERTING_MODEL_REPOSITORY_URL = "Reverting model repository url.";
+    private static final String LOG_VERSION_CONFIGURATION_NOT_UPDATED = "Version configuration not updated.";
+
     private final ConfigurationService configurationService;
     private final SourceCodeManager sourceCodeManager;
 
@@ -38,7 +49,10 @@ public class RepositoryController {
 
         if (validRequest) {
             String oldUrl = configurationService.getModelRepositoryUrl();
-            configurationService.setModelRepositoryUrl(repositoryUrl);
+            LOGGER.info(String.format(LOG_TRYING_TO_SYNC_REPOSITORY, repositoryUrl));
+            if (!repositoryUrl.equals(oldUrl)) {
+                configurationService.setModelRepositoryUrl(repositoryUrl);
+            }
 
             try {
                 sourceCodeManager.updateRepository();
@@ -46,13 +60,19 @@ public class RepositoryController {
 
                 if (!repositoryUrl.equals(oldUrl)) {
                     // Version numbers from the old repository are clearly not valid
+                    LOGGER.info(LOG_CLEARING_MODEL_VERSION);
                     configurationService.setModelRepositoryVersion("");
                 }
 
+                LOGGER.info(LOG_SYNC_REPO_SUCCESSFUL);
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity<List<String>>(versions, HttpStatus.OK);
             } catch (Exception e) {
-                configurationService.setModelRepositoryUrl(oldUrl);
+                LOGGER.error(LOG_SYNC_REPO_FAILED, e);
+                if (!repositoryUrl.equals(oldUrl)) {
+                    LOGGER.info(LOG_REVERTING_MODEL_REPOSITORY_URL);
+                    configurationService.setModelRepositoryUrl(oldUrl);
+                }
             }
         }
 
@@ -70,15 +90,22 @@ public class RepositoryController {
 
         if (validRequest) {
             try {
+                if (version.equals(configurationService.getModelRepositoryVersion())) {
+                    return new ResponseEntity(HttpStatus.NO_CONTENT);
+                }
+
                 if (sourceCodeManager.getAvailableVersions().contains(version)) {
                     configurationService.setModelRepositoryVersion(version);
                 } else {
+                    LOGGER.info(LOG_REJECTING_MODEL_VERSION);
                     return new ResponseEntity(HttpStatus.BAD_REQUEST);
                 }
 
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
+                LOGGER.error(LOG_FAILED_TO_GET_LIST_OF_VERSIONS, e);
+                LOGGER.info(LOG_VERSION_CONFIGURATION_NOT_UPDATED);
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
         }

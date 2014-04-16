@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
@@ -10,7 +11,11 @@ import java.nio.file.Paths;
  * Copyright (c) 2014 University of Oxford
  */
 public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
+    private static final Logger LOGGER = Logger.getLogger(RunConfigurationFactoryImpl.class);
+    private static final String LOG_CREATING_THE_DEFAULT_RUN_CONFIGURATION = "Creating the default run configuration.";
+
     private static final String DEFAULT_RUN_NAME = "run";
+
     private final ConfigurationService configurationService;
 
     public RunConfigurationFactoryImpl(ConfigurationService configurationService) {
@@ -23,6 +28,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      */
     @Override
     public RunConfiguration createDefaultConfiguration() {
+        LOGGER.info(LOG_CREATING_THE_DEFAULT_RUN_CONFIGURATION);
         return new RunConfiguration(
                 Paths.get(tempFindR()).toFile(), // move to conf service
                 Paths.get(configurationService.getCacheDirectory()).toFile(),
