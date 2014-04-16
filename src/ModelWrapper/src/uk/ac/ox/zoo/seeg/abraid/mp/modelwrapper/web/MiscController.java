@@ -56,6 +56,10 @@ public class MiscController {
      */
     @RequestMapping(value = "/misc/runduration", method = RequestMethod.POST)
     public ResponseEntity updateMaxRunDuration(int value) {
+        if (value < 1000) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
         if (value != configurationService.getMaxModelRunDuration()) {
             configurationService.setMaxModelRunDuration(value);
         }

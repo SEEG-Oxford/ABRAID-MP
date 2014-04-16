@@ -81,9 +81,24 @@ public class MiscControllerTest {
     }
 
     @Test
+    public void updateMaxRunDurationRejectsInvalidArguments() throws Exception {
+        // Arrange
+        List<Integer> invalidValues = Arrays.asList(0, 999, -2000, -10);
+        MiscController target = new MiscController(mock(ConfigurationService.class));
+
+        for (int value : invalidValues) {
+            // Act
+            ResponseEntity result = target.updateMaxRunDuration(value);
+
+            // Assert
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Test
     public void updateMaxRunDurationSavesValueIfDifferentToExistingValue() throws Exception {
         // Arrange
-        int value = 1;
+        int value = 1001;
         ConfigurationService configurationService = mock(ConfigurationService.class);
         MiscController target = new MiscController(configurationService);
         when(configurationService.getMaxModelRunDuration()).thenReturn(-value);
@@ -99,7 +114,7 @@ public class MiscControllerTest {
     @Test
     public void updateMaxRunDurationDoesNotSaveValueIfSameAsExistingValue() throws Exception {
         // Arrange
-        int value = 1;
+        int value = 1001;
         ConfigurationService configurationService = mock(ConfigurationService.class);
         MiscController target = new MiscController(configurationService);
         when(configurationService.getMaxModelRunDuration()).thenReturn(value);

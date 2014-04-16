@@ -10,6 +10,6 @@ define(["ko", "jquery", "app/SingleFieldFormViewModel"], function (ko, $, Single
         self.RExecutableViewModel = ko.validatedObservable(
             new SingleFieldFormViewModel(basePath, "misc/rpath", initialData.rPath, { required: true }));
         self.ModelDurationViewModel = ko.validatedObservable(
-            new SingleFieldFormViewModel(basePath, "misc/runduration", initialData.runDuration, { required: true, number: true }));
+            new SingleFieldFormViewModel(basePath, "misc/runduration", initialData.runDuration, { required: true, number: true, min: 1000 }));
     };
 });

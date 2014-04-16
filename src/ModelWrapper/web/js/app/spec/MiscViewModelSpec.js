@@ -26,7 +26,7 @@ define([ 'app/MiscViewModel', 'ko', 'underscore', 'app/spec/util/ruleMatcher', '
 
                     // Assert
                     expect(spy).toHaveBeenCalledWith('expectedBaseUrl', 'misc/rpath', 'expectedInitialRPath', { required : true });
-                    expect(spy).toHaveBeenCalledWith('expectedBaseUrl', 'misc/runduration', 'expectedInitialRunDuration', { required : true, number: true  });
+                    expect(spy).toHaveBeenCalledWith('expectedBaseUrl', 'misc/runduration', 'expectedInitialRunDuration', { required : true, number: true, min: 1000 });
                     done();
                 });
             });
