@@ -76,7 +76,7 @@ public class MiscControllerIntegrationTest extends BaseWebIntegrationTests {
 
     private MockHttpServletRequestBuilder requestToRunDuration(HttpMethod method) {
         return request(method, "/misc/runduration")
-                .param("value", "123");
+                .param("value", "1234");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class MiscControllerIntegrationTest extends BaseWebIntegrationTests {
     public void runDurationPageAcceptsValidRequest() throws Exception {
         this.mockMvc
                 .perform(post("/misc/runduration")
-                        .param("value", "123"))
+                        .param("value", "1234"))
                 .andExpect(status().isNoContent());
     }
 

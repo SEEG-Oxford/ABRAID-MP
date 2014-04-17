@@ -16,6 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationServi
  */
 @Controller
 public class MiscController {
+    private static final int MINIMUM_MAX_RUN_DURATION = 1000;
     private final ConfigurationService configurationService;
 
     @Autowired
@@ -56,7 +57,7 @@ public class MiscController {
      */
     @RequestMapping(value = "/misc/runduration", method = RequestMethod.POST)
     public ResponseEntity updateMaxRunDuration(int value) {
-        if (value < 1000) {
+        if (value < MINIMUM_MAX_RUN_DURATION) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
