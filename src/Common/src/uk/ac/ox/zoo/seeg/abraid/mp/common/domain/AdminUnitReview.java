@@ -33,12 +33,12 @@ public class AdminUnitReview {
 
     // The global administrative unit.
     @ManyToOne
-    @JoinColumn(name = "global_gaul_code", nullable = false)
+    @JoinColumn(name = "global_gaul_code")
     private GlobalAdminUnit globalAdminUnit;
 
     // The tropical administrative unit.
     @ManyToOne
-    @JoinColumn(name = "tropical_gaul_code", nullable = false)
+    @JoinColumn(name = "tropical_gaul_code")
     private TropicalAdminUnit tropicalAdminUnit;
 
     // The disease group (to clarify, this is not referring to the validator disease group).

@@ -38,6 +38,16 @@ public class GlobalAdminUnit {
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon geom;
 
+    public GlobalAdminUnit() {
+    }
+
+    public GlobalAdminUnit(Integer gaulCode, char level, String name, String publicName) {
+        this.gaulCode = gaulCode;
+        this.level = level;
+        this.name = name;
+        this.publicName = publicName;
+    }
+
     public Integer getGaulCode() {
         return gaulCode;
     }
