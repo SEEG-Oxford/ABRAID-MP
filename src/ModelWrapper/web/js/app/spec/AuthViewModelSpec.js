@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false, describe:false, it:false, expect:false, beforeEach:false, jasmine:false*/
-define([ 'app/AuthViewModel', 'ko', 'app/spec/ruleMatcher' ], function(AuthViewModel, ko, ruleMatcher) {
+define([ 'app/AuthViewModel', 'ko', 'app/spec/util/ruleMatcher' ], function(AuthViewModel, ko, ruleMatcher) {
     "use strict";
 
     describe("The auth view model", function() {

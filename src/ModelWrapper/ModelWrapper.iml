@@ -44,6 +44,8 @@
     <orderEntry type="library" name="console" level="application" />
     <orderEntry type="library" name="jasmine-html" level="application" />
     <orderEntry type="library" name="boot" level="application" />
+    <orderEntry type="library" name="underscore" level="application" />
+    <orderEntry type="library" name="mock-ajax" level="application" />
   </component>
 </module>
 

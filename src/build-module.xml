@@ -527,7 +527,7 @@
     <echo>Running: ${phantom.executable}</echo>
     <exec executable="${phantom.executable}" resultproperty="js.test.result">
       <arg value="${project.root.dir}/src/run-jasmine.js"/>
-      <arg value="${web.dir}/js/app/spec/SpecRunner.html"/>
+      <arg value="${web.dir}/js/app/spec/SpecRunner.html?console=true&amp;coverage=true"/>
     </exec>
     <condition property="js.test.failure">
       <not>

@@ -44,7 +44,7 @@ public class WorkspaceProvisionerTest {
         // Assert
         assertThat(result.getParentFile()).isEqualTo(expectedBasePath);
         assertThat(result.getName()).startsWith(expectedRunName);
-        assertThat(result.getName()).matches(expectedRunName + "-" + UUID_REGEX);
+        assertThat(result.getName()).matches(expectedRunName + "_" + UUID_REGEX);
         assertThat(result).exists();
         assertThat(result).isDirectory();
     }
