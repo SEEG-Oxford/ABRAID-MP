@@ -1,9 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +16,13 @@ public interface DiseaseService {
      * @return All HealthMap diseases.
      */
     List<HealthMapDisease> getAllHealthMapDiseases();
+
+    /**
+     * Gets the disease group by its id.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The disease group.
+     */
+    DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
 
     /**
      * Gets all disease groups.
@@ -66,4 +70,15 @@ public interface DiseaseService {
      */
     boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
                                                                            Integer validatorDiseaseGroupId);
+
+
+    /**
+     * For each global admin unit, get the disease extent class for the specified disease group.
+     * @param globalAdminUnits The global administrative units.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The map, from global admin unit, to its disease extent class, for the specified disease group.
+     */
+    Map<GlobalAdminUnit, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(List<GlobalAdminUnit> globalAdminUnits,
+                                                                               Integer diseaseGroupId);
+
 }

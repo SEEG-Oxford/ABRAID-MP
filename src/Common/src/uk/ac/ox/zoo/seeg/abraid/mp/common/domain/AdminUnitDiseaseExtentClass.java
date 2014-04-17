@@ -12,6 +12,13 @@ import javax.persistence.*;
  * The admin unit will either be GlobalAdminUnit or TropicalAdminUnit, depending on the property of the DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries(
+        @NamedQuery(
+                name = "getDiseaseExtentClass",
+                query = "select diseaseExtentClass from AdminUnitDiseaseExtentClass" +
+                        "where globalAdminUnit.gaulCode=:gaulCode and diseaseGroup.id=:diseaseGroupId"
+        )
+)
 @Entity(name = "admin_unit_disease_extent_class")
 @Table
 public class AdminUnitDiseaseExtentClass {

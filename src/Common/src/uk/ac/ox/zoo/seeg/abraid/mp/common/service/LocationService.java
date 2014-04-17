@@ -64,4 +64,16 @@ public interface LocationService {
      * @param geoName The GeoName to save.
      */
     void saveGeoName(GeoName geoName);
+
+    /**
+     * Gets all global administrative units.
+     * @return The list of global administrative units.
+     */
+    List<GlobalAdminUnit> getAllGlobalAdminUnits();
+
+    /**
+     * Gets all tropical administrative units.
+     * @return The list of tropical administrative units.
+     */
+    List<TropicalAdminUnit> getAllTropicalAdminUnits();
 }

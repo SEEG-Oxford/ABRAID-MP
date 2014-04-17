@@ -9,6 +9,7 @@
     <session-factory>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnit"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup"/>
