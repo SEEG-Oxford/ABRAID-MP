@@ -27,7 +27,7 @@ public class AdminUnitReviewDaoTest extends AbstractSpringIntegrationTests {
         Expert expert = expertDao.getById(1);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         GlobalAdminUnit globalAdminUnit = new GlobalAdminUnit(0, '1', "Global Admin Unit", "GAU");
-        AdminUnitReviewResponse response = AdminUnitReviewResponse.PRESENCE;
+        DiseaseExtentClass response = DiseaseExtentClass.PRESENCE;
 
         AdminUnitReview review = new AdminUnitReview();
         review.setExpert(expert);
