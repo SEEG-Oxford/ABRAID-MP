@@ -13,11 +13,11 @@ public enum LocationPrecision {
     /**
      * The location is the centroid of a first-level administrative unit (e.g. state, province).
      */
-    ADMIN1("l"),
+    ADMIN1("l", '1'),
     /**
      * The location is the centroid of a second-level administrative unit.
      */
-    ADMIN2,
+    ADMIN2('2'),
     /**
      * The location is a point, or the centroid of an area, that is equal to or smaller than "admin 3" level
      * (for that area).
@@ -29,15 +29,30 @@ public enum LocationPrecision {
      */
     private String healthMapPlaceBasicType;
 
-    private LocationPrecision() {
-    }
+    /**
+     * The administrative level as specified in the shapefile tables (e.g. admin_unit).
+     */
+    private char shapefileTableAdminLevel;
 
     private LocationPrecision(String healthMapPlaceBasicType) {
         this.healthMapPlaceBasicType = healthMapPlaceBasicType;
     }
 
+    private LocationPrecision(char shapefileTableAdminLevel) {
+        this.shapefileTableAdminLevel = shapefileTableAdminLevel;
+    }
+
+    private LocationPrecision(String healthMapPlaceBasicType, char shapefileTableAdminLevel) {
+        this.healthMapPlaceBasicType = healthMapPlaceBasicType;
+        this.shapefileTableAdminLevel = shapefileTableAdminLevel;
+    }
+
     public String getHealthMapPlaceBasicType() {
         return healthMapPlaceBasicType;
+    }
+
+    public char getShapefileTableAdminLevel() {
+        return shapefileTableAdminLevel;
     }
 
     /**

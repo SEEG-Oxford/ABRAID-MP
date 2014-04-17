@@ -5,7 +5,24 @@
 -->
 <#import "common.ftl" as c/>
 <#import "/spring.ftl" as spring />
+<#assign endOfHeadContent>
+    <style>
+        iframe {
+            height: 100%;
+            width: 100%;
+            border: 0;
+            overflow: hidden;
+        }
+        #common {
+            position: absolute;
+            top:50px;
+            bottom: 30px;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
+</#assign>
 
-<@c.page title="ABRAID MP">
-<iframe src="<@spring.url "/datavalidationcontent"/>"></iframe>
+<@c.page title="ABRAID MP" endOfHead=endOfHeadContent>
+<iframe src="<@spring.url "/datavalidation/content"/>"></iframe>
 </@c.page>

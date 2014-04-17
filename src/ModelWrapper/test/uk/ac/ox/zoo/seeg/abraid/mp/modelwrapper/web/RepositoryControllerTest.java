@@ -87,6 +87,24 @@ public class RepositoryControllerTest {
         verify(configurationService, times(1)).setModelRepositoryVersion(expectedVersion);
     }
 
+    @Test
+    public void setModelVersionAcceptsCurrentVersionButSkipsLogic() throws Exception {
+        // Arrange
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
+        String expectedVersion = "3";
+        when(configurationService.getModelRepositoryVersion()).thenReturn(expectedVersion);
+
+        RepositoryController target = new RepositoryController(configurationService, sourceCodeManager);
+
+        // Act
+        ResponseEntity result = target.setModelVersion(expectedVersion);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(configurationService, times(0)).setModelRepositoryVersion(expectedVersion);
+    }
+
 
     @Test
     public void syncRepositoryRejectsInvalidRepositoryUrl() throws Exception {
@@ -214,6 +232,7 @@ public class RepositoryControllerTest {
     }
 
     private String valueCache;
+
     private void setupGetAndSetForRepositoryURL(ConfigurationService configurationService, String initialValue) {
         doAnswer(new Answer<String>() {
             public String answer(InvocationOnMock invocation) {
@@ -230,5 +249,4 @@ public class RepositoryControllerTest {
 
         valueCache = initialValue;
     }
-
 }

@@ -21,15 +21,17 @@ public class LocationServiceImpl implements LocationService {
     private LocationDao locationDao;
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
+    private AdminUnitDao adminUnitDao;
 
     public LocationServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
                                LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
-                               GeoNameDao geoNameDao) {
+                               GeoNameDao geoNameDao, AdminUnitDao adminUnitDao) {
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
         this.locationDao = locationDao;
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
         this.geoNameDao = geoNameDao;
+        this.adminUnitDao = adminUnitDao;
     }
 
     /**
@@ -48,6 +50,15 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public List<HealthMapCountry> getAllHealthMapCountries() {
         return healthMapCountryDao.getAll();
+    }
+
+    /**
+     * Gets all administrative units.
+     * @return All administrative units.
+     */
+    @Override
+    public List<AdminUnit> getAllAdminUnits() {
+        return adminUnitDao.getAll();
     }
 
     /**
@@ -101,7 +112,7 @@ public class LocationServiceImpl implements LocationService {
      * @param geoName The GeoName to save.
      */
     @Override
-    public void save(GeoName geoName) {
+    public void saveGeoName(GeoName geoName) {
         geoNameDao.save(geoName);
     }
 }

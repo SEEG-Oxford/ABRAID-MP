@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Represents a user of the PublicSite.
@@ -64,7 +64,7 @@ public class Expert {
             joinColumns = { @JoinColumn(name = "expert_id") },
             inverseJoinColumns = { @JoinColumn(name = "validator_disease_group_id") })
     @Fetch(FetchMode.SELECT)
-    private Set<ValidatorDiseaseGroup> validatorDiseaseGroups;
+    private List<ValidatorDiseaseGroup> validatorDiseaseGroups;
 
     public Integer getId() {
         return id;
@@ -110,11 +110,11 @@ public class Expert {
         this.isPubliclyVisible = isPubliclyVisible;
     }
 
-    public Set<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
+    public List<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
         return validatorDiseaseGroups;
     }
 
-    public void setValidatorDiseaseGroups(Set<ValidatorDiseaseGroup> validatorDiseaseGroups) {
+    public void setValidatorDiseaseGroups(List<ValidatorDiseaseGroup> validatorDiseaseGroups) {
         this.validatorDiseaseGroups = validatorDiseaseGroups;
     }
 

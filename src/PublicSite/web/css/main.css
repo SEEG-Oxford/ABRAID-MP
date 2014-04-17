@@ -2,20 +2,14 @@
  * Styling for PublicSite
  * Copyright (c) 2014 University of Oxford
  */
-iframe {
-    width:100%;
-    height:100%;
-}
 html {
     position: relative;
     min-height: 100%;
 }
 body {
+    margin-top: 50px;
     margin-bottom: 30px;
     min-width: 320px;
-}
-#common {
-    padding-top:50px;
 }
 .navbar-right div {
     padding:15px;

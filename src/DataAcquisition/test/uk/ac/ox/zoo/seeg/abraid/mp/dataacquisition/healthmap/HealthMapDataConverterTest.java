@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ public class HealthMapDataConverterTest {
     @SuppressWarnings("FieldCanBeLocal")
     private HealthMapLookupData healthMapLookupData;
     private HealthMapDataConverter healthMapDataConverter;
+    private QCManager qcManager;
 
     private Provenance healthMapProvenance;
 
@@ -43,8 +45,9 @@ public class HealthMapDataConverterTest {
         locationConverter = mock(HealthMapLocationConverter.class);
         alertConverter = mock(HealthMapAlertConverter.class);
         healthMapLookupData = mock(HealthMapLookupData.class);
+        qcManager = mock(QCManager.class);
         healthMapDataConverter = new HealthMapDataConverter(locationConverter, alertConverter,
-                alertService, diseaseService, healthMapLookupData);
+                alertService, diseaseService, healthMapLookupData, qcManager);
 
         healthMapProvenance = new Provenance();
         when(healthMapLookupData.getHealthMapProvenance()).thenReturn(healthMapProvenance);
@@ -256,7 +259,7 @@ public class HealthMapDataConverterTest {
     }
 
     @Test
-    public void convertLocationContinuationFails() {
+    public void addingLocationPrecisionFails() {
         // Arrange
         // Create a location with 1 alert
         HealthMapLocation healthMapLocation1 = new HealthMapLocation();
@@ -280,6 +283,82 @@ public class HealthMapDataConverterTest {
 
         // Assert
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+    }
+
+    @Test
+    public void qcStage1Fails() {
+        // Arrange
+        // Create a location with 1 alert
+        HealthMapLocation healthMapLocation1 = new HealthMapLocation();
+        HealthMapAlert healthMapAlert1 = new HealthMapAlert();
+        healthMapLocation1.setAlerts(Arrays.asList(healthMapAlert1));
+        List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1);
+        int passedQCStage = 0;
+
+        DateTime retrievalEndDate = DateTime.now();
+
+        // healthMapLocation1 is successfully converted into location1, but it fails at QC stage 1
+        final Location location1 = new Location();
+        when(locationConverter.convert(healthMapLocation1)).thenReturn(location1);
+        mockAddPrecision(healthMapLocation1, location1);
+        when(qcManager.performQC(location1)).thenReturn(passedQCStage);
+
+        // healthMapAlert1 is successfully converted into diseaseOccurrence1
+        DiseaseOccurrence diseaseOccurrence1 = new DiseaseOccurrence();
+        when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
+
+        // Act
+        healthMapDataConverter.convert(locations, retrievalEndDate);
+
+        // Assert
+        assertThat(location1.getPassedQCStage()).isEqualTo(passedQCStage);
+        verify(diseaseService, times(1)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+        verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence1));
+    }
+
+    @Test
+    public void qcStage1FirstLocationPassesSecondLocationFails() {
+        // Arrange
+        // Create 2 locations each with 1 alert
+        HealthMapLocation healthMapLocation1 = new HealthMapLocation();
+        HealthMapLocation healthMapLocation2 = new HealthMapLocation();
+        HealthMapAlert healthMapAlert1 = new HealthMapAlert();
+        HealthMapAlert healthMapAlert2 = new HealthMapAlert();
+        healthMapLocation1.setAlerts(Arrays.asList(healthMapAlert1));
+        healthMapLocation2.setAlerts(Arrays.asList(healthMapAlert2));
+        List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1, healthMapLocation2);
+
+        DateTime retrievalEndDate = DateTime.now();
+
+        // healthMapLocation1 is successfully converted into location1, and passes QC stage 1
+        final Location location1 = new Location();
+        when(locationConverter.convert(healthMapLocation1)).thenReturn(location1);
+        mockAddPrecision(healthMapLocation1, location1);
+        when(qcManager.performQC(location1)).thenReturn(1);
+
+        // healthMapLocation2 is successfully converted into location2, but fails QC stage 1
+        final Location location2 = new Location();
+        when(locationConverter.convert(healthMapLocation2)).thenReturn(location2);
+        mockAddPrecision(healthMapLocation2, location2);
+        when(qcManager.performQC(location2)).thenReturn(0);
+
+        // healthMapAlert1 is successfully converted into diseaseOccurrence1
+        DiseaseOccurrence diseaseOccurrence1 = new DiseaseOccurrence();
+        when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
+
+        // healthMapAlert2 is successfully converted into diseaseOccurrence2
+        DiseaseOccurrence diseaseOccurrence2 = new DiseaseOccurrence();
+        when(alertConverter.convert(healthMapAlert2, location2)).thenReturn(diseaseOccurrence2);
+
+        // Act
+        healthMapDataConverter.convert(locations, retrievalEndDate);
+
+        // Assert
+        assertThat(location1.getPassedQCStage()).isEqualTo(1);
+        assertThat(location2.getPassedQCStage()).isEqualTo(0);
+        verify(diseaseService, times(2)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+        verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence1));
+        verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence2));
     }
 
     @Test

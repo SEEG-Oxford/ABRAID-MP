@@ -45,11 +45,17 @@
         <!-- TODO: When hibernate-spatial 4.3 is released: -->
         <!-- 1. Include this line (you may need to exclude org="postgresql" name="postgresql" if it is older than revision 9.3) -->
         <!--    <dependency org="org.hibernate" name="hibernate-spatial" rev="4.3"/> -->
-        <!-- 2. Remove this line (it's a dependency) -->
-        <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
-        <!-- 3. In build.xml, remove the download of hibernate-spatial 4.3 -->
+        <!-- 2. In build.xml, remove the download of hibernate-spatial 4.3 -->
 
         &ivy-project-dependencies;
+
+        <!-- Geometry utilities -->
+        <dependency org="com.vividsolutions" name="jts" rev="1.8" conf="external->default" />
+        <dependency org="org.geotools" name="gt-api" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-referencing" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-opengis" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-metadata" rev="11.0" conf="external->default" />
+        <dependency org="net.java.dev.jsr-275" name="jsr-275" rev="1.0-beta-2" conf="external->default" />
 
         <!-- Workaround: Excluded as these conflict with javax.persistence 2.1 which is required by Hibernate 4 -->
         <!-- These are transitive dependencies of org.springframework.spring-orm -->

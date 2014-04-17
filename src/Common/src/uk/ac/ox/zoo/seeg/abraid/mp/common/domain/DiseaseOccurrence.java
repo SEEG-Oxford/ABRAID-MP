@@ -22,16 +22,15 @@ import javax.persistence.Table;
                         "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesByDiseaseGroupId",
-                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId"
-        ),
-        @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
                 query = "from DiseaseOccurrence as d " +
                         "inner join fetch d.location " +
                         "inner join fetch d.alert " +
                         "inner join fetch d.alert.feed " +
-                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "inner join fetch d.alert.feed.provenance " +
+                        "inner join fetch d.diseaseGroup " +
+                        "left outer join fetch d.diseaseGroup.validatorDiseaseGroup " +
+                        "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
                         "expert.id=:expertId)"
         )
@@ -90,6 +89,10 @@ public class DiseaseOccurrence {
 
     public DiseaseGroup getDiseaseGroup() {
         return diseaseGroup;
+    }
+
+    public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
+        return diseaseGroup.getValidatorDiseaseGroup();
     }
 
     public void setDiseaseGroup(DiseaseGroup diseaseGroup) {

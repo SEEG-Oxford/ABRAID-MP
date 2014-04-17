@@ -181,6 +181,9 @@ ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
 ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit 
     FOREIGN KEY (admin_unit_gaul_code) REFERENCES admin_unit (gaul_code);
 
+ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit
+    FOREIGN KEY (admin_unit_gaul_code) REFERENCES admin_unit (gaul_code);
+
 ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
     FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
 

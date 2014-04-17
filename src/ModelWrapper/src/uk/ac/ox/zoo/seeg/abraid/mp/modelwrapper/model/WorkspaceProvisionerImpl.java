@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
@@ -14,8 +15,13 @@ import java.util.UUID;
  * Copyright (c) 2014 University of Oxford
  */
 public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
+    private static final Logger LOGGER = Logger.getLogger(WorkspaceProvisionerImpl.class);
+    private static final String LOG_DIRECTORY_ERROR = "Workspace directory structure could not be created at %s";
+
     private static final String MODEL_CODE_DIRECTORY_NAME = "model";
     private static final String MODEL_DATA_DIRECTORY_NAME = "data";
+    private static final String LOG_PROVISIONING_WORKSPACE = "Provisioning workspace at %s";
+    private static final String LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED = "Workspace successfully provisioned at %s";
 
     private final ScriptGenerator scriptGenerator;
     private final SourceCodeManager sourceCodeManager;
@@ -32,8 +38,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
      * Sets up the directory in which a model will run.
      * @param configuration The model run configuration options.
      * @param modelData The data to use in the model.
-     * @throws IOException Thrown if the directory can not be correctly provisioned.
      * @return The model wrapper script file to run.
+     * @throws IOException Thrown if the directory can not be correctly provisioned.
      */
     @Override
     public File provisionWorkspace(RunConfiguration configuration, GeoJsonDiseaseOccurrenceFeatureCollection modelData)
@@ -41,7 +47,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         // Create directories
         Path workingDirectoryPath = Paths.get(
                 configuration.getBaseDir().getAbsolutePath(),
-                configuration.getRunName() + "-" + UUID.randomUUID().toString());
+                configuration.getRunName() + "_" + UUID.randomUUID().toString());
+        LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
 
         File workingDirectory = workingDirectoryPath.toFile();
         boolean workingDirectoryCreated = workingDirectory.mkdirs();
@@ -61,6 +68,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         }
 
         if (!workingDirectoryCreated) {
+            LOGGER.warn(String.format(LOG_DIRECTORY_ERROR, workingDirectoryPath.toString()));
             throw new IOException("Directory structure could not be created.");
         }
 
@@ -72,6 +80,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
 
         // Template script
         File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);
+
+        LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectoryPath.toString()));
         return runScript;
     }
 }

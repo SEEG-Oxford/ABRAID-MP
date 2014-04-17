@@ -21,25 +21,18 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         super(sessionFactory);
     }
 
-    /**
-     * Gets a list of occurrence points, for the specified disease group.
-     * @param diseaseGroupId The id of the disease group of interest.
-     * @return The list of disease occurrence points for one disease group.
-     */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrencesByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
-    }
 
     /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
-     * @param diseaseGroupId The id of the diseaseGroup of interest.
+     * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer diseaseGroupId) {
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
+                                                                        Integer validatorDiseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrencesYetToBeReviewed",
-                "expertId", expertId, "diseaseGroupId", diseaseGroupId);
+                "expertId", expertId, "validatorDiseaseGroupId", validatorDiseaseGroupId);
     }
 
 

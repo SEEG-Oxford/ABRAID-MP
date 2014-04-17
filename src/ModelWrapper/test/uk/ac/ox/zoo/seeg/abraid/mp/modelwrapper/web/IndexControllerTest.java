@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,8 @@ public class IndexControllerTest {
         String expectedUrl = "foo1";
         String expectedVersion = "foo2";
         List<String> expectedVersions = Arrays.asList("1", "2", "3");
+        int expectedDuration = 1234;
+        String expectedRPath = "foo3";
 
         ConfigurationService configurationService = mock(ConfigurationService.class);
         SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
@@ -47,6 +50,8 @@ public class IndexControllerTest {
         when(configurationService.getModelRepositoryUrl()).thenReturn(expectedUrl);
         when(configurationService.getModelRepositoryVersion()).thenReturn(expectedVersion);
         when(sourceCodeManager.getAvailableVersions()).thenReturn(expectedVersions);
+        when(configurationService.getMaxModelRunDuration()).thenReturn(expectedDuration);
+        when(configurationService.getRExecutablePath()).thenReturn(expectedRPath);
 
         Model model = mock(Model.class);
         IndexController target = new IndexController(configurationService, sourceCodeManager);
@@ -58,6 +63,8 @@ public class IndexControllerTest {
         verify(model, times(1)).addAttribute("repository_url", expectedUrl);
         verify(model, times(1)).addAttribute("model_version", expectedVersion);
         verify(model, times(1)).addAttribute("available_versions", expectedVersions);
+        verify(model, times(1)).addAttribute("r_path", expectedRPath);
+        verify(model, times(1)).addAttribute("run_duration", expectedDuration);
     }
 
     @Test
@@ -75,6 +82,21 @@ public class IndexControllerTest {
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
         verify(model, times(1)).addAttribute(eq("available_versions"), captor.capture());
         assertThat(captor.getValue()).hasSize(0);
+    }
+
+    @Test
+    public void showIndexPageSetsEmptyRPathIfConfigurationCheckFails() throws Exception {
+        // Arrange
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        when(configurationService.getRExecutablePath()).thenThrow(new ConfigurationException());
+        Model model = mock(Model.class);
+        IndexController target = new IndexController(configurationService, mock(SourceCodeManager.class));
+
+        // Act
+        target.showIndexPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("r_path", "");
     }
 
     @Test

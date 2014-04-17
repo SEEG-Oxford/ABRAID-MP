@@ -14,13 +14,8 @@ import javax.persistence.*;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertId",
-        query = "from DiseaseOccurrenceReview where expert.id=:expertId"
-    ),
-    @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsByExpertIdAndDiseaseGroupId",
-        query = "from DiseaseOccurrenceReview where expert.id=:expertId " +
-                "and diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
+        name = "getDiseaseOccurrenceReviewCountByExpertId",
+        query = "select count(*) from DiseaseOccurrenceReview where expert.id=:expertId"
     ),
     @NamedQuery(
         name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
@@ -87,16 +82,16 @@ public class DiseaseOccurrenceReview {
         return diseaseOccurrence;
     }
 
+    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
+        this.diseaseOccurrence = diseaseOccurrence;
+    }
+
     public DiseaseOccurrenceReviewResponse getResponse() {
         return response;
     }
 
     public void setResponse(DiseaseOccurrenceReviewResponse response) {
         this.response = response;
-    }
-
-    public void setDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
-        this.diseaseOccurrence = diseaseOccurrence;
     }
 
     public DateTime getCreatedDate() {

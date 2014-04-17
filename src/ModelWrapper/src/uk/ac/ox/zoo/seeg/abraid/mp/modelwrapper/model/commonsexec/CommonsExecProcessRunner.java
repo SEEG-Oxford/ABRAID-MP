@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec;
 
 import org.apache.commons.exec.*;
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessException;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessRunner;
@@ -14,7 +15,14 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 class CommonsExecProcessRunner implements ProcessRunner {
-    public static final int SUCCESS = 0;
+    private static final Logger LOGGER = Logger.getLogger(CommonsExecProcessRunner.class);
+    private static final String LOG_BG_START = "Starting background process:";
+    private static final String LOG_BG_DIRECTORY = "-> directory: %s";
+    private static final String LOG_BG_COMMAND = "-> command: %s";
+    private static final String LOG_BG_TIMEOUT = "-> timeout: %d";
+
+    private static final int SUCCESS = 0;
+
     private final Executor executor;
 
     // The command used to start the process.
@@ -52,6 +60,11 @@ class CommonsExecProcessRunner implements ProcessRunner {
         if (hasRun) {
             throw new ProcessException(new Throwable("Can not use same process runner twice"));
         }
+
+        LOGGER.info(LOG_BG_START);
+        LOGGER.info(String.format(LOG_BG_DIRECTORY, workspace.toString()));
+        LOGGER.info(String.format(LOG_BG_COMMAND, commandLine.toString()));
+        LOGGER.info(String.format(LOG_BG_TIMEOUT, timeout));
 
         hasRun = true;
 

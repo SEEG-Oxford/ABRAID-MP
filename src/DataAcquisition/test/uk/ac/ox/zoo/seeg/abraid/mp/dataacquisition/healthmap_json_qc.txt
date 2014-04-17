@@ -1,0 +1,73 @@
+[
+    {
+        "country": "Germany",
+        "place_name": "Bremen, Germany",
+        "lat": "53.133381",
+        "lng": "8.758477",
+        "geonameid": "",
+        "place_basic_type": "l",
+        "place_id": "28053",
+        "country_id": "101",
+        "alerts": [
+            {
+                "feed": "Google News Deutsch",
+                "disease": "Influenza",
+                "summary": "Werder Bremen: Hunt, and Schmitz, Ekici back - spox.com",
+                "date": "2013-04-17 12:18:52-0400",
+                "formatted_date": "17 April 2013 12:18:52 EDT",
+                "link": "http://healthmap.org/ln.php?1653093&trto=en&trfr=de",
+                "descr": "<table border=\"0\" cellpadding=\"2\" cellspacing=\"7\" style=\"vertical-align:top;\"><tr><td width=\"80\" align=\"center\" valign=\"top\"><font style=\"font-size:85%;font-family:arial,sans-serif\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;usg=AFQjCNE8V5hkkRkMdZGD4s388FUjQx1QOg&amp;url=http://www.spox.com/de/sport/fussball/bundesliga/1304/News/personalsitutation-entspannt-sich-aaron-hunt-mehmet-ekici-lukas-schmitz-zurueck-im-training-werder-bremen-alexander-ignjovski.html\"><img src=\"//nt1.ggpht.com/news/tbn/yeif8Pmgkbs-gM/0.jpg\" alt=\"\" border=\"1\" width=\"80\" height=\"46\" /><br /><font size=\"-2\">spox.com</font></a></font></td><td valign=\"top\" class=\"j\"><font style=\"font-size:85%;font-family:arial,sans-serif\"><br /><div style=\"padding-top:0.8em;\"><img alt=\"\" height=\"1\" width=\"1\" /></div><div class=\"lh\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;usg=AFQjCNE8V5hkkRkMdZGD4s388FUjQx1QOg&amp;url=http://www.spox.com/de/sport/fussball/bundesliga/1304/News/personalsitutation-entspannt-sich-aaron-hunt-mehmet-ekici-lukas-schmitz-zurueck-im-training-werder-bremen-alexander-ignjovski.html\">Werder Bremen: Hunt, Ekici und Schmitz zur&uuml;ck</a><br /><font size=\"-1\"><font color=\"#6f6f6f\">spox.com</font></font><br /><font size=\"-1\">Die Personalsituation bei Bundesligist Werder Bremen entspannt sich. Die zuletzt grippekranken Aaron Hunt und Lukas Schmitz sind am Mittwoch ebenso ins Mannschaftstraining zur&uuml;ckgekehrt wie der von seinen Adduktorenproblemen genesene Mehmet ...</font><br /><font size=\"-1\" class=\"p\"></font><br /><font class=\"p\" size=\"-1\"><a class=\"p\" href=\"http://news.google.de/news/story?ncl=dN3B3xvP5GaiqZM&amp;ned=de\"><nobr>und weitere&nbsp;&raquo;</nobr></a></font></div></font></td></tr></table>",
+                "rating": {
+                    "count": "1",
+                    "rating": "2.0000"
+                },
+                "species_name": "Humans",
+                "dup_count": "0",
+                "feed_lang": "de",
+                "sc": "3",
+                "summary_en": "Werder Bremen: Hunt, and Schmitz, Ekici back - spox.com",
+                "summary_es": "Werder Bremen: Hunt, y Schmitz, Ekici back - spox.com",
+                "summary_fr": "Werder Brême: Hunt, et Schmitz, Ekici arrière - spox.com",
+                "summary_ru": "Вердер: Охота и Schmitz, Ekici Назад - spox.com",
+                "summary_zh": "云达不莱梅：亨特，和Schmitz，播种机回来 -  spox.com",
+                "summary_pt": "Werder Bremen: Hunt, e Schmitz, Ekici volta - spox.com",
+                "summary_ar": "فيردر بريمن: هانت، وشميتز، اكيسي عودة - spox.com",
+                "place_category": [],
+                "original_url": "http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNE8V5hkkRkMdZGD4s388FUjQx1QOg&url=http://www.spox.com/de/sport/fussball/bundesliga/1304/News/personalsitutation-entspannt-sich-aaron-hunt-mehmet-ekici-lukas-schmitz-zurueck-im-training-werder-bremen-alexander-ignjovski.html",
+                "disease_id": "67",
+                "feed_id": "92"
+            }
+        ]
+    },
+    {
+        "country": "United Kingdom",
+        "place_name": "Isles of Scilly, England, United Kingdom",
+        "lat": "49.921169",
+        "lng": "-6.294310",
+        "geonameid": "2638384",
+        "place_basic_type": "p",
+        "place_id": "35933",
+        "country_id": "40",
+        "alerts": [
+            {
+                "feed": "Google News",
+                "disease": "Gastroenteritis",
+                "summary": "Illness Affecting Some Park House Staff Is Not Norovirus - ScillyToday",
+                "date": "2013-12-24 05:00:07-0500",
+                "formatted_date": "24 December 2013 05:00:07 EST",
+                "link": "http://healthmap.org/ln.php?2134306",
+                "descr": "An illness that has affected some Park House staff is not the norovirus, or winter vomiting bug. Procedures to limit any spread of disease through contact were put in place by management last weekend and medical advice sought after some staff became ;...",
+                "rating": {
+                "count": 0,
+                "rating": 3
+                },
+                "species_name": "Humans",
+                "dup_count": "0",
+                "place_category": [],
+                "original_url": "http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNGlxNTieHepLS0LZorGtp2pJVN92g&url=http://www.scillytoday.com/2013/12/24/illness-affecting-some-park-house-staff-is-not-norovirus/",
+                "disease_id": "150",
+                "feed_id": "4"
+            }
+        ]
+    }
+]

@@ -4,11 +4,9 @@ import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-
-import java.util.List;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -39,71 +37,54 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
     @Autowired
     private LocationDao locationDao;
 
-    @Test
-    public void getAllReviewsForExpert() {
-        // Arrange
-        Expert expert = createExpert();
-        DiseaseOccurrence diseaseOccurrence = createDiseaseOccurrence();
-        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
+    @Autowired
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
-        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview();
-        diseaseOccurrenceReview.setExpert(expert);
-        diseaseOccurrenceReview.setDiseaseOccurrence(diseaseOccurrence);
-        diseaseOccurrenceReview.setResponse(response);
+    @Test
+    public void getCountByExpertId() {
+        // Arrange - no reviews in the database
 
         // Act
-        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
-        flushAndClear();
+        Long count = diseaseOccurrenceReviewDao.getCountByExpertId(1);
 
         // Assert
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertId(expert.getId());
-        assertThat(reviews).hasSize(1);
-
-        DiseaseOccurrenceReview review = reviews.get(0);
-        assertThat(review.getResponse()).isEqualTo(response);
-        assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
-        assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
+        assertThat(count).isEqualTo(0);
     }
 
     @Test
-    public void getAllReviewsForExpertForOneDisease() {
+    public void doesDiseaseOccurrenceReviewExistReturnsTrueWhenExpected() {
         // Arrange
         Expert expert = createExpert();
-        DiseaseOccurrence diseaseOccurrence = createDiseaseOccurrence();
-        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
-
-        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview();
-        diseaseOccurrenceReview.setExpert(expert);
-        diseaseOccurrenceReview.setDiseaseOccurrence(diseaseOccurrence);
-        diseaseOccurrenceReview.setResponse(response);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence();
+        createDiseaseOccurrenceReview(expert, occurrence);
 
         // Act
-        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
-        flushAndClear();
+        boolean result = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expert.getId(), occurrence.getId());
 
         // Assert
-        DiseaseGroup diseaseGroup = diseaseOccurrenceReview.getDiseaseOccurrence().getDiseaseGroup();
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expert.getId(), diseaseGroup.getId());
-        assertThat(reviews).hasSize(1);
-
-        DiseaseOccurrenceReview review = reviews.get(0);
-        assertThat(review.getResponse()).isEqualTo(response);
-        assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
-        assertThat(review.getDiseaseOccurrence().getId()).isEqualTo(diseaseOccurrence.getId());
+        assertThat(result).isTrue();
     }
 
     @Test
-    public void getAllReviewsForExpertMustReturnEmptyListIfNoReviewsHaveBeenSubmitted() {
+    public void doesDiseaseOccurrenceReviewExistReturnsFalseWhenReviewDoesNotExist() {
         // Arrange
-        Integer expertId = 1;
-        DiseaseGroup diseaseGroup = createDiseaseGroup();
+        Expert expert = createExpert();
+        DiseaseOccurrence occurrence = createDiseaseOccurrence();
 
         // Act
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroup.getId());
+        boolean result = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expert.getId(), occurrence.getId());
 
         // Assert
-        assertThat(reviews).isNotNull();
-        assertThat(reviews).isEmpty();
+        assertThat(result).isFalse();
+    }
+
+    private DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence) {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
+        review.setExpert(expert);
+        review.setDiseaseOccurrence(occurrence);
+        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
+        diseaseOccurrenceReviewDao.save(review);
+        return review;
     }
 
     private Expert createExpert() {
@@ -158,6 +139,13 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
         diseaseGroupDao.save(diseaseGroup);
         return diseaseGroup;
+    }
+
+    private ValidatorDiseaseGroup createValidatorDiseaseGroup() {
+        ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup();
+        validatorDiseaseGroup.setName("Test validator disease group");
+        validatorDiseaseGroupDao.save(validatorDiseaseGroup);
+        return validatorDiseaseGroup;
     }
 
     private Location createLocation() {

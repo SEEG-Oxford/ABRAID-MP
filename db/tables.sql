@@ -211,8 +211,7 @@ CREATE TABLE location (
     admin_unit_gaul_code integer,
     passed_qc_stage integer,
     qc_message varchar(1000)
-)
-;
+);
 
 CREATE TABLE provenance (
     id serial NOT NULL,

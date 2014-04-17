@@ -24,6 +24,20 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     private DiseaseService diseaseService;
 
     @Test
+    public void saveDiseaseOccurrence() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        diseaseService.saveDiseaseOccurrence(occurrence);
+        verify(diseaseOccurrenceDao).save(eq(occurrence));
+    }
+
+    @Test
+    public void saveHealthMapDisease() {
+        HealthMapDisease disease = new HealthMapDisease();
+        diseaseService.saveHealthMapDisease(disease);
+        verify(healthMapDiseaseDao).save(eq(disease));
+    }
+
+    @Test
     public void getAllHealthMapDiseases() {
         // Arrange
         List<HealthMapDisease> diseases = Arrays.asList(new HealthMapDisease());
@@ -47,20 +61,6 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testDiseaseGroups).isSameAs(diseaseGroups);
-    }
-
-    @Test
-    public void saveDiseaseOccurrence() {
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        diseaseService.saveDiseaseOccurrence(occurrence);
-        verify(diseaseOccurrenceDao).save(eq(occurrence));
-    }
-
-    @Test
-    public void saveHealthMapDisease() {
-        HealthMapDisease disease = new HealthMapDisease();
-        diseaseService.saveHealthMapDisease(disease);
-        verify(healthMapDiseaseDao).save(eq(disease));
     }
 
     @Test
@@ -213,8 +213,12 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
     @Test
     public void doesDiseaseOccurrenceMatchDiseaseGroupReturnsExpectedResult() {
         // Arrange
+        int validatorDiseaseGroupId = 1;
+        ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup(validatorDiseaseGroupId);
+
         int diseaseGroupId = 1;
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
 
         int occurrenceId = 2;
         DiseaseOccurrence occurrence = new DiseaseOccurrence(occurrenceId);
@@ -222,10 +226,11 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         when(diseaseOccurrenceDao.getById(occurrenceId)).thenReturn(occurrence);
 
         // Act
-        boolean diseaseOccurrenceMatches = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(
-                occurrenceId, diseaseGroupId);
-        boolean diseaseOccurrenceDoesNotMatch = diseaseService.doesDiseaseOccurrenceMatchDiseaseGroup(
-                occurrenceId, 3);
+        boolean diseaseOccurrenceMatches =
+                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
+                        validatorDiseaseGroupId);
+        boolean diseaseOccurrenceDoesNotMatch =
+                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId, 3);
 
         // Assert
         assertThat(diseaseOccurrenceMatches).isTrue();
