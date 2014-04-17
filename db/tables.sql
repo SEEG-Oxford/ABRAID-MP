@@ -37,11 +37,19 @@ CREATE TABLE admin_unit (
     gaul_code integer NOT NULL,
     level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
-    centr_lat double precision NOT NULL,
     centr_lon double precision NOT NULL,
+    centr_lat double precision NOT NULL,
     area double precision NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326),
-    max_centr_distance double precision
+    geom geometry(MULTIPOLYGON, 4326)
+);
+
+CREATE TABLE admin_unit_disease_extent_class (
+    id serial NOT NULL,
+    global_gaul_code integer,
+    tropical_gaul_code integer,
+    disease_group_id integer NOT NULL,
+    disease_extent_class varchar(17) NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE admin_unit_global (
@@ -52,13 +60,14 @@ CREATE TABLE admin_unit_global (
     geom geometry(MULTIPOLYGON, 4326)
 );
 
-CREATE TABLE admin_unit_review ( 
+CREATE TABLE admin_unit_review (
     id serial NOT NULL,
     expert_id integer NOT NULL,
-    admin_unit_gaul_code integer NOT NULL,
     disease_group_id integer NOT NULL,
+    global_gaul_code integer,
+    tropical_gaul_code integer,
     response varchar(6) NOT NULL,
-    created_date timestamp
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE admin_unit_simplified_global (
@@ -198,8 +207,12 @@ CREATE TABLE location (
     geoname_id integer,
     resolution_weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    healthmap_country_id bigint
-);
+    healthmap_country_id bigint,
+    admin_unit_gaul_code integer,
+    passed_qc_stage integer,
+    qc_message varchar(1000)
+)
+;
 
 CREATE TABLE provenance (
     id serial NOT NULL,
