@@ -23,34 +23,48 @@ public class AdminUnit {
     private Integer gaulCode;
 
     // The admin unit's level (1 or 2).
-    private char level;
+    @Column(name = "level")
+    private char adminLevel;
 
     // The admin unit's name.
     @Column
     private String name;
 
-    // The latitude component of the admin unit's centroid.
-    @Column(name = "centr_lat")
-    private double centroidLatitude;
-
     // The longitude component of the admin unit's centroid.
     @Column(name = "centr_lon")
     private double centroidLongitude;
+
+    // The latitude component of the admin unit's centroid.
+    @Column(name = "centr_lat")
+    private double centroidLatitude;
 
     // The admin unit's area.
     @Column
     private double area;
 
+    public AdminUnit() {
+    }
+
+    public AdminUnit(Integer gaulCode, char adminLevel, String name, double centroidLongitude, double centroidLatitude,
+                     double area) {
+        this.gaulCode = gaulCode;
+        this.adminLevel = adminLevel;
+        this.name = name;
+        this.centroidLatitude = centroidLatitude;
+        this.centroidLongitude = centroidLongitude;
+        this.area = area;
+    }
+
     public Integer getGaulCode() {
         return gaulCode;
     }
 
-    public char getLevel() {
-        return level;
+    public char getAdminLevel() {
+        return adminLevel;
     }
 
-    public void setLevel(char adminLevel) {
-        this.level = adminLevel;
+    public void setAdminLevel(char adminLevel) {
+        this.adminLevel = adminLevel;
     }
 
     public String getName() {
@@ -97,7 +111,7 @@ public class AdminUnit {
         if (Double.compare(adminUnit.area, area) != 0) return false;
         if (Double.compare(adminUnit.centroidLatitude, centroidLatitude) != 0) return false;
         if (Double.compare(adminUnit.centroidLongitude, centroidLongitude) != 0) return false;
-        if (level != adminUnit.level) return false;
+        if (adminLevel != adminUnit.adminLevel) return false;
         if (gaulCode != null ? !gaulCode.equals(adminUnit.gaulCode) : adminUnit.gaulCode != null) return false;
         if (name != null ? !name.equals(adminUnit.name) : adminUnit.name != null) return false;
 
@@ -109,7 +123,7 @@ public class AdminUnit {
         int result;
         long temp;
         result = gaulCode != null ? gaulCode.hashCode() : 0;
-        result = 31 * result + (int) level;
+        result = 31 * result + (int) adminLevel;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         temp = Double.doubleToLongBits(centroidLatitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));

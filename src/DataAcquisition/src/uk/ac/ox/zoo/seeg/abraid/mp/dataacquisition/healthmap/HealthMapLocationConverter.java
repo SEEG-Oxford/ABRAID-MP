@@ -167,7 +167,26 @@ public class HealthMapLocationConverter {
     }
 
     private LocationPrecision findLocationPrecision(HealthMapLocation healthMapLocation) {
+        // HealthMap does not always set place_basic_type to "c" for countries. So firstly, return COUNTRY if the place
+        // name is the name of a HealthMap country.
+        if (isHealthMapCountryName(healthMapLocation.getPlaceName())) {
+            return LocationPrecision.COUNTRY;
+        }
+
+        // Otherwise map the HealthMap place_basic_type field on to our LocationPrecision enumeration
         return LocationPrecision.findByHealthMapPlaceBasicType(healthMapLocation.getPlaceBasicType());
+    }
+
+    private boolean isHealthMapCountryName(String name) {
+        if (StringUtils.hasText(name)) {
+            for (HealthMapCountry country : lookupData.getCountryMap().values()) {
+                if (name.equals(country.getName())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private GeoName getGeoName(int geoNameId) {
@@ -196,7 +215,7 @@ public class HealthMapLocationConverter {
     private GeoName createAndSaveGeoName(
             uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName geoNameDTO) {
         GeoName geoName = new GeoName(geoNameDTO.getGeoNameId(), geoNameDTO.getFeatureCode());
-        locationService.save(geoName);
+        locationService.saveGeoName(geoName);
         return geoName;
     }
 

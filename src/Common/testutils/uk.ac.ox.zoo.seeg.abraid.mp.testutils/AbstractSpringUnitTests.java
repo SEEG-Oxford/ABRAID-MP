@@ -20,6 +20,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 public abstract class AbstractSpringUnitTests {
     @ReplaceWithMock
     @Autowired
+    protected AdminUnitDao adminUnitDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected AlertDao alertDao;
 
     @ReplaceWithMock

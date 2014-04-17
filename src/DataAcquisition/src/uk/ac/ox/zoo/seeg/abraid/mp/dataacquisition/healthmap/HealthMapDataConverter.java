@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager;
 
 import java.util.*;
 
@@ -23,6 +24,7 @@ public class HealthMapDataConverter {
     private HealthMapLocationConverter locationConverter;
     private HealthMapAlertConverter alertConverter;
     private HealthMapLookupData lookupData;
+    private QCManager qcManager;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
     private static final String CONVERSION_MESSAGE =
@@ -32,12 +34,13 @@ public class HealthMapDataConverter {
     public HealthMapDataConverter(HealthMapLocationConverter locationConverter,
                                   HealthMapAlertConverter alertConverter,
                                   AlertService alertService, DiseaseService diseaseService,
-                                  HealthMapLookupData lookupData) {
+                                  HealthMapLookupData lookupData, QCManager qcManager) {
         this.locationConverter = locationConverter;
         this.alertConverter = alertConverter;
         this.alertService = alertService;
         this.diseaseService = diseaseService;
         this.lookupData = lookupData;
+        this.qcManager = qcManager;
     }
 
     /**
@@ -113,18 +116,29 @@ public class HealthMapDataConverter {
         }
     }
 
+    // Returns whether or not the location conversion was successful (if not the location should be ignored)
     private boolean continueLocationConversion(HealthMapLocation healthMapLocation, Location location) {
         if (location.getId() == null) {
             // Location is new, so add precision (using GeoNames). Do it at this point so that we only call out to
             // GeoNames if we know that we have at least one disease occurrence that was converted successfully.
             locationConverter.addPrecision(healthMapLocation, location);
 
-            // NB: Call to data QC will go here (if this conditional is true)
-            return (location.getPrecision() != null);
+            if (location.getPrecision() != null) {
+                // Location could be converted, so perform quality control
+                performQualityControl(location);
+                return true;
+            } else {
+                return false;
+            }
         } else {
             // Location already exists, so conversion was successful
             return true;
         }
+    }
+
+    private void performQualityControl(Location location) {
+        int passedQCStage = qcManager.performQC(location);
+        location.setPassedQCStage(passedQCStage);
     }
 
     private void writeLastRetrievalEndDate(DateTime retrievalDate) {

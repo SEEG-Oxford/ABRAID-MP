@@ -41,6 +41,12 @@ public interface LocationService {
     List<HealthMapCountry> getAllHealthMapCountries();
 
     /**
+     * Gets all administrative units.
+     * @return All administrative units.
+     */
+    List<AdminUnit> getAllAdminUnits();
+
+    /**
      * Gets mappings between GeoNames feature codes and location precision.
      * @return A set of mappings.
      */
@@ -57,5 +63,5 @@ public interface LocationService {
      * Saves a GeoName.
      * @param geoName The GeoName to save.
      */
-    void save(GeoName geoName);
+    void saveGeoName(GeoName geoName);
 }

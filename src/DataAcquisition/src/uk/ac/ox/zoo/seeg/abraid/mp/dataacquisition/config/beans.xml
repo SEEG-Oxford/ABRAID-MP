@@ -47,6 +47,10 @@
     <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLocationConverter" autowire="constructor"/>
     <bean id="healthMapLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLookupData" autowire="constructor"/>
 
+    <!-- Quality control beans -->
+    <bean id="qcManager" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager" autowire="constructor"/>
+    <bean id="qcLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCLookupData" autowire="constructor"/>
+
     <!-- Main bean (program entry point) -->
     <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main" autowire="constructor"/>
 
