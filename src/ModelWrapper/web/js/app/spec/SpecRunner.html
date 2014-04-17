@@ -31,7 +31,7 @@
             /*global specs:false, require:false, jasmine:false, jasmineRequire:false, document:false*/
             var baseUrl = document.URL.substring(0, document.URL.indexOf("js/app/spec/SpecRunner.html"));
             var includeCoverage = document.URL.indexOf("coverage=true") !== -1;
-            var includeConsole = document.URL.indexOf("console=true") !== -1;;
+            var includeConsole = document.URL.indexOf("console=true") !== -1;
 
             require([ baseUrl + 'js/require.conf.js' ], function() {
                 require(["domReady!", "https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js"], function() {

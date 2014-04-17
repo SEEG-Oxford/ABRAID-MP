@@ -163,7 +163,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     private String findDefaultR() throws ConfigurationException {
-        File r = Paths.get(osChecker.isWindows() ? DEFAULT_WINDOWS_R_PATH : DEFAULT_LINUX_R_PATH).toFile();
+        String rPath = osChecker.isWindows() ? DEFAULT_WINDOWS_R_PATH : DEFAULT_LINUX_R_PATH;
+        File r = Paths.get(rPath).toFile();
         if (r.exists() && r.canExecute()) {
             return r.getAbsolutePath();
         } else {
