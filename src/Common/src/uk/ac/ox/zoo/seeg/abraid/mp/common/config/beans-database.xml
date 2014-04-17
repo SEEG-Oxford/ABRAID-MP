@@ -13,18 +13,21 @@
     <!-- Data Access Objects -->
     <bean id="alertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDaoImpl" autowire="constructor" />
     <bean id="adminUnitDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitDaoImpl" autowire="constructor" />
+    <bean id="adminUnitReviewDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitReviewDaoImpl" autowire="constructor" />
     <bean id="countryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDaoImpl" autowire="constructor" />
     <bean id="diseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceReviewDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDaoImpl" autowire="constructor" />
     <bean id="expertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDaoImpl" autowire="constructor" />
     <bean id="feedDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDaoImpl" autowire="constructor" />
+    <bean id="globalAdminUnitDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GlobalAdminUnitDaoImpl" autowire="constructor" />
     <bean id="geoNameDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDaoImpl" autowire="constructor" />
     <bean id="geoNamesLocationPrecisionDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDaoImpl" autowire="constructor" />
     <bean id="healthMapCountryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapCountryDaoImpl" autowire="constructor" />
     <bean id="healthMapDiseaseDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapDiseaseDaoImpl" autowire="constructor" />
     <bean id="locationDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDaoImpl" autowire="constructor" />
     <bean id="provenanceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDaoImpl" autowire="constructor" />
+    <bean id="tropicalAdminUnitDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.TropicalAdminUnitDaoImpl" autowire="constructor" />
     <bean id="validatorDiseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDaoImpl" autowire="constructor" />
 
     <!-- Database configuration -->

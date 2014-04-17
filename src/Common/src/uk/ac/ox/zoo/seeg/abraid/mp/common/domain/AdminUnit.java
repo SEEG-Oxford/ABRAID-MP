@@ -22,6 +22,7 @@ public class AdminUnit {
     @Column(name = "gaul_code")
     private Integer gaulCode;
 
+    @Column
     // The admin unit's level (1 or 2).
     private char level;
 
