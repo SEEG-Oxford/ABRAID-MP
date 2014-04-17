@@ -48,6 +48,11 @@ public class ModelRunController {
 
         try {
             LOGGER.info(LOG_STARTING_NEW_BACKGROUND_MODEL_RUN);
+
+            // NOTE: Here I am using "foo" as a default disease name. The expectation is that it will be passed into
+            // this method, maybe as a HTTP header, or maybe as part of a TBD json DTO that encapsulates the disease
+            // occurrence feature collection and the disease extent data. There is no value in setting this up until we
+            // know the format of the extent data.
             RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration("foo");
             modelRunner.runModel(runConfiguration, occurrenceData); // Ignore result for now
         } catch (Exception e) {
