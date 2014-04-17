@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service interface for diseases, including disease occurrences.
@@ -30,6 +31,12 @@ public interface DiseaseService {
      * @return A list of all validator disease groups.
      */
     List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups();
+
+    /**
+     * For each validator disease group, get a list of its disease groups.
+     * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
+     */
+    Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
 
     /**
      * Saves a disease occurrence.

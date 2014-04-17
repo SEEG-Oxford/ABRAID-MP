@@ -75,6 +75,7 @@ public class DataValidationController {
             model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
             model.addAttribute("allOtherDiseases",
                     sortByDisplayName(getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests)));
+            model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
         }

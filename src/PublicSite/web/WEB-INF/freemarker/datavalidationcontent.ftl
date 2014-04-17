@@ -36,8 +36,11 @@
                         <option data-bind="html: name, option: $data"></option>
                     </optgroup>
                 </select>
+                <div data-bind="if: selectedType() == 'disease extent'">
+                    <select data-bind="options: selectedDisease().diseaseGroups, optionsText: 'name', value: selectedDiseaseGroup"></select>
+                </div>
             </h4>
-            <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview" style="text-align: center">
+            <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview()" style="text-align: center">
                 There are no occurrences in need of review for this disease.
             </div>
         </div>
@@ -62,10 +65,18 @@
         var diseaseOccurrenceReviewCount = ${reviewCount?c};
         var diseaseInterests = [
             <#if diseaseInterests??>
-                <#list diseaseInterests as disease>
+                <#list diseaseInterests as validatorDiseaseGroup>
                     {
-                        name: "${disease.getName()?lower_case?js_string}",
-                        id: ${disease.id?c}
+                        name: "${validatorDiseaseGroup.getName()?lower_case?js_string}",
+                        id: ${validatorDiseaseGroup.id?c},
+                        diseaseGroups: [
+                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                {
+                                    name: "${diseaseGroup.getName()?lower_case?js_string}",
+                                    id: ${diseaseGroup.id?c}
+                                },
+                            </#list>
+                        ]
                     },
                 </#list>
             <#else>
@@ -77,10 +88,18 @@
         ];
         var allOtherDiseases = [
             <#if allOtherDiseases??>
-                <#list allOtherDiseases as disease>
+                <#list allOtherDiseases as validatorDiseaseGroup>
                     {
-                        name: "${disease.getName()?lower_case?js_string}",
-                        id: ${disease.id?c}
+                        name: "${validatorDiseaseGroup.getName()?lower_case?js_string}",
+                        id: ${validatorDiseaseGroup.id?c},
+                        diseaseGroups: [
+                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                {
+                                    name: "${diseaseGroup.getName()?lower_case?js_string}",
+                                    id: ${diseaseGroup.id?c}
+                                },
+                            </#list>
+                        ]
                     },
                 </#list>
             </#if>

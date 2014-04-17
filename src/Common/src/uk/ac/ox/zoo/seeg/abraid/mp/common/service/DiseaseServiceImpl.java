@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Service class for diseases, including disease occurrences.
@@ -79,6 +79,27 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups() {
         return validatorDiseaseGroupDao.getAll();
+    }
+
+    /**
+     * Gets the list of disease groups, for each validator disease group.
+     * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
+     */
+    @Override
+    public Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap() {
+        List<DiseaseGroup> allDiseaseGroups = getAllDiseaseGroups();
+        Map<String, List<DiseaseGroup>> map = new HashMap<>();
+        for (DiseaseGroup diseaseGroup : allDiseaseGroups) {
+            if (diseaseGroup.getValidatorDiseaseGroup() != null) {
+                String name = diseaseGroup.getValidatorDiseaseGroup().getName();
+                if (map.containsKey(name)) {
+                    map.get(name).add(diseaseGroup);
+                } else {
+                    map.put(name, new ArrayList<>(Arrays.asList(diseaseGroup)));
+                }
+            }
+        }
+        return map;
     }
 
     /**

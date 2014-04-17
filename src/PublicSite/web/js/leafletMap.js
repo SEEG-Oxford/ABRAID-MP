@@ -155,7 +155,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
     clusterLayer.on('clusterclick', resetSelectedPoint);
 
     // Add the new feature collection to the clustered layer, and zoom to its bounds
-    function switchDiseaseLayer(diseaseId) {
+    function switchDiseaseOccurrenceLayer(diseaseId) {
         clusterLayer.clearLayers();
         diseaseOccurrenceLayer.clearLayers();
         layerMap = {};
@@ -189,8 +189,50 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         }
     }
 
+    function getColour(c) {
+        return c == 'PRESENCE' ? '#9e1e71' :
+                    'POSSIBLE_PRESENCE' ? '#c478a9' :
+                    'UNCERTAIN' ? '#ffffbf' :
+                    'POSSIBLE_ABSENCE' ? '#b5caaa' :
+                    'ABSENCE' ? '#84a872' : '';
+    }
+
+    function diseaseExtentLayerStyle(feature) {
+        return {
+            fillColor: getColour(feature.properties.diseaseExtentClass),
+            fillOpacity: 0.7,
+            weight: 2,
+            opacity: 1,
+            color: white
+        };
+    }
+
+    var diseaseExtentLayer = L.geoJson([], {style: diseaseExtentLayerStyle}).addTo(map);
+
+    function switchDiseaseExtentLayer(diseaseId) {
+        var geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/extent';
+        $.getJSON(geoJsonRequestUrl, function (featureCollection) {
+            diseaseExtentLayer.addData(featureCollection);
+            map.fitBound(diseaseExtentLayer.getBounds());
+            // Fit bounds to P/PP polygons + neighbours...
+        };
+    }
+
+    function toggleValidationTypeLayer() {
+        if (map.hasLayer(diseaseExtentLayer)) {
+            map.removeLayer(diseaseExtentLayer);
+            clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
+        } else {
+            map.removeLayer(diseaseOccurrenceLayer);
+            map.removeLayer(clusterLayer);
+            diseaseExtentLayer.addTo(map);
+        }
+    }
+
     return {
-        switchDiseaseLayer: switchDiseaseLayer,
-        removeReviewedPoint: removeReviewedPoint
+        switchDiseaseOccurrenceLayer: switchDiseaseOccurrenceLayer,
+        switchDiseaseExtentLayer: switchDiseaseExtentLayer,
+        removeReviewedPoint: removeReviewedPoint,
+        toggleValidationTypeLayer: toggleValidationTypeLayer
     };
 }(L, jQuery, DataValidationViewModels, wmsUrl, loggedIn));
