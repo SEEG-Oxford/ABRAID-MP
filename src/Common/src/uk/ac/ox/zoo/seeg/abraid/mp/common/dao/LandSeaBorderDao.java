@@ -10,5 +10,9 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public interface LandSeaBorderDao {
+    /**
+     * Gets all land-sea borders.
+     * @return All land-sea borders.
+     */
     List<LandSeaBorder> getAll();
 }

@@ -166,9 +166,9 @@ public class GeometryUtilsTest {
     @Test
     public void concatenateMultiPolygons() {
         // Arrange
-        MultiPolygon onePolygon = GeometryUtils.createMultiPolygon(new Polygon[] { getTriangle() });
+        MultiPolygon onePolygon = GeometryUtils.createMultiPolygon(new Polygon[] {getTriangle()});
         MultiPolygon twoPolygons = GeometryUtils.createMultiPolygon(
-                new Polygon[] { getSquare(), getFivePointedPolygon()});
+                new Polygon[] {getSquare(), getFivePointedPolygon()});
 
         List<MultiPolygon> multiPolygonList = Arrays.asList(onePolygon, null, twoPolygons);
 
@@ -273,6 +273,12 @@ public class GeometryUtilsTest {
 
         // Assert
         assertThat(closestPoint.equalsExact(expectedClosestPoint)).isTrue();
+    }
+
+    // Asserted exception is in the @Test annotation - cannot use catchException() for static methods
+    @Test(expected = IllegalArgumentException.class)
+    public void createPolygonThrowsExceptionIfNumberParametersIsOdd() {
+        GeometryUtils.createPolygon(1, 1, 3, 2, 2, 3, 1);
     }
 
     private Polygon getTriangle() {

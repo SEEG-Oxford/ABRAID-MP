@@ -44,9 +44,13 @@ public final class GeometryUtils {
      * @return A polygon.
      */
     public static Polygon createPolygon(double... xOrY) {
+        if (xOrY.length % 2 > 0) {
+            throw new IllegalArgumentException("Number of parameters must be even");
+        }
+
         Coordinate[] coordinates = new Coordinate[xOrY.length / 2];
         for (int i = 0; i < xOrY.length; i += 2) {
-            Coordinate coordinate = new Coordinate(xOrY[i], xOrY[i+1]);
+            Coordinate coordinate = new Coordinate(xOrY[i], xOrY[i + 1]);
             PRECISION_MODEL.makePrecise(coordinate);
             coordinates[i / 2] = coordinate;
         }

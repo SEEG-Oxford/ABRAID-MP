@@ -42,7 +42,7 @@ public class QCLookupDataTest {
         // Arrange
         LocationService locationService = mock(LocationService.class);
         MultiPolygon expectedMultiPolygon = GeometryUtils.createMultiPolygon(
-                new Polygon[] { getTriangle(), getSquare() });
+                new Polygon[] {getTriangle(), getSquare()});
         when(locationService.getAllLandSeaBorders()).thenReturn(getLandSeaBorderList());
 
         // Act
@@ -55,8 +55,8 @@ public class QCLookupDataTest {
 
     private List<LandSeaBorder> getLandSeaBorderList() {
         return Arrays.asList(
-                new LandSeaBorder(GeometryUtils.createMultiPolygon(new Polygon[] { getTriangle() })),
-                new LandSeaBorder(GeometryUtils.createMultiPolygon(new Polygon[] { getSquare() }))
+                new LandSeaBorder(GeometryUtils.createMultiPolygon(new Polygon[] {getTriangle()})),
+                new LandSeaBorder(GeometryUtils.createMultiPolygon(new Polygon[] {getSquare()}))
         );
     }
 

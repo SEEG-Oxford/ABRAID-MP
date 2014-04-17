@@ -79,6 +79,6 @@ public class LandSnapperTest {
     private MultiPolygon getLandSeaBorders() {
         Polygon bigSquare = GeometryUtils.createPolygon(5, 5, 100, 5, 100, 100, 5, 100, 5, 5);
         Polygon smallTriangle = GeometryUtils.createPolygon(110, 110, 120, 120, 120, 105, 110, 110);
-        return GeometryUtils.createMultiPolygon(new Polygon[] { bigSquare, smallTriangle });
+        return GeometryUtils.createMultiPolygon(new Polygon[] {bigSquare, smallTriangle});
     }
 }

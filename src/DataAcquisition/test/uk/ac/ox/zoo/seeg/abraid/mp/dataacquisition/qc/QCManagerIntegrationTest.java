@@ -42,8 +42,7 @@ public class QCManagerIntegrationTest {
     @Test
     public void stage1NotRunWhenLocationPrecisionIsPreciseAndStage2Fails() {
         // Arrange
-        Location location = new Location("Mīr Ali Cantonment, Federally Administered Tribal Areas, Pakistan",
-                70.27333, 32.98667, LocationPrecision.PRECISE);
+        Location location = new Location("Somewhere in the North Sea", 3.524163, 56.051420, LocationPrecision.PRECISE);
 
         // Act
         int passedQCStage = qcManager.performQC(location);
@@ -52,8 +51,8 @@ public class QCManagerIntegrationTest {
         assertThat(passedQCStage).isEqualTo(1);
         assertThat(location.getAdminUnit()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC stage " +
-                "2 failed: location too distant from land (closest point is (129.333210,33.166629) at distance " +
-                "5436.397km).");
+                "2 failed: location too distant from land (closest point is (4.916593,53.291621) at distance " +
+                "320.061km).");
     }
 
     @Test

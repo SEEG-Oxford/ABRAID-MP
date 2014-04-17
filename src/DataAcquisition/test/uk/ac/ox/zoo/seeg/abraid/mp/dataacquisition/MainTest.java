@@ -103,9 +103,10 @@ public class MainTest {
         assertThat(occurrence1Location.getHealthMapCountry()).isNotNull();
         assertThat(occurrence1Location.getHealthMapCountry().getName()).isEqualTo("Malaysia");
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
-        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(1);
+        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(2);
         assertThat(occurrence1Location.getAdminUnit()).isNull();
-        assertThat(occurrence1Location.getQcMessage()).isNull();
+        assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
+                "ADMIN2. QC stage 2 passed: location already on land.");
 
         assertThatGeoNameExists(1735161, "PPLC");
 
@@ -137,9 +138,10 @@ public class MainTest {
         assertThat(occurrence2Location.getHealthMapCountry()).isNotNull();
         assertThat(occurrence2Location.getHealthMapCountry().getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
-        assertThat(occurrence2Location.getPassedQCStage()).isEqualTo(1);
+        assertThat(occurrence2Location.getPassedQCStage()).isEqualTo(2);
         assertThat(occurrence2Location.getAdminUnit()).isNull();
-        assertThat(occurrence2Location.getQcMessage()).isNull();
+        assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
+                "ADMIN2. QC stage 2 passed: location already on land.");
 
         assertThatGeoNameExists(2186224, "PCLI");
 
