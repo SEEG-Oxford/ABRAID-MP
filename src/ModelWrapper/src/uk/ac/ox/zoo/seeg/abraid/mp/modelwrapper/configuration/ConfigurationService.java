@@ -80,4 +80,16 @@ public interface ConfigurationService {
      * @param value The max duration.
      */
     void setMaxModelRunDuration(int value);
+
+    /**
+     * Gets the current directory for covariate files.
+     * @return The directory for covariate files.
+     */
+    String getCovariateDirectory();
+
+    /**
+     * Sets the current directory for covariate files.
+     * @param value The directory for covariate files.
+     */
+    void setCovariateDirectory(String path);
 }

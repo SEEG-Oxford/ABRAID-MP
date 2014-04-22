@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -321,5 +322,51 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(FileUtils.readFileToString(testFile)).contains("r.max.duration = " + expectedValue);
+    }
+
+    @Test
+    public void getCovariateDirectoryReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, new OSCheckerImpl());
+
+        // Act
+        String result = target.getCovariateDirectory();
+
+        // Assert
+        assertThat(new File(result).getParentFile().getAbsolutePath()).isEqualTo(target.getCacheDirectory());
+        assertThat(new File(result).getName()).isEqualTo("covariates");
+    }
+
+    @Test
+    public void getCovariateDirectoryReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedValue = "foo";
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "covariate.dir", expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+
+        // Act
+        String result = target.getCovariateDirectory();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void setCovariateDirectoryUpdatesFile() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+
+        String expectedValue = "bar";
+
+        // Act
+        target.setCovariateDirectory(expectedValue);
+
+        // Assert
+        assertThat(FileUtils.readFileToString(testFile)).contains("covariate.dir = " + expectedValue);
     }
 }
