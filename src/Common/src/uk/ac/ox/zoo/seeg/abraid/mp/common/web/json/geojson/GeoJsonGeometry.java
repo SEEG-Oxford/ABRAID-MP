@@ -11,24 +11,24 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public abstract class GeoJsonGeometry<TCrs extends GeoJsonCrs> extends GeoJsonObject<TCrs> {
-    private List<Double> coordinates;
+public abstract class GeoJsonGeometry<TCrs extends GeoJsonCrs, TCoordinates> extends GeoJsonObject<TCrs> {
+    private TCoordinates coordinates;
 
     public GeoJsonGeometry() {
     }
 
-    public GeoJsonGeometry(GeoJsonGeometryType type, List<Double> coordinates, TCrs crs, List<Double> bbox) {
+    public GeoJsonGeometry(GeoJsonGeometryType type, TCoordinates coordinates, TCrs crs, List<Double> bbox) {
         super(type.getGeoJsonObjectType(), crs, bbox);
 
         setCoordinates(coordinates);
     }
 
-    public List<Double> getCoordinates() {
+    public TCoordinates getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(List<Double> coordinates) {
-        this.coordinates = Collections.unmodifiableList(coordinates);
+    public void setCoordinates(TCoordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     ///COVERAGE:OFF - generated code
