@@ -4,15 +4,18 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Represents an admin unit from the global shapefile.
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries(
+        @NamedQuery(
+                name = "getGlobalAdminUnitByGaulCode",
+                query = "from GlobalAdminUnit where gaulCode=:gaulCode"
+        )
+)
 @Entity
 @Table(name = "admin_unit_global")
 @Immutable
@@ -37,16 +40,6 @@ public class GlobalAdminUnit {
     @Column(nullable = false)
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon geom;
-
-    public GlobalAdminUnit() {
-    }
-
-    public GlobalAdminUnit(Integer gaulCode, char level, String name, String publicName) {
-        this.gaulCode = gaulCode;
-        this.level = level;
-        this.name = name;
-        this.publicName = publicName;
-    }
 
     public Integer getGaulCode() {
         return gaulCode;

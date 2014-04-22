@@ -14,4 +14,11 @@ public interface GlobalAdminUnitDao {
      * @return A list of all the global administrative units.
      */
     List<GlobalAdminUnit> getAll();
+
+    /**
+     * Gets the global admin unit, specified by its GAUL code.
+     * @param gaulCode The gaul code of the admin unit.
+     * @return The global admin unit.
+     */
+    GlobalAdminUnit getByGaulCode(Integer gaulCode);
 }

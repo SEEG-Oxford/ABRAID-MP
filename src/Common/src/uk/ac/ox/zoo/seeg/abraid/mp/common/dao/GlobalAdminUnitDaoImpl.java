@@ -11,4 +11,14 @@ public class GlobalAdminUnitDaoImpl extends AbstractDao<GlobalAdminUnit, Integer
     public GlobalAdminUnitDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
+    /**
+     * Gets the global admin unit, specified by its GAUL code.
+     * @param gaulCode The gaul code of the admin unit.
+     * @return The global admin unit.
+     */
+    @Override
+    public GlobalAdminUnit getByGaulCode(Integer gaulCode) {
+        return uniqueResultNamedQuery("getGlobalAdminUnitByGaulCode", "gaulCode", gaulCode);
+    }
 }
