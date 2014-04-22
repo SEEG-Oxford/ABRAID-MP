@@ -9,14 +9,15 @@ import javax.persistence.*;
 
 /**
  * Represents the extent class (ie presence, absence) of a disease group across a administrative unit.
- * The admin unit will either be GlobalAdminUnit or TropicalAdminUnit, depending on the property of the DiseaseGroup.
+ * The admin unit will either be AdminUnitGlobal or AdminUnitTropical, depending on the property of the DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
  */
 @NamedQueries(
         @NamedQuery(
-                name = "getDiseaseExtentClass",
-                query = "select diseaseExtentClass from AdminUnitDiseaseExtentClass " +
-                        "where globalAdminUnit.gaulCode=:gaulCode and diseaseGroup.id=:diseaseGroupId"
+                name = "getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId",
+                query = "from AdminUnitDiseaseExtentClass a " +
+                        "inner join fetch a.adminUnitGlobal " +
+                        "where a.diseaseGroup.id=:diseaseGroupId"
         )
 )
 @Entity
@@ -30,12 +31,12 @@ public class AdminUnitDiseaseExtentClass {
     // The global administrative unit.
     @ManyToOne
     @JoinColumn(name = "global_gaul_code")
-    private GlobalAdminUnit globalAdminUnit;
+    private AdminUnitGlobal adminUnitGlobal;
 
     // The tropical administrative unit.
     @ManyToOne
     @JoinColumn(name = "tropical_gaul_code")
-    private TropicalAdminUnit tropicalAdminUnit;
+    private AdminUnitTropical adminUnitTropical;
 
     // The disease group.
     @ManyToOne
@@ -44,6 +45,7 @@ public class AdminUnitDiseaseExtentClass {
 
     // The disease extent class.
     @Column(name = "disease_extent_class")
+    @Enumerated(EnumType.STRING)
     private DiseaseExtentClass diseaseExtentClass;
 
     // The database row creation date.
@@ -56,20 +58,20 @@ public class AdminUnitDiseaseExtentClass {
         return id;
     }
 
-    public GlobalAdminUnit getGlobalAdminUnit() {
-        return globalAdminUnit;
+    public AdminUnitGlobal getAdminUnitGlobal() {
+        return adminUnitGlobal;
     }
 
-    public void setGlobalAdminUnit(GlobalAdminUnit globalAdminUnit) {
-        this.globalAdminUnit = globalAdminUnit;
+    public void setAdminUnitGlobal(AdminUnitGlobal adminUnitGlobal) {
+        this.adminUnitGlobal = adminUnitGlobal;
     }
 
-    public TropicalAdminUnit getTropicalAdminUnit() {
-        return tropicalAdminUnit;
+    public AdminUnitTropical getAdminUnitTropical() {
+        return adminUnitTropical;
     }
 
-    public void setTropicalAdminUnit(TropicalAdminUnit tropicalAdminUnit) {
-        this.tropicalAdminUnit = tropicalAdminUnit;
+    public void setAdminUnitTropical(AdminUnitTropical adminUnitTropical) {
+        this.adminUnitTropical = adminUnitTropical;
     }
 
     public DiseaseGroup getDiseaseGroup() {
@@ -104,10 +106,10 @@ public class AdminUnitDiseaseExtentClass {
         if (!createdDate.equals(that.createdDate)) return false;
         if (diseaseExtentClass != that.diseaseExtentClass) return false;
         if (!diseaseGroup.equals(that.diseaseGroup)) return false;
-        if (globalAdminUnit != null ? !globalAdminUnit.equals(that.globalAdminUnit) : that.globalAdminUnit != null)
+        if (adminUnitGlobal != null ? !adminUnitGlobal.equals(that.adminUnitGlobal) : that.adminUnitGlobal != null)
             return false;
         if (!id.equals(that.id)) return false;
-        if (tropicalAdminUnit != null ? !tropicalAdminUnit.equals(that.tropicalAdminUnit) : that.tropicalAdminUnit != null)
+        if (adminUnitTropical != null ? !adminUnitTropical.equals(that.adminUnitTropical) : that.adminUnitTropical != null)
             return false;
 
         return true;
@@ -116,8 +118,8 @@ public class AdminUnitDiseaseExtentClass {
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + (globalAdminUnit != null ? globalAdminUnit.hashCode() : 0);
-        result = 31 * result + (tropicalAdminUnit != null ? tropicalAdminUnit.hashCode() : 0);
+        result = 31 * result + (adminUnitGlobal != null ? adminUnitGlobal.hashCode() : 0);
+        result = 31 * result + (adminUnitTropical != null ? adminUnitTropical.hashCode() : 0);
         result = 31 * result + diseaseGroup.hashCode();
         result = 31 * result + diseaseExtentClass.hashCode();
         result = 31 * result + createdDate.hashCode();

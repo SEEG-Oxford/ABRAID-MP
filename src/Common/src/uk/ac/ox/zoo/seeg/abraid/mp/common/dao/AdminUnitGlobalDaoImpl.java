@@ -1,14 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.SessionFactory;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GlobalAdminUnit;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
 
 /**
- * The GlobalAdminUnit entity's Data Access Object.
+ * The AdminUnitGlobal entity's Data Access Object.
  * Copyright (c) 2014 University of Oxford
  */
-public class GlobalAdminUnitDaoImpl extends AbstractDao<GlobalAdminUnit, Integer> implements GlobalAdminUnitDao {
-    public GlobalAdminUnitDaoImpl(SessionFactory sessionFactory) {
+public class AdminUnitGlobalDaoImpl extends AbstractDao<AdminUnitGlobal, Integer> implements AdminUnitGlobalDao {
+    public AdminUnitGlobalDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
 
@@ -18,7 +18,7 @@ public class GlobalAdminUnitDaoImpl extends AbstractDao<GlobalAdminUnit, Integer
      * @return The global admin unit.
      */
     @Override
-    public GlobalAdminUnit getByGaulCode(Integer gaulCode) {
+    public AdminUnitGlobal getByGaulCode(Integer gaulCode) {
         return uniqueResultNamedQuery("getGlobalAdminUnitByGaulCode", "gaulCode", gaulCode);
     }
 }

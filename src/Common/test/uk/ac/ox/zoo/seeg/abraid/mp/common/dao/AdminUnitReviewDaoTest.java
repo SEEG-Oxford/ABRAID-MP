@@ -13,7 +13,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class AdminUnitReviewDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
-    private GlobalAdminUnitDao globalAdminUnitDao;
+    private AdminUnitGlobalDao adminUnitGlobalDao;
 
     @Autowired
     private AdminUnitReviewDao adminUnitReviewDao;
@@ -29,10 +29,10 @@ public class AdminUnitReviewDaoTest extends AbstractSpringIntegrationTests {
         // Arrange
         Expert expert = expertDao.getById(2);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
-        GlobalAdminUnit globalAdminUnit = globalAdminUnitDao.getByGaulCode(2);
+        AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2);
         DiseaseExtentClass response = DiseaseExtentClass.PRESENCE;
 
-        AdminUnitReview review = createAdminUnitReview(expert, globalAdminUnit, diseaseGroup, response);
+        AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobal, diseaseGroup, response);
 
         // Act
         adminUnitReviewDao.save(review);
@@ -48,16 +48,16 @@ public class AdminUnitReviewDaoTest extends AbstractSpringIntegrationTests {
         assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
         assertThat(review.getExpert().getValidatorDiseaseGroups()).containsAll(expert.getValidatorDiseaseGroups());
         assertThat(review.getDiseaseGroup()).isEqualTo(diseaseGroup);
-        assertThat(review.getGlobalAdminUnit()).isEqualTo(globalAdminUnit);
-        assertThat(review.getTropicalAdminUnit()).isNull();
+        assertThat(review.getAdminUnitGlobal()).isEqualTo(adminUnitGlobal);
+        assertThat(review.getAdminUnitTropical()).isNull();
         assertThat(review.getResponse()).isEqualTo(response);
     }
 
-    private AdminUnitReview createAdminUnitReview(Expert expert, GlobalAdminUnit globalAdminUnit,
+    private AdminUnitReview createAdminUnitReview(Expert expert, AdminUnitGlobal adminUnitGlobal,
                                                   DiseaseGroup diseaseGroup, DiseaseExtentClass response) {
         AdminUnitReview review = new AdminUnitReview();
         review.setExpert(expert);
-        review.setGlobalAdminUnit(globalAdminUnit);
+        review.setAdminUnitGlobal(adminUnitGlobal);
         review.setDiseaseGroup(diseaseGroup);
         review.setResponse(response);
         return review;

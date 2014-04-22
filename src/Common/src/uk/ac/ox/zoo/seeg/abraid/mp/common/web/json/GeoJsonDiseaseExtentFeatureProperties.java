@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GlobalAdminUnit;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 
 /**
@@ -11,7 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
  */
 public class GeoJsonDiseaseExtentFeatureProperties {
     @JsonView(DisplayJsonView.class)
-    private String adminUnitPublicName;
+    private String name;
 
     @JsonView(DisplayJsonView.class)
     private DiseaseExtentClass diseaseExtentClass;
@@ -19,18 +19,18 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 //    @JsonView(DisplayJsonView.class)
 //    private int diseaseOccurrenceCount;
 
-    public GeoJsonDiseaseExtentFeatureProperties(GlobalAdminUnit globalAdminUnit, DiseaseExtentClass diseaseExtentClass)
+    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobal adminUnitGlobal, DiseaseExtentClass diseaseExtentClass)
     {
-        setAdminUnitPublicName(globalAdminUnit.getPublicName());
+        setName(adminUnitGlobal.getPublicName());
         setDiseaseExtentClass(diseaseExtentClass);
     }
 
-    public String getAdminUnitPublicName() {
-        return adminUnitPublicName;
+    public String getName() {
+        return name;
     }
 
-    public void setAdminUnitPublicName(String adminUnitPublicName) {
-        this.adminUnitPublicName = adminUnitPublicName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public DiseaseExtentClass getDiseaseExtentClass() {
@@ -50,7 +50,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
         GeoJsonDiseaseExtentFeatureProperties that = (GeoJsonDiseaseExtentFeatureProperties) o;
 
-        if (adminUnitPublicName != null ? !adminUnitPublicName.equals(that.adminUnitPublicName) : that.adminUnitPublicName != null)
+        if (name != null ? !name.equals(that.name) : that.name != null)
             return false;
         if (diseaseExtentClass != that.diseaseExtentClass) return false;
 
@@ -59,7 +59,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     @Override
     public int hashCode() {
-        int result = adminUnitPublicName != null ? adminUnitPublicName.hashCode() : 0;
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (diseaseExtentClass != null ? diseaseExtentClass.hashCode() : 0);
         return result;
     }

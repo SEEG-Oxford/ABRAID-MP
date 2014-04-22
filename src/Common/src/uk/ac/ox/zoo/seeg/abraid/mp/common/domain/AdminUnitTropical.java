@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "admin_unit_tropical")
 @Immutable
-public class TropicalAdminUnit {
+public class AdminUnitTropical {
     // The admin unit's GAUL code.
     @Id
     @Column(name = "gaul_code")
@@ -63,9 +63,9 @@ public class TropicalAdminUnit {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TropicalAdminUnit)) return false;
+        if (!(o instanceof AdminUnitTropical)) return false;
 
-        TropicalAdminUnit that = (TropicalAdminUnit) o;
+        AdminUnitTropical that = (AdminUnitTropical) o;
 
         if (level != that.level) return false;
         if (!gaulCode.equals(that.gaulCode)) return false;

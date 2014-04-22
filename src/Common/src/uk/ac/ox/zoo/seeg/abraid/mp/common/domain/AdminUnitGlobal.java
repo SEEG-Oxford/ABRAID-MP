@@ -13,13 +13,13 @@ import javax.persistence.*;
 @NamedQueries(
         @NamedQuery(
                 name = "getGlobalAdminUnitByGaulCode",
-                query = "from GlobalAdminUnit where gaulCode=:gaulCode"
+                query = "from AdminUnitGlobal where gaulCode=:gaulCode"
         )
 )
 @Entity
 @Table(name = "admin_unit_global")
 @Immutable
-public class GlobalAdminUnit {
+public class AdminUnitGlobal {
     // The admin unit's GAUL code.
     @Id
     @Column(name = "gaul_code")
@@ -66,9 +66,9 @@ public class GlobalAdminUnit {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof GlobalAdminUnit)) return false;
+        if (!(o instanceof AdminUnitGlobal)) return false;
 
-        GlobalAdminUnit that = (GlobalAdminUnit) o;
+        AdminUnitGlobal that = (AdminUnitGlobal) o;
 
         if (level != that.level) return false;
         if (!gaulCode.equals(that.gaulCode)) return false;

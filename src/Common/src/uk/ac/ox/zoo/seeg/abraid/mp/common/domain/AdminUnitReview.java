@@ -34,12 +34,12 @@ public class AdminUnitReview {
     // The global administrative unit.
     @ManyToOne
     @JoinColumn(name = "global_gaul_code")
-    private GlobalAdminUnit globalAdminUnit;
+    private AdminUnitGlobal adminUnitGlobal;
 
     // The tropical administrative unit.
     @ManyToOne
     @JoinColumn(name = "tropical_gaul_code")
-    private TropicalAdminUnit tropicalAdminUnit;
+    private AdminUnitTropical adminUnitTropical;
 
     // The disease group (to clarify, this is not referring to the validator disease group).
     @ManyToOne
@@ -73,20 +73,20 @@ public class AdminUnitReview {
         this.expert = expert;
     }
 
-    public GlobalAdminUnit getGlobalAdminUnit() {
-        return globalAdminUnit;
+    public AdminUnitGlobal getAdminUnitGlobal() {
+        return adminUnitGlobal;
     }
 
-    public void setGlobalAdminUnit(GlobalAdminUnit globalAdminUnit) {
-        this.globalAdminUnit = globalAdminUnit;
+    public void setAdminUnitGlobal(AdminUnitGlobal adminUnitGlobal) {
+        this.adminUnitGlobal = adminUnitGlobal;
     }
 
-    public TropicalAdminUnit getTropicalAdminUnit() {
-        return tropicalAdminUnit;
+    public AdminUnitTropical getAdminUnitTropical() {
+        return adminUnitTropical;
     }
 
-    public void setTropicalAdminUnit(TropicalAdminUnit tropicalAdminUnit) {
-        this.tropicalAdminUnit = tropicalAdminUnit;
+    public void setAdminUnitTropical(AdminUnitTropical adminUnitTropical) {
+        this.adminUnitTropical = adminUnitTropical;
     }
 
     public DiseaseGroup getDiseaseGroup() {
@@ -121,11 +121,11 @@ public class AdminUnitReview {
         if (!createdDate.equals(review.createdDate)) return false;
         if (!diseaseGroup.equals(review.diseaseGroup)) return false;
         if (!expert.equals(review.expert)) return false;
-        if (globalAdminUnit != null ? !globalAdminUnit.equals(review.globalAdminUnit) : review.globalAdminUnit != null)
+        if (adminUnitGlobal != null ? !adminUnitGlobal.equals(review.adminUnitGlobal) : review.adminUnitGlobal != null)
             return false;
         if (!id.equals(review.id)) return false;
         if (response != review.response) return false;
-        if (tropicalAdminUnit != null ? !tropicalAdminUnit.equals(review.tropicalAdminUnit) : review.tropicalAdminUnit != null)
+        if (adminUnitTropical != null ? !adminUnitTropical.equals(review.adminUnitTropical) : review.adminUnitTropical != null)
             return false;
 
         return true;
@@ -135,8 +135,8 @@ public class AdminUnitReview {
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + expert.hashCode();
-        result = 31 * result + (globalAdminUnit != null ? globalAdminUnit.hashCode() : 0);
-        result = 31 * result + (tropicalAdminUnit != null ? tropicalAdminUnit.hashCode() : 0);
+        result = 31 * result + (adminUnitGlobal != null ? adminUnitGlobal.hashCode() : 0);
+        result = 31 * result + (adminUnitTropical != null ? adminUnitTropical.hashCode() : 0);
         result = 31 * result + diseaseGroup.hashCode();
         result = 31 * result + response.hashCode();
         result = 31 * result + createdDate.hashCode();
