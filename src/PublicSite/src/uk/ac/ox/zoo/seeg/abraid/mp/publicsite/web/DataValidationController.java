@@ -141,21 +141,10 @@ public class DataValidationController {
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
-        Map<AdminUnitGlobal, DiseaseExtentClass> adminUnitDiseaseExtentClassMap = new HashMap<>();
-        if (isDiseaseGroupGlobal(diseaseGroupId)) {
-            adminUnitDiseaseExtentClassMap =
-                    diseaseService.getGlobalAdminUnitDiseaseExtentClassMap(diseaseGroupId);
-//        } else {
-//            adminUnitDiseaseExtentClassMap =
-//                    diseaseService.getTropicalAdminUnitDiseaseExtentClassMap(diseaseGroupId);
-        }
         return new ResponseEntity<>(
-                new GeoJsonDiseaseExtentFeatureCollection(adminUnitDiseaseExtentClassMap), HttpStatus.OK);
-    }
-
-    private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        return diseaseGroup.isGlobal();
+           new GeoJsonDiseaseExtentFeatureCollection(diseaseService.getAdminUnitDiseaseExtentClassMap(diseaseGroupId)),
+           HttpStatus.OK
+        );
     }
 
     /**

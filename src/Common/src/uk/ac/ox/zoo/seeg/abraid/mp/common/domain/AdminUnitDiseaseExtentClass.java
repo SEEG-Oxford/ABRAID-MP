@@ -12,14 +12,20 @@ import javax.persistence.*;
  * The admin unit will either be AdminUnitGlobal or AdminUnitTropical, depending on the property of the DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId",
                 query = "from AdminUnitDiseaseExtentClass a " +
                         "inner join fetch a.adminUnitGlobal " +
                         "where a.diseaseGroup.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
+                name = "getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId",
+                query = "from AdminUnitDiseaseExtentClass a " +
+                        "inner join fetch a.adminUnitTropical " +
+                        "where a.diseaseGroup.id=:diseaseGroupId"
         )
-)
+})
 @Entity
 @Table(name = "admin_unit_disease_extent_class")
 public class AdminUnitDiseaseExtentClass {
@@ -53,6 +59,14 @@ public class AdminUnitDiseaseExtentClass {
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
+
+    /**
+     * The AdminUnitGlobal or the AdminUnitTropical, whichever of the pair is not null.
+     * @return The (global or tropical) admin unit.
+     */
+    public AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropical() {
+        return (adminUnitGlobal == null) ? adminUnitTropical : adminUnitGlobal;
+    }
 
     public Integer getId() {
         return id;

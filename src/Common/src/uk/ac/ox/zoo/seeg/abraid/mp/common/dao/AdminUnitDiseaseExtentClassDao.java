@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 
 import java.util.List;
 
@@ -11,9 +10,17 @@ import java.util.List;
  */
 public interface AdminUnitDiseaseExtentClassDao {
     /**
-     * Gets all AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
+     * Gets all global AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
      * @param diseaseGroupId The id of the disease group.
-     * @return A list of the AdminUnitDiseaseExtentClasses.
+     * @return A list of the global AdminUnitDiseaseExtentClasses.
      */
     List<AdminUnitDiseaseExtentClass> getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets all tropical AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of the tropical AdminUnitDiseaseExtentClasses.
+     */
+    List<AdminUnitDiseaseExtentClass> getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+            Integer diseaseGroupId);
 }

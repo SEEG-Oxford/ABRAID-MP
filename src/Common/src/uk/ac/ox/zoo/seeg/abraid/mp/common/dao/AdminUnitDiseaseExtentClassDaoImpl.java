@@ -1,9 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 
 import java.util.List;
 
@@ -18,12 +16,26 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
     }
 
     /**
-     * Gets all AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
+     * Gets all global AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of the AdminUnitDiseaseExtentClasses.
      */
     @Override
-    public List<AdminUnitDiseaseExtentClass> getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(Integer diseaseGroupId) {
-        return listNamedQuery("getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
+    public List<AdminUnitDiseaseExtentClass> getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+            Integer diseaseGroupId) {
+        return listNamedQuery("getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId",
+            "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
+     * Gets all tropical AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of the tropical AdminUnitDiseaseExtentClasses.
+     */
+    @Override
+    public List<AdminUnitDiseaseExtentClass> getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+            Integer diseaseGroupId) {
+        return listNamedQuery("getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId",
+            "diseaseGroupId", diseaseGroupId);
     }
 }

@@ -1,6 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonMultiPolygonGeometry;
@@ -15,25 +15,25 @@ public class GeoJsonDiseaseExtentFeature extends GeoJsonFeature
     public GeoJsonDiseaseExtentFeature() {
     }
 
-    public GeoJsonDiseaseExtentFeature(AdminUnitGlobal adminUnitGlobal, DiseaseExtentClass diseaseExtentClass) {
+    public GeoJsonDiseaseExtentFeature(AdminUnitGlobalOrTropical adminUnit, DiseaseExtentClass diseaseExtentClass) {
         super(
-                extractGaulCode(adminUnitGlobal),
-                extractGeometry(adminUnitGlobal),
-                extractProperties(adminUnitGlobal, diseaseExtentClass),
+                extractGaulCode(adminUnit),
+                extractGeometry(adminUnit),
+                extractProperties(adminUnit, diseaseExtentClass),
                 null, null
         );
     }
 
-    private static int extractGaulCode(AdminUnitGlobal adminUnitGlobal) {
-        return adminUnitGlobal.getGaulCode();
+    private static int extractGaulCode(AdminUnitGlobalOrTropical adminUnit) {
+        return adminUnit.getGaulCode();
     }
 
-    private static GeoJsonMultiPolygonGeometry<GeoJsonNamedCrs> extractGeometry(AdminUnitGlobal adminUnitGlobal) {
-        return new GeoJsonMultiPolygonGeometry<>(adminUnitGlobal.getGeom(), null, null);
+    private static GeoJsonMultiPolygonGeometry<GeoJsonNamedCrs> extractGeometry(AdminUnitGlobalOrTropical adminUnit) {
+        return new GeoJsonMultiPolygonGeometry<>(adminUnit.getGeom(), null, null);
     }
 
-    private static GeoJsonDiseaseExtentFeatureProperties extractProperties(AdminUnitGlobal adminUnitGlobal,
+    private static GeoJsonDiseaseExtentFeatureProperties extractProperties(AdminUnitGlobalOrTropical adminUnit,
                                                                            DiseaseExtentClass diseaseExtentClass) {
-        return new GeoJsonDiseaseExtentFeatureProperties(adminUnitGlobal, diseaseExtentClass);
+        return new GeoJsonDiseaseExtentFeatureProperties(adminUnit, diseaseExtentClass);
     }
 }

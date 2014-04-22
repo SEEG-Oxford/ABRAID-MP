@@ -1,8 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 
 /**
@@ -19,9 +19,10 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 //    @JsonView(DisplayJsonView.class)
 //    private int diseaseOccurrenceCount;
 
-    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobal adminUnitGlobal, DiseaseExtentClass diseaseExtentClass)
+    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobalOrTropical adminUnit,
+                                                 DiseaseExtentClass diseaseExtentClass)
     {
-        setName(adminUnitGlobal.getPublicName());
+        setName(adminUnit.getPublicName());
         setDiseaseExtentClass(diseaseExtentClass);
     }
 

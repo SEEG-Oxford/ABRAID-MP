@@ -71,12 +71,10 @@ public interface DiseaseService {
     boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
                                                                            Integer validatorDiseaseGroupId);
 
-
     /**
-     * For each global admin unit, get the disease extent class for the specified disease group.
+     * For each admin unit, get the disease extent class for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @return The map, from global admin unit, to its disease extent class, for the specified disease group.
+     * @return The map, from admin unit, to its disease extent class, for the specified disease group.
      */
-    Map<AdminUnitGlobal, DiseaseExtentClass> getGlobalAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId);
-
+    Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId);
 }

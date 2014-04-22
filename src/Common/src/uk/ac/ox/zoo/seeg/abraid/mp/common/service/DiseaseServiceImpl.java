@@ -110,21 +110,34 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * For each global admin unit, get the disease extent class for the specified disease group.
+     * For each admin unit, get the disease extent class for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @return The map, from global admin unit, to its disease extent class, for the specified disease group.
+     * @return The map, from admin unit, to its disease extent class, for the specified disease group.
      */
     @Override
-    public Map<AdminUnitGlobal, DiseaseExtentClass> getGlobalAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId) {
-        Map<AdminUnitGlobal, DiseaseExtentClass> map = new HashMap<>();
-        List<AdminUnitDiseaseExtentClass> list =
-                adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+    public Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(
+            Integer diseaseGroupId) {
+        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = new HashMap<>();
+        List<AdminUnitDiseaseExtentClass> list;
+        boolean isDiseaseGroupGlobal = isDiseaseGroupGlobal(diseaseGroupId);
+        if (isDiseaseGroupGlobal) {
+            list =
+            adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+        } else {
+            list =
+            adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+        }
         for (AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass : list) {
-            AdminUnitGlobal adminUnitGlobal = adminUnitDiseaseExtentClass.getAdminUnitGlobal();
+            AdminUnitGlobalOrTropical adminUnit = adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical();
             DiseaseExtentClass diseaseExtentClass = adminUnitDiseaseExtentClass.getDiseaseExtentClass();
-            map.put(adminUnitGlobal, diseaseExtentClass);
+            map.put(adminUnit, diseaseExtentClass);
         }
         return map;
+    }
+
+    private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
+        DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
+        return diseaseGroup.isGlobal();
     }
 
     /**
