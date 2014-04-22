@@ -70,7 +70,7 @@ var DataValidationViewModels = (function () {
         }, this);
         this.selectedDiseaseGroup = ko.observable();
         this.selectedDiseaseGroup.subscribe(function () {
-           LeafletMap.switchDiseaseExtentLayer(this.selectedDiseaseGroup());
+           LeafletMap.switchDiseaseExtentLayer(this.selectedDiseaseGroup().id);
         }, this);
         this.noOccurrencesToReview = ko.observable(false);
     };

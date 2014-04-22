@@ -215,7 +215,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
             diseaseExtentLayer.addData(featureCollection);
             map.fitBound(diseaseExtentLayer.getBounds());
             // Fit bounds to P/PP polygons + neighbours...
-        };
+        });
     }
 
     function toggleValidationTypeLayer() {
