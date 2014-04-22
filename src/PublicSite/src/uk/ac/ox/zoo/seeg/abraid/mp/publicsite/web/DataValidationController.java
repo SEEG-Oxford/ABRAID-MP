@@ -15,16 +15,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller for the expert data validation map page.
@@ -138,13 +136,15 @@ public class DataValidationController {
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
+        Map<GlobalAdminUnit, DiseaseExtentClass> adminUnitDiseaseExtentClassMap = new HashMap<>();
         if (isDiseaseGroupGlobal(diseaseGroupId)) {
             List<GlobalAdminUnit> globalAdminUnits = locationService.getAllGlobalAdminUnits();
-            Map<GlobalAdminUnit, DiseaseExtentClass> adminUnitDiseaseExtentClassMap =
+            adminUnitDiseaseExtentClassMap =
                     diseaseService.getAdminUnitDiseaseExtentClassMap(globalAdminUnits, diseaseGroupId);
         } else {
             List<TropicalAdminUnit> tropicalAdminUnits = locationService.getAllTropicalAdminUnits();
         }
+        return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(adminUnitDiseaseExtentClassMap), HttpStatus.OK);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
