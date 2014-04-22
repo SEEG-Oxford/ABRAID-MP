@@ -19,6 +19,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String LOG_UPDATING_AUTH_CONFIGURATION = "Updating auth configuration: %s %s";
     private static final String LOG_UPDATING_REPOSITORY_URL_CONFIGURATION = "Updating repository url configuration: %s";
     private static final String LOG_UPDATING_VERSION_CONFIGURATION = "Updating repository version configuration: %s";
+    private static final String LOG_UPDATING_R_PATH = "Updating R path configuration: %s";
+    private static final String LOG_UPDATING_RUN_DURATION = "Updating max run duration configuration: %s";
 
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
@@ -141,6 +143,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setRExecutablePath(String path) {
+        LOGGER.info(String.format(LOG_UPDATING_R_PATH, path));
         basicProperties.setProperty(R_EXECUTABLE_KEY, path);
     }
 
@@ -159,6 +162,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setMaxModelRunDuration(int value) {
+        LOGGER.info(String.format(LOG_UPDATING_RUN_DURATION, value));
         basicProperties.setProperty(R_MAX_DURATION_KEY, value);
     }
 

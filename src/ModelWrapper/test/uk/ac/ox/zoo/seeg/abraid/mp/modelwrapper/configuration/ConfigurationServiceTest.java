@@ -34,27 +34,11 @@ public class ConfigurationServiceTest {
         writer.close();
     }
 
-    private void writeStandardSimplePropertiesWithCacheDir(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, String defaultCacheDir)
+    private void writeStandardSimplePropertiesWithExtra(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, String extraKey, String extraValue)
             throws IOException {
         writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
-        writer.println("cache.data.dir = " + defaultCacheDir);
-        writer.close();
-    }
-
-    private void writeStandardSimplePropertiesWithRPath(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, String defaultRPath)
-            throws IOException {
-        writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
-        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
-        writer.println("r.executable.path = " + defaultRPath);
-        writer.close();
-    }
-
-    private void writeStandardSimplePropertiesWithRunDuration(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, String defaultRunDuration)
-            throws IOException {
-        writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
-        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
-        writer.println("r.max.duration = " + defaultRunDuration);
+        writer.println(extraKey + " = " + extraValue);
         writer.close();
     }
 
@@ -207,7 +191,7 @@ public class ConfigurationServiceTest {
         OSChecker osChecker = mock(OSChecker.class);
         File testFile = testFolder.newFile();
         String expectedDir = "foo";
-        writeStandardSimplePropertiesWithCacheDir(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", expectedDir);
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "cache.data.dir", expectedDir);
         ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
 
         // Act
@@ -268,7 +252,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         String expectedValue = "foo";
-        writeStandardSimplePropertiesWithRPath(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", expectedValue);
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "r.executable.path", expectedValue);
         ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
 
         // Act
@@ -313,7 +297,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         int expectedValue = 1234;
-        writeStandardSimplePropertiesWithRunDuration(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "" + expectedValue);
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "r.max.duration", "" + expectedValue);
         ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
 
         // Act
