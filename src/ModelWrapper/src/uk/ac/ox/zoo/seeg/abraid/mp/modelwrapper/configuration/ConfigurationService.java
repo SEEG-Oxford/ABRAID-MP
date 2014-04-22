@@ -89,7 +89,7 @@ public interface ConfigurationService {
 
     /**
      * Sets the current directory for covariate files.
-     * @param value The directory for covariate files.
+     * @param path The directory for covariate files.
      */
     void setCovariateDirectory(String path);
 }

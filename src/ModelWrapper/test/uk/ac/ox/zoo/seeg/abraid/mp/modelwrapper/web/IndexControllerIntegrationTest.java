@@ -100,6 +100,7 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
         when(configurationService.getModelRepositoryVersion()).thenReturn("");
         when(configurationService.getRExecutablePath()).thenReturn("");
         when(configurationService.getMaxModelRunDuration()).thenReturn(0);
+        when(configurationService.getCovariateDirectory()).thenReturn("");
         when(sourceCodeManager.getAvailableVersions()).thenReturn(new ArrayList<String>());
 
         this.mockMvc.perform(get("/")).andExpect(status().isOk());

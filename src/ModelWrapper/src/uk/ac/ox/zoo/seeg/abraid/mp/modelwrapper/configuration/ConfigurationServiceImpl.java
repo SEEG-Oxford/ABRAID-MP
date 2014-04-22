@@ -181,7 +181,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     /**
      * Sets the current directory for covariate files.
-     * @param value The directory for covariate files.
+     * @param path The directory for covariate files.
      */
     @Override
     public void setCovariateDirectory(String path) {
