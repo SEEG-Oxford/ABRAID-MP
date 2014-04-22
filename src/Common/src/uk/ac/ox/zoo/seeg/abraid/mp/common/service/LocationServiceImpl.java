@@ -22,16 +22,18 @@ public class LocationServiceImpl implements LocationService {
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
     private AdminUnitDao adminUnitDao;
+    private LandSeaBorderDao landSeaBorderDao;
 
     public LocationServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
                                LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
-                               GeoNameDao geoNameDao, AdminUnitDao adminUnitDao) {
+                               GeoNameDao geoNameDao, AdminUnitDao adminUnitDao, LandSeaBorderDao landSeaBorderDao) {
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
         this.locationDao = locationDao;
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
         this.geoNameDao = geoNameDao;
         this.adminUnitDao = adminUnitDao;
+        this.landSeaBorderDao = landSeaBorderDao;
     }
 
     /**
@@ -59,6 +61,15 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public List<AdminUnit> getAllAdminUnits() {
         return adminUnitDao.getAll();
+    }
+
+    /**
+     * Gets all land-sea borders.
+     * @return All land-sea borders.
+     */
+    @Override
+    public List<LandSeaBorder> getAllLandSeaBorders() {
+        return landSeaBorderDao.getAll();
     }
 
     /**

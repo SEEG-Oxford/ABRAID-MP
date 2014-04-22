@@ -76,11 +76,11 @@ public class MainQCTest {
         Location occurrence1Location = occurrence.getLocation();
         assertThat(occurrence1Location.getName()).isEqualTo("Bremen, Germany");
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
-        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(1);
+        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(2);
         assertThat(occurrence1Location.getAdminUnit()).isNotNull();
         assertThat(occurrence1Location.getAdminUnit().getGaulCode()).isEqualTo(1312);
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 16.09% of " +
-                "the square root of the area.");
+                "the square root of the area. QC stage 2 passed: location already on land.");
     }
 
     private void assertSecondLocation(DiseaseOccurrence occurrence) {

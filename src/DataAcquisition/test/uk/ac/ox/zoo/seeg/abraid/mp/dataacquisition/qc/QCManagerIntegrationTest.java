@@ -25,7 +25,7 @@ public class QCManagerIntegrationTest {
     private QCManager qcManager;
 
     @Test
-    public void stage1NotRunWhenLocationPrecisionIsCountry() {
+    public void stage1NotRunWhenLocationPrecisionIsCountryAndStage2Passes() {
         // Arrange
         Location location = new Location("Japan", 138.47861, 36.09854, LocationPrecision.COUNTRY);
 
@@ -33,16 +33,16 @@ public class QCManagerIntegrationTest {
         int passedQCStage = qcManager.performQC(location);
 
         // Assert
-        assertThat(passedQCStage).isEqualTo(1);
+        assertThat(passedQCStage).isEqualTo(2);
         assertThat(location.getAdminUnit()).isNull();
-        assertThat(location.getQcMessage()).isNull();
+        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
+                "stage 2 passed: location already on land.");
     }
 
     @Test
-    public void stage1NotRunWhenLocationPrecisionIsPrecise() {
+    public void stage1NotRunWhenLocationPrecisionIsPreciseAndStage2Fails() {
         // Arrange
-        Location location = new Location("Los Angeles, California, United States", -118.2428, 34.0522,
-                LocationPrecision.PRECISE);
+        Location location = new Location("Somewhere in the North Sea", 3.524163, 56.051420, LocationPrecision.PRECISE);
 
         // Act
         int passedQCStage = qcManager.performQC(location);
@@ -50,11 +50,13 @@ public class QCManagerIntegrationTest {
         // Assert
         assertThat(passedQCStage).isEqualTo(1);
         assertThat(location.getAdminUnit()).isNull();
-        assertThat(location.getQcMessage()).isNull();
+        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC stage " +
+                "2 failed: location too distant from land (closest point is (4.916593,53.291621) at distance " +
+                "320.061km).");
     }
 
     @Test
-    public void passesStage1() {
+    public void passesStage1AndStage2() {
         // Arrange
         Location location = new Location("Estado de México, Mexico", -99.4922, 19.3318, LocationPrecision.ADMIN1);
 
@@ -62,11 +64,11 @@ public class QCManagerIntegrationTest {
         int passedQCStage = qcManager.performQC(location);
 
         // Assert
-        assertThat(passedQCStage).isEqualTo(1);
+        assertThat(passedQCStage).isEqualTo(2);
         assertThat(location.getAdminUnit()).isNotNull();
         assertThat(location.getAdminUnit().getGaulCode()).isEqualTo(1006355);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 10.92% of the square " +
-                "root of the area.");
+                "root of the area. QC stage 2 passed: location already on land.");
     }
 
     @Test
