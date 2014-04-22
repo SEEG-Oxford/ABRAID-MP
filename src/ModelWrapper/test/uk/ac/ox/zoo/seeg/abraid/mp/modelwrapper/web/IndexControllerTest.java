@@ -43,6 +43,7 @@ public class IndexControllerTest {
         List<String> expectedVersions = Arrays.asList("1", "2", "3");
         int expectedDuration = 1234;
         String expectedRPath = "foo3";
+        String expectedCovariateDir = "man";
 
         ConfigurationService configurationService = mock(ConfigurationService.class);
         SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
@@ -52,6 +53,7 @@ public class IndexControllerTest {
         when(sourceCodeManager.getAvailableVersions()).thenReturn(expectedVersions);
         when(configurationService.getMaxModelRunDuration()).thenReturn(expectedDuration);
         when(configurationService.getRExecutablePath()).thenReturn(expectedRPath);
+        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
 
         Model model = mock(Model.class);
         IndexController target = new IndexController(configurationService, sourceCodeManager);
@@ -65,6 +67,7 @@ public class IndexControllerTest {
         verify(model, times(1)).addAttribute("available_versions", expectedVersions);
         verify(model, times(1)).addAttribute("r_path", expectedRPath);
         verify(model, times(1)).addAttribute("run_duration", expectedDuration);
+        verify(model, times(1)).addAttribute("covariate_directory", expectedCovariateDir);
     }
 
     @Test
