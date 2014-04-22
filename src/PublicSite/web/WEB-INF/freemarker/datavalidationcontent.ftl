@@ -40,8 +40,10 @@
                     <select data-bind="options: selectedDisease().diseaseGroups, optionsText: 'name', value: selectedDiseaseGroup"></select>
                 </div>
             </h4>
-            <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview()" style="text-align: center">
-                There are no occurrences in need of review for this disease.
+            <div data-bind="if: selectedType() == 'disease occurrences'">
+                <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview()" style="text-align: center">
+                    There are no occurrences in need of review for this disease.
+                </div>
             </div>
         </div>
         <div id="map"></div>

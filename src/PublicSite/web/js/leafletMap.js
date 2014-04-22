@@ -189,12 +189,19 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
         }
     }
 
-    function getColour(c) {
-        return c == 'PRESENCE' ? '#9e1e71' :
-                    'POSSIBLE_PRESENCE' ? '#c478a9' :
-                    'UNCERTAIN' ? '#ffffbf' :
-                    'POSSIBLE_ABSENCE' ? '#b5caaa' :
-                    'ABSENCE' ? '#84a872' : '';
+    function getColour(diseaseExtentClass) {
+        switch (diseaseExtentClass) {
+            case 'PRESENCE':
+                return '#9e1e71';
+            case 'POSSIBLE_PRESENCE':
+                return '#c478a9';
+            case 'UNCERTAIN':
+                return '#ffffbf';
+            case 'POSSIBLE_ABSENCE':
+                return '#b5caaa';
+            case 'ABSENCE':
+                return '#84a872';
+        }
     }
 
     function diseaseExtentLayerStyle(feature) {
@@ -203,29 +210,32 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
             fillOpacity: 0.7,
             weight: 2,
             opacity: 1,
-            color: white
+            color: '#ffffff'
         };
     }
 
-    var diseaseExtentLayer = L.geoJson([], {style: diseaseExtentLayerStyle}).addTo(map);
+    var diseaseExtentLayer = L.geoJson([], {style: diseaseExtentLayerStyle});
 
     function switchDiseaseExtentLayer(diseaseId) {
         var geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/extent';
         $.getJSON(geoJsonRequestUrl, function (featureCollection) {
-            diseaseExtentLayer.addData(featureCollection);
-            map.fitBound(diseaseExtentLayer.getBounds());
-            // Fit bounds to P/PP polygons + neighbours...
+            if (featureCollection.features.length != 0) {
+                diseaseExtentLayer.addData(featureCollection);
+                map.fitBounds(diseaseExtentLayer.getBounds());
+                // Fit bounds to P/PP polygons + neighbours...
+            } else {
+                map.fitWorld();
+            }
         });
     }
 
     function toggleValidationTypeLayer() {
-        if (map.hasLayer(diseaseExtentLayer)) {
-            map.removeLayer(diseaseExtentLayer);
-            clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
-        } else {
-            map.removeLayer(diseaseOccurrenceLayer);
+        if (map.hasLayer(clusterLayer)) {
             map.removeLayer(clusterLayer);
             diseaseExtentLayer.addTo(map);
+        } else {
+            clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
+            map.removeLayer(diseaseExtentLayer);
         }
     }
 
