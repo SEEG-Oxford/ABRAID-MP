@@ -120,8 +120,8 @@ public class DiseaseServiceImpl implements DiseaseService {
             List<GlobalAdminUnit> globalAdminUnits, Integer diseaseGroupId) {
         Map<GlobalAdminUnit, DiseaseExtentClass> map = new HashMap<>();
         for (GlobalAdminUnit globalAdminUnit : globalAdminUnits) {
-            Integer gaulCode = globalAdminUnit.getGaulCode();
-            DiseaseExtentClass diseaseExtentClass = adminUnitDiseaseExtentClassDao.getDiseaseExtentClass(gaulCode, diseaseGroupId);
+            DiseaseExtentClass diseaseExtentClass =
+                    adminUnitDiseaseExtentClassDao.getDiseaseExtentClass(globalAdminUnit.getGaulCode(), diseaseGroupId);
             map.put(globalAdminUnit, diseaseExtentClass);
         }
         return map;

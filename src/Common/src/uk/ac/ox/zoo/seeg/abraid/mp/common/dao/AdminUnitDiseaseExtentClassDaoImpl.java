@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 
 /**
+ * The AdminUnitDiseaseExtentClass entity's Data Access Object.
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDiseaseExtentClass, Integer> implements
@@ -21,7 +22,8 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
      */
     @Override
     public DiseaseExtentClass getDiseaseExtentClass(Integer gaulCode, Integer diseaseGroupId) {
-        Query query = getParameterisedNamedQuery("getDiseaseExtentClass", "gaulCode", gaulCode, "diseaseGroupId", diseaseGroupId);
+        Query query = getParameterisedNamedQuery("getDiseaseExtentClass", "gaulCode", gaulCode,
+                                                                          "diseaseGroupId", diseaseGroupId);
         return (DiseaseExtentClass) query.uniqueResult();
     }
 }

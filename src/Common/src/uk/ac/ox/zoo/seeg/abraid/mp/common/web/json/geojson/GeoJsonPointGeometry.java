@@ -6,7 +6,7 @@ import java.util.List;
  * A DTO for "Point Geometry" objects.
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Implements the specification available from http://geojson.org/geojson-spec.html#point
- * @param <TCrs> The type of crs.
+ * @param <TCrs> The Coordinate Reference System type.
  *
  * Copyright (c) 2014 University of Oxford
  */

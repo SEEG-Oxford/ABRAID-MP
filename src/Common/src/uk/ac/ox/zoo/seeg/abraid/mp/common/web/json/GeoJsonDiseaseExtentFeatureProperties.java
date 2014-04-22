@@ -19,7 +19,8 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 //    @JsonView(DisplayJsonView.class)
 //    private int diseaseOccurrenceCount;
 
-    public GeoJsonDiseaseExtentFeatureProperties(GlobalAdminUnit globalAdminUnit, DiseaseExtentClass diseaseExtentClass) {
+    public GeoJsonDiseaseExtentFeatureProperties(GlobalAdminUnit globalAdminUnit, DiseaseExtentClass diseaseExtentClass)
+    {
         setAdminUnitPublicName(globalAdminUnit.getPublicName());
         setDiseaseExtentClass(diseaseExtentClass);
     }

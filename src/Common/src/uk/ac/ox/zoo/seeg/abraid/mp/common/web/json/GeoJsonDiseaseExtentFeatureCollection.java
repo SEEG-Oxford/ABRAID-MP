@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A DTO to express a list of AdminUnits as a "FeatureCollection", with the extent class of a DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseExtentFeatureCollection
@@ -21,11 +22,11 @@ public class GeoJsonDiseaseExtentFeatureCollection
         super(extractExtentFeatures(map), GeoJsonNamedCrs.createEPSG4326(), null);
     }
 
-    private static List<GeoJsonDiseaseExtentFeature> extractExtentFeatures(Map<GlobalAdminUnit, DiseaseExtentClass> map) {
+    private static List<GeoJsonDiseaseExtentFeature> extractExtentFeatures(Map<GlobalAdminUnit, DiseaseExtentClass> map)
+    {
         List<GeoJsonDiseaseExtentFeature> features = new ArrayList<>();
-        for (GlobalAdminUnit globalAdminUnit : map.keySet()) {
-            DiseaseExtentClass diseaseExtentClass = map.get(globalAdminUnit);
-            features.add(new GeoJsonDiseaseExtentFeature(globalAdminUnit, diseaseExtentClass));
+        for (Map.Entry<GlobalAdminUnit, DiseaseExtentClass> entry : map.entrySet()) {
+            features.add(new GeoJsonDiseaseExtentFeature(entry.getKey(), entry.getValue()));
         }
         return features;
     }

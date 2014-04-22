@@ -103,7 +103,7 @@ public class DataValidationController {
 
     /**
      * Returns the disease occurrence points in need of review by the current user for a given disease id.
-     * @param validatorDiseaseGroupId The id of the validator disease group to return occurrence points for.
+     * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
@@ -127,7 +127,12 @@ public class DataValidationController {
         return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 
-    @Secured({ "ROLE_USER", "ROLE_ADMIN"})
+    /**
+     * Returns the admin units, and their disease extent class, for a given disease id.
+     * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/extent",
             method = RequestMethod.GET,
@@ -141,10 +146,11 @@ public class DataValidationController {
             List<GlobalAdminUnit> globalAdminUnits = locationService.getAllGlobalAdminUnits();
             adminUnitDiseaseExtentClassMap =
                     diseaseService.getAdminUnitDiseaseExtentClassMap(globalAdminUnits, diseaseGroupId);
-        } else {
-            List<TropicalAdminUnit> tropicalAdminUnits = locationService.getAllTropicalAdminUnits();
+//        } else {
+//            List<TropicalAdminUnit> tropicalAdminUnits = locationService.getAllTropicalAdminUnits();
         }
-        return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(adminUnitDiseaseExtentClassMap), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new GeoJsonDiseaseExtentFeatureCollection(adminUnitDiseaseExtentClassMap), HttpStatus.OK);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

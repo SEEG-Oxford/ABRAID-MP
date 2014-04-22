@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,6 +7,7 @@ import java.util.List;
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Implements the specification available from http://geojson.org/geojson-spec.html#geometry-objects
  * @param <TCrs> The type of crs.
+ * @param <TCoordinates> The type of GeoJson Feature's coordinates.
  *
  * Copyright (c) 2014 University of Oxford
  */

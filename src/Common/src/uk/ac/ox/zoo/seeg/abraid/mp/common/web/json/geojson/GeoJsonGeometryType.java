@@ -20,7 +20,7 @@ public enum GeoJsonGeometryType implements GeoJsonNamedEnum {
     //MULTI_LINE_STRING(GeoJsonObjectType.MULTI_LINE_STRING),
     //POLYGON(GeoJsonObjectType.POLYGON),
     /**
-     * A GeoJSON MultiPolygon
+     * A GeoJSON MultiPolygon.
      */
     MULTI_POLYGON(GeoJsonObjectType.MULTI_POLYGON);
     //GEOMETRY_COLLECTION(GeoJsonObjectType.GEOMETRY_COLLECTION);

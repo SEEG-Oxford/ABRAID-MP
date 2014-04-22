@@ -13,7 +13,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class AdminUnitReviewDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
-    GlobalAdminUnitDao globalAdminUnitDao;
+    private GlobalAdminUnitDao globalAdminUnitDao;
 
     @Autowired
     private AdminUnitReviewDao adminUnitReviewDao;
