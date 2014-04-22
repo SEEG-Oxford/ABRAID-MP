@@ -22,21 +22,16 @@ public class LocationServiceImpl implements LocationService {
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
     private AdminUnitDao adminUnitDao;
-    private AdminUnitGlobalDao adminUnitGlobalDao;
-    private AdminUnitTropicalDao adminUnitTropicalDao;
 
     public LocationServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
                                LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
-                               GeoNameDao geoNameDao, AdminUnitDao adminUnitDao, AdminUnitGlobalDao adminUnitGlobalDao,
-                               AdminUnitTropicalDao adminUnitTropicalDao) {
+                               GeoNameDao geoNameDao, AdminUnitDao adminUnitDao) {
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
         this.locationDao = locationDao;
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
         this.geoNameDao = geoNameDao;
         this.adminUnitDao = adminUnitDao;
-        this.adminUnitGlobalDao = adminUnitGlobalDao;
-        this.adminUnitTropicalDao = adminUnitTropicalDao;
     }
 
     /**
@@ -119,23 +114,5 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void saveGeoName(GeoName geoName) {
         geoNameDao.save(geoName);
-    }
-
-    /**
-     * Gets all global administrative units.
-     * @return The list of global administrative units.
-     */
-    @Override
-    public List<AdminUnitGlobal> getAllGlobalAdminUnits() {
-        return adminUnitGlobalDao.getAll();
-    }
-
-    /**
-     * Gets all tropical administrative units.
-     * @return The list of tropical administrative units.
-     */
-    @Override
-    public List<AdminUnitTropical> getAllTropicalAdminUnits() {
-        return adminUnitTropicalDao.getAll();
     }
 }
