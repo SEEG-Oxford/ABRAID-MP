@@ -111,18 +111,18 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * For each global admin unit, get the disease extent class for the specified disease group.
-     * @param globalAdminUnits The global administrative units.
      * @param diseaseGroupId The id of the disease group.
      * @return The map, from global admin unit, to its disease extent class, for the specified disease group.
      */
     @Override
-    public Map<GlobalAdminUnit, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(
-            List<GlobalAdminUnit> globalAdminUnits, Integer diseaseGroupId) {
-        Map<GlobalAdminUnit, DiseaseExtentClass> map = new HashMap<>();
-        for (GlobalAdminUnit globalAdminUnit : globalAdminUnits) {
-            DiseaseExtentClass diseaseExtentClass =
-                    adminUnitDiseaseExtentClassDao.getDiseaseExtentClass(globalAdminUnit.getGaulCode(), diseaseGroupId);
-            map.put(globalAdminUnit, diseaseExtentClass);
+    public Map<AdminUnitGlobal, DiseaseExtentClass> getGlobalAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId) {
+        Map<AdminUnitGlobal, DiseaseExtentClass> map = new HashMap<>();
+        List<AdminUnitDiseaseExtentClass> list =
+                adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+        for (AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass : list) {
+            AdminUnitGlobal adminUnitGlobal = adminUnitDiseaseExtentClass.getAdminUnitGlobal();
+            DiseaseExtentClass diseaseExtentClass = adminUnitDiseaseExtentClass.getDiseaseExtentClass();
+            map.put(adminUnitGlobal, diseaseExtentClass);
         }
         return map;
     }

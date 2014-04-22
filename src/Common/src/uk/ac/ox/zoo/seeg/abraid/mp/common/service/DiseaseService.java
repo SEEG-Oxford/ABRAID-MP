@@ -74,11 +74,9 @@ public interface DiseaseService {
 
     /**
      * For each global admin unit, get the disease extent class for the specified disease group.
-     * @param globalAdminUnits The global administrative units.
      * @param diseaseGroupId The id of the disease group.
      * @return The map, from global admin unit, to its disease extent class, for the specified disease group.
      */
-    Map<GlobalAdminUnit, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(List<GlobalAdminUnit> globalAdminUnits,
-                                                                               Integer diseaseGroupId);
+    Map<AdminUnitGlobal, DiseaseExtentClass> getGlobalAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId);
 
 }

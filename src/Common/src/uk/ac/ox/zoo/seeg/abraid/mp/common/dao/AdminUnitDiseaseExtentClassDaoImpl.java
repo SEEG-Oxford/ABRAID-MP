@@ -5,6 +5,8 @@ import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 
+import java.util.List;
+
 /**
  * The AdminUnitDiseaseExtentClass entity's Data Access Object.
  * Copyright (c) 2014 University of Oxford
@@ -14,16 +16,14 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
     public AdminUnitDiseaseExtentClassDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
     /**
-     * Get the disease extent class for the disease group, across the admin unit.
-     * @param gaulCode The gaul code of the administrative unit.
+     * Gets all AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
      * @param diseaseGroupId The id of the disease group.
-     * @return The disease extent class.
+     * @return A list of the AdminUnitDiseaseExtentClasses.
      */
     @Override
-    public DiseaseExtentClass getDiseaseExtentClass(Integer gaulCode, Integer diseaseGroupId) {
-        Query query = getParameterisedNamedQuery("getDiseaseExtentClass", "gaulCode", gaulCode,
-                                                                          "diseaseGroupId", diseaseGroupId);
-        return (DiseaseExtentClass) query.uniqueResult();
+    public List<AdminUnitDiseaseExtentClass> getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(Integer diseaseGroupId) {
+        return listNamedQuery("getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
     }
 }

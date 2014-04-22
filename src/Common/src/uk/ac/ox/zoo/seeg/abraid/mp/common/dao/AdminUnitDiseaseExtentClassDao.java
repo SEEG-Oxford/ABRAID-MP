@@ -1,6 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
+
+import java.util.List;
 
 /**
  * Interface for the AdminUnitDiseaseExtentClass entity's Data Access Object.
@@ -8,10 +11,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
  */
 public interface AdminUnitDiseaseExtentClassDao {
     /**
-     * Get the disease extent class for the disease group, across the admin unit.
-     * @param gaulCode The gaul code of the administrative unit.
+     * Gets all AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
      * @param diseaseGroupId The id of the disease group.
-     * @return The disease extent class.
+     * @return A list of the AdminUnitDiseaseExtentClasses.
      */
-    DiseaseExtentClass getDiseaseExtentClass(Integer gaulCode, Integer diseaseGroupId);
+    List<AdminUnitDiseaseExtentClass> getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(Integer diseaseGroupId);
 }
