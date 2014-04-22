@@ -11,5 +11,7 @@ define(["ko", "jquery", "app/SingleFieldFormViewModel"], function (ko, $, Single
             new SingleFieldFormViewModel(basePath, "misc/rpath", initialData.rPath, { required: true }));
         self.ModelDurationViewModel = ko.validatedObservable(
             new SingleFieldFormViewModel(basePath, "misc/runduration", initialData.runDuration, { required: true, number: true, min: 1000 }));
+        self.CovariateDirectoryViewModel = ko.validatedObservable(
+            new SingleFieldFormViewModel(basePath, "misc/covariatedirectory", initialData.covariateDirectory, { required: true }));
     };
 });
