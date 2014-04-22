@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,11 @@ import java.io.File;
  */
 @Controller
 public class MiscController {
+    private static final Logger LOGGER = Logger.getLogger(MiscController.class);
+    private static final String LOG_EXCEPTION_GETTING_R_PATH = "Exception getting R path.";
+    private static final String LOG_SUPPLIED_MAX_TOO_SHORT = "User supplied max run duration too short: %s";
+    private static final String LOG_SUPPLIED_DIRECTORY_NOT_USABLE = "User supplied covariate dir not usable: %s";
+
     private static final int MINIMUM_MAX_RUN_DURATION = 1000;
     private final ConfigurationService configurationService;
 
@@ -42,6 +48,7 @@ public class MiscController {
             currentValue = configurationService.getRExecutablePath();
         } catch (ConfigurationException e) {
             // If the value if the file is invalid then we should definitely try the new one.
+            LOGGER.error(LOG_EXCEPTION_GETTING_R_PATH, e);
             currentValue = "";
         }
 
@@ -60,6 +67,7 @@ public class MiscController {
     @RequestMapping(value = "/misc/runduration", method = RequestMethod.POST)
     public ResponseEntity updateMaxRunDuration(int value) {
         if (value < MINIMUM_MAX_RUN_DURATION) {
+            LOGGER.info(String.format(LOG_SUPPLIED_MAX_TOO_SHORT, value));
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
@@ -84,6 +92,7 @@ public class MiscController {
         if (!value.equals(configurationService.getCovariateDirectory())) {
             File newDirectory = new File(value);
             if (!newDirectory.exists() || !newDirectory.isDirectory() || !newDirectory.canRead()) {
+                LOGGER.info(String.format(LOG_SUPPLIED_DIRECTORY_NOT_USABLE, value));
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
 
