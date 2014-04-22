@@ -15,12 +15,12 @@ import javax.persistence.*;
 @NamedQueries(
         @NamedQuery(
                 name = "getDiseaseExtentClass",
-                query = "select diseaseExtentClass from AdminUnitDiseaseExtentClass" +
+                query = "select diseaseExtentClass from AdminUnitDiseaseExtentClass " +
                         "where globalAdminUnit.gaulCode=:gaulCode and diseaseGroup.id=:diseaseGroupId"
         )
 )
-@Entity(name = "admin_unit_disease_extent_class")
-@Table
+@Entity
+@Table(name = "admin_unit_disease_extent_class")
 public class AdminUnitDiseaseExtentClass {
     // The id of the DiseaseGroup-AdminUnit pairing's class.
     @Id

@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
@@ -21,6 +23,7 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
 /**
@@ -42,10 +45,11 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         CurrentUserService currentUserService = new CurrentUserServiceImpl();
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
+        LocationService locationService = mock(LocationService.class);
         Model model = mock(Model.class);
 
         DataValidationController target = new DataValidationController(currentUserService, diseaseService,
-                expertService);
+                expertService, locationService);
 
         // Act
         String result = target.showPage(model);
@@ -59,13 +63,14 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
+        LocationService locationService = mock(LocationService.class);
         List<DiseaseOccurrence> occurrences = new ArrayList<>();
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
         when(expertService.getDiseaseOccurrencesYetToBeReviewed(1, 1)).thenReturn(occurrences);
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
-                expertService);
+                expertService, locationService);
 
         // Act
         ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
@@ -81,10 +86,11 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
+        LocationService locationService = mock(LocationService.class);
         when(expertService.getDiseaseOccurrencesYetToBeReviewed(1, 1)).thenThrow(new IllegalArgumentException());
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
-                expertService);
+                expertService, locationService);
 
         // Act
         ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
@@ -99,12 +105,13 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
+        LocationService locationService = mock(LocationService.class);
         when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
                 .thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
-                expertService);
+                expertService, locationService);
 
         // Act
         ResponseEntity result = target.submitReview(1, 1, "YES");
@@ -118,12 +125,13 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
+        LocationService locationService = mock(LocationService.class);
         when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
                 .thenReturn(false);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
-                expertService);
+                expertService, locationService);
 
         // Act
         ResponseEntity result = target.submitReview(1, 1, "YES");
@@ -137,12 +145,13 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
+        LocationService locationService = mock(LocationService.class);
         when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
                 .thenReturn(false);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(true);
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
-                expertService);
+                expertService, locationService);
 
         // Act
         ResponseEntity result = target.submitReview(1, 1, "YES");

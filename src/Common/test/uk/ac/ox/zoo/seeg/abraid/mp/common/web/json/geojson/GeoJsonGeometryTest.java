@@ -32,9 +32,6 @@ public class GeoJsonGeometryTest {
         assertThat(target.getCoordinates()).isEqualTo(expectedCoordinates);
         assertThat(target.getCrs()).isSameAs(expectedCrs);
         assertThat(target.getBBox()).isEqualTo(expectedBBox);
-
-        assertThat(target.getCoordinates().getClass().getCanonicalName())
-                .isEqualTo(Collections.unmodifiableList(expectedCoordinates).getClass().getCanonicalName());
     }
 
     @Test
