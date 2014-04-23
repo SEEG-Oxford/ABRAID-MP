@@ -9,6 +9,7 @@
 \copy alert (id, feed_id, title, publication_date, url, summary, healthmap_alert_id) FROM 'alert.txt' (ENCODING utf8, NULL '')
 \copy disease_occurrence (id, disease_group_id, location_id, alert_id, occurrence_start_date) FROM 'disease_occurrence.txt' (ENCODING utf8, NULL '')
 \copy expert_validator_disease_group (expert_id, validator_disease_group_id) FROM 'expert_validator_disease_group.txt' (ENCODING utf8)
+\copy admin_unit_disease_extent_class (global_gaul_code, disease_group_id, disease_extent_class) FROM 'admin_unit_disease_extent_class.txt' (ENCODING utf8)
 
 -- Some of the data above contains explicit values of serial primary keys, so that child tables can refer
 -- to known IDs. So now we need to reset the sequences of such primary keys.

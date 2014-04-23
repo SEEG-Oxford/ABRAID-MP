@@ -191,16 +191,11 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
 
     function getColour(diseaseExtentClass) {
         switch (diseaseExtentClass) {
-            case 'PRESENCE':
-                return '#9e1e71';
-            case 'POSSIBLE_PRESENCE':
-                return '#c478a9';
-            case 'UNCERTAIN':
-                return '#ffffbf';
-            case 'POSSIBLE_ABSENCE':
-                return '#b5caaa';
-            case 'ABSENCE':
-                return '#84a872';
+            case 'PRESENCE':          return '#8e1b65';  // darkPink
+            case 'POSSIBLE_PRESENCE': return '#c478a9';  // lightPink
+            case 'UNCERTAIN':         return '#ffffbf';  // yellow
+            case 'POSSIBLE_ABSENCE':  return '#b5caaa';  // lightGreen
+            case 'ABSENCE':           return '#769766';  // darkGreen
         }
     }
 

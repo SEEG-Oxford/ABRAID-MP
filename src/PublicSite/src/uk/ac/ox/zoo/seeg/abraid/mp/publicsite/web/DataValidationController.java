@@ -73,9 +73,9 @@ public class DataValidationController {
             int expertId = user.getId();
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
-            model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
+            model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
-                    sortByDisplayName(getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests)));
+                    getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
             model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
@@ -89,16 +89,6 @@ public class DataValidationController {
             List<ValidatorDiseaseGroup> diseaseInterests) {
         List<ValidatorDiseaseGroup> list = diseaseService.getAllValidatorDiseaseGroups();
         list.removeAll(diseaseInterests);
-        return list;
-    }
-
-    private List<ValidatorDiseaseGroup> sortByDisplayName(List<ValidatorDiseaseGroup> list) {
-        Collections.sort(list, new Comparator<ValidatorDiseaseGroup>() {
-            @Override
-            public int compare(ValidatorDiseaseGroup o1, ValidatorDiseaseGroup o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
         return list;
     }
 
