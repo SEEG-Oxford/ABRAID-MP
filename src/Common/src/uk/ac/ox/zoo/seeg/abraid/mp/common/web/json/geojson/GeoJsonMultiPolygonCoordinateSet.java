@@ -7,11 +7,11 @@ import java.util.List;
  * A list of GeoJson Polygon coordinate arrays, to represent a GeoJson MultiPolygon's coordinates.
  * Copyright (c) 2014 University of Oxford
  */
-public class MultiPolygonCoordinateSet extends ArrayList<PolygonCoordinateSet> {
-    MultiPolygonCoordinateSet() {
+public class GeoJsonMultiPolygonCoordinateSet extends ArrayList<GeoJsonPolygonCoordinateSet> {
+    public GeoJsonMultiPolygonCoordinateSet() {
     }
 
-    MultiPolygonCoordinateSet(List<PolygonCoordinateSet> polygonCoordinateSetList) {
+    public GeoJsonMultiPolygonCoordinateSet(List<GeoJsonPolygonCoordinateSet> polygonCoordinateSetList) {
         super(polygonCoordinateSetList);
     }
 }

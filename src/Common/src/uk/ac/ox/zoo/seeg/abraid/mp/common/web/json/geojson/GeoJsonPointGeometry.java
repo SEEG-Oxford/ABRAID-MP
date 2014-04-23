@@ -10,11 +10,11 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public final class GeoJsonPointGeometry<TCrs extends GeoJsonCrs> extends GeoJsonGeometry<TCrs, PairCoordinateSet> {
+public final class GeoJsonPointGeometry<TCrs extends GeoJsonCrs> extends GeoJsonGeometry<TCrs, GeoJsonCoordinate> {
     public GeoJsonPointGeometry() {
     }
 
     public GeoJsonPointGeometry(double longitude, double latitude, TCrs crs, List<Double> bbox) {
-        super(GeoJsonGeometryType.POINT, new PairCoordinateSet(longitude, latitude), crs, bbox);
+        super(GeoJsonGeometryType.POINT, new GeoJsonCoordinate(longitude, latitude), crs, bbox);
     }
 }

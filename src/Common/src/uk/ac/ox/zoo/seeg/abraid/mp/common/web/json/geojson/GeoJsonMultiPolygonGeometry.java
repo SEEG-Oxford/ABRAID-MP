@@ -15,7 +15,7 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public final class GeoJsonMultiPolygonGeometry<TCrs extends GeoJsonCrs>
-        extends GeoJsonGeometry<TCrs, MultiPolygonCoordinateSet> {
+        extends GeoJsonGeometry<TCrs, GeoJsonMultiPolygonCoordinateSet> {
     public GeoJsonMultiPolygonGeometry() {
     }
 
@@ -23,17 +23,17 @@ public final class GeoJsonMultiPolygonGeometry<TCrs extends GeoJsonCrs>
         super(GeoJsonGeometryType.MULTI_POLYGON, extractCoordinates(multiPolygon), crs, bbox);
     }
 
-    private static MultiPolygonCoordinateSet extractCoordinates(MultiPolygon multiPolygon) {
-        MultiPolygonCoordinateSet multiPolygonCoordinateSet = new MultiPolygonCoordinateSet();
+    private static GeoJsonMultiPolygonCoordinateSet extractCoordinates(MultiPolygon multiPolygon) {
+        GeoJsonMultiPolygonCoordinateSet multiPolygonCoordinateSet = new GeoJsonMultiPolygonCoordinateSet();
         for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
             Polygon polygon = (Polygon) multiPolygon.getGeometryN(i);
-            PolygonCoordinateSet polygonCoordinateSet = new PolygonCoordinateSet();
+            GeoJsonPolygonCoordinateSet polygonCoordinateSet = new GeoJsonPolygonCoordinateSet();
 
-            RingCoordinateSet exteriorRingCoordinateSet = getExteriorRingCoordinateSet(polygon);
+            GeoJsonRingCoordinateSet exteriorRingCoordinateSet = getExteriorRingCoordinateSet(polygon);
             polygonCoordinateSet.add(exteriorRingCoordinateSet);
 
             for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
-                RingCoordinateSet interiorRingCoordinateSet = getInteriorRingCoordinateSet(polygon, j);
+                GeoJsonRingCoordinateSet interiorRingCoordinateSet = getInteriorRingCoordinateSet(polygon, j);
                 polygonCoordinateSet.add(interiorRingCoordinateSet);
             }
             multiPolygonCoordinateSet.add(polygonCoordinateSet);
@@ -41,24 +41,24 @@ public final class GeoJsonMultiPolygonGeometry<TCrs extends GeoJsonCrs>
         return multiPolygonCoordinateSet;
     }
 
-    private static RingCoordinateSet getExteriorRingCoordinateSet(Polygon polygon) {
-        RingCoordinateSet ringCoordinateSet = new RingCoordinateSet();
+    private static GeoJsonRingCoordinateSet getExteriorRingCoordinateSet(Polygon polygon) {
+        GeoJsonRingCoordinateSet ringCoordinateSet = new GeoJsonRingCoordinateSet();
         LineString exteriorRing = polygon.getExteriorRing();
         for (Coordinate coordinate : exteriorRing.getCoordinates()) {
             double x = coordinate.x;
             double y = coordinate.y;
-            ringCoordinateSet.add(new PairCoordinateSet(x, y));
+            ringCoordinateSet.add(new GeoJsonCoordinate(x, y));
         }
         return ringCoordinateSet;
     }
 
-    private static RingCoordinateSet getInteriorRingCoordinateSet(Polygon polygon, Integer j) {
-        RingCoordinateSet ringCoordinateSet = new RingCoordinateSet();
+    private static GeoJsonRingCoordinateSet getInteriorRingCoordinateSet(Polygon polygon, Integer j) {
+        GeoJsonRingCoordinateSet ringCoordinateSet = new GeoJsonRingCoordinateSet();
         LineString interiorRing = polygon.getInteriorRingN(j);
         for (Coordinate coordinate : interiorRing.getCoordinates()) {
             double x = coordinate.x;
             double y = coordinate.y;
-            ringCoordinateSet.add(new PairCoordinateSet(x, y));
+            ringCoordinateSet.add(new GeoJsonCoordinate(x, y));
         }
         return ringCoordinateSet;
     }
