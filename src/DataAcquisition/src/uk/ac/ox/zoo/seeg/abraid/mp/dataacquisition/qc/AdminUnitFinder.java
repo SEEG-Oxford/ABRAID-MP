@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import com.vividsolutions.jts.geom.Point;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnit;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -33,7 +33,7 @@ public class AdminUnitFinder {
 
     // The admin unit that is closest to the location, with the closest distance, within the maximum distance
     // allowed.
-    private AdminUnit closestAdminUnit;
+    private AdminUnitQC closestAdminUnit;
     private double closestDistance = 0;
 
     // A message that is created when a close enough admin unit is not found.
@@ -47,16 +47,16 @@ public class AdminUnitFinder {
      * @param location The location. Must be ADMIN1 or ADMIN2.
      * @param adminUnits A list of admin units for comparison.
      */
-    public void findClosestAdminUnit(Location location, List<AdminUnit> adminUnits) {
+    public void findClosestAdminUnit(Location location, List<AdminUnitQC> adminUnits) {
         validateLocation(location);
         char adminLevel = location.getPrecision().getShapefileTableAdminLevel();
 
         // The admin unit that is closest to the location, with the closest distance. This is stored for logging
         // purposes only.
-        AdminUnit closestAdminUnitForLogging = null;
+        AdminUnitQC closestAdminUnitForLogging = null;
         double closestDistanceForLogging = 0;
 
-        for (AdminUnit adminUnit : adminUnits) {
+        for (AdminUnitQC adminUnit : adminUnits) {
             if (adminUnit.getAdminLevel() == adminLevel) {
                 // This admin unit is at the desired level
                 // So find the distance between the input location and the admin unit's centroid
@@ -99,7 +99,7 @@ public class AdminUnitFinder {
      * @return The admin unit whose centroid is closest to the specified location, as long as the distance is within
      * the maximum allowed. Returns null if no such centroid exists.
      */
-    public AdminUnit getClosestAdminUnit() {
+    public AdminUnitQC getClosestAdminUnit() {
         return closestAdminUnit;
     }
 
@@ -122,11 +122,11 @@ public class AdminUnitFinder {
         }
     }
 
-    private double getMaximumDistanceFromCentroid(AdminUnit adminUnit) {
+    private double getMaximumDistanceFromCentroid(AdminUnitQC adminUnit) {
         return Math.sqrt(adminUnit.getArea()) * MAXIMUM_PERCENTAGE_OF_SQUARE_ROOT_OF_AREA / RATIO_TO_PERCENTAGE;
     }
 
-    private double percentageOfSquareRootOfArea(AdminUnit adminUnit, double distance) {
+    private double percentageOfSquareRootOfArea(AdminUnitQC adminUnit, double distance) {
         return distance * RATIO_TO_PERCENTAGE / Math.sqrt(adminUnit.getArea());
     }
 

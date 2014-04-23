@@ -103,11 +103,11 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
     @Test
     public void getAllAdminUnits() {
         // Arrange
-        List<AdminUnit> adminUnits = Arrays.asList(new AdminUnit());
-        when(adminUnitDao.getAll()).thenReturn(adminUnits);
+        List<AdminUnitQC> adminUnits = Arrays.asList(new AdminUnitQC());
+        when(adminUnitQCDao.getAll()).thenReturn(adminUnits);
 
         // Act
-        List<AdminUnit> testAdminUnits = locationService.getAllAdminUnits();
+        List<AdminUnitQC> testAdminUnits = locationService.getAllAdminUnitQCs();
 
         // Assert
         assertThat(testAdminUnits).isSameAs(adminUnits);

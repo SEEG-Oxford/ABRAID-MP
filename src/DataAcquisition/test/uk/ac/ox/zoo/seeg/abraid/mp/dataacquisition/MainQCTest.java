@@ -76,11 +76,12 @@ public class MainQCTest {
         Location occurrence1Location = occurrence.getLocation();
         assertThat(occurrence1Location.getName()).isEqualTo("Bremen, Germany");
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
-        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(2);
-        assertThat(occurrence1Location.getAdminUnit()).isNotNull();
-        assertThat(occurrence1Location.getAdminUnit().getGaulCode()).isEqualTo(1312);
+        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(3);
+        assertThat(occurrence1Location.getAdminUnitQC()).isNotNull();
+        assertThat(occurrence1Location.getAdminUnitQC().getGaulCode()).isEqualTo(1312);
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 16.09% of " +
-                "the square root of the area. QC stage 2 passed: location already on land.");
+                "the square root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: " +
+                "location already within HealthMap country.");
     }
 
     private void assertSecondLocation(DiseaseOccurrence occurrence) {
@@ -88,7 +89,7 @@ public class MainQCTest {
         assertThat(occurrence2Location.getName()).isEqualTo("Isles of Scilly, England, United Kingdom");
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.ADMIN2);
         assertThat(occurrence2Location.getPassedQCStage()).isEqualTo(0);
-        assertThat(occurrence2Location.getAdminUnit()).isNull();
+        assertThat(occurrence2Location.getAdminUnitQC()).isNull();
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 failed: closest distance is 196.04% of " +
                 "the square root of the area (GAUL code 40101: \"Cornwall\").");
 

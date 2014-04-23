@@ -5,6 +5,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,12 +14,6 @@ import java.util.Set;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries({
-        @NamedQuery(
-                name = "getHealthMapCountryByName",
-                query = "from HealthMapCountry where name=:name"
-        )
-})
 @Entity
 @Table(name = "healthmap_country")
 @Immutable
@@ -32,7 +27,7 @@ public class HealthMapCountry {
     private String name;
 
     // The corresponding SEEG countries.
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "healthmap_country_country",
             joinColumns = { @JoinColumn(name = "healthmap_country_id") },
             inverseJoinColumns = { @JoinColumn(name = "gaul_code") })
@@ -42,16 +37,13 @@ public class HealthMapCountry {
     public HealthMapCountry() {
     }
 
-    public HealthMapCountry(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public HealthMapCountry(Long id, String name, Country country) {
+    public HealthMapCountry(Long id, String name, Country... countries) {
         this.id = id;
         this.name = name;
         this.countries = new HashSet<>();
-        this.countries.add(country);
+        if (countries != null) {
+            Collections.addAll(this.countries, countries);
+        }
     }
 
     public Long getId() {

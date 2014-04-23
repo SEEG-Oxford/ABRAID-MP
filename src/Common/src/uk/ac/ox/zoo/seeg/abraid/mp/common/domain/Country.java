@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import com.vividsolutions.jts.geom.MultiPolygon;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -27,12 +29,21 @@ public class Country {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    @Type(type = "org.hibernate.spatial.GeometryType")
+    private MultiPolygon geom;
+
     public Country() {
     }
 
     public Country(Integer gaulCode, String name) {
         this.gaulCode = gaulCode;
         this.name = name;
+    }
+
+    public Country(Integer gaulCode, String name, MultiPolygon geom) {
+        this(gaulCode, name);
+        this.geom = geom;
     }
 
     public Integer getGaulCode() {
@@ -47,6 +58,14 @@ public class Country {
         this.name = name;
     }
 
+    public MultiPolygon getGeom() {
+        return geom;
+    }
+
+    public void setGeom(MultiPolygon geom) {
+        this.geom = geom;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -57,6 +76,7 @@ public class Country {
         Country country = (Country) o;
 
         if (gaulCode != null ? !gaulCode.equals(country.gaulCode) : country.gaulCode != null) return false;
+        if (geom != null ? !geom.equals(country.geom) : country.geom != null) return false;
         if (name != null ? !name.equals(country.name) : country.name != null) return false;
 
         return true;
@@ -66,6 +86,7 @@ public class Country {
     public int hashCode() {
         int result = gaulCode != null ? gaulCode.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (geom != null ? geom.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

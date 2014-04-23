@@ -8,15 +8,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Represents an admin 1/2 area. Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller
- * islands removed.
+ * Represents an admin 1/2 area for the purposes of QC (Quality Control).
+ * Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
  *
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
-@Table(name = "admin_unit")
+@Table(name = "admin_unit_qc")
 @Immutable
-public class AdminUnit {
+public class AdminUnitQC {
     // The admin unit's GAUL (Global Administrative Unit Layers) code. This is used in the corresponding SEEG shapefile.
     @Id
     @Column(name = "gaul_code")
@@ -42,11 +42,11 @@ public class AdminUnit {
     @Column
     private double area;
 
-    public AdminUnit() {
+    public AdminUnitQC() {
     }
 
-    public AdminUnit(Integer gaulCode, char adminLevel, String name, double centroidLongitude, double centroidLatitude,
-                     double area) {
+    public AdminUnitQC(Integer gaulCode, char adminLevel, String name, double centroidLongitude,
+                       double centroidLatitude, double area) {
         this.gaulCode = gaulCode;
         this.adminLevel = adminLevel;
         this.name = name;
@@ -106,14 +106,14 @@ public class AdminUnit {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AdminUnit adminUnit = (AdminUnit) o;
+        AdminUnitQC adminUnitQC = (AdminUnitQC) o;
 
-        if (Double.compare(adminUnit.area, area) != 0) return false;
-        if (Double.compare(adminUnit.centroidLatitude, centroidLatitude) != 0) return false;
-        if (Double.compare(adminUnit.centroidLongitude, centroidLongitude) != 0) return false;
-        if (adminLevel != adminUnit.adminLevel) return false;
-        if (gaulCode != null ? !gaulCode.equals(adminUnit.gaulCode) : adminUnit.gaulCode != null) return false;
-        if (name != null ? !name.equals(adminUnit.name) : adminUnit.name != null) return false;
+        if (Double.compare(adminUnitQC.area, area) != 0) return false;
+        if (Double.compare(adminUnitQC.centroidLatitude, centroidLatitude) != 0) return false;
+        if (Double.compare(adminUnitQC.centroidLongitude, centroidLongitude) != 0) return false;
+        if (adminLevel != adminUnitQC.adminLevel) return false;
+        if (gaulCode != null ? !gaulCode.equals(adminUnitQC.gaulCode) : adminUnitQC.gaulCode != null) return false;
+        if (name != null ? !name.equals(adminUnitQC.name) : adminUnitQC.name != null) return false;
 
         return true;
     }

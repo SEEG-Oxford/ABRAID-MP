@@ -133,7 +133,7 @@ public class HealthMapLocationConverter {
             LOGGER.warn(String.format(IGNORING_COUNTRY_MESSAGE, healthMapCountry.getName()));
         } else {
             location = new Location();
-            location.setHealthMapCountry(healthMapCountry);
+            location.setHealthMapCountryId(healthMapCountry.getId());
             location.setGeom(point);
             location.setName(healthMapLocation.getPlaceName());
         }

@@ -50,6 +50,21 @@ public class GeometryUtilsTest {
     }
 
     @Test
+    public void findOrthodromicDistanceForTypicalParameters2() {
+        // Arrange
+        Point point1 = GeometryUtils.createPoint(8.75848, 53.13338);
+        Point point2 = GeometryUtils.createPoint(8.76167, 53.16090);
+        double expectedDistance = 3.070102641947;
+
+        // Act
+        double distance = GeometryUtils.findOrthodromicDistance(point1, point2);
+
+        // Assert
+        assertThat(distance).isEqualTo(expectedDistance, offset(MAXIMUM_ORTHODROMIC_DISTANCE_OFFSET));
+    }
+
+
+    @Test
     public void findOrthodromicDistanceForZeroParameters() {
         Point point = GeometryUtils.createPoint(0, 0);
         double distance = GeometryUtils.findOrthodromicDistance(point, point);
@@ -164,11 +179,23 @@ public class GeometryUtilsTest {
     }
 
     @Test
+    public void concatenateMultiPolygonsReturnsASingleNonNullMultiPolygonIfOnlyItIsSpecified() {
+        // Arrange
+        MultiPolygon onePolygon = GeometryUtils.createMultiPolygon(getTriangle());
+        List<MultiPolygon> multiPolygonList = Arrays.asList(onePolygon);
+
+        // Act
+        MultiPolygon concatenation = GeometryUtils.concatenate(multiPolygonList);
+
+        // Assert
+        assertThat(concatenation).isSameAs(onePolygon);
+    }
+
+    @Test
     public void concatenateMultiPolygons() {
         // Arrange
-        MultiPolygon onePolygon = GeometryUtils.createMultiPolygon(new Polygon[] {getTriangle()});
-        MultiPolygon twoPolygons = GeometryUtils.createMultiPolygon(
-                new Polygon[] {getSquare(), getFivePointedPolygon()});
+        MultiPolygon onePolygon = GeometryUtils.createMultiPolygon(getTriangle());
+        MultiPolygon twoPolygons = GeometryUtils.createMultiPolygon(getSquare(), getFivePointedPolygon());
 
         List<MultiPolygon> multiPolygonList = Arrays.asList(onePolygon, null, twoPolygons);
 

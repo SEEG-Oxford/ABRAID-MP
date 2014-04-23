@@ -42,19 +42,19 @@
     <!-- Imports shapefiles, if the property "shapefiles.path" is specified (this must be a valid path to the shapefiles folder) -->
     <target name="import.shapefiles" if="shapefiles.path">
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit.shp"/>
-        </antcall>
-        <antcall target="import.shapefile">
             <param name="shapefile.name" value="admin_unit_global.shp"/>
         </antcall>
         <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit_tropical.shp"/>
+            <param name="shapefile.name" value="admin_unit_qc.shp"/>
         </antcall>
         <antcall target="import.shapefile">
             <param name="shapefile.name" value="admin_unit_simplified_global.shp"/>
         </antcall>
         <antcall target="import.shapefile">
             <param name="shapefile.name" value="admin_unit_simplified_tropical.shp"/>
+        </antcall>
+        <antcall target="import.shapefile">
+            <param name="shapefile.name" value="admin_unit_tropical.shp"/>
         </antcall>
         <antcall target="import.shapefile">
             <param name="shapefile.name" value="country.shp"/>
@@ -93,7 +93,6 @@
     <!-- SUB-TARGETS -->
     
     <!-- Runs a script, connected to the database -->
-    <!-- Assumes that the superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows) -->
     <target name="run.database.script">
         <exec executable="psql" failonerror="true" dir="${database.script.dir}">
             <arg value="-U" />
