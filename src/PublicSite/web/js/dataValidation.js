@@ -55,7 +55,10 @@ var DataValidationViewModels = (function () {
 
     var LayerSelectorViewModel = function () {
         this.validationTypes = ko.observableArray(["disease occurrences", "disease extent"]);
-        this.selectedType = ko.observable();
+        this.selectedType = ko.observable("disease occurrences");
+        this.selectedType.subscribe(function () {
+            LeafletMap.toggleValidationTypeLayer();
+        });
         this.groups = ko.observableArray([
             new Group("Your Disease Interests", diseaseInterests),
             new Group("Other Diseases", allOtherDiseases)
@@ -63,7 +66,11 @@ var DataValidationViewModels = (function () {
         this.selectedDisease = ko.observable();
         this.selectedDisease.subscribe(function () {
             DataValidationViewModels.selectedPointViewModel.clearSelectedPoint();
-            LeafletMap.switchDiseaseLayer(this.selectedDisease().id);
+            LeafletMap.switchDiseaseOccurrenceLayer(this.selectedDisease().id);
+        }, this);
+        this.selectedDiseaseGroup = ko.observable();
+        this.selectedDiseaseGroup.subscribe(function () {
+           LeafletMap.switchDiseaseExtentLayer(this.selectedDiseaseGroup().id);
         }, this);
         this.noOccurrencesToReview = ko.observable(false);
     };

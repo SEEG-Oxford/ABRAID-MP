@@ -12,7 +12,11 @@
 
     <!-- Data Access Objects -->
     <bean id="alertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDaoImpl" autowire="constructor" />
+    <bean id="adminUnitDiseaseExtentClassDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitDiseaseExtentClassDaoImpl" autowire="constructor" />
+    <bean id="adminUnitGlobalDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitGlobalDaoImpl" autowire="constructor" />
     <bean id="adminUnitQCDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitQCDaoImpl" autowire="constructor" />
+    <bean id="adminUnitReviewDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitReviewDaoImpl" autowire="constructor" />
+    <bean id="adminUnitTropicalDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitTropicalDaoImpl" autowire="constructor" />
     <bean id="countryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDaoImpl" autowire="constructor" />
     <bean id="diseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />

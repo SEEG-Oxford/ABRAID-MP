@@ -26,7 +26,7 @@ public class GeoJsonPointGeometryTest {
 
         // Assert
         assertThat(target.getType()).isSameAs(GeoJsonGeometryType.POINT.getGeoJsonObjectType());
-        assertThat(target.getCoordinates()).isEqualTo(Arrays.asList(expectedLongitude, expectedLatitude));
+        assertThat(target.getCoordinates()).isEqualTo(new GeoJsonCoordinate(expectedLongitude, expectedLatitude));
         assertThat(target.getCrs()).isSameAs(expectedCrs);
         assertThat(target.getBBox()).isEqualTo(expectedBBox);
     }

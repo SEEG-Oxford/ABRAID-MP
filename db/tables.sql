@@ -8,6 +8,7 @@
 -- List of tables:
 --
 -- admin_unit_global:              Represents an admin 0/1 area. As admin_unit_tropical, except ten large countries have been divided into admin 1 areas, to use for global diseases.
+-- admin_unit_review:              Represents an expert's response to the presence or absence of a disease group across an admin unit.
 -- admin_unit_qc:                  Represents an admin 1/2 area for the purposes of QC (Quality Control).
 --                                 Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
 -- admin_unit_simplified_global:   Represents an admin 0/1 area. As admin_unit_global, except with simplified borders to improve rendering performance.
@@ -43,12 +44,31 @@ CREATE TABLE admin_unit_qc (
     geom geometry(MULTIPOLYGON, 4326)
 );
 
+CREATE TABLE admin_unit_disease_extent_class (
+    id serial NOT NULL,
+    global_gaul_code integer,
+    tropical_gaul_code integer,
+    disease_group_id integer NOT NULL,
+    disease_extent_class varchar(17) NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
 CREATE TABLE admin_unit_global (
     gaul_code integer NOT NULL,
     level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
     pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
+);
+
+CREATE TABLE admin_unit_review (
+    id serial NOT NULL,
+    expert_id integer NOT NULL,
+    disease_group_id integer NOT NULL,
+    global_gaul_code integer,
+    tropical_gaul_code integer,
+    response varchar(17) NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE admin_unit_simplified_global (

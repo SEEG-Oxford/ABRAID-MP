@@ -1,0 +1,25 @@
+package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitTropical;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+
+import java.util.List;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+
+/**
+ * Tests the AdminUnitTropicalDao class.
+ * Copyright (c) 2014 University of Oxford
+ */
+public class AdminUnitTropicalDaoTest extends AbstractSpringIntegrationTests {
+    @Autowired
+    private AdminUnitTropicalDao adminUnitTropicalDao;
+
+    @Test
+    public void getAll() {
+        List<AdminUnitTropical> globalAdminUnits = adminUnitTropicalDao.getAll();
+        assertThat(globalAdminUnits).hasSize(459);
+    }
+}

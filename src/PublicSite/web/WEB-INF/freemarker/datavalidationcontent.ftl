@@ -27,20 +27,8 @@
 <body>
     <div id="dataValidation">
         <#include "datavalidationsidepanel.ftl"/>
-        <div id="layerSelector">
-            <h4>You are validating
-                <select data-bind="options: validationTypes, value: selectedType"></select>
-                of
-                <select data-bind="foreach: groups, value: selectedDisease">
-                    <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
-                        <option data-bind="html: name, option: $data"></option>
-                    </optgroup>
-                </select>
-            </h4>
-            <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview" style="text-align: center">
-                There are no occurrences in need of review for this disease.
-            </div>
-        </div>
+        <#include "layerselector.ftl"/>
+
         <div id="map"></div>
     </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
@@ -62,10 +50,18 @@
         var diseaseOccurrenceReviewCount = ${reviewCount?c};
         var diseaseInterests = [
             <#if diseaseInterests??>
-                <#list diseaseInterests as disease>
+                <#list diseaseInterests as validatorDiseaseGroup>
                     {
-                        name: "${disease.getName()?lower_case?js_string}",
-                        id: ${disease.id?c}
+                        name: "${validatorDiseaseGroup.getName()?lower_case?js_string}",
+                        id: ${validatorDiseaseGroup.id?c},
+                        diseaseGroups: [
+                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                {
+                                    name: "${diseaseGroup.getName()?lower_case?js_string}",
+                                    id: ${diseaseGroup.id?c}
+                                },
+                            </#list>
+                        ]
                     },
                 </#list>
             <#else>
@@ -77,10 +73,18 @@
         ];
         var allOtherDiseases = [
             <#if allOtherDiseases??>
-                <#list allOtherDiseases as disease>
+                <#list allOtherDiseases as validatorDiseaseGroup>
                     {
-                        name: "${disease.getName()?lower_case?js_string}",
-                        id: ${disease.id?c}
+                        name: "${validatorDiseaseGroup.getName()?lower_case?js_string}",
+                        id: ${validatorDiseaseGroup.id?c},
+                        diseaseGroups: [
+                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                {
+                                    name: "${diseaseGroup.getName()?lower_case?js_string}",
+                                    id: ${diseaseGroup.id?c}
+                                },
+                            </#list>
+                        ]
                     },
                 </#list>
             </#if>

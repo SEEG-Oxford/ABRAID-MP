@@ -1,11 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapDisease;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service interface for diseases, including disease occurrences.
@@ -20,6 +18,13 @@ public interface DiseaseService {
     List<HealthMapDisease> getAllHealthMapDiseases();
 
     /**
+     * Gets the disease group by its id.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The disease group.
+     */
+    DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
+
+    /**
      * Gets all disease groups.
      * @return All disease groups.
      */
@@ -30,6 +35,12 @@ public interface DiseaseService {
      * @return A list of all validator disease groups.
      */
     List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups();
+
+    /**
+     * For each validator disease group, get a list of its disease groups.
+     * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
+     */
+    Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
 
     /**
      * Saves a disease occurrence.
@@ -59,4 +70,11 @@ public interface DiseaseService {
      */
     boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
                                                                            Integer validatorDiseaseGroupId);
+
+    /**
+     * For each admin unit, get the disease extent class for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The map, from admin unit, to its disease extent class, for the specified disease group.
+     */
+    Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId);
 }

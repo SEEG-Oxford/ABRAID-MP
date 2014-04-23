@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,27 +7,28 @@ import java.util.List;
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Implements the specification available from http://geojson.org/geojson-spec.html#geometry-objects
  * @param <TCrs> The type of crs.
+ * @param <TCoordinates> The type of GeoJson Feature's coordinates.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public abstract class GeoJsonGeometry<TCrs extends GeoJsonCrs> extends GeoJsonObject<TCrs> {
-    private List<Double> coordinates;
+public abstract class GeoJsonGeometry<TCrs extends GeoJsonCrs, TCoordinates> extends GeoJsonObject<TCrs> {
+    private TCoordinates coordinates;
 
     public GeoJsonGeometry() {
     }
 
-    public GeoJsonGeometry(GeoJsonGeometryType type, List<Double> coordinates, TCrs crs, List<Double> bbox) {
+    public GeoJsonGeometry(GeoJsonGeometryType type, TCoordinates coordinates, TCrs crs, List<Double> bbox) {
         super(type.getGeoJsonObjectType(), crs, bbox);
 
         setCoordinates(coordinates);
     }
 
-    public List<Double> getCoordinates() {
+    public TCoordinates getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(List<Double> coordinates) {
-        this.coordinates = Collections.unmodifiableList(coordinates);
+    public void setCoordinates(TCoordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     ///COVERAGE:OFF - generated code

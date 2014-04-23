@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -32,9 +31,6 @@ public class GeoJsonGeometryTest {
         assertThat(target.getCoordinates()).isEqualTo(expectedCoordinates);
         assertThat(target.getCrs()).isSameAs(expectedCrs);
         assertThat(target.getBBox()).isEqualTo(expectedBBox);
-
-        assertThat(target.getCoordinates().getClass().getCanonicalName())
-                .isEqualTo(Collections.unmodifiableList(expectedCoordinates).getClass().getCanonicalName());
     }
 
     @Test

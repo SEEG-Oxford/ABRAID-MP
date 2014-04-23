@@ -11,20 +11,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for the expert data validation map page.
@@ -72,9 +70,10 @@ public class DataValidationController {
             int expertId = user.getId();
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
-            model.addAttribute("diseaseInterests", sortByDisplayName(diseaseInterests));
+            model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
-                    sortByDisplayName(getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests)));
+                    getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
+            model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
         }
@@ -90,19 +89,9 @@ public class DataValidationController {
         return list;
     }
 
-    private List<ValidatorDiseaseGroup> sortByDisplayName(List<ValidatorDiseaseGroup> list) {
-        Collections.sort(list, new Comparator<ValidatorDiseaseGroup>() {
-            @Override
-            public int compare(ValidatorDiseaseGroup o1, ValidatorDiseaseGroup o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-        return list;
-    }
-
     /**
      * Returns the disease occurrence points in need of review by the current user for a given disease id.
-     * @param validatorDiseaseGroupId The id of the validator disease group to return occurrence points for.
+     * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
@@ -124,6 +113,31 @@ public class DataValidationController {
         }
 
         return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
+    }
+
+    /**
+     * Returns the admin units, and their disease extent class, for a given disease id.
+     * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/extent",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
+    @ResponseBody
+    public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
+            @PathVariable Integer diseaseGroupId) {
+        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map;
+
+        try {
+            map = diseaseService.getAdminUnitDiseaseExtentClassMap(diseaseGroupId);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(map), HttpStatus.OK);
     }
 
     /**

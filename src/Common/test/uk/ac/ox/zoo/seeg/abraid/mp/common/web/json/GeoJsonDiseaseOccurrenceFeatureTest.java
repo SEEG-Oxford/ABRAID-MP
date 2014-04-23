@@ -2,10 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonCoordinate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectType;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
-
-import java.util.Arrays;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -34,7 +33,7 @@ public class GeoJsonDiseaseOccurrenceFeatureTest extends AbstractDiseaseOccurren
         assertThat(result.getType()).isEqualTo(GeoJsonObjectType.FEATURE);
         assertThat(result.getId()).isEqualTo(expectedId);
         assertThat(result.getGeometry().getType()).isEqualTo(GeoJsonObjectType.POINT);
-        assertThat(result.getGeometry().getCoordinates()).isEqualTo(Arrays.asList(expectedLongitude, expectedLatitude));
+        assertThat(result.getGeometry().getCoordinates()).isEqualTo(new GeoJsonCoordinate(expectedLongitude, expectedLatitude));
         assertThat(result.getGeometry().getCrs()).isNull();
         assertThat(result.getGeometry().getBBox()).isNull();
         assertThat(result.getProperties()).isNotNull();

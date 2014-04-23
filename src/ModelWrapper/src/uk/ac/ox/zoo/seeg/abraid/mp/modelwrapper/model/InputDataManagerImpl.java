@@ -61,8 +61,8 @@ public class InputDataManagerImpl implements InputDataManager {
 
     private String extractCsvLine(GeoJsonDiseaseOccurrenceFeature occurrence) {
         return StringUtils.join(new String[]{
-                occurrence.getGeometry().getCoordinates().get(0).toString(),
-                occurrence.getGeometry().getCoordinates().get(1).toString(),
+                Double.toString(occurrence.getGeometry().getCoordinates().getLongitude()),
+                Double.toString(occurrence.getGeometry().getCoordinates().getLatitude()),
                 occurrence.getProperties().getLocationPrecision().toString(),
                 occurrence.getProperties().getWeighting().toString()
         }, ',');

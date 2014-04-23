@@ -14,12 +14,15 @@ public enum GeoJsonGeometryType implements GeoJsonNamedEnum {
     /**
      * A GeoJSON Point.
      */
-    POINT(GeoJsonObjectType.POINT);
+    POINT(GeoJsonObjectType.POINT),
     //MULTI_POINT(GeoJsonObjectType.MULTI_POINT),
     //LINE_STRING(GeoJsonObjectType.LINE_STRING),
     //MULTI_LINE_STRING(GeoJsonObjectType.MULTI_LINE_STRING),
     //POLYGON(GeoJsonObjectType.POLYGON),
-    //MULTI_POLYGON(GeoJsonObjectType.MULTI_POLYGON),
+    /**
+     * A GeoJSON MultiPolygon.
+     */
+    MULTI_POLYGON(GeoJsonObjectType.MULTI_POLYGON);
     //GEOMETRY_COLLECTION(GeoJsonObjectType.GEOMETRY_COLLECTION);
 
     private GeoJsonObjectType objectType;
