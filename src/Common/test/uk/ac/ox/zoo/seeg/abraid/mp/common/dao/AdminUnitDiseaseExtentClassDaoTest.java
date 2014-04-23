@@ -16,13 +16,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class AdminUnitDiseaseExtentClassDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
-    AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+    private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
     @Autowired
-    DiseaseGroupDao diseaseGroupDao;
+    private DiseaseGroupDao diseaseGroupDao;
 
     @Test
-    public void GlobalAdminUnitDiseaseExtentClassHasNullTropicalAdminUnit() {
+    public void globalAdminUnitDiseaseExtentClassHasNullTropicalAdminUnit() {
         // Arrange - NB. Disease Group 22 in DB is a GLOBAL admin unit
         Integer diseaseGroupId = 22;
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);

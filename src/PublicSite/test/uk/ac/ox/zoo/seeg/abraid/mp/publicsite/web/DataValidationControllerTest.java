@@ -7,10 +7,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -29,8 +26,7 @@ import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for the DataValidationController.
@@ -57,6 +53,9 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
         // Assert
         assertThat(result).isEqualTo("datavalidationcontent");
+        verify(model, times(1)).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model, times(1)).addAttribute("userLoggedIn", true);
+        verify(model, times(1)).addAttribute("reviewCount", 0);
     }
 
     private DataValidationController createTarget() {
@@ -159,7 +158,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
     }
 
     private MultiPolygon createMultiPolygon() {
-        Polygon polygon = GeometryUtils.createPolygon(1,1,2,2,3,3,1,1);
+        Polygon polygon = GeometryUtils.createPolygon(1, 1, 2, 2, 3, 3, 1, 1);
         Polygon[] polygons = {polygon};
         return GeometryUtils.createMultiPolygon(polygons);
     }
