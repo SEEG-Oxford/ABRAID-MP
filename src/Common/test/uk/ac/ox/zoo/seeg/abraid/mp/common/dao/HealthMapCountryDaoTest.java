@@ -21,19 +21,30 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     private HealthMapCountryDao healthMapCountryDao;
 
     @Test
-    public void getAllDiseaseGroups() {
+    public void getAllHealthMapCountries() {
+        // Act
         List<HealthMapCountry> countries = healthMapCountryDao.getAll();
+
+        // Assert
         assertThat(countries).hasSize(224);
+
+        int totalCountries = 0;
+        for (HealthMapCountry healthMapCountry : countries) {
+            if (healthMapCountry.getCountries() != null) {
+                totalCountries += healthMapCountry.getCountries().size();
+            }
+        }
+        assertThat(totalCountries).isEqualTo(225);
     }
 
     @Test
     public void getHealthMapCountryWithNoAssociatedSEEGCountries() {
         // Arrange
-        int id = 143;
+        long id = 143;
         String healthMapCountryName = "Maldives";
 
         // Act
-        HealthMapCountry healthMapCountry = healthMapCountryDao.getByName(healthMapCountryName);
+        HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
 
         // Assert
         assertThat(healthMapCountry).isNotNull();
@@ -46,11 +57,11 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getHealthMapCountryWithOneAssociatedSEEGCountry() {
         // Arrange
-        int id = 28;
+        long id = 28;
         String healthMapCountryName = "Trinidad & Tobago";
 
         // Act
-        HealthMapCountry healthMapCountry = healthMapCountryDao.getByName(healthMapCountryName);
+        HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
 
         // Assert
         assertThat(healthMapCountry).isNotNull();
@@ -67,11 +78,11 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getHealthMapCountryWithTwoAssociatedSEEGCountries() {
         // Arrange
-        int id = 107;
+        long id = 107;
         String healthMapCountryName = "Norway";
 
         // Act
-        HealthMapCountry healthMapCountry = healthMapCountryDao.getByName(healthMapCountryName);
+        HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
 
         // Assert
         assertThat(healthMapCountry).isNotNull();
@@ -91,9 +102,9 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     }
 
     @Test
-    public void getHealthMapCountryByInvalidName() {
-        String healthMapCountryName = "This country does not exist";
-        HealthMapCountry healthMapCountry = healthMapCountryDao.getByName(healthMapCountryName);
+    public void getHealthMapCountryByInvalidId() {
+        long id = 5000;
+        HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
         assertThat(healthMapCountry).isNull();
     }
 

@@ -17,10 +17,10 @@ public interface HealthMapCountryDao {
     List<HealthMapCountry> getAll();
 
     /**
-     * Gets a HealthMap country by name.
-     * @param name The name.
+     * Gets a HealthMap country by ID.
+     * @param id The country's ID.
      * @return The country, or null if not found.
      * @throws org.springframework.dao.DataAccessException if multiple countries with this name are found
      */
-    HealthMapCountry getByName(String name);
+    HealthMapCountry getById(Long id);
 }

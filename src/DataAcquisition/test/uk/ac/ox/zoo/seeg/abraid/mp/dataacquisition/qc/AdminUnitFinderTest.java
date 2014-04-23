@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnit;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
@@ -23,7 +23,7 @@ public class AdminUnitFinderTest {
     public void findsNoAdminUnitIfNoneProvided() {
         // Arrange
         Location location = new Location("Hampshire", -1.25, 51, LocationPrecision.ADMIN2);
-        List<AdminUnit> adminUnits = new ArrayList<>();
+        List<AdminUnitQC> adminUnits = new ArrayList<>();
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -38,7 +38,7 @@ public class AdminUnitFinderTest {
     public void throwsExceptionIfLocationNotAnAdmin1OrAdmin2() {
         // Arrange
         Location location = new Location("United States", -97.5561, 39.96693, LocationPrecision.COUNTRY);
-        List<AdminUnit> adminUnits = createAdminUnits();
+        List<AdminUnitQC> adminUnits = createAdminUnits();
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -53,7 +53,7 @@ public class AdminUnitFinderTest {
         // Arrange
         Location location = new Location();
         location.setPrecision(LocationPrecision.ADMIN2);
-        List<AdminUnit> adminUnits = createAdminUnits();
+        List<AdminUnitQC> adminUnits = createAdminUnits();
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -67,8 +67,8 @@ public class AdminUnitFinderTest {
     public void findsClosestAdminUnitIfSingleAdminUnitInList() {
         // Arrange
         Location location = new Location("Hampshire", -1.25, 51, LocationPrecision.ADMIN2);
-        AdminUnit hampshire = new AdminUnit(40112, '2', "Hampshire", -1.28383, 51.06529, 3747.35320108);
-        List<AdminUnit> adminUnits = Arrays.asList(hampshire);
+        AdminUnitQC hampshire = new AdminUnitQC(40112, '2', "Hampshire", -1.28383, 51.06529, 3747.35320108);
+        List<AdminUnitQC> adminUnits = Arrays.asList(hampshire);
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -84,8 +84,8 @@ public class AdminUnitFinderTest {
     public void findsNoAdminUnitIfSingleAdminUnitInListIsNotCloseEnough() {
         // Arrange
         Location location = new Location("Hampshire", -1.25, 51, LocationPrecision.ADMIN2);
-        AdminUnit berkshire = new AdminUnit(40096, '2', "Berkshire", -1.07313, 51.44574, 1222.48602795);
-        List<AdminUnit> adminUnits = Arrays.asList(berkshire);
+        AdminUnitQC berkshire = new AdminUnitQC(40096, '2', "Berkshire", -1.07313, 51.44574, 1222.48602795);
+        List<AdminUnitQC> adminUnits = Arrays.asList(berkshire);
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -101,7 +101,7 @@ public class AdminUnitFinderTest {
     public void findsClosestAdminUnitForAnAdmin2() {
         // Arrange
         Location location = new Location("Hampshire", -1.25, 51, LocationPrecision.ADMIN2);
-        List<AdminUnit> adminUnits = createAdminUnits();
+        List<AdminUnitQC> adminUnits = createAdminUnits();
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -118,7 +118,7 @@ public class AdminUnitFinderTest {
     public void findsClosestAdminUnitForAnAdmin1() {
         // Arrange
         Location location = new Location("West Virginia, United States", -80.5079, 38.5137, LocationPrecision.ADMIN1);
-        List<AdminUnit> adminUnits = createAdminUnits();
+        List<AdminUnitQC> adminUnits = createAdminUnits();
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -135,7 +135,7 @@ public class AdminUnitFinderTest {
     public void findsNoAdminUnitIfNoneCloseEnough() {
         // Arrange
         Location location = new Location("Oxfordshire", -1.25, 51.833333, LocationPrecision.ADMIN2);
-        List<AdminUnit> adminUnits = createAdminUnits();
+        List<AdminUnitQC> adminUnits = createAdminUnits();
         AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
 
         // Act
@@ -147,18 +147,18 @@ public class AdminUnitFinderTest {
                 "square root of the area (GAUL code 40096: \"Berkshire\").");
     }
 
-    private List<AdminUnit> createAdminUnits() {
+    private List<AdminUnitQC> createAdminUnits() {
         // Five US states and five English counties
         return Arrays.asList(
-                new AdminUnit(3227, '1', "Illinois", -89.19754, 40.06572, 146172.656559),
-                new AdminUnit(3260, '1', "Virginia", -78.83583, 37.51577, 104188.680259),
-                new AdminUnit(3261, '1', "Washington", -120.43996, 47.38034, 174921.174796),
-                new AdminUnit(3262, '1', "West Virginia", -80.61382, 38.64252, 62845.4130703),
-                new AdminUnit(3263, '1', "Wisconsin", -90.00856, 44.63645, 145538.410907),
-                new AdminUnit(40096, '2', "Berkshire", -1.07313, 51.44574, 1222.48602795),
-                new AdminUnit(40112, '2', "Hampshire", -1.28383, 51.06529, 3747.35320108),
-                new AdminUnit(40116, '2', "Isle of Wight", -1.30334, 50.67887, 373.855675662),
-                new AdminUnit(40137, '2', "West Sussex", -0.48444, 50.95776, 1945.02141568),
-                new AdminUnit(40139, '2', "Wiltshire", -1.92657, 51.31608, 3428.74012362));
+                new AdminUnitQC(3227, '1', "Illinois", -89.19754, 40.06572, 146172.656559),
+                new AdminUnitQC(3260, '1', "Virginia", -78.83583, 37.51577, 104188.680259),
+                new AdminUnitQC(3261, '1', "Washington", -120.43996, 47.38034, 174921.174796),
+                new AdminUnitQC(3262, '1', "West Virginia", -80.61382, 38.64252, 62845.4130703),
+                new AdminUnitQC(3263, '1', "Wisconsin", -90.00856, 44.63645, 145538.410907),
+                new AdminUnitQC(40096, '2', "Berkshire", -1.07313, 51.44574, 1222.48602795),
+                new AdminUnitQC(40112, '2', "Hampshire", -1.28383, 51.06529, 3747.35320108),
+                new AdminUnitQC(40116, '2', "Isle of Wight", -1.30334, 50.67887, 373.855675662),
+                new AdminUnitQC(40137, '2', "West Sussex", -0.48444, 50.95776, 1945.02141568),
+                new AdminUnitQC(40139, '2', "Wiltshire", -1.92657, 51.31608, 3428.74012362));
     }
 }

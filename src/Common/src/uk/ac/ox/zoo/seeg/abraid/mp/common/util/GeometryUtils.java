@@ -63,7 +63,7 @@ public final class GeometryUtils {
      * @param polygons A list of polygons.
      * @return A multipolygon.
      */
-    public static MultiPolygon createMultiPolygon(Polygon[] polygons) {
+    public static MultiPolygon createMultiPolygon(Polygon... polygons) {
         return GEOMETRY_FACTORY.createMultiPolygon(polygons);
     }
 
@@ -73,6 +73,11 @@ public final class GeometryUtils {
      * @return A multipolygon that is the concatenation of the input multipolygons.
      */
     public static MultiPolygon concatenate(List<MultiPolygon> multiPolygons) {
+        if (multiPolygons.size() == 1 && multiPolygons.get(0) != null) {
+            // We can immediately return if there is a single non-null multipolygon in the input list
+            return multiPolygons.get(0);
+        }
+
         List<Polygon> polygons = new ArrayList<>();
 
         for (MultiPolygon multiPolygon : multiPolygons) {

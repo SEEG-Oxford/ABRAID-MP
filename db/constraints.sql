@@ -29,10 +29,10 @@ ALTER TABLE provenance
 
 
 -- Primary keys
-ALTER TABLE admin_unit ADD CONSTRAINT pk_admin_unit
+ALTER TABLE admin_unit_global ADD CONSTRAINT pk_admin_unit_tailored_simplified_tropical
     PRIMARY KEY (gaul_code);
 
-ALTER TABLE admin_unit_global ADD CONSTRAINT pk_admin_unit_tailored_simplified_tropical
+ALTER TABLE admin_unit_qc ADD CONSTRAINT pk_admin_unit_qc
     PRIMARY KEY (gaul_code);
 
 ALTER TABLE admin_unit_simplified_global ADD CONSTRAINT pk_admin_unit_simplified_global
@@ -139,8 +139,8 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT fk_healthmap_country_countr
 ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
-ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit
-    FOREIGN KEY (admin_unit_gaul_code) REFERENCES admin_unit (gaul_code);
+ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_qc
+    FOREIGN KEY (admin_unit_qc_gaul_code) REFERENCES admin_unit_qc (gaul_code);
 
 ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
     FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
