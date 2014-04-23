@@ -80,9 +80,13 @@ public class Location {
         this.id = id;
     }
 
-    public Location(String name, double x, double y, LocationPrecision precision) {
-        this.name = name;
+    public Location(double x, double y) {
         this.geom = GeometryUtils.createPoint(x, y);
+    }
+
+    public Location(String name, double x, double y, LocationPrecision precision) {
+        this(x, y);
+        this.name = name;
         this.precision = precision;
     }
 
