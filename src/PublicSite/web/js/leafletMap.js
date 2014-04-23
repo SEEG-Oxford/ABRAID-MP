@@ -217,7 +217,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
             if (featureCollection.features.length != 0) {
                 diseaseExtentLayer.addData(featureCollection);
                 map.fitBounds(diseaseExtentLayer.getBounds());
-                // Fit bounds to P/PP polygons + neighbours...
+                //TODO: Only fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
             } else {
                 map.fitWorld();
             }

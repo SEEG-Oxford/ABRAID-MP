@@ -7,10 +7,10 @@
 
 -- Unique constraints
 ALTER TABLE admin_unit_disease_extent_class
-    ADD CONSTRAINT uq_global_gaul_code_disease_group_id UNIQUE (global_gaul_code, disease_group_id);
+    ADD CONSTRAINT uq_global_gaul_code_disease_group_id UNIQUE (disease_group_id, global_gaul_code);
 
 ALTER TABLE admin_unit_disease_extent_class
-    ADD CONSTRAINT uq_tropical_gaul_code_disease_group_id UNIQUE (tropical_gaul_code, disease_group_id);
+    ADD CONSTRAINT uq_tropical_gaul_code_disease_group_id UNIQUE (disease_group_id, tropical_gaul_code);
 
 ALTER TABLE admin_unit_review
     ADD CONSTRAINT uq_expert_id_disease_group_id_global_gaul_code UNIQUE (expert_id, disease_group_id, global_gaul_code);

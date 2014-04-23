@@ -11,7 +11,7 @@ import java.util.List;
  * A DTO for "MultiPolygon Geometry" objects.
  * Structured to reflect the fields that should be serialized in GeoJSON server response.
  * Implements the specification available from http://geojson.org/geojson-spec.html#multipolygon
- * @param <TCrs> The type of
+ * @param <TCrs> The type of Coordinate Reference System.
  * Copyright (c) 2014 University of Oxford
  */
 public final class GeoJsonMultiPolygonGeometry<TCrs extends GeoJsonCrs>

@@ -30,6 +30,14 @@ public class GeoJsonCoordinate {
         return Collections.unmodifiableList(Arrays.asList(longitude, latitude));
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
     /**
      * Coordinate setter.
      * @param values The list of coordinates.
