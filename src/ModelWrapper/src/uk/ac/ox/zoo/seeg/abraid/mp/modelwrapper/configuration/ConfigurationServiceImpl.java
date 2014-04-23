@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -175,7 +176,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public String getCovariateDirectory() {
-        String defaultDir = Paths.get(getCacheDirectory(), DEFAULT_COVARIATE_SUB_DIR).toFile().getAbsolutePath();
+        Path defaultDirPath = Paths.get(getCacheDirectory(), DEFAULT_COVARIATE_SUB_DIR);
+        String defaultDir = defaultDirPath.toFile().getAbsolutePath();
         return basicProperties.getString(COVARIATE_DIRECTORY_KEY, defaultDir);
     }
 
