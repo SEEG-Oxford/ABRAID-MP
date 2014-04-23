@@ -75,8 +75,8 @@ public class QCLookupDataTest {
         assertThat(healthMapCountryGeometryMap.get(1L)).isNotNull();
         assertThat(healthMapCountryGeometryMap.get(2L)).isNull();
         assertThat(healthMapCountryGeometryMap.get(3L)).isNotNull();
-        assertThat(healthMapCountryGeometryMap.get(1L).equalsExact(expectedGeometry1)).isTrue();
-        assertThat(healthMapCountryGeometryMap.get(3L).equalsExact(expectedGeometry2)).isTrue();
+        assertThat(healthMapCountryGeometryMap.get(1L).equals(expectedGeometry1)).isTrue();
+        assertThat(healthMapCountryGeometryMap.get(3L).equals(expectedGeometry2)).isTrue();
     }
 
     private Map<Long, HealthMapCountry> getCountryMap() {
