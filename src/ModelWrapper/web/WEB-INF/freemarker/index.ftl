@@ -142,6 +142,23 @@
                         <div data-bind="alert: $data"></div>
                     </div>
                 </form>
+                <form action="#" data-bind="with: CovariateDirectoryViewModel">
+                    <p class="form-group">
+                        <label for="covariate-directory">Covariate directory: </label>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-folder-open"></i>
+                            </span>
+                            <input id="covariate-directory" type="text" class="form-control" placeholder="Covariate directory" autocomplete="off" data-bind="value: value, valueUpdate:'afterkeydown', disable: saving" >
+                        </span>
+                    </p>
+                    <p class="form-group">
+                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
+                    </p>
+                    <div class="form-group" data-bind="foreach: notices">
+                        <div data-bind="alert: $data"></div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -160,7 +177,8 @@
     };
     var initialMiscData = {
         rPath: "${r_path?js_string}",
-        runDuration: ${run_duration?c}
+        runDuration: ${run_duration?c},
+        covariateDirectory: "${covariate_directory?js_string}"
     };
 </script>
 </@c.page>

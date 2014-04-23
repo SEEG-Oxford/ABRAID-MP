@@ -11,7 +11,7 @@ define([ 'app/MiscViewModel', 'ko', 'underscore', 'app/spec/util/ruleMatcher', '
             jasmine.addMatchers({ toBeObservable: observableMatcher });
         };
 
-        describe("composes two sub view models which", function() {
+        describe("composes three sub view models which", function() {
             beforeEach(addCustomMatchers);
 
             it("are SingleFieldFormViewModel with the correct properties", function (done) {
@@ -22,11 +22,12 @@ define([ 'app/MiscViewModel', 'ko', 'underscore', 'app/spec/util/ruleMatcher', '
 
                 injector.require(['app/MiscViewModel'], function (MiscViewModel) {
                     // Act
-                    var vm = new MiscViewModel({rPath: "expectedInitialRPath", runDuration: "expectedInitialRunDuration"}, "expectedBaseUrl");
+                    var vm = new MiscViewModel({rPath: "expectedInitialRPath", runDuration: "expectedInitialRunDuration", covariateDirectory: "expectedInitialCovariateDirectory"}, "expectedBaseUrl");
 
                     // Assert
                     expect(spy).toHaveBeenCalledWith('expectedBaseUrl', 'misc/rpath', 'expectedInitialRPath', { required : true });
                     expect(spy).toHaveBeenCalledWith('expectedBaseUrl', 'misc/runduration', 'expectedInitialRunDuration', { required : true, number: true, min: 1000 });
+                    expect(spy).toHaveBeenCalledWith('expectedBaseUrl', 'misc/covariatedirectory', 'expectedInitialCovariateDirectory', { required : true });
                     done();
                 });
             });
@@ -34,11 +35,12 @@ define([ 'app/MiscViewModel', 'ko', 'underscore', 'app/spec/util/ruleMatcher', '
             it("are assigned correctly", function () {
 
                 // Act
-                var vm = new MiscViewModel({rPath: "expectedInitialRPath", runDuration: "expectedInitialRunDuration"}, "expectedBaseUrl");
+                var vm = new MiscViewModel({rPath: "expectedInitialRPath", runDuration: "expectedInitialRunDuration", covariateDirectory: "expectedInitialCovariateDirectory"}, "expectedBaseUrl");
 
                 // Assert
                 expect(vm.RExecutableViewModel().value()).toBe("expectedInitialRPath");
                 expect(vm.ModelDurationViewModel().value()).toBe("expectedInitialRunDuration");
+                expect(vm.CovariateDirectoryViewModel().value()).toBe("expectedInitialCovariateDirectory");
             });
         });
     });

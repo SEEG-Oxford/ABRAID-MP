@@ -1,7 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
@@ -17,6 +19,9 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class MiscControllerTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     @Test
     public void updateRExecutablePathRejectsInvalidArguments() throws Exception {
         // Arrange
@@ -125,5 +130,68 @@ public class MiscControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         verify(configurationService, times(0)).setMaxModelRunDuration(value);
+    }
+
+    @Test
+    public void updateCovariateDirectoryRejectsInvalidArguments() throws Exception {
+        // Arrange
+        List<String> invalidValues = Arrays.asList("", null);
+        MiscController target = new MiscController(mock(ConfigurationService.class));
+
+        for (String value : invalidValues) {
+            // Act
+            ResponseEntity result = target.updateCovariateDirectory(value);
+
+            // Assert
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Test
+    public void updateCovariateDirectorySavesValueIfValid() throws Exception {
+        // Arrange
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        MiscController target = new MiscController(configurationService);
+        when(configurationService.getCovariateDirectory()).thenReturn("nonsense");
+
+        // Act
+        String dir = testFolder.newFolder().getAbsolutePath();
+        ResponseEntity result = target.updateCovariateDirectory(dir);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(configurationService, times(1)).setCovariateDirectory(dir);
+    }
+
+    @Test
+    public void updateCovariateDirectoryDoesNotSaveValueIfSameAsExistingValue() throws Exception {
+        // Arrange
+        String value = "FOO";
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        MiscController target = new MiscController(configurationService);
+        when(configurationService.getCovariateDirectory()).thenReturn(value);
+
+        // Act
+        ResponseEntity result = target.updateCovariateDirectory(value);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(configurationService, times(0)).setCovariateDirectory(value);
+    }
+
+    @Test
+    public void updateCovariateDirectoryDoesNotSaveValueIfNotValidPath() throws Exception {
+        // Arrange
+        String value = "nonsense";
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        MiscController target = new MiscController(configurationService);
+        when(configurationService.getCovariateDirectory()).thenReturn("old-" + value);
+
+        // Act
+        ResponseEntity result = target.updateCovariateDirectory(value);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(configurationService, times(0)).setCovariateDirectory(value);
     }
 }

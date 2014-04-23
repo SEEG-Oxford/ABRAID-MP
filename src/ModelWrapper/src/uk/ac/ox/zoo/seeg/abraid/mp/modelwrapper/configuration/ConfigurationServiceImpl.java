@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -19,9 +20,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String LOG_UPDATING_AUTH_CONFIGURATION = "Updating auth configuration: %s %s";
     private static final String LOG_UPDATING_REPOSITORY_URL_CONFIGURATION = "Updating repository url configuration: %s";
     private static final String LOG_UPDATING_VERSION_CONFIGURATION = "Updating repository version configuration: %s";
+    private static final String LOG_UPDATING_R_PATH = "Updating R path configuration: %s";
+    private static final String LOG_UPDATING_RUN_DURATION = "Updating max run duration configuration: %s";
+    private static final String LOG_UPDATING_COVARIATE_DIR = "Updating covariate dir configuration: %s";
 
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
+    private static final String DEFAULT_COVARIATE_SUB_DIR = "covariates";
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\R.exe";
 
@@ -32,6 +37,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String MODEL_VERSION_KEY = "model.repo.version";
     private static final String R_EXECUTABLE_KEY = "r.executable.path";
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
+    private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
 
     private final FileConfiguration basicProperties;
     private final OSChecker osChecker;
@@ -141,6 +147,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setRExecutablePath(String path) {
+        LOGGER.info(String.format(LOG_UPDATING_R_PATH, path));
         basicProperties.setProperty(R_EXECUTABLE_KEY, path);
     }
 
@@ -159,7 +166,29 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setMaxModelRunDuration(int value) {
+        LOGGER.info(String.format(LOG_UPDATING_RUN_DURATION, value));
         basicProperties.setProperty(R_MAX_DURATION_KEY, value);
+    }
+
+    /**
+     * Gets the current directory for covariate files.
+     * @return The directory for covariate files.
+     */
+    @Override
+    public String getCovariateDirectory() {
+        Path defaultDirPath = Paths.get(getCacheDirectory(), DEFAULT_COVARIATE_SUB_DIR);
+        String defaultDir = defaultDirPath.toFile().getAbsolutePath();
+        return basicProperties.getString(COVARIATE_DIRECTORY_KEY, defaultDir);
+    }
+
+    /**
+     * Sets the current directory for covariate files.
+     * @param path The directory for covariate files.
+     */
+    @Override
+    public void setCovariateDirectory(String path) {
+        LOGGER.info(String.format(LOG_UPDATING_COVARIATE_DIR, path));
+        basicProperties.setProperty(COVARIATE_DIRECTORY_KEY, path);
     }
 
     private String findDefaultR() throws ConfigurationException {
