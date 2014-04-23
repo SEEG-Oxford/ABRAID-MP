@@ -1,8 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.annotation.DirtiesContext;
@@ -13,8 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,10 +36,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration("file:ModelWrapper/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MiscControllerIntegrationTest extends BaseWebIntegrationTests {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     private MockMvc mockMvc;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @ReplaceWithMock
+    @Autowired
+    private ConfigurationService configurationService;
 
     @Before
     public void setup() {
@@ -101,6 +113,39 @@ public class MiscControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/misc/runduration")
                         .param("value", "not_number"))
+                .andExpect(status().isBadRequest());
+    }
+
+    private MockHttpServletRequestBuilder requestToCovariateDirectory(HttpMethod method) {
+        return request(method, "/misc/covariatedirectory")
+                .param("value", "dir");
+    }
+
+    @Test
+    public void covariateDirectoryPageOnlyAcceptsPOST() throws Exception {
+        when(configurationService.getCovariateDirectory()).thenReturn("dir");
+        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.GET)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.POST)).andExpect(status().isNoContent());
+        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.PUT)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.DELETE)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.PATCH)).andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void covariateDirectoryPageAcceptsValidRequest() throws Exception {
+        when(configurationService.getCovariateDirectory()).thenReturn("dir");
+        this.mockMvc
+                .perform(post("/misc/covariatedirectory")
+                        .param("value", testFolder.newFolder().getAbsolutePath()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void covariateDirectoryPageRejectsInvalidRequest() throws Exception {
+        when(configurationService.getCovariateDirectory()).thenReturn("dir");
+        this.mockMvc
+                .perform(post("/misc/covariatedirectory")
+                        .param("value", ""))
                 .andExpect(status().isBadRequest());
     }
 }

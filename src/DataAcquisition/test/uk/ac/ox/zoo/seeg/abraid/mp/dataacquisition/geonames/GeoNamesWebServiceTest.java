@@ -61,6 +61,23 @@ public class GeoNamesWebServiceTest {
     }
 
     @Test
+    public void otherGeoNamesErrorMessage() {
+        // Arrange
+        int geoNameId = 898337123;
+        String json = "{\"status\":{\"message\":\"hourly limit of credits exceeded\",\"value\":19}}";
+
+        String url = getGeoNamesUrl(geoNameId);
+        WebServiceClient client = getMockWebServiceClient(url, json);
+        GeoNamesWebService webService = getGeoNamesWebService(client);
+
+        // Act
+        GeoName geoName = webService.getById(geoNameId);
+
+        // Assert
+        assertThat(geoName).isNull();
+    }
+
+    @Test
     public void webServiceClientThrewException() {
         // Arrange
         int geoNameId = 12345;

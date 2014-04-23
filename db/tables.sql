@@ -7,9 +7,10 @@
 
 -- List of tables:
 --
--- admin_unit:                     Represents an admin 1/2 area. Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
 -- admin_unit_global:              Represents an admin 0/1 area. As admin_unit_tropical, except ten large countries have been divided into admin 1 areas, to use for global diseases.
 -- admin_unit_review:              Represents an expert's response to the presence or absence of a disease group across an admin unit.
+-- admin_unit_qc:                  Represents an admin 1/2 area for the purposes of QC (Quality Control).
+--                                 Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
 -- admin_unit_simplified_global:   Represents an admin 0/1 area. As admin_unit_global, except with simplified borders to improve rendering performance.
 -- admin_unit_simplified_tropical: Represents an admin 0/1 area. As admin_unit_tropical, except with simplified borders to improve rendering performance.
 -- admin_unit_tropical:            Represents an admin 0/1 area. Tailored for ABRAID-MP by separating non-contiguous parts of countries, absorbing tiny countries, removing smaller
@@ -33,7 +34,7 @@
 -- validator_disease_group:        Represents a grouping of diseases for use by the Data Validator.
 
 
-CREATE TABLE admin_unit (
+CREATE TABLE admin_unit_qc (
     gaul_code integer NOT NULL,
     level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
@@ -208,7 +209,7 @@ CREATE TABLE location (
     resolution_weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     healthmap_country_id bigint,
-    admin_unit_gaul_code integer,
+    admin_unit_qc_gaul_code integer,
     passed_qc_stage integer,
     qc_message varchar(1000)
 );

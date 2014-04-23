@@ -93,13 +93,12 @@ public class HealthMapLookupData {
     }
 
     /**
-     * Clear the lookups. This avoids stale Hibernate objects across transactions.
+     * Clear the lookups whose data may be used in a SQL statement.
+     * This avoids stale Hibernate objects across transactions.
      */
     public void clearLookups() {
-        countryMap = null;
         diseaseMap = null;
         feedMap = null;
-        geoNamesMap = null;
         healthMapProvenance = null;
     }
 }

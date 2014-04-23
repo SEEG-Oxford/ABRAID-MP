@@ -23,5 +23,5 @@ CREATE INDEX ix_expert_validator_disease_group_validator_disease_group_id ON exp
 CREATE INDEX ix_feed_provenance_id ON feed (provenance_id);
 CREATE INDEX ix_healthmap_country_country_gaul_code ON healthmap_country_country (gaul_code);
 CREATE INDEX ix_healthmap_disease_disease_group_id ON healthmap_disease (disease_group_id);
-CREATE INDEX ix_location_admin_unit_gaul_code ON location (admin_unit_gaul_code);
 CREATE INDEX ix_location_healthmap_country_id ON location (healthmap_country_id);
+CREATE INDEX ix_location_admin_unit_qc_gaul_code ON location (admin_unit_qc_gaul_code);

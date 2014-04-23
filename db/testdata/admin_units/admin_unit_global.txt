@@ -7,10 +7,28 @@
 194	0	Paraguay	Paraguay
 197	0	Pitcairn	Pitcairn
 207	0	Saint Helena	Saint Helena
+36	0	Bouvet Island	Bouvet Island
 212	0	Samoa	Samoa
 228	0	South Georgia and the South Sandwich Islands	South Georgia and the South Sandwich Islands
 245	0	Tonga	Tonga
 260	0	Uruguay	Uruguay
+1013693	1	SUMATERA SELATAN	Sumatera selatan, Indonesia
+1013694	1	PAPUA	Papua, Indonesia
+4	0	Algeria	Algeria
+42	0	Burkina Faso	Burkina Faso
+85	0	France	France
+94	0	Ghana	Ghana
+155	0	Mali	Mali
+234	0	Svalbard and Jan Mayen Islands	Svalbard and Jan Mayen Islands
+243	0	Togo	Togo
+256	0	U.K. of Great Britain and Northern Ireland	UK
+667	1	Amapa	Amapa,Brasil
+687	1	Roraima	Roraima,Brasil
+2501	1	Chukotskiy Okrug	Chukotskiy okrug,Russian Federation
+3214	1	Alabama	Alabama,USA
+3215	1	Alaska	Alaska,USA
+3216	1	Arizona	Arizona,USA
+3217	1	Arkansas	Arkansas,USA
 266	0	Wallis and Futuna	Wallis and Futuna
 429	1	Buenos Aires	Buenos aires,Argentina
 430	1	Buenos Aires D.f.	Buenos aires d.f.,Argentina
@@ -35,26 +53,18 @@
 449	1	Santa Fe	Santa fe,Argentina
 450	1	Santiago Del Estero	Santiago del estero,Argentina
 451	1	Tierra Del Fuego	Tierra del fuego,Argentina
-452	1	Tucuman	Tucuman,Argentina
-36	0	Bouvet Island	Bouvet Island
 109	0	Heard Island and McDonald Islands	Heard Island and McDonald Islands
 8	0	Angola	Angola
 35	0	Botswana	Botswana
+3218	1	California	California,USA
+3219	1	Colorado	Colorado,USA
+3220	1	Connecticut	Connecticut,USA
+3221	1	Delaware	Delaware,USA
+452	1	Tucuman	Tucuman,Argentina
+3261	1	Washington	Washington,USA
+3262	1	West Virginia	West virginia,USA
+3263	1	Wisconsin	Wisconsin,USA
 38	0	British Indian Ocean Territory	British Indian Ocean Territory
-58	0	Comoros	Comoros
-142	0	Lesotho	Lesotho
-150	0	Madagascar	Madagascar
-152	0	Malawi	Malawi
-160	0	Mauritius	Mauritius
-161	0	Mayotte	Mayotte
-170	0	Mozambique	Mozambique
-172	0	Namibia	Namibia
-206	0	Réunion	Réunion
-235	0	Swaziland	Swaziland
-270	0	Zambia	Zambia
-271	0	Zimbabwe	Zimbabwe
-1013965	0	South Africa	South Africa
-220	0	Seychelles	Seychelles
 54	0	Christmas Island	Christmas Island
 178	0	New Caledonia	New Caledonia
 184	0	Norfolk Island	Norfolk Island
@@ -62,14 +72,74 @@
 262	0	Vanuatu	Vanuatu
 1011444	0	Solomon Islands	Solomon Islands
 9	0	Anguilla	Anguilla
+2494	1	Bashkortostan Rep.	Bashkortostan rep.,Russian Federation
+2495	1	Belgorodskaya Oblast	Belgorodskaya oblast,Russian Federation
+2496	1	Bryanskaya Oblast	Bryanskaya oblast,Russian Federation
+2497	1	Buryatiya Rep.	Buryatiya rep.,Russian Federation
+58	0	Comoros	Comoros
+142	0	Lesotho	Lesotho
+150	0	Madagascar	Madagascar
+152	0	Malawi	Malawi
+2498	1	Chechnya Rep.	Chechnya rep.,Russian Federation
+2499	1	Chelyabinskaya Oblast	Chelyabinskaya oblast,Russian Federation
+2500	1	Chitinskaya Oblast	Chitinskaya oblast,Russian Federation
+2502	1	Chuvashiya Rep.	Chuvashiya rep.,Russian Federation
+2503	1	Dagestan Rep.	Dagestan rep.,Russian Federation
+2504	1	Evenkiyskiy Okrug	Evenkiyskiy okrug,Russian Federation
+2505	1	Ingushetiya Rep.	Ingushetiya rep.,Russian Federation
+2506	1	Irkutskaya Oblast	Irkutskaya oblast,Russian Federation
+2507	1	Ivanovskaya Oblast	Ivanovskaya oblast,Russian Federation
+2508	1	Kabardino-balkariya Rep.	Kabardino-balkariya rep.,Russian Federation
+2509	1	Kaliningradskaya Oblast	Kaliningradskaya oblast,Russian Federation
+2510	1	Kalmykiya Rep.	Kalmykiya rep.,Russian Federation
+2511	1	Kaluzhskaya Oblast	Kaluzhskaya oblast,Russian Federation
+2512	1	Kamchatskaya Oblast	Kamchatskaya oblast,Russian Federation
+2513	1	Karatchayevo-cherkesiya Rep.	Karatchayevo-cherkesiya rep.,Russian Federation
+2514	1	Karelya Rep.	Karelya rep.,Russian Federation
+160	0	Mauritius	Mauritius
+30	0	Bermuda	Bermuda
+2515	1	Kemerovskaya Oblast	Kemerovskaya oblast,Russian Federation
+2516	1	Khabarovskiy Kray	Khabarovskiy kray,Russian Federation
+2517	1	Khakasiya Rep.	Khakasiya rep.,Russian Federation
+2518	1	Khanty-mansyiskiy Okrug	Khanty-mansyiskiy okrug,Russian Federation
+2519	1	Kirovskaya Oblast	Kirovskaya oblast,Russian Federation
+2520	1	Komi Rep.	Komi rep.,Russian Federation
+2521	1	Komi-permyatskiy Okrug	Komi-permyatskiy okrug,Russian Federation
+161	0	Mayotte	Mayotte
+170	0	Mozambique	Mozambique
+172	0	Namibia	Namibia
+206	0	Réunion	Réunion
+2522	1	Koryakskiy Okrug	Koryakskiy okrug,Russian Federation
+2523	1	Kostromskaya Oblast	Kostromskaya oblast,Russian Federation
+2524	1	Krasnodarskiy Kray	Krasnodarskiy kray,Russian Federation
+2525	1	Krasnoyarskiy Kray	Krasnoyarskiy kray,Russian Federation
+2526	1	Kurganskaya Oblast	Kurganskaya oblast,Russian Federation
+2527	1	Kurskaya Oblast	Kurskaya oblast,Russian Federation
+2529	1	Leningradskaya Oblast	Leningradskaya oblast,Russian Federation
+2530	1	Lipetskaya Oblast	Lipetskaya oblast,Russian Federation
+235	0	Swaziland	Swaziland
+270	0	Zambia	Zambia
+271	0	Zimbabwe	Zimbabwe
+1013965	0	South Africa	South Africa
+220	0	Seychelles	Seychelles
+2531	1	Magadanskaya Oblast	Magadanskaya oblast,Russian Federation
+2532	1	Mariy-el Rep.	Mariy-el rep.,Russian Federation
+2533	1	Mordoviya Rep.	Mordoviya rep.,Russian Federation
+2534	1	Moskovskaya Oblast	Moskovskaya oblast,Russian Federation
+2535	1	Moskva	Moskva,Russian Federation
+2536	1	Murmanskaya Oblast	Murmanskaya oblast,Russian Federation
+2538	1	Nenetskiy Okrug	Nenetskiy okrug,Russian Federation
 11	0	Antigua and Barbuda	Antigua and Barbuda
 14	0	Aruba	Aruba
 20	0	Bahamas	Bahamas
 24	0	Barbados	Barbados
 28	0	Belize	Belize
-30	0	Bermuda	Bermuda
+2539	1	Nizhegorodskaya Oblast	Nizhegorodskaya oblast,Russian Federation
+2540	1	Novgorodskaya Oblast	Novgorodskaya oblast,Russian Federation
+2541	1	Novosibirskaya Oblast	Novosibirskaya oblast,Russian Federation
 39	0	British Virgin Islands	British Virgin Islands
 47	0	Cape Verde	Cape Verde
+99	0	Grenada	Grenada
 48	0	Cayman Islands	Cayman Islands
 61	0	Costa Rica	Costa Rica
 63	0	Cuba	Cuba
@@ -82,9 +152,11 @@
 90	0	Gambia	Gambia
 95	0	Gibraltar	Gibraltar
 98	0	Greenland	Greenland
-99	0	Grenada	Grenada
 100	0	Guadeloupe	Guadeloupe
 103	0	Guatemala	Guatemala
+128	0	Jersey	Jersey
+134	0	Kingman Reef	Kingman Reef
+144	0	Liberia	Liberia
 104	0	Guernsey	Guernsey
 105	0	Guinea-Bissau	Guinea-Bissau
 106	0	Guinea	Guinea
@@ -95,21 +167,35 @@
 119	0	Ireland	Ireland
 120	0	Isle of Man	Isle of Man
 123	0	Jamaica	Jamaica
-128	0	Jersey	Jersey
-134	0	Kingman Reef	Kingman Reef
-144	0	Liberia	Liberia
+2542	1	Omskaya Oblast	Omskaya oblast,Russian Federation
+2543	1	Orenburgskaya Oblast	Orenburgskaya oblast,Russian Federation
+2544	1	Orlovskaya Oblast	Orlovskaya oblast,Russian Federation
+2545	1	Penzenskaya Oblast	Penzenskaya oblast,Russian Federation
+2546	1	Permskaya Oblast	Permskaya oblast,Russian Federation
+2547	1	Primorskiy Kray	Primorskiy kray,Russian Federation
+2548	1	Pskovskaya Oblast	Pskovskaya oblast,Russian Federation
+2549	1	Rostovskaya Oblast	Rostovskaya oblast,Russian Federation
+2550	1	Ryazanskaya Oblast	Ryazanskaya oblast,Russian Federation
+2551	1	Sakha Rep.	Sakha rep.,Russian Federation
+2552	1	Sakhalinskaya Oblast	Sakhalinskaya oblast,Russian Federation
+2553	1	Samarskaya Oblast	Samarskaya oblast,Russian Federation
 151	0	Madeira Islands	Madeira Islands
+209	0	Saint Lucia	Saint Lucia
 158	0	Martinique	Martinique
 159	0	Mauritania	Mauritania
 168	0	Montserrat	Montserrat
 169	0	Morocco	Morocco
+84	0	Finland	Finland
+91	0	Palestine	Palestinian Territories
+92	0	Georgia	Georgia
+93	0	Germany	Germany
+97	0	Greece	Greece
 176	0	Netherlands Antilles	Netherlands Antilles
 180	0	Nicaragua	Nicaragua
 191	0	Panama	Panama
 199	0	Portugal	Portugal
 200	0	Puerto Rico	Puerto Rico
 208	0	Saint Kitts and Nevis	Saint Kitts and Nevis
-209	0	Saint Lucia	Saint Lucia
 210	0	Saint Pierre et Miquelon	Saint Pierre et Miquelon
 211	0	Saint Vincent and the Grenadines	Saint Vincent and the Grenadines
 217	0	Senegal	Senegal
@@ -143,36 +229,6 @@
 15	0	Arunachal Pradesh	Arunachal Pradesh
 18	0	Austria	Austria
 19	0	Azerbaijan	Azerbaijan
-21	0	Bahrain	Bahrain
-23	0	Bangladesh	Bangladesh
-26	0	Belarus	Belarus
-27	0	Belgium	Belgium
-29	0	Benin	Benin
-31	0	Bhutan	Bhutan
-34	0	Bosnia and Herzegovina	Bosnia and Herzegovina
-40	0	Brunei Darussalam	Brunei Darussalam
-41	0	Bulgaria	Bulgaria
-44	0	Cambodia	Cambodia
-45	0	Cameroon	Cameroon
-49	0	Central African Republic	Central African Republic
-50	0	Chad	Chad
-52	0	China/India	China/India border areas
-62	0	Croatia	Croatia
-64	0	Cyprus	Cyprus
-65	0	Czech Republic	Czech Republic
-67	0	Dem People's Rep of Korea	Dem People's Rep of Korea
-69	0	Denmark	Denmark
-70	0	Djibouti	Djibouti
-74	0	South Sudan	South Sudan
-76	0	Equatorial Guinea	Equatorial Guinea
-77	0	Eritrea	Eritrea
-78	0	Estonia	Estonia
-79	0	Ethiopia	Ethiopia
-84	0	Finland	Finland
-91	0	Palestine	Palestinian Territories
-92	0	Georgia	Georgia
-93	0	Germany	Germany
-97	0	Greece	Greece
 101	0	Guam	Guam
 113	0	Hungary	Hungary
 117	0	Iran  (Islamic Republic of)	Iran, Islamic Republic of
@@ -193,6 +249,45 @@
 147	0	Lithuania	Lithuania
 148	0	Luxembourg	Luxembourg
 153	0	Malaysia	Malaysia
+21	0	Bahrain	Bahrain
+23	0	Bangladesh	Bangladesh
+26	0	Belarus	Belarus
+27	0	Belgium	Belgium
+29	0	Benin	Benin
+31	0	Bhutan	Bhutan
+34	0	Bosnia and Herzegovina	Bosnia and Herzegovina
+40	0	Brunei Darussalam	Brunei Darussalam
+41	0	Bulgaria	Bulgaria
+44	0	Cambodia	Cambodia
+45	0	Cameroon	Cameroon
+49	0	Central African Republic	Central African Republic
+50	0	Chad	Chad
+52	0	China/India	China/India border areas
+62	0	Croatia	Croatia
+1012936	0	Kashmir	Kashmir
+196	0	Philippines	Philippines
+240	0	Thailand	Thailand
+906	1	Hainan Sheng	Hainan sheng,China
+904	1	Guangxi Zhuangzu Zizhiqu	Guangxi zhuangzu zizhiqu,China
+929	1	Yunnan Sheng	Yunnan sheng,China
+928	1	Xizang Zizhiqu	Xizang zizhiqu,China
+903	1	Guangdong Sheng	Guangdong sheng,China
+901	1	Fujian Sheng	Fujian sheng,China
+925	1	Taiwan Sheng	Taiwan sheng,China
+927	1	Xinjiang Uygur Zizhiqu	Xinjiang uygur zizhiqu,China
+913	1	Jiangsu Sheng	Jiangsu sheng,China
+922	1	Shanghai Shi	Shanghai shi,China
+921	1	Shandong Sheng	Shandong sheng,China
+64	0	Cyprus	Cyprus
+65	0	Czech Republic	Czech Republic
+67	0	Dem People's Rep of Korea	Dem People's Rep of Korea
+69	0	Denmark	Denmark
+70	0	Djibouti	Djibouti
+74	0	South Sudan	South Sudan
+76	0	Equatorial Guinea	Equatorial Guinea
+77	0	Eritrea	Eritrea
+78	0	Estonia	Estonia
+79	0	Ethiopia	Ethiopia
 156	0	Malta	Malta
 163	0	Micronesia (Federated States of)	Micronesia, Federated States of
 165	0	Moldova, Republic of	Moldova, Republic of
@@ -201,6 +296,33 @@
 177	0	Netherlands	Netherlands
 181	0	Niger	Niger
 182	0	Nigeria	Nigeria
+917	1	Neimenggu Zizhiqu	Neimenggu zizhiqu,China
+915	1	Jilin Sheng	Jilin sheng,China
+907	1	Hebei Sheng	Hebei sheng,China
+899	1	Beijing Shi	Beijing shi,China
+905	1	Guizhou Sheng	Guizhou sheng,China
+924	1	Sichuan Sheng	Sichuan sheng,China
+919	1	Qinghai Sheng	Qinghai sheng,China
+898	1	Anhui Sheng	Anhui sheng,China
+923	1	Shanxi Sheng	Shanxi sheng,China
+920	1	Shaanxi Sheng	Shaanxi sheng,China
+914	1	Jiangxi Sheng	Jiangxi sheng,China
+902	1	Gansu Sheng	Gansu sheng,China
+909	1	Henan Sheng	Henan sheng,China
+900	1	Chongqing Shi	Chongqing shi,China
+918	1	Ningxia Huizu Zizhiqu	Ningxia huizu zizhiqu,China
+911	1	Hubei Sheng	Hubei sheng,China
+912	1	Hunan Sheng	Hunan sheng,China
+916	1	Liaoning Sheng	Liaoning sheng,China
+908	1	Heilongjiang Sheng	Heilongjiang sheng,China
+2554	1	Sankt-peterburg	Sankt-peterburg,Russian Federation
+2555	1	Saratovskaya Oblast	Saratovskaya oblast,Russian Federation
+2556	1	Severnaya Osetiya-alaniya Rep.	Severnaya osetiya-alaniya rep.,Russian Federation
+2557	1	Smolenskaya Oblast	Smolenskaya oblast,Russian Federation
+2558	1	Stavropolskiy Kray	Stavropolskiy kray,Russian Federation
+2559	1	Sverdlovskaya Oblast	Sverdlovskaya oblast,Russian Federation
+2560	1	Tambovskaya Oblast	Tambovskaya oblast,Russian Federation
+2561	1	Tatarstan Rep.	Tatarstan rep.,Russian Federation
 185	0	Northern Mariana Islands	Northern Mariana Islands
 186	0	Norway	Norway
 187	0	Oman	Oman
@@ -210,7 +332,19 @@
 201	0	Qatar	Qatar
 203	0	Romania	Romania
 205	0	Rwanda	Rwanda
+2562	1	Taymyrskiy Okrug	Taymyrskiy okrug,Russian Federation
+2563	1	Tomskaya Oblast	Tomskaya oblast,Russian Federation
 214	0	Sao Tome and Principe	Sao Tome and Principe
+2623	1	Baha	Baha,Saudia Arabia
+2624	1	Eastern Province	Eastern province,Saudia Arabia
+2564	1	Tulskaya Oblast	Tulskaya oblast,Russian Federation
+2565	1	Tverskaya Oblast	Tverskaya oblast,Russian Federation
+2566	1	Tyumenskaya Oblast	Tyumenskaya oblast,Russian Federation
+2567	1	Tyva Rep.	Tyva rep.,Russian Federation
+2568	1	Udmurtiya Rep.	Udmurtiya rep.,Russian Federation
+2569	1	Ulyanovskaya Oblast	Ulyanovskaya oblast,Russian Federation
+2570	1	Ustordynskiy Buryatskiy Okrug	Ustordynskiy buryatskiy okrug,Russian Federation
+2571	1	Vladimirskaya Oblast	Vladimirskaya oblast,Russian Federation
 222	0	Singapore	Singapore
 223	0	Slovakia	Slovakia
 224	0	Slovenia	Slovenia
@@ -232,6 +366,24 @@
 2647	0	Montenegro	Montenegro
 2648	0	Serbia	Serbia
 33364	0	Hong Kong	Hong Kong
+2572	1	Volgogradskaya Oblast	Volgogradskaya oblast,Russian Federation
+2573	1	Vologodskaya Oblast	Vologodskaya oblast,Russian Federation
+2574	1	Voronezhskaya Oblast	Voronezhskaya oblast,Russian Federation
+2575	1	Yamalo-nenetskiy Okrug	Yamalo-nenetskiy okrug,Russian Federation
+2576	1	Yaroslavskaya Oblast	Yaroslavskaya oblast,Russian Federation
+2577	1	Yevreyskaya A. Oblast	Yevreyskaya a. oblast,Russian Federation
+1013665	1	KEPULAUAN RIAU	Kepulauan riau, Indonesia
+1013670	1	RIAU	Riau, Indonesia
+1013671	1	NANGGROE ACEH DARUSALAM	Nanggroe aceh darusalam, Indonesia
+1013674	1	GORONTALO	Gorontalo, Indonesia
+1013677	1	MALUKU UTARA	Maluku utara, Indonesia
+1013681	1	SUMATERA UTARA	Sumatera utara, Indonesia
+1013687	1	KALIMANTAN TIMUR	Kalimantan timur, Indonesia
+1013666	1	SULAWESI UTARA	Sulawesi utara, Indonesia
+1013672	1	JAMBI	Jambi, Indonesia
+1013695	1	KALIMANTAN BARAT	Kalimantan barat, Indonesia
+1143	0	Galapagos	Galapagos
+73	0	Ecuador	Ecuador (excl. Galapagos)
 40760	0	Hala'ib triangle	Hala'ib triangle
 40762	0	Ma'tan al-Sarra	Ma'tan al-Sarra
 40765	0	Egypt	Egypt
@@ -242,49 +394,25 @@
 1012935	0	Jammu Kashmir	Jammu Kashmir
 1011443	0	Korea, Republic of	Korea, Republic of
 1011446	0	Afghanistan	Afghanistan
-1012936	0	Kashmir	Kashmir
-196	0	Philippines	Philippines
-240	0	Thailand	Thailand
-906	1	Hainan Sheng	Hainan sheng,China
-904	1	Guangxi Zhuangzu Zizhiqu	Guangxi zhuangzu zizhiqu,China
-929	1	Yunnan Sheng	Yunnan sheng,China
-928	1	Xizang Zizhiqu	Xizang zizhiqu,China
-903	1	Guangdong Sheng	Guangdong sheng,China
-901	1	Fujian Sheng	Fujian sheng,China
-925	1	Taiwan Sheng	Taiwan sheng,China
-927	1	Xinjiang Uygur Zizhiqu	Xinjiang uygur zizhiqu,China
-913	1	Jiangsu Sheng	Jiangsu sheng,China
-922	1	Shanghai Shi	Shanghai shi,China
-921	1	Shandong Sheng	Shandong sheng,China
-917	1	Neimenggu Zizhiqu	Neimenggu zizhiqu,China
-915	1	Jilin Sheng	Jilin sheng,China
-907	1	Hebei Sheng	Hebei sheng,China
-899	1	Beijing Shi	Beijing shi,China
-905	1	Guizhou Sheng	Guizhou sheng,China
-924	1	Sichuan Sheng	Sichuan sheng,China
-919	1	Qinghai Sheng	Qinghai sheng,China
-898	1	Anhui Sheng	Anhui sheng,China
-923	1	Shanxi Sheng	Shanxi sheng,China
-920	1	Shaanxi Sheng	Shaanxi sheng,China
-914	1	Jiangxi Sheng	Jiangxi sheng,China
-902	1	Gansu Sheng	Gansu sheng,China
-909	1	Henan Sheng	Henan sheng,China
-900	1	Chongqing Shi	Chongqing shi,China
-918	1	Ningxia Huizu Zizhiqu	Ningxia huizu zizhiqu,China
-911	1	Hubei Sheng	Hubei sheng,China
-912	1	Hunan Sheng	Hunan sheng,China
-916	1	Liaoning Sheng	Liaoning sheng,China
-908	1	Heilongjiang Sheng	Heilongjiang sheng,China
 2622	1	Asir	Asir,Saudia Arabia
-2623	1	Baha	Baha,Saudia Arabia
-2624	1	Eastern Province	Eastern province,Saudia Arabia
 2625	1	Hail	Hail,Saudia Arabia
 2626	1	Jawf	Jawf,Saudia Arabia
 2627	1	Jizan	Jizan,Saudia Arabia
 2628	1	Madinah	Madinah,Saudia Arabia
 2629	1	Makkah	Makkah,Saudia Arabia
 2630	1	Najran	Najran,Saudia Arabia
+70076	1	Dadra and Nagar Haveli	Dadra and nagar haveli,India
+70081	1	Uttar Pradesh	Uttar pradesh,India
+70079	1	Madhya Pradesh	Madhya pradesh,India
+1506	1	Rajasthan	Rajasthan,India
+1509	1	Tripura	Tripura,India
 2631	1	Northern Frontier	Northern frontier,Saudia Arabia
+70074	1	Chandigarh	Chandigarh,India
+70077	1	Daman and Diu	Daman and diu,India
+1508	1	Tamil Nadu	Tamil nadu,India
+1495	1	Kerala	Kerala,India
+1498	1	Maharashtra	Maharashtra,India
+1505	1	Punjab	Punjab,India
 2632	1	Quassim	Quassim,Saudia Arabia
 2633	1	Riyad	Riyad,Saudia Arabia
 2634	1	Tabuk	Tabuk,Saudia Arabia
@@ -305,17 +433,6 @@
 1496	1	Lakshadweep	Lakshadweep,India
 1491	1	Gujarat	Gujarat,India
 1504	1	Orissa	Orissa,India
-70076	1	Dadra and Nagar Haveli	Dadra and nagar haveli,India
-70081	1	Uttar Pradesh	Uttar pradesh,India
-70079	1	Madhya Pradesh	Madhya pradesh,India
-1506	1	Rajasthan	Rajasthan,India
-1509	1	Tripura	Tripura,India
-70074	1	Chandigarh	Chandigarh,India
-70077	1	Daman and Diu	Daman and diu,India
-1508	1	Tamil Nadu	Tamil nadu,India
-1495	1	Kerala	Kerala,India
-1498	1	Maharashtra	Maharashtra,India
-1505	1	Punjab	Punjab,India
 1507	1	Sikkim	Sikkim,India
 1487	1	Assam	Assam,India
 70075	1	Chhattisgarh	Chhattisgarh,India
@@ -331,21 +448,6 @@
 668	1	Amazonas	Amazonas,Brasil
 669	1	Bahia	Bahia,Brasil
 670	1	Ceara	Ceara,Brasil
-671	1	Distrito Federal	Distrito federal,Brasil
-672	1	Espirito Santo	Espirito santo,Brasil
-673	1	Goias	Goias,Brasil
-674	1	Maranhao	Maranhao,Brasil
-675	1	Mato Grosso	Mato grosso,Brasil
-676	1	Mato Grosso Do Sul	Mato grosso do sul,Brasil
-677	1	Minas Gerais	Minas gerais,Brasil
-678	1	Para	Para,Brasil
-679	1	Paraiba	Paraiba,Brasil
-680	1	Parana	Parana,Brasil
-681	1	Pernambuco	Pernambuco,Brasil
-682	1	Piaui	Piaui,Brasil
-683	1	Rio De Janeiro	Rio de janeiro,Brasil
-684	1	Rio Grande Do Norte	Rio grande do norte,Brasil
-685	1	Rio Grande Do Sul	Rio grande do sul,Brasil
 686	1	Rondonia	Rondonia,Brasil
 688	1	Santa Catarina	Santa catarina,Brasil
 689	1	Sao Paulo	Sao paulo,Brasil
@@ -388,27 +490,21 @@
 1013688	1	BANTEN	Banten, Indonesia
 1013689	1	SULAWESI SELATAN	Sulawesi selatan, Indonesia
 1013692	1	SULAWESI BARAT	Sulawesi barat, Indonesia
-1013693	1	SUMATERA SELATAN	Sumatera selatan, Indonesia
-1013694	1	PAPUA	Papua, Indonesia
-4	0	Algeria	Algeria
-42	0	Burkina Faso	Burkina Faso
-85	0	France	France
-94	0	Ghana	Ghana
-155	0	Mali	Mali
-234	0	Svalbard and Jan Mayen Islands	Svalbard and Jan Mayen Islands
-243	0	Togo	Togo
-256	0	U.K. of Great Britain and Northern Ireland	UK
-667	1	Amapa	Amapa,Brasil
-687	1	Roraima	Roraima,Brasil
-2501	1	Chukotskiy Okrug	Chukotskiy okrug,Russian Federation
-3214	1	Alabama	Alabama,USA
-3215	1	Alaska	Alaska,USA
-3216	1	Arizona	Arizona,USA
-3217	1	Arkansas	Arkansas,USA
-3218	1	California	California,USA
-3219	1	Colorado	Colorado,USA
-3220	1	Connecticut	Connecticut,USA
-3221	1	Delaware	Delaware,USA
+671	1	Distrito Federal	Distrito federal,Brasil
+672	1	Espirito Santo	Espirito santo,Brasil
+673	1	Goias	Goias,Brasil
+674	1	Maranhao	Maranhao,Brasil
+675	1	Mato Grosso	Mato grosso,Brasil
+676	1	Mato Grosso Do Sul	Mato grosso do sul,Brasil
+677	1	Minas Gerais	Minas gerais,Brasil
+678	1	Para	Para,Brasil
+679	1	Paraiba	Paraiba,Brasil
+680	1	Parana	Parana,Brasil
+681	1	Pernambuco	Pernambuco,Brasil
+682	1	Piaui	Piaui,Brasil
+683	1	Rio De Janeiro	Rio de janeiro,Brasil
+684	1	Rio Grande Do Norte	Rio grande do norte,Brasil
+685	1	Rio Grande Do Sul	Rio grande do sul,Brasil
 3222	1	District Of Columbia	District of columbia,USA
 3223	1	Florida	Florida,USA
 3224	1	Georgia	Georgia,USA
@@ -447,9 +543,6 @@
 3258	1	Utah	Utah,USA
 3259	1	Vermont	Vermont,USA
 3260	1	Virginia	Virginia,USA
-3261	1	Washington	Washington,USA
-3262	1	West Virginia	West virginia,USA
-3263	1	Wisconsin	Wisconsin,USA
 3264	1	Wyoming	Wyoming,USA
 2487	1	Adygeya Rep.	Adygeya rep.,Russian Federation
 2488	1	Aginskiy Buryatskiy A. Okrug	Aginskiy buryatskiy a. okrug,Russian Federation
@@ -458,101 +551,8 @@
 2491	1	Amurskaya Oblast	Amurskaya oblast,Russian Federation
 2492	1	Arkhangelskaya Oblast	Arkhangelskaya oblast,Russian Federation
 2493	1	Astrakhanskaya Oblast	Astrakhanskaya oblast,Russian Federation
-2494	1	Bashkortostan Rep.	Bashkortostan rep.,Russian Federation
-2495	1	Belgorodskaya Oblast	Belgorodskaya oblast,Russian Federation
-2496	1	Bryanskaya Oblast	Bryanskaya oblast,Russian Federation
-2497	1	Buryatiya Rep.	Buryatiya rep.,Russian Federation
-2498	1	Chechnya Rep.	Chechnya rep.,Russian Federation
-2499	1	Chelyabinskaya Oblast	Chelyabinskaya oblast,Russian Federation
-2500	1	Chitinskaya Oblast	Chitinskaya oblast,Russian Federation
-2502	1	Chuvashiya Rep.	Chuvashiya rep.,Russian Federation
-2503	1	Dagestan Rep.	Dagestan rep.,Russian Federation
-2504	1	Evenkiyskiy Okrug	Evenkiyskiy okrug,Russian Federation
-2505	1	Ingushetiya Rep.	Ingushetiya rep.,Russian Federation
-2506	1	Irkutskaya Oblast	Irkutskaya oblast,Russian Federation
-2507	1	Ivanovskaya Oblast	Ivanovskaya oblast,Russian Federation
-2508	1	Kabardino-balkariya Rep.	Kabardino-balkariya rep.,Russian Federation
-2509	1	Kaliningradskaya Oblast	Kaliningradskaya oblast,Russian Federation
-2510	1	Kalmykiya Rep.	Kalmykiya rep.,Russian Federation
-2511	1	Kaluzhskaya Oblast	Kaluzhskaya oblast,Russian Federation
-2512	1	Kamchatskaya Oblast	Kamchatskaya oblast,Russian Federation
-2513	1	Karatchayevo-cherkesiya Rep.	Karatchayevo-cherkesiya rep.,Russian Federation
-2514	1	Karelya Rep.	Karelya rep.,Russian Federation
-2515	1	Kemerovskaya Oblast	Kemerovskaya oblast,Russian Federation
-2516	1	Khabarovskiy Kray	Khabarovskiy kray,Russian Federation
-2517	1	Khakasiya Rep.	Khakasiya rep.,Russian Federation
-2518	1	Khanty-mansyiskiy Okrug	Khanty-mansyiskiy okrug,Russian Federation
-2519	1	Kirovskaya Oblast	Kirovskaya oblast,Russian Federation
-2520	1	Komi Rep.	Komi rep.,Russian Federation
-2521	1	Komi-permyatskiy Okrug	Komi-permyatskiy okrug,Russian Federation
-2522	1	Koryakskiy Okrug	Koryakskiy okrug,Russian Federation
-2523	1	Kostromskaya Oblast	Kostromskaya oblast,Russian Federation
-2524	1	Krasnodarskiy Kray	Krasnodarskiy kray,Russian Federation
-2525	1	Krasnoyarskiy Kray	Krasnoyarskiy kray,Russian Federation
-2526	1	Kurganskaya Oblast	Kurganskaya oblast,Russian Federation
-2527	1	Kurskaya Oblast	Kurskaya oblast,Russian Federation
-2529	1	Leningradskaya Oblast	Leningradskaya oblast,Russian Federation
-2530	1	Lipetskaya Oblast	Lipetskaya oblast,Russian Federation
-2531	1	Magadanskaya Oblast	Magadanskaya oblast,Russian Federation
-2532	1	Mariy-el Rep.	Mariy-el rep.,Russian Federation
-2533	1	Mordoviya Rep.	Mordoviya rep.,Russian Federation
-2534	1	Moskovskaya Oblast	Moskovskaya oblast,Russian Federation
-2535	1	Moskva	Moskva,Russian Federation
-2536	1	Murmanskaya Oblast	Murmanskaya oblast,Russian Federation
-2538	1	Nenetskiy Okrug	Nenetskiy okrug,Russian Federation
-2539	1	Nizhegorodskaya Oblast	Nizhegorodskaya oblast,Russian Federation
-2540	1	Novgorodskaya Oblast	Novgorodskaya oblast,Russian Federation
-2541	1	Novosibirskaya Oblast	Novosibirskaya oblast,Russian Federation
-2542	1	Omskaya Oblast	Omskaya oblast,Russian Federation
-2543	1	Orenburgskaya Oblast	Orenburgskaya oblast,Russian Federation
-2544	1	Orlovskaya Oblast	Orlovskaya oblast,Russian Federation
-2545	1	Penzenskaya Oblast	Penzenskaya oblast,Russian Federation
-2546	1	Permskaya Oblast	Permskaya oblast,Russian Federation
-2547	1	Primorskiy Kray	Primorskiy kray,Russian Federation
-2548	1	Pskovskaya Oblast	Pskovskaya oblast,Russian Federation
-2549	1	Rostovskaya Oblast	Rostovskaya oblast,Russian Federation
-2550	1	Ryazanskaya Oblast	Ryazanskaya oblast,Russian Federation
-2551	1	Sakha Rep.	Sakha rep.,Russian Federation
-2552	1	Sakhalinskaya Oblast	Sakhalinskaya oblast,Russian Federation
-2553	1	Samarskaya Oblast	Samarskaya oblast,Russian Federation
-2554	1	Sankt-peterburg	Sankt-peterburg,Russian Federation
-2555	1	Saratovskaya Oblast	Saratovskaya oblast,Russian Federation
-2556	1	Severnaya Osetiya-alaniya Rep.	Severnaya osetiya-alaniya rep.,Russian Federation
-2557	1	Smolenskaya Oblast	Smolenskaya oblast,Russian Federation
-2558	1	Stavropolskiy Kray	Stavropolskiy kray,Russian Federation
-2559	1	Sverdlovskaya Oblast	Sverdlovskaya oblast,Russian Federation
-2560	1	Tambovskaya Oblast	Tambovskaya oblast,Russian Federation
-2561	1	Tatarstan Rep.	Tatarstan rep.,Russian Federation
-2562	1	Taymyrskiy Okrug	Taymyrskiy okrug,Russian Federation
-2563	1	Tomskaya Oblast	Tomskaya oblast,Russian Federation
-2564	1	Tulskaya Oblast	Tulskaya oblast,Russian Federation
-2565	1	Tverskaya Oblast	Tverskaya oblast,Russian Federation
-2566	1	Tyumenskaya Oblast	Tyumenskaya oblast,Russian Federation
-2567	1	Tyva Rep.	Tyva rep.,Russian Federation
-2568	1	Udmurtiya Rep.	Udmurtiya rep.,Russian Federation
-2569	1	Ulyanovskaya Oblast	Ulyanovskaya oblast,Russian Federation
-2570	1	Ustordynskiy Buryatskiy Okrug	Ustordynskiy buryatskiy okrug,Russian Federation
-2571	1	Vladimirskaya Oblast	Vladimirskaya oblast,Russian Federation
-2572	1	Volgogradskaya Oblast	Volgogradskaya oblast,Russian Federation
-2573	1	Vologodskaya Oblast	Vologodskaya oblast,Russian Federation
-2574	1	Voronezhskaya Oblast	Voronezhskaya oblast,Russian Federation
-2575	1	Yamalo-nenetskiy Okrug	Yamalo-nenetskiy okrug,Russian Federation
-2576	1	Yaroslavskaya Oblast	Yaroslavskaya oblast,Russian Federation
-2577	1	Yevreyskaya A. Oblast	Yevreyskaya a. oblast,Russian Federation
-1013665	1	KEPULAUAN RIAU	Kepulauan riau, Indonesia
-1013670	1	RIAU	Riau, Indonesia
-1013671	1	NANGGROE ACEH DARUSALAM	Nanggroe aceh darusalam, Indonesia
-1013674	1	GORONTALO	Gorontalo, Indonesia
-1013677	1	MALUKU UTARA	Maluku utara, Indonesia
-1013681	1	SUMATERA UTARA	Sumatera utara, Indonesia
-1013687	1	KALIMANTAN TIMUR	Kalimantan timur, Indonesia
-1013666	1	SULAWESI UTARA	Sulawesi utara, Indonesia
-1013672	1	JAMBI	Jambi, Indonesia
-1013695	1	KALIMANTAN BARAT	Kalimantan barat, Indonesia
-1143	0	Galapagos	Galapagos
-73	0	Ecuador	Ecuador (excl. Galapagos)
 894	0	Easter Island	Easter Island
 51	0	Chile	Chile (excl. Easter Island)
 3225	1	Hawaii	Hawaii,USA
-229	0	Spain	Spain
+229	0	Spain	Spain (excl. Canary Islands)
 229010	0	Canary Islands	Canary Islands

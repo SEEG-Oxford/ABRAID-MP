@@ -41,10 +41,10 @@ public interface LocationService {
     List<HealthMapCountry> getAllHealthMapCountries();
 
     /**
-     * Gets all administrative units.
-     * @return All administrative units.
+     * Gets all administrative units for QC.
+     * @return All administrative units for QC.
      */
-    List<AdminUnit> getAllAdminUnits();
+    List<AdminUnitQC> getAllAdminUnitQCs();
 
     /**
      * Gets all land-sea borders.

@@ -21,18 +21,19 @@ public class LocationServiceImpl implements LocationService {
     private LocationDao locationDao;
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
-    private AdminUnitDao adminUnitDao;
+    private AdminUnitQCDao adminUnitQCDao;
     private LandSeaBorderDao landSeaBorderDao;
 
     public LocationServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
                                LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
-                               GeoNameDao geoNameDao, AdminUnitDao adminUnitDao, LandSeaBorderDao landSeaBorderDao) {
+                               GeoNameDao geoNameDao, AdminUnitQCDao adminUnitQCDao,
+                               LandSeaBorderDao landSeaBorderDao) {
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
         this.locationDao = locationDao;
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
         this.geoNameDao = geoNameDao;
-        this.adminUnitDao = adminUnitDao;
+        this.adminUnitQCDao = adminUnitQCDao;
         this.landSeaBorderDao = landSeaBorderDao;
     }
 
@@ -59,8 +60,8 @@ public class LocationServiceImpl implements LocationService {
      * @return All administrative units.
      */
     @Override
-    public List<AdminUnit> getAllAdminUnits() {
-        return adminUnitDao.getAll();
+    public List<AdminUnitQC> getAllAdminUnitQCs() {
+        return adminUnitQCDao.getAll();
     }
 
     /**

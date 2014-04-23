@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnit;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 
 import java.util.List;
 
@@ -11,17 +11,17 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
 
 /**
- * Tests the AdminUnitDao class.
+ * Tests the AdminUnitQCDao class.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class AdminUnitDaoTest extends AbstractSpringIntegrationTests {
+public class AdminUnitQCDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
-    private AdminUnitDao adminUnitDao;
+    private AdminUnitQCDao adminUnitQCDao;
 
     @Test
     public void getAllReturnsAllAdminUnits() {
-        List<AdminUnit> adminUnits = adminUnitDao.getAll();
+        List<AdminUnitQC> adminUnits = adminUnitQCDao.getAll();
         assertThat(adminUnits).hasSize(41724);
     }
 
@@ -31,7 +31,7 @@ public class AdminUnitDaoTest extends AbstractSpringIntegrationTests {
         int gaulCode = 1633;
 
         // Act
-        AdminUnit adminUnit = adminUnitDao.getByGaulCode(gaulCode);
+        AdminUnitQC adminUnit = adminUnitQCDao.getByGaulCode(gaulCode);
 
         // Assert
         assertThat(adminUnit).isNotNull();
@@ -45,7 +45,7 @@ public class AdminUnitDaoTest extends AbstractSpringIntegrationTests {
 
     @Test
     public void getByGaulCodeReturnsNullIfAdminUnitDoesNotExist() {
-        AdminUnit adminUnit = adminUnitDao.getByGaulCode(300);
+        AdminUnitQC adminUnit = adminUnitQCDao.getByGaulCode(300);
         assertThat(adminUnit).isNull();
     }
 }

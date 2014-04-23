@@ -10,9 +10,9 @@ DROP ROLE IF EXISTS :application_username;
 CREATE ROLE :application_username LOGIN PASSWORD :'application_password';
 
 -- Privileges for the ABRAID-MP application: tables
-GRANT SELECT                        ON admin_unit TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON admin_unit_disease_extent_class TO :application_username;
 GRANT SELECT                        ON admin_unit_global TO :application_username;
+GRANT SELECT                        ON admin_unit_qc TO :application_username;
 GRANT SELECT, INSERT                ON admin_unit_review TO :application_username;
 GRANT SELECT                        ON admin_unit_simplified_global TO :application_username;
 GRANT SELECT                        ON admin_unit_simplified_tropical TO :application_username;

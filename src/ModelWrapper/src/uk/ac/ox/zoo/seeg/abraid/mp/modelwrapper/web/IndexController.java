@@ -69,6 +69,7 @@ public class IndexController {
         model.addAttribute("available_versions", modelVersions);
         model.addAttribute("run_duration", configurationService.getMaxModelRunDuration());
         model.addAttribute("r_path", rPath);
+        model.addAttribute("covariate_directory", configurationService.getCovariateDirectory());
 
         return "index";
     }

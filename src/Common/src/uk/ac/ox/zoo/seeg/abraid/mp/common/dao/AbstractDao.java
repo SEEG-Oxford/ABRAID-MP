@@ -166,7 +166,7 @@ public abstract class AbstractDao<E, I extends Serializable> {
      * @see Query#list()
      */
     @SuppressWarnings("unchecked")
-    public final List<E> getAll() throws HibernateException {
+    public List<E> getAll() throws HibernateException {
         return currentSession().createCriteria(entityClass).list();
     }
 
