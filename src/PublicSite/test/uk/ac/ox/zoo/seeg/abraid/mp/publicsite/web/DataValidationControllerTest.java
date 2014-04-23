@@ -1,13 +1,20 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
@@ -16,7 +23,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -28,6 +37,7 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class DataValidationControllerTest extends AbstractAuthenticatingTests {
+
     @Before
     public void setupUser() {
         PublicSiteUser user = mock(PublicSiteUser.class);
@@ -39,19 +49,21 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
     @Test
     public void showPageReturnsDataValidationPage() {
         // Arrange
-        CurrentUserService currentUserService = new CurrentUserServiceImpl();
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertService expertService = mock(ExpertService.class);
         Model model = mock(Model.class);
-
-        DataValidationController target = new DataValidationController(currentUserService, diseaseService,
-                expertService);
+        DataValidationController target = createTarget();
 
         // Act
         String result = target.showPage(model);
 
         // Assert
         assertThat(result).isEqualTo("datavalidationcontent");
+    }
+
+    private DataValidationController createTarget() {
+        CurrentUserService currentUserService = new CurrentUserServiceImpl();
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        return new DataValidationController(currentUserService, diseaseService, expertService);
     }
 
     @Test
@@ -92,6 +104,64 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getDiseaseExtentForDiseaseGroupFailsForInvalidDiseaseGroup() throws Exception {
+        // Arrange
+        CurrentUserService currentUserService = new CurrentUserServiceImpl();
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        DataValidationController target = new DataValidationController(currentUserService, diseaseService, expertService);
+        when(diseaseService.getAdminUnitDiseaseExtentClassMap(anyInt())).thenThrow(new IllegalArgumentException());
+
+        // Act
+        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(0);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getDiseaseExtentForDiseaseGroupReturnsCorrectData() {
+        // Arrange
+        Integer diseaseGroupId = 22;
+        CurrentUserService currentUserService = new CurrentUserServiceImpl();
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        DataValidationController target = new DataValidationController(currentUserService, diseaseService, expertService);
+
+        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = createMap();
+        when(diseaseService.getAdminUnitDiseaseExtentClassMap(diseaseGroupId)).thenReturn(map);
+
+        // Act
+        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getFeatures()).hasSameSizeAs(map.entrySet());
+    }
+
+    private Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> createMap() {
+        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = new HashMap<>();
+        AdminUnitGlobal adminUnitGlobal = createAdminUnitGlobal();
+        map.put(adminUnitGlobal, DiseaseExtentClass.ABSENCE);
+        return map;
+    }
+
+    private AdminUnitGlobal createAdminUnitGlobal() {
+        AdminUnitGlobal adminUnitGlobal = new AdminUnitGlobal();
+        adminUnitGlobal.setGaulCode(1);
+        adminUnitGlobal.setPublicName("AUG");
+        adminUnitGlobal.setLevel('1');
+        adminUnitGlobal.setGeom(createMultiPolygon());
+        return adminUnitGlobal;
+    }
+
+    private MultiPolygon createMultiPolygon() {
+        Polygon polygon = GeometryUtils.createPolygon(1,1,2,2,3,3,1,1);
+        Polygon[] polygons = {polygon};
+        return GeometryUtils.createMultiPolygon(polygons);
     }
 
     @Test

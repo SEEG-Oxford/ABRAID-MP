@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,16 +13,22 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -117,6 +125,64 @@ public class DataValidationControllerIntegrationTest {
         this.mockMvc.perform(
                 patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void extentResourceAcceptsValidRequest() throws Exception {
+        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = new HashMap<>();
+        AdminUnitGlobal adminUnitGlobal = createAdminUnitGlobal();
+        map.put(adminUnitGlobal, DiseaseExtentClass.ABSENCE);
+        when(diseaseService.getAdminUnitDiseaseExtentClassMap(anyInt())).thenReturn(map);
+
+        this.mockMvc.perform(
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/2/extent"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"));
+    }
+
+    @Test
+    public void extentResourceRejectsInvalidNonNumericId() throws Exception {
+        this.mockMvc.perform(
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/id/extent"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void extentResourceOnlyAcceptsGET() throws Exception {
+        this.mockMvc.perform(
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(
+                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    private AdminUnitGlobal createAdminUnitGlobal() {
+        AdminUnitGlobal adminUnitGlobal = new AdminUnitGlobal();
+        adminUnitGlobal.setGaulCode(1);
+        adminUnitGlobal.setPublicName("AUG");
+        adminUnitGlobal.setLevel('1');
+        adminUnitGlobal.setGeom(createMultiPolygon());
+        return adminUnitGlobal;
+    }
+
+    private MultiPolygon createMultiPolygon() {
+        Polygon polygon = GeometryUtils.createPolygon(1, 1, 2, 2, 3, 3, 1, 1);
+        Polygon[] polygons = {polygon};
+        return GeometryUtils.createMultiPolygon(polygons);
     }
 
     @Test

@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseExtentFeatureCollection;
@@ -26,6 +24,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for the expert data validation map page.
@@ -132,10 +131,15 @@ public class DataValidationController {
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
-        return new ResponseEntity<>(
-           new GeoJsonDiseaseExtentFeatureCollection(diseaseService.getAdminUnitDiseaseExtentClassMap(diseaseGroupId)),
-           HttpStatus.OK
-        );
+        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map;
+
+        try {
+            map = diseaseService.getAdminUnitDiseaseExtentClassMap(diseaseGroupId);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(map), HttpStatus.OK);
     }
 
     /**

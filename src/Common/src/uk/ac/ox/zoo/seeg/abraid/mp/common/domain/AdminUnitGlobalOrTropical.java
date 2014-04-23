@@ -33,6 +33,10 @@ public class AdminUnitGlobalOrTropical {
         return gaulCode;
     }
 
+    public void setGaulCode(Integer gaulCode) {
+        this.gaulCode = gaulCode;
+    }
+
     public char getLevel() {
         return level;
     }
