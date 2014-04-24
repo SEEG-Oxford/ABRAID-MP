@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfigurationFactory;
@@ -20,7 +21,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
  * Copyright (c) 2014 University of Oxford
  */
 @Controller
-public class ModelRunController {
+public class ModelRunController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(ModelRunController.class);
     private static final String LOG_STARTING_NEW_BACKGROUND_MODEL_RUN = "Starting new background model run";
     private static final String LOG_EXCEPTION_STARTING_MODEL_RUN = "Exception starting model run.";

@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
  * Copyright (c) 2014 University of Oxford
  */
 @Controller
-public class IndexController {
+public class IndexController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(IndexController.class);
     private static final String LOG_FAILED_TO_GET_REPOSITORY_VERSIONS = "Failed to get repository versions.";
 
