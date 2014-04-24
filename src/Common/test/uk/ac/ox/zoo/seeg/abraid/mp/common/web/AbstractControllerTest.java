@@ -18,7 +18,7 @@ public class AbstractControllerTest {
     @Test
     public void initBinderShouldRegisterStringTrimmer() {
         // Arrange
-        AbstractController target = new AbstractController() {};
+        AbstractController target = new AbstractController() { };
         WebDataBinder binder = mock(WebDataBinder.class);
 
         // Act
@@ -27,5 +27,4 @@ public class AbstractControllerTest {
         // Assert
         verify(binder, times(1)).registerCustomEditor(eq(String.class), any(StringTrimmerEditor.class));
     }
-
 }
