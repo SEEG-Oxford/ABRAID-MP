@@ -57,7 +57,7 @@
                         diseaseGroups: [
                             <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                 {
-                                    name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                     id: ${diseaseGroup.id?c}
                                 },
                             </#list>
@@ -80,7 +80,7 @@
                         diseaseGroups: [
                             <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                 {
-                                    name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                     id: ${diseaseGroup.id?c}
                                 },
                             </#list>

@@ -8,7 +8,7 @@
             </optgroup>
         </select>
         <span data-bind="if: selectedType() == 'disease extent'">
-            <select data-bind="options: selectedDisease().diseaseGroups, optionsText: 'name', value: selectedDiseaseGroup"></select>
+            <select data-bind="options: selectedDisease().diseaseGroups, optionsText: 'shortName', value: selectedDiseaseGroup"></select>
         </span>
     </h4>
 
