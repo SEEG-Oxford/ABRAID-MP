@@ -19,7 +19,7 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
                 query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
-                        "and alert=:alert and occurrenceStartDate=:occurrenceStartDate"
+                        "and alert=:alert and occurrenceDate=:occurrenceDate"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
@@ -71,10 +71,10 @@ public class DiseaseOccurrence {
     @Column(name = "validation_weighting")
     private Double validationWeighting;
 
-    // The start date of the disease occurrence (if known).
-    @Column(name = "occurrence_start_date")
+    // The date of the disease occurrence.
+    @Column(name = "occurrence_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime occurrenceStartDate;
+    private DateTime occurrenceDate;
 
     public DiseaseOccurrence() {
     }
@@ -127,12 +127,12 @@ public class DiseaseOccurrence {
         this.validationWeighting = validationWeighting;
     }
 
-    public DateTime getOccurrenceStartDate() {
-        return occurrenceStartDate;
+    public DateTime getOccurrenceDate() {
+        return occurrenceDate;
     }
 
-    public void setOccurrenceStartDate(DateTime occurrenceStartDate) {
-        this.occurrenceStartDate = occurrenceStartDate;
+    public void setOccurrenceDate(DateTime occurrenceDate) {
+        this.occurrenceDate = occurrenceDate;
     }
 
     ///COVERAGE:OFF - generated code
@@ -151,7 +151,7 @@ public class DiseaseOccurrence {
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (occurrenceStartDate != null ? !occurrenceStartDate.equals(that.occurrenceStartDate) : that.occurrenceStartDate != null)
+        if (occurrenceDate != null ? !occurrenceDate.equals(that.occurrenceDate) : that.occurrenceDate != null)
             return false;
 
         return true;
@@ -165,7 +165,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (validationWeighting != null ? validationWeighting.hashCode() : 0);
-        result = 31 * result + (occurrenceStartDate != null ? occurrenceStartDate.hashCode() : 0);
+        result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

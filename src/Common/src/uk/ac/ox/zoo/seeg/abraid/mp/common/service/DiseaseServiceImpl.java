@@ -160,7 +160,7 @@ public class DiseaseServiceImpl implements DiseaseService {
 
         List<DiseaseOccurrence> matchingOccurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
-                occurrence.getOccurrenceStartDate());
+                occurrence.getOccurrenceDate());
 
         return matchingOccurrences.size() > 0;
     }
