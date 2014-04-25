@@ -161,7 +161,7 @@ public class QCManagerIntegrationTest {
         assertThat(passedQCStage).isEqualTo(3);
         assertThat(location.getAdminUnitQC()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
-                "stage 2 passed: location (73.465640,5.842700) snapped to land (distance 0.820km). QC stage 3 " +
-                "passed: no country geometries associated with this location.");
+                "stage 2 passed: location is a country. QC stage 3 passed: no country geometries associated with " +
+                "this location.");
     }
 }

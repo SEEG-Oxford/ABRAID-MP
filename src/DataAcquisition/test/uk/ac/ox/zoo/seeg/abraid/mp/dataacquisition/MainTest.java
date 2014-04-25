@@ -140,7 +140,7 @@ public class MainTest {
         assertThat(occurrence2Location.getPassedQCStage()).isEqualTo(3);
         assertThat(occurrence2Location.getAdminUnitQC()).isNull();
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
-                "ADMIN2. QC stage 2 passed: location already within land. QC stage 3 passed: location already " +
+                "ADMIN2. QC stage 2 passed: location is a country. QC stage 3 passed: location already " +
                 "within HealthMap country.");
 
         assertThatGeoNameExists(2186224, "PCLI");
