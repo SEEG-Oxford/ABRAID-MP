@@ -25,7 +25,7 @@
                 </span>
             </p>
             <p class="form-group">
-                <input type="submit" class="btn btn-primary" value="Log in to start validating" data-bind="click: attemptFormLogin">
+                <input type="submit" class="btn btn-primary" value="Log in to start validating" data-bind="click: submit">
             </p>
         </form>
     </@security.authorize>

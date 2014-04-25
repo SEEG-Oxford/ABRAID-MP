@@ -38,7 +38,6 @@
             var baseUrl = "<@spring.url "/" />";
             ${endOfBodyScript}
         </script>
-        <#--<@-- script type="text/javascript" data-main="<@spring.url '${requireDataMain}'/>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>-->
         ${endOfBody}
     </body>
 </html>

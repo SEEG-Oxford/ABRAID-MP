@@ -17,7 +17,7 @@ define(["ko", "jquery"], function (ko, $) {
         self.savingVersion = ko.observable(false);
         self.notices = initialData.availableVersions.length !== 0 ?
             ko.observableArray() :
-            ko.observableArray([{ message: "The current repository does not appear to have any versions. If the url is correct try syncing the repository, otherwise fix the url.", priority: 'info'}]);
+            ko.observableArray([{ message: "The current repository does not appear to have any versions. If the URL is correct try syncing the repository, otherwise fix the URL.", priority: 'info'}]);
 
         // Computed state
         self.urlChanged = ko.computed(function() {
@@ -41,7 +41,7 @@ define(["ko", "jquery"], function (ko, $) {
                 $.post(baseUrl + "repo/sync", { repositoryUrl: self.url() })
                     .done(function (response) {
                         if (response.length === 0) {
-                            self.notices.push({ 'message': "The repository was successfully synced but contained no versions. Try a different url.", 'priority': 'info'});
+                            self.notices.push({ 'message': "The repository was successfully synced but contained no versions. Try a different URL.", 'priority': 'info'});
                         } else {
                             for (var i=0; i < response.length; i++) {
                                 self.availableVersions.push(response[i]);
@@ -52,7 +52,7 @@ define(["ko", "jquery"], function (ko, $) {
                             self.notices.push({ 'message': "Sync successful.", 'priority': 'success'});
                         }})
                     .fail(function () {
-                        self.notices.push({ 'message': "Sync failed, are you sure the url is correct?", 'priority': 'warning'}); })
+                        self.notices.push({ 'message': "Sync failed, are you sure the URL is correct?", 'priority': 'warning'}); })
                     .always(function () {
                         self.syncingRepo(false);
                         self.lastUrl(currentUrl);

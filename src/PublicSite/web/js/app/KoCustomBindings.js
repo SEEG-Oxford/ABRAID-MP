@@ -1,0 +1,52 @@
+/* An AMD defining and registering a set of custom knockout bindings.
+ * Copyright (c) 2014 University of Oxford.
+ */
+/*global define:false*/
+define(["knockout", "jquery", "moment"], function (ko, $, moment) {
+    "use strict";
+
+    ko.utils.recursiveUnwrap = function (func) {
+        if (typeof func != 'function') {
+            return func;
+        }
+        return ko.utils.recursiveUnwrap(func());
+    };
+
+    // Set the width of the element to fit the number of digits (2, 3 or 4)
+    function adjustElementWidthForCounterValue(element, value) {
+        if ((value > 999) && ($(element).width() != 280)) {
+            $(element).width(280);
+        } else if ((value > 99) && ($(element).width() != 210)) {
+            $(element).width(210);
+        }
+    }
+
+    // Custom binding to set the value on the flipclock.js counter
+    ko.bindingHandlers.counter = {
+        init: function (element, valueAccessor) {
+            var counter = $(element).FlipClock(ko.utils.recursiveUnwrap(valueAccessor), { clockFace: "Counter" });
+            ko.utils.domData.set(element, "counter", counter);
+        },
+        update: function (element, valueAccessor) {
+            var counter = ko.utils.domData.get(element, "counter");
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            adjustElementWidthForCounterValue(element, value);
+            counter.setValue(value);
+        }
+    };
+
+    // Custom binding to format the datetime display with moment.js library
+    ko.bindingHandlers.date = {
+        update: function (element, valueAccessor) {
+            var date = ko.utils.recursiveUnwrap(valueAccessor);
+            $(element).text(moment(date).lang('en-gb').format('LL'));
+        }
+    };
+
+    ko.bindingHandlers.option = {
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            ko.selectExtensions.writeValue(element, value);
+        }
+    };
+});

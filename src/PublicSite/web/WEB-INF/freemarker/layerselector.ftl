@@ -2,13 +2,13 @@
     <h4>You are validating
         <select data-bind="options: validationTypes, value: selectedType"></select>
         of
-        <select data-bind="foreach: groups, value: selectedDisease">
+        <select data-bind="foreach: groups, value: selectedDiseaseSet">
             <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
                 <option data-bind="html: name, option: $data"></option>
             </optgroup>
         </select>
         <span data-bind="if: selectedType() == 'disease extent'">
-            <select data-bind="options: selectedDisease().diseaseGroups, optionsText: 'name', value: selectedDiseaseGroup"></select>
+            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease"></select>
         </span>
     </h4>
 
