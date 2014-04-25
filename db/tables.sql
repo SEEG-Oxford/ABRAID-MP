@@ -32,22 +32,13 @@
 -- validator_disease_group:        Represents a grouping of diseases for use by the Data Validator.
 
 
-CREATE TABLE admin_unit_qc (
-    gaul_code integer NOT NULL,
-    level varchar(1) NOT NULL,
-    name varchar(100) NOT NULL,
-    centr_lon double precision NOT NULL,
-    centr_lat double precision NOT NULL,
-    area double precision NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
-);
-
 CREATE TABLE admin_unit_disease_extent_class (
     id serial NOT NULL,
     global_gaul_code integer,
     tropical_gaul_code integer,
     disease_group_id integer NOT NULL,
     disease_extent_class varchar(17) NOT NULL,
+    has_changed boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -58,6 +49,16 @@ CREATE TABLE admin_unit_global (
     pub_name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326),
     simplified_geom geometry(MULTIPOLYGON, 4326)
+);
+
+CREATE TABLE admin_unit_qc (
+    gaul_code integer NOT NULL,
+    level varchar(1) NOT NULL,
+    name varchar(100) NOT NULL,
+    centr_lon double precision NOT NULL,
+    centr_lat double precision NOT NULL,
+    area double precision NOT NULL,
+    geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_review (
@@ -106,6 +107,7 @@ CREATE TABLE disease_group (
     abbreviation varchar(10),
     is_global boolean,
     validator_disease_group_id integer,
+    last_extent_generation_date timestamp,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -196,6 +198,8 @@ CREATE TABLE location (
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     healthmap_country_id bigint,
     admin_unit_qc_gaul_code integer,
+    admin_unit_global_gaul_code integer,
+    admin_unit_tropical_gaul_code integer,
     passed_qc_stage integer,
     qc_message varchar(1000)
 );
