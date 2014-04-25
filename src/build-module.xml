@@ -96,7 +96,7 @@
     <fail message="Quality checks failed!" if="build.failure" />
   </target>
 
-  <target name="print.summary" depends="test.summary, js.test.summary, style.summary, bug.summary, combine.results, composite.summary" />
+  <target name="print.summary" depends="test.summary, js.test.summary, style.summary, js.style.summary, bug.summary, combine.results, composite.summary" />
 
   <target name="print.start">
     <echo message="[Summary]" />
@@ -115,6 +115,10 @@
     <echo>[Summary] ${module.name}: Styling errors!</echo>
   </target>
 
+    <target name="js.style.summary" if="js.style.failure">
+    <echo>[Summary] ${module.name}: JS style errors!</echo>
+  </target>
+
   <target name="bug.summary" if="bug.failure">
     <echo>[Summary] ${module.name}: Bugs detected!</echo>
   </target>
@@ -125,6 +129,7 @@
           <isset property="test.failure"/>
           <isset property="js.test.failure"/>
           <isset property="style.failure"/>
+          <!-- <isset property="js.style.failure"/>  // Not enforced yet. -->
           <isset property="bug.failure"/>
        </or>
      </condition>
@@ -239,6 +244,13 @@
     </unzip>
     <move file="${lib.local.analysis.dir}/jacocoant.jar" tofile="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
     <delete file="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip"/>
+  </target>
+
+  <!-- JSHint manually -->
+  <property name="jshint.version" value="2.5.0" />
+
+  <target name="retrieve.jshint">
+    <get skipexisting="true" src="https://raw.githubusercontent.com/jshint/jshint/${jshint.version}/dist/jshint.js" dest="${lib.local.external.dir}/jshint-${jshint.version}.js"/>
   </target>
 
   <!-- Get Phantom manually -->
@@ -523,15 +535,48 @@
   <!-- JS targets -->
   <target name="check.extras" />
 
+  <target name="check.quality.js" depends="unit.test.js, check.style.js, check.test.style.js"/>
+
   <target name="unit.test.js" depends="retrieve.libs, find.phantom">
-    <echo>Running: ${phantom.executable}</echo>
     <exec executable="${phantom.executable}" resultproperty="js.test.result">
-      <arg value="${project.root.dir}/src/run-jasmine.js"/>
-      <arg value="${web.dir}/js/app/spec/SpecRunner.html?console=true&amp;coverage=true"/>
+      <arg value="'${project.root.dir}/src/run-jasmine.js'"/>
+      <arg value="'${web.dir}/js/app/spec/SpecRunner.html?console=true&amp;coverage=true'"/>
     </exec>
     <condition property="js.test.failure">
       <not>
         <equals arg1="${js.test.result}" arg2="0" />
+      </not>
+    </condition>
+  </target>
+
+  <target name="check.style.js" depends="retrieve.libs, find.phantom">
+    <exec executable="${phantom.executable}" dir="${basedir}" resultproperty="js.style.result">
+      <arg line="'${project.root.dir}/src/run-jshint.js'" />
+      <arg line="'${lib.local.external.dir}/jshint-${jshint.version}.js'" />
+      <arg line="'${web.dir}/js'" />
+      <arg line="'^.*\.js$'" />
+      <arg line="'spec|lib'" />
+      <arg line="'${project.root.dir}/src/code-style-js.json'" />
+    </exec>
+    <condition property="js.style.failure">
+      <not>
+        <equals arg1="${js.style.result}" arg2="0" />
+      </not>
+    </condition>
+  </target>
+
+  <target name="check.test.style.js" depends="retrieve.libs, find.phantom">
+    <exec executable="${phantom.executable}" dir="${basedir}" resultproperty="js.test.style.result">
+      <arg line="'${project.root.dir}/src/run-jshint.js'" />
+      <arg line="'${lib.local.external.dir}/jshint-${jshint.version}.js'" />
+      <arg line="'${web.dir}/js'" />
+      <arg line="'^.*\/spec\/.*\.js$'" />
+      <arg line="'lib'" />
+      <arg line="'${project.root.dir}/src/code-style-js.json'" />
+    </exec>
+    <condition property="js.style.failure">
+      <not>
+        <equals arg1="${js.test.style.result}" arg2="0" />
       </not>
     </condition>
   </target>

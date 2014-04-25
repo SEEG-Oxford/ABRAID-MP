@@ -29,6 +29,7 @@ INCLUDE_PATTERNS="\
 \[Summary\]|\
 \[findbugs\]|\
 \[checkstyle\]|\
+\[JSHint\]|\
 \[junit\](.*)ERROR|\
 \[junit\](.*)SKIPPED|\
 \[junit\](.*)FAILED|\
