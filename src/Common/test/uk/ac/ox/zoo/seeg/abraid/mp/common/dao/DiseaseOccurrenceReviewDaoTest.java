@@ -109,6 +109,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTes
         diseaseOccurrence.setAlert(createAlert());
         diseaseOccurrence.setDiseaseGroup(createDiseaseGroup());
         diseaseOccurrence.setLocation(createLocation());
+        diseaseOccurrence.setOccurrenceDate(DateTime.now());
         diseaseOccurrenceDao.save(diseaseOccurrence);
         return diseaseOccurrence;
     }
