@@ -25,7 +25,7 @@ public class QCManagerIntegrationTest {
     private QCManager qcManager;
 
     @Test
-    public void stage1NotRunWhenLocationPrecisionIsCountryAndStage2PassesAndStage3Passes() {
+    public void stage1AndStage2NotRunWhenLocationPrecisionIsCountryAndStage3Passes() {
         // Arrange
         long japanId = 156L;
         Location location = new Location("Japan", 138.47861, 36.09854, LocationPrecision.COUNTRY, japanId);
@@ -37,7 +37,7 @@ public class QCManagerIntegrationTest {
         assertThat(passedQCStage).isEqualTo(3);
         assertThat(location.getAdminUnitQC()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
-                "stage 2 passed: location already within land. QC stage 3 passed: location already within HealthMap " +
+                "stage 2 passed: location is a country. QC stage 3 passed: location already within HealthMap " +
                 "country.");
     }
 

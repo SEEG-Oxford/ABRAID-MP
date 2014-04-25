@@ -20,6 +20,8 @@
 20	Cholera	64
 21	Liver Fluke	352
 22	C. difficile	71
+23	Coccidiodomycosis	72
+24	Colorado Tick Fever	74
 25	Cold	76
 26	Conjunctivitis	77
 27	CJD	78
@@ -40,6 +42,7 @@
 43	Elephantiasis	218
 44	Encephalitis	384
 45	Enterobiasis	109
+46	Eosinophilic Pneumonia	218
 47	Fascioliasis	118
 48	Fasciolopsiasis	119
 49	Filariasis	120
@@ -122,14 +125,17 @@
 127	Shingles	150
 128	Smallpox-Related	328
 129	Staph	114
+130	Staphylococcal Enterotoxin B	333
 131	Strep	106
 132	Syphilis	340
 133	Taeniasis	341
 134	Tetanus	343
 135	Foot Fungus	218
+136	Toxic Shock Syndrome	348
 137	Toxocariasis	349
 138	Toxoplasmosis	350
 139	Trachoma	351
+140	Trichinellosis	353
 141	Trichinosis	353
 142	Trichuriasis	356
 143	Trypanosomiasis	358
