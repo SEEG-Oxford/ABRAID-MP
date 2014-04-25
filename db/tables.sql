@@ -97,10 +97,10 @@ CREATE TABLE alert (
     id serial NOT NULL,
     feed_id integer NOT NULL,
     title text,
-    publication_date timestamp,
-    url varchar(2000),
+    publication_date timestamp NOT NULL,
+    url varchar(2000) NOT NULL,
     summary text,
-    healthmap_alert_id bigint,
+    healthmap_alert_id bigint NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -129,7 +129,7 @@ CREATE TABLE disease_occurrence (
     location_id integer NOT NULL,
     alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    occurrence_start_date timestamp,
+    occurrence_date timestamp NOT NULL,
     validation_weighting double precision
 );
 

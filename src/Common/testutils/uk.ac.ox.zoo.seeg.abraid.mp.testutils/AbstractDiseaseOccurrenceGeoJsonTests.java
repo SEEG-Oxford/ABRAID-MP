@@ -49,12 +49,12 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockLocation(1.0, -1.0, "locationName", LocationPrecision.PRECISE);
     }
 
-    public static DiseaseOccurrence mockDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Location location, DateTime start, Alert alert, double weighting) {
+    public static DiseaseOccurrence mockDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Location location, DateTime occurrenceDate, Alert alert, double weighting) {
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getId()).thenReturn(id);
         when(occurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
         when(occurrence.getLocation()).thenReturn(location);
-        when(occurrence.getOccurrenceStartDate()).thenReturn(start);
+        when(occurrence.getOccurrenceDate()).thenReturn(occurrenceDate);
         when(occurrence.getAlert()).thenReturn(alert);
         when(occurrence.getValidationWeighting()).thenReturn(weighting);
         return occurrence;
@@ -86,7 +86,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
            "               \"feedName\":\"feedName\"," +
            "               \"feedLanguage\":\"feedLanguage\"" +
            "            }," +
-           "            \"startDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
+           "            \"occurrenceDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
 
         String modellingViewProperties =
            "            \"locationPrecision\":\"PRECISE\"," +

@@ -85,11 +85,11 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
         occurrences.getFeatures().get(0).getProperties().setLocationName(null);
         occurrences.getFeatures().get(0).getProperties().setDiseaseGroupPublicName(null);
         occurrences.getFeatures().get(0).getProperties().setAlert(null);
-        occurrences.getFeatures().get(0).getProperties().setStartDate(null);
+        occurrences.getFeatures().get(0).getProperties().setOccurrenceDate(null);
         occurrences.getFeatures().get(1).getProperties().setLocationName(null);
         occurrences.getFeatures().get(1).getProperties().setDiseaseGroupPublicName(null);
         occurrences.getFeatures().get(1).getProperties().setAlert(null);
-        occurrences.getFeatures().get(1).getProperties().setStartDate(null);
+        occurrences.getFeatures().get(1).getProperties().setOccurrenceDate(null);
 
         // Act
         ObjectReader reader = objectMapper.reader(GeoJsonDiseaseOccurrenceFeatureCollection.class);

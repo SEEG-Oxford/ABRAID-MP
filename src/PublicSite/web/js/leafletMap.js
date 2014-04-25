@@ -212,7 +212,7 @@ var LeafletMap = (function (L, $, DataValidationViewModels, wmsUrl, loggedIn) {
     var diseaseExtentLayer = L.geoJson([], {style: diseaseExtentLayerStyle});
 
     function switchDiseaseExtentLayer(diseaseId) {
-        var geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/extent';
+        var geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/adminunits';
         $.getJSON(geoJsonRequestUrl, function (featureCollection) {
             if (featureCollection.features.length != 0) {
                 diseaseExtentLayer.addData(featureCollection);

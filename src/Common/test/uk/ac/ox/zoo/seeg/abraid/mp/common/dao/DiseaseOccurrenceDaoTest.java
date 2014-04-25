@@ -109,14 +109,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         Alert alert = createAlert();
         Location location = createLocation();
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
-        DateTime occurrenceStartDate = DateTime.now().minusDays(5);
+        DateTime occurrenceDate = DateTime.now().minusDays(5);
         double validationWeighting = 0.5;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
         occurrence.setLocation(location);
         occurrence.setDiseaseGroup(diseaseGroup);
-        occurrence.setOccurrenceStartDate(occurrenceStartDate);
+        occurrence.setOccurrenceDate(occurrenceDate);
         occurrence.setValidationWeighting(validationWeighting);
 
         // Act
@@ -143,7 +143,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         assertThat(occurrence.getValidationWeighting()).isEqualTo(validationWeighting);
         assertThat(occurrence.getDiseaseGroup()).isNotNull();
         assertThat(occurrence.getDiseaseGroup().getId()).isNotNull();
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(occurrenceStartDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(occurrenceDate);
     }
 
     @Test
@@ -151,7 +151,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
-                occurrence.getOccurrenceStartDate());
+                occurrence.getOccurrenceDate());
         assertThat(occurrences).hasSize(1);
     }
 
@@ -161,7 +161,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 diseaseGroup, occurrence.getLocation(), occurrence.getAlert(),
-                occurrence.getOccurrenceStartDate());
+                occurrence.getOccurrenceDate());
         assertThat(occurrences).hasSize(0);
     }
 
@@ -171,7 +171,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         Location location = locationDao.getById(80);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), location, occurrence.getAlert(),
-                occurrence.getOccurrenceStartDate());
+                occurrence.getOccurrenceDate());
         assertThat(occurrences).hasSize(0);
     }
 
@@ -181,17 +181,17 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         Alert alert = alertDao.getById(213235);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), alert,
-                occurrence.getOccurrenceStartDate());
+                occurrence.getOccurrenceDate());
         assertThat(occurrences).hasSize(0);
     }
 
     @Test
-    public void getDiseaseOccurrencesForExistenceCheckOccurrenceStartDateDifferent() {
+    public void getDiseaseOccurrencesForExistenceCheckOccurrenceDateDifferent() {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
-        DateTime occurrenceStartDate = DateTime.now();
+        DateTime occurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
-                occurrenceStartDate);
+                occurrenceDate);
         assertThat(occurrences).hasSize(0);
     }
 

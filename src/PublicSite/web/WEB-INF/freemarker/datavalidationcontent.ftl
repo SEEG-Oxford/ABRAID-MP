@@ -52,12 +52,12 @@
             <#if diseaseInterests??>
                 <#list diseaseInterests as validatorDiseaseGroup>
                     {
-                        name: "${validatorDiseaseGroup.getName()?lower_case?js_string}",
+                        name: "${validatorDiseaseGroup.getName()?js_string}",
                         id: ${validatorDiseaseGroup.id?c},
                         diseaseGroups: [
                             <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                 {
-                                    name: "${diseaseGroup.getName()?lower_case?js_string}",
+                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                     id: ${diseaseGroup.id?c}
                                 },
                             </#list>
@@ -75,12 +75,12 @@
             <#if allOtherDiseases??>
                 <#list allOtherDiseases as validatorDiseaseGroup>
                     {
-                        name: "${validatorDiseaseGroup.getName()?lower_case?js_string}",
+                        name: "${validatorDiseaseGroup.getName()?js_string}",
                         id: ${validatorDiseaseGroup.id?c},
                         diseaseGroups: [
                             <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                 {
-                                    name: "${diseaseGroup.getName()?lower_case?js_string}",
+                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                     id: ${diseaseGroup.id?c}
                                 },
                             </#list>

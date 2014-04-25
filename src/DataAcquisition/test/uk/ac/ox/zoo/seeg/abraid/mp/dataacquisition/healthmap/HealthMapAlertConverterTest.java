@@ -68,7 +68,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getTitle()).isEqualTo(summary);
         assertThat(occurrence.getAlert().getUrl()).isEqualTo(originalUrl);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getTitle()).isEqualTo(summary);
         assertThat(occurrence.getAlert().getUrl()).isEqualTo(originalUrl);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getDiseaseGroup()).isSameAs(diseaseGroup);
         assertThat(occurrence.getAlert()).isSameAs(alert);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
     }
 
     @Test
@@ -218,7 +218,7 @@ public class HealthMapAlertConverterTest {
         assertThat(newAlert.getTitle()).isEqualTo(summary);
         assertThat(newAlert.getUrl()).isEqualTo(originalUrl);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         verify(alertService, times(1)).saveFeed(same(newFeed));
         assertThat(lookupData.getFeedMap().get(feedId)).isSameAs(newFeed);
     }
@@ -266,7 +266,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getDiseaseGroup()).isSameAs(diseaseGroup);
         assertThat(occurrence.getAlert()).isSameAs(alert);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         assertThat(healthMapDisease.getName()).isEqualTo(healthMapDiseaseNewName);
         verify(diseaseService, times(1)).saveHealthMapDisease(eq(healthMapDisease));
     }
@@ -318,7 +318,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getDiseaseGroup()).isEqualTo(newDiseaseGroup);
         assertThat(occurrence.getAlert()).isSameAs(alert);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         verify(diseaseService, times(1)).saveHealthMapDisease(eq(newHealthMapDisease));
         assertThat(lookupData.getDiseaseMap().get(diseaseId)).isEqualTo(newHealthMapDisease);
     }
@@ -441,7 +441,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getFeed()).isSameAs(feed);
         assertThat(occurrence.getAlert().getFeed().getName()).isSameAs(feedNewName);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         verify(alertService, times(1)).saveFeed(same(feed));
     }
 
@@ -488,7 +488,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getFeed()).isSameAs(feed);
         assertThat(occurrence.getAlert().getFeed().getLanguage()).isSameAs(feedNewLanguage);
         assertThat(occurrence.getLocation()).isSameAs(location);
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(publicationDate);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         verify(alertService, times(1)).saveFeed(same(feed));
     }
 

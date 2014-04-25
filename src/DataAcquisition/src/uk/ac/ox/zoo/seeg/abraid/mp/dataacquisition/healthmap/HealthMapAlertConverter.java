@@ -50,7 +50,7 @@ public class HealthMapAlertConverter {
         if (diseaseGroup != null) {
             occurrence = new DiseaseOccurrence();
             occurrence.setDiseaseGroup(diseaseGroup);
-            occurrence.setOccurrenceStartDate(healthMapAlert.getDate());
+            occurrence.setOccurrenceDate(healthMapAlert.getDate());
             occurrence.setAlert(alert);
             occurrence.setLocation(location);
 

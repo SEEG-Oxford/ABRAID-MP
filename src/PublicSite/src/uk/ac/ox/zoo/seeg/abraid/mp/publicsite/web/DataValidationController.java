@@ -123,7 +123,7 @@ public class DataValidationController extends AbstractController {
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/extent",
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
