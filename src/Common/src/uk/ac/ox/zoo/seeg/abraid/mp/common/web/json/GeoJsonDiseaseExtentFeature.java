@@ -29,7 +29,7 @@ public class GeoJsonDiseaseExtentFeature extends GeoJsonFeature
     }
 
     private static GeoJsonMultiPolygonGeometry<GeoJsonNamedCrs> extractGeometry(AdminUnitGlobalOrTropical adminUnit) {
-        return new GeoJsonMultiPolygonGeometry<>(adminUnit.getGeom(), null, null);
+        return new GeoJsonMultiPolygonGeometry<>(adminUnit.getSimplifiedGeom(), null, null);
     }
 
     private static GeoJsonDiseaseExtentFeatureProperties extractProperties(AdminUnitGlobalOrTropical adminUnit,
