@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 @Controller
-public class AtlasController {
+public class AtlasController extends AbstractController {
     private LocationService locationService;
 
     @Autowired

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 
 import java.io.File;
@@ -18,7 +19,7 @@ import java.io.File;
  * Copyright (c) 2014 University of Oxford
  */
 @Controller
-public class MiscController {
+public class MiscController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(MiscController.class);
     private static final String LOG_EXCEPTION_GETTING_R_PATH = "Exception getting R path.";
     private static final String LOG_SUPPLIED_MAX_TOO_SHORT = "User supplied max run duration too short: %s";
