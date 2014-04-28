@@ -115,7 +115,7 @@
     <echo>[Summary] ${module.name}: Styling errors!</echo>
   </target>
 
-    <target name="js.style.summary" if="js.style.failure">
+  <target name="js.style.summary" if="js.style.failure">
     <echo>[Summary] ${module.name}: JS style errors!</echo>
   </target>
 
@@ -539,7 +539,7 @@
 
   <target name="unit.test.js" depends="retrieve.libs, find.phantom">
     <exec executable="${phantom.executable}" resultproperty="js.test.result">
-      <arg value="'${project.root.dir}/src/run-jasmine.js'"/>
+      <arg value="${project.root.dir}/src/run-jasmine.js"/>
       <arg value="'${web.dir}/js/app/spec/SpecRunner.html?console=true&amp;coverage=true'"/>
     </exec>
     <condition property="js.test.failure">
@@ -551,7 +551,7 @@
 
   <target name="check.style.js" depends="retrieve.libs, find.phantom">
     <exec executable="${phantom.executable}" dir="${basedir}" resultproperty="js.style.result">
-      <arg line="'${project.root.dir}/src/run-jshint.js'" />
+      <arg line="${project.root.dir}/src/run-jshint.js" />
       <arg line="'${lib.local.external.dir}/jshint-${jshint.version}.js'" />
       <arg line="'${web.dir}/js'" />
       <arg line="'^.*\.js$'" />
@@ -567,7 +567,7 @@
 
   <target name="check.test.style.js" depends="retrieve.libs, find.phantom">
     <exec executable="${phantom.executable}" dir="${basedir}" resultproperty="js.test.style.result">
-      <arg line="'${project.root.dir}/src/run-jshint.js'" />
+      <arg line="${project.root.dir}/src/run-jshint.js" />
       <arg line="'${lib.local.external.dir}/jshint-${jshint.version}.js'" />
       <arg line="'${web.dir}/js'" />
       <arg line="'^.*\/spec\/.*\.js$'" />
