@@ -1,4 +1,5 @@
 /*
+ * AMD to represent the current value to be displayed on the counter.
  * Copyright (c) 2014 University of Oxford
  */
 define(["ko"], function (ko) {

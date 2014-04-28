@@ -44,7 +44,7 @@ define([
             radius: 8
         };
 
-        // Change a point"s colour on roll-over
+        // Change a point's colour on roll-over
         function highlightFeature(e) {
             e.target.setStyle({
                 stroke: true,
@@ -60,7 +60,7 @@ define([
             });
         }
 
-        // Change the point"s colour and size when clicked
+        // Change the point's colour and size when clicked
         function selectFeature(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
             resetLayerStyle();
@@ -95,7 +95,7 @@ define([
             }
             marker.on({
                 click: function () {
-                    ko.postbox.publish("selectedPoint", feature);
+                    ko.postbox.publish("point-selected", feature);
                     selectFeature(this);
                 }
             });
@@ -152,7 +152,7 @@ define([
 
         // Reset to default style when a point is unselected (by clicking anywhere else on the map)
         function resetSelectedPoint() {
-            ko.postbox.publish("selectedPoint", null);
+            ko.postbox.publish("point-selected", null);
             resetLayerStyle();
         }
 
@@ -235,6 +235,7 @@ define([
 
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
+            diseaseExtentLayer.clearLayers();
             var geoJsonRequestUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
             $.getJSON(geoJsonRequestUrl, function (featureCollection) {
                 if (featureCollection.features.length !== 0) {

@@ -46,7 +46,7 @@
                             diseaseGroups: [
                                 <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                     {
-                                        shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                        name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                         id: ${diseaseGroup.id?c}
                                     },
                                 </#list>
@@ -55,9 +55,12 @@
                     </#list>
                 <#else>
                     {
-                        name: "${defaultValidatorDiseaseGroupName}",
-                        id: 0,
-                        diseaseGroups: []
+                        name: "${defaultValidatorDiseaseGroupName?js_string}",
+                        diseaseGroups: [
+                            {
+                                name: "${defaultDiseaseGroupShortName?js_string}"
+                            }
+                        ]
                     }
                 </#if>
             ],
@@ -70,7 +73,7 @@
                             diseaseGroups: [
                                 <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                     {
-                                        shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                        name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                         id: ${diseaseGroup.id?c}
                                     },
                                 </#list>

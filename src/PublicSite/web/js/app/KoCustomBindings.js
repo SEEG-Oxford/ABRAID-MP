@@ -48,6 +48,7 @@ define([
         }
     };
 
+    // Custom binding used to bind each child member of a group to an option
     ko.bindingHandlers.option = {
         update: function (element, valueAccessor) {
             var value = ko.utils.recursiveUnwrap(valueAccessor);

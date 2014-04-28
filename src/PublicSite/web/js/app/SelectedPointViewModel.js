@@ -29,8 +29,12 @@ define([
             return url;
         };
 
-        self.selectedPoint = ko.observable(null).syncWith("selectedPoint"); // Published by MapView
-        self.selectedDisease = ko.observable().subscribeTo("selectDisease"); // Published by SelectedLayerViewModel
+        var diseaseId = null;
+        ko.postbox.subscribe("layers-changed", function (value) {
+            diseaseId = value.diseaseSet.id;
+        });
+
+        self.selectedPoint = ko.observable(null).syncWith("point-selected"); // Published by MapView
         self.hasSelectedPoint = ko.computed(function () {
             return self.selectedPoint() !== null;
         });
@@ -42,22 +46,21 @@ define([
             }
         });
         self.submitReview = function (review) {
-            var diseaseId = self.selectedDisease().id;
-            var occurrenceId = self.selectedPoint().id;
-            var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
-            $.post(url, { review: review })
-                .done(function () {
-                    // Status 2xx
-                    // Display a success alert, remove the point from the map and side panel, increment the counter
-                    $("#submitReviewSuccess").fadeIn(1000);
-                    ko.postbox.publish("point-reviewed", occurrenceId);
-                    self.selectedPoint(null);
-                })
-                .fail(function (xhr) {
-                    alert("Something went wrong. Please try again. " + xhr.responseText);
-                });
+            return function () {
+                var occurrenceId = self.selectedPoint().id;
+                var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
+                $.post(url, { review: review })
+                    .done(function () {
+                        // Status 2xx
+                        // Display a success alert, remove the point from the map and side panel, increment the counter
+                        $("#submitReviewSuccess").fadeIn(1000);
+                        ko.postbox.publish("point-reviewed", occurrenceId);
+                        self.selectedPoint(null);
+                    })
+                    .fail(function (xhr) {
+                        alert("Something went wrong. Please try again. " + xhr.responseText);
+                    });
+            };
         };
-
-        ko.postbox.subscribe("selectedDiseaseSet", function () { self.selectedPoint(null); });
     };
 });
