@@ -6,17 +6,18 @@
 require(["require.conf"], function () {
     "use strict";
 
-    require(["ko",
+    require([
+        "ko",
         "app/LogInViewModel",
         "app/MapView",
         "app/SelectedPointViewModel",
         "app/SelectedLayerViewModel",
         "app/CounterViewModel",
-        "domReady!"],
-        function(ko, LogInViewModel, MapView, SelectedPointViewModel, SelectedLayerViewModel, CounterViewModel, doc) {
-            MapView(wmsUrl, loggedIn);
+        "domReady!"
+    ], function(ko, LogInViewModel, MapView, SelectedPointViewModel, SelectedLayerViewModel, CounterViewModel, doc) {
+            MapView(baseUrl, wmsUrl, loggedIn);
             ko.applyBindings(new SelectedPointViewModel(baseUrl), doc.getElementById("datapointInfo"));
-            ko.applyBindings(new SelectedLayerViewModel(), doc.getElementById("layerSelector"));
+            ko.applyBindings(new SelectedLayerViewModel(diseaseInterests, allOtherDiseases), doc.getElementById("layerSelector"));
             if (loggedIn) {
                 ko.applyBindings(new CounterViewModel(diseaseOccurrenceReviewCount), doc.getElementById("counterDiv"));
             } else {

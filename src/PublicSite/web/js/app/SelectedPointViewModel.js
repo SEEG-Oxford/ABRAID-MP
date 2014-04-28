@@ -3,7 +3,10 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false*/
-define(["ko", "jquery"], function (ko, $) {
+define([
+    "ko",
+    "jquery"
+], function (ko, $) {
     "use strict";
 
     return function (baseUrl) {
@@ -24,13 +27,11 @@ define(["ko", "jquery"], function (ko, $) {
             return url;
         };
 
-        self.selectedPoint = ko.observable(null);
+        self.selectedPoint = ko.observable(null).syncWith("selectedPoint"); // Published by MapView
+        self.selectedDisease = ko.observable().subscribeTo("selectDisease"); // Published by SelectedLayerViewModel
         self.hasSelectedPoint = ko.computed(function () {
             return self.selectedPoint() !== null;
         });
-        self.clearSelectedPoint = function () {
-            self.selectedPoint(null);
-        };
         self.translationUrl = ko.computed(function () {
             if (self.hasSelectedPoint()) {
                 var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
@@ -39,23 +40,22 @@ define(["ko", "jquery"], function (ko, $) {
             }
         });
         self.submitReview = function (review) {
-            return function () {
-                var diseaseId = DataValidationViewModels.layerSelectorViewModel.selectedDiseaseSet().id;
-                var occurrenceId = self.selectedPoint().id;
-                var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
-                $.post(url, { review: review })
-                    .done(function () {
-                        // Status 2xx
-                        // Display a success alert, remove the point from the map and side panel, increment the counter
-                        $("#submitReviewSuccess").fadeIn(1000);
-                        self.clearSelectedPoint();
-                        LeafletMap.removeReviewedPoint(occurrenceId);
-                        DataValidationViewModels.counterViewModel.incrementDiseaseOccurrenceReviewCount();
-                    })
-                    .fail(function (xhr) {
-                        alert("Something went wrong. Please try again. " + xhr.responseText);
-                    });
-            };
+            var diseaseId = self.selectedDisease().id;
+            var occurrenceId = self.selectedPoint().id;
+            var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
+            $.post(url, { review: review })
+                .done(function () {
+                    // Status 2xx
+                    // Display a success alert, remove the point from the map and side panel, increment the counter
+                    $("#submitReviewSuccess").fadeIn(1000);
+                    ko.postbox.publish("point-reviewed", occurrenceId);
+                    self.selectedPoint(null);
+                })
+                .fail(function (xhr) {
+                    alert("Something went wrong. Please try again. " + xhr.responseText);
+                });
         };
+
+        ko.postbox.subscribe("selectedDiseaseSet", function () { self.selectedPoint(null); });
     };
 });

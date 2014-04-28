@@ -55,7 +55,8 @@
             <#else>
                 {
                     name: "${defaultValidatorDiseaseGroupName}",
-                    id: 0
+                    id: 0,
+                    diseaseGroups: []
                 }
             </#if>
         ];

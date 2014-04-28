@@ -8,8 +8,9 @@ define(["ko"], function (ko) {
     return function (initialValue) {
         var self = this;
         self.count = ko.observable(initialValue);
-        self.incrementCount = function () {
+
+        ko.postbox.subscribe("point-reviewed", function () {
             self.count(self.count() + 1);
-        };
+        });
     };
 });
