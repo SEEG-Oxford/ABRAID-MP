@@ -141,14 +141,12 @@ public class DiseaseGroup {
 
     /**
      * Gets the disease group's short name for display, if it exists.
+     * This should only be used on the Data Validation page's layer selector dropdown menu.
      * @return The disease group's short name for display.
      */
     public String getShortNameForDisplay() {
         if (StringUtils.hasText(getShortName())) {
             return getShortName();
-        }
-        if (StringUtils.hasText(getPublicName())) {
-            return getPublicName();
         }
         return getName();
     }

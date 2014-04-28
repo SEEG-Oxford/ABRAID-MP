@@ -48,10 +48,10 @@ public interface DiseaseOccurrenceDao {
      * @param diseaseGroup The disease group.
      * @param location The location.
      * @param alert The alert.
-     * @param occurrenceStartDate The occurrence start date.
+     * @param occurrenceDate The occurrence date.
      * @return A list of matching disease occurrences.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForExistenceCheck(DiseaseGroup diseaseGroup,
                                                                    Location location, Alert alert,
-                                                                   DateTime occurrenceStartDate);
+                                                                   DateTime occurrenceDate);
 }

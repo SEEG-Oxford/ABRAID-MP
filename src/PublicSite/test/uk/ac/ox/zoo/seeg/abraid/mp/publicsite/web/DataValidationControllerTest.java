@@ -153,14 +153,13 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         adminUnitGlobal.setGaulCode(1);
         adminUnitGlobal.setPublicName("AUG");
         adminUnitGlobal.setLevel('1');
-        adminUnitGlobal.setGeom(createMultiPolygon());
+        adminUnitGlobal.setSimplifiedGeom(createMultiPolygon());
         return adminUnitGlobal;
     }
 
     private MultiPolygon createMultiPolygon() {
         Polygon polygon = GeometryUtils.createPolygon(1, 1, 2, 2, 3, 3, 1, 1);
-        Polygon[] polygons = {polygon};
-        return GeometryUtils.createMultiPolygon(polygons);
+        return GeometryUtils.createMultiPolygon(polygon);
     }
 
     @Test

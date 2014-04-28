@@ -11,8 +11,6 @@
 -- admin_unit_review:              Represents an expert's response to the presence or absence of a disease group across an admin unit.
 -- admin_unit_qc:                  Represents an admin 1/2 area for the purposes of QC (Quality Control).
 --                                 Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
--- admin_unit_simplified_global:   Represents an admin 0/1 area. As admin_unit_global, except with simplified borders to improve rendering performance.
--- admin_unit_simplified_tropical: Represents an admin 0/1 area. As admin_unit_tropical, except with simplified borders to improve rendering performance.
 -- admin_unit_tropical:            Represents an admin 0/1 area. Tailored for ABRAID-MP by separating non-contiguous parts of countries, absorbing tiny countries, removing smaller
 --                                 smaller islands etc. Eight large subtropical countries have been divided into admin 1 areas.
 -- alert:                          Represents a report of a disease occurrence or occurrences, from a feed.
@@ -58,7 +56,8 @@ CREATE TABLE admin_unit_global (
     level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
     pub_name varchar(100) NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
+    geom geometry(MULTIPOLYGON, 4326),
+    simplified_geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE admin_unit_review (
@@ -71,36 +70,23 @@ CREATE TABLE admin_unit_review (
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
-CREATE TABLE admin_unit_simplified_global (
-    gaul_code integer NOT NULL,
-    name varchar(100) NOT NULL,
-    pub_name varchar(100) NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
-);
-
-CREATE TABLE admin_unit_simplified_tropical (
-    gaul_code integer NOT NULL,
-    name varchar(100) NOT NULL,
-    pub_name varchar(100) NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
-);
-
 CREATE TABLE admin_unit_tropical (
     gaul_code integer NOT NULL,
     level varchar(1) NOT NULL,
     name varchar(100) NOT NULL,
     pub_name varchar(100) NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
+    geom geometry(MULTIPOLYGON, 4326),
+    simplified_geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE alert (
     id serial NOT NULL,
     feed_id integer NOT NULL,
     title text,
-    publication_date timestamp,
-    url varchar(2000),
+    publication_date timestamp NOT NULL,
+    url varchar(2000) NOT NULL,
     summary text,
-    healthmap_alert_id bigint,
+    healthmap_alert_id bigint NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -129,7 +115,7 @@ CREATE TABLE disease_occurrence (
     location_id integer NOT NULL,
     alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    occurrence_start_date timestamp,
+    occurrence_date timestamp NOT NULL,
     validation_weighting double precision
 );
 

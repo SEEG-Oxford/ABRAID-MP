@@ -42,14 +42,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param diseaseGroup The disease group.
      * @param location The location.
      * @param alert The alert.
-     * @param occurrenceStartDate The occurrence start date.
+     * @param occurrenceDate The occurrence date.
      * @return A list of matching disease occurrences.
      */
     public List<DiseaseOccurrence> getDiseaseOccurrencesForExistenceCheck(DiseaseGroup diseaseGroup,
                                                                           Location location, Alert alert,
-                                                                          DateTime occurrenceStartDate) {
+                                                                          DateTime occurrenceDate) {
         return listNamedQuery("getDiseaseOccurrencesForExistenceCheck",
                 "diseaseGroup", diseaseGroup, "location", location, "alert", alert,
-                "occurrenceStartDate", occurrenceStartDate);
+                "occurrenceDate", occurrenceDate);
     }
 }

@@ -124,7 +124,7 @@ public class MainTest {
         DiseaseGroup occurrence1DiseaseGroup = occurrence.getDiseaseGroup();
         assertThat(occurrence1DiseaseGroup.getName()).isEqualTo("Dengue");
 
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
         assertThat(occurrence.getCreatedDate()).isNotNull();
     }
 
@@ -164,7 +164,7 @@ public class MainTest {
         DiseaseGroup occurrence2DiseaseGroup = occurrence.getDiseaseGroup();
         assertThat(occurrence2DiseaseGroup.getName()).isEqualTo("Dengue");
 
-        assertThat(occurrence.getOccurrenceStartDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
         assertThat(occurrence.getCreatedDate()).isNotNull();
     }
 

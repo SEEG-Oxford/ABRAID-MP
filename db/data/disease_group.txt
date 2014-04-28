@@ -118,9 +118,9 @@
 118		Fascioliasis	SINGLE					
 119		Fasciolopsiasis	SINGLE					
 120		Filariasis	MICROCLUSTER	lymphatic filariasis	lymphatic filariasis	lf	no	11
-121		Filariasis - Bancroftian	SINGLE	<i>Wuchereria bancrofti</i>	<i>Wuchereria bancrofti</i>	lf-wb	no	11
-122		Filariasis - Brugia malayi	SINGLE	<i>Bugia major</i>	<i>Bugia major</i>	lf-bm	no	11
-123		Filariasis - Brugia timori	SINGLE	<i>Brugia timori</i>	<i>Brugia timori</i>	lf-bt	no	11
+121		Filariasis - Bancroftian	SINGLE	<i>Wuchereria bancrofti</i>	Wuchereria bancrofti	lf-wb	no	11
+122		Filariasis - Brugia malayi	SINGLE	<i>Bugia major</i>	Bugia major	lf-bm	no	11
+123		Filariasis - Brugia timori	SINGLE	<i>Brugia timori</i>	Brugia timori	lf-bt	no	11
 124		Flinders Island spotted fever	SINGLE					
 125		Fungal infection - invasive	SINGLE					
 126		Fungus_environment	CLUSTER					
@@ -246,11 +246,11 @@
 246		Oropouche virus	SINGLE					
 247		Osteomyelitis	SINGLE					
 248		Otitis media	SINGLE					
-249		P. falciparum	SINGLE	<i>Plasmodium falciparum</i> malaria	<i>Plasmodium falciparum</i> malaria	malpf	no	12
-250		P. knowlesi	SINGLE	<i>Plasmodium knowlesi</i> malaria	<i>Plasmodium knowlesi</i> malaria	malpk	no	12
-251		P. malariae	SINGLE	<i>Plasmodium malariae</i> malaria	<i>Plasmodium malariae</i> malaria	malpm	no	12
-252		P. ovale	SINGLE	<i>Plasmodium ovale</i> malaria	<i>Plasmodium ovale</i> malaria	malpo	no	12
-253		P. vivax	SINGLE	<i>Plasmodium vivax</i> malaria	<i>Plasmodium vivax</i> malaria	malpv	no	12
+249		P. falciparum	SINGLE	<i>Plasmodium falciparum</i> malaria	Plasmodium falciparum malaria	malpf	no	12
+250		P. knowlesi	SINGLE	<i>Plasmodium knowlesi</i> malaria	Plasmodium knowlesi malaria	malpk	no	12
+251		P. malariae	SINGLE	<i>Plasmodium malariae</i> malaria	Plasmodium malariae malaria	malpm	no	12
+252		P. ovale	SINGLE	<i>Plasmodium ovale</i> malaria	Plasmodium ovale malaria	malpo	no	12
+253		P. vivax	SINGLE	<i>Plasmodium vivax</i> malaria	Plasmodium vivax malaria	malpv	no	12
 254		Paracoccidioidomycosis	SINGLE					
 255		Paragonimiasis	SINGLE					
 256		Parainfluenza virus infection	SINGLE					
@@ -313,10 +313,10 @@
 313		SARS	SINGLE					
 314		Scabies	SINGLE					
 315		Scarlet fever	SINGLE					
-316		Schistosomiasis - haematobium	SINGLE	<i>Schistosoma haematobium</i>	<i>Schistosoma haematobium</i>	sch-h	no	16
+316		Schistosomiasis - haematobium	SINGLE	<i>Schistosoma haematobium</i>	Schistosoma haematobium	sch-h	no	16
 317		Schistosomiasis - intercalatum	SINGLE					
-318		Schistosomiasis - japonicum	SINGLE	<i>Schistosoma japonicum</i>	<i>Schistosoma japonicum</i>	sch-j	no	16
-319		Schistosomiasis - mansoni	SINGLE	<i>Schistosoma mansoni</i>	<i>Schistosoma mansoni</i>	sch-m	no	16
+318		Schistosomiasis - japonicum	SINGLE	<i>Schistosoma japonicum</i>	Schistosoma japonicum	sch-j	no	16
+319		Schistosomiasis - mansoni	SINGLE	<i>Schistosoma mansoni</i>	Schistosoma mansoni	sch-m	no	16
 320		Schistosomiasis - mattheei	SINGLE					
 321		Schistosomiasis - mekongi	SINGLE					
 322		Sennetsu neorickettsiosis	SINGLE					

@@ -135,7 +135,7 @@ public class DataValidationControllerIntegrationTest {
         when(diseaseService.getAdminUnitDiseaseExtentClassMap(anyInt())).thenReturn(map);
 
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/2/extent"))
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/2/adminunits"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
     }
@@ -143,30 +143,30 @@ public class DataValidationControllerIntegrationTest {
     @Test
     public void extentResourceRejectsInvalidNonNumericId() throws Exception {
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/id/extent"))
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/id/adminunits"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void extentResourceOnlyAcceptsGET() throws Exception {
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
                 .andExpect(status().isOk());
 
         this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/extent"))
+                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
                 .andExpect(status().isMethodNotAllowed());
     }
 
@@ -175,14 +175,13 @@ public class DataValidationControllerIntegrationTest {
         adminUnitGlobal.setGaulCode(1);
         adminUnitGlobal.setPublicName("AUG");
         adminUnitGlobal.setLevel('1');
-        adminUnitGlobal.setGeom(createMultiPolygon());
+        adminUnitGlobal.setSimplifiedGeom(createMultiPolygon());
         return adminUnitGlobal;
     }
 
     private MultiPolygon createMultiPolygon() {
         Polygon polygon = GeometryUtils.createPolygon(1, 1, 2, 2, 3, 3, 1, 1);
-        Polygon[] polygons = {polygon};
-        return GeometryUtils.createMultiPolygon(polygons);
+        return GeometryUtils.createMultiPolygon(polygon);
     }
 
     @Test

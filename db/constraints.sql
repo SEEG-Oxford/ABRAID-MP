@@ -53,12 +53,6 @@ ALTER TABLE admin_unit_qc ADD CONSTRAINT pk_admin_unit_qc
 ALTER TABLE admin_unit_review ADD CONSTRAINT pk_admin_unit_review
     PRIMARY KEY (id);
 
-ALTER TABLE admin_unit_simplified_global ADD CONSTRAINT pk_admin_unit_simplified_global
-    PRIMARY KEY (gaul_code);
-
-ALTER TABLE admin_unit_simplified_tropical ADD CONSTRAINT pk_admin_unit_simplified_tropical
-    PRIMARY KEY (gaul_code);
-
 ALTER TABLE admin_unit_tropical ADD CONSTRAINT pk_admin_unit_tropical
     PRIMARY KEY (gaul_code);
 
