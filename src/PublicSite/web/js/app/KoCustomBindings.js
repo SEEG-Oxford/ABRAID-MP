@@ -5,7 +5,8 @@
 define([
     "knockout",
     "jquery",
-    "moment"
+    "moment",
+    "flipclock"
 ], function (ko, $, moment) {
     "use strict";
 

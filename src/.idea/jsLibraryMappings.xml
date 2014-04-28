@@ -19,6 +19,7 @@
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/SelectedLayerViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/SelectedPointViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/dataValidationContent.js" libraries="{jquery, knockout-debug, moment}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/default.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/navbar.js" libraries="{jquery, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/require.conf.js" libraries="{require}" />
   </component>

@@ -2,7 +2,7 @@
     The page template, including header and footer.
     Copyright (c) 2014 University of Oxford
 -->
-<#macro page title endOfHead="" endOfBody="" endOfBodyScript="">
+<#macro page title endOfHead="" endOfBody="" endOfBodyScript="" requireDataMain="/js/default">
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html class="no-js">
@@ -28,16 +28,11 @@
             <#nested/>
         </div>
         <#include "footer.ftl"/>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-        <script src="<@spring.url "/js/navbar.js" />"></script>
         <script>
             var baseUrl = "<@spring.url "/" />";
             ${endOfBodyScript}
         </script>
+        <script type="text/javascript" data-main="<@spring.url '${requireDataMain}' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
         ${endOfBody}
     </body>
 </html>
