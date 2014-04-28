@@ -2,7 +2,6 @@
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
  */
-/*global define:false */
 define([
     "L",
     "jquery",
@@ -13,7 +12,7 @@ define([
 
     return function (baseUrl, wmsUrl, loggedIn) {
         // Initialise map at "map" div
-        var map = L.map('map', {
+        var map = L.map("map", {
             attributionControl: false,
             zoomControl: false,
             zoomsliderControl: true,
@@ -25,15 +24,15 @@ define([
 
         // Add the simplified shapefile base layer with WMS GET request
         L.tileLayer.wms(wmsUrl, {
-            layers: ['abraid:simplified_base_layer'],
-            format: 'image/png',
+            layers: ["abraid:simplified_base_layer"],
+            format: "image/png",
             reuseTiles: true
         }).addTo(map);
 
         // Global colour variables
-        var defaultColour = '#c478a9';      // Lighter pink/red
-        var highlightColour = '#9e1e71';    // The chosen pink/red compatible with colourblindness
-        var strokeColour = '#ce8eb8';       // Darker pink/red
+        var defaultColour = "#c478a9";      // Lighter pink/red
+        var highlightColour = "#9e1e71";    // The chosen pink/red compatible with colourblindness
+        var strokeColour = "#ce8eb8";       // Darker pink/red
 
         // Define default style for unselected points
         var diseaseOccurrenceLayerStyle = {
@@ -45,23 +44,23 @@ define([
             radius: 8
         };
 
-        // Change a point's colour on roll-over
-        function highlightFeature() {
-            this.setStyle({
+        // Change a point"s colour on roll-over
+        function highlightFeature(e) {
+            e.target.setStyle({
                 stroke: true,
                 color: highlightColour
             });
         }
 
         // Return to default colour
-        function resetHighlight() {
-            this.setStyle({
+        function resetHighlight(e) {
+            e.target.setStyle({
                 stroke: false,
                 color: defaultColour
             });
         }
 
-        // Change the point's colour and size when clicked
+        // Change the point"s colour and size when clicked
         function selectFeature(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
             resetLayerStyle();
@@ -72,7 +71,7 @@ define([
                     radius: 13
                 });
             } else {
-                marker._icon.classList.add('marker-question-selected');
+                marker._icon.classList.add("marker-question-selected"); // jshint ignore:line
             }
         }
 
@@ -88,8 +87,8 @@ define([
                 // Display a question mark marker
                 marker = L.marker(latlng, { icon:
                     L.divIcon({
-                        html: '<div><span>?</span></div>',
-                        className: 'marker-question',
+                        html: "<div><span>?</span></div>",
+                        className: "marker-question",
                         iconAnchor: [10, 10]
                     })
                 });
@@ -107,21 +106,21 @@ define([
         // Text displays the number of points in the cluster. Styling in separate CSS file.
         function clusterLayerPoint(cluster) {
             return new L.DivIcon({
-                html: '<div><span>' + cluster.getChildCount() + '</span></div>',
-                className: 'marker-cluster',
+                html: "<div><span>" + cluster.getChildCount() + "</span></div>",
+                className: "marker-cluster",
                 iconSize: new L.Point(40, 40)
             });
         }
 
-        // Map from the id of a point (or feature) to its marker layer, so the actual layer object can be used in removeReviewedPoint.
+        // Map from the id of a feature to its marker layer, so the layer object can be used in removeReviewedPoint.
         // Also serves to keep track of the number of markers on the diseaseOccurrenceLayer (for the selected disease).
         var layerMap = {};
-        // Define styling options of the geoJson layer to which occurrence data (the feature collection) will be added later via AJAX request
+        // Define styling of the layer to which occurrence data (feature collection) is later added via AJAX request
         var diseaseOccurrenceLayer = L.geoJson([], {
             pointToLayer: diseaseOccurrenceLayerPoint,
             style: diseaseOccurrenceLayerStyle,
             onEachFeature: function (feature, layer) {
-                layer.on('add', function () {
+                layer.on("add", function () {
                     layerMap[feature.id] = layer;
                 });
             }
@@ -146,7 +145,7 @@ define([
                 diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
             } else {
                 Object.keys(layerMap).forEach(function (key) {
-                    layerMap[key]._icon.classList.remove('marker-question-selected');
+                    layerMap[key]._icon.classList.remove("marker-question-selected"); // jshint ignore:line
                 });
             }
         }
@@ -157,17 +156,22 @@ define([
             resetLayerStyle();
         }
 
-        map.on('click', resetSelectedPoint);
-        clusterLayer.on('clusterclick', resetSelectedPoint);
+        map.on("click", resetSelectedPoint);
+        clusterLayer.on("clusterclick", resetSelectedPoint);
 
         // Return the corresponding colour for the disease extent class of the admin unit
         function getColour(diseaseExtentClass) {
             switch (diseaseExtentClass) {
-                case 'PRESENCE':          return '#8e1b65';  // darkPink
-                case 'POSSIBLE_PRESENCE': return '#c478a9';  // lightPink
-                case 'UNCERTAIN':         return '#ffffbf';  // yellow
-                case 'POSSIBLE_ABSENCE':  return '#b5caaa';  // lightGreen
-                case 'ABSENCE':           return '#769766';  // darkGreen
+                case "PRESENCE":
+                    return "#8e1b65";  // darkPink
+                case "POSSIBLE_PRESENCE":
+                    return "#c478a9";  // lightPink
+                case "UNCERTAIN":
+                    return "#ffffbf";  // yellow
+                case "POSSIBLE_ABSENCE":
+                    return "#b5caaa";  // lightGreen
+                case "ABSENCE":
+                    return "#769766";  // darkGreen
             }
         }
 
@@ -177,7 +181,7 @@ define([
                 fillOpacity: 0.7,
                 weight: 2,
                 opacity: 1,
-                color: '#ffffff'
+                color: "#ffffff"
             };
         }
 
@@ -207,16 +211,16 @@ define([
 
         function getDiseaseOccurrenceRequestUrl(diseaseId) {
             if (loggedIn) {
-                return baseUrl + 'datavalidation/diseases/' + diseaseId + '/occurrences';
+                return baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences";
             } else {
-                return baseUrl + 'static/defaultDiseaseOccurrences.json';
+                return baseUrl + "static/defaultDiseaseOccurrences.json";
             }
         }
 
         // Add the new feature collection to the clustered layer, and zoom to its bounds
         function switchDiseaseOccurrenceLayer(diseaseId) {
             clearDiseaseOccurrenceLayer();
-            var geoJsonRequestUrl = getDiseaseOccurrenceRequestUrl;
+            var geoJsonRequestUrl = getDiseaseOccurrenceRequestUrl(diseaseId);
             $.getJSON(geoJsonRequestUrl, function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("noOccurrencesToReview", false);
@@ -231,24 +235,24 @@ define([
 
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
-            var geoJsonRequestUrl = baseUrl + 'datavalidation/diseases/' + diseaseId + '/extent';
+            var geoJsonRequestUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
             $.getJSON(geoJsonRequestUrl, function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     diseaseExtentLayer.addData(featureCollection);
                     map.fitBounds(diseaseExtentLayer.getBounds());
-                    //TODO: Only fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
+                    //TODO: Fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
                 } else {
                     map.fitWorld();
                 }
             });
         }
 
-        ko.postbox.subscribe("layers-changed", function (viewModelState) {
-            switchValidationTypeView(viewModelState.validationType());
-            if (viewModelState.validationType() === "disease occurrences") {
-                switchDiseaseOccurrenceLayer(viewModelState.diseaseSet.id);
+        ko.postbox.subscribe("layers-changed", function (layers) {
+            switchValidationTypeView(layers.type);
+            if (layers.type === "disease occurrences") {
+                switchDiseaseOccurrenceLayer(layers.diseaseSet.id);
             } else {
-                switchDiseaseExtentLayer(viewModelState.disease.id);
+                switchDiseaseExtentLayer(layers.disease.id);
             }
         });
 

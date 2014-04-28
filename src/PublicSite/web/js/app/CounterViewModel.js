@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2014 University of Oxford
  */
-/*global define:false*/
 define(["ko"], function (ko) {
     "use strict";
 

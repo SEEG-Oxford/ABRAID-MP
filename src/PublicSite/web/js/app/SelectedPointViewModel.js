@@ -2,7 +2,7 @@
  * An AMD defining the SelectedPointViewModel to hold the state of the selected occurrence point on the map.
  * Copyright (c) 2014 University of Oxford
  */
-/*global define:false*/
+/*global alert:false*/
 define([
     "ko",
     "jquery"
@@ -13,7 +13,9 @@ define([
         var self = this;
 
         var createTranslationUrl = function (langPair, summary) {
-            return "http://translate.google.com/?" + "langpair=" + langPair + "&" + "text=" + encodeURIComponent(summary);
+            return "http://translate.google.com/?" +
+                "langpair=" + langPair + "&" +
+                "text=" + encodeURIComponent(summary);
         };
 
         // If the encoded URL is too long, remove the last word from the summary
@@ -34,8 +36,8 @@ define([
         });
         self.translationUrl = ko.computed(function () {
             if (self.hasSelectedPoint()) {
-                var langPair = (this.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
-                var summary = this.selectedPoint().properties.alert.summary;
+                var langPair = (self.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
+                var summary = self.selectedPoint().properties.alert.summary;
                 return createTranslationUrlWithCorrectLength(langPair, summary);
             }
         });

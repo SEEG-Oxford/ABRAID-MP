@@ -1,12 +1,16 @@
-/* An AMD defining and registering a set of custom knockout bindings.
+/*
+ * An AMD defining and registering a set of custom knockout bindings.
  * Copyright (c) 2014 University of Oxford.
  */
-/*global define:false*/
-define(["knockout", "jquery", "moment"], function (ko, $, moment) {
+define([
+    "knockout",
+    "jquery",
+    "moment"
+], function (ko, $, moment) {
     "use strict";
 
     ko.utils.recursiveUnwrap = function (func) {
-        if (typeof func != 'function') {
+        if (typeof func !== "function") {
             return func;
         }
         return ko.utils.recursiveUnwrap(func());
@@ -14,9 +18,9 @@ define(["knockout", "jquery", "moment"], function (ko, $, moment) {
 
     // Set the width of the element to fit the number of digits (2, 3 or 4)
     function adjustElementWidthForCounterValue(element, value) {
-        if ((value > 999) && ($(element).width() != 280)) {
+        if ((value > 999) && ($(element).width() !== 280)) {
             $(element).width(280);
-        } else if ((value > 99) && ($(element).width() != 210)) {
+        } else if ((value > 99) && ($(element).width() !== 210)) {
             $(element).width(210);
         }
     }
@@ -39,7 +43,7 @@ define(["knockout", "jquery", "moment"], function (ko, $, moment) {
     ko.bindingHandlers.date = {
         update: function (element, valueAccessor) {
             var date = ko.utils.recursiveUnwrap(valueAccessor);
-            $(element).text(moment(date).lang('en-gb').format('LL'));
+            $(element).text(moment(date).lang("en-gb").format("LL"));
         }
     };
 

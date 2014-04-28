@@ -2,9 +2,12 @@
  * The AJAX call to Spring Security when login button is clicked.
  * Copyright (c) 2014 University of Oxford
  */
-/*global define:false, location:false*/
-define(["ko", "jquery"], function (ko, $) {
-    'use strict';
+/*global location:false*/
+define([
+    "ko",
+    "jquery"
+], function (ko, $) {
+    "use strict";
 
     return function (baseUrl) {
         var self = this;
@@ -14,7 +17,11 @@ define(["ko", "jquery"], function (ko, $) {
         self.submit = function () {
             self.formAlert(" ");
             if (self.formUsername() !== "" && self.formPassword() !== "") {
-                $.post(baseUrl + "j_spring_security_check", {j_username: self.formUsername(), j_password: self.formPassword()})
+                $.post(baseUrl + "j_spring_security_check",
+                    {
+                        "j_username": self.formUsername(),
+                        "j_password": self.formPassword()
+                    })
                     .done(function () {
                         // Status 2xx
                         location.reload();
@@ -29,4 +36,3 @@ define(["ko", "jquery"], function (ko, $) {
         };
     };
 });
-

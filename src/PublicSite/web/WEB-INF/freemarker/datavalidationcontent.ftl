@@ -33,51 +33,53 @@
     </div>
     <script>
         var baseUrl = "<@spring.url "/" />";
-        var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
-        var loggedIn = ${userLoggedIn?c};
-        var diseaseOccurrenceReviewCount = ${reviewCount?c};
-        var diseaseInterests = [
-            <#if diseaseInterests??>
-                <#list diseaseInterests as validatorDiseaseGroup>
+        var data = {
+            wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
+            loggedIn: ${userLoggedIn?c},
+            diseaseOccurrenceReviewCount: ${reviewCount?c},
+            diseaseInterests: [
+                <#if diseaseInterests??>
+                    <#list diseaseInterests as validatorDiseaseGroup>
+                        {
+                            name: "${validatorDiseaseGroup.getName()?js_string}",
+                            id: ${validatorDiseaseGroup.id?c},
+                            diseaseGroups: [
+                                <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                    {
+                                        shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                        id: ${diseaseGroup.id?c}
+                                    },
+                                </#list>
+                            ]
+                        },
+                    </#list>
+                <#else>
                     {
-                        name: "${validatorDiseaseGroup.getName()?js_string}",
-                        id: ${validatorDiseaseGroup.id?c},
-                        diseaseGroups: [
-                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
-                                {
-                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
-                                    id: ${diseaseGroup.id?c}
-                                },
-                            </#list>
-                        ]
-                    },
-                </#list>
-            <#else>
-                {
-                    name: "${defaultValidatorDiseaseGroupName}",
-                    id: 0,
-                    diseaseGroups: []
-                }
-            </#if>
-        ];
-        var allOtherDiseases = [
-            <#if allOtherDiseases??>
-                <#list allOtherDiseases as validatorDiseaseGroup>
-                    {
-                        name: "${validatorDiseaseGroup.getName()?js_string}",
-                        id: ${validatorDiseaseGroup.id?c},
-                        diseaseGroups: [
-                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
-                                {
-                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
-                                    id: ${diseaseGroup.id?c}
-                                },
-                            </#list>
-                        ]
-                    },
-                </#list>
-            </#if>
-        ];
+                        name: "${defaultValidatorDiseaseGroupName}",
+                        id: 0,
+                        diseaseGroups: []
+                    }
+                </#if>
+            ],
+            allOtherDiseases: [
+                <#if allOtherDiseases??>
+                    <#list allOtherDiseases as validatorDiseaseGroup>
+                        {
+                            name: "${validatorDiseaseGroup.getName()?js_string}",
+                            id: ${validatorDiseaseGroup.id?c},
+                            diseaseGroups: [
+                                <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                    {
+                                        shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                        id: ${diseaseGroup.id?c}
+                                    },
+                                </#list>
+                            ]
+                        },
+                    </#list>
+                </#if>
+            ]
+        };
     </script>
     <script type="text/javascript" data-main="<@spring.url '/js/dataValidationContent' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>

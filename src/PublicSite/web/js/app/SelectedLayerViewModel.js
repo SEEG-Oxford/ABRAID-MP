@@ -1,4 +1,3 @@
-/*global define:false*/
 define(["ko"], function (ko) {
     "use strict";
 
@@ -29,8 +28,8 @@ define(["ko"], function (ko) {
             new Group("Your Disease Interests", diseaseInterests),
             new Group("Other Diseases", allOtherDiseases)
         ]);
-        self.selectedDiseaseSet = ko.observable(diseaseInterests[0]);
-        self.selectedDisease = ko.observable(self.selectedDiseaseSet().diseaseGroups()[0]);
+        self.selectedDiseaseSet = ko.observable();
+        self.selectedDisease = ko.observable();
         self.noOccurrencesToReview = ko.observable(false).subscribeTo("noOccurrencesToReview"); // Published by MapView
 
         self.selectedType.subscribe(notifyMap);

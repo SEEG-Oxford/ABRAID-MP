@@ -21,7 +21,7 @@
     <option unused="true" />
     <option indent="4" />
     <option quotmark="double" />
-    <option maxparams="6" />
+    <option maxparams="8" />
     <option maxdepth="5" />
     <option maxstatements="50" />
     <option maxcomplexity="10" />
@@ -69,7 +69,7 @@
     <option passfail="false" />
     <option white="true" />
     <option maxerr="10000" />
-    <option predef="" />
+    <option predef="define:false, describe:false, it:false, expect:false, beforeEach:false, afterEach:false, spyOn:false, jasmine:false" />
   </component>
 </project>
 
