@@ -42,6 +42,11 @@ public class IndexController extends AbstractController {
         this.sourceCodeManager = sourceCodeManager;
     }
 
+    @RequestMapping(value = "/covariates", method = RequestMethod.GET)
+    public String showCovariatesPage(Model model) {
+        return "covariates";
+    }
+
     /**
      * Request map for the index page.
      * @param model The ftl data model.

@@ -10,8 +10,11 @@ require(["require.conf"], function () {
              "app/RepositoryViewModel",
              "app/AuthViewModel",
              "app/MiscViewModel",
-              "domReady!"
-    ], function (ko, RepositoryViewModel, AuthViewModel, MiscViewModel, doc) {
+             "navbar",
+              "domReady!",
+    ], function (ko, RepositoryViewModel, AuthViewModel, MiscViewModel, setupNavbar, doc) {
+        setupNavbar();
+
         ko.applyBindings(
             ko.validatedObservable(new RepositoryViewModel(initialRepoData, baseUrl)),
             doc.getElementById("repo-body"));
