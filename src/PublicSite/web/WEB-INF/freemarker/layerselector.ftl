@@ -7,14 +7,15 @@
                 <option data-bind="html: name, option: $data"></option>
             </optgroup>
         </select>
-        <span data-bind="if: selectedType() == 'disease extent'">
+        <span data-bind="if: showDiseaseExtentLayer">
             <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease"></select>
         </span>
     </h4>
 
-    <div data-bind="if: selectedType() == 'disease occurrences'">
-        <div class="alert alert-info alert-dismissable" data-bind="visible: noOccurrencesToReview()" style="text-align: center">
-            There are no occurrences in need of review for this disease.
+    <div class="alert alert-info alert-dismissable" data-bind="visible: noFeaturesToReview()" style="text-align: center">
+        <div data-bind="text: showDiseaseExtentLayer ?
+            'There are no administrative units in need of review for this disease' :
+            'There are no occurrences in need of review for this disease'">
         </div>
     </div>
 </div>

@@ -223,11 +223,11 @@ define([
             var geoJsonRequestUrl = getDiseaseOccurrenceRequestUrl(diseaseId);
             $.getJSON(geoJsonRequestUrl, function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
-                    ko.postbox.publish("noOccurrencesToReview", false);
+                    ko.postbox.publish("no-features-to-review", false);
                     clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
                     map.fitBounds(diseaseOccurrenceLayer.getBounds());
                 } else {
-                    ko.postbox.publish("noOccurrencesToReview", true);
+                    ko.postbox.publish("no-features-to-review", true);
                     map.fitWorld();
                 }
             });
@@ -239,10 +239,12 @@ define([
             var geoJsonRequestUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
             $.getJSON(geoJsonRequestUrl, function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
+                    ko.postbox.publish("no-features-to-review", false);
                     diseaseExtentLayer.addData(featureCollection);
                     map.fitBounds(diseaseExtentLayer.getBounds());
                     //TODO: Fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
                 } else {
+                    ko.postbox.publish("no-features-to-review", true);
                     map.fitWorld();
                 }
             });
@@ -263,7 +265,7 @@ define([
             diseaseOccurrenceLayer.removeLayer(layerMap[id]);
             delete layerMap[id];
             if (_(layerMap).isEmpty()) {
-                ko.postbox.publish("noOccurrencesToReview", true);
+                ko.postbox.publish("no-features-to-review", true);
             } else {
                 clusterLayer.addLayer(diseaseOccurrenceLayer);
             }

@@ -2,7 +2,7 @@
  * The AJAX call to Spring Security when login button is clicked.
  * Copyright (c) 2014 University of Oxford
  */
-/*global location:false*/
+/*global window:false*/
 define([
     "ko",
     "jquery"
@@ -24,7 +24,7 @@ define([
                     })
                     .done(function () {
                         // Status 2xx
-                        location.reload();
+                        window.top.location.reload();
                     })
                     .fail(function (xhr) {
                         // Status Unauthorized 401 - Display authentication error message to user: eg Bad Credentials
