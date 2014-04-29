@@ -69,7 +69,7 @@
     <option passfail="false" />
     <option white="true" />
     <option maxerr="10000" />
-    <option predef="" />
+    <option predef="define:false, describe:false, it:false, expect:false, beforeEach:false, afterEach:false, spyOn:false, jasmine:false " />
   </component>
 </project>
 

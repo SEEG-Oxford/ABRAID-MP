@@ -104,7 +104,19 @@
     // not be improved in any way and might be removed at any point.
 
     "nomen"         : true,    // Prohibit use of initial or trailing underbars in names.
-    "onevar"        : false,    // Allow only one `var` statement per function.
-    "passfail"      : false,    // Stop on first error.
-    "white"         : true     // Check against strict whitespace and indentation rules.
+    "onevar"        : false,   // Allow only one `var` statement per function.
+    "passfail"      : false,   // Stop on first error.
+    "white"         : true,    // Check against strict whitespace and indentation rules.
+
+    // == Globals =========================================================
+    "predef": [
+        "define",       // RequireJS
+        "describe",     // Jasmine
+        "it",           // Jasmine
+        "expect",       // Jasmine
+        "beforeEach",   // Jasmine
+        "afterEach",    // Jasmine
+        "spyOn",        // Jasmine
+        "jasmine"       // Jasmine
+    ]
 }
