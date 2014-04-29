@@ -1,13 +1,12 @@
 /* A custom Jasmine matcher for knockout observables.
  * Copyright (c) 2014 University of Oxford
  */
-/*global define:false*/
-define(['ko'], function(ko) {
+define(["ko"], function (ko) {
     "use strict";
 
-    return function(util, customEqualityTesters) {
+    return function () {
         return {
-            compare: function(actual) {
+            compare: function (actual) {
                 var result = {};
 
                 result.pass = ko.isObservable(actual);
