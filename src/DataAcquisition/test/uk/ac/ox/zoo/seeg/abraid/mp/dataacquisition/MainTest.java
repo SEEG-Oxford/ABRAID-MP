@@ -102,7 +102,7 @@ public class MainTest {
         assertThat(occurrence1Location.getGeoNameId()).isEqualTo(1735161);
         assertThat(occurrence1Location.getHealthMapCountryId()).isEqualTo(147);
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
-        assertThat(occurrence1Location.getPassedQCStage()).isEqualTo(3);
+        assertThat(occurrence1Location.hasPassedQc()).isTrue();
         assertThat(occurrence1Location.getAdminUnitQC()).isNull();
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
                 "ADMIN2. QC stage 2 passed: location already within land. QC stage 3 passed: location already " +
@@ -137,7 +137,7 @@ public class MainTest {
         assertThat(occurrence2Location.getGeoNameId()).isEqualTo(2186224);
         assertThat(occurrence2Location.getHealthMapCountryId()).isEqualTo(164);
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
-        assertThat(occurrence2Location.getPassedQCStage()).isEqualTo(3);
+        assertThat(occurrence2Location.hasPassedQc()).isTrue();
         assertThat(occurrence2Location.getAdminUnitQC()).isNull();
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
                 "ADMIN2. QC stage 2 passed: location is a country. QC stage 3 passed: location already " +
