@@ -13,7 +13,7 @@
     </h4>
 
     <div class="alert alert-info alert-dismissable" data-bind="visible: noFeaturesToReview()" style="text-align: center">
-        <div data-bind="text: showDiseaseExtentLayer ?
+        <div data-bind="text: showDiseaseExtentLayer() ?
             'There are no administrative units in need of review for this disease' :
             'There are no occurrences in need of review for this disease'">
         </div>

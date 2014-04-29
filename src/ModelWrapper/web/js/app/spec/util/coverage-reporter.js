@@ -1,7 +1,9 @@
 /** Defines a Jasmine Reporter to display Blanket coverage results.
- *  Adapted from the example in the Blanket src at https://github.com/alex-seville/blanket/blob/master/src/adapters/jasmine-blanket.js
+ *  Adapted from the example in the Blanket src at:
+ *      https://github.com/alex-seville/blanket/blob/master/src/adapters/jasmine-blanket.js
  *  Updated to work better with AMD setup we have and with Jasmine 2.0.
  */
+ /* jshint ignore:start */ // External file
 (function() {
 
     if (! jasmine) {
@@ -62,3 +64,4 @@
     jasmine.BlanketReporter = BlanketReporter;
 
 })();
+/* jshint ignore:end */

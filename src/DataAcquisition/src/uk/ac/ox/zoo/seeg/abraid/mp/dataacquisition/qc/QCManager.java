@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
  */
 public class QCManager {
     private static final String QC_STAGE_1_PASSED_MESSAGE = "QC stage 1 passed: location not an ADMIN1 or ADMIN2.";
+    private static final String QC_STAGE_2_PASSED_MESSAGE = "QC stage 2 passed: location is a country.";
     private static final String QC_STAGE_3_PASSED_MESSAGE = "QC stage 3 passed: no country geometries associated " +
             "with this location.";
 
@@ -60,7 +61,7 @@ public class QCManager {
     private boolean performQCStage1(Location location) {
         boolean passed = true;
 
-        if (isLocationAdmin1OrAdmin2(location)) {
+        if (isAdmin1OrAdmin2(location)) {
             // Location is an admin1 or admin2, so find the closest admin unit to the location
             // (as long as it is close enough - see class AdminUnitFinder for details)
             AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
@@ -76,9 +77,17 @@ public class QCManager {
     }
 
     private boolean performQCStage2(Location location) {
-        // Ensure that the location is on land. If not, snap to land if within the maximum distance away.
-        Snapper snapper = new Snapper(QC_STAGE_2_ID, "land", QC_STAGE_2_MAXIMUM_DISTANCE);
-        return applySnapperToLocation(snapper, location, qcLookupData.getLandSeaBorders());
+        boolean passed = true;
+
+        if (!isCountry(location)) {
+            // Ensure that the location is on land. If not, snap to land if within the maximum distance away.
+            Snapper snapper = new Snapper(QC_STAGE_2_ID, "land", QC_STAGE_2_MAXIMUM_DISTANCE);
+            passed = applySnapperToLocation(snapper, location, qcLookupData.getLandSeaBorders());
+        } else {
+            appendQcMessage(location, QC_STAGE_2_PASSED_MESSAGE);
+        }
+
+        return passed;
     }
 
     private boolean performQCStage3(Location location) {
@@ -102,9 +111,13 @@ public class QCManager {
         return passed;
     }
 
-    private boolean isLocationAdmin1OrAdmin2(Location location) {
+    private boolean isAdmin1OrAdmin2(Location location) {
         return (location.getPrecision() == LocationPrecision.ADMIN1) ||
                 (location.getPrecision() == LocationPrecision.ADMIN2);
+    }
+
+    private boolean isCountry(Location location) {
+        return (location.getPrecision() == LocationPrecision.COUNTRY);
     }
 
     private boolean applySnapperToLocation(Snapper snapper, Location location, MultiPolygon geometry) {
