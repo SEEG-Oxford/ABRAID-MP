@@ -41,6 +41,7 @@
     <orderEntry type="library" name="leaflet" level="application" />
     <orderEntry type="library" name="leaflet.markercluster-src" level="application" />
     <orderEntry type="library" name="require" level="application" />
+    <orderEntry type="library" name="jasmine" level="application" />
   </component>
 </module>
 

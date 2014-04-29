@@ -48,7 +48,8 @@ define([
         self.submitReview = function (review) {
             return function () {
                 var occurrenceId = self.selectedPoint().id;
-                var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
+                var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
+                    "/validate";
                 $.post(url, { review: review })
                     .done(function () {
                         // Status 2xx

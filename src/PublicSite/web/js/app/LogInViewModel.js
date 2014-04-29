@@ -11,8 +11,8 @@ define([
 
     return function (baseUrl) {
         var self = this;
-        self.formUsername = ko.observable("");
-        self.formPassword = ko.observable("");
+        self.formUsername = ko.observable();
+        self.formPassword = ko.observable();
         self.formAlert = ko.observable(" ");
         self.submit = function () {
             self.formAlert(" ");

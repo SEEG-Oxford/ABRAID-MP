@@ -16,7 +16,7 @@ define(["ko", "underscore"], function (ko, _) {
         };
 
         // View Model State
-        self.validationTypes = ko.observableArray([DISEASE_OCCURRENCES, DISEASE_EXTENT]);
+        self.validationTypes = [DISEASE_OCCURRENCES, DISEASE_EXTENT];
         self.selectedType = ko.observable(self.validationTypes[0]);
         self.groups = [
             new Group("Your Disease Interests", diseaseInterests),
