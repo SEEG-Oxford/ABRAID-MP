@@ -23,18 +23,18 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getAllHealthMapCountries() {
         // Act
-        List<HealthMapCountry> countries = healthMapCountryDao.getAll();
+        List<HealthMapCountry> healthMapCountries = healthMapCountryDao.getAll();
 
         // Assert
-        assertThat(countries).hasSize(224);
+        assertThat(healthMapCountries).hasSize(224);
 
-        int totalCountries = 0;
-        for (HealthMapCountry healthMapCountry : countries) {
+        int totalAssociatedCountries = 0;
+        for (HealthMapCountry healthMapCountry : healthMapCountries) {
             if (healthMapCountry.getCountries() != null) {
-                totalCountries += healthMapCountry.getCountries().size();
+                totalAssociatedCountries += healthMapCountry.getCountries().size();
             }
         }
-        assertThat(totalCountries).isEqualTo(225);
+        assertThat(totalAssociatedCountries).isEqualTo(265);
     }
 
     @Test
@@ -78,8 +78,8 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
     @Test
     public void getHealthMapCountryWithTwoAssociatedSEEGCountries() {
         // Arrange
-        long id = 107;
-        String healthMapCountryName = "Norway";
+        long id = 104;
+        String healthMapCountryName = "Netherlands";
 
         // Act
         HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
@@ -92,13 +92,13 @@ public class HealthMapCountryDaoTest extends AbstractSpringIntegrationTests {
         assertThat(countries).isNotNull();
         assertThat(countries).hasSize(2);
 
-        Country country1 = findCountryByGaulCode(countries, 234);
+        Country country1 = findCountryByGaulCode(countries, 177);
         assertThat(country1).isNotNull();
-        assertThat(country1.getName()).isEqualTo("Svalbard and Jan Mayen Islands");
+        assertThat(country1.getName()).isEqualTo("Netherlands");
 
-        Country country2 = findCountryByGaulCode(countries, 186);
+        Country country2 = findCountryByGaulCode(countries, 14);
         assertThat(country2).isNotNull();
-        assertThat(country2.getName()).isEqualTo("Norway");
+        assertThat(country2.getName()).isEqualTo("Aruba");
     }
 
     @Test

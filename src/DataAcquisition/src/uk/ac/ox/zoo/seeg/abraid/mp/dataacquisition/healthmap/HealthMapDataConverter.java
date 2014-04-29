@@ -137,8 +137,8 @@ public class HealthMapDataConverter {
     }
 
     private void performQualityControl(Location location) {
-        int passedQCStage = qcManager.performQC(location);
-        location.setPassedQCStage(passedQCStage);
+        boolean hasPassedQc = qcManager.performQC(location);
+        location.setHasPassedQc(hasPassedQc);
     }
 
     private void writeLastRetrievalEndDate(DateTime retrievalDate) {

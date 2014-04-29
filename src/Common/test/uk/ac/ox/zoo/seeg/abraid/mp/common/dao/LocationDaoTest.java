@@ -102,14 +102,13 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         double y = -1.29479;
         Point point = GeometryUtils.createPoint(x, y);
         AdminUnitQC adminUnit = adminUnitQCDao.getByGaulCode(29863);
-        int passedQCStage = 3;
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN2);
         location.setAdminUnitQC(adminUnit);
-        location.setPassedQCStage(passedQCStage);
+        location.setHasPassedQc(true);
 
         // Act
         locationDao.save(location);
@@ -127,7 +126,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getHealthMapCountryId()).isNull();
         assertThat(location.getCreatedDate()).isNotNull();
         assertThat(location.getAdminUnitQC()).isEqualTo(adminUnit);
-        assertThat(location.getPassedQCStage()).isEqualTo(passedQCStage);
+        assertThat(location.hasPassedQc()).isTrue();
     }
 
     @Test
@@ -164,6 +163,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getPrecision()).isEqualTo(precision);
         assertThat(location.getHealthMapCountryId()).isEqualTo(healthMapCountryId);
         assertThat(location.getCreatedDate()).isNotNull();
+        assertThat(location.hasPassedQc()).isFalse();
     }
 
     @Test

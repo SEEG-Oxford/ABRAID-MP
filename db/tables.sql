@@ -196,7 +196,7 @@ CREATE TABLE location (
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     healthmap_country_id bigint,
     admin_unit_qc_gaul_code integer,
-    passed_qc_stage integer,
+    has_passed_qc boolean NOT NULL,
     qc_message varchar(1000)
 );
 
