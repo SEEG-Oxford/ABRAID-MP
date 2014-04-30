@@ -63,6 +63,12 @@
         </tr>
         <!-- /ko -->
     </script>
+    <script type="text/html" id="file-list-header-template">
+        <th data-bind="click: function () { $parent.updateSort(field.name) }">
+            <span data-bind="text: display"></span>
+            <span data-bind="text: ($parent.sortField() === field.name) ? ($parent.reverseSort() ? '&#9650;' : '&#9660;') : '&nbsp;'" class="up-down"></span>
+        </th>
+    </script>
 </#assign>
 
 <@c.page title="ABRAID-MP ModelWrapper" mainjs="/js/covariates" bootstrapData=bootstrapData templates=templates>
@@ -77,16 +83,16 @@
         </div>
         <div class="panel-collapse collapse in" id="covariate-body">
             <div class="panel-body">
-                <p>Use the fields below to update the covariate file settings.</p>
+                <p>Use the fields below to update the existing covariate settings.</p>
                 <form action="#">
                     <p class="form-group">
                         <label for="disease-picker">Disease: </label>
-                                    <span class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-medkit"></i>
-                                        </span>
-                                        <select id="disease-picker" class="form-control" data-bind="options: diseases, value: selectedDisease, optionsText: 'name', optionsCaption: 'No disease selected', disable: saving" ></select>
-                                    </span>
+                        <span class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-medkit"></i>
+                            </span>
+                            <select id="disease-picker" class="form-control" data-bind="options: diseases, value: selectedDisease, optionsText: 'name', optionsCaption: 'No disease selected', disable: saving" ></select>
+                        </span>
                     </p>
                     <p class="form-group">
                         <label for="file-filter">Filter: </label>
@@ -103,12 +109,12 @@
                         <div class="table-responsive">
                             <table id="file-list" class="table table-hover">
                                 <thead>
-                                <tr>
-                                    <th data-bind="click: updateSort('name')">Name</th>
-                                    <th data-bind="click: updateSort('path')">Path</th>
-                                    <th data-bind="click: updateSort('state'), text: 'Use for ' + selectedDisease().name"></th>
-                                    <th data-bind="click: updateSort('warn')">+</th>
-                                </tr>
+                                <tr data-bind="template: { name: 'file-list-header-template', foreach: [
+                                    { name: 'name', display: 'Name' },
+                                    { name: 'path', display: 'Path' },
+                                    { name: 'state', display: 'Use for ' + selectedDisease().name },
+                                    { name: 'warn', display: '+' }
+                                ], as: 'field' }"></tr>
                                 </thead>
                                 <tbody data-bind="template: { name: visibleFiles().length == 0 ? 'no-files-template' : 'file-list-template' }"></tbody>
                             </table>

@@ -17,14 +17,12 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
         self.sortField = ko.observable("path");
         self.reverseSort = ko.observable(false);
         self.updateSort = function (field) {
-            return function () {
-                if (self.sortField() === field) {
-                    self.reverseSort(!self.reverseSort());
-                } else {
-                    self.reverseSort(false);
-                    self.sortField(field);
-                }
-            };
+            if (self.sortField() === field) {
+                self.reverseSort(!self.reverseSort());
+            } else {
+                self.reverseSort(false);
+                self.sortField(field);
+            }
         };
 
         self.files = ko.observableArray(initialValue.files);

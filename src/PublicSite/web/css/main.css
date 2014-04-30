@@ -85,10 +85,18 @@ form {
     background: transparent;
     border: 2px solid transparent;
 }
-td input[type="text"] {
+.table td input[type="text"] {
     width: 100%
 }
-td.text-muted {
+.table td.text-muted {
     text-align: center;
     font-style: italic
+}
+.table th {
+    cursor: pointer;
+}
+.table th .up-down {
+    float: right;
+    height: 20px;
+    width:20px;
 }
