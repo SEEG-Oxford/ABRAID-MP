@@ -17,7 +17,7 @@
             "underscore": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore",
             "domReady": "https://cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady",
             "leaflet": "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet",
-            "leaflet-markercluster": baseUrl + "js/lib/leaflet.markercluster-src",
+            "leaflet-markercluster": baseUrl + "js/lib/leaflet.markercluster",
             "leaflet-zoomslider": baseUrl + "js/lib/L.Control.Zoomslider",
             "flipclock": baseUrl + "js/lib/flipclock.min",
             "moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min"

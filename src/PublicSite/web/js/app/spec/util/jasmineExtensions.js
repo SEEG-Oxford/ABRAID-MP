@@ -17,4 +17,3 @@ define([
         jasmine.Ajax.uninstall();
     });
 });
-

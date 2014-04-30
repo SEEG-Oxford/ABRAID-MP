@@ -1,4 +1,5 @@
-/* A custom Jasmine matcher to force failure, and return the specified failure message.
+/*
+ * A custom Jasmine matcher to force failure, and return the specified failure message.
  * Copyright (c) 2014 University of Oxford
  */
 define([], function () {
