@@ -160,24 +160,17 @@ define([
         clusterLayer.on("clusterclick", resetSelectedPoint);
 
         // Return the corresponding colour for the disease extent class of the admin unit
-        function getColour(diseaseExtentClass) {
-            switch (diseaseExtentClass) {
-                case "PRESENCE":
-                    return "#8e1b65";  // darkPink
-                case "POSSIBLE_PRESENCE":
-                    return "#c478a9";  // lightPink
-                case "UNCERTAIN":
-                    return "#ffffbf";  // yellow
-                case "POSSIBLE_ABSENCE":
-                    return "#b5caaa";  // lightGreen
-                case "ABSENCE":
-                    return "#769766";  // darkGreen
-            }
-        }
+        var diseaseExtentClassColourScale = {
+            "PRESENCE":          "#8e1b65",  // dark pink
+            "POSSIBLE_PRESENCE": "#c478a9",  // light pink
+            "UNCERTAIN":         "#ffffbf",  // yellow
+            "POSSIBLE_ABSENCE":  "#b5caaa",  // light green
+            "ABSENCE":           "#769766"   // dark green
+        };
 
         function diseaseExtentLayerStyle(feature) {
             return {
-                fillColor: getColour(feature.properties.diseaseExtentClass),
+                fillColor: diseaseExtentClassColourScale[feature.properties.diseaseExtentClass],
                 fillOpacity: 0.7,
                 weight: 2,
                 opacity: 1,
@@ -190,14 +183,42 @@ define([
             style: diseaseExtentLayerStyle
         });
 
+        // Convert from a disease extent class name to display string (eg "POSSIBLE_PRESENCE" to "Possible presence")
+        function formatClassNameForDisplay(string) {
+            // Replace underscore with a space
+            var s = string.replace("_", " ");
+            // Capitalise the first letter of the string
+            return s.charAt(0).toLocaleUpperCase() + s.slice(1).toLocaleLowerCase();
+        }
+
+        function createLegendRow(className, colour) {
+            var colourBox = "<i style='background:" + colour + "'></i>";
+            var displayName = "<span>" + formatClassNameForDisplay(className) + "</span><br>";
+            return colourBox + displayName;
+        }
+
+        // Add a legend to display the disease extent class colour scale with corresponding class names
+        var legend = L.control({position: "bottomleft"});
+        legend.onAdd = function () {
+            var div = L.DomUtil.create("div", "legend");
+            var classNames = _.keys(diseaseExtentClassColourScale);
+            var colours = _.values(diseaseExtentClassColourScale);
+            for (var i = 0; i < classNames.length; i++) {
+                div.innerHTML += createLegendRow(classNames[i], colours[i]);
+            }
+            return div;
+        };
+
         // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
-        function switchValidationTypeView(validationType) {
-            if (validationType === "disease occurrences") {
+        function switchValidationTypeView(type) {
+            if (type === "disease occurrences") {
+                if (map.hasLayer(diseaseExtentLayer)) { map.removeControl(legend); }
                 map.removeLayer(diseaseExtentLayer);
                 clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
             } else {
                 map.removeLayer(clusterLayer);
                 diseaseExtentLayer.addTo(map);
+                legend.addTo(map);
             }
         }
 
