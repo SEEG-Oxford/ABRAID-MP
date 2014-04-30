@@ -42,6 +42,11 @@ public class IndexController extends AbstractController {
         this.sourceCodeManager = sourceCodeManager;
     }
 
+    /**
+     * TEMP.
+     * @param model Temp.
+     * @return Temp.
+     */
     @RequestMapping(value = "/covariates", method = RequestMethod.GET)
     public String showCovariatesPage(Model model) {
         return "covariates";

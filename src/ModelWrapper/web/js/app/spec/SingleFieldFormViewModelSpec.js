@@ -4,7 +4,7 @@
 define([
     "app/SingleFieldFormViewModel",
     "ko",
-    "underscore",
+    "underscore"
 ], function (SingleFieldFormViewModel, ko, _) {
     "use strict";
 

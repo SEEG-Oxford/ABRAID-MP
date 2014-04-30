@@ -11,7 +11,7 @@ require(["require.conf"], function () {
              "app/AuthViewModel",
              "app/MiscViewModel",
              "navbar",
-              "domReady!",
+              "domReady!"
     ], function (ko, RepositoryViewModel, AuthViewModel, MiscViewModel, setupNavbar, doc) {
         setupNavbar();
 

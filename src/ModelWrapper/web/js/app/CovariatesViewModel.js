@@ -36,10 +36,10 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
             if (self.filter() && !/^\s*$/.test(self.filter())) {
                 var filter = self.filter().toLowerCase();
 
-                iterable = iterable.filter(function (file) {               
+                iterable = iterable.filter(function (file) {
                     var name = (file.name || "").toLowerCase();
                     var path = file.path.toLowerCase();
-                    return name.indexOf(self.filter()) !== -1 || path.indexOf(self.filter()) !== -1;
+                    return name.indexOf(filter) !== -1 || path.indexOf(filter) !== -1;
                 });
             }
                    
