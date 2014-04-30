@@ -91,7 +91,8 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
        
         self.saving = ko.observable(false);
         self.notices = ko.observableArray();
-       
+        self.hasUnsavedChanges = ko.observable(false);
+
         self.submit = function () {
             self.notices.removeAll();
             if (self.isValid()) {
@@ -108,6 +109,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                         self.saving(false);
                     });
                 */
+                self.hasUnsavedChanges(false);
                 self.saving(false);
             } else {
                 self.notices.push({ message: "Form must be valid before saving.", priority: "warning"});
