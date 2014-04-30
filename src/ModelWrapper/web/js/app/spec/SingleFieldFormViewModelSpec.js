@@ -5,20 +5,11 @@ define([
     "app/SingleFieldFormViewModel",
     "ko",
     "underscore",
-    "app/spec/util/ruleMatcher",
-    "app/spec/util/observableMatcher"
-], function (SingleFieldFormViewModel, ko, _, ruleMatcher, observableMatcher) {
+], function (SingleFieldFormViewModel, ko, _) {
     "use strict";
 
     describe("A single field form view model", function () {
-        var addCustomMatchers = function () {
-            jasmine.addMatchers({ toHaveValidationRule: ruleMatcher });
-            jasmine.addMatchers({ toBeObservable: observableMatcher });
-        };
-
         describe("holds a value which", function () {
-            beforeEach(addCustomMatchers);
-
             it("is an observable", function () {
                 var vm = new SingleFieldFormViewModel("", "", "", {});
                 expect(vm.value).toBeObservable();
@@ -44,7 +35,6 @@ define([
             var vm = {};
             beforeEach(function () {
                 vm = new SingleFieldFormViewModel("", "", "", {});
-                addCustomMatchers();
             });
 
             it("is an observable", function () {
@@ -60,7 +50,6 @@ define([
             var vm = {};
             beforeEach(function () {
                 vm = new SingleFieldFormViewModel("", "", "", {});
-                addCustomMatchers();
             });
 
             it("is an observable", function () {
@@ -76,12 +65,6 @@ define([
             var vm = {};
             beforeEach(function () {
                 vm = ko.validatedObservable(new SingleFieldFormViewModel("", "", "", {}))();
-                addCustomMatchers();
-                jasmine.Ajax.install();
-            });
-
-            afterEach(function () {
-                jasmine.Ajax.uninstall();
             });
 
             it("updates the saving field correctly", function () {

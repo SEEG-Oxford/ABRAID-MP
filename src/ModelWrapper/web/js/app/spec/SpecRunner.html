@@ -41,6 +41,8 @@
                         beforeSpecs.push("app/spec/util/coverage-reporter");
                     }
 
+                    beforeSpecs.push("app/spec/util/jasmineExtensions");
+
                     require(beforeSpecs, function() {
                         if (includeCoverage) {
                             blanket.options({ filter: baseUrl+"js/app", antifilter: baseUrl+"js/app/spec" });

@@ -1,4 +1,4 @@
-/* Tests for RepositoryViewModel.
+/* Tests for CovariatesViewModel.
  * Copyright (c) 2014 University of Oxford
  */
 /* jshint unused:false */ // Ignore unused "CovariatesViewModel", this is an placeholder until these tests are written.
