@@ -3,20 +3,13 @@
  */
 define([
     "app/CounterViewModel",
-    "ko",
-    "app/spec/util/observableMatcher"
-], function (CounterViewModel, ko, observableMatcher) {
+    "ko"
+], function (CounterViewModel, ko) {
     "use strict";
 
     describe("The counter view model", function () {
-        var addCustomMatchers = function () {
-            jasmine.addMatchers({ toBeObservable: observableMatcher });
-        };
-
-        beforeEach(addCustomMatchers);
 
         describe("holds the count which", function () {
-
             it("is an observable", function () {
                 var vm = new CounterViewModel(0);
                 expect(vm.count).toBeObservable();

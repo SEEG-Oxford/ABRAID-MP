@@ -46,22 +46,20 @@ define([
             }
         });
         self.submitReview = function (review) {
-            return function () {
-                var occurrenceId = self.selectedPoint().id;
-                var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
-                    "/validate";
-                $.post(url, { review: review })
-                    .done(function () {
-                        // Status 2xx
-                        // Display a success alert, remove the point from the map and side panel, increment the counter
-                        $("#submitReviewSuccess").fadeIn(1000);
-                        ko.postbox.publish("point-reviewed", occurrenceId);
-                        self.selectedPoint(null);
-                    })
-                    .fail(function (xhr) {
-                        alert("Something went wrong. Please try again. " + xhr.responseText);
-                    });
-            };
+            var occurrenceId = self.selectedPoint().id;
+            var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
+                "/validate";
+            $.post(url, { review: review })
+                .done(function () {
+                    // Status 2xx
+                    // Display a success alert, remove the point from the map and side panel, increment the counter
+                    self.selectedPoint(null);
+                    ko.postbox.publish("point-reviewed", occurrenceId);
+                    $("#submitReviewSuccess").fadeIn(1000);
+                })
+                .fail(function () {
+                    alert("Something went wrong. Please try again.");
+                });
         };
     };
 });

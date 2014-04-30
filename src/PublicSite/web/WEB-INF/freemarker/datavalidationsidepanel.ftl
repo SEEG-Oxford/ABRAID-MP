@@ -71,9 +71,9 @@
     <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div class="btn-group">
-            <button type="button" class="btn btn-primary" data-bind="click: submitReview('YES')"><i class="fa fa-check"></i>&nbsp;Valid</button>
-            <button type="button" class="btn btn-primary" data-bind="click: submitReview('UNSURE')">Unsure<br /></button>
-            <button type="button" class="btn btn-primary" data-bind="click: submitReview('NO')"><i class="fa fa-times"></i>&nbsp;Invalid</button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('YES') }"><i class="fa fa-check"></i>&nbsp;Valid</button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('UNSURE') }">Unsure<br /></button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('NO') }"><i class="fa fa-times"></i>&nbsp;Invalid</button>
         </div>
     </@security.authorize>
     </div>

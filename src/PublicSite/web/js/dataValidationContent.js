@@ -2,7 +2,7 @@
  * Apply KO bindings for the data validation page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, data:false*/
+/*global require:false, baseUrl:false, data:false, window:false*/
 require(["require.conf"], function () {
     "use strict";
 
@@ -30,8 +30,12 @@ require(["require.conf"], function () {
                     doc.getElementById("counterDiv")
                 );
             } else {
+                var refresh = function () {
+                    // Maybe check if TGHN
+                    window.top.location.reload();
+                };
                 ko.applyBindings(
-                    new LogInViewModel(baseUrl),
+                    new LogInViewModel(baseUrl, refresh),
                     doc.getElementById("logIn")
                 );
             }

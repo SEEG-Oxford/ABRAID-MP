@@ -4,24 +4,18 @@
 define([
     "app/SelectedLayerViewModel",
     "ko",
-    "underscore",
-    "app/spec/util/observableMatcher",
-    "app/spec/util/forceFailureMatcher"
-], function (SelectedLayerViewModel, ko, _, observableMatcher, forceFailureMatcher) {
+    "underscore"
+], function (SelectedLayerViewModel, ko, _) {
     "use strict";
 
     describe("The selected layer view model", function () {
-        var addCustomMatchers = function () {
-            jasmine.addMatchers({ toBeObservable: observableMatcher });
-            jasmine.addMatchers({ thisLineToNotExecute: forceFailureMatcher });
-        };
-
         var diseaseInterests = [ { name: "dengue", diseaseGroups: [ { name: "dengue" } ] } ];
-        var vm = new SelectedLayerViewModel(diseaseInterests, []);
-        beforeEach(addCustomMatchers);
+        var vm = {};
+        beforeEach(function () {
+            vm = new SelectedLayerViewModel(diseaseInterests, []);
+        });
 
         describe("holds the validation type which", function () {
-
             it("is an observable", function () {
                 expect(vm.selectedType).toBeObservable();
             });
@@ -44,7 +38,6 @@ define([
         });
 
         describe("holds the lists of diseases which", function () {
-
             it("has two groups", function () {
                 expect(vm.groups.length).toBe(2);
             });
@@ -59,7 +52,6 @@ define([
         });
 
         describe("holds the validator disease group which", function () {
-
             it("is an observable", function () {
                 expect(vm.selectedDiseaseSet).toBeObservable();
             });
@@ -90,7 +82,7 @@ define([
 
                 // Arrange assertions
                 var subscription = ko.postbox.subscribe("layers-changed", function () {
-                    expect().thisLineToNotExecute("The 'layers-changed' event should not be fired here.");
+                    expect().toNotExecuteThisLine("The 'layers-changed' event should not be fired here.");
                 });
 
                 // Act
@@ -100,7 +92,6 @@ define([
         });
 
         describe("holds the (child) disease group which", function () {
-
             it("is an observable", function () {
                 expect(vm.selectedDisease).toBeObservable();
             });
@@ -140,7 +131,6 @@ define([
         });
 
         describe("holds a field indicating whether there are features for review which", function () {
-
             it("is an observable", function () {
                 expect(vm.noFeaturesToReview).toBeObservable();
             });

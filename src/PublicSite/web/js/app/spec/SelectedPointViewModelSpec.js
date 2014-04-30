@@ -1,19 +1,14 @@
 /* A suite of tests for the SelectedLayerViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
+/*global alert:true*/
 define([
     "app/SelectedPointViewModel",
-    "ko",
-    "app/spec/util/observableMatcher",
-    "app/spec/util/forceFailureMatcher"
-], function (SelectedPointViewModel, ko, observableMatcher, forceFailureMatcher) {
+    "ko"
+], function (SelectedPointViewModel, ko) {
     "use strict";
 
     describe("The selected point view model", function () {
-        var addCustomMatchers = function () {
-            jasmine.addMatchers({ toBeObservable: observableMatcher });
-            jasmine.addMatchers({ thisLineToNotExecute: forceFailureMatcher });
-        };
 
         var feature = {
             "type": "Feature",
@@ -37,13 +32,13 @@ define([
                 "occurrenceDate": "2014-02-25T02:22:21.000Z"
             }
         };
-
         var baseUrl = "";
-        var vm = new SelectedPointViewModel(baseUrl);
-        beforeEach(addCustomMatchers);
+        var vm = {};
+        beforeEach(function () {
+            vm = new SelectedPointViewModel(baseUrl);
+        });
 
-        describe("holds the selected disease occurrence which", function () {
-
+        describe("holds the selected disease occurrence point which", function () {
             it("is an observable", function () {
                 expect(vm.selectedPoint).toBeObservable();
             });
@@ -53,7 +48,6 @@ define([
             });
 
             describe("syncs with the 'point-selected' event by", function () {
-
                 it("changing its value when the event is fired externally", function () {
                     // Arrange
                     vm.selectedPoint(null);
@@ -72,17 +66,6 @@ define([
                     vm.selectedPoint(feature);
                     subscription.dispose();
                 });
-            });
-
-            it("reacts to the 'point-reviewed' event by resetting its value to null", function () {
-                //Arrange
-                vm.selectedPoint(feature);
-                expect(vm.selectedPoint()).not.toBeNull();
-                // Act
-                vm.submitReview("foo");
-                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                // Assert
-                expect(vm.selectedPoint()).toBeNull();
             });
         });
 
@@ -107,43 +90,27 @@ define([
 
         describe("has a submit method which", function () {
             beforeEach(function () {
-                jasmine.Ajax.install();
-            });
-            afterEach(function () {
-                jasmine.Ajax.uninstall();
+                vm.selectedPoint(feature);
             });
 
             it("POSTs to the specified URL, with the correct parameters", function () {
                 // Arrange
                 var diseaseId = 1;
                 ko.postbox.publish("layers-changed", {diseaseSet : { id: diseaseId}});
-                vm.selectedPoint(feature);
                 var occurrenceId = vm.selectedPoint().id;
-                var expectedUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId + "/validate";
+                var expectedUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
+                    "/validate";
                 var review = "foo";
                 var expectedParams = "review=" + review;
                 // Act
-                vm.submitReview(review)();
+                vm.submitReview(review);
                 // Assert
                 expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
                 expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
                 expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
             });
 
-            it("fires the 'point-reviewed' event on success", function () {
-                // Arrange
-                var expectation = vm.selectedPoint().id;
-                // Arrange assertions
-                var subscription = ko.postbox.subscribe("point-reviewed", function (value) {
-                    expect(value).toBe(expectation);
-                });
-                // Act
-                vm.submitReview("foo");
-                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                subscription.dispose();
-            });
-
-            it("displays an alert on failure", function () {
+            it("when unsuccessful, displays an alert", function () {
                 // Arrange
                 alert = jasmine.createSpy();
                 var message = "Something went wrong. Please try again.";
@@ -152,6 +119,30 @@ define([
                 jasmine.Ajax.requests.mostRecent().response({ status: 500 });
                 // Assert
                 expect(alert).toHaveBeenCalledWith(message);
+            });
+
+            describe("when successful,", function () {
+                it("fires the 'point-reviewed' event", function () {
+                    // Arrange
+                    var expectation = vm.selectedPoint().id;
+                    // Arrange assertions
+                    var subscription = ko.postbox.subscribe("point-reviewed", function (value) {
+                        expect(value).toBe(expectation);
+                    });
+                    // Act
+                    vm.submitReview("foo");
+                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                    subscription.dispose();
+                });
+
+                it("resets the selected point to null", function () {
+                    expect(vm.selectedPoint()).not.toBeNull();
+                    // Act
+                    vm.submitReview("foo");
+                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                    // Assert
+                    expect(vm.selectedPoint()).toBeNull();
+                });
             });
         });
     });

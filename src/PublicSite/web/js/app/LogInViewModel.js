@@ -2,14 +2,13 @@
  * The AJAX call to Spring Security when login button is clicked.
  * Copyright (c) 2014 University of Oxford
  */
-/*global window:false*/
 define([
     "ko",
     "jquery"
 ], function (ko, $) {
     "use strict";
 
-    return function (baseUrl) {
+    return function (baseUrl, refresh) {
         var self = this;
         self.formUsername = ko.observable();
         self.formPassword = ko.observable();
@@ -24,7 +23,7 @@ define([
                     })
                     .done(function () {
                         // Status 2xx
-                        window.top.location.reload();
+                        refresh();
                     })
                     .fail(function (xhr) {
                         // Status Unauthorized 401 - Display authentication error message to user: eg Bad Credentials
