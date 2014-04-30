@@ -71,6 +71,10 @@ public abstract class AbstractSpringUnitTests {
 
     @ReplaceWithMock
     @Autowired
+    protected NativeSQL nativeSQL;
+
+    @ReplaceWithMock
+    @Autowired
     protected ProvenanceDao provenanceDao;
 
     @ReplaceWithMock

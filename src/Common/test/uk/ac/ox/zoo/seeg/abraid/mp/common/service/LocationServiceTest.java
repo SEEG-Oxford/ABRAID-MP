@@ -125,4 +125,32 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
         // Assert
         assertThat(testLandSeaBorders).isSameAs(landSeaBorders);
     }
+
+    @Test
+    public void findAdminUnitGlobalThatContainsPoint() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(1, 2);
+        Integer expectedGaulCode = 123;
+        when(nativeSQL.findAdminUnitGlobalThatContainsPoint(point)).thenReturn(expectedGaulCode);
+
+        // Act
+        Integer actualGaulCode = locationService.findAdminUnitGlobalThatContainsPoint(point);
+
+        // Assert
+        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
+    }
+
+    @Test
+    public void findAdminUnitTropicalThatContainsPoint() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(1, 2);
+        Integer expectedGaulCode = 123;
+        when(nativeSQL.findAdminUnitTropicalThatContainsPoint(point)).thenReturn(expectedGaulCode);
+
+        // Act
+        Integer actualGaulCode = locationService.findAdminUnitTropicalThatContainsPoint(point);
+
+        // Assert
+        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
+    }
 }

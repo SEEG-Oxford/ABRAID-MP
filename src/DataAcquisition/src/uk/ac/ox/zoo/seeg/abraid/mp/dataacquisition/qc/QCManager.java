@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
@@ -39,7 +40,7 @@ public class QCManager {
     }
 
     private void initializeLocationForQC(Location location) {
-        location.setAdminUnitQC(null);
+        location.setAdminUnitQCGaulCode(null);
         location.setQcMessage(null);
     }
 
@@ -51,9 +52,13 @@ public class QCManager {
             // (as long as it is close enough - see class AdminUnitFinder for details)
             AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
             adminUnitFinder.findClosestAdminUnit(location, qcLookupData.getAdminUnits());
-            location.setAdminUnitQC(adminUnitFinder.getClosestAdminUnit());
+
+            AdminUnitQC closestAdminUnit = adminUnitFinder.getClosestAdminUnit();
+            if (closestAdminUnit != null) {
+                location.setAdminUnitQCGaulCode(closestAdminUnit.getGaulCode());
+            }
             appendQcMessage(location, adminUnitFinder.getMessage());
-            passed = (adminUnitFinder.getClosestAdminUnit() != null);
+            passed = (closestAdminUnit != null);
         } else {
             appendQcMessage(location, QC_STAGE_1_PASSED_MESSAGE);
         }

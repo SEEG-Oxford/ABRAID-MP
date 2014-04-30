@@ -103,7 +103,9 @@ public class MainTest {
         assertThat(occurrence1Location.getHealthMapCountryId()).isEqualTo(147);
         assertThat(occurrence1Location.getCreatedDate()).isNotNull();
         assertThat(occurrence1Location.hasPassedQc()).isTrue();
-        assertThat(occurrence1Location.getAdminUnitQC()).isNull();
+        assertThat(occurrence1Location.getAdminUnitQCGaulCode()).isNull();
+        assertThat(occurrence1Location.getAdminUnitGlobalGaulCode()).isEqualTo(153);
+        assertThat(occurrence1Location.getAdminUnitTropicalGaulCode()).isEqualTo(153);
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
                 "ADMIN2. QC stage 2 passed: location already within land. QC stage 3 passed: location already " +
                 "within HealthMap country.");
@@ -138,7 +140,9 @@ public class MainTest {
         assertThat(occurrence2Location.getHealthMapCountryId()).isEqualTo(164);
         assertThat(occurrence2Location.getCreatedDate()).isNotNull();
         assertThat(occurrence2Location.hasPassedQc()).isTrue();
-        assertThat(occurrence2Location.getAdminUnitQC()).isNull();
+        assertThat(occurrence2Location.getAdminUnitQCGaulCode()).isNull();
+        assertThat(occurrence2Location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
+        assertThat(occurrence2Location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
                 "ADMIN2. QC stage 2 passed: location is a country. QC stage 3 passed: location already " +
                 "within HealthMap country.");

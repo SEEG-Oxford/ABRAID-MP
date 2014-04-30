@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class HealthMapDataConverterTest {
     private HealthMapLookupData healthMapLookupData;
     private HealthMapDataConverter healthMapDataConverter;
     private QCManager qcManager;
+    private PostQCManager postQcManager;
 
     private Provenance healthMapProvenance;
 
@@ -46,8 +48,9 @@ public class HealthMapDataConverterTest {
         alertConverter = mock(HealthMapAlertConverter.class);
         healthMapLookupData = mock(HealthMapLookupData.class);
         qcManager = mock(QCManager.class);
+        postQcManager = mock(PostQCManager.class);
         healthMapDataConverter = new HealthMapDataConverter(locationConverter, alertConverter,
-                alertService, diseaseService, healthMapLookupData, qcManager);
+                alertService, diseaseService, healthMapLookupData, qcManager, postQcManager);
 
         healthMapProvenance = new Provenance();
         when(healthMapLookupData.getHealthMapProvenance()).thenReturn(healthMapProvenance);
@@ -313,6 +316,7 @@ public class HealthMapDataConverterTest {
         assertThat(location1.hasPassedQc()).isFalse();
         verify(diseaseService, times(1)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence1));
+        verify(postQcManager, times(1)).runPostQCProcesses(same(location1));
     }
 
     @Test
@@ -358,6 +362,8 @@ public class HealthMapDataConverterTest {
         verify(diseaseService, times(2)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence1));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence2));
+        verify(postQcManager, times(1)).runPostQCProcesses(same(location1));
+        verify(postQcManager, times(1)).runPostQCProcesses(same(location2));
     }
 
     @Test

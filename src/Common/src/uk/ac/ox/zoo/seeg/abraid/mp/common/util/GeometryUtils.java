@@ -33,9 +33,7 @@ public final class GeometryUtils {
      * @return A point.
      */
     public static Point createPoint(double x, double y) {
-        Coordinate coordinate = new Coordinate(x, y);
-        PRECISION_MODEL.makePrecise(coordinate);
-        return GEOMETRY_FACTORY.createPoint(coordinate);
+        return createPoint(new Coordinate(x, y));
     }
 
     /**
@@ -129,6 +127,11 @@ public final class GeometryUtils {
      */
     public static Point findClosestPointOnGeometry(Geometry geometry, Point point) {
         Coordinate[] coordinates = DistanceOp.closestPoints(geometry, point);
-        return GEOMETRY_FACTORY.createPoint(coordinates[0]);
+        return createPoint(coordinates[0]);
+    }
+
+    private static Point createPoint(Coordinate coordinate) {
+        PRECISION_MODEL.makePrecise(coordinate);
+        return GEOMETRY_FACTORY.createPoint(coordinate);
     }
 }
