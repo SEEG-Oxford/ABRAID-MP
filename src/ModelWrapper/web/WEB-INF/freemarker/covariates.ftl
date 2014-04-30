@@ -15,7 +15,7 @@
             ],
             files: [
                 { path: "/fooopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopop", name: "FOO", enabled: [ 1, 3 ] },
-                { path: "/fo2o", name: "BOO", warn: "File missing", enabled: [ 1, 4 ] },
+                { path: "/fo2o", name: "BOO", info: "File missing", enabled: [ 1, 4 ] },
                 { path: "/foo4", enabled: [ 2, 3, 4 ] },
                 { path: "/foo4", enabled: [ 2, 3, 4 ] },
                 { path: "/foo4", enabled: [ 2, 3, 4 ] },
@@ -49,16 +49,25 @@
             <td colspan="4" class="text-muted">No matching files.</td>
         </tr>
     </script>
+    <script type="text/html" id="file-list-delete-template">
+        <p>This file is currently used in <span data-bind="text: jsonFile.enabled.length"></span> <span data-bind="text: jsonFile.enabled.length === 1 ? 'disease' : 'diseases'"></span>. Are you sure you want to delete it?</p><br>
+        <p style="text-align:center;">
+            <span class="btn btn-default">Confirm<span>
+        </p>
+    </script>
     <script type="text/html" id="file-list-template">
         <!-- ko foreach: visibleFiles -->
-        <tr data-bind="css: { danger: warn }">
+        <tr>
             <td data-bind="event: { mouseover: function() { mouseOver(true) }, mouseout: function() { mouseOver(false) } }">
                 <input type="text" data-bind="value: name, attr: { title: name }, css: { 'transparent-input': !mouseOver() }" placeholder="No name given" >
             </td>
             <td><input type="text" data-bind="value: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
             <td><input type="checkbox" data-bind="checked: state"></td>
-            <td data-bind="if: warn">
-                <i class="fa fa-lg fa-exclamation-circle text-danger" data-bind="tooltip: { title: warn, placement: 'right' }"></i>
+            <td>
+                <button class="btn btn-default fa fa-lg fa-trash-o" data-bind="popover: { title: 'Delete file?', trigger: 'focus', placement: 'bottom', template: 'file-list-delete-template'}, click: function(data, event) { event.preventDefault(); }"></button>
+                <span data-bind="if: info">
+                    <i class="fa fa-lg fa-info-circle text-info" data-bind="tooltip: { title: info, placement: 'bottom' }"></i>&nbsp;
+                </span>
             </td>
         </tr>
         <!-- /ko -->
@@ -168,7 +177,7 @@
                                     { name: 'name', display: 'Name' },
                                     { name: 'path', display: 'Path' },
                                     { name: 'state', display: 'Use for ' + selectedDisease().name },
-                                    { name: 'warn', display: '+' }
+                                    { name: 'info', display: '+' }
                                 ], as: 'field' }"></tr>
                                 </thead>
                                 <tbody data-bind="template: { name: visibleFiles().length == 0 ? 'no-files-template' : 'file-list-template' }"></tbody>

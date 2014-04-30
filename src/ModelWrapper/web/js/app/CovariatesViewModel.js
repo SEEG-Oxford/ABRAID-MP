@@ -44,6 +44,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
             // Convert to view models
             iterable = iterable.map(function (file) {
                 return {
+                    jsonFile: file,
                     name: ko.computed({
                         read: function () {
                             return file.name;
@@ -54,7 +55,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                     }),
                     mouseOver: ko.observable(false),
                     path: ko.observable(file.path),
-                    warn: ko.observable(file.warn),
+                    info: ko.observable(file.info),
                     state: ko.computed({
                         read: function () {
                             return _(file.enabled).contains(self.selectedDisease().id);
