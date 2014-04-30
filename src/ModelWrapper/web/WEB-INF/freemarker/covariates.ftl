@@ -162,7 +162,7 @@
                     <div>
                         <label for="file-list">Files: </label>
                         <div class="table-responsive">
-                            <table id="file-list" class="table table-hover">
+                            <table id="file-list" class="table table-condensed table-hover">
                                 <thead>
                                 <tr data-bind="template: { name: 'file-list-header-template', foreach: [
                                     { name: 'name', display: 'Name' },
