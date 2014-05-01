@@ -5,7 +5,7 @@
  * -- 'validation-type-changed' - to swap between DiseaseOccurrenceLayer and DiseaseExtentLayer
  * -- 'disease-set-changed'     - to swap the data on DiseaseOccurrenceLayer
  * -- 'disease-changed'         - to swap the data on DiseaseExtentLayer
- * -- 'pont-reviewed'           - to remove the point from the map
+ * -- 'point-reviewed'          - to remove the point from the map
  * Events published:
  * -- 'no-features-to-review'   - when the FeatureCollection data is empty, or the last point is remove from its layer
  */
@@ -100,11 +100,9 @@ define([
                     })
                 });
             }
-            marker.on({
-                click: function () {
-                    ko.postbox.publish("point-selected", feature);
-                    selectFeature(this);
-                }
+            marker.on("click", function () {
+                ko.postbox.publish("point-selected", feature);
+                selectFeature(this);
             });
             return marker;
         }
@@ -162,7 +160,6 @@ define([
             ko.postbox.publish("point-selected", null);
             resetLayerStyle();
         }
-
         map.on("click", resetSelectedPoint);
         clusterLayer.on("clusterclick", resetSelectedPoint);
 
@@ -187,7 +184,12 @@ define([
 
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
         var diseaseExtentLayer = L.geoJson([], {
-            style: diseaseExtentLayerStyle
+            style: diseaseExtentLayerStyle,
+            onEachFeature: function (feature, layer) {
+                layer.on("click", function () {
+                    ko.postbox.publish("admin-unit-selected", feature);
+                });
+            }
         });
 
         // Convert from a disease extent class name to display string (eg "POSSIBLE_PRESENCE" to "Possible presence")
@@ -277,29 +279,15 @@ define([
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
                     diseaseExtentLayer.addData(featureCollection);
-                    map.fitBounds(diseaseExtentLayer.getBounds());
                     //TODO: Fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
                 } else {
                     ko.postbox.publish("no-features-to-review", true);
-                    map.fitWorld();
                 }
             });
         }
 
-        ko.postbox.subscribe("validation-type-changed", function (type) {
-            switchValidationTypeView(type);
-        });
-
-        ko.postbox.subscribe("disease-set-changed", function (diseaseSet) {
-            switchDiseaseOccurrenceLayer(diseaseSet.id);
-        });
-
-        ko.postbox.subscribe("disease-changed", function (disease) {
-            switchDiseaseExtentLayer(disease.id);
-        });
-
-        // Remove marker from map
-        ko.postbox.subscribe("point-reviewed", function (id) {
+        // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
+        function removeMarkerFromMap(id) {
             clusterLayer.clearLayers();
             diseaseOccurrenceLayer.removeLayer(layerMap[id]);
             delete layerMap[id];
@@ -308,6 +296,23 @@ define([
             } else {
                 clusterLayer.addLayer(diseaseOccurrenceLayer);
             }
+        }
+
+        ko.postbox.subscribe("validation-type-changed", function (type) {
+            switchValidationTypeView(type);
+        });
+
+        ko.postbox.subscribe("disease-set-changed", function (diseaseSet) {
+            resetSelectedPoint();
+            switchDiseaseOccurrenceLayer(diseaseSet.id);
+        });
+
+        ko.postbox.subscribe("disease-changed", function (disease) {
+            switchDiseaseExtentLayer(disease.id);
+        });
+
+        ko.postbox.subscribe("point-reviewed", function (id) {
+            removeMarkerFromMap(id);
         });
     };
 });

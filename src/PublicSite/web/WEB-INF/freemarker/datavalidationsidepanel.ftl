@@ -4,47 +4,32 @@
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
-    <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
+    <div id="featureInfo" data-bind="template: { name:
+        hasSelectedPoint() ? 'selected-point-template' :
+        (hasSelectedAdminUnit() ? 'selected-admin-unit-template' :
+        'no-selected-feature-template')
+    }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-        <form id="logIn" action="">
-            <p id="formAlert" data-bind="text: formAlert"></p>
-            <p class="form-group">
-                <span class="input-group">
-                    <span class="input-group-addon">
-                        <i class="glyphicon glyphicon-user"></i>
-                    </span>
-                    <input type="text" class="form-control" placeholder="Email address" data-bind="value: formUsername" >
-                </span>
-            </p>
-            <p class="form-group">
-                <span class="input-group">
-                    <span class="input-group-addon">
-                        <i class="glyphicon glyphicon-lock"></i>
-                    </span>
-                    <input type="password" class="form-control" placeholder="Password" data-bind="value: formPassword">
-                </span>
-            </p>
-            <p class="form-group">
-                <input type="submit" class="btn btn-primary" value="Log in to start validating" data-bind="click: submit">
-            </p>
-        </form>
+        <#include "loginform.ftl"/>
     </@security.authorize>
     <@security.authorize ifAnyGranted="ROLE_USER">
-        <div id="counterDiv">
-            <span>You have validated</span>
-            <div id="counter" data-bind="counter: count"></div>
-            <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
-        </div>
+        <#include "counter.ftl"/>
     </@security.authorize>
 </div>
 
-<script type="text/html" id="no-selected-point-template">
+<script type="text/html" id="no-selected-feature-template">
     <ul>
-        <li>Select a point on the map to view more details here...</li>
+        <li>Select a feature on the map to view more details here...</li>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
     </div>
+</script>
+
+<script type="text/html" id="selected-admin-unit-template">
+    <ul>
+        <li><p data-bind="text: selectedAdminUnit().properties.name"></p></li>
+    </ul>
 </script>
 
 <script type="text/html" id="selected-point-template">

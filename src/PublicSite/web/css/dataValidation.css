@@ -35,19 +35,19 @@ html, body, #dataValidation {
     background-color:rgb(214, 214, 214);
     opacity:0.8;
 }
-#datapointInfo {
+#featureInfo {
     height:100%;
     position:relative;
 }
-#datapointInfo h4 {
+#featureInfo h4 {
     min-height:57px;
 }
-#datapointInfo ul {
+#featureInfo ul {
     list-style-type: none;      /* Remove bullet points */
     padding:10px;
     margin:0;
 }
-#datapointInfo p {
+#featureInfo p {
     display:inline;
 }
 #summary {
