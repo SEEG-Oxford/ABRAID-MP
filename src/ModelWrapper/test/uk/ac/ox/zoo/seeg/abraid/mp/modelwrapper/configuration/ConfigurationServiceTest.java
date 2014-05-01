@@ -48,7 +48,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedUserName = "foo";
         String expectedPasswordHash = "bar";
@@ -66,7 +66,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedUrl = "foo";
 
@@ -82,7 +82,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedVersion = "foo";
 
@@ -99,7 +99,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedUserName = "foo";
         writeStandardSimpleProperties(testFile, expectedUserName, "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getAuthenticationUsername();
@@ -114,7 +114,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedPasswordHash = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", expectedPasswordHash, "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getAuthenticationPasswordHash();
@@ -129,7 +129,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedUrl = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", expectedUrl, "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getModelRepositoryUrl();
@@ -144,7 +144,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedVersion = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", expectedVersion);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getModelRepositoryVersion();
@@ -160,7 +160,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(true);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
 
         // Act
         String result = target.getCacheDirectory();
@@ -177,7 +177,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(false);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
 
         // Act
         String result = target.getCacheDirectory();
@@ -193,7 +193,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedDir = "foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "cache.data.dir", expectedDir);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
 
         // Act
         String result = target.getCacheDirectory();
@@ -209,7 +209,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(false);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
         if (Paths.get("/usr/bin/R").toFile().exists()) {
             // Act
             String result = target.getRExecutablePath();
@@ -232,7 +232,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(true);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
         if (Paths.get(System.getenv("R_HOME") + "\\bin\\R.exe").toFile().exists()) {
             // Act
             String result = target.getRExecutablePath();
@@ -254,7 +254,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedValue = "foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "r.executable.path", expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         String result = target.getRExecutablePath();
@@ -268,7 +268,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedValue = "foo";
 
@@ -284,7 +284,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         int result = target.getMaxModelRunDuration();
@@ -299,7 +299,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         int expectedValue = 1234;
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "r.max.duration", "" + expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         int result = target.getMaxModelRunDuration();
@@ -313,7 +313,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         int expectedValue = 123;
 
@@ -329,7 +329,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, new OSCheckerImpl());
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, new OSCheckerImpl());
 
         // Act
         String result = target.getCovariateDirectory();
@@ -345,7 +345,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedValue = "foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "covariate.dir", expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         String result = target.getCovariateDirectory();
@@ -359,7 +359,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedValue = "bar";
 

@@ -1,7 +1,7 @@
 /* Kick-start JS for the covariates page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl: false, initialData:false, window:false, confirm:false*/
+/* global require:false, baseUrl: false, initialData:false, window:false */
 //Load base configuration, then load the app logic for this page.
 require(["require.conf"], function () {
     "use strict";
@@ -17,7 +17,7 @@ require(["require.conf"], function () {
         var covariatesViewModel = new CovariatesViewModel(baseUrl, initialData);
 
         ko.applyBindings(
-            ko.validatedObservable(covariatesViewModel),
+            covariatesViewModel,
             doc.getElementById("covariate-body"));
 
         covariatesViewModel.hasUnsavedChanges.subscribe(function (value) {

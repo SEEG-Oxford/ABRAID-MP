@@ -74,8 +74,8 @@ form {
 }
 .input-group > .clear {
     position: absolute;
-    right: 50px;
     top: 0;
+    right: 8px;
     bottom: 0;
     height: 14px;
     margin: auto;

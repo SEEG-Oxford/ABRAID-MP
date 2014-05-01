@@ -25,11 +25,12 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
             }
         };
 
-        self.files = ko.observableArray(initialValue.files);
+        self.files = ko.observable(initialValue.files);
         self.visibleFiles = ko.computed(function () {
+            var diseaseId = self.selectedDisease().id;
             // Wrap with underscore
             var iterable = _(self.files()).chain();
-           
+
             // Filter
             if (self.filter() && !/^\s*$/.test(self.filter())) {
                 var filter = self.filter().toLowerCase();
@@ -37,14 +38,15 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                 iterable = iterable.filter(function (file) {
                     var name = (file.name || "").toLowerCase();
                     var path = file.path.toLowerCase();
-                    return name.indexOf(filter) !== -1 || path.indexOf(filter) !== -1;
+                    return (name.indexOf(filter) !== -1 || path.indexOf(filter) !== -1);
                 });
             }
-                   
+
             // Convert to view models
             iterable = iterable.map(function (file) {
                 return {
                     jsonFile: file,
+                    id: file.id,
                     name: ko.computed({
                         read: function () {
                             return file.name;
@@ -53,30 +55,42 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                             file.name = value;
                         }
                     }),
+                    hide: ko.computed({
+                        read: function () {
+                            return file.hide;
+                        },
+                        write: function (value) {
+                            file.hide = value;
+                            self.files.valueHasMutated(); //Force view refresh
+                        }
+                    }),
                     mouseOver: ko.observable(false),
-                    path: ko.observable(file.path),
-                    info: ko.observable(file.info),
+                    path: "./" + file.path,
+                    info: file.info,
                     state: ko.computed({
                         read: function () {
-                            return _(file.enabled).contains(self.selectedDisease().id);
+                            return _(file.enabled).contains(diseaseId);
                         },
                         write: function (value) {
                             if (value) {
-                                file.enabled.push(self.selectedDisease().id);
+                                file.enabled.push(diseaseId);
                             } else {
                                 // Note: using underscore"s indexOf instead of native indexOf because native
                                 //       indexOf is flakey in old IEs.
-                                file.enabled.splice(_(file.enabled).indexOf(self.selectedDisease().id), 1);
+                                file.enabled.splice(_(file.enabled).indexOf(diseaseId), 1);
                             }
                         }
                     })
                 };
             });
 
+            // Hide
+            iterable = iterable.filter(function (file) { return !file.hide(); });
+
             // Sort
             if (self.sortField() && !/^\s*$/.test(self.sortField())) {
                 var sortField = self.sortField();
-                iterable = iterable.sortBy(function (file) { return file[sortField](); });
+                iterable = iterable.sortBy(function (file) { return ko.utils.recursiveUnwrap(file[sortField]); });
             }
 
             // Unwrap underscore
@@ -96,7 +110,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
 
         self.submit = function () {
             self.notices.removeAll();
-            if (self.isValid()) {
+            if (true) {
                 self.saving(true);
                 /*
                 $.post(baseUrl + formUrl, { value: self.value() })

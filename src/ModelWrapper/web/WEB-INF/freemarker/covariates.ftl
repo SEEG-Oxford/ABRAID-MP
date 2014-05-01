@@ -6,40 +6,7 @@
 <#assign bootstrapData>
     <script type="text/javascript">
         // bootstrapped data for js viewmodels
-        var initialData = {
-            diseases: [
-                { id: 1, name: "foo" },
-                { id: 2, name: "foo1" },
-                { id: 3, name: "foo2" },
-                { id: 4, name: "foo3" }
-            ],
-            files: [
-                { path: "/fooopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopopop", name: "FOO", enabled: [ 1, 3 ] },
-                { path: "/fo2o", name: "BOO", info: "File missing", enabled: [ 1, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] },
-                { path: "/foo4", enabled: [ 2, 3, 4 ] }
-            ]
-        };
+        var initialData = ${initialData};
     </script>
 </#assign>
 
@@ -52,7 +19,7 @@
     <script type="text/html" id="file-list-delete-template">
         <p>This file is currently used in <span data-bind="text: jsonFile.enabled.length"></span> <span data-bind="text: jsonFile.enabled.length === 1 ? 'disease' : 'diseases'"></span>. Are you sure you want to delete it?</p><br>
         <p style="text-align:center;">
-            <span class="btn btn-default">Confirm<span>
+            <span class="btn btn-default" data-bind="click: function () { hide(true) }" data-dismiss="popover">Confirm<span>
         </p>
     </script>
     <script type="text/html" id="file-list-template">
@@ -128,7 +95,7 @@
                         </span>
                     </p>
                     <p class="form-group">
-                        <a class="btn btn-primary">Upload</a>
+                        <a class="btn btn-primary" onclick="alert('Not implemented!')">Upload</a>
                     </p>
                     <div class="form-group" >
                         <div></div>
@@ -155,7 +122,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-medkit"></i>
                             </span>
-                            <select id="disease-picker" class="form-control" data-bind="options: diseases, value: selectedDisease, optionsText: 'name', optionsCaption: 'No disease selected', disable: saving" ></select>
+                            <select id="disease-picker" class="form-control" data-bind="options: diseases, value: selectedDisease, optionsText: 'name', disable: saving" ></select>
                         </span>
                     </p>
                     <p class="form-group">
@@ -176,7 +143,7 @@
                                 <tr data-bind="template: { name: 'file-list-header-template', foreach: [
                                     { name: 'name', display: 'Name' },
                                     { name: 'path', display: 'Path' },
-                                    { name: 'state', display: 'Use for ' + selectedDisease().name },
+                                    { name: 'state', display: 'Use for current disease' },
                                     { name: 'info', display: '+' }
                                 ], as: 'field' }"></tr>
                                 </thead>
@@ -185,7 +152,7 @@
                         </div>
                     </div>
                     <p class="form-group">
-                        <a class="btn btn-primary" data-bind="css: { 'disabled': !isValid() || saving }, click: submit">Save</a>
+                        <a class="btn btn-primary" data-bind="css: { 'disabled': saving }, click: submit">Save</a>
                     </p>
                     <div class="form-group" data-bind="foreach: notices">
                         <div data-bind="alert: $data"></div>

@@ -1,14 +1,29 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
+import ch.lambdaj.function.convert.Converter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.CovariateObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.collection.IsIn.isIn;
 
 /**
  * Service class for configuration data.
@@ -38,14 +53,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String R_EXECUTABLE_KEY = "r.executable.path";
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
     private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
+    private static final String COVARIATE_JSON_FILE = "abraid.json";
 
     private final FileConfiguration basicProperties;
+    private final File defaultCovariateConfig;
     private final OSChecker osChecker;
 
-    public ConfigurationServiceImpl(File basicProperties, OSChecker osChecker) throws ConfigurationException {
+    public ConfigurationServiceImpl(File basicProperties, File defaultCovariateConfig, OSChecker osChecker)
+            throws ConfigurationException {
         LOGGER.info(String.format(LOG_LOADING_CONFIGURATION_FILE, basicProperties.toString()));
         this.basicProperties = new PropertiesConfiguration(basicProperties);
         this.basicProperties.setAutoSave(true);
+        this.defaultCovariateConfig = defaultCovariateConfig;
         this.osChecker = osChecker;
     }
 
@@ -189,6 +208,52 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public void setCovariateDirectory(String path) {
         LOGGER.info(String.format(LOG_UPDATING_COVARIATE_DIR, path));
         basicProperties.setProperty(COVARIATE_DIRECTORY_KEY, path);
+    }
+
+    /**
+     * Gets the current covariate configuration.
+     * @return The covariate configuration.
+     * @throws java.io.IOException throw if the configuration json file can not be parsed correctly.
+     */
+    @Override
+    public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
+        String covariateDirectory = getCovariateDirectory();
+        Path configPath = Paths.get(covariateDirectory, COVARIATE_JSON_FILE);
+        File configFile = configPath.toFile();
+
+        ObjectMapper jsonConverter = new CovariateObjectMapper();
+        JsonCovariateConfiguration jsonCovariateConfiguration;
+        if (configFile.exists()) {
+            jsonCovariateConfiguration =
+                    jsonConverter.readValue(configFile, JsonCovariateConfiguration.class);
+        } else {
+            jsonCovariateConfiguration =
+                    jsonConverter.readValue(defaultCovariateConfig, JsonCovariateConfiguration.class);
+        }
+
+        appendNewCovariateFiles(jsonCovariateConfiguration, covariateDirectory);
+        return jsonCovariateConfiguration;
+    }
+
+    private void appendNewCovariateFiles(
+            JsonCovariateConfiguration jsonCovariateConfiguration, String covariateDirectoryLocation) {
+        final Path covariateDirectoryPath = Paths.get(covariateDirectoryLocation);
+        File covariateDirectory = covariateDirectoryPath.toFile();
+        if (covariateDirectory.exists()) {
+            Collection<File> files = FileUtils.listFiles(covariateDirectory, null, true);
+            List<JsonCovariateFile> knownFiles = jsonCovariateConfiguration.getFiles();
+            Collection<String> knownPaths = extract(knownFiles, on(JsonCovariateFile.class).getPath());
+
+            files = filter(having(on(File.class).getPath(), not(isIn(knownPaths))), files);
+
+            knownFiles.addAll(convert(files, new Converter<File, JsonCovariateFile>() {
+                public JsonCovariateFile convert(File file) {
+                    Path subPath = covariateDirectoryPath.relativize(file.toPath());
+                    String normalizedSubPath = FilenameUtils.separatorsToUnix(subPath.toString());
+                    return new JsonCovariateFile(normalizedSubPath, "", null, false, new ArrayList<Integer>());
+                }
+            }));
+        }
     }
 
     private String findDefaultR() throws ConfigurationException {

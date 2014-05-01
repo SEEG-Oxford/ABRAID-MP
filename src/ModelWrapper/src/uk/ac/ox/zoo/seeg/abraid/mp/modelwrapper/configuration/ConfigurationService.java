@@ -1,6 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import org.apache.commons.configuration.ConfigurationException;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+
+import java.io.IOException;
 
 /**
  * Service interface for configuration data.
@@ -92,4 +95,11 @@ public interface ConfigurationService {
      * @param path The directory for covariate files.
      */
     void setCovariateDirectory(String path);
+
+    /**
+     * Gets the current covariate configuration.
+     * @return The covariate configuration.
+     * @throws java.io.IOException throw if the configuration json file can not be parsed correctly.
+     */
+    JsonCovariateConfiguration getCovariateConfiguration() throws IOException;
 }
