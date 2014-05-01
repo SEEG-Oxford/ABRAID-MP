@@ -254,10 +254,18 @@ define([
             });
         }
 
+        function getDiseaseExtentRequestUrl(diseaseId) {
+            if (loggedIn) {
+                return baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
+            } else {
+                return baseUrl + "static/defaultDiseaseExtent.json";
+            }
+        }
+
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
             diseaseExtentLayer.clearLayers();
-            var geoJsonRequestUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
+            var geoJsonRequestUrl = getDiseaseExtentRequestUrl(diseaseId);
             $.getJSON(geoJsonRequestUrl, function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
