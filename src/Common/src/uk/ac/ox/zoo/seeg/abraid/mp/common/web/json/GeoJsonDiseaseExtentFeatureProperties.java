@@ -14,13 +14,19 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     private String name;
 
     @JsonView(DisplayJsonView.class)
-    private DiseaseExtentClass diseaseExtentClass;
+    private String diseaseExtentClass;
 
     public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobalOrTropical adminUnit,
                                                  DiseaseExtentClass diseaseExtentClass)
     {
         setName(adminUnit.getPublicName());
-        setDiseaseExtentClass(diseaseExtentClass);
+        setDiseaseExtentClass(getString(diseaseExtentClass));
+    }
+
+    private String getString(DiseaseExtentClass diseaseExtentClass) {
+        String s = diseaseExtentClass.toString();
+        s = s.replace("_", " ");
+        return s.charAt(0) + s.substring(1).toLowerCase();
     }
 
     public String getName() {
@@ -31,11 +37,11 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         this.name = name;
     }
 
-    public DiseaseExtentClass getDiseaseExtentClass() {
+    public String getDiseaseExtentClass() {
         return diseaseExtentClass;
     }
 
-    public void setDiseaseExtentClass(DiseaseExtentClass diseaseExtentClass) {
+    public void setDiseaseExtentClass(String diseaseExtentClass) {
         this.diseaseExtentClass = diseaseExtentClass;
     }
 

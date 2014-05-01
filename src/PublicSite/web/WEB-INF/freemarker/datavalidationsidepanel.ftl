@@ -28,7 +28,8 @@
 
 <script type="text/html" id="selected-admin-unit-template">
     <ul>
-        <li><p data-bind="text: selectedAdminUnit().properties.name"></p></li>
+        <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.name"></p></li>
+        <li><i class="fa fa-square-o"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.diseaseExtentClass"></p></li>
     </ul>
 </script>
 

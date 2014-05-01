@@ -8,6 +8,8 @@
  * -- 'point-reviewed'          - to remove the point from the map
  * Events published:
  * -- 'no-features-to-review'   - when the FeatureCollection data is empty, or the last point is remove from its layer
+ * -- 'point-selected'
+ * -- 'admin-unit-selected'
  */
 define([
     "L",
@@ -52,7 +54,7 @@ define([
         };
 
         // Change a point's colour on roll-over
-        function highlightFeature(e) {
+        function highlightPoint(e) {
             e.target.setStyle({
                 stroke: true,
                 color: highlightColour
@@ -60,7 +62,7 @@ define([
         }
 
         // Return to default colour
-        function resetHighlight(e) {
+        function resetHighlightedPoint(e) {
             e.target.setStyle({
                 stroke: false,
                 color: defaultColour
@@ -68,9 +70,9 @@ define([
         }
 
         // Change the point's colour and size when clicked
-        function selectFeature(marker) {
+        function selectPoint(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
-            resetLayerStyle();
+            resetDiseaseOccurrenceLayerStyle();
             if (loggedIn) {
                 marker.setStyle({
                     stroke: false,
@@ -87,8 +89,8 @@ define([
             var marker;
             if (loggedIn) {
                 marker = L.circleMarker(latlng).on({
-                    mouseover: highlightFeature,
-                    mouseout: resetHighlight
+                    mouseover: highlightPoint,
+                    mouseout: resetHighlightedPoint
                 });
             } else {
                 // Display a question mark marker
@@ -102,7 +104,7 @@ define([
             }
             marker.on("click", function () {
                 ko.postbox.publish("point-selected", feature);
-                selectFeature(this);
+                selectPoint(this);
             });
             return marker;
         }
@@ -145,7 +147,7 @@ define([
         });
 
         // Reset the style of all markers on diseaseOccurrenceLayer
-        function resetLayerStyle() {
+        function resetDiseaseOccurrenceLayerStyle() {
             if (loggedIn) {
                 diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
             } else {
@@ -155,54 +157,61 @@ define([
             }
         }
 
-        // Reset to default style when a point is unselected (by clicking anywhere else on the map)
-        function resetSelectedPoint() {
-            ko.postbox.publish("point-selected", null);
-            resetLayerStyle();
-        }
-        map.on("click", resetSelectedPoint);
-        clusterLayer.on("clusterclick", resetSelectedPoint);
-
         // Return the corresponding colour for the disease extent class of the admin unit
         var diseaseExtentClassColourScale = {
-            "PRESENCE":          "#8e1b65",  // dark pink
-            "POSSIBLE_PRESENCE": "#c478a9",  // light pink
-            "UNCERTAIN":         "#ffffbf",  // yellow
-            "POSSIBLE_ABSENCE":  "#b5caaa",  // light green
-            "ABSENCE":           "#769766"   // dark green
+            "Presence":          "#8e1b65",  // dark pink
+            "Possible presence": "#c478a9",  // light pink
+            "Uncertain":         "#ffffbf",  // yellow
+            "Possible absence":  "#b5caaa",  // light green
+            "Absence":           "#769766"   // dark green
         };
 
         function diseaseExtentLayerStyle(feature) {
             return {
                 fillColor: diseaseExtentClassColourScale[feature.properties.diseaseExtentClass],
                 fillOpacity: 0.7,
+                opacity: 0.7,
                 weight: 2,
-                opacity: 1,
-                color: "#ffffff"
+                color: "#ffffff" // white border
             };
+        }
+
+        function resetDiseaseExtentLayerStyle() {
+            diseaseExtentLayer.setStyle({
+                weight: 2,
+                color: "#ffffff"
+            });
+        }
+
+        function selectAdminUnit(layer) {
+            resetDiseaseExtentLayerStyle();
+            layer.setStyle({
+                weight: 2.5,
+                color: "#333333"
+            });
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+            }
         }
 
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
         var diseaseExtentLayer = L.geoJson([], {
             style: diseaseExtentLayerStyle,
             onEachFeature: function (feature, layer) {
-                layer.on("click", function () {
-                    ko.postbox.publish("admin-unit-selected", feature);
+                layer.on({
+                    click: function () {
+                        selectAdminUnit(layer);
+                        ko.postbox.publish("admin-unit-selected", feature);
+                    },
+                    mouseover: function () { layer.setStyle({ fillOpacity: 1 }); },
+                    mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
                 });
             }
         });
 
-        // Convert from a disease extent class name to display string (eg "POSSIBLE_PRESENCE" to "Possible presence")
-        function formatClassNameForDisplay(string) {
-            // Replace underscore with a space
-            var s = string.replace("_", " ");
-            // Capitalise the first letter of the string
-            return s.charAt(0).toLocaleUpperCase() + s.slice(1).toLocaleLowerCase();
-        }
-
         function createLegendRow(className, colour) {
             var colourBox = "<i style='background:" + colour + "'></i>";
-            var displayName = "<span>" + formatClassNameForDisplay(className) + "</span><br>";
+            var displayName = "<span>" + className + "</span><br>";
             return colourBox + displayName;
         }
 
@@ -218,9 +227,11 @@ define([
             return div;
         };
 
+        var validationTypeIsDiseaseOccurrenceLayer;
+
         // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
-        function switchValidationTypeView(type) {
-            if (type === "disease occurrences") {
+        function switchValidationTypeView() {
+            if (validationTypeIsDiseaseOccurrenceLayer) {
                 if (map.hasLayer(diseaseExtentLayer)) { map.removeControl(legend); }
                 map.removeLayer(diseaseExtentLayer);
                 clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
@@ -239,19 +250,22 @@ define([
             layerMap = {};
         }
 
-        function getDiseaseOccurrenceRequestUrl(diseaseId) {
+        function getGeoJsonRequestUrl(diseaseId) {
+            var url = baseUrl;
             if (loggedIn) {
-                return baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences";
+                url += "datavalidation/diseases/" + diseaseId +
+                    (validationTypeIsDiseaseOccurrenceLayer ? "/occurrences" : "/adminunits");
             } else {
-                return baseUrl + "static/defaultDiseaseOccurrences.json";
+                url += "static/default" +
+                    (validationTypeIsDiseaseOccurrenceLayer ? "Occurrences.json" : "AdminUnits.json");
             }
+            return url;
         }
 
         // Add the new feature collection to the clustered layer, and zoom to its bounds
         function switchDiseaseOccurrenceLayer(diseaseId) {
             clearDiseaseOccurrenceLayer();
-            var geoJsonRequestUrl = getDiseaseOccurrenceRequestUrl(diseaseId);
-            $.getJSON(geoJsonRequestUrl, function (featureCollection) {
+            $.getJSON(getGeoJsonRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
                     clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
@@ -263,19 +277,10 @@ define([
             });
         }
 
-        function getDiseaseExtentRequestUrl(diseaseId) {
-            if (loggedIn) {
-                return baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
-            } else {
-                return baseUrl + "static/defaultDiseaseExtent.json";
-            }
-        }
-
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
             diseaseExtentLayer.clearLayers();
-            var geoJsonRequestUrl = getDiseaseExtentRequestUrl(diseaseId);
-            $.getJSON(geoJsonRequestUrl, function (featureCollection) {
+            $.getJSON(getGeoJsonRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
                     diseaseExtentLayer.addData(featureCollection);
@@ -298,16 +303,30 @@ define([
             }
         }
 
+        // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
+        function resetSelectedFeature() {
+            ko.postbox.publish("point-selected", null);
+            resetDiseaseOccurrenceLayerStyle();
+
+            ko.postbox.publish("admin-unit-selected", null);
+            resetDiseaseExtentLayerStyle();
+        }
+        clusterLayer.on("clusterclick", resetSelectedFeature);
+        map.on("click", resetSelectedFeature);
+
         ko.postbox.subscribe("validation-type-changed", function (type) {
-            switchValidationTypeView(type);
+            validationTypeIsDiseaseOccurrenceLayer = (type === "disease occurrences");
+            resetSelectedFeature();
+            switchValidationTypeView();
         });
 
         ko.postbox.subscribe("disease-set-changed", function (diseaseSet) {
-            resetSelectedPoint();
+            resetSelectedFeature();
             switchDiseaseOccurrenceLayer(diseaseSet.id);
         });
 
         ko.postbox.subscribe("disease-changed", function (disease) {
+            resetSelectedFeature();
             switchDiseaseExtentLayer(disease.id);
         });
 
