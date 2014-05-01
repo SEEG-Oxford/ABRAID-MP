@@ -1,6 +1,13 @@
 /**
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
+ * Events subscribed to:
+ * -- 'validation-type-changed' - to swap between DiseaseOccurrenceLayer and DiseaseExtentLayer
+ * -- 'disease-set-changed'     - to swap the data on DiseaseOccurrenceLayer
+ * -- 'disease-changed'         - to swap the data on DiseaseExtentLayer
+ * -- 'pont-reviewed'           - to remove the point from the map
+ * Events published:
+ * -- 'no-features-to-review'   - when the FeatureCollection data is empty, or the last point is remove from its layer
  */
 define([
     "L",
@@ -279,13 +286,16 @@ define([
             });
         }
 
-        ko.postbox.subscribe("layers-changed", function (layers) {
-            switchValidationTypeView(layers.type);
-            if (layers.type === "disease occurrences") {
-                switchDiseaseOccurrenceLayer(layers.diseaseSet.id);
-            } else {
-                switchDiseaseExtentLayer(layers.disease.id);
-            }
+        ko.postbox.subscribe("validation-type-changed", function (type) {
+            switchValidationTypeView(type);
+        });
+
+        ko.postbox.subscribe("disease-set-changed", function (diseaseSet) {
+            switchDiseaseOccurrenceLayer(diseaseSet.id);
+        });
+
+        ko.postbox.subscribe("disease-changed", function (disease) {
+            switchDiseaseExtentLayer(disease.id);
         });
 
         // Remove marker from map
