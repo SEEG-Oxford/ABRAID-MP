@@ -46,9 +46,13 @@ public class JsonDisease {
      */
     @JsonIgnore
     public boolean isValid() {
+        return
+                checkNameHasValue();
+    }
+
+    private boolean checkNameHasValue() {
         boolean valid = StringUtils.isNotEmpty(name);
         LOGGER.assertLog(valid, LOG_NAME_NOT_SPECIFIED);
-
         return valid;
     }
 }

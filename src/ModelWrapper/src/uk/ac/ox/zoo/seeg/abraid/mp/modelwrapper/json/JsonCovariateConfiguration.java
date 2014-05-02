@@ -62,36 +62,62 @@ public class JsonCovariateConfiguration {
      */
     @JsonIgnore
     public boolean isValid() {
-        // Check diseases field not null
-        boolean valid = diseases != null;
-        LOGGER.assertLog(valid, LOG_DISEASES_IS_NULL);
+        return
+                checkDiseaseFieldForNull() &&
+                checkFilesFieldForNull() &&
+                checkDiseaseSubItems() &&
+                checkFileSubItems() &&
+                checkDiseaseReferenceIntegrity() &&
+                checkDiseaseUniqueness() &&
+                checkFileUniqueness();
+    }
 
-        // Check files field not null
-        valid = valid && files != null;
-        LOGGER.assertLog(valid, LOG_FILES_IS_NULL);
+    private boolean checkFileUniqueness() {
+        // Check uniqueness of files
+        boolean valid = with(files).distinct(on(JsonCovariateFile.class).getPath()).size() == files.size();
+        LOGGER.assertLog(valid, LOG_FILES_ARE_DUPLICATED);
+        return valid;
+    }
 
-        // Check validity of disease sub items
-        valid = valid && with(diseases).extract(on(JsonDisease.class).isValid()).all(equalTo(true));
-        // Logs printed in sub items
+    private boolean checkDiseaseUniqueness() {
+        // Check uniqueness of diseases
+        boolean valid = with(diseases).distinct(on(JsonDisease.class).getId()).size() == diseases.size();
+        LOGGER.assertLog(valid, LOG_DISEASES_ARE_DUPLICATED);
+        return valid;
+    }
 
-        // Check validity of file sub items
-        valid = valid && with(files).extract(on(JsonCovariateFile.class).isValid()).all(equalTo(true));
-        // Logs printed in sub items
-
+    private boolean checkDiseaseReferenceIntegrity() {
         // Check integrity of disease references in file objects
         Collection<Integer> diseaseIds = with(diseases).extract(on(JsonDisease.class).getId());
         Collection<Integer> linkedDiseaseIds = flatten(with(files).extract(on(JsonCovariateFile.class).getEnabled()));
-        valid = valid && with(linkedDiseaseIds).all(isIn(diseaseIds));
+        boolean valid = with(linkedDiseaseIds).all(isIn(diseaseIds));
         LOGGER.assertLog(valid, LOG_UNKNOWN_DISEASE_ID_REFERENCED_BY_FILE);
+        return valid;
+    }
 
-        // Check uniqueness of diseases
-        valid = valid && with(diseases).distinct(on(JsonDisease.class).getId()).size() == diseases.size();
-        LOGGER.assertLog(valid, LOG_DISEASES_ARE_DUPLICATED);
+    private boolean checkFileSubItems() {
+        // Check validity of file sub items
+        // Logs printed in sub items
+        return with(files).extract(on(JsonCovariateFile.class).isValid()).all(equalTo(true));
+    }
 
-        // Check uniqueness of files
-        valid = valid && with(files).distinct(on(JsonCovariateFile.class).getPath()).size() == files.size();
-        LOGGER.assertLog(valid, LOG_FILES_ARE_DUPLICATED);
+    private boolean checkDiseaseSubItems() {
+        // Check validity of disease sub items
+        // Logs printed in sub items
+        return with(diseases).extract(on(JsonDisease.class).isValid()).all(equalTo(true));
+    }
 
+    private boolean checkFilesFieldForNull() {
+        // Check files field not null
+        boolean valid = files != null;
+        LOGGER.assertLog(valid, LOG_FILES_IS_NULL);
+        return valid;
+    }
+
+    private boolean checkDiseaseFieldForNull() {
+        // Check diseases field not null
+        boolean valid = diseases != null;
+        LOGGER.assertLog(valid, LOG_DISEASES_IS_NULL);
         return valid;
     }
 }

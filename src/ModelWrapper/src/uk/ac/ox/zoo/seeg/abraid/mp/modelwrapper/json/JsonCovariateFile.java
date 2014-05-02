@@ -82,12 +82,21 @@ public class JsonCovariateFile {
      */
     @JsonIgnore
     public boolean isValid() {
+        return
+                checkPathHasValue() &&
+                checkEnabledIdsAreUnique();
+    }
+
+    private boolean checkEnabledIdsAreUnique() {
+        boolean valid;
+        valid = with(enabled).distinct().size() == enabled.size();
+        LOGGER.assertLog(valid, LOG_ENABLED_DISEASE_IDS_CONTAINS_DUPLICATES);
+        return valid;
+    }
+
+    private boolean checkPathHasValue() {
         boolean valid = StringUtils.isNotEmpty(path);
         LOGGER.assertLog(valid, LOG_PATH_NOT_SPECIFIED);
-
-        valid = valid && with(enabled).distinct().size() == enabled.size();
-        LOGGER.assertLog(valid, LOG_ENABLED_DISEASE_IDS_CONTAINS_DUPLICATES);
-
         return valid;
     }
 }
