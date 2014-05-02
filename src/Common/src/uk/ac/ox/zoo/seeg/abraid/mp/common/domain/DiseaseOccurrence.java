@@ -33,11 +33,32 @@ import javax.persistence.Table;
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
                         "expert.id=:expertId)"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForDiseaseExtent",
+                query = DiseaseOccurrence.DISEASE_EXTENT_QUERY
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForDiseaseExtentByFeedIds",
+                query = DiseaseOccurrence.DISEASE_EXTENT_QUERY + " and d.alert.feed.id in :feedIds"
         )
 })
 @Entity
 @Table(name = "disease_occurrence")
 public class DiseaseOccurrence {
+    /**
+     * An HQL fragment used to get disease occurrences for a disease extent.
+     */
+    public static final String DISEASE_EXTENT_QUERY =
+            "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
+            "       (d.occurrenceDate, d.validationWeighting, " +
+            "        d.location.adminUnitGlobalGaulCode, d.location.adminUnitTropicalGaulCode) " +
+            "from DiseaseOccurrence d " +
+            "where d.diseaseGroup.id = :diseaseGroupId " +
+            "and d.validationWeighting >= :minimumValidationWeighting " +
+            "and d.occurrenceDate >= :minimumOccurrenceDate " +
+            "and d.location.hasPassedQc = true";
+
     // The primary key.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

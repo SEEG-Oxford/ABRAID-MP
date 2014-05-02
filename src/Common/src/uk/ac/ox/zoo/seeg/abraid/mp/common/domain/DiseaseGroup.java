@@ -86,6 +86,11 @@ public class DiseaseGroup {
         this.groupType = groupType;
     }
 
+    public DiseaseGroup(String name, ValidatorDiseaseGroup validatorDiseaseGroup) {
+        this.name = name;
+        this.validatorDiseaseGroup = validatorDiseaseGroup;
+    }
+
     public Integer getId() {
         return id;
     }

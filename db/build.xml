@@ -12,6 +12,8 @@
     <!-- If database.properties does not exist, this uses database.properties.example -->
     <property file="database.properties" />
     <property file="database.properties.example" />
+    <!-- By default, scripts are run by connecting to the specified database -->
+    <property name="connect.database.name" value="${database.name}" />
 
     <!-- Creates the database containing test data -->
     <target name="create.test.database" depends="create.database, create.test.data" />
@@ -21,22 +23,13 @@
     
     <!-- Creates the database schema -->
     <target name="create.schema">
-        <exec executable="psql" failonerror="true">
-            <arg value="-U" />
-            <arg value="${superuser.name}" />
-            <arg value="-q" />
-            <arg value="-w" />
-            <arg value="-v" />
-            <arg value="ON_ERROR_STOP=ON" />
-            <arg value="-v" />
-            <arg value="database_name=${database.name}" />
-            <arg value="-v" />
-            <arg value="application_username=${application.username}" />
-            <arg value="-v" />
-            <arg value="application_password=${application.password}" />
-            <arg value="-f" />
-            <arg value="create_database.sql" />
-        </exec>
+        <echo>Creating database named ${database.name}</echo>
+        <antcall target="run.database.script">
+            <param name="database.script.name" value="create_database.sql"/>
+            <param name="database.script.dir" value="."/>
+            <!-- Connect to the default database -->
+            <param name="connect.database.name" value=""/>
+        </antcall>
     </target>
 
     <!-- Imports shapefiles, if the property "shapefiles.path" is specified (this must be a valid path to the shapefiles folder) -->
@@ -92,6 +85,14 @@
             <param name="database.script.dir" value="data"/>
         </antcall>
     </target>
+
+    <!-- Adds test roles to an existing database -->
+    <target name="create.test.roles">
+        <antcall target="run.database.script">
+            <param name="database.script.name" value="test_roles.sql"/>
+            <param name="database.script.dir" value="."/>
+        </antcall>
+    </target>
     
     <!-- Adds test data to an existing database -->
     <target name="create.test.data">
@@ -103,7 +104,7 @@
 
     <!-- SUB-TARGETS -->
     
-    <!-- Runs a script, connected to the database -->
+    <!-- Runs a database script -->
     <target name="run.database.script">
         <exec executable="psql" failonerror="true" dir="${database.script.dir}">
             <arg value="-U" />
@@ -111,10 +112,16 @@
             <arg value="-q" />
             <arg value="-w" />
             <arg value="-v" />
+            <arg value="database_name=${database.name}" />
+            <arg value="-v" />
+            <arg value="application_username=${application.username}" />
+            <arg value="-v" />
+            <arg value="application_password=${application.password}" />
+            <arg value="-v" />
             <arg value="ON_ERROR_STOP=ON" />
             <arg value="-f" />
             <arg value="${database.script.name}" />
-            <arg value="${database.name}" />
+            <arg value="${connect.database.name}" />
         </exec>
     </target>
 

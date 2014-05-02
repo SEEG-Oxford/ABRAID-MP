@@ -13,10 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobal;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -25,10 +22,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -129,10 +123,10 @@ public class DataValidationControllerIntegrationTest {
 
     @Test
     public void extentResourceAcceptsValidRequest() throws Exception {
-        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = new HashMap<>();
-        AdminUnitGlobal adminUnitGlobal = createAdminUnitGlobal();
-        map.put(adminUnitGlobal, DiseaseExtentClass.ABSENCE);
-        when(diseaseService.getAdminUnitDiseaseExtentClassMap(anyInt())).thenReturn(map);
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+                createAdminUnitGlobal(), new DiseaseGroup(), DiseaseExtentClass.ABSENCE, 0);
+        List<AdminUnitDiseaseExtentClass> map = Arrays.asList(adminUnitDiseaseExtentClass);
+        when(diseaseService.getDiseaseExtentByDiseaseGroupId(anyInt())).thenReturn(map);
 
         this.mockMvc.perform(
                 get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/2/adminunits"))

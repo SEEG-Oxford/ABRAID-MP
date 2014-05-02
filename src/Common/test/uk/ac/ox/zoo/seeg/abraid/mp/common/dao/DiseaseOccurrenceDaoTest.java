@@ -1,13 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -107,7 +107,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
     public void saveThenReloadDiseaseOccurrence() {
         // Arrange
         Alert alert = createAlert();
-        Location location = createLocation();
+        Location location = new Location("Karachi", 25.0111455, 67.0647043, LocationPrecision.PRECISE);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         DateTime occurrenceDate = DateTime.now().minusDays(5);
         double validationWeighting = 0.5;
@@ -195,6 +195,33 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         assertThat(occurrences).hasSize(0);
     }
 
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentWithNullFeedIds() {
+        getDiseaseOccurrencesForDiseaseExtent(null, 9);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentWithZeroFeedIds() {
+        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 9);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentWithSomeFeedIds() {
+        getDiseaseOccurrencesForDiseaseExtent(Arrays.asList(1, 4, 8), 7);
+    }
+
+    private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount) {
+        int diseaseGroupId = 87; // Dengue
+        double minimumValidationWeight = 0.6;
+        DateTime minimumOccurrenceDate = new DateTime("2014-02-26");
+
+        List<DiseaseOccurrenceForDiseaseExtent> occurrences =
+                diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
+                        minimumOccurrenceDate, feedIds);
+
+        assertThat(occurrences).hasSize(expectedOccurrenceCount);
+    }
+
     private Alert createAlert() {
         Feed feed = feedDao.getById(1);
         DateTime publicationDate = DateTime.now().minusDays(5);
@@ -211,17 +238,6 @@ public class DiseaseOccurrenceDaoTest extends AbstractSpringIntegrationTests {
         alert.setSummary(summary);
         alert.setUrl(url);
         return alert;
-    }
-
-    private Location createLocation() {
-        String placeName = "Karachi";
-        Point point = GeometryUtils.createPoint(25.0111455, 67.0647043);
-
-        Location location = new Location();
-        location.setGeom(point);
-        location.setName(placeName);
-        location.setPrecision(LocationPrecision.PRECISE);
-        return location;
     }
 
     private DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence,

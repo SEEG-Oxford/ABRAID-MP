@@ -7,29 +7,30 @@
 
 -- List of tables:
 --
--- admin_unit_global:              Represents an admin 0/1 area. As admin_unit_tropical, except ten large countries have been divided into admin 1 areas, to use for global diseases.
--- admin_unit_review:              Represents an expert's response to the presence or absence of a disease group across an admin unit.
--- admin_unit_qc:                  Represents an admin 1/2 area for the purposes of QC (Quality Control).
---                                 Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
--- admin_unit_tropical:            Represents an admin 0/1 area. Tailored for ABRAID-MP by separating non-contiguous parts of countries, absorbing tiny countries, removing smaller
---                                 smaller islands etc. Eight large subtropical countries have been divided into admin 1 areas.
--- alert:                          Represents a report of a disease occurrence or occurrences, from a feed.
--- country:                        Represents a country as defined by SEEG. Imported from the standard SEEG/GAUL admin 0 shapefile, with smaller islands removed.
--- disease_group:                  Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
--- disease_occurrence:             Represents an occurrence of a disease group, in a location, as reported by an alert.
--- disease_occurrence_review:      Represents an expert's response on the validity of a disease occurrence point.
--- expert:                         Represents a user of the PublicSite.
--- expert_validator_disease_group: Represents an expert's disease interest, in terms of a disease group used by the Data Validator.
--- feed:                           Represents a source of alerts.
--- geoname:                        Represents a GeoName.
--- geonames_location_precision:    Represents a mapping between a GeoNames feature code and a location precision.
--- healthmap_country:              Represents a country as defined by HealthMap.
--- healthmap_country_country:      Represents a mapping between HealthMap countries and SEEG countries.
--- healthmap_disease:              Represents a disease as defined by HealthMap.
--- land_sea_border:                Represents a land-sea border to a 5km resolution as used by the model.
--- location:                       Represents the location of a disease occurrence.
--- provenance:                     Represents a provenance, i.e. the source of a group of feeds.
--- validator_disease_group:        Represents a grouping of diseases for use by the Data Validator.
+-- admin_unit_disease_extent_class: Represents the extent class (e.g. presence, absence) of a disease group across an administrative unit.
+-- admin_unit_global:               Represents an admin 0/1 area. As admin_unit_tropical, except ten large countries have been divided into admin 1 areas, to use for global diseases.
+-- admin_unit_review:               Represents an expert's response to the presence or absence of a disease group across an admin unit.
+-- admin_unit_qc:                   Represents an admin 1/2 area for the purposes of QC (Quality Control).
+--                                  Imported from the standard SEEG/GAUL admin 1 and admin 2 shapefiles, with smaller islands removed.
+-- admin_unit_tropical:             Represents an admin 0/1 area. Tailored for ABRAID-MP by separating non-contiguous parts of countries, absorbing tiny countries, removing smaller
+--                                  smaller islands etc. Eight large subtropical countries have been divided into admin 1 areas.
+-- alert:                           Represents a report of a disease occurrence or occurrences, from a feed.
+-- country:                         Represents a country as defined by SEEG. Imported from the standard SEEG/GAUL admin 0 shapefile, with smaller islands removed.
+-- disease_group:                   Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
+-- disease_occurrence:              Represents an occurrence of a disease group, in a location, as reported by an alert.
+-- disease_occurrence_review:       Represents an expert's response on the validity of a disease occurrence point.
+-- expert:                          Represents a user of the PublicSite.
+-- expert_validator_disease_group:  Represents an expert's disease interest, in terms of a disease group used by the Data Validator.
+-- feed:                            Represents a source of alerts.
+-- geoname:                         Represents a GeoName.
+-- geonames_location_precision:     Represents a mapping between a GeoNames feature code and a location precision.
+-- healthmap_country:               Represents a country as defined by HealthMap.
+-- healthmap_country_country:       Represents a mapping between HealthMap countries and SEEG countries.
+-- healthmap_disease:               Represents a disease as defined by HealthMap.
+-- land_sea_border:                 Represents a land-sea border to a 5km resolution as used by the model.
+-- location:                        Represents the location of a disease occurrence.
+-- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
+-- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
 
 
 CREATE TABLE admin_unit_disease_extent_class (
@@ -38,6 +39,7 @@ CREATE TABLE admin_unit_disease_extent_class (
     tropical_gaul_code integer,
     disease_group_id integer NOT NULL,
     disease_extent_class varchar(17) NOT NULL,
+    occurrence_count integer NOT NULL,
     has_changed boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

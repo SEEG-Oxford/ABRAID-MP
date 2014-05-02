@@ -1,9 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.util.List;
@@ -17,6 +17,12 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class AdminUnitDiseaseExtentClassDaoTest extends AbstractSpringIntegrationTests {
     @Autowired
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+
+    @Autowired
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+
+    @Autowired
+    private AdminUnitTropicalDao adminUnitTropicalDao;
 
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
@@ -37,5 +43,85 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractSpringIntegratio
             assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical()).isNull();
             assertThat(adminUnitDiseaseExtentClass.getDiseaseGroup()).isEqualTo(diseaseGroup);
         }
+    }
+
+    @Test
+    public void saveAndReloadGlobalAdminUnitDiseaseExtentClass() {
+        // Arrange
+        int gaulCode = 2510;
+        int diseaseGroupId = 22;
+        AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(gaulCode);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        DiseaseExtentClass extentClass = DiseaseExtentClass.PRESENCE;
+        int occurrenceCount = 25;
+
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+                adminUnitGlobal, diseaseGroup, extentClass, occurrenceCount);
+
+        // Act
+        adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
+        Integer id = adminUnitDiseaseExtentClass.getId();
+
+        // Assert
+        assertThat(adminUnitDiseaseExtentClass.getCreatedDate()).isNotNull();
+        flushAndClear();
+        adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClassDao.getById(id);
+        assertThat(adminUnitDiseaseExtentClass).isNotNull();
+        assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal()).isNotNull();
+        assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal().getGaulCode()).isEqualTo(gaulCode);
+        assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical()).isNull();
+        assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
+        assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
+        assertThat(adminUnitDiseaseExtentClass.hasChanged()).isTrue();
+    }
+
+    @Test
+    public void saveAndReloadTropicalAdminUnitDiseaseExtentClass() {
+        // Arrange
+        int gaulCode = 204001;
+        int diseaseGroupId = 96;
+        AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(gaulCode);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        DiseaseExtentClass extentClass = DiseaseExtentClass.ABSENCE;
+        int occurrenceCount = 0;
+
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+                adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
+        adminUnitDiseaseExtentClass.setHasChanged(false);
+
+        // Act
+        adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
+        Integer id = adminUnitDiseaseExtentClass.getId();
+
+        // Assert
+        assertThat(adminUnitDiseaseExtentClass.getCreatedDate()).isNotNull();
+        flushAndClear();
+        adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClassDao.getById(id);
+        assertThat(adminUnitDiseaseExtentClass).isNotNull();
+        assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical()).isNotNull();
+        assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical().getGaulCode()).isEqualTo(gaulCode);
+        assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal()).isNull();
+        assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
+        assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
+        assertThat(adminUnitDiseaseExtentClass.hasChanged()).isFalse();
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void cannotSpecifyBothGlobalAndTropicalAdminUnit() {
+        // Arrange
+        AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2510);
+        AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(204001);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(96);
+        DiseaseExtentClass extentClass = DiseaseExtentClass.ABSENCE;
+        int occurrenceCount = 0;
+
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+                adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
+        adminUnitDiseaseExtentClass.setAdminUnitGlobal(adminUnitGlobal);
+
+        // Act
+        // Cannot use catchException() because the sessionFactory becomes null for some reason -
+        // expected exception is specified in the @Test annotation
+        adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
     }
 }

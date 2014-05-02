@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -72,9 +73,38 @@ public interface DiseaseService {
                                                                            Integer validatorDiseaseGroupId);
 
     /**
-     * For each admin unit, get the disease extent class for the specified disease group.
-     * @param diseaseGroupId The id of the disease group.
-     * @return The map, from admin unit, to its disease extent class, for the specified disease group.
+     * Gets the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
      */
-    Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(Integer diseaseGroupId);
+    List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
+     * is a global or a tropical disease.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
+     */
+    List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
+            Integer diseaseGroupId);
+
+    /**
+     * Saves a disease extent class that is associated with an admin unit (global or tropical).
+     * @param adminUnitDiseaseExtentClass The object to save.
+     */
+    void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
+
+    /**
+     * Gets disease occurrences for generating the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
+     *                                   value.
+     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
+     * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
+     *                accepts all feeds.
+     * @return A list of disease occurrences.
+     */
+    List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
+            List<Integer> feedIds);
 }

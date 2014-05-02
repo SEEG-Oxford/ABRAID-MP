@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 
 /**
  * Base class for Spring-enabled unit tests. Mocks out the Data Access Objects.
@@ -17,6 +18,18 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
 public abstract class AbstractSpringUnitTests {
+    @ReplaceWithMock
+    @Autowired
+    protected AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected AdminUnitGlobalDao adminUnitGlobalDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected AdminUnitTropicalDao adminUnitTropicalDao;
+
     @ReplaceWithMock
     @Autowired
     protected AdminUnitQCDao adminUnitQCDao;
