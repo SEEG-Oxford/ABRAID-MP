@@ -21,7 +21,6 @@
     <option unused="true" />
     <option indent="4" />
     <option quotmark="double" />
-    <option maxparams="8" />
     <option maxdepth="5" />
     <option maxstatements="50" />
     <option maxcomplexity="10" />

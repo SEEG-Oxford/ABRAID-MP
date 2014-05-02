@@ -1,15 +1,15 @@
 /**
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
- * Events subscribed to:
- * -- 'validation-type-changed' - to swap between DiseaseOccurrenceLayer and DiseaseExtentLayer
- * -- 'disease-set-changed'     - to swap the data on DiseaseOccurrenceLayer
- * -- 'disease-changed'         - to swap the data on DiseaseExtentLayer
- * -- 'point-reviewed'          - to remove the point from the map
- * Events published:
- * -- 'no-features-to-review'   - when the FeatureCollection data is empty, or the last point is remove from its layer
+ * - Events subscribed to:
+ * -- 'layers-changed' - published by SelectedLayerViewModel
+ * -- 'point-reviewed' - published by SelectedPointViewModel
+ * - Events published:
  * -- 'point-selected'
  * -- 'admin-unit-selected'
+ * -- 'no-features-to-review' if
+ * --- the FeatureCollection data is empty
+ * --- the last point is remove from its layer
  */
 define([
     "L",
@@ -219,11 +219,9 @@ define([
         var legend = L.control({position: "bottomleft"});
         legend.onAdd = function () {
             var div = L.DomUtil.create("div", "legend");
-            var classNames = _.keys(diseaseExtentClassColourScale);
-            var colours = _.values(diseaseExtentClassColourScale);
-            for (var i = 0; i < classNames.length; i++) {
-                div.innerHTML += createLegendRow(classNames[i], colours[i]);
-            }
+            div.innerHTML = _((_(diseaseExtentClassColourScale).pairs()).map(function (pair) {
+                return createLegendRow(pair[0], pair[1]);
+            })).join("");
             return div;
         };
 
@@ -236,9 +234,9 @@ define([
                 map.removeLayer(diseaseExtentLayer);
                 clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
             } else {
-                map.removeLayer(clusterLayer);
+                if (!map.hasLayer(diseaseExtentLayer)) { legend.addTo(map); }
                 diseaseExtentLayer.addTo(map);
-                legend.addTo(map);
+                map.removeLayer(clusterLayer);
             }
         }
 
@@ -308,32 +306,36 @@ define([
         }
 
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
+        function resetSelectedPoint() {
+            ko.postbox.publish("point-selected", null);
+            resetDiseaseOccurrenceLayerStyle();
+        }
+
+        function resetSelectedAdminUnit() {
+            ko.postbox.publish("admin-unit-selected", null);
+            resetDiseaseExtentLayerStyle();
+        }
+
         function resetSelectedFeature() {
             if (validationTypeIsDiseaseOccurrenceLayer) {
-                ko.postbox.publish("point-selected", null);
-                resetDiseaseOccurrenceLayerStyle();
+                resetSelectedPoint();
             } else {
-                ko.postbox.publish("admin-unit-selected", null);
-                resetDiseaseExtentLayerStyle();
+                resetSelectedAdminUnit();
             }
         }
-        clusterLayer.on("clusterclick", resetSelectedFeature);
+
+        clusterLayer.on("clusterclick", resetSelectedPoint);
         map.on("click", resetSelectedFeature);
 
-        ko.postbox.subscribe("validation-type-changed", function (type) {
-            validationTypeIsDiseaseOccurrenceLayer = (type === "disease occurrences");
-            resetSelectedFeature();
+        ko.postbox.subscribe("layers-changed", function (data) {
+            validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
             switchValidationTypeView();
-        });
-
-        ko.postbox.subscribe("disease-set-changed", function (diseaseSet) {
             resetSelectedFeature();
-            switchDiseaseOccurrenceLayer(diseaseSet.id);
-        });
-
-        ko.postbox.subscribe("disease-changed", function (disease) {
-            resetSelectedFeature();
-            switchDiseaseExtentLayer(disease.id);
+            if (validationTypeIsDiseaseOccurrenceLayer) {
+                switchDiseaseOccurrenceLayer(data.diseaseId);
+            } else {
+                switchDiseaseExtentLayer(data.diseaseId);
+            }
         });
 
         ko.postbox.subscribe("point-reviewed", function (id) {

@@ -1,7 +1,7 @@
 /* A suite of tests for the SelectedPointViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
-/*global alert:true*/
+/*global window:true*/
 define([
     "app/SelectedPointViewModel",
     "ko"
@@ -96,7 +96,7 @@ define([
             it("POSTs to the specified URL, with the correct parameters", function () {
                 // Arrange
                 var diseaseId = 1;
-                ko.postbox.publish("layers-changed", {diseaseSet : { id: diseaseId}});
+                ko.postbox.publish("layers-changed", { diseaseId: diseaseId });
                 var occurrenceId = vm.selectedPoint().id;
                 var expectedUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
                     "/validate";
@@ -112,13 +112,13 @@ define([
 
             it("when unsuccessful, displays an alert", function () {
                 // Arrange
-                alert = jasmine.createSpy();
+                spyOn(window, "alert");
                 var message = "Something went wrong. Please try again.";
                 // Act
                 vm.submitReview("foo");
                 jasmine.Ajax.requests.mostRecent().response({ status: 500 });
                 // Assert
-                expect(alert).toHaveBeenCalledWith(message);
+                expect(window.alert).toHaveBeenCalledWith(message);
             });
 
             describe("when successful,", function () {

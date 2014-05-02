@@ -16,7 +16,8 @@ require(["require.conf"], function () {
         "app/SidePanelViewModel",
         "app/CounterViewModel",
         "domReady!"
-    ], function (ko, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
+    ], function (ko, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
+                 SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
             ko.applyBindings(new SidePanelViewModel(
                     new SelectedPointViewModel(baseUrl),
@@ -35,7 +36,7 @@ require(["require.conf"], function () {
                 );
             } else {
                 var refresh = function () {
-                    // Maybe check if TGHN
+                    // Refresh function may change, according to location of iframe (eg on TGHN site)
                     window.top.location.reload();
                 };
                 ko.applyBindings(

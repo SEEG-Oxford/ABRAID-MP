@@ -20,12 +20,12 @@ define([
 
             describe("returns the expected template", function () {
                 it("for disease occurrences layer", function () {
-                    ko.postbox.publish("validation-type-changed", "disease occurrences");
+                    ko.postbox.publish("layers-changed", { type: "disease occurrences" });
                     expect(vm.templateName()).toBe("occurrences-template");
                 });
 
                 it("for disease extent layer", function () {
-                    ko.postbox.publish("validation-type-changed", "disease extent");
+                    ko.postbox.publish("layers-changed", { type: "disease extent" });
                     expect(vm.templateName()).toBe("admin-units-template");
                 });
             });

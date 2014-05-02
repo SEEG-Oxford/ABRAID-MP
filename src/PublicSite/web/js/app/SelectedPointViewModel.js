@@ -1,6 +1,11 @@
 /**
  * An AMD defining the SelectedPointViewModel to hold the state of the selected occurrence point on the map.
  * Copyright (c) 2014 University of Oxford
+ * - Events subscribed to:
+ * -- 'point-selected' - published by MapView.
+ * -- 'layers-changed' - published by SelectedLayerViewModel.
+ * - Events published:
+ * -- 'point-reviewed' on successful submitReview POST
  */
 /*global alert:false*/
 define([
@@ -31,10 +36,10 @@ define([
 
         var diseaseId = null;
         ko.postbox.subscribe("layers-changed", function (value) {
-            diseaseId = value.diseaseSet.id;
+            diseaseId = value.diseaseId;
         });
 
-        self.selectedPoint = ko.observable(null).syncWith("point-selected"); // Published by MapView
+        self.selectedPoint = ko.observable(null).syncWith("point-selected");
         self.hasSelectedPoint = ko.computed(function () {
             return self.selectedPoint() !== null;
         });
