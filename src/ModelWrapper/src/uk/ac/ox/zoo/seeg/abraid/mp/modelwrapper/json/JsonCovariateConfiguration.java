@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.log4j.Logger;
 
 import java.util.Collection;
@@ -59,14 +60,15 @@ public class JsonCovariateConfiguration {
      * Determines if the configuration object is valid.
      * @return The validity.
      */
+    @JsonIgnore
     public boolean isValid() {
         // Check diseases field not null
         boolean valid = diseases != null;
-        LOGGER.assertLog(!valid, LOG_DISEASES_IS_NULL);
+        LOGGER.assertLog(valid, LOG_DISEASES_IS_NULL);
 
         // Check files field not null
         valid = valid && files != null;
-        LOGGER.assertLog(!valid, LOG_FILES_IS_NULL);
+        LOGGER.assertLog(valid, LOG_FILES_IS_NULL);
 
         // Check validity of disease sub items
         valid = valid && with(diseases).extract(on(JsonDisease.class).isValid()).all(equalTo(true));
@@ -80,15 +82,15 @@ public class JsonCovariateConfiguration {
         Collection<Integer> diseaseIds = with(diseases).extract(on(JsonDisease.class).getId());
         Collection<Integer> linkedDiseaseIds = flatten(with(files).extract(on(JsonCovariateFile.class).getEnabled()));
         valid = valid && with(linkedDiseaseIds).all(isIn(diseaseIds));
-        LOGGER.assertLog(!valid, LOG_UNKNOWN_DISEASE_ID_REFERENCED_BY_FILE);
+        LOGGER.assertLog(valid, LOG_UNKNOWN_DISEASE_ID_REFERENCED_BY_FILE);
 
         // Check uniqueness of diseases
         valid = valid && with(diseases).distinct(on(JsonDisease.class).getId()).size() == diseases.size();
-        LOGGER.assertLog(!valid, LOG_DISEASES_ARE_DUPLICATED);
+        LOGGER.assertLog(valid, LOG_DISEASES_ARE_DUPLICATED);
 
         // Check uniqueness of files
         valid = valid && with(files).distinct(on(JsonCovariateFile.class).getPath()).size() == files.size();
-        LOGGER.assertLog(!valid, LOG_FILES_ARE_DUPLICATED);
+        LOGGER.assertLog(valid, LOG_FILES_ARE_DUPLICATED);
 
         return valid;
     }

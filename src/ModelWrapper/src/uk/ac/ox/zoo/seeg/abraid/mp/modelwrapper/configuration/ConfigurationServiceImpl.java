@@ -318,13 +318,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             paths.remove(COVARIATE_JSON_FILE);
             paths.removeAll(knownPaths);
 
+            if (paths.size() != 0) {
+                LOGGER.info(String.format(LOG_ADDING_FILES_TO_COVARIATE_CONFIG, paths.size()));
+            }
+
             knownFiles.addAll(convert(paths, new Converter<String, JsonCovariateFile>() {
                 public JsonCovariateFile convert(String path) {
                     return new JsonCovariateFile(path, "", null, false, new ArrayList<Integer>());
                 }
             }));
-
-            LOGGER.info(String.format(LOG_ADDING_FILES_TO_COVARIATE_CONFIG, paths.size()));
         }
     }
 

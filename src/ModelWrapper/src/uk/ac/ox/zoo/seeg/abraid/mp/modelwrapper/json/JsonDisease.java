@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -43,9 +44,10 @@ public class JsonDisease {
      * Determines if the configuration object is valid.
      * @return The validity.
      */
+    @JsonIgnore
     public boolean isValid() {
         boolean valid = StringUtils.isNotEmpty(name);
-        LOGGER.assertLog(!valid, LOG_NAME_NOT_SPECIFIED);
+        LOGGER.assertLog(valid, LOG_NAME_NOT_SPECIFIED);
 
         return valid;
     }
