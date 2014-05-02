@@ -3,8 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
  * Tests the DiseaseService class.
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseServiceTest extends AbstractSpringUnitTests {
+public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     @Autowired
     private DiseaseService diseaseService;
 

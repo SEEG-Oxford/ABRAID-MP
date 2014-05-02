@@ -1,13 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.postqc;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -17,10 +13,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = Main.APPLICATION_CONTEXT_LOCATION)
-@Transactional
-public class PostQCManagerIntegrationTest {
+public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private PostQCManager postQCManager;
 

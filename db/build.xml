@@ -16,7 +16,7 @@
     <property name="connect.database.name" value="${database.name}" />
 
     <!-- Creates the database containing test data -->
-    <target name="create.test.database" depends="create.database, create.test.data" />
+    <target name="create.test.database" depends="create.database, create.test.roles, create.test.data" />
 
     <!-- Creates the database containing production data only (and test admin unit data if the shapefiles are unavailable) -->
     <target name="create.database" depends="create.schema, import.shapefiles, create.test.admin.unit.data, create.data" />

@@ -2,18 +2,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.kubek2k.springockito.annotations.ReplaceWithMock;
-import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,19 +22,12 @@ import static org.mockito.Mockito.when;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = SpringockitoContextLoader.class, locations = Main.APPLICATION_CONTEXT_LOCATION)
-@Transactional
-public class MainTest {
+public class MainTest extends AbstractMainTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @ReplaceWithMock
-    @Autowired
-    private WebServiceClient webServiceClient;
 
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;

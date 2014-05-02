@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -11,7 +11,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Tests the AdminUnitReviewDao class.
  * Copyright (c) 2014 University of Oxford
  */
-public class AdminUnitReviewDaoTest extends AbstractSpringIntegrationTests {
+public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private AdminUnitGlobalDao adminUnitGlobalDao;
 
