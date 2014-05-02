@@ -55,6 +55,10 @@ public class JsonCovariateConfiguration {
         this.files = files;
     }
 
+    /**
+     * Determines if the configuration object is valid.
+     * @return The validity.
+     */
     public boolean isValid() {
         // Check diseases field not null
         boolean valid = diseases != null;

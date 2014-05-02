@@ -39,6 +39,10 @@ public class JsonDisease {
         this.name = name;
     }
 
+    /**
+     * Determines if the configuration object is valid.
+     * @return The validity.
+     */
     public boolean isValid() {
         boolean valid = StringUtils.isNotEmpty(name);
         LOGGER.assertLog(!valid, LOG_NAME_NOT_SPECIFIED);

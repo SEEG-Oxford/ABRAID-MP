@@ -75,6 +75,10 @@ public class JsonCovariateFile {
         this.enabled = enabled;
     }
 
+    /**
+     * Determines if the configuration object is valid.
+     * @return The validity.
+     */
     public boolean isValid() {
         boolean valid = StringUtils.isNotEmpty(path);
         LOGGER.assertLog(!valid, LOG_PATH_NOT_SPECIFIED);
