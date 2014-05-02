@@ -8,13 +8,13 @@ require(["require.conf"], function () {
 
     require([
         "ko",
-        "app/CovariatesViewModel",
+        "app/CovariatesListViewModel",
         "navbar",
         "domReady!"
-    ], function (ko, CovariatesViewModel, setupNavbar, doc) {
+    ], function (ko, CovariatesListViewModel, setupNavbar, doc) {
         setupNavbar();
 
-        var covariatesViewModel = new CovariatesViewModel(baseUrl, initialData);
+        var covariatesViewModel = new CovariatesListViewModel(baseUrl, initialData);
 
         ko.applyBindings(
             covariatesViewModel,

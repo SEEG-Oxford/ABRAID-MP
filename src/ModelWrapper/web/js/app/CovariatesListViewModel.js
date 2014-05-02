@@ -1,7 +1,12 @@
 /* An AMD defining the Covariates, a vm to back covariate configuration form.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "jquery", "underscore"], function (ko, $, _) {
+define([
+    "ko",
+    "jquery",
+    "underscore",
+    "app/CovariatesListRowViewModel"
+], function (ko, $, _, CovariatesListRowViewModel) {
     "use strict";
 
     return function (baseUrl, initialValue) {
@@ -22,9 +27,12 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
             }
         };
 
-        self.files = ko.observable(initialValue.files);
+        self.files = ko.observableArray(initialValue.files);
         self.visibleFiles = ko.computed(function () {
+            // Note: disease id is extracted here rather than on the fly in row the row view models
+            //       because the ko dependency tracker only looks a few levels deep.
             var diseaseId = self.selectedDisease().id;
+
             // Wrap with underscore
             var iterable = _(self.files()).chain();
 
@@ -41,57 +49,21 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
 
             // Convert to view models
             iterable = iterable.map(function (file) {
-                return {
-                    jsonFile: file,
-                    id: file.id,
-                    name: ko.computed({
-                        read: function () {
-                            return file.name;
-                        },
-                        write: function (value) {
-                            file.name = value;
-                            self.hasUnsavedChanges(true);
-                        }
-                    }),
-                    hide: ko.computed({
-                        read: function () {
-                            return file.hide;
-                        },
-                        write: function (value) {
-                            file.hide = value;
-                            self.hasUnsavedChanges(true);
-                            self.files.valueHasMutated(); //Force view refresh
-                        }
-                    }),
-                    mouseOver: ko.observable(false),
-                    path: "./" + file.path,
-                    info: file.info,
-                    state: ko.computed({
-                        read: function () {
-                            return _(file.enabled).contains(diseaseId);
-                        },
-                        write: function (value) {
-                            if (value) {
-                                file.enabled.push(diseaseId);
-                            } else {
-                                // Note: using underscore"s indexOf instead of native indexOf because native
-                                //       indexOf is flakey in old IEs.
-                                file.enabled.splice(_(file.enabled).indexOf(diseaseId), 1);
-                            }
-                            self.hasUnsavedChanges(true);
-                        }
-                    })
-                };
+                return new CovariatesListRowViewModel(self, file, diseaseId);
             });
 
             // Hide
-            iterable = iterable.filter(function (file) { return !file.hide(); });
+            iterable = iterable.filter(function (rowViewModel) { return !rowViewModel.hide(); });
 
             // Sort
-            if (self.sortField() && !/^\s*$/.test(self.sortField())) {
-                var sortField = self.sortField();
-                iterable = iterable.sortBy(function (file) { return ko.utils.recursiveUnwrap(file[sortField]); });
-            }
+            var sortField = self.sortField();
+            iterable = iterable.sortBy(function (rowViewModel) {
+                var sortable = ko.utils.recursiveUnwrap(rowViewModel[sortField]);
+                if (typeof sortable === "string" || sortable instanceof String) {
+                    sortable = sortable.toLowerCase();
+                }
+                return sortable;
+            });
 
             // Unwrap underscore
             iterable = iterable.value();
@@ -119,14 +91,14 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
             })
                 .done(function () {
                     self.notices.push({ "message": "Saved successfully.", "priority": "success"});
+                    self.hasUnsavedChanges(false);
                 })
                 .fail(function () {
                     self.notices.push({ "message": "Form could not be saved.", "priority": "warning"});
                 })
                 .always(function () {
                     self.saving(false);
-                    self.hasUnsavedChanges(false);
                 });
-            };
+        };
     };
 });

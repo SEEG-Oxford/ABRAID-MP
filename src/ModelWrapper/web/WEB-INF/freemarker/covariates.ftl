@@ -17,7 +17,7 @@
         </tr>
     </script>
     <script type="text/html" id="file-list-delete-template">
-        <p>This file is currently used in <span data-bind="text: jsonFile.enabled.length"></span> <span data-bind="text: jsonFile.enabled.length === 1 ? 'disease' : 'diseases'"></span>. Are you sure you want to delete it?</p><br>
+        <p>This file is currently used in <span data-bind="text: usageCount"></span> <span data-bind="text: usageCount() === 1 ? 'disease' : 'diseases'"></span>. Are you sure you want to delete it?</p><br>
         <p style="text-align:center;">
             <span class="btn btn-default" data-bind="click: function () { hide(true) }" data-dismiss="popover">Confirm<span>
         </p>
