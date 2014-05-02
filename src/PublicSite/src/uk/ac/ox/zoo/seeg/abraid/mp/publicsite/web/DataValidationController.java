@@ -35,6 +35,7 @@ public class DataValidationController extends AbstractController {
     public static final String GEOWIKI_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
+    private static final String DEFAULT_DISEASE_GROUP_SHORT_NAME = "dengue";
     private static final int DEFAULT_DISEASE_OCCURRENCE_COUNT = 10;
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
@@ -77,6 +78,7 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
+            model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);

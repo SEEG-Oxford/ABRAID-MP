@@ -25,15 +25,15 @@
                 </span>
             </p>
             <p class="form-group">
-                <input type="submit" class="btn btn-primary" value="Log in to start validating" data-bind="click: attemptFormLogin">
+                <input type="submit" class="btn btn-primary" value="Log in to start validating" data-bind="click: submit">
             </p>
         </form>
     </@security.authorize>
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div id="counterDiv">
             <span>You have validated</span>
-            <div id="counter" data-bind="counter: diseaseOccurrenceReviewCount"></div>
-            <span data-bind="text: diseaseOccurrenceReviewCount() == 1 ? 'occurrence' : 'occurrences'"></span>
+            <div id="counter" data-bind="counter: count"></div>
+            <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
         </div>
     </@security.authorize>
 </div>
@@ -71,9 +71,9 @@
     <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div class="btn-group">
-            <button type="button" class="btn btn-primary" data-bind="click: submitReview('YES')"><i class="fa fa-check"></i>&nbsp;Valid</button>
-            <button type="button" class="btn btn-primary" data-bind="click: submitReview('UNSURE')">Unsure<br /></button>
-            <button type="button" class="btn btn-primary" data-bind="click: submitReview('NO')"><i class="fa fa-times"></i>&nbsp;Invalid</button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('YES') }"><i class="fa fa-check"></i>&nbsp;Valid</button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('UNSURE') }">Unsure<br /></button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('NO') }"><i class="fa fa-times"></i>&nbsp;Invalid</button>
         </div>
     </@security.authorize>
     </div>

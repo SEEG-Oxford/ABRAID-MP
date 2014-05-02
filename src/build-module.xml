@@ -129,7 +129,7 @@
           <isset property="test.failure"/>
           <isset property="js.test.failure"/>
           <isset property="style.failure"/>
-          <!-- <isset property="js.style.failure"/>  // Not enforced yet. -->
+          <isset property="js.style.failure"/>
           <isset property="bug.failure"/>
        </or>
      </condition>

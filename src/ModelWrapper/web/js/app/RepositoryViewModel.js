@@ -20,10 +20,10 @@ define([
         self.notices = ko.observableArray();
 
         if (initialData.availableVersions.length === 0) {
-            ko.observableArray([{
+            self.notices.push({
                 message: "The current repository does not appear to have any versions. If the url is correct try syncing the repository, otherwise fix the url.", /* jshint ignore:line */ // Line length
                 priority: "info"
-            }]);
+            });
         }
 
         // Computed state

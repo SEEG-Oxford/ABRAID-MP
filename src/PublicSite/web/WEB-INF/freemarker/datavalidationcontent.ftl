@@ -31,67 +31,59 @@
 
         <div id="map"></div>
     </div>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/en-gb.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-    <script src="http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
-    <script src="<@spring.url "/js/L.Control.Zoomslider.js"/>"></script>
-    <script src="<@spring.url "/js/flipclock.min.js"/>"></script>
-    <script src="<@spring.url "/js/navbar.js" />"></script>
     <script>
         var baseUrl = "<@spring.url "/" />";
-        var wmsUrl = "http://localhost:8081/geoserver/abraid/wms";
-        var loggedIn = ${userLoggedIn?c};
-        var diseaseOccurrenceReviewCount = ${reviewCount?c};
-        var diseaseInterests = [
-            <#if diseaseInterests??>
-                <#list diseaseInterests as validatorDiseaseGroup>
+        var data = {
+            wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
+            loggedIn: ${userLoggedIn?c},
+            diseaseOccurrenceReviewCount: ${reviewCount?c},
+            diseaseInterests: [
+                <#if diseaseInterests??>
+                    <#list diseaseInterests as validatorDiseaseGroup>
+                        {
+                            name: "${validatorDiseaseGroup.getName()?js_string}",
+                            id: ${validatorDiseaseGroup.id?c},
+                            diseaseGroups: [
+                                <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                    {
+                                        name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                        id: ${diseaseGroup.id?c}
+                                    },
+                                </#list>
+                            ]
+                        },
+                    </#list>
+                <#else>
                     {
-                        name: "${validatorDiseaseGroup.getName()?js_string}",
-                        id: ${validatorDiseaseGroup.id?c},
+                        name: "${defaultValidatorDiseaseGroupName?js_string}",
                         diseaseGroups: [
-                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
-                                {
-                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
-                                    id: ${diseaseGroup.id?c}
-                                },
-                            </#list>
+                            {
+                                name: "${defaultDiseaseGroupShortName?js_string}"
+                            }
                         ]
-                    },
-                </#list>
-            <#else>
-                {
-                    name: "${defaultValidatorDiseaseGroupName}",
-                    id: 0
-                }
-            </#if>
-        ];
-        var allOtherDiseases = [
-            <#if allOtherDiseases??>
-                <#list allOtherDiseases as validatorDiseaseGroup>
-                    {
-                        name: "${validatorDiseaseGroup.getName()?js_string}",
-                        id: ${validatorDiseaseGroup.id?c},
-                        diseaseGroups: [
-                            <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
-                                {
-                                    shortName: "${diseaseGroup.getShortNameForDisplay()?js_string}",
-                                    id: ${diseaseGroup.id?c}
-                                },
-                            </#list>
-                        ]
-                    },
-                </#list>
-            </#if>
-        ];
+                    }
+                </#if>
+            ],
+            allOtherDiseases: [
+                <#if allOtherDiseases??>
+                    <#list allOtherDiseases as validatorDiseaseGroup>
+                        {
+                            name: "${validatorDiseaseGroup.getName()?js_string}",
+                            id: ${validatorDiseaseGroup.id?c},
+                            diseaseGroups: [
+                                <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
+                                    {
+                                        name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
+                                        id: ${diseaseGroup.id?c}
+                                    },
+                                </#list>
+                            ]
+                        },
+                    </#list>
+                </#if>
+            ]
+        };
     </script>
-    <script src="<@spring.url "/js/dataValidation.js"/>"></script>
-    <script src="<@spring.url "/js/leafletMap.js"/>"></script>
-    <script src="<@spring.url "/js/login.js" />"></script>
+    <script type="text/javascript" data-main="<@spring.url '/js/dataValidationContent' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>
 </html>
