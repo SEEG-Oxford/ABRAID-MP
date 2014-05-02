@@ -60,7 +60,7 @@ public class JsonCovariateFile {
         this.info = info;
     }
 
-    public boolean isHide() {
+    public boolean getHide() {
         return hide;
     }
 

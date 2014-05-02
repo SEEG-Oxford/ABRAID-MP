@@ -10,11 +10,11 @@ import java.util.Arrays;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * Tests for CovariateObjectMapper
+ * Tests for CovariateObjectMapper.
  * Copyright (c) 2014 University of Oxford
  */
 public class CovariateObjectMapperTest {
-    private static String JSON =
+    private static String testJson =
             "{\n" +
             "  \"diseases\" : [ {\n" +
             "    \"id\" : 22,\n" +
@@ -44,7 +44,7 @@ public class CovariateObjectMapperTest {
         ObjectMapper target = new CovariateObjectMapper();
 
         // Act
-        JsonCovariateConfiguration result = target.readValue(JSON, JsonCovariateConfiguration.class);
+        JsonCovariateConfiguration result = target.readValue(testJson, JsonCovariateConfiguration.class);
 
         // Assert
         assertThat(result.isValid()).isEqualTo(true);
@@ -70,7 +70,7 @@ public class CovariateObjectMapperTest {
         String result = target.writeValueAsString(conf);
 
         // Assert
-        assertThat(result).isEqualTo(JSON.replace(" ", "").replace("\n", ""));
+        assertThat(result).isEqualTo(testJson.replace(" ", "").replace("\n", ""));
     }
 }
 
