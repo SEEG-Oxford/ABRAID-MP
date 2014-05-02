@@ -1,15 +1,12 @@
 /* An AMD defining the Covariates, a vm to back covariate configuration form.
  * Copyright (c) 2014 University of Oxford
  */
-/*global define:false, console:false*/
 define(["ko", "jquery", "underscore"], function (ko, $, _) {
     "use strict";
 
     return function (baseUrl, initialValue) {
         var self = this;
-        console.log("================ INPUT ================");
-        console.log(initialValue);
-       
+
         self.diseases = ko.observableArray(initialValue.diseases);
         self.selectedDisease = ko.observable(self.diseases()[0]);
        
@@ -53,6 +50,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                         },
                         write: function (value) {
                             file.name = value;
+                            self.hasUnsavedChanges(true);
                         }
                     }),
                     hide: ko.computed({
@@ -61,6 +59,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                         },
                         write: function (value) {
                             file.hide = value;
+                            self.hasUnsavedChanges(true);
                             self.files.valueHasMutated(); //Force view refresh
                         }
                     }),
@@ -79,6 +78,7 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
                                 //       indexOf is flakey in old IEs.
                                 file.enabled.splice(_(file.enabled).indexOf(diseaseId), 1);
                             }
+                            self.hasUnsavedChanges(true);
                         }
                     })
                 };
@@ -110,28 +110,23 @@ define(["ko", "jquery", "underscore"], function (ko, $, _) {
 
         self.submit = function () {
             self.notices.removeAll();
-            if (true) {
-                self.saving(true);
-                /*
-                $.post(baseUrl + formUrl, { value: self.value() })
-                    .done(function () {
-                        self.notices.push({ "message": "Saved successfully.", "priority": "success"});
-                    })
-                    .fail(function () {
-                        self.notices.push({ "message": "Form could not be saved.", "priority": "warning"});
-                    })
-                    .always(function () {
-                        self.saving(false);
-                    });
-                */
-                self.hasUnsavedChanges(false);
-                self.saving(false);
-            } else {
-                self.notices.push({ message: "Form must be valid before saving.", priority: "warning"});
-            }
-
-            console.log("================ OUTPUT ================");
-            console.log({ diseases: self.diseases(), files: self.files() });
-        };
+            self.saving(true);
+            $.ajax({
+                method: "POST",
+                url: baseUrl + "covariates/config",
+                data: JSON.stringify({ diseases: self.diseases(), files: self.files() }),
+                contentType : "application/json"
+            })
+                .done(function () {
+                    self.notices.push({ "message": "Saved successfully.", "priority": "success"});
+                })
+                .fail(function () {
+                    self.notices.push({ "message": "Form could not be saved.", "priority": "warning"});
+                })
+                .always(function () {
+                    self.saving(false);
+                    self.hasUnsavedChanges(false);
+                });
+            };
     };
 });

@@ -99,7 +99,14 @@ public interface ConfigurationService {
     /**
      * Gets the current covariate configuration.
      * @return The covariate configuration.
-     * @throws java.io.IOException throw if the configuration json file can not be parsed correctly.
+     * @throws java.io.IOException thrown if the configuration json file can not be parsed correctly.
      */
     JsonCovariateConfiguration getCovariateConfiguration() throws IOException;
+
+    /**
+     * Sets the current covariate configuration.
+     * @param config The covariate configuration.
+     * @throws java.io.IOException thrown if the configuration json file can not be written correctly.
+     */
+    void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException;
 }

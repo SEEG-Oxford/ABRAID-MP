@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -19,11 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.collection.IsIn.isIn;
 
 /**
  * Service class for configuration data.
@@ -31,13 +29,34 @@ import static org.hamcrest.collection.IsIn.isIn;
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger LOGGER = Logger.getLogger(ConfigurationServiceImpl.class);
-    private static final String LOG_LOADING_CONFIGURATION_FILE = "Loading configuration file %s";
-    private static final String LOG_UPDATING_AUTH_CONFIGURATION = "Updating auth configuration: %s %s";
-    private static final String LOG_UPDATING_REPOSITORY_URL_CONFIGURATION = "Updating repository url configuration: %s";
-    private static final String LOG_UPDATING_VERSION_CONFIGURATION = "Updating repository version configuration: %s";
-    private static final String LOG_UPDATING_R_PATH = "Updating R path configuration: %s";
-    private static final String LOG_UPDATING_RUN_DURATION = "Updating max run duration configuration: %s";
-    private static final String LOG_UPDATING_COVARIATE_DIR = "Updating covariate dir configuration: %s";
+    private static final String LOG_LOADING_CONFIGURATION_FILE =
+            "Loading configuration file %s";
+    private static final String LOG_UPDATING_AUTH_CONFIGURATION =
+            "Updating auth configuration: %s %s";
+    private static final String LOG_UPDATING_REPOSITORY_URL_CONFIGURATION =
+            "Updating repository url configuration: %s";
+    private static final String LOG_UPDATING_VERSION_CONFIGURATION =
+            "Updating repository version configuration: %s";
+    private static final String LOG_UPDATING_R_PATH =
+            "Updating R path configuration: %s";
+    private static final String LOG_UPDATING_RUN_DURATION =
+            "Updating max run duration configuration: %s";
+    private static final String LOG_UPDATING_COVARIATE_DIR =
+            "Updating covariate dir configuration: %s";
+    private static final String LOG_ADDING_FILES_TO_COVARIATE_CONFIG =
+            "Adding %s files to the covariate config.";
+    private static final String LOG_COVARIATE_DIR_CREATION_FAIL =
+            "Can not store covariate config. The directory does not exist and could not be created. At: %s";
+    private static final String LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL =
+            "Removing old covariate config failed. At: %s";
+    private static final String LOG_WRITING_COVARIATE_CONFIG_FAIL =
+            "Writing new covariate config failed. At: %s";
+    private static final String LOG_USING_DEFAULT_COVARIATE_CONFIG =
+            "Custom covariate config file does not yet exist. Using default file: %s.";
+    private static final String LOG_INVALID_COVARIATE_CONFIG =
+            "Covariate config file on disk is not valid.";
+    private static final String LOG_COULD_NOT_READ_COVARIATE_CONFIG =
+            "Failed to read and parse covariate config file from disk.";
 
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
@@ -213,7 +232,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Gets the current covariate configuration.
      * @return The covariate configuration.
-     * @throws java.io.IOException throw if the configuration json file can not be parsed correctly.
+     * @throws java.io.IOException thrown if the configuration json file can not be parsed correctly.
      */
     @Override
     public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
@@ -223,36 +242,89 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         ObjectMapper jsonConverter = new CovariateObjectMapper();
         JsonCovariateConfiguration jsonCovariateConfiguration;
-        if (configFile.exists()) {
-            jsonCovariateConfiguration =
-                    jsonConverter.readValue(configFile, JsonCovariateConfiguration.class);
-        } else {
-            jsonCovariateConfiguration =
-                    jsonConverter.readValue(defaultCovariateConfig, JsonCovariateConfiguration.class);
+        try {
+            if (configFile.exists()) {
+                jsonCovariateConfiguration =
+                        jsonConverter.readValue(configFile, JsonCovariateConfiguration.class);
+            } else {
+                LOGGER.info(String.format(LOG_USING_DEFAULT_COVARIATE_CONFIG, defaultCovariateConfig.toString()));
+                jsonCovariateConfiguration =
+                        jsonConverter.readValue(defaultCovariateConfig, JsonCovariateConfiguration.class);
+            }
+        } catch (IOException e) {
+            LOGGER.error(LOG_COULD_NOT_READ_COVARIATE_CONFIG, e);
+            throw new IOException(LOG_COULD_NOT_READ_COVARIATE_CONFIG, e);
         }
 
         appendNewCovariateFiles(jsonCovariateConfiguration, covariateDirectory);
+
+        if (!jsonCovariateConfiguration.isValid()) {
+            LOGGER.error(LOG_INVALID_COVARIATE_CONFIG);
+            throw new IOException(LOG_INVALID_COVARIATE_CONFIG);
+        }
         return jsonCovariateConfiguration;
+    }
+
+    /**
+     * Sets the current covariate configuration.
+     * @param config The covariate configuration.
+     * @throws java.io.IOException thrown if the configuration json file can not be written correctly.
+     */
+    @Override
+    public void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
+        String covariateDirectoryLocation = getCovariateDirectory();
+        File covariateDirectory = Paths.get(covariateDirectoryLocation).toFile();
+        if (!covariateDirectory.exists() && !covariateDirectory.mkdirs()) {
+            LOGGER.error(String.format(LOG_COVARIATE_DIR_CREATION_FAIL, covariateDirectoryLocation));
+            throw new IOException(LOG_COVARIATE_DIR_CREATION_FAIL);
+        }
+
+        Path configPath = Paths.get(covariateDirectoryLocation, COVARIATE_JSON_FILE);
+        File configFile = configPath.toFile();
+
+        ObjectMapper jsonConverter = new CovariateObjectMapper();
+        jsonConverter.configure(SerializationFeature.INDENT_OUTPUT, true);
+
+        if (configFile.exists() && !configFile.delete()) {
+            LOGGER.error(String.format(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL, configFile.toString()));
+            throw new IOException(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL);
+        }
+
+        try {
+            jsonConverter.writeValue(configFile, config);
+        } catch (IOException e) {
+            LOGGER.error(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
+            throw new IOException(LOG_WRITING_COVARIATE_CONFIG_FAIL, e);
+        }
     }
 
     private void appendNewCovariateFiles(
             JsonCovariateConfiguration jsonCovariateConfiguration, String covariateDirectoryLocation) {
         final Path covariateDirectoryPath = Paths.get(covariateDirectoryLocation);
         File covariateDirectory = covariateDirectoryPath.toFile();
+
         if (covariateDirectory.exists()) {
             Collection<File> files = FileUtils.listFiles(covariateDirectory, null, true);
-            List<JsonCovariateFile> knownFiles = jsonCovariateConfiguration.getFiles();
+            Collection<String> paths = convert(files, new Converter<File, String>() {
+                public String convert(File file) {
+                    Path subPath = covariateDirectoryPath.relativize(file.toPath());
+                    return FilenameUtils.separatorsToUnix(subPath.toString());
+                }
+            });
+
+            Collection<JsonCovariateFile> knownFiles = jsonCovariateConfiguration.getFiles();
             Collection<String> knownPaths = extract(knownFiles, on(JsonCovariateFile.class).getPath());
 
-            files = filter(having(on(File.class).getPath(), not(isIn(knownPaths))), files);
+            paths.remove(COVARIATE_JSON_FILE);
+            paths.removeAll(knownPaths);
 
-            knownFiles.addAll(convert(files, new Converter<File, JsonCovariateFile>() {
-                public JsonCovariateFile convert(File file) {
-                    Path subPath = covariateDirectoryPath.relativize(file.toPath());
-                    String normalizedSubPath = FilenameUtils.separatorsToUnix(subPath.toString());
-                    return new JsonCovariateFile(normalizedSubPath, "", null, false, new ArrayList<Integer>());
+            knownFiles.addAll(convert(paths, new Converter<String, JsonCovariateFile>() {
+                public JsonCovariateFile convert(String path) {
+                    return new JsonCovariateFile(path, "", null, false, new ArrayList<Integer>());
                 }
             }));
+
+            LOGGER.info(String.format(LOG_ADDING_FILES_TO_COVARIATE_CONFIG, paths.size()));
         }
     }
 

@@ -31,7 +31,7 @@
             <td><input type="text" data-bind="value: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
             <td><input type="checkbox" data-bind="checked: state"></td>
             <td>
-                <button class="btn btn-default fa fa-lg fa-trash-o" data-bind="popover: { title: 'Delete file?', trigger: 'focus', placement: 'bottom', template: 'file-list-delete-template'}, click: function(data, event) { event.preventDefault(); }"></button>
+                <button class="btn btn-default fa fa-lg fa-trash-o" style="float: right" data-bind="popover: { title: 'Delete file?', trigger: 'focus', placement: 'bottom', template: 'file-list-delete-template'}, click: function(data, event) { event.preventDefault(); }"></button>
                 <span data-bind="if: info">
                     <i class="fa fa-lg fa-info-circle text-info" data-bind="tooltip: { title: info, placement: 'bottom' }"></i>&nbsp;
                 </span>
