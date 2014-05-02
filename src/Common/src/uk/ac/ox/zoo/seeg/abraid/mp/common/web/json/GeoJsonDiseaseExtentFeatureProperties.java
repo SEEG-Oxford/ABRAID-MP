@@ -17,14 +17,14 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     private String diseaseExtentClass;
 
     public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobalOrTropical adminUnit,
-                                                 DiseaseExtentClass diseaseExtentClass)
+                                                 DiseaseExtentClass diseaseExtentClassObject)
     {
         setName(adminUnit.getPublicName());
-        setDiseaseExtentClass(formatDisplayString(diseaseExtentClass));
+        setDiseaseExtentClass(formatDisplayString(diseaseExtentClassObject));
     }
 
-    private String formatDisplayString(DiseaseExtentClass diseaseExtentClass) {
-        String s = diseaseExtentClass.toString();
+    private String formatDisplayString(DiseaseExtentClass diseaseExtentClassObject) {
+        String s = diseaseExtentClassObject.toString();
         s = s.replace("_", " ");
         return s.charAt(0) + s.substring(1).toLowerCase();
     }

@@ -8,7 +8,7 @@ define(["ko"], function (ko) {
     return function () {
         var self = this;
 
-        self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected"); // Published by MapView
+        self.selectedAdminUnit = ko.observable(null).subscribeTo("admin-unit-selected"); // Published by MapView
         self.hasSelectedAdminUnit = ko.computed(function () {
             return self.selectedAdminUnit() !== null;
         });
