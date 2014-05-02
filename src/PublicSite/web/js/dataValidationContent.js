@@ -10,15 +10,19 @@ require(["require.conf"], function () {
         "ko",
         "app/LogInViewModel",
         "app/MapView",
-        "app/SelectedFeatureViewModel",
+        "app/SelectedPointViewModel",
         "app/SelectedLayerViewModel",
+        "app/SelectedAdminUnitViewModel",
+        "app/SidePanelViewModel",
         "app/CounterViewModel",
         "domReady!"
-    ], function (ko, LogInViewModel, setupMap, SelectedFeatureViewModel, SelectedLayerViewModel, CounterViewModel, doc) {
+    ], function (ko, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
-            ko.applyBindings(
-                new SelectedFeatureViewModel(baseUrl),
-                doc.getElementById("featureInfo")
+            ko.applyBindings(new SidePanelViewModel(
+                    new SelectedPointViewModel(baseUrl),
+                    new SelectedAdminUnitViewModel()
+                ),
+                doc.getElementById("sidePanelContent")
             );
             ko.applyBindings(
                 new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),

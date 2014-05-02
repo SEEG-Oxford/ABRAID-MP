@@ -250,22 +250,18 @@ define([
             layerMap = {};
         }
 
-        function getGeoJsonRequestUrl(diseaseId) {
-            var url = baseUrl;
+        function getDiseaseOccurrencesRequestUrl(diseaseId) {
             if (loggedIn) {
-                url += "datavalidation/diseases/" + diseaseId +
-                    (validationTypeIsDiseaseOccurrenceLayer ? "/occurrences" : "/adminunits");
+                return baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences";
             } else {
-                url += "static/default" +
-                    (validationTypeIsDiseaseOccurrenceLayer ? "Occurrences.json" : "AdminUnits.json");
+                return baseUrl + "static/defaultOccurrences.json";
             }
-            return url;
         }
 
         // Add the new feature collection to the clustered layer, and zoom to its bounds
         function switchDiseaseOccurrenceLayer(diseaseId) {
             clearDiseaseOccurrenceLayer();
-            $.getJSON(getGeoJsonRequestUrl(diseaseId), function (featureCollection) {
+            $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
                     clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
@@ -277,10 +273,18 @@ define([
             });
         }
 
+        function getDiseaseExtentRequestUrl(diseaseId) {
+            if (loggedIn) {
+                return baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
+            } else {
+                return baseUrl + "static/defaultAdminUnits.json";
+            }
+        }
+
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
             diseaseExtentLayer.clearLayers();
-            $.getJSON(getGeoJsonRequestUrl(diseaseId), function (featureCollection) {
+            $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
                     diseaseExtentLayer.addData(featureCollection);
@@ -305,11 +309,13 @@ define([
 
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
         function resetSelectedFeature() {
-            ko.postbox.publish("point-selected", null);
-            resetDiseaseOccurrenceLayerStyle();
-
-            ko.postbox.publish("admin-unit-selected", null);
-            resetDiseaseExtentLayerStyle();
+            if (validationTypeIsDiseaseOccurrenceLayer) {
+                ko.postbox.publish("point-selected", null);
+                resetDiseaseOccurrenceLayerStyle();
+            } else {
+                ko.postbox.publish("admin-unit-selected", null);
+                resetDiseaseExtentLayerStyle();
+            }
         }
         clusterLayer.on("clusterclick", resetSelectedFeature);
         map.on("click", resetSelectedFeature);

@@ -4,11 +4,7 @@
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
-    <div id="featureInfo" data-bind="template: { name:
-        hasSelectedPoint() ? 'selected-point-template' :
-        (hasSelectedAdminUnit() ? 'selected-admin-unit-template' :
-        'no-selected-feature-template')
-    }"></div>
+    <div id="sidePanelContent" data-bind="template: { name : templateName() }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
         <#include "loginform.ftl"/>
     </@security.authorize>
@@ -17,20 +13,33 @@
     </@security.authorize>
 </div>
 
-<script type="text/html" id="no-selected-feature-template">
+<script type="text/html" id="admin-units-template">
+    <!-- ko with:selectedAdminUnitViewModel -->
+    <div>
+        <!--Table here-->
+        <div data-bind="if: hasSelectedAdminUnit()">
+            <ul>
+                <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.name"></p></li>
+                <li><i class="fa fa-square-o"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.diseaseExtentClass"></p></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="occurrences-template">
+    <!-- ko with:selectedPointViewModel -->
+        <div data-bind="template: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template'"></div>
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="no-selected-point-template">
     <ul>
         <li>Select a feature on the map to view more details here...</li>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
     </div>
-</script>
-
-<script type="text/html" id="selected-admin-unit-template">
-    <ul>
-        <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.name"></p></li>
-        <li><i class="fa fa-square-o"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.diseaseExtentClass"></p></li>
-    </ul>
 </script>
 
 <script type="text/html" id="selected-point-template">

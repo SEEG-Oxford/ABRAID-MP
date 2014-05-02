@@ -20,10 +20,10 @@ public class GeoJsonDiseaseExtentFeatureProperties {
                                                  DiseaseExtentClass diseaseExtentClass)
     {
         setName(adminUnit.getPublicName());
-        setDiseaseExtentClass(getString(diseaseExtentClass));
+        setDiseaseExtentClass(formatDisplayString(diseaseExtentClass));
     }
 
-    private String getString(DiseaseExtentClass diseaseExtentClass) {
+    private String formatDisplayString(DiseaseExtentClass diseaseExtentClass) {
         String s = diseaseExtentClass.toString();
         s = s.replace("_", " ");
         return s.charAt(0) + s.substring(1).toLowerCase();
@@ -54,9 +54,9 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
         GeoJsonDiseaseExtentFeatureProperties that = (GeoJsonDiseaseExtentFeatureProperties) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null)
+        if (diseaseExtentClass != null ? !diseaseExtentClass.equals(that.diseaseExtentClass) : that.diseaseExtentClass != null)
             return false;
-        if (diseaseExtentClass != that.diseaseExtentClass) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
         return true;
     }

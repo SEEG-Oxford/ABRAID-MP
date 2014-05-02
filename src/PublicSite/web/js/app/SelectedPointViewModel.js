@@ -45,10 +45,6 @@ define([
                 return createTranslationUrlWithCorrectLength(langPair, summary);
             }
         });
-        self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected"); // Published by MapView
-        self.hasSelectedAdminUnit = ko.computed(function () {
-            return self.selectedAdminUnit() !== null;
-        });
         self.submitReview = function (review) {
             var occurrenceId = self.selectedPoint().id;
             var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +

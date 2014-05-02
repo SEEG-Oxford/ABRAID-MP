@@ -35,19 +35,19 @@ html, body, #dataValidation {
     background-color:rgb(214, 214, 214);
     opacity:0.8;
 }
-#featureInfo {
+#sidePanelContent {
     height:100%;
     position:relative;
 }
-#featureInfo h4 {
+#sidePanelContent h4 {
     min-height:57px;
 }
-#featureInfo ul {
+#sidePanelContent ul {
     list-style-type: none;      /* Remove bullet points */
     padding:10px;
     margin:0;
 }
-#featureInfo p {
+#sidePanelContent p {
     display:inline;
 }
 #summary {
