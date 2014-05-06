@@ -127,9 +127,7 @@ define([
             pointToLayer: diseaseOccurrenceLayerPoint,
             style: diseaseOccurrenceLayerStyle,
             onEachFeature: function (feature, layer) {
-                layer.on("add", function () {
-                    layerMap[feature.id] = layer;
-                });
+                layerMap[feature.id] = layer;
             }
         });
 
@@ -192,17 +190,17 @@ define([
             if (!L.Browser.ie && !L.Browser.opera) {
                 layer.bringToFront();
             }
+            map.fitBounds(layer.getBounds(), { maxZoom: 5 });
         }
 
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
+        var adminUnitLayerMap = {};
         var diseaseExtentLayer = L.geoJson([], {
             style: diseaseExtentLayerStyle,
             onEachFeature: function (feature, layer) {
+                adminUnitLayerMap[feature.id] = layer;
                 layer.on({
-                    click: function () {
-                        selectAdminUnit(layer);
-                        ko.postbox.publish("admin-unit-selected", feature);
-                    },
+                    click: function () { ko.postbox.publish("admin-unit-selected", feature); },
                     mouseover: function () { layer.setStyle({ fillOpacity: 1 }); },
                     mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
                 });
@@ -282,6 +280,7 @@ define([
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
             diseaseExtentLayer.clearLayers();
+            adminUnitLayerMap = {};
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
@@ -336,6 +335,10 @@ define([
             } else {
                 switchDiseaseExtentLayer(data.diseaseId);
             }
+        });
+
+        ko.postbox.subscribe("admin-unit-selected", function (data) {
+            if (data !== null) { selectAdminUnit(adminUnitLayerMap[data.id]); }
         });
 
         ko.postbox.subscribe("point-reviewed", function (id) {

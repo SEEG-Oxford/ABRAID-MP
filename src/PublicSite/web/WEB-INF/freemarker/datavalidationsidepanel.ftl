@@ -16,7 +16,24 @@
 <script type="text/html" id="admin-units-template">
     <!-- ko with:selectedAdminUnitViewModel -->
     <div>
-        <!--Table here-->
+        <div>
+            <div class="table-responsive">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>Administrative Unit</th>
+                            <th>Class</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: adminUnits" >
+                        <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', this); }">
+                            <td data-bind="text: properties.name"></td>
+                            <td data-bind="text: properties.diseaseExtentClass"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div data-bind="if: hasSelectedAdminUnit()">
             <ul>
                 <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.name"></p></li>
