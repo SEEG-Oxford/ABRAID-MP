@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -41,7 +42,7 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, 0, "");
+        RunConfiguration config = new RunConfiguration(null, null, null, 0, "", "", new ArrayList<String>());
 
         // Act
         target.runModel(config, null);
@@ -64,7 +65,7 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, 0, "");
+        RunConfiguration config = new RunConfiguration(null, null, null, 0, "", "", new ArrayList<String>());
 
         // Act
         target.runModel(config, null);
@@ -91,7 +92,8 @@ public class ModelRunnerTest {
         File expectedR = new File("e1");
         File expectedBase = new File("base");
         int expectedTimeout = 10;
-        RunConfiguration config = new RunConfiguration(expectedR, expectedBase, null, expectedTimeout, "");
+        RunConfiguration config =
+                new RunConfiguration(expectedR, expectedBase, null, expectedTimeout, "", "", new ArrayList<String>());
 
         // Act
         target.runModel(config, null);

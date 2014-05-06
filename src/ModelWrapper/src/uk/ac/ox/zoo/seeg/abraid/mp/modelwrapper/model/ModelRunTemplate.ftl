@@ -18,11 +18,11 @@ verbosity <- ${verbosity}
 # Define outbreak data
 outbreakData <- "${outbreak_file}"
 
-# Define covariants to use.
-# If you would like to use these covariant files please contact TBD@TBD.com, as we can not release them in all circumstances.
-covariants <- c(
-<#list covariants as covariant>
-    "${covariant}"<#if covariant_has_next>,</#if>
+# Define covariates to use.
+# If you would like to use these covariate files please contact TBD@TBD.com, as we can not release them in all circumstances.
+covariates <- c(
+<#list covariates as covariate>
+    "${covariate}"<#if covariate_has_next>,</#if>
 </#list>
 )
 
@@ -35,10 +35,10 @@ extentData <- "${extent_file}"
 
 # Run the model
 result <- tryCatch({
-    # seegSDM.run(outbreakData, extentData, covariants, verbosity, ${dry_run?c})
+    # seegSDM.run(outbreakData, extentData, covariates, verbosity, ${dry_run?c})
     write(paste("I'm running the model using: ", outbreakData), file="echo")
     # Temp POC
-    print(covariants)
+    print(covariates)
     0 # return 0
 }, warning = function(w) {
     print(paste("Warning:  ", w))

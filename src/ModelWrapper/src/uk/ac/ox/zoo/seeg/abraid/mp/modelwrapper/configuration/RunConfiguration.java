@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * An immutable data structure to hold the configuration for a single model run.
@@ -23,6 +24,10 @@ public class RunConfiguration {
     // The version of the model to use
     private String modelVersion;
 
+    // The covariate setup to use
+    private final String covariateDirectory;
+    private final Collection<String> covariateFilePaths;
+
     /**
      * Creates a new RunConfiguration.
      * @param rPath The file path for the R binary to be executed.
@@ -31,12 +36,15 @@ public class RunConfiguration {
      * @param maxRuntime The maximum allowed time (in ms) for which the model should be allow to run.
      * @param modelVersion The version of the model to use.
      */
-    public RunConfiguration(File rPath, File baseDir, String runName, int maxRuntime, String modelVersion) {
+    public RunConfiguration(File rPath, File baseDir, String runName, int maxRuntime, String modelVersion,
+                            String covariateDirectory, Collection<String> covariateFilePaths) {
         this.rPath = rPath;
         this.baseDir = baseDir;
         this.runName = runName;
         this.maxRuntime = maxRuntime;
         this.modelVersion = modelVersion;
+        this.covariateDirectory = covariateDirectory;
+        this.covariateFilePaths = covariateFilePaths;
     }
 
     public String getRunName() {
@@ -57,5 +65,13 @@ public class RunConfiguration {
 
     public String getModelVersion() {
         return modelVersion;
+    }
+
+    public String getCovariateDirectory() {
+        return covariateDirectory;
+    }
+
+    public Collection<String> getCovariateFilePaths() {
+        return covariateFilePaths;
     }
 }

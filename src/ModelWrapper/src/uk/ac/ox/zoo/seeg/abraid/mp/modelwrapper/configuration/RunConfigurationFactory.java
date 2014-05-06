@@ -2,6 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import java.io.IOException;
+
 /**
  * Interface to define a factory method for RunConfigurations.
  * Copyright (c) 2014 University of Oxford
@@ -9,9 +11,12 @@ import org.apache.commons.configuration.ConfigurationException;
 public interface RunConfigurationFactory {
     /**
      * Creates a new RunConfiguration using the current defaults.
+     * @param diseaseId The disease id
      * @param diseaseName The disease name
      * @return The new RunConfiguration
      * @throws ConfigurationException When the R executable can not be found.
+     * @throws IOException When the covariate configuration can not be read.
      */
-    RunConfiguration createDefaultConfiguration(String diseaseName) throws ConfigurationException;
+    RunConfiguration createDefaultConfiguration(int diseaseId, String diseaseName)
+            throws ConfigurationException, IOException;
 }
