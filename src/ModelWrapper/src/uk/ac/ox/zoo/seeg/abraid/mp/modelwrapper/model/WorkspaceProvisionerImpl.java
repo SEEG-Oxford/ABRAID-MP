@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -37,12 +38,15 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
     /**
      * Sets up the directory in which a model will run.
      * @param configuration The model run configuration options.
-     * @param modelData The data to use in the model.
+     * @param occurrenceData The occurrences to use in the model.
+     * @param extentData The extents to model with.
      * @return The model wrapper script file to run.
      * @throws IOException Thrown if the directory can not be correctly provisioned.
      */
     @Override
-    public File provisionWorkspace(RunConfiguration configuration, GeoJsonDiseaseOccurrenceFeatureCollection modelData)
+    public File provisionWorkspace(RunConfiguration configuration,
+                                   GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
+                                   Collection<Integer> extentData)
             throws IOException {
         // Create directories
         Path workingDirectoryPath = Paths.get(
@@ -72,8 +76,12 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
             throw new IOException("Directory structure could not be created.");
         }
 
+        // Rasterize extents
+        LOGGER.info(String.format("TODO: Rasterize extent data. Tropical? %s. GAUL codes: %s",
+                configuration.isTropical(), extentData));
+
         // Copy input data
-        inputDataManager.writeData(modelData, dataDirectory);
+        inputDataManager.writeData(occurrenceData, dataDirectory);
 
         // Copy model
         sourceCodeManager.provisionVersion(configuration.getModelVersion(), modelDirectory);

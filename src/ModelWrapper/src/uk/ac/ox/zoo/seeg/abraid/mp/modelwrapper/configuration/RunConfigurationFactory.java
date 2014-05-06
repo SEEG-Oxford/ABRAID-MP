@@ -12,11 +12,14 @@ public interface RunConfigurationFactory {
     /**
      * Creates a new RunConfiguration using the current defaults.
      * @param diseaseId The disease id
+     * @param diseaseTropical If the disease is tropical
+     * @param diseaseAbbreviation The disease abbreviation
      * @param diseaseName The disease name
      * @return The new RunConfiguration
      * @throws ConfigurationException When the R executable can not be found.
      * @throws IOException When the covariate configuration can not be read.
      */
-    RunConfiguration createDefaultConfiguration(int diseaseId, String diseaseName)
+    RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseTropical,
+                                                String diseaseName, String diseaseAbbreviation)
             throws ConfigurationException, IOException;
 }

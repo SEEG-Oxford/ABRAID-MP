@@ -36,10 +36,10 @@ public class RunConfigurationFactoryTest {
         DateTimeUtils.setCurrentMillisFixed(0);
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, "foo");
+        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
 
         // Assert
-        assertThat(result.getRunName()).isEqualTo("foo_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
+        assertThat(result.getRunName()).isEqualTo("foo1_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
         assertThat(result.getBaseDir().getName()).isEqualTo("expectation1");
         assertThat(result.getMaxRuntime()).isEqualTo(12345);
         assertThat(result.getModelVersion()).isEqualTo("expectation2");
@@ -63,7 +63,7 @@ public class RunConfigurationFactoryTest {
 
         // Act
         String longName = RandomStringUtils.randomAlphanumeric(300);
-        RunConfiguration result = target.createDefaultConfiguration(1, longName);
+        RunConfiguration result = target.createDefaultConfiguration(1, true, longName, longName);
 
         // Assert
         assertThat(result.getRunName()).isEqualTo(
@@ -90,7 +90,7 @@ public class RunConfigurationFactoryTest {
         RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, "foo");
+        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
 
         // Assert
         assertThat(result.getCovariateFilePaths()).hasSize(2);

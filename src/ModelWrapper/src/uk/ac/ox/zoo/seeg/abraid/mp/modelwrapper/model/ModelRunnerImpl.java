@@ -5,6 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -30,16 +31,18 @@ public class ModelRunnerImpl implements ModelRunner {
      * Starts a new model run with the given configuration.
      * @param configuration The model run configuration.
      * @param occurrenceData The occurrence data to model with.
+     * @param extentData The extents to model with.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
      * @throws IOException Thrown if the workspace can not be correctly provisioned.
      */
     @Override
     public ModelProcessHandler runModel(RunConfiguration configuration,
-                                        GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData)
+                                        GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
+                                        Collection<Integer> extentData)
             throws ProcessException, IOException {
         // Provision workspace
-        File scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData);
+        File scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData, extentData);
 
         // Run model
         HashMap<String, File> fileArguments = new HashMap<>();

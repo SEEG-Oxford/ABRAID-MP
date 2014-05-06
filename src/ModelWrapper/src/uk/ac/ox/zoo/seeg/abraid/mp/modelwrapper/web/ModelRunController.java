@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
@@ -42,20 +42,20 @@ public class ModelRunController extends AbstractController {
      */
     @RequestMapping(value = "/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> startRun(@RequestBody GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData) {
-        if (occurrenceData == null) {
-            return new ResponseEntity<String>("Occurrence data must be provided", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> startRun(@RequestBody JsonModelRun runData) {
+        if (runData == null || !runData.isValid()|| !runData.getDisease().isValid()) {
+            return new ResponseEntity<String>("Run data must be provided and be valid", HttpStatus.BAD_REQUEST);
         }
 
         try {
             LOGGER.info(LOG_STARTING_NEW_BACKGROUND_MODEL_RUN);
 
-            // NOTE: Here I am using "foo" as a default disease name. The expectation is that it will be passed into
-            // this method, maybe as a HTTP header, or maybe as part of a TBD json DTO that encapsulates the disease
-            // occurrence feature collection and the disease extent data. There is no value in setting this up until we
-            // know the format of the extent data.
-            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration(1, "foo");
-            modelRunner.runModel(runConfiguration, occurrenceData); // Ignore result for now
+            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration(
+                    runData.getDisease().getId(),
+                    runData.getDisease().isTropical(),
+                    runData.getDisease().getName(),
+                    runData.getDisease().getAbbreviation());
+            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtents()); // Ignore result for now
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return new ResponseEntity<String>("Could not start model run.", HttpStatus.INTERNAL_SERVER_ERROR);
