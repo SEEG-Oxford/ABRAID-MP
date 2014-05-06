@@ -19,7 +19,7 @@ verbosity <- ${verbosity}
 outbreakData <- "${outbreak_file}"
 
 # Define covariates to use.
-# If you would like to use these covariate files please contact TBD@TBD.com, as we can not release them in all circumstances.
+# If you would like to use these covariate files please contact TBD@TBD.com, as we cannot release them in all circumstances.
 covariates <- c(
 <#list covariates as covariate>
     "${covariate}"<#if covariate_has_next>,</#if>

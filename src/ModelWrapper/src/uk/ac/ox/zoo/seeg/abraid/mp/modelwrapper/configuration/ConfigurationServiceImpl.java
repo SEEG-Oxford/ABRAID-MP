@@ -46,7 +46,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String LOG_ADDING_FILES_TO_COVARIATE_CONFIG =
             "Adding %s files to the covariate config.";
     private static final String LOG_COVARIATE_DIR_CREATION_FAIL =
-            "Can not store covariate config. The directory does not exist and could not be created. At: %s";
+            "Cannot store covariate config. The directory does not exist and could not be created. At: %s";
     private static final String LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL =
             "Removing old covariate config failed. At: %s";
     private static final String LOG_WRITING_COVARIATE_CONFIG_FAIL =

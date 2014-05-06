@@ -110,14 +110,14 @@ public class JsonCovariateConfiguration {
 
     private boolean checkFilesFieldForNull() {
         // Check files field not null
-        boolean valid = files != null;
+        boolean valid = (files != null);
         LOGGER.assertLog(valid, LOG_FILES_IS_NULL);
         return valid;
     }
 
     private boolean checkDiseaseFieldForNull() {
         // Check diseases field not null
-        boolean valid = diseases != null;
+        boolean valid = (diseases != null);
         LOGGER.assertLog(valid, LOG_DISEASES_IS_NULL);
         return valid;
     }
