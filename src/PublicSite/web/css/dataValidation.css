@@ -26,6 +26,7 @@ html, body, #dataValidation {
     height:100%;
     width:100%;
     float:left;
+    background-color: white;
 }
 #sidePanel {
     height:100%;
@@ -49,6 +50,10 @@ html, body, #dataValidation {
 }
 #sidePanelContent p {
     display:inline;
+}
+#adminUnitTable {
+    max-height: 600px;
+    overflow-y: auto;
 }
 #summary {
     margin:5px;

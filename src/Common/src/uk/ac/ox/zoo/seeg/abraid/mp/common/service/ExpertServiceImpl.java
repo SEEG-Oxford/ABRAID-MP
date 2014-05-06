@@ -1,9 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -15,13 +13,16 @@ import java.util.List;
  */
 @Transactional
 public class ExpertServiceImpl implements ExpertService {
+    private AdminUnitReviewDao adminUnitReviewDao;
     private ExpertDao expertDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
 
-    public ExpertServiceImpl(ExpertDao expertDao,
+    public ExpertServiceImpl(AdminUnitReviewDao adminUnitReviewDao,
+                             ExpertDao expertDao,
                              DiseaseOccurrenceDao diseaseOccurrenceDao,
                              DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
+        this.adminUnitReviewDao = adminUnitReviewDao;
         this.expertDao = expertDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
@@ -60,6 +61,17 @@ public class ExpertServiceImpl implements ExpertService {
     public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
                                                                         Integer validatorDiseaseGroupId) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
+    }
+
+    /**
+     * Gets all reviews submitted by the specified expert, for the specified disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of reviews.
+     */
+    @Override
+    public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId) {
+        return adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
     }
 
     /**

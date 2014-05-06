@@ -5,9 +5,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
@@ -27,12 +29,13 @@ public class UserDetailsServiceTest {
     @Test
     public void loadUserByUsername() {
 
+        AdminUnitReviewDao adminUnitReviewDao = mock(AdminUnitReviewDao.class);
         ExpertDao expertDao = mock(ExpertDao.class);
         DiseaseOccurrenceDao diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
         DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
 
-        UserDetailsService userDetailsService = new UserDetailsServiceImpl(new ExpertServiceImpl(expertDao,
-                diseaseOccurrenceDao, diseaseOccurrenceReviewDao));
+        UserDetailsService userDetailsService = new UserDetailsServiceImpl(new ExpertServiceImpl(adminUnitReviewDao,
+                expertDao, diseaseOccurrenceDao, diseaseOccurrenceReviewDao));
 
         String fullName = "Helena Patching";
         String email = "zool1250@zoo.ox.ac.uk";

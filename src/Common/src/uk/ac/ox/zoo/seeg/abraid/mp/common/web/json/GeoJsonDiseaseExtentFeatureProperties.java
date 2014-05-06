@@ -1,9 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
+
+import java.util.List;
 
 /**
  * A DTO for the properties of an AdminUnit, with reference to a DiseaseGroup.
@@ -16,17 +20,41 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     @JsonView(DisplayJsonView.class)
     private String diseaseExtentClass;
 
-    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobalOrTropical adminUnit,
-                                                 DiseaseExtentClass diseaseExtentClassObject)
+    @JsonView(DisplayJsonView.class)
+    private Integer occurrenceCount;
+
+    @JsonView(DisplayJsonView.class)
+    private boolean needsReview;
+
+    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
+                                                 List<AdminUnitReview> reviews)
     {
-        setName(adminUnit.getPublicName());
-        setDiseaseExtentClass(formatDisplayString(diseaseExtentClassObject));
+        setName(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical().getPublicName());
+        setDiseaseExtentClass(formatDisplayString(adminUnitDiseaseExtentClass.getDiseaseExtentClass()));
+        setOccurrenceCount(adminUnitDiseaseExtentClass.getOccurrenceCount());
+        setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
     }
 
     private String formatDisplayString(DiseaseExtentClass diseaseExtentClassObject) {
         String s = diseaseExtentClassObject.toString();
         s = s.replace("_", " ");
         return s.charAt(0) + s.substring(1).toLowerCase();
+    }
+
+    private boolean computeNeedsReview(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass, List<AdminUnitReview> reviews) {
+        boolean extentClassHasChanged = adminUnitDiseaseExtentClass.hasChanged();
+        boolean expertHasReviewed = containsAdminUnit(reviews, adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical());
+        return (extentClassHasChanged || !expertHasReviewed);
+    }
+
+    private boolean containsAdminUnit(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit1) {
+        for (AdminUnitReview review : reviews) {
+            AdminUnitGlobalOrTropical adminUnit2 = (review.getAdminUnitGlobal() != null) ? review.getAdminUnitGlobal() : review.getAdminUnitTropical();
+            if (adminUnit1.equals(adminUnit2)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getName() {
@@ -43,6 +71,22 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     public void setDiseaseExtentClass(String diseaseExtentClass) {
         this.diseaseExtentClass = diseaseExtentClass;
+    }
+
+    public Integer getOccurrenceCount() {
+        return occurrenceCount;
+    }
+
+    public void setOccurrenceCount(Integer occurrenceCount) {
+        this.occurrenceCount = occurrenceCount;
+    }
+
+    public boolean isNeedsReview() {
+        return needsReview;
+    }
+
+    public void setNeedsReview(boolean needsReview) {
+        this.needsReview = needsReview;
     }
 
     ///COVERAGE:OFF - generated code
