@@ -37,13 +37,13 @@ public class ModelRunController extends AbstractController {
 
     /**
      * Triggers a new model run with the given occurrences.
-     * @param occurrenceData A set of occurrences.
+     * @param runData The run data to model.
      * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
     @RequestMapping(value = "/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<String> startRun(@RequestBody JsonModelRun runData) {
-        if (runData == null || !runData.isValid()|| !runData.getDisease().isValid()) {
+        if (runData == null || !runData.isValid() || !runData.getDisease().isValid()) {
             return new ResponseEntity<String>("Run data must be provided and be valid", HttpStatus.BAD_REQUEST);
         }
 
@@ -55,7 +55,9 @@ public class ModelRunController extends AbstractController {
                     runData.getDisease().isTropical(),
                     runData.getDisease().getName(),
                     runData.getDisease().getAbbreviation());
-            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtents()); // Ignore result for now
+
+            // Ignore result for now
+            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtents());
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return new ResponseEntity<String>("Could not start model run.", HttpStatus.INTERNAL_SERVER_ERROR);
