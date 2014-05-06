@@ -68,9 +68,9 @@ public class JsonCovariateConfiguration {
                 checkFilesFieldForNull() &&
                 checkDiseaseSubItems() &&
                 checkFileSubItems() &&
-                checkDiseaseReferenceIntegrity() &&
                 checkDiseaseUniqueness() &&
-                checkFileUniqueness();
+                checkFileUniqueness() &&
+                checkDiseaseReferenceIntegrity();
     }
 
     private boolean checkFileUniqueness() {
