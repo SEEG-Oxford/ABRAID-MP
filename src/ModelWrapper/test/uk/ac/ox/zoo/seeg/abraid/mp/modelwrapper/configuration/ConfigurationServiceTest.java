@@ -549,7 +549,7 @@ public class ConfigurationServiceTest {
         // Assert
         assertThat(caughtException())
                 .isInstanceOf(IOException.class)
-                .hasMessageStartingWith("Can not store covariate config.");
+                .hasMessageStartingWith("Cannot store covariate config.");
     }
 
     private static JsonCovariateConfiguration createJsonCovariateConfig() {
