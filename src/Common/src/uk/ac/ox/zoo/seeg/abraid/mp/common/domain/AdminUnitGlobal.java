@@ -13,4 +13,10 @@ import javax.persistence.Table;
 @Table(name = "admin_unit_global")
 @Immutable
 public class AdminUnitGlobal extends AdminUnitGlobalOrTropical {
+    public AdminUnitGlobal() {
+    }
+
+    public AdminUnitGlobal(Integer gaulCode) {
+        super(gaulCode);
+    }
 }

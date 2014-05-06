@@ -19,43 +19,59 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
     @Test
     public void findAdminUnitGlobalThatContainsPoint() {
-        Point point = GeometryUtils.createPoint(172.65939, -42.42349);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point);
-        assertThat(gaulCode).isEqualTo(179);
+        Point point = GeometryUtils.createPoint(-124.2, 54.1);
+        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null);
+        assertThat(gaulCode).isEqualTo(826);
     }
 
     @Test
     public void findAdminUnitGlobalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point);
+        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null);
         assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitGlobalWherePointIsOnBorder() {
         Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point);
+        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null);
         assertThat(gaulCode).isEqualTo(179);
     }
 
     @Test
+    public void findAdminUnitGlobalWherePointIsNotInTheRequestedAdminLevel() {
+        // This point is within British Columbia, which is an admin1
+        Point point = GeometryUtils.createPoint(-124.2, 54.1);
+        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, '0');
+        assertThat(gaulCode).isNull();
+    }
+
+    @Test
     public void findAdminUnitTropicalThatContainsPoint() {
-        Point point = GeometryUtils.createPoint(101.7, 3.16667);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point);
-        assertThat(gaulCode).isEqualTo(153);
+        Point point = GeometryUtils.createPoint(-124.2, 54.1);
+        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, null);
+        assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test
     public void findAdminUnitTropicalWherePointIsOnBorder() {
         Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point);
+        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, null);
         assertThat(gaulCode).isEqualTo(179);
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point);
+        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, null);
+        assertThat(gaulCode).isNull();
+    }
+
+    @Test
+    public void findAdminUnitTropicalWherePointIsNotInTheRequestedAdminLevel() {
+        // This point is within British Columbia, which is an admin1
+        Point point = GeometryUtils.createPoint(-124.2, 54.1);
+        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, '0');
         assertThat(gaulCode).isNull();
     }
 }

@@ -14,6 +14,7 @@ public class NativeSQLImpl implements NativeSQL {
     // geometry border
     private static final String ADMIN_UNIT_CONTAINS_POINT_QUERY =
             "select min(gaul_code) from %s where st_intersects(geom, :point)";
+    private static final String ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER = " and level = :adminLevel";
     private static final String ADMIN_UNIT_GLOBAL_TABLE_NAME = "admin_unit_global";
     private static final String ADMIN_UNIT_TROPICAL_TABLE_NAME = "admin_unit_tropical";
 
@@ -26,29 +27,40 @@ public class NativeSQLImpl implements NativeSQL {
     /**
      * Finds the first admin unit for global diseases that contains the specified point.
      * @param point The point.
+     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
     @Override
-    public Integer findAdminUnitGlobalThatContainsPoint(Point point) {
-        return findAdminUnitThatContainsPoint(point, ADMIN_UNIT_GLOBAL_TABLE_NAME);
+    public Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel) {
+        return findAdminUnitThatContainsPoint(point, adminLevel, ADMIN_UNIT_GLOBAL_TABLE_NAME);
     }
 
     /**
      * Finds the first admin unit for tropical diseases that contains the specified point.
      * @param point The point.
+     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first tropical admin unit that contains the specified point, or null if no
      * admin units found.
      */
     @Override
-    public Integer findAdminUnitTropicalThatContainsPoint(Point point) {
-        return findAdminUnitThatContainsPoint(point, ADMIN_UNIT_TROPICAL_TABLE_NAME);
+    public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
+        return findAdminUnitThatContainsPoint(point, adminLevel, ADMIN_UNIT_TROPICAL_TABLE_NAME);
     }
 
-    private Integer findAdminUnitThatContainsPoint(Point point, String tableName) {
-        return (Integer) createSQLQuery(String.format(ADMIN_UNIT_CONTAINS_POINT_QUERY, tableName))
-                            .setParameter("point", point)
-                            .uniqueResult();
+    private Integer findAdminUnitThatContainsPoint(Point point, Character adminLevel, String tableName) {
+        String queryString = String.format(ADMIN_UNIT_CONTAINS_POINT_QUERY, tableName);
+        if (adminLevel != null) {
+            queryString += ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER;
+        }
+
+        SQLQuery query = createSQLQuery(queryString);
+        query.setParameter("point", point);
+        if (adminLevel != null) {
+            query.setParameter("adminLevel", adminLevel);
+        }
+
+        return (Integer) query.uniqueResult();
     }
 
     private SQLQuery createSQLQuery(String query) {

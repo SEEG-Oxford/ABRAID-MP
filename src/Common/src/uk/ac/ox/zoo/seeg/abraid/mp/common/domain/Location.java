@@ -90,10 +90,14 @@ public class Location {
         this.geom = GeometryUtils.createPoint(x, y);
     }
 
-    public Location(String name, double x, double y, LocationPrecision precision) {
+    public Location(double x, double y, LocationPrecision precision) {
         this(x, y);
-        this.name = name;
         this.precision = precision;
+    }
+
+    public Location(String name, double x, double y, LocationPrecision precision) {
+        this(x, y, precision);
+        this.name = name;
     }
 
     public Location(String name, double x, double y, LocationPrecision precision, long healthMapCountryId) {

@@ -28,6 +28,13 @@ public abstract class AdminUnitGlobalOrTropical {
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon simplifiedGeom;
 
+    protected AdminUnitGlobalOrTropical() {
+    }
+
+    protected AdminUnitGlobalOrTropical(Integer gaulCode) {
+        this.gaulCode = gaulCode;
+    }
+
     public Integer getGaulCode() {
         return gaulCode;
     }
