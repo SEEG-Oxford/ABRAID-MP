@@ -10,6 +10,13 @@ define([
 ], function (ko) {
     "use strict";
 
+    ko.utils.recursiveUnwrap = function (func) {
+        if (typeof func !== "function") {
+            return func;
+        }
+        return ko.utils.recursiveUnwrap(func());
+    };
+
     // Bundle up all the knockout stuff
     return ko;
 });

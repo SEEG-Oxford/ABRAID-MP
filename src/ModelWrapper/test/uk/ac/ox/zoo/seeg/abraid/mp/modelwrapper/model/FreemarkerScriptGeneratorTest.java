@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -27,7 +28,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatItHasCreated() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "", "", new ArrayList<String>());
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -43,7 +44,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatIsBasedOnTheCorrectTemplate() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "", "", new ArrayList<String>());
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -57,7 +58,7 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         String expectedRunName = "foobar4321";
-        RunConfiguration conf = new RunConfiguration(null, null, expectedRunName, 0, "");
+        RunConfiguration conf = new RunConfiguration(null, null, expectedRunName, 0, "", "", new ArrayList<String>());
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -70,7 +71,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfScriptCanNotBeWritten() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "", "", new ArrayList<String>());
 
         // Act
         catchException(target).generateScript(conf, new File("non-existent"), false);
@@ -84,7 +85,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfWorkingDirectoryIsAFile() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "");
+        RunConfiguration conf = new RunConfiguration(null, null, "", 0, "", "", new ArrayList<String>());
 
         // Act
         catchException(target).generateScript(conf, testFolder.newFile(), false);

@@ -54,7 +54,7 @@ public class ModelRunController extends AbstractController {
             // this method, maybe as a HTTP header, or maybe as part of a TBD json DTO that encapsulates the disease
             // occurrence feature collection and the disease extent data. There is no value in setting this up until we
             // know the format of the extent data.
-            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration("foo");
+            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration(1, "foo");
             modelRunner.runModel(runConfiguration, occurrenceData); // Ignore result for now
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);

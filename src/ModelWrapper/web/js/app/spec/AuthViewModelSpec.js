@@ -1,30 +1,16 @@
 /* A suite of tests for the AuthViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
-define([
-    "app/AuthViewModel",
-    "ko",
-    "app/spec/util/ruleMatcher"
-], function (AuthViewModel, ko, ruleMatcher) {
+define(["app/AuthViewModel"], function (AuthViewModel) {
     "use strict";
 
     describe("The auth view model", function () {
         var vm = {};
-        var initVM = function (makeValidatable) {
-            return function () {
-                jasmine.addMatchers({ toHaveValidationRule: ruleMatcher });
-
-                if (!makeValidatable) {
-                    vm = new AuthViewModel("foo");
-                } else {
-                    vm = ko.validatedObservable(new AuthViewModel("foo"));
-                }
-            };
-        };
+        beforeEach(function () {
+            vm = new AuthViewModel("foo");
+        });
 
         describe("holds a username which", function () {
-            beforeEach(initVM(false));
-
             it("starts empty", function () {
                 expect(vm.username()).toBeUndefined();
             });
@@ -39,8 +25,6 @@ define([
         });
 
         describe("holds a password which", function () {
-            beforeEach(initVM(false));
-
             it("starts empty", function () {
                 expect(vm.password()).toBeUndefined();
             });
@@ -55,8 +39,6 @@ define([
         });
 
         describe("holds a password confirmation which", function () {
-            beforeEach(initVM(false));
-
             it("starts empty", function () {
                 expect(vm.passwordConfirmation()).toBeUndefined();
             });

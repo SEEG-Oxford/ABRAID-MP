@@ -69,3 +69,34 @@ form {
 .form-group {
     display: block;
 }
+.input-group > .clear {
+    position: absolute;
+    right: 50px;
+    top: 0;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #999;
+    z-index: 999;
+}
+.transparent-input {
+    background: transparent;
+    border: 2px solid transparent;
+}
+.table td input[type="text"] {
+    width: 100%
+}
+.table td.text-muted {
+    text-align: center;
+    font-style: italic
+}
+.table th {
+    cursor: pointer;
+}
+.table th .up-down {
+    float: right;
+    height: 20px;
+    width:20px;
+}

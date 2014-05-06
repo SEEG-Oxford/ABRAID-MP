@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import ch.lambdaj.function.convert.Converter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -9,8 +10,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  * A freemarker based ScriptGenerator to generate model run scripts based on a template file.
@@ -90,7 +94,15 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("model_version", runConfiguration.getModelVersion());
         data.put("outbreak_file", "data/outbreakData.csv");
         data.put("extent_file", "data/extentData.csv");
-        data.put("covariants", new String[]{"file1.csv", "file2.csv"});
+
+        final String covariatePathPrefix = runConfiguration.getCovariateDirectory();
+        Collection<String> covariatePaths =
+                convert(runConfiguration.getCovariateFilePaths(), new Converter<String, String>() {
+                    public String convert(String subpath) {
+                        return Paths.get(covariatePathPrefix, subpath).toString();
+                    }
+                });
+        data.put("covariates", covariatePaths);
         return data;
     }
 }
