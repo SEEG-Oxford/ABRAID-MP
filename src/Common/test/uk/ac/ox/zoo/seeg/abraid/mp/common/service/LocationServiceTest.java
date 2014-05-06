@@ -3,9 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class LocationServiceTest extends AbstractSpringUnitTests {
+public class LocationServiceTest extends AbstractCommonSpringUnitTests {
     @Autowired
     private LocationService locationService;
 
@@ -124,5 +124,33 @@ public class LocationServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testLandSeaBorders).isSameAs(landSeaBorders);
+    }
+
+    @Test
+    public void findAdminUnitGlobalThatContainsPoint() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(1, 2);
+        Integer expectedGaulCode = 123;
+        when(nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null)).thenReturn(expectedGaulCode);
+
+        // Act
+        Integer actualGaulCode = locationService.findAdminUnitGlobalThatContainsPoint(point, null);
+
+        // Assert
+        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
+    }
+
+    @Test
+    public void findAdminUnitTropicalThatContainsPoint() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(1, 2);
+        Integer expectedGaulCode = 123;
+        when(nativeSQL.findAdminUnitTropicalThatContainsPoint(point, '0')).thenReturn(expectedGaulCode);
+
+        // Act
+        Integer actualGaulCode = locationService.findAdminUnitTropicalThatContainsPoint(point, '0');
+
+        // Assert
+        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
     }
 }

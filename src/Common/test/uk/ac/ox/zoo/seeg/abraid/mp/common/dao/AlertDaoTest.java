@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 
@@ -14,7 +14,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class AlertDaoTest extends AbstractSpringIntegrationTests {
+public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private AlertDao alertDao;
 

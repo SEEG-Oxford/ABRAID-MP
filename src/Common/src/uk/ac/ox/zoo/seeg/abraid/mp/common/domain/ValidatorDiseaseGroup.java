@@ -39,6 +39,10 @@ public class ValidatorDiseaseGroup {
         this.id = id;
     }
 
+    public ValidatorDiseaseGroup(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -22,6 +22,7 @@ CREATE EXTENSION postgis;
 
 -- Create schema objects
 \i tables.sql
+\i views.sql
 \i constraints.sql
 \i indexes.sql
 \i roles.sql

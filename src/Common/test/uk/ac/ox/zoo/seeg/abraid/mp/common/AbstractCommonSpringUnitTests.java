@@ -1,22 +1,32 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.testutils;
+package uk.ac.ox.zoo.seeg.abraid.mp.common;
 
-import org.junit.runner.RunWith;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 /**
  * Base class for Spring-enabled unit tests. Mocks out the Data Access Objects.
  *
  * Copyright (c) 2014 University of Oxford
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
-public abstract class AbstractSpringUnitTests {
+public abstract class AbstractCommonSpringUnitTests extends AbstractSpringIntegrationTests {
+    @ReplaceWithMock
+    @Autowired
+    protected AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected AdminUnitGlobalDao adminUnitGlobalDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected AdminUnitTropicalDao adminUnitTropicalDao;
+
     @ReplaceWithMock
     @Autowired
     protected AdminUnitQCDao adminUnitQCDao;
@@ -68,6 +78,10 @@ public abstract class AbstractSpringUnitTests {
     @ReplaceWithMock
     @Autowired
     protected LocationDao locationDao;
+
+    @ReplaceWithMock
+    @Autowired
+    protected NativeSQL nativeSQL;
 
     @ReplaceWithMock
     @Autowired

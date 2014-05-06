@@ -11,4 +11,14 @@ public class AdminUnitTropicalDaoImpl extends AbstractDao<AdminUnitTropical, Int
     public AdminUnitTropicalDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
+    /**
+     * Gets the tropical admin unit, specified by its GAUL code.
+     * @param gaulCode The gaul code of the admin unit.
+     * @return The tropical admin unit.
+     */
+    @Override
+    public AdminUnitTropical getByGaulCode(Integer gaulCode) {
+        return getById(gaulCode);
+    }
 }

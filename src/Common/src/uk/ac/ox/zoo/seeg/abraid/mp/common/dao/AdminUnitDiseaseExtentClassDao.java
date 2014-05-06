@@ -23,4 +23,17 @@ public interface AdminUnitDiseaseExtentClassDao {
      */
     List<AdminUnitDiseaseExtentClass> getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
             Integer diseaseGroupId);
+
+    /**
+     * Gets an AdminUnitDiseaseExtentClass object by ID.
+     * @param id The ID.
+     * @return The matching AdminUnitDiseaseExtentClass object, or null if not found.
+     */
+    AdminUnitDiseaseExtentClass getById(Integer id);
+
+    /**
+     * Saves a disease extent class that is associated with an admin unit (global or tropical).
+     * @param adminUnitDiseaseExtentClass The object to save.
+     */
+    void save(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
 }

@@ -22,11 +22,12 @@ public class LocationServiceImpl implements LocationService {
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
     private AdminUnitQCDao adminUnitQCDao;
+    private NativeSQL nativeSQL;
     private LandSeaBorderDao landSeaBorderDao;
 
     public LocationServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
                                LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
-                               GeoNameDao geoNameDao, AdminUnitQCDao adminUnitQCDao,
+                               GeoNameDao geoNameDao, AdminUnitQCDao adminUnitQCDao, NativeSQL nativeSQL,
                                LandSeaBorderDao landSeaBorderDao) {
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
@@ -34,6 +35,7 @@ public class LocationServiceImpl implements LocationService {
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
         this.geoNameDao = geoNameDao;
         this.adminUnitQCDao = adminUnitQCDao;
+        this.nativeSQL = nativeSQL;
         this.landSeaBorderDao = landSeaBorderDao;
     }
 
@@ -62,6 +64,28 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public List<AdminUnitQC> getAllAdminUnitQCs() {
         return adminUnitQCDao.getAll();
+    }
+
+    /**
+     * Finds the first admin unit for global diseases that contains the specified point.
+     * @param point The point.
+     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
+     * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
+     * admin units found.
+     */
+    public Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel) {
+        return nativeSQL.findAdminUnitGlobalThatContainsPoint(point, adminLevel);
+    }
+
+    /**
+     * Finds the first admin unit for tropical diseases that contains the specified point.
+     * @param point The point.
+     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
+     * @return The GAUL code of the first tropical admin unit that contains the specified point, or null if no
+     * admin units found.
+     */
+    public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
+        return nativeSQL.findAdminUnitTropicalThatContainsPoint(point, adminLevel);
     }
 
     /**

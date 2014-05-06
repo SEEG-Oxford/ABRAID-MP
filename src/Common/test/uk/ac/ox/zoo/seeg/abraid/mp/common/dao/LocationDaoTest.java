@@ -3,11 +3,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
 import java.util.List;
 
@@ -18,11 +17,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class LocationDaoTest extends AbstractSpringIntegrationTests {
+public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private LocationDao locationDao;
-    @Autowired
-    private AdminUnitQCDao adminUnitQCDao;
 
     @Test
     public void saveAndReloadCountryLocation() {
@@ -101,15 +98,18 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         double x = 51.81394;
         double y = -1.29479;
         Point point = GeometryUtils.createPoint(x, y);
-        AdminUnitQC adminUnit = adminUnitQCDao.getByGaulCode(29863);
-        int passedQCStage = 3;
+        int adminUnitQCGaulCode = 29863;
+        int adminUnitGlobalGaulCode = 3;
+        int adminUnitTropicalGaulCode = 4;
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN2);
-        location.setAdminUnitQC(adminUnit);
-        location.setPassedQCStage(passedQCStage);
+        location.setAdminUnitQCGaulCode(adminUnitQCGaulCode);
+        location.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
+        location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
+        location.setHasPassedQc(true);
 
         // Act
         locationDao.save(location);
@@ -126,8 +126,10 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN2);
         assertThat(location.getHealthMapCountryId()).isNull();
         assertThat(location.getCreatedDate()).isNotNull();
-        assertThat(location.getAdminUnitQC()).isEqualTo(adminUnit);
-        assertThat(location.getPassedQCStage()).isEqualTo(passedQCStage);
+        assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(adminUnitQCGaulCode);
+        assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(adminUnitGlobalGaulCode);
+        assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(adminUnitTropicalGaulCode);
+        assertThat(location.hasPassedQc()).isTrue();
     }
 
     @Test
@@ -164,6 +166,7 @@ public class LocationDaoTest extends AbstractSpringIntegrationTests {
         assertThat(location.getPrecision()).isEqualTo(precision);
         assertThat(location.getHealthMapCountryId()).isEqualTo(healthMapCountryId);
         assertThat(location.getCreatedDate()).isNotNull();
+        assertThat(location.hasPassedQc()).isFalse();
     }
 
     @Test

@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
@@ -17,8 +18,6 @@ public class QCManager {
     private static final String QC_STAGE_3_PASSED_MESSAGE = "QC stage 3 passed: no country geometries associated " +
             "with this location.";
 
-    private static final int NO_QC_STAGE = 0;
-    private static final int QC_STAGE_1_ID = 1;
     private static final int QC_STAGE_2_ID = 2;
     private static final int QC_STAGE_3_ID = 3;
     private static final int QC_STAGE_2_MAXIMUM_DISTANCE = 5;
@@ -33,28 +32,15 @@ public class QCManager {
     /**
      * Performs quality control (QC) on a location. Each QC step is performed until a step fails.
      * @param location The location.
-     * @return The final QC step that passed (1-3), or 0 if no steps passed.
+     * @return True if the location passed all QC checks, otherwise false.
      */
-    public int performQC(Location location) {
+    public boolean performQC(Location location) {
         initializeLocationForQC(location);
-
-        if (!performQCStage1(location)) {
-            return NO_QC_STAGE;
-        }
-
-        if (!performQCStage2(location)) {
-            return QC_STAGE_1_ID;
-        }
-
-        if (!performQCStage3(location)) {
-            return QC_STAGE_2_ID;
-        }
-
-        return QC_STAGE_3_ID;
+        return performQCStage1(location) && performQCStage2(location) && performQCStage3(location);
     }
 
     private void initializeLocationForQC(Location location) {
-        location.setAdminUnitQC(null);
+        location.setAdminUnitQCGaulCode(null);
         location.setQcMessage(null);
     }
 
@@ -66,9 +52,13 @@ public class QCManager {
             // (as long as it is close enough - see class AdminUnitFinder for details)
             AdminUnitFinder adminUnitFinder = new AdminUnitFinder();
             adminUnitFinder.findClosestAdminUnit(location, qcLookupData.getAdminUnits());
-            location.setAdminUnitQC(adminUnitFinder.getClosestAdminUnit());
+
+            AdminUnitQC closestAdminUnit = adminUnitFinder.getClosestAdminUnit();
+            if (closestAdminUnit != null) {
+                location.setAdminUnitQCGaulCode(closestAdminUnit.getGaulCode());
+            }
             appendQcMessage(location, adminUnitFinder.getMessage());
-            passed = (adminUnitFinder.getClosestAdminUnit() != null);
+            passed = (closestAdminUnit != null);
         } else {
             appendQcMessage(location, QC_STAGE_1_PASSED_MESSAGE);
         }

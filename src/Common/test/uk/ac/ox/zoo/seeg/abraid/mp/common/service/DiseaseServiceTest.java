@@ -3,12 +3,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -19,7 +17,7 @@ import static org.mockito.Mockito.when;
  * Tests the DiseaseService class.
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseServiceTest extends AbstractSpringUnitTests {
+public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     @Autowired
     private DiseaseService diseaseService;
 
@@ -35,6 +33,13 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         HealthMapDisease disease = new HealthMapDisease();
         diseaseService.saveHealthMapDisease(disease);
         verify(healthMapDiseaseDao).save(eq(disease));
+    }
+
+    @Test
+    public void saveAdminUnitDiseaseExtentClass() {
+        AdminUnitDiseaseExtentClass disease = new AdminUnitDiseaseExtentClass();
+        diseaseService.saveAdminUnitDiseaseExtentClass(disease);
+        verify(adminUnitDiseaseExtentClassDao).save(eq(disease));
     }
 
     @Test
@@ -61,6 +66,46 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
 
         // Assert
         assertThat(testDiseaseGroups).isSameAs(diseaseGroups);
+    }
+
+    @Test
+    public void getAllValidatorDiseaseGroups() {
+        // Arrange
+        List<ValidatorDiseaseGroup> expectedValidatorDiseaseGroups = Arrays.asList(new ValidatorDiseaseGroup());
+        when(validatorDiseaseGroupDao.getAll()).thenReturn(expectedValidatorDiseaseGroups);
+
+        // Act
+        List<ValidatorDiseaseGroup> actualValidatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
+
+        // Assert
+        assertThat(actualValidatorDiseaseGroups).isSameAs(expectedValidatorDiseaseGroups);
+    }
+
+    @Test
+    public void getValidatorDiseaseGroupMap() {
+        // Arrange
+        ValidatorDiseaseGroup validatorDiseaseGroup1 = new ValidatorDiseaseGroup("ascariasis");
+        ValidatorDiseaseGroup validatorDiseaseGroup2 = new ValidatorDiseaseGroup("trypanosomiases");
+        DiseaseGroup diseaseGroup1 = new DiseaseGroup("Ascariasis", validatorDiseaseGroup1);
+        DiseaseGroup diseaseGroup2 = new DiseaseGroup("Trypanosomiasis - American", validatorDiseaseGroup2);
+        DiseaseGroup diseaseGroup3 = new DiseaseGroup("Poliomyelitis");
+        DiseaseGroup diseaseGroup4 = new DiseaseGroup("Trypanosomiases", validatorDiseaseGroup2);
+        DiseaseGroup diseaseGroup5 = new DiseaseGroup("Trypanosomiasis - African", validatorDiseaseGroup2);
+
+        List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2, diseaseGroup3, diseaseGroup4,
+                diseaseGroup5);
+
+        Map<String, List<DiseaseGroup>> expectedMap = new HashMap<>();
+        expectedMap.put("ascariasis", Arrays.asList(diseaseGroup1));
+        expectedMap.put("trypanosomiases", Arrays.asList(diseaseGroup2, diseaseGroup4, diseaseGroup5));
+
+        when(diseaseGroupDao.getAll()).thenReturn(diseaseGroups);
+
+        // Act
+        Map<String, List<DiseaseGroup>> actualMap = diseaseService.getValidatorDiseaseGroupMap();
+
+        // Assert
+        assertThat(actualMap).isEqualTo(expectedMap);
     }
 
     @Test
@@ -235,5 +280,124 @@ public class DiseaseServiceTest extends AbstractSpringUnitTests {
         // Assert
         assertThat(diseaseOccurrenceMatches).isTrue();
         assertThat(diseaseOccurrenceDoesNotMatch).isFalse();
+    }
+
+    @Test
+    public void getDiseaseExtentByDiseaseGroupIdReturnsGlobalExtentForGlobalDisease() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setGlobal(true);
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = new ArrayList<>();
+
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId))
+                .thenReturn(expectedDiseaseExtent);
+
+        // Act
+        List<AdminUnitDiseaseExtentClass> actualDiseaseExtent =
+                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(actualDiseaseExtent).isSameAs(expectedDiseaseExtent);
+    }
+
+    @Test
+    public void getDiseaseExtentByDiseaseGroupIdReturnsTropicalExtentForTropicalDisease() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setGlobal(false);
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = new ArrayList<>();
+
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId))
+                .thenReturn(expectedDiseaseExtent);
+
+        // Act
+        List<AdminUnitDiseaseExtentClass> actualDiseaseExtent =
+                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(actualDiseaseExtent).isSameAs(expectedDiseaseExtent);
+    }
+
+    @Test
+    public void getDiseaseExtentByDiseaseGroupIdReturnsTropicalExtentForUnspecifiedDisease() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = new ArrayList<>();
+
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId))
+                .thenReturn(expectedDiseaseExtent);
+
+        // Act
+        List<AdminUnitDiseaseExtentClass> actualDiseaseExtent =
+                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(actualDiseaseExtent).isSameAs(expectedDiseaseExtent);
+    }
+
+    @Test
+    public void getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupIdReturnsGlobalsForGlobalDisease() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setGlobal(true);
+        List<AdminUnitGlobal> expectedAdminUnits = new ArrayList<>();
+
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(adminUnitGlobalDao.getAll()).thenReturn(expectedAdminUnits);
+
+        // Act
+        List actualAdminUnits =
+                diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        //noinspection unchecked
+        assertThat(actualAdminUnits).isSameAs(expectedAdminUnits);
+    }
+
+    @Test
+    public void getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupIdReturnsTropicalsForTropicalDisease() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setGlobal(false);
+        List<AdminUnitTropical> expectedAdminUnits = new ArrayList<>();
+
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(adminUnitTropicalDao.getAll()).thenReturn(expectedAdminUnits);
+
+        // Act
+        List actualAdminUnits =
+                diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        //noinspection unchecked
+        assertThat(actualAdminUnits).isSameAs(expectedAdminUnits);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtent() {
+        // Arrange
+        int diseaseGroupId = 10;
+        double minimumValidationWeighting = 0.7;
+        DateTime minimumOccurrenceDate = DateTime.now();
+        List<Integer> feedIds = new ArrayList<>();
+        List<DiseaseOccurrenceForDiseaseExtent> expectedOccurrences = new ArrayList<>();
+
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
+                minimumOccurrenceDate, feedIds)).thenReturn(expectedOccurrences);
+
+        // Act
+        List<DiseaseOccurrenceForDiseaseExtent> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds);
+
+        // Assert
+        assertThat(expectedOccurrences).isSameAs(actualOccurrences);
     }
 }

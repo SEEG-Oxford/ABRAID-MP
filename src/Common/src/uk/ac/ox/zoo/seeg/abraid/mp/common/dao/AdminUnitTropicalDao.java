@@ -14,4 +14,11 @@ public interface AdminUnitTropicalDao {
      * @return A list of all tropical administrative units.
      */
     List<AdminUnitTropical> getAll();
+
+    /**
+     * Gets the tropical admin unit, specified by its GAUL code.
+     * @param gaulCode The gaul code of the admin unit.
+     * @return The tropical admin unit.
+     */
+    AdminUnitTropical getByGaulCode(Integer gaulCode);
 }

@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import static org.fest.assertions.api.Assertions.offset;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class AdminUnitQCDaoTest extends AbstractSpringIntegrationTests {
+public class AdminUnitQCDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private AdminUnitQCDao adminUnitQCDao;
 

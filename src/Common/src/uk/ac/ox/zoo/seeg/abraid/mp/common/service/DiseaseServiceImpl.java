@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -18,17 +19,23 @@ public class DiseaseServiceImpl implements DiseaseService {
     private HealthMapDiseaseDao healthMapDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+    private AdminUnitTropicalDao adminUnitTropicalDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseGroupDao diseaseGroupDao,
                               HealthMapDiseaseDao healthMapDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
-                              AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao) {
+                              AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
+                              AdminUnitGlobalDao adminUnitGlobalDao,
+                              AdminUnitTropicalDao adminUnitTropicalDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
+        this.adminUnitGlobalDao = adminUnitGlobalDao;
+        this.adminUnitTropicalDao = adminUnitTropicalDao;
     }
 
     /**
@@ -110,34 +117,62 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * For each admin unit, get the disease extent class for the specified disease group.
-     * @param diseaseGroupId The id of the disease group.
-     * @return The map, from admin unit, to its disease extent class, for the specified disease group.
+     * Gets the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
      */
     @Override
-    public Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> getAdminUnitDiseaseExtentClassMap(
-            Integer diseaseGroupId) {
-        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = new HashMap<>();
-        List<AdminUnitDiseaseExtentClass> list;
-        boolean isDiseaseGroupGlobal = isDiseaseGroupGlobal(diseaseGroupId);
-        if (isDiseaseGroupGlobal) {
-            list =
-            adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+    public List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId) {
+        if (isDiseaseGroupGlobal(diseaseGroupId)) {
+            return adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+                    diseaseGroupId);
         } else {
-            list =
-            adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+            return adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+                    diseaseGroupId);
         }
-        for (AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass : list) {
-            AdminUnitGlobalOrTropical adminUnit = adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical();
-            DiseaseExtentClass diseaseExtentClass = adminUnitDiseaseExtentClass.getDiseaseExtentClass();
-            map.put(adminUnit, diseaseExtentClass);
-        }
-        return map;
     }
 
-    private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
-        DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
-        return diseaseGroup.isGlobal();
+    /**
+     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
+     * is a global or a tropical disease.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
+     */
+    @Override
+    public List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
+            Integer diseaseGroupId) {
+        if (isDiseaseGroupGlobal(diseaseGroupId)) {
+            return adminUnitGlobalDao.getAll();
+        } else {
+            return adminUnitTropicalDao.getAll();
+        }
+    }
+
+    /**
+     * Saves a disease extent class that is associated with an admin unit (global or tropical).
+     * @param adminUnitDiseaseExtentClass The object to save.
+     */
+    @Override
+    public void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
+        adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
+    }
+
+    /**
+     * Gets disease occurrences for generating the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
+     *                                   value.
+     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
+     * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
+     *                accepts all feeds.
+     * @return A list of disease occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
+            List<Integer> feedIds) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds);
     }
 
     /**
@@ -175,5 +210,10 @@ public class DiseaseServiceImpl implements DiseaseService {
                                                           Integer validatorDiseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
         return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
+    }
+
+    private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
+        DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
+        return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());
     }
 }

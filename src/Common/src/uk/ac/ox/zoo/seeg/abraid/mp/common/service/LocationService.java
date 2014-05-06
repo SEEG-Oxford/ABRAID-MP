@@ -47,6 +47,24 @@ public interface LocationService {
     List<AdminUnitQC> getAllAdminUnitQCs();
 
     /**
+     * Finds the first admin unit for global diseases that contains the specified point.
+     * @param point The point.
+     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
+     * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
+     * admin units found.
+     */
+    Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel);
+
+    /**
+     * Finds the first admin unit for tropical diseases that contains the specified point.
+     * @param point The point.
+     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
+     * @return The GAUL code of the first tropical admin unit that contains the specified point, or null if no
+     * admin units found.
+     */
+    Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
+
+    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */
