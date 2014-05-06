@@ -99,4 +99,34 @@ public class JsonCovariateFile {
         LOGGER.assertLog(valid, LOG_PATH_NOT_SPECIFIED);
         return valid;
     }
+
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JsonCovariateFile that = (JsonCovariateFile) o;
+
+        if (hide != that.hide) return false;
+        if (enabled != null ? !enabled.equals(that.enabled) : that.enabled != null) return false;
+        if (info != null ? !info.equals(that.info) : that.info != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (path != null ? !path.equals(that.path) : that.path != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = path != null ? path.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (info != null ? info.hashCode() : 0);
+        result = 31 * result + (hide ? 1 : 0);
+        result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
+        return result;
+    }
+    ///COVERAGE:ON
+    ///CHECKSTYLE:ON
 }

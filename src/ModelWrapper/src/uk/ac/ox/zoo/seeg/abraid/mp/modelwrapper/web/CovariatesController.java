@@ -56,7 +56,7 @@ public class CovariatesController {
             return "covariates";
         } catch (IOException e) {
             LOGGER.error(LOG_EXISTING_COVARIATE_CONFIGURATION_IS_INVALID); // Exception already logged at lower level
-            throw e;
+            throw new IOException(LOG_EXISTING_COVARIATE_CONFIGURATION_IS_INVALID, e);
         }
     }
 
@@ -77,7 +77,7 @@ public class CovariatesController {
             configurationService.setCovariateConfiguration(config);
         } catch (IOException e) {
             LOGGER.error(LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED); // Exception already logged at lower level
-            throw e;
+            throw new IOException(LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED, e);
         }
 
         LOGGER.info(LOG_COVARIATE_CONFIGURATION_UPDATED_SUCCESSFULLY);

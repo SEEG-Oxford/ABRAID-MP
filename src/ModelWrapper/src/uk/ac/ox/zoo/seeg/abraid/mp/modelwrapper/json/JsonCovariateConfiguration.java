@@ -38,6 +38,7 @@ public class JsonCovariateConfiguration {
     public JsonCovariateConfiguration(List<JsonDisease> diseases, List<JsonCovariateFile> files) {
         setFiles(files);
         setDiseases(diseases);
+
     }
 
     public List<JsonDisease> getDiseases() {
@@ -120,4 +121,28 @@ public class JsonCovariateConfiguration {
         LOGGER.assertLog(valid, LOG_DISEASES_IS_NULL);
         return valid;
     }
+
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JsonCovariateConfiguration that = (JsonCovariateConfiguration) o;
+
+        if (diseases != null ? !diseases.equals(that.diseases) : that.diseases != null) return false;
+        if (files != null ? !files.equals(that.files) : that.files != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = diseases != null ? diseases.hashCode() : 0;
+        result = 31 * result + (files != null ? files.hashCode() : 0);
+        return result;
+    }
+    ///COVERAGE:ON
+    ///CHECKSTYLE:ON
 }

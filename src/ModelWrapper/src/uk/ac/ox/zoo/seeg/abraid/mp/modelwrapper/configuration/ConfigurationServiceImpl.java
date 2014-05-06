@@ -274,9 +274,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
         String covariateDirectoryLocation = getCovariateDirectory();
         File covariateDirectory = Paths.get(covariateDirectoryLocation).toFile();
-        if (!covariateDirectory.exists() && !covariateDirectory.mkdirs()) {
+        if (!covariateDirectory.isDirectory() && !covariateDirectory.mkdirs()) {
             LOGGER.error(String.format(LOG_COVARIATE_DIR_CREATION_FAIL, covariateDirectoryLocation));
-            throw new IOException(LOG_COVARIATE_DIR_CREATION_FAIL);
+            throw new IOException(String.format(LOG_COVARIATE_DIR_CREATION_FAIL, covariateDirectoryLocation));
         }
 
         Path configPath = Paths.get(covariateDirectoryLocation, COVARIATE_JSON_FILE);
@@ -287,14 +287,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         if (configFile.exists() && !configFile.delete()) {
             LOGGER.error(String.format(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL, configFile.toString()));
-            throw new IOException(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL);
+            throw new IOException(String.format(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL, configFile.toString()));
         }
 
         try {
             jsonConverter.writeValue(configFile, config);
         } catch (IOException e) {
             LOGGER.error(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
-            throw new IOException(LOG_WRITING_COVARIATE_CONFIG_FAIL, e);
+            throw new IOException(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
         }
     }
 
