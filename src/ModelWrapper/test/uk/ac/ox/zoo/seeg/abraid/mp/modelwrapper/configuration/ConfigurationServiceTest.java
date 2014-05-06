@@ -13,8 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -552,33 +550,6 @@ public class ConfigurationServiceTest {
         assertThat(caughtException())
                 .isInstanceOf(IOException.class)
                 .hasMessageStartingWith("Can not store covariate config.");
-    }
-
-    @Test
-    public void setCovariateConfigurationThrowsIfExistingConfigCanNotBeRemoved() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File confDir = testFolder.newFolder();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", confDir.toString());
-
-        JsonCovariateConfiguration conf = createJsonCovariateConfig();
-        File confFile = Paths.get(confDir.toString(), "abraid.json").toFile();
-        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
-
-        FileChannel channel = new RandomAccessFile(confFile, "rw").getChannel();
-        FileLock lock = channel.lock();
-
-        // Act
-        catchException(target).setCovariateConfiguration(conf);
-
-        // Assert
-        lock.release();
-        assertThat(caughtException())
-                .isInstanceOf(IOException.class)
-                .hasMessageStartingWith("Removing old covariate config failed.");
     }
 
     private static JsonCovariateConfiguration createJsonCovariateConfig() {
