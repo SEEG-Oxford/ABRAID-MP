@@ -23,6 +23,7 @@
         <dependency org="org.springframework" name="spring-orm" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
 
         <!-- Web services -->
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
