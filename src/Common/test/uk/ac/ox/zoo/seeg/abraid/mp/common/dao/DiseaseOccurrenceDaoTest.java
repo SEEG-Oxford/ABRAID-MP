@@ -39,9 +39,6 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Autowired
     private LocationDao locationDao;
 
-    @Autowired
-    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
-
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedMustNotReturnAReviewedPoint() {
         // Arrange
@@ -197,27 +194,33 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(null, 9);
+        getDiseaseOccurrencesForDiseaseExtent(null, 21, false);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithZeroFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 9);
+        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 21, false);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(Arrays.asList(1, 4, 8), 7);
+        getDiseaseOccurrencesForDiseaseExtent(Arrays.asList(1, 4, 8), 18, false);
     }
 
-    private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount) {
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
+        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 22, true);
+    }
+
+    private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
+                                                       boolean isGlobal) {
         int diseaseGroupId = 87; // Dengue
         double minimumValidationWeight = 0.6;
-        DateTime minimumOccurrenceDate = new DateTime("2014-02-26");
+        DateTime minimumOccurrenceDate = new DateTime("2014-02-25");
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
-                        minimumOccurrenceDate, feedIds);
+                        minimumOccurrenceDate, feedIds, isGlobal);
 
         assertThat(occurrences).hasSize(expectedOccurrenceCount);
     }

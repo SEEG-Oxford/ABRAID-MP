@@ -382,16 +382,28 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseOccurrencesForDiseaseExtent() {
+    public void getDiseaseOccurrencesForDiseaseExtentForGlobalDisease() {
+        getDiseaseOccurrencesForDiseaseExtent(true);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentForTropicalDisease() {
+        getDiseaseOccurrencesForDiseaseExtent(false);
+    }
+
+    public void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
         // Arrange
         int diseaseGroupId = 10;
         double minimumValidationWeighting = 0.7;
         DateTime minimumOccurrenceDate = DateTime.now();
         List<Integer> feedIds = new ArrayList<>();
         List<DiseaseOccurrenceForDiseaseExtent> expectedOccurrences = new ArrayList<>();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setGlobal(isGlobal);
 
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
-                minimumOccurrenceDate, feedIds)).thenReturn(expectedOccurrences);
+                minimumOccurrenceDate, feedIds, isGlobal)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrenceForDiseaseExtent> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(

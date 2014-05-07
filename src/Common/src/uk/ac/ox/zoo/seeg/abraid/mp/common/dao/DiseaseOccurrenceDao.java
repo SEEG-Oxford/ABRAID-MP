@@ -60,9 +60,10 @@ public interface DiseaseOccurrenceDao {
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
      *                accepts all feeds.
+     * @param isGlobal True if the disease group is global, otherwise false.
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds);
+            List<Integer> feedIds, boolean isGlobal);
 }

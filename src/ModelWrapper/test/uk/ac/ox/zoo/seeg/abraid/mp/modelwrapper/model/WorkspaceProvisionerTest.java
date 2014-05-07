@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -35,10 +36,11 @@ public class WorkspaceProvisionerTest {
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
         File expectedBasePath = testFolder.getRoot();
         String expectedRunName = "bar";
-        RunConfiguration config = new RunConfiguration(null, expectedBasePath, expectedRunName, 0, "");
+        RunConfiguration config =
+                new RunConfiguration(null, expectedBasePath, expectedRunName, true, 0, "", "", new ArrayList<String>());
 
         // Act
-        File script = target.provisionWorkspace(config, null);
+        File script = target.provisionWorkspace(config, null, null);
         File result = script.getParentFile();
 
         // Assert
@@ -55,11 +57,12 @@ public class WorkspaceProvisionerTest {
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         File expectedScript = new File("foobar");
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
-        RunConfiguration config = new RunConfiguration(null, testFolder.getRoot(), "", 0, "");
+        RunConfiguration config =
+                new RunConfiguration(null, testFolder.getRoot(), "", true, 0, "", "", new ArrayList<String>());
         when(scriptGenerator.generateScript(eq(config), any(File.class), eq(false))).thenReturn(expectedScript);
 
         // Act
-        File script = target.provisionWorkspace(config, null);
+        File script = target.provisionWorkspace(config, null, null);
 
         // Assert
         verify(scriptGenerator, times(1)).generateScript(eq(config), any(File.class), eq(false));
@@ -75,10 +78,11 @@ public class WorkspaceProvisionerTest {
         when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class), anyBoolean())).then(returnsArgAt(1));
         String expectedVersion = "foobar";
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
-        RunConfiguration config = new RunConfiguration(null, testFolder.getRoot(), "", 0, expectedVersion);
+        RunConfiguration config =
+                new RunConfiguration(null, testFolder.getRoot(), "", true, 0, expectedVersion, "", new ArrayList<String>());
 
         // Act
-        File runDir = target.provisionWorkspace(config, null);
+        File runDir = target.provisionWorkspace(config, null, null);
 
         // Assert
         ArgumentCaptor<String> versionCaptor = ArgumentCaptor.forClass(String.class);
@@ -98,10 +102,11 @@ public class WorkspaceProvisionerTest {
         when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class), anyBoolean())).then(returnsArgAt(1));
         GeoJsonDiseaseOccurrenceFeatureCollection expectedData = mock(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
-        RunConfiguration config = new RunConfiguration(null, testFolder.getRoot(), "", 0, "foobar");
+        RunConfiguration config =
+                new RunConfiguration(null, testFolder.getRoot(), "", true, 0, "foobar", "", new ArrayList<String>());
 
         // Act
-        File runDir = target.provisionWorkspace(config, expectedData);
+        File runDir = target.provisionWorkspace(config, expectedData, null);
 
         // Assert
         ArgumentCaptor<GeoJsonDiseaseOccurrenceFeatureCollection> dataCaptor = ArgumentCaptor.forClass(GeoJsonDiseaseOccurrenceFeatureCollection.class);
@@ -117,10 +122,10 @@ public class WorkspaceProvisionerTest {
         // Arrange
         File notAValidDirectory = testFolder.newFile();
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(mock(ScriptGenerator.class), mock(SourceCodeManager.class), mock(InputDataManager.class));
-        RunConfiguration conf = new RunConfiguration(null, notAValidDirectory, "", 0, "");
+        RunConfiguration conf = new RunConfiguration(null, notAValidDirectory, "", true, 0, "", "", new ArrayList<String>());
 
         // Act
-        catchException(target).provisionWorkspace(conf, null);
+        catchException(target).provisionWorkspace(conf, null, null);
         Exception result = caughtException();
 
         // Assert

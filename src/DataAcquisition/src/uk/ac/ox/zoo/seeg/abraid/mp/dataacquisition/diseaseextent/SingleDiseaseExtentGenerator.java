@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent;
 
+import ch.lambdaj.function.convert.Converter;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -10,8 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ch.lambdaj.Lambda.index;
-import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.*;
 
 /**
  * Generates a disease extent for a single disease group.
@@ -74,19 +74,16 @@ public class SingleDiseaseExtentGenerator {
 
     private Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> findAndGroupInitialDiseaseExtentClasses(
             Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit,
-            DiseaseExtentParameters parameters) {
-
-        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> classesByAdminUnit = new HashMap<>();
-
+            final DiseaseExtentParameters parameters) {
         // For each admin unit, convert its list of disease occurrences into a disease extent class
-        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
-                occurrencesByAdminUnit.entrySet()) {
-            int occurrenceCount = occurrenceByAdminUnit.getValue().size();
-            DiseaseExtentClass diseaseExtentClass = getInitialDiseaseExtentClass(occurrenceCount, parameters);
-            classesByAdminUnit.put(occurrenceByAdminUnit.getKey(), diseaseExtentClass);
-        }
-
-        return classesByAdminUnit;
+        return convertMap(occurrencesByAdminUnit,
+                          new Converter<List<DiseaseOccurrenceForDiseaseExtent>, DiseaseExtentClass>() {
+            @Override
+            public DiseaseExtentClass convert(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+                // This is the conversion of one list of disease occurrences into a disease extent class
+                return getInitialDiseaseExtentClass(occurrences.size(), parameters);
+            }
+        });
     }
 
     private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> groupOccurrencesByAdminUnit(
@@ -107,7 +104,10 @@ public class SingleDiseaseExtentGenerator {
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
             AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(
                     occurrence.getAdminUnitGlobalOrTropicalGaulCode());
-            group.get(adminUnit).add(occurrence);
+            // Should never be null, but just in case
+            if (adminUnit != null) {
+                group.get(adminUnit).add(occurrence);
+            }
         }
 
         return group;

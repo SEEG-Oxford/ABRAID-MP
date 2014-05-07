@@ -22,7 +22,9 @@
                 "app/spec/KoCustomRulesSpec",
                 "app/spec/MiscViewModelSpec",
                 "app/spec/RepositoryViewModelSpec",
-                "app/spec/SingleFieldFormViewModelSpec"
+                "app/spec/SingleFieldFormViewModelSpec",
+                "app/spec/CovariatesListViewModelSpec",
+                "app/spec/CovariatesListRowViewModelSpec"
             ];
         </script>
 
@@ -40,6 +42,8 @@
                         beforeSpecs.push("https://cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.js");
                         beforeSpecs.push("app/spec/util/coverage-reporter");
                     }
+
+                    beforeSpecs.push("app/spec/util/jasmineExtensions");
 
                     require(beforeSpecs, function() {
                         if (includeCoverage) {

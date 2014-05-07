@@ -4,10 +4,13 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -32,23 +35,25 @@ public class ModelRunControllerTest {
     }
 
     @Test
-    public void startRunAcceptsFeatureCollectionAndTriggersRun() throws Exception {
+    public void startRunAcceptsModelDataAndTriggersRun() throws Exception {
         // Arrange
         RunConfigurationFactory mockFactory = mock(RunConfigurationFactory.class);
         RunConfiguration mockConf = mock(RunConfiguration.class);
         ModelRunner mockRunner = mock(ModelRunner.class);
-        when(mockFactory.createDefaultConfiguration(anyString())).thenReturn(mockConf);
+        when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString(), anyString())).thenReturn(mockConf);
 
         ModelRunController target = new ModelRunController(mockFactory, mockRunner);
 
-        GeoJsonDiseaseOccurrenceFeatureCollection object = new GeoJsonDiseaseOccurrenceFeatureCollection(
+        GeoJsonDiseaseOccurrenceFeatureCollection occurrence = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
+        ArrayList<Integer> extent = new ArrayList<Integer>();
 
         // Act
-        ResponseEntity result = target.startRun(object);
+        ResponseEntity result = target.startRun(new JsonModelRun(
+                new JsonModelDisease(1, true, "foo", "foo"), occurrence, extent));
 
         // Assert
-        verify(mockRunner, times(1)).runModel(mockConf, object);
+        verify(mockRunner, times(1)).runModel(mockConf, occurrence, extent);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -61,7 +66,8 @@ public class ModelRunControllerTest {
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
 
         // Act
-        ResponseEntity result = target.startRun(object);
+        ResponseEntity result = target.startRun(new JsonModelRun(
+                new JsonModelDisease(1, true, "foo", "foo"), object, new ArrayList<Integer>()));
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

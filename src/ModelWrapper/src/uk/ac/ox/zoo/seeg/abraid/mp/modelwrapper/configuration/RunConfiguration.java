@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * An immutable data structure to hold the configuration for a single model run.
@@ -17,26 +18,38 @@ public class RunConfiguration {
     // The path to the R executable to use
     private final File rPath;
 
+    // If the run is for a global disease
+    private final boolean isGlobal;
+
     // The maximum allowable model run time in ms
     private final int maxRuntime;
 
     // The version of the model to use
     private String modelVersion;
 
+    // The covariate setup to use
+    private final String covariateDirectory;
+    private final Collection<String> covariateFilePaths;
+
     /**
      * Creates a new RunConfiguration.
      * @param rPath The file path for the R binary to be executed.
      * @param baseDir The executable which should be run.
      * @param runName The name that should be used to identify the run.
+     * @param isGlobal If the run is for a global disease.
      * @param maxRuntime The maximum allowed time (in ms) for which the model should be allow to run.
      * @param modelVersion The version of the model to use.
      */
-    public RunConfiguration(File rPath, File baseDir, String runName, int maxRuntime, String modelVersion) {
+    public RunConfiguration(File rPath, File baseDir, String runName, boolean isGlobal, int maxRuntime,
+                            String modelVersion, String covariateDirectory, Collection<String> covariateFilePaths) {
         this.rPath = rPath;
         this.baseDir = baseDir;
         this.runName = runName;
+        this.isGlobal = isGlobal;
         this.maxRuntime = maxRuntime;
         this.modelVersion = modelVersion;
+        this.covariateDirectory = covariateDirectory;
+        this.covariateFilePaths = covariateFilePaths;
     }
 
     public String getRunName() {
@@ -57,5 +70,17 @@ public class RunConfiguration {
 
     public String getModelVersion() {
         return modelVersion;
+    }
+
+    public String getCovariateDirectory() {
+        return covariateDirectory;
+    }
+
+    public Collection<String> getCovariateFilePaths() {
+        return covariateFilePaths;
+    }
+
+    public boolean isGlobal() {
+        return isGlobal;
     }
 }

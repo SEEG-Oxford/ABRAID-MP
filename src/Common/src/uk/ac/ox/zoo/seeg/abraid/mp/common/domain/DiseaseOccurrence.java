@@ -57,7 +57,9 @@ public class DiseaseOccurrence {
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.validationWeighting >= :minimumValidationWeighting " +
             "and d.occurrenceDate >= :minimumOccurrenceDate " +
-            "and d.location.hasPassedQc = true";
+            "and d.location.hasPassedQc = true " +
+            "and ((:isGlobal = true and d.location.adminUnitGlobalGaulCode is not null) or " +
+            "     (:isGlobal = false and d.location.adminUnitTropicalGaulCode is not null))";
 
     // The primary key.
     @Id
