@@ -104,7 +104,10 @@ public class SingleDiseaseExtentGenerator {
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
             AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(
                     occurrence.getAdminUnitGlobalOrTropicalGaulCode());
-            group.get(adminUnit).add(occurrence);
+            // Should never be null, but just in case
+            if (adminUnit != null) {
+                group.get(adminUnit).add(occurrence);
+            }
         }
 
         return group;

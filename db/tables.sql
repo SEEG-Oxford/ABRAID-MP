@@ -109,7 +109,6 @@ CREATE TABLE disease_group (
     abbreviation varchar(10),
     is_global boolean,
     validator_disease_group_id integer,
-    last_extent_generation_date timestamp,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 

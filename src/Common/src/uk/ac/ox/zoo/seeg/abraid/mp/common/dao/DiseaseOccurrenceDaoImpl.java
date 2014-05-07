@@ -58,13 +58,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
      *                accepts all feeds.
+     * @param isGlobal True if the disease group is global, otherwise false.
      * @return A list of disease occurrences.
      */
     @Override
     @SuppressWarnings("unchecked")
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds) {
+            List<Integer> feedIds, boolean isGlobal) {
         // Restrict to the given list of feed IDs (if any)
         boolean includeFeedIds = (feedIds != null && feedIds.size() > 0);
 
@@ -74,6 +75,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         query.setParameter("diseaseGroupId", diseaseGroupId);
         query.setParameter("minimumValidationWeighting", minimumValidationWeighting);
         query.setParameter("minimumOccurrenceDate", minimumOccurrenceDate);
+        query.setParameter("isGlobal", isGlobal);
         if (includeFeedIds) {
             query.setParameterList("feedIds", feedIds);
         }
