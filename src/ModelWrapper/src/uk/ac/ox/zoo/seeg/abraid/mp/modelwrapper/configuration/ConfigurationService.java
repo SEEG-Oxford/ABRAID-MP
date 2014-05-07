@@ -85,6 +85,18 @@ public interface ConfigurationService {
     void setMaxModelRunDuration(int value);
 
     /**
+     * Gets the path to the current global shapefile.
+     * @return The path to the global shapefile.
+     */
+    String getGlobalShapeFile();
+
+    /**
+     * Gets the path to the current tropical shapefile.
+     * @return The path to the tropical shapefile.
+     */
+    String getTropicalShapeFile();
+
+    /**
      * Gets the current directory for covariate files.
      * @return The directory for covariate files.
      */
