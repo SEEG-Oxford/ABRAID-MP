@@ -63,6 +63,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_COVARIATE_SUB_DIR = "covariates";
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\R.exe";
+    private static final String DEFAULT_SHAPEFILE_SUBDIR = "admin_units";
+    private static final String DEFAULT_TROPICAL_SHAPEFILE_NAME = "admin_units_tropical.shp";
+    private static final String DEFAULT_GLOBAL_SHAPEFILE_NAME = "admin_units_global.shp";
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
@@ -71,7 +74,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String MODEL_VERSION_KEY = "model.repo.version";
     private static final String R_EXECUTABLE_KEY = "r.executable.path";
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
+    private static final String GLOBAL_SHAPEFILE_KEY = "shape.file.global";
+    private static final String TROPICAL_SHAPEFILE_KEY = "shape.file.tropical";
     private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
+
     private static final String COVARIATE_JSON_FILE = "abraid.json";
 
     private final FileConfiguration basicProperties;
@@ -206,6 +212,32 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public void setMaxModelRunDuration(int value) {
         LOGGER.info(String.format(LOG_UPDATING_RUN_DURATION, value));
         basicProperties.setProperty(R_MAX_DURATION_KEY, value);
+    }
+
+    /**
+     * Gets the path to the current global shapefile.
+     * @return The path to the global shapefile.
+     */
+    @Override
+    public String getGlobalShapeFile() {
+        return getShapeFile(GLOBAL_SHAPEFILE_KEY, DEFAULT_GLOBAL_SHAPEFILE_NAME);
+    }
+
+    /**
+     * Gets the path to the current tropical shapefile.
+     * @return The path to the tropical shapefile.
+     */
+    @Override
+    public String getTropicalShapeFile() {
+        return getShapeFile(TROPICAL_SHAPEFILE_KEY, DEFAULT_TROPICAL_SHAPEFILE_NAME);
+    }
+
+    private String getShapeFile(String propertyKey, String defaultName) {
+        if (basicProperties.containsKey(propertyKey)) {
+            return basicProperties.getString(propertyKey);
+        }
+        Path filePath = Paths.get(getCacheDirectory(), DEFAULT_SHAPEFILE_SUBDIR, defaultName);
+        return filePath.toString();
     }
 
     /**
