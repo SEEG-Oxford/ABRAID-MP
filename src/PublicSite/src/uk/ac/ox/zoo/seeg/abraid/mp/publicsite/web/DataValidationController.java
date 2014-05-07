@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
-import org.omg.CORBA.Current;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

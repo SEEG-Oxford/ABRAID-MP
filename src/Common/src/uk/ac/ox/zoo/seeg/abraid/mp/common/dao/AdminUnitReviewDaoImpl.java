@@ -32,7 +32,7 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
      */
     @Override
     public List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
-        return listNamedQuery("getAdminUnitReviewsByExpertIdAndDiseaseGroupId", "expertId", expertId,"diseaseGroupId",
+        return listNamedQuery("getAdminUnitReviewsByExpertIdAndDiseaseGroupId", "expertId", expertId, "diseaseGroupId",
                 diseaseGroupId);
     }
 }

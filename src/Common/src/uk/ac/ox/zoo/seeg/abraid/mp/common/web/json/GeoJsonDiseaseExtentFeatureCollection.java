@@ -17,7 +17,8 @@ public class GeoJsonDiseaseExtentFeatureCollection
     public GeoJsonDiseaseExtentFeatureCollection() {
     }
 
-    public GeoJsonDiseaseExtentFeatureCollection(List<AdminUnitDiseaseExtentClass> diseaseExtent, List<AdminUnitReview> reviews) {
+    public GeoJsonDiseaseExtentFeatureCollection(List<AdminUnitDiseaseExtentClass> diseaseExtent,
+                                                 List<AdminUnitReview> reviews) {
         super(extractExtentFeatures(diseaseExtent, reviews), GeoJsonNamedCrs.createEPSG4326(), null);
     }
 

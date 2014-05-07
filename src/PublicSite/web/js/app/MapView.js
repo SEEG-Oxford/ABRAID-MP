@@ -217,9 +217,10 @@ define([
         var legend = L.control({position: "bottomleft"});
         legend.onAdd = function () {
             var div = L.DomUtil.create("div", "legend");
-            div.innerHTML = _((_(diseaseExtentClassColourScale).pairs()).map(function (pair) {
-                return createLegendRow(pair[0], pair[1]);
-            })).join("");
+            div.innerHTML = "<span style='text-decoration:underline'>Current classification</span><br>" +
+                _((_(diseaseExtentClassColourScale).pairs()).map(function (pair) {
+                    return createLegendRow(pair[0], pair[1]);
+                })).join("");
             return div;
         };
 

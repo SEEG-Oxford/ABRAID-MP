@@ -18,7 +18,8 @@ public class GeoJsonDiseaseExtentFeature extends GeoJsonFeature
     public GeoJsonDiseaseExtentFeature() {
     }
 
-    public GeoJsonDiseaseExtentFeature(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass, List<AdminUnitReview> reviews) {
+    public GeoJsonDiseaseExtentFeature(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
+                                       List<AdminUnitReview> reviews) {
         super(
                 extractGaulCode(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical()),
                 extractGeometry(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical()),
