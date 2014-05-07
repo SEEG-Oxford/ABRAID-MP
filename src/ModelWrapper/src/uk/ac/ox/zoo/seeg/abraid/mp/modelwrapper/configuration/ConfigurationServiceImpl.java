@@ -220,11 +220,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public String getGlobalShapeFile() {
-        if (basicProperties.containsKey(GLOBAL_SHAPEFILE_KEY)) {
-            return basicProperties.getString(GLOBAL_SHAPEFILE_KEY);
-        }
-        Path filePath = Paths.get(getCacheDirectory(), DEFAULT_SHAPEFILE_SUBDIR, DEFAULT_GLOBAL_SHAPEFILE_NAME);
-        return filePath.toString();
+        return getShapeFile(GLOBAL_SHAPEFILE_KEY, DEFAULT_GLOBAL_SHAPEFILE_NAME);
     }
 
     /**
@@ -233,10 +229,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public String getTropicalShapeFile() {
-        if (basicProperties.containsKey(TROPICAL_SHAPEFILE_KEY)) {
-            return basicProperties.getString(TROPICAL_SHAPEFILE_KEY);
+        return getShapeFile(TROPICAL_SHAPEFILE_KEY, DEFAULT_TROPICAL_SHAPEFILE_NAME);
+    }
+
+    private String getShapeFile(String propertyKey, String defaultName) {
+        if (basicProperties.containsKey(propertyKey)) {
+            return basicProperties.getString(propertyKey);
         }
-        Path filePath = Paths.get(getCacheDirectory(), DEFAULT_SHAPEFILE_SUBDIR, DEFAULT_TROPICAL_SHAPEFILE_NAME);
+        Path filePath = Paths.get(getCacheDirectory(), DEFAULT_SHAPEFILE_SUBDIR, defaultName);
         return filePath.toString();
     }
 
