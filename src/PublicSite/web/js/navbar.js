@@ -1,10 +1,14 @@
-/**
- * JS file for the navbar header.
- * Copyright (c) 2014 University of Oxford
+/** JS file for the navbar header.
+ *  Copyright (c) 2014 University of Oxford
  */
-'use strict';
+/*global window:false*/
+define(["jquery"], function ($) {
+    "use strict";
 
-// Highlight the link for the current page
-$('ul.nav a').filter(function () {
-    return this.href == location;
-}).parent().addClass('active');
+    return function () {
+        // Highlight the link for the current page
+        $("ul.nav a").filter(function () {
+            return this.href.toLowerCase() === window.location.href.toLowerCase();
+        }).parent().addClass("active");
+    };
+});

@@ -2,14 +2,20 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -24,6 +30,28 @@ import static org.mockito.Mockito.when;
 public class ConfigurationServiceTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+    public static final String TEST_COVARIATE_JSON = "{\n" +
+            "  \"diseases\" : [ {\n" +
+            "    \"id\" : 22,\n" +
+            "    \"name\" : \"Ascariasis\"\n" +
+            "  }, {\n" +
+            "    \"id\" : 64,\n" +
+            "    \"name\" : \"Cholera\"\n" +
+            "  } ],\n" +
+            "  \"files\" : [ {\n" +
+            "    \"path\" : \"f1\",\n" +
+            "    \"name\" : \"a\",\n" +
+            "    \"info\" : null,\n" +
+            "    \"hide\" : false,\n" +
+            "    \"enabled\" : [ 22 ]\n" +
+            "  }, {\n" +
+            "    \"path\" : \"f2\",\n" +
+            "    \"name\" : \"\",\n" +
+            "    \"info\" : null,\n" +
+            "    \"hide\" : true,\n" +
+            "    \"enabled\" : [ ]\n" +
+            "  } ]\n" +
+            "}";
 
     private void writeStandardSimpleProperties(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion)
             throws FileNotFoundException, UnsupportedEncodingException {
@@ -39,7 +67,7 @@ public class ConfigurationServiceTest {
             throws IOException {
         writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
-        writer.println(extraKey + " = " + extraValue);
+        writer.println(extraKey + " = " + StringEscapeUtils.escapeJava(extraValue));
         writer.close();
     }
 
@@ -48,7 +76,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedUserName = "foo";
         String expectedPasswordHash = "bar";
@@ -66,7 +94,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedUrl = "foo";
 
@@ -82,7 +110,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedVersion = "foo";
 
@@ -99,7 +127,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedUserName = "foo";
         writeStandardSimpleProperties(testFile, expectedUserName, "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getAuthenticationUsername();
@@ -114,7 +142,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedPasswordHash = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", expectedPasswordHash, "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getAuthenticationPasswordHash();
@@ -129,7 +157,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedUrl = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", expectedUrl, "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getModelRepositoryUrl();
@@ -144,7 +172,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedVersion = "foo";
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", expectedVersion);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         // Act
         String result = target.getModelRepositoryVersion();
@@ -160,7 +188,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(true);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
 
         // Act
         String result = target.getCacheDirectory();
@@ -177,7 +205,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(false);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
 
         // Act
         String result = target.getCacheDirectory();
@@ -193,7 +221,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedDir = "foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "cache.data.dir", expectedDir);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
 
         // Act
         String result = target.getCacheDirectory();
@@ -209,7 +237,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(false);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
         if (Paths.get("/usr/bin/R").toFile().exists()) {
             // Act
             String result = target.getRExecutablePath();
@@ -232,7 +260,7 @@ public class ConfigurationServiceTest {
         when(osChecker.isWindows()).thenReturn(true);
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, osChecker);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
         if (Paths.get(System.getenv("R_HOME") + "\\bin\\R.exe").toFile().exists()) {
             // Act
             String result = target.getRExecutablePath();
@@ -254,7 +282,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedValue = "foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "r.executable.path", expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         String result = target.getRExecutablePath();
@@ -268,7 +296,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedValue = "foo";
 
@@ -284,7 +312,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         int result = target.getMaxModelRunDuration();
@@ -299,7 +327,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         int expectedValue = 1234;
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "r.max.duration", "" + expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         int result = target.getMaxModelRunDuration();
@@ -313,7 +341,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         int expectedValue = 123;
 
@@ -329,7 +357,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, new OSCheckerImpl());
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, new OSCheckerImpl());
 
         // Act
         String result = target.getCovariateDirectory();
@@ -345,7 +373,7 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         String expectedValue = "foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "covariate.dir", expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, mock(OSChecker.class));
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         String result = target.getCovariateDirectory();
@@ -359,7 +387,7 @@ public class ConfigurationServiceTest {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
 
         String expectedValue = "bar";
 
@@ -368,5 +396,172 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(FileUtils.readFileToString(testFile)).contains("covariate.dir = " + expectedValue);
+    }
+
+    @Test
+    public void getCovariateConfigurationReturnsCorrectObject() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        File covariateDir = testFolder.newFolder();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", covariateDir.toString());
+
+        File confFile = Paths.get(covariateDir.toString(), "abraid.json").toFile();
+        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
+
+        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        JsonCovariateConfiguration result = target.getCovariateConfiguration();
+
+        // Assert
+        assertThat(result).isEqualTo(conf);
+    }
+
+    @Test
+    public void getCovariateConfigurationReturnsCorrectFallbackObject() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        File covariateDir = testFolder.newFolder();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", "nonsense");
+
+        File confFile = Paths.get(covariateDir.toString(), "abraid.json").toFile();
+        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
+
+        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, confFile, mock(OSChecker.class));
+
+        // Act
+        JsonCovariateConfiguration result = target.getCovariateConfiguration();
+
+        // Assert
+        assertThat(result).isEqualTo(conf);
+    }
+
+    @Test
+    public void getCovariateConfigurationAddsNewFilesCorrectly() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        File covariateDir = testFolder.newFolder();
+        File covariateConfFile = testFolder.newFile();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", covariateDir.toString());
+
+        FileUtils.writeStringToFile(covariateConfFile, TEST_COVARIATE_JSON);
+
+        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "1").toFile(), "foo");
+        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "2").toFile(), "foo");
+        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "3").toFile(), "foo");
+
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, covariateConfFile, mock(OSChecker.class));
+
+        // Act
+        JsonCovariateConfiguration result = target.getCovariateConfiguration();
+
+        // Assert
+        assertThat(result.getFiles().size()).isEqualTo(2 + 3);
+    }
+
+    @Test
+    public void getCovariateConfigurationThrowsIfFilesNotReadable() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", "nonsense");
+
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, new File("nonsense"), mock(OSChecker.class));
+
+        // Act
+        catchException(target).getCovariateConfiguration();
+
+        // Assert
+        assertThat(caughtException())
+                .isInstanceOf(IOException.class)
+                .hasMessage("Failed to read and parse covariate config file from disk.");
+    }
+
+    @Test
+    public void getCovariateConfigurationThrowsIfConfigurationNoValid() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        File covariateConfFile = testFolder.newFile();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", "nonsense");
+
+        FileUtils.writeStringToFile(covariateConfFile, "{}");
+
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, covariateConfFile, mock(OSChecker.class));
+
+        // Act
+        catchException(target).getCovariateConfiguration();
+
+        // Assert
+        assertThat(caughtException())
+                .isInstanceOf(IOException.class)
+                .hasMessage("Covariate config file on disk is not valid.");
+    }
+
+    @Test
+    public void setCovariateConfigurationWritesFile() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        File covariateDir = testFolder.newFolder();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", covariateDir.toString());
+
+        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        target.setCovariateConfiguration(conf);
+        String result = FileUtils.readFileToString(Paths.get(covariateDir.toString(), "abraid.json").toFile());
+
+        // Assert
+        assertThat(result.replaceAll("[\\r\\n]+", "")).isEqualTo(TEST_COVARIATE_JSON.replaceAll("[\\r\\n]+", ""));
+    }
+
+    @Test
+    public void setCovariateConfigurationThrowsIfDirectoryCanNotBeCreated() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        File notADir = testFolder.newFile();
+        writeStandardSimplePropertiesWithExtra(testFile,
+                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "covariate.dir", notADir.toString());
+
+        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        catchException(target).setCovariateConfiguration(conf);
+
+        // Assert
+        assertThat(caughtException())
+                .isInstanceOf(IOException.class)
+                .hasMessageStartingWith("Cannot store covariate config.");
+    }
+
+    private static JsonCovariateConfiguration createJsonCovariateConfig() {
+        JsonCovariateConfiguration conf = new JsonCovariateConfiguration();
+        conf.setDiseases(Arrays.asList(
+                new JsonDisease(22, "Ascariasis"),
+                new JsonDisease(64, "Cholera")
+        ));
+        conf.setFiles(Arrays.asList(
+                new JsonCovariateFile("f1", "a", null, false, Arrays.asList(22)),
+                new JsonCovariateFile("f2", "", null, true, new ArrayList<Integer>())
+        ));
+        return conf;
     }
 }

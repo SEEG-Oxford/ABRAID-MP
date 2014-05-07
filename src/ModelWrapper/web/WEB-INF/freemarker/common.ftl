@@ -2,7 +2,7 @@
     The page template, including header and footer.
     Copyright (c) 2014 University of Oxford
 -->
-<#macro page title endOfHead="" endOfBody="" endOfBodyScript="" requireDataMain="">
+<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="">
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html class="no-js">
@@ -18,52 +18,37 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap-theme.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.2/css/jasny-bootstrap.css">
 
         ${endOfHead}
 
         <link rel="stylesheet" href="<@spring.url '/css/main.css'/>">
     </head>
     <body>
-        <div class="navbar navbar-default navbar-fixed-top navbar-inverse">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">ABRAID-MP Model Wrapper</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <#include "navbar.ftl"/>
         <div id="common">
             <#nested/>
         </div>
-        <div id="footer" class="text-muted">
-            <div class="container">
-                <div class="links">
-                    <a href="http://www.gatesfoundation.org/">BMGF</a><p> | </p>
-                    <a href="http://healthmap.org/en/">HealthMap</a><p> | </p>
-                    <a href="http://seeg.zoo.ox.ac.uk/">SEEG</a><p> | </p>
-                    <a href="http://tghn.org/">TGHN</a>
-                </div>
-                <div class="copyright">
-                    <p>&copy; 2014 University of Oxford</p>
-                </div>
-            </div>
-        </div>
+        <#include "footer.ftl"/>
+
+        <!-- Base url -->
         <script>
             var baseUrl = "<@spring.url '/'/>";
-            ${endOfBodyScript}
         </script>
-        <script type="text/javascript" data-main="<@spring.url '${requireDataMain}' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
-        ${endOfBody}
+
+        <!-- Bootstrapped JS data for KO view models -->
+        ${bootstrapData}
+
+        <!-- Templates -->
+        ${templates}
+        <script type="text/html" id="validation-template">
+            <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
+                <i class="fa fa-lg" data-bind="css: field.isValid() ? 'text-success fa-check-circle' : 'text-danger fa-exclamation-circle'"></i>
+            </span>
+        </script>
+
+        <!-- Require -->
+        <script type="text/javascript" data-main="<@spring.url '${mainjs}' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
     </body>
 </html>
 </#macro>

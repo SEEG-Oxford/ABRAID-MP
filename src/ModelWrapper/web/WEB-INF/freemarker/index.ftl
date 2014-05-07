@@ -3,7 +3,24 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#import "common.ftl" as c/>
-<@c.page title="ABRAID-MP ModelWrapper" requireDataMain="/js/index">
+
+<#assign bootstrapData>
+    <script type="text/javascript">
+        // bootstrapped data for js viewmodels
+        var initialRepoData = {
+            url: "${repository_url?js_string}",
+            version: "${model_version?js_string}",
+            availableVersions: [<#list available_versions as version>"${version?js_string}"<#if version_has_next>,</#if></#list>]
+        };
+        var initialMiscData = {
+            rPath: "${r_path?js_string}",
+            runDuration: ${run_duration?c},
+            covariateDirectory: "${covariate_directory?js_string}"
+        };
+    </script>
+</#assign>
+
+<@c.page title="ABRAID-MP ModelWrapper" mainjs="/js/index" bootstrapData=bootstrapData templates="">
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -163,22 +180,4 @@
         </div>
     </div>
 </div>
-<script type="text/html" id="validation-template">
-    <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
-        <i class="fa fa-lg" data-bind="css: field.isValid() ? 'text-success fa-check-circle' : 'text-danger fa-exclamation-circle'"></i>
-    </span>
-</script>
-<script>
-    // bootstrapped data for js viewmodels
-    var initialRepoData = {
-        url: "${repository_url?js_string}",
-        version: "${model_version?js_string}",
-        availableVersions: [<#list available_versions as version>"${version?js_string}"<#if version_has_next>,</#if></#list>]
-    };
-    var initialMiscData = {
-        rPath: "${r_path?js_string}",
-        runDuration: ${run_duration?c},
-        covariateDirectory: "${covariate_directory?js_string}"
-    };
-</script>
 </@c.page>
