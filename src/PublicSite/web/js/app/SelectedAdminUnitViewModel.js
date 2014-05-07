@@ -16,8 +16,8 @@ define([
     return function () {
         var self = this;
 
-        ko.postbox.subscribe("admin-units-to-be-reviewed", function (units) {
-            self.adminUnits(_(units).sortBy(function (unit) { return unit.properties.name; }));
+        ko.postbox.subscribe("admin-units-to-be-reviewed", function (event) {
+            self.adminUnits(_(event.data).sortBy(function (unit) { return unit.properties.name; }));
         });
 
         self.adminUnits = ko.observable();

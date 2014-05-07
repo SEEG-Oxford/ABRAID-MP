@@ -2,7 +2,7 @@
  * Apply KO bindings for the data validation page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, data:false, window:false*/
+/*global require:false, baseUrl:false, data:false, window:false, alert:false*/
 require(["require.conf"], function () {
     "use strict";
 
@@ -20,7 +20,7 @@ require(["require.conf"], function () {
                  SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
             ko.applyBindings(new SidePanelViewModel(
-                    new SelectedPointViewModel(baseUrl),
+                    new SelectedPointViewModel(baseUrl, alert),
                     new SelectedAdminUnitViewModel()
                 ),
                 doc.getElementById("sidePanelContent")

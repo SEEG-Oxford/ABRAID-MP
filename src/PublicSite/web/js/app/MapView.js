@@ -287,7 +287,7 @@ define([
                 var adminUnitsNeedReview = _(featureCollection.features).filter(function (f) {
                     return f.properties.needsReview;
                 });
-                ko.postbox.publish("admin-units-to-be-reviewed", adminUnitsNeedReview);
+                ko.postbox.publish("admin-units-to-be-reviewed", { data: adminUnitsNeedReview, skipSerialize: true });
                 ko.postbox.publish("no-features-to-review", adminUnitsNeedReview.length === 0);
             });
         }

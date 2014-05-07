@@ -7,14 +7,13 @@
  * - Events published:
  * -- 'point-reviewed' on successful submitReview POST
  */
-/*global alert:false*/
 define([
     "ko",
     "jquery"
 ], function (ko, $) {
     "use strict";
 
-    return function (baseUrl) {
+    return function (baseUrl, alert) {
         var self = this;
 
         var createTranslationUrl = function (langPair, summary) {

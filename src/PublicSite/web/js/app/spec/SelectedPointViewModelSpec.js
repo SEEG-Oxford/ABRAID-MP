@@ -1,7 +1,7 @@
 /* A suite of tests for the SelectedPointViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
-/*global window:true*/
+/*global window:false*/
 define([
     "app/SelectedPointViewModel",
     "ko"

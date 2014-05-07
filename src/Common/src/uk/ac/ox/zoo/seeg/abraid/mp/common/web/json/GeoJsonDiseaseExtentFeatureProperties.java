@@ -49,11 +49,9 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return (extentClassHasChanged || !expertHasReviewed);
     }
 
-    private boolean containsAdminUnit(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit1) {
+    private boolean containsAdminUnit(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
         for (AdminUnitReview review : reviews) {
-            AdminUnitGlobalOrTropical adminUnit2 =
-                    (review.getAdminUnitGlobal() != null) ? review.getAdminUnitGlobal() : review.getAdminUnitTropical();
-            if (adminUnit1.equals(adminUnit2)) {
+            if (adminUnit.equals(review.getAdminUnitGlobalOrTropical())) {
                 return true;
             }
         }

@@ -61,6 +61,14 @@ public class AdminUnitReview {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
+    /**
+     * The AdminUnitGlobal or the AdminUnitTropical, whichever of the pair is not null.
+     * @return The (global or tropical) admin unit.
+     */
+    public AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropical() {
+        return (adminUnitGlobal == null) ? adminUnitTropical : adminUnitGlobal;
+    }
+
     public Integer getId() {
         return id;
     }
