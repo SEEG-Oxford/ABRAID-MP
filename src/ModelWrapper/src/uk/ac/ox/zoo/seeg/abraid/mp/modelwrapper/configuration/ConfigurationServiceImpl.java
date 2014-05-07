@@ -64,8 +64,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\R.exe";
     private static final String DEFAULT_SHAPEFILE_SUBDIR = "admin_units";
-    private static final String DEFAULT_TROPICAL_SHAPEFILE_NAME = "admin_units_tropical";
-    private static final String DEFAULT_GLOBAL_SHAPEFILE_NAME = "admin_units_global";
+    private static final String DEFAULT_TROPICAL_SHAPEFILE_NAME = "admin_units_tropical.shp";
+    private static final String DEFAULT_GLOBAL_SHAPEFILE_NAME = "admin_units_global.shp";
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
