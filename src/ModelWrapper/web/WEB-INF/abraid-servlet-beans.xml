@@ -47,4 +47,11 @@
 
     <!-- Enable @Secured attribute -->
     <security:global-method-security secured-annotations="enabled" />
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.LoggingHandlerInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>
