@@ -10,5 +10,7 @@ define([
 ], function (ko) {
     "use strict";
 
+    // Force postbox to publish every change - https://github.com/rniemeyer/knockout-postbox/issues/10
+    ko.postbox.serializer = function () { return {}; };
     return ko;
 });

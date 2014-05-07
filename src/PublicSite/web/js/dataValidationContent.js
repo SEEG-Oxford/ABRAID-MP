@@ -21,7 +21,7 @@ require(["require.conf"], function () {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
             ko.applyBindings(new SidePanelViewModel(
                     new SelectedPointViewModel(baseUrl),
-                    new SelectedAdminUnitViewModel(baseUrl)
+                    new SelectedAdminUnitViewModel()
                 ),
                 doc.getElementById("sidePanelContent")
             );

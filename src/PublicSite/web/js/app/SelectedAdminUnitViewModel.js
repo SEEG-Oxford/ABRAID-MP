@@ -9,24 +9,18 @@
  */
 define([
     "ko",
-    "jquery"
-], function (ko, $) {
+    "underscore"
+], function (ko, _) {
     "use strict";
 
-    return function (baseUrl) {
+    return function () {
         var self = this;
 
-        ko.postbox.subscribe("layers-changed", function (data) {
-            if (data.type === "disease extent") {
-                var url = baseUrl + "datavalidation/diseases/" + data.diseaseId + "/adminunits";
-                $.getJSON(url, function (featureCollection) {
-                    // Filter only those where the boolean property indicating it is in need of review is true
-                    self.adminUnits(featureCollection.features);
-                });
-            }
+        ko.postbox.subscribe("admin-units-to-be-reviewed", function (units) {
+            self.adminUnits(_(units).sortBy(function (unit) { return unit.properties.name; }));
         });
 
-        self.adminUnits = ko.observableArray();
+        self.adminUnits = ko.observable();
         self.selectedAdminUnit = ko.observable(null).subscribeTo("admin-unit-selected");
         self.hasSelectedAdminUnit = ko.computed(function () {
             return self.selectedAdminUnit() !== null;

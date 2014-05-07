@@ -21,16 +21,14 @@
                 <table class="table table-condensed table-hover">
                     <thead>
                         <tr>
+                            <th>Occurrences</th>
                             <th>Admin Unit</th>
-                            <th>Class</th>
-                            <th>Count</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
                         <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', this); }">
-                            <td data-bind="text: properties.name"></td>
-                            <td data-bind="text: properties.diseaseExtentClass"></td>
-                            <td data-bind="text: properties.occurrenceCount"></td>
+                            <td style="text-align: center" data-bind="text: properties.occurrenceCount"></td>
+                            <td style="text-align: left" data-bind="text: properties.name"></td>
                         </tr>
                     </tbody>
                 </table>

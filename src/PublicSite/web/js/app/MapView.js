@@ -282,13 +282,12 @@ define([
             diseaseExtentLayer.clearLayers();
             adminUnitLayerMap = {};
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
-                if (featureCollection.features.length !== 0) {
-                    ko.postbox.publish("no-features-to-review", false);
-                    diseaseExtentLayer.addData(featureCollection);
-                    //TODO: Fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
-                } else {
-                    ko.postbox.publish("no-features-to-review", true);
-                }
+                diseaseExtentLayer.addData(featureCollection);
+                var adminUnitsNeedReview = _(featureCollection.features).filter(function (f) {
+                    return f.properties.needsReview;
+                });
+                ko.postbox.publish("admin-units-to-be-reviewed", adminUnitsNeedReview);
+                ko.postbox.publish("no-features-to-review", adminUnitsNeedReview.length === 0);
             });
         }
 
