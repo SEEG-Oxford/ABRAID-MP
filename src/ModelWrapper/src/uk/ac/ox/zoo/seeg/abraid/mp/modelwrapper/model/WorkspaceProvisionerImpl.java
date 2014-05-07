@@ -77,8 +77,8 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         }
 
         // Rasterize extents
-        LOGGER.info(String.format("TODO: Rasterize extent data. Tropical? %s. GAUL codes: %s",
-                configuration.isTropical(), extentData));
+        LOGGER.info(String.format("TODO: Rasterize extent data. Global? %s. GAUL codes: %s",
+                configuration.isGlobal(), extentData));
 
         // Copy input data
         inputDataManager.writeData(occurrenceData, dataDirectory);

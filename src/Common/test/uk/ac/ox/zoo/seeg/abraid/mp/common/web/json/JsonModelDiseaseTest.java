@@ -13,16 +13,16 @@ public class JsonModelDiseaseTest {
     public void constructorForJsonModelDiseaseBindsParametersCorrectly() throws Exception {
         // Arrange
         int expectedId = 64;
-        boolean expectedTropical = true;
+        boolean expectedGlobal = true;
         String expectedName = "foo";
         String expectedAbbreviation = "f";
 
         // Act
-        JsonModelDisease result = new JsonModelDisease(expectedId, expectedTropical, expectedName, expectedAbbreviation);
+        JsonModelDisease result = new JsonModelDisease(expectedId, expectedGlobal, expectedName, expectedAbbreviation);
 
         // Assert
         assertThat(result.getId()).isEqualTo(expectedId);
-        assertThat(result.isTropical()).isEqualTo(expectedTropical);
+        assertThat(result.isGlobal()).isEqualTo(expectedGlobal);
         assertThat(result.getName()).isEqualTo(expectedName);
         assertThat(result.getAbbreviation()).isEqualTo(expectedAbbreviation);
     }

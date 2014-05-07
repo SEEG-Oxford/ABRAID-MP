@@ -4,20 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
 
 /**
- * The JSON DTO used identify a disease when trigger model runs.
+ * The JSON DTO used identify a disease when triggering model runs.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelDisease {
     private int id;
-    private boolean isTropical;
+    private boolean isGlobal;
     private String name;
     private String abbreviation;
 
     public JsonModelDisease() {
     }
 
-    public JsonModelDisease(int id, boolean isTropical, String name, String abbreviation) {
-        setTropical(isTropical);
+    public JsonModelDisease(int id, boolean isGlobal, String name, String abbreviation) {
+        setGlobal(isGlobal);
         setId(id);
         setName(name);
         setAbbreviation(abbreviation);
@@ -31,12 +31,12 @@ public class JsonModelDisease {
         this.id = id;
     }
 
-    public boolean isTropical() {
-        return isTropical;
+    public boolean isGlobal() {
+        return isGlobal;
     }
 
-    public void setTropical(boolean isTropical) {
-        this.isTropical = isTropical;
+    public void setGlobal(boolean isGlobal) {
+        this.isGlobal = isGlobal;
     }
 
     public String getName() {

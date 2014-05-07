@@ -16,7 +16,7 @@ public class RunConfigurationTest {
     public void runConfigurationBindsParametersCorrectly() {
         // Arrange
         String expectedRunName = "foobar";
-        boolean expectedTropical = true;
+        boolean expectedGlobal = true;
         File expectedBaseDir = new File("xyz");
         File expectedRPath = new File("abc");
         int expectedMaxRuntime = 123;
@@ -25,12 +25,12 @@ public class RunConfigurationTest {
         ArrayList<String> expectedCovariatePaths = new ArrayList<String>();
 
         // Act
-        RunConfiguration result = new RunConfiguration(expectedRPath, expectedBaseDir, expectedRunName, expectedTropical,
+        RunConfiguration result = new RunConfiguration(expectedRPath, expectedBaseDir, expectedRunName, expectedGlobal,
                 expectedMaxRuntime, expectedModelVersion, expectedCovariateDir, expectedCovariatePaths);
 
         // Assert
         assertThat(result.getRunName()).isEqualTo(expectedRunName);
-        assertThat(result.isTropical()).isEqualTo(expectedTropical);
+        assertThat(result.isGlobal()).isEqualTo(expectedGlobal);
         assertThat(result.getBaseDir()).isEqualTo(expectedBaseDir);
         assertThat(result.getRPath()).isEqualTo(expectedRPath);
         assertThat(result.getMaxRuntime()).isEqualTo(expectedMaxRuntime);

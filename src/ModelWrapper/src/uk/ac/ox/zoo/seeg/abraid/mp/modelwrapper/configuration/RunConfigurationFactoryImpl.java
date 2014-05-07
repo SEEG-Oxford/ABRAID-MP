@@ -35,7 +35,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
     /**
      * Creates a new RunConfiguration using the current defaults.
      * @param diseaseId The disease id
-     * @param diseaseTropical If the disease is tropical
+     * @param diseaseGlobal If the disease is global
      * @param diseaseName The disease name
      * @param diseaseAbbreviation The disease abbreviation
      * @return The new RunConfiguration
@@ -43,7 +43,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      * @throws IOException When the covariate configuration can not be read.
      */
     @Override
-    public RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseTropical,
+    public RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseGlobal,
                                                        String diseaseName, String diseaseAbbreviation)
             throws ConfigurationException, IOException {
         LOGGER.info(LOG_CREATING_THE_DEFAULT_RUN_CONFIGURATION);
@@ -51,7 +51,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 Paths.get(configurationService.getRExecutablePath()).toFile(),
                 Paths.get(configurationService.getCacheDirectory()).toFile(),
                 buildRunName(diseaseAbbreviation),
-                diseaseTropical,
+                diseaseGlobal,
                 configurationService.getMaxModelRunDuration(),
                 configurationService.getModelRepositoryVersion(),
                 configurationService.getCovariateDirectory(),

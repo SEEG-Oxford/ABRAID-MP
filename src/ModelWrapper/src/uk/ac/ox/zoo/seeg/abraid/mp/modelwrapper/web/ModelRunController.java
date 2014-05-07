@@ -52,7 +52,7 @@ public class ModelRunController extends AbstractController {
 
             RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration(
                     runData.getDisease().getId(),
-                    runData.getDisease().isTropical(),
+                    runData.getDisease().isGlobal(),
                     runData.getDisease().getName(),
                     runData.getDisease().getAbbreviation());
 
