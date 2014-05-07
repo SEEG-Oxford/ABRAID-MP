@@ -22,13 +22,13 @@
                     <thead>
                         <tr>
                             <th>Occurrences</th>
-                            <th>Admin Unit</th>
+                            <th>Administrative Unit</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
                         <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', this); }">
-                            <td style="text-align: center" data-bind="text: properties.occurrenceCount"></td>
-                            <td style="text-align: left" data-bind="text: properties.name"></td>
+                            <td id="occurrencesColumn" data-bind="text: properties.occurrenceCount"></td>
+                            <td data-bind="text: properties.name"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -52,8 +52,12 @@ html, body, #dataValidation {
     display:inline;
 }
 #adminUnitTable {
-    max-height: 600px;
+    max-height: 750px;
     overflow-y: auto;
+}
+#adminUnitTable #occurrencesColumn {
+    width: 90px;
+    text-align: center;
 }
 #summary {
     margin:5px;
