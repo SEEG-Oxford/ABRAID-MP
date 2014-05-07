@@ -1,10 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonMultiPolygonGeometry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
+
+import java.util.List;
 
 /**
  * A DTO to express an AdminUnit, with properties referring to the DIseaseGroup, as a "Feature".
@@ -15,11 +18,12 @@ public class GeoJsonDiseaseExtentFeature extends GeoJsonFeature
     public GeoJsonDiseaseExtentFeature() {
     }
 
-    public GeoJsonDiseaseExtentFeature(AdminUnitGlobalOrTropical adminUnit, DiseaseExtentClass diseaseExtentClass) {
+    public GeoJsonDiseaseExtentFeature(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
+                                       List<AdminUnitReview> reviews) {
         super(
-                extractGaulCode(adminUnit),
-                extractGeometry(adminUnit),
-                extractProperties(adminUnit, diseaseExtentClass),
+                extractGaulCode(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical()),
+                extractGeometry(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical()),
+                extractProperties(adminUnitDiseaseExtentClass, reviews),
                 null, null
         );
     }
@@ -32,8 +36,8 @@ public class GeoJsonDiseaseExtentFeature extends GeoJsonFeature
         return new GeoJsonMultiPolygonGeometry<>(adminUnit.getSimplifiedGeom(), null, null);
     }
 
-    private static GeoJsonDiseaseExtentFeatureProperties extractProperties(AdminUnitGlobalOrTropical adminUnit,
-                                                                           DiseaseExtentClass diseaseExtentClass) {
-        return new GeoJsonDiseaseExtentFeatureProperties(adminUnit, diseaseExtentClass);
+    private static GeoJsonDiseaseExtentFeatureProperties extractProperties(
+            AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass, List<AdminUnitReview> reviews) {
+        return new GeoJsonDiseaseExtentFeatureProperties(adminUnitDiseaseExtentClass, reviews);
     }
 }

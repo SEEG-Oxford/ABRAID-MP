@@ -1,9 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
+
+import java.util.List;
 
 /**
  * A DTO for the properties of an AdminUnit, with reference to a DiseaseGroup.
@@ -14,13 +18,44 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     private String name;
 
     @JsonView(DisplayJsonView.class)
-    private DiseaseExtentClass diseaseExtentClass;
+    private String diseaseExtentClass;
 
-    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitGlobalOrTropical adminUnit,
-                                                 DiseaseExtentClass diseaseExtentClass)
+    @JsonView(DisplayJsonView.class)
+    private Integer occurrenceCount;
+
+    @JsonView(DisplayJsonView.class)
+    private boolean needsReview;
+
+    public GeoJsonDiseaseExtentFeatureProperties(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
+                                                 List<AdminUnitReview> reviews)
     {
-        setName(adminUnit.getPublicName());
-        setDiseaseExtentClass(diseaseExtentClass);
+        setName(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical().getPublicName());
+        setDiseaseExtentClass(formatDisplayString(adminUnitDiseaseExtentClass.getDiseaseExtentClass()));
+        setOccurrenceCount(adminUnitDiseaseExtentClass.getOccurrenceCount());
+        setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
+    }
+
+    private String formatDisplayString(DiseaseExtentClass diseaseExtentClassObject) {
+        String s = diseaseExtentClassObject.toString();
+        s = s.replace("_", " ");
+        return s.charAt(0) + s.substring(1).toLowerCase();
+    }
+
+    private boolean computeNeedsReview(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
+                                       List<AdminUnitReview> reviews) {
+        boolean extentClassHasChanged = adminUnitDiseaseExtentClass.hasChanged();
+        boolean expertHasReviewed = containsAdminUnit(reviews,
+                                                      adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical());
+        return (extentClassHasChanged || !expertHasReviewed);
+    }
+
+    private boolean containsAdminUnit(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
+        for (AdminUnitReview review : reviews) {
+            if (adminUnit.equals(review.getAdminUnitGlobalOrTropical())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getName() {
@@ -31,12 +66,28 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         this.name = name;
     }
 
-    public DiseaseExtentClass getDiseaseExtentClass() {
+    public String getDiseaseExtentClass() {
         return diseaseExtentClass;
     }
 
-    public void setDiseaseExtentClass(DiseaseExtentClass diseaseExtentClass) {
+    public void setDiseaseExtentClass(String diseaseExtentClass) {
         this.diseaseExtentClass = diseaseExtentClass;
+    }
+
+    public Integer getOccurrenceCount() {
+        return occurrenceCount;
+    }
+
+    public void setOccurrenceCount(Integer occurrenceCount) {
+        this.occurrenceCount = occurrenceCount;
+    }
+
+    public boolean isNeedsReview() {
+        return needsReview;
+    }
+
+    public void setNeedsReview(boolean needsReview) {
+        this.needsReview = needsReview;
     }
 
     ///COVERAGE:OFF - generated code
@@ -48,9 +99,9 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
         GeoJsonDiseaseExtentFeatureProperties that = (GeoJsonDiseaseExtentFeatureProperties) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null)
+        if (diseaseExtentClass != null ? !diseaseExtentClass.equals(that.diseaseExtentClass) : that.diseaseExtentClass != null)
             return false;
-        if (diseaseExtentClass != that.diseaseExtentClass) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
         return true;
     }

@@ -1,5 +1,6 @@
-/** JS file for the navbar header.
- *  Copyright (c) 2014 University of Oxford
+/**
+ * JS file for the navbar header.
+ * Copyright (c) 2014 University of Oxford
  */
 /*global window:false*/
 define(["jquery"], function ($) {

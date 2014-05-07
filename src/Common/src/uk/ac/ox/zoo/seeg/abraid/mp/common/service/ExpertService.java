@@ -1,9 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReviewResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
@@ -39,6 +36,14 @@ public interface ExpertService {
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer validatorDiseaseGroupId)
             throws IllegalArgumentException;
+
+    /**
+     * Gets all reviews submitted by the specified expert, for the specified disease group.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of reviews.
+     */
+    List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId);
 
     /**
      * Gets the specified expert's disease interests.

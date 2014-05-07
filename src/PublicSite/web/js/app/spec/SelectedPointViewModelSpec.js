@@ -1,7 +1,6 @@
-/* A suite of tests for the SelectedLayerViewModel AMD.
+/* A suite of tests for the SelectedPointViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
-/*global alert:true*/
 define([
     "app/SelectedPointViewModel",
     "ko"
@@ -35,7 +34,7 @@ define([
         var baseUrl = "";
         var vm = {};
         beforeEach(function () {
-            vm = new SelectedPointViewModel(baseUrl);
+            vm = new SelectedPointViewModel(baseUrl, function () {});
         });
 
         describe("holds the selected disease occurrence point which", function () {
@@ -96,7 +95,7 @@ define([
             it("POSTs to the specified URL, with the correct parameters", function () {
                 // Arrange
                 var diseaseId = 1;
-                ko.postbox.publish("layers-changed", {diseaseSet : { id: diseaseId}});
+                ko.postbox.publish("layers-changed", { diseaseId: diseaseId });
                 var occurrenceId = vm.selectedPoint().id;
                 var expectedUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
                     "/validate";
@@ -112,13 +111,16 @@ define([
 
             it("when unsuccessful, displays an alert", function () {
                 // Arrange
-                alert = jasmine.createSpy();
+                var spy = jasmine.createSpy();
+                vm = new SelectedPointViewModel(baseUrl, spy);
+                vm.selectedPoint(feature);
+
                 var message = "Something went wrong. Please try again.";
                 // Act
                 vm.submitReview("foo");
                 jasmine.Ajax.requests.mostRecent().response({ status: 500 });
                 // Assert
-                expect(alert).toHaveBeenCalledWith(message);
+                expect(spy).toHaveBeenCalledWith(message);
             });
 
             describe("when successful,", function () {

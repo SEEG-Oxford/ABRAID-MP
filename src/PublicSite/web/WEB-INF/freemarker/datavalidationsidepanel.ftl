@@ -4,43 +4,55 @@
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
-    <div id="datapointInfo" data-bind="template: { name: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template' }"></div>
+    <div id="sidePanelContent" data-bind="template: { name : templateName() }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-        <form id="logIn" action="">
-            <p id="formAlert" data-bind="text: formAlert"></p>
-            <p class="form-group">
-                <span class="input-group">
-                    <span class="input-group-addon">
-                        <i class="glyphicon glyphicon-user"></i>
-                    </span>
-                    <input type="text" class="form-control" placeholder="Email address" data-bind="value: formUsername" >
-                </span>
-            </p>
-            <p class="form-group">
-                <span class="input-group">
-                    <span class="input-group-addon">
-                        <i class="glyphicon glyphicon-lock"></i>
-                    </span>
-                    <input type="password" class="form-control" placeholder="Password" data-bind="value: formPassword">
-                </span>
-            </p>
-            <p class="form-group">
-                <input type="submit" class="btn btn-primary" value="Log in to start validating" data-bind="click: submit">
-            </p>
-        </form>
+        <#include "loginform.ftl"/>
     </@security.authorize>
     <@security.authorize ifAnyGranted="ROLE_USER">
-        <div id="counterDiv">
-            <span>You have validated</span>
-            <div id="counter" data-bind="counter: count"></div>
-            <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
-        </div>
+        <#include "counter.ftl"/>
     </@security.authorize>
 </div>
 
+<script type="text/html" id="admin-units-template">
+    <!-- ko with:selectedAdminUnitViewModel -->
+    <div>
+        <div>
+            <div id="adminUnitTable" class="table-responsive">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>Occurrences</th>
+                            <th>Admin Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: adminUnits" >
+                        <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', this); }">
+                            <td style="text-align: center" data-bind="text: properties.occurrenceCount"></td>
+                            <td style="text-align: left" data-bind="text: properties.name"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div data-bind="if: hasSelectedAdminUnit()">
+            <ul>
+                <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.name"></p></li>
+                <li><i class="fa fa-square-o"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.diseaseExtentClass"></p></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="occurrences-template">
+    <!-- ko with:selectedPointViewModel -->
+        <div data-bind="template: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template'"></div>
+    <!-- /ko -->
+</script>
+
 <script type="text/html" id="no-selected-point-template">
     <ul>
-        <li>Select a point on the map to view more details here...</li>
+        <li>Select a feature on the map to view more details here...</li>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>

@@ -12,12 +12,16 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getAdminUnitReviewsByExpertId",
                 query = "from AdminUnitReview where expert.id=:expertId"
+        ),
+        @NamedQuery(
+                name = "getAdminUnitReviewsByExpertIdAndDiseaseGroupId",
+                query = "from AdminUnitReview where expert.id=:expertId and diseaseGroup.id=:diseaseGroupId"
         )
-)
+})
 @Entity
 @Table(name = "admin_unit_review")
 public class AdminUnitReview {
@@ -56,6 +60,14 @@ public class AdminUnitReview {
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
+
+    /**
+     * The AdminUnitGlobal or the AdminUnitTropical, whichever of the pair is not null.
+     * @return The (global or tropical) admin unit.
+     */
+    public AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropical() {
+        return (adminUnitGlobal == null) ? adminUnitTropical : adminUnitGlobal;
+    }
 
     public Integer getId() {
         return id;

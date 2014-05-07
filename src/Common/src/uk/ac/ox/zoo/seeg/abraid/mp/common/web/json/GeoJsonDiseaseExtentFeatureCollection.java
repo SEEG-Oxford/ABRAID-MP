@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
 
@@ -16,17 +17,17 @@ public class GeoJsonDiseaseExtentFeatureCollection
     public GeoJsonDiseaseExtentFeatureCollection() {
     }
 
-    public GeoJsonDiseaseExtentFeatureCollection(List<AdminUnitDiseaseExtentClass> diseaseExtent) {
-        super(extractExtentFeatures(diseaseExtent), GeoJsonNamedCrs.createEPSG4326(), null);
+    public GeoJsonDiseaseExtentFeatureCollection(List<AdminUnitDiseaseExtentClass> diseaseExtent,
+                                                 List<AdminUnitReview> reviews) {
+        super(extractExtentFeatures(diseaseExtent, reviews), GeoJsonNamedCrs.createEPSG4326(), null);
     }
 
     private static List<GeoJsonDiseaseExtentFeature> extractExtentFeatures(
-            List<AdminUnitDiseaseExtentClass> diseaseExtent) {
+            List<AdminUnitDiseaseExtentClass> diseaseExtent, List<AdminUnitReview> reviews) {
         List<GeoJsonDiseaseExtentFeature> features = new ArrayList<>();
 
         for (AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass : diseaseExtent) {
-            features.add(new GeoJsonDiseaseExtentFeature(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical(),
-                    adminUnitDiseaseExtentClass.getDiseaseExtentClass()));
+            features.add(new GeoJsonDiseaseExtentFeature(adminUnitDiseaseExtentClass, reviews));
         }
 
         return features;

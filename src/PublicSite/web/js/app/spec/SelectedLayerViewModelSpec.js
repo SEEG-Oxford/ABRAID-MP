@@ -43,7 +43,7 @@ define([
             });
 
             it("contains 'Your Disease Interests'", function () {
-                expect(_(vm.groups).findWhere({groupLabel: "Your Disease Interests"})).toBeDefined();
+                expect(vm.groups[0].groupLabel).toEqual("Your Disease Interests");
             });
 
             it("contains 'Other Diseases'", function () {
@@ -62,22 +62,24 @@ define([
 
             it("fires the 'layers-changed' event when its value changes, for 'disease occurrences'", function () {
                 // Arrange
-                var expectation = "foo";
+                var diseaseId = 0;
+                var newDiseaseSet = { id: diseaseId };
                 vm.selectedType("disease occurrences");
 
                 // Arrange assertions
                 var subscription = ko.postbox.subscribe("layers-changed", function (value) {
-                    expect(value.diseaseSet).toBe(expectation);
+                    expect(value.diseaseId).toBe(diseaseId);
                 });
 
                 // Act
-                vm.selectedDiseaseSet(expectation);
+                vm.selectedDiseaseSet(newDiseaseSet);
                 subscription.dispose();
             });
 
             it("does not fire the 'layers-changed' event when its value changes, for 'disease extent'", function () {
                 // Arrange
-                var expectation = "foo";
+                var diseaseId = 0;
+                var newDiseaseSet = { id: diseaseId };
                 vm.selectedType("disease extent");
 
                 // Arrange assertions
@@ -86,7 +88,7 @@ define([
                 });
 
                 // Act
-                vm.selectedDiseaseSet(expectation);
+                vm.selectedDiseaseSet(newDiseaseSet);
                 subscription.dispose();
             });
         });
@@ -97,34 +99,19 @@ define([
             });
 
             describe("fires the 'layers-changed' event when its value changes", function () {
-
-                it("for 'disease occurrences'", function () {
-                    // Arrange
-                    var expectation = "foo";
-                    vm.selectedType("disease occurrences");
-
-                    // Arrange assertions
-                    var subscription = ko.postbox.subscribe("layers-changed", function (value) {
-                        expect(value.disease).toBe(expectation);
-                    });
-
-                    // Act
-                    vm.selectedDisease(expectation);
-                    subscription.dispose();
-                });
-
                 it("for 'disease extent'", function () {
                     // Arrange
-                    var expectation = "foo";
+                    var diseaseId = 0;
+                    var newDisease = { id: diseaseId };
                     vm.selectedType("disease extent");
 
                     // Arrange assertions
                     var subscription = ko.postbox.subscribe("layers-changed", function (value) {
-                        expect(value.disease).toBe(expectation);
+                        expect(value.diseaseId).toBe(diseaseId);
                     });
 
                     // Act
-                    vm.selectedDisease(expectation);
+                    vm.selectedDisease(newDisease);
                     subscription.dispose();
                 });
             });

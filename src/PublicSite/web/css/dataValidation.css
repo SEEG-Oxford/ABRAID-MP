@@ -26,6 +26,7 @@ html, body, #dataValidation {
     height:100%;
     width:100%;
     float:left;
+    background-color: white;
 }
 #sidePanel {
     height:100%;
@@ -35,20 +36,24 @@ html, body, #dataValidation {
     background-color:rgb(214, 214, 214);
     opacity:0.8;
 }
-#datapointInfo {
+#sidePanelContent {
     height:100%;
     position:relative;
 }
-#datapointInfo h4 {
+#sidePanelContent h4 {
     min-height:57px;
 }
-#datapointInfo ul {
+#sidePanelContent ul {
     list-style-type: none;      /* Remove bullet points */
     padding:10px;
     margin:0;
 }
-#datapointInfo p {
+#sidePanelContent p {
     display:inline;
+}
+#adminUnitTable {
+    max-height: 600px;
+    overflow-y: auto;
 }
 #summary {
     margin:5px;
@@ -103,6 +108,30 @@ html, body, #dataValidation {
     zoom:0.8;
     width:140px;
 }
+.legend {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.legend h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
 .fa-map-marker {
     padding: 3px;
+}
+.fa-square-o {
+    padding: 2px;
 }

@@ -1,13 +1,15 @@
 /**
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
- * Events subscribed to:
- * -- 'validation-type-changed' - to swap between DiseaseOccurrenceLayer and DiseaseExtentLayer
- * -- 'disease-set-changed'     - to swap the data on DiseaseOccurrenceLayer
- * -- 'disease-changed'         - to swap the data on DiseaseExtentLayer
- * -- 'pont-reviewed'           - to remove the point from the map
- * Events published:
- * -- 'no-features-to-review'   - when the FeatureCollection data is empty, or the last point is remove from its layer
+ * - Events subscribed to:
+ * -- 'layers-changed' - published by SelectedLayerViewModel
+ * -- 'point-reviewed' - published by SelectedPointViewModel
+ * - Events published:
+ * -- 'point-selected'
+ * -- 'admin-unit-selected'
+ * -- 'no-features-to-review' if
+ * --- the FeatureCollection data is empty
+ * --- the last point is remove from its layer
  */
 define([
     "L",
@@ -52,7 +54,7 @@ define([
         };
 
         // Change a point's colour on roll-over
-        function highlightFeature(e) {
+        function highlightPoint(e) {
             e.target.setStyle({
                 stroke: true,
                 color: highlightColour
@@ -60,7 +62,7 @@ define([
         }
 
         // Return to default colour
-        function resetHighlight(e) {
+        function resetHighlightedPoint(e) {
             e.target.setStyle({
                 stroke: false,
                 color: defaultColour
@@ -68,9 +70,9 @@ define([
         }
 
         // Change the point's colour and size when clicked
-        function selectFeature(marker) {
+        function selectPoint(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
-            resetLayerStyle();
+            resetDiseaseOccurrenceLayerStyle();
             if (loggedIn) {
                 marker.setStyle({
                     stroke: false,
@@ -87,8 +89,8 @@ define([
             var marker;
             if (loggedIn) {
                 marker = L.circleMarker(latlng).on({
-                    mouseover: highlightFeature,
-                    mouseout: resetHighlight
+                    mouseover: highlightPoint,
+                    mouseout: resetHighlightedPoint
                 });
             } else {
                 // Display a question mark marker
@@ -100,11 +102,9 @@ define([
                     })
                 });
             }
-            marker.on({
-                click: function () {
-                    ko.postbox.publish("point-selected", feature);
-                    selectFeature(this);
-                }
+            marker.on("click", function () {
+                ko.postbox.publish("point-selected", feature);
+                selectPoint(this);
             });
             return marker;
         }
@@ -127,9 +127,7 @@ define([
             pointToLayer: diseaseOccurrenceLayerPoint,
             style: diseaseOccurrenceLayerStyle,
             onEachFeature: function (feature, layer) {
-                layer.on("add", function () {
-                    layerMap[feature.id] = layer;
-                });
+                layerMap[feature.id] = layer;
             }
         });
 
@@ -147,7 +145,7 @@ define([
         });
 
         // Reset the style of all markers on diseaseOccurrenceLayer
-        function resetLayerStyle() {
+        function resetDiseaseOccurrenceLayerStyle() {
             if (loggedIn) {
                 diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
             } else {
@@ -157,54 +155,87 @@ define([
             }
         }
 
-        // Reset to default style when a point is unselected (by clicking anywhere else on the map)
-        function resetSelectedPoint() {
-            ko.postbox.publish("point-selected", null);
-            resetLayerStyle();
-        }
-
-        map.on("click", resetSelectedPoint);
-        clusterLayer.on("clusterclick", resetSelectedPoint);
-
         // Return the corresponding colour for the disease extent class of the admin unit
-        function getColour(diseaseExtentClass) {
-            switch (diseaseExtentClass) {
-                case "PRESENCE":
-                    return "#8e1b65";  // darkPink
-                case "POSSIBLE_PRESENCE":
-                    return "#c478a9";  // lightPink
-                case "UNCERTAIN":
-                    return "#ffffbf";  // yellow
-                case "POSSIBLE_ABSENCE":
-                    return "#b5caaa";  // lightGreen
-                case "ABSENCE":
-                    return "#769766";  // darkGreen
-            }
-        }
+        var diseaseExtentClassColourScale = {
+            "Presence":          "#8e1b65",  // dark pink
+            "Possible presence": "#c478a9",  // light pink
+            "Uncertain":         "#ffffbf",  // yellow
+            "Possible absence":  "#b5caaa",  // light green
+            "Absence":           "#769766"   // dark green
+        };
 
         function diseaseExtentLayerStyle(feature) {
             return {
-                fillColor: getColour(feature.properties.diseaseExtentClass),
+                fillColor: diseaseExtentClassColourScale[feature.properties.diseaseExtentClass],
                 fillOpacity: 0.7,
+                opacity: 0.7,
                 weight: 2,
-                opacity: 1,
-                color: "#ffffff"
+                color: "#ffffff" // white border
             };
         }
 
+        function resetDiseaseExtentLayerStyle() {
+            diseaseExtentLayer.setStyle({
+                weight: 2,
+                color: "#ffffff"
+            });
+        }
+
+        function selectAdminUnit(layer) {
+            resetDiseaseExtentLayerStyle();
+            layer.setStyle({
+                weight: 2.5,
+                color: "#333333"
+            });
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+            }
+            map.fitBounds(layer.getBounds(), { maxZoom: 5 });
+        }
+
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
+        var adminUnitLayerMap = {};
         var diseaseExtentLayer = L.geoJson([], {
-            style: diseaseExtentLayerStyle
+            style: diseaseExtentLayerStyle,
+            onEachFeature: function (feature, layer) {
+                adminUnitLayerMap[feature.id] = layer;
+                layer.on({
+                    click: function () { ko.postbox.publish("admin-unit-selected", feature); },
+                    mouseover: function () { layer.setStyle({ fillOpacity: 1 }); },
+                    mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
+                });
+            }
         });
 
+        function createLegendRow(className, colour) {
+            var colourBox = "<i style='background:" + colour + "'></i>";
+            var displayName = "<span>" + className + "</span><br>";
+            return colourBox + displayName;
+        }
+
+        // Add a legend to display the disease extent class colour scale with corresponding class names
+        var legend = L.control({position: "bottomleft"});
+        legend.onAdd = function () {
+            var div = L.DomUtil.create("div", "legend");
+            div.innerHTML = "<span style='text-decoration:underline'>Current classification</span><br>" +
+                _((_(diseaseExtentClassColourScale).pairs()).map(function (pair) {
+                    return createLegendRow(pair[0], pair[1]);
+                })).join("");
+            return div;
+        };
+
+        var validationTypeIsDiseaseOccurrenceLayer;
+
         // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
-        function switchValidationTypeView(validationType) {
-            if (validationType === "disease occurrences") {
+        function switchValidationTypeView() {
+            if (validationTypeIsDiseaseOccurrenceLayer) {
+                if (map.hasLayer(diseaseExtentLayer)) { map.removeControl(legend); }
                 map.removeLayer(diseaseExtentLayer);
                 clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
             } else {
-                map.removeLayer(clusterLayer);
+                if (!map.hasLayer(diseaseExtentLayer)) { legend.addTo(map); }
                 diseaseExtentLayer.addTo(map);
+                map.removeLayer(clusterLayer);
             }
         }
 
@@ -216,19 +247,18 @@ define([
             layerMap = {};
         }
 
-        function getDiseaseOccurrenceRequestUrl(diseaseId) {
+        function getDiseaseOccurrencesRequestUrl(diseaseId) {
             if (loggedIn) {
                 return baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences";
             } else {
-                return baseUrl + "static/defaultDiseaseOccurrences.json";
+                return baseUrl + "static/defaultOccurrences.json";
             }
         }
 
         // Add the new feature collection to the clustered layer, and zoom to its bounds
         function switchDiseaseOccurrenceLayer(diseaseId) {
             clearDiseaseOccurrenceLayer();
-            var geoJsonRequestUrl = getDiseaseOccurrenceRequestUrl(diseaseId);
-            $.getJSON(geoJsonRequestUrl, function (featureCollection) {
+            $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
                     clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
@@ -240,37 +270,30 @@ define([
             });
         }
 
+        function getDiseaseExtentRequestUrl(diseaseId) {
+            if (loggedIn) {
+                return baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
+            } else {
+                return baseUrl + "static/defaultAdminUnits.json";
+            }
+        }
+
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
             diseaseExtentLayer.clearLayers();
-            var geoJsonRequestUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
-            $.getJSON(geoJsonRequestUrl, function (featureCollection) {
-                if (featureCollection.features.length !== 0) {
-                    ko.postbox.publish("no-features-to-review", false);
-                    diseaseExtentLayer.addData(featureCollection);
-                    map.fitBounds(diseaseExtentLayer.getBounds());
-                    //TODO: Fit bounds to the polygons with PRESENCE and POSSIBLE_PRESENCE class, and their neighbours
-                } else {
-                    ko.postbox.publish("no-features-to-review", true);
-                    map.fitWorld();
-                }
+            adminUnitLayerMap = {};
+            $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
+                diseaseExtentLayer.addData(featureCollection);
+                var adminUnitsNeedReview = _(featureCollection.features).filter(function (f) {
+                    return f.properties.needsReview;
+                });
+                ko.postbox.publish("admin-units-to-be-reviewed", { data: adminUnitsNeedReview, skipSerialize: true });
+                ko.postbox.publish("no-features-to-review", adminUnitsNeedReview.length === 0);
             });
         }
 
-        ko.postbox.subscribe("validation-type-changed", function (type) {
-            switchValidationTypeView(type);
-        });
-
-        ko.postbox.subscribe("disease-set-changed", function (diseaseSet) {
-            switchDiseaseOccurrenceLayer(diseaseSet.id);
-        });
-
-        ko.postbox.subscribe("disease-changed", function (disease) {
-            switchDiseaseExtentLayer(disease.id);
-        });
-
-        // Remove marker from map
-        ko.postbox.subscribe("point-reviewed", function (id) {
+        // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
+        function removeMarkerFromMap(id) {
             clusterLayer.clearLayers();
             diseaseOccurrenceLayer.removeLayer(layerMap[id]);
             delete layerMap[id];
@@ -279,6 +302,47 @@ define([
             } else {
                 clusterLayer.addLayer(diseaseOccurrenceLayer);
             }
+        }
+
+        // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
+        function resetSelectedPoint() {
+            ko.postbox.publish("point-selected", null);
+            resetDiseaseOccurrenceLayerStyle();
+        }
+
+        function resetSelectedAdminUnit() {
+            ko.postbox.publish("admin-unit-selected", null);
+            resetDiseaseExtentLayerStyle();
+        }
+
+        function resetSelectedFeature() {
+            if (validationTypeIsDiseaseOccurrenceLayer) {
+                resetSelectedPoint();
+            } else {
+                resetSelectedAdminUnit();
+            }
+        }
+
+        clusterLayer.on("clusterclick", resetSelectedPoint);
+        map.on("click", resetSelectedFeature);
+
+        ko.postbox.subscribe("layers-changed", function (data) {
+            validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
+            switchValidationTypeView();
+            resetSelectedFeature();
+            if (validationTypeIsDiseaseOccurrenceLayer) {
+                switchDiseaseOccurrenceLayer(data.diseaseId);
+            } else {
+                switchDiseaseExtentLayer(data.diseaseId);
+            }
+        });
+
+        ko.postbox.subscribe("admin-unit-selected", function (data) {
+            if (data !== null) { selectAdminUnit(adminUnitLayerMap[data.id]); }
+        });
+
+        ko.postbox.subscribe("point-reviewed", function (id) {
+            removeMarkerFromMap(id);
         });
     };
 });
