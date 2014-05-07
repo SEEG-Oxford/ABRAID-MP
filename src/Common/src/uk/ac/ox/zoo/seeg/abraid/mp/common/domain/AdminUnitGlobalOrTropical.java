@@ -9,9 +9,8 @@ import javax.persistence.*;
  * The parent class for AdminUnitGlobal and AdminUnitTropical.
  * Copyright (c) 2014 University of Oxford
  */
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class AdminUnitGlobalOrTropical {
+@MappedSuperclass
+public abstract class AdminUnitGlobalOrTropical {
     // The admin unit's GAUL code.
     @Id
     @Column(name = "gaul_code")
@@ -25,13 +24,16 @@ public class AdminUnitGlobalOrTropical {
     @Column(name = "pub_name")
     private String publicName;
 
-    @Column
-    @Type(type = "org.hibernate.spatial.GeometryType")
-    private MultiPolygon geom;
-
     @Column(name = "simplified_geom")
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon simplifiedGeom;
+
+    protected AdminUnitGlobalOrTropical() {
+    }
+
+    protected AdminUnitGlobalOrTropical(Integer gaulCode) {
+        this.gaulCode = gaulCode;
+    }
 
     public Integer getGaulCode() {
         return gaulCode;
@@ -57,14 +59,6 @@ public class AdminUnitGlobalOrTropical {
         this.publicName = publicName;
     }
 
-    public MultiPolygon getGeom() {
-        return geom;
-    }
-
-    public void setGeom(MultiPolygon geom) {
-        this.geom = geom;
-    }
-
     public MultiPolygon getSimplifiedGeom() {
         return simplifiedGeom;
     }
@@ -84,7 +78,6 @@ public class AdminUnitGlobalOrTropical {
 
         if (level != that.level) return false;
         if (gaulCode != null ? !gaulCode.equals(that.gaulCode) : that.gaulCode != null) return false;
-        if (geom != null ? !geom.equals(that.geom) : that.geom != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
         if (simplifiedGeom != null ? !simplifiedGeom.equals(that.simplifiedGeom) : that.simplifiedGeom != null)
             return false;
@@ -97,7 +90,6 @@ public class AdminUnitGlobalOrTropical {
         int result = gaulCode != null ? gaulCode.hashCode() : 0;
         result = 31 * result + (int) level;
         result = 31 * result + (publicName != null ? publicName.hashCode() : 0);
-        result = 31 * result + (geom != null ? geom.hashCode() : 0);
         result = 31 * result + (simplifiedGeom != null ? simplifiedGeom.hashCode() : 0);
         return result;
     }

@@ -2,8 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringUnitTests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertServiceTest extends AbstractSpringUnitTests {
+public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     @Autowired
     private ExpertService expertService;
 

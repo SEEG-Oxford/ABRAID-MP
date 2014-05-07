@@ -19,6 +19,6 @@ public class AdminUnitGlobalDaoImpl extends AbstractDao<AdminUnitGlobal, Integer
      */
     @Override
     public AdminUnitGlobal getByGaulCode(Integer gaulCode) {
-        return uniqueResultNamedQuery("getGlobalAdminUnitByGaulCode", "gaulCode", gaulCode);
+        return getById(gaulCode);
     }
 }

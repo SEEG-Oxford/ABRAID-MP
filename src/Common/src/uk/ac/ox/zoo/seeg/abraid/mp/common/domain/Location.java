@@ -59,10 +59,17 @@ public class Location {
     @Column(name = "healthmap_country_id")
     private Long healthMapCountryId;
 
-    // The admin 1/2 unit (if any).
-    @ManyToOne
-    @JoinColumn(name = "admin_unit_qc_gaul_code")
-    private AdminUnitQC adminUnitQC;
+    // The GAUL code of the admin 1/2 unit assigned to the location during QC stage 1.
+    @Column(name = "admin_unit_qc_gaul_code")
+    private Integer adminUnitQCGaulCode;
+
+    // The GAUL code of the admin_unit_global geometry that contains this location.
+    @Column(name = "admin_unit_global_gaul_code")
+    private Integer adminUnitGlobalGaulCode;
+
+    // The GAUL code of the admin_unit_tropical geometry that contains this location.
+    @Column(name = "admin_unit_tropical_gaul_code")
+    private Integer adminUnitTropicalGaulCode;
 
     // True if this location passed all of the QC checks, false if not.
     @Column(name = "has_passed_qc")
@@ -83,10 +90,14 @@ public class Location {
         this.geom = GeometryUtils.createPoint(x, y);
     }
 
-    public Location(String name, double x, double y, LocationPrecision precision) {
+    public Location(double x, double y, LocationPrecision precision) {
         this(x, y);
-        this.name = name;
         this.precision = precision;
+    }
+
+    public Location(String name, double x, double y, LocationPrecision precision) {
+        this(x, y, precision);
+        this.name = name;
     }
 
     public Location(String name, double x, double y, LocationPrecision precision, long healthMapCountryId) {
@@ -142,12 +153,28 @@ public class Location {
         this.geoNameId = geoNameId;
     }
 
-    public AdminUnitQC getAdminUnitQC() {
-        return adminUnitQC;
+    public Integer getAdminUnitQCGaulCode() {
+        return adminUnitQCGaulCode;
     }
 
-    public void setAdminUnitQC(AdminUnitQC adminUnitQC) {
-        this.adminUnitQC = adminUnitQC;
+    public void setAdminUnitQCGaulCode(Integer adminUnitQCGaulCode) {
+        this.adminUnitQCGaulCode = adminUnitQCGaulCode;
+    }
+
+    public Integer getAdminUnitGlobalGaulCode() {
+        return adminUnitGlobalGaulCode;
+    }
+
+    public void setAdminUnitGlobalGaulCode(Integer adminUnitGlobalGaulCode) {
+        this.adminUnitGlobalGaulCode = adminUnitGlobalGaulCode;
+    }
+
+    public Integer getAdminUnitTropicalGaulCode() {
+        return adminUnitTropicalGaulCode;
+    }
+
+    public void setAdminUnitTropicalGaulCode(Integer adminUnitTropicalGaulCode) {
+        this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
     }
 
     /**
@@ -179,8 +206,11 @@ public class Location {
 
         Location location = (Location) o;
 
-        if (hasPassedQc != location.hasPassedQc) return false;
-        if (adminUnitQC != null ? !adminUnitQC.equals(location.adminUnitQC) : location.adminUnitQC != null)
+        if (adminUnitGlobalGaulCode != null ? !adminUnitGlobalGaulCode.equals(location.adminUnitGlobalGaulCode) : location.adminUnitGlobalGaulCode != null)
+            return false;
+        if (adminUnitQCGaulCode != null ? !adminUnitQCGaulCode.equals(location.adminUnitQCGaulCode) : location.adminUnitQCGaulCode != null)
+            return false;
+        if (adminUnitTropicalGaulCode != null ? !adminUnitTropicalGaulCode.equals(location.adminUnitTropicalGaulCode) : location.adminUnitTropicalGaulCode != null)
             return false;
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
@@ -190,6 +220,7 @@ public class Location {
             return false;
         if (id != null ? !id.equals(location.id) : location.id != null) return false;
         if (name != null ? !name.equals(location.name) : location.name != null) return false;
+        if (hasPassedQc != location.hasPassedQc) return false;
         if (precision != location.precision) return false;
         if (qcMessage != null ? !qcMessage.equals(location.qcMessage) : location.qcMessage != null) return false;
 
@@ -205,7 +236,9 @@ public class Location {
         result = 31 * result + (geoNameId != null ? geoNameId.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (healthMapCountryId != null ? healthMapCountryId.hashCode() : 0);
-        result = 31 * result + (adminUnitQC != null ? adminUnitQC.hashCode() : 0);
+        result = 31 * result + (adminUnitQCGaulCode != null ? adminUnitQCGaulCode.hashCode() : 0);
+        result = 31 * result + (adminUnitGlobalGaulCode != null ? adminUnitGlobalGaulCode.hashCode() : 0);
+        result = 31 * result + (adminUnitTropicalGaulCode != null ? adminUnitTropicalGaulCode.hashCode() : 0);
         result = 31 * result + (hasPassedQc ? 1 : 0);
         result = 31 * result + (qcMessage != null ? qcMessage.hashCode() : 0);
         return result;

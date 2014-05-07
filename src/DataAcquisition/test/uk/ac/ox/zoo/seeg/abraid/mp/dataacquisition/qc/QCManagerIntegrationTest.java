@@ -1,14 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -17,10 +13,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = Main.APPLICATION_CONTEXT_LOCATION)
-@Transactional
-public class QCManagerIntegrationTest {
+public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private QCManager qcManager;
 
@@ -35,7 +28,7 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isTrue();
-        assertThat(location.getAdminUnitQC()).isNull();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
                 "stage 2 passed: location is a country. QC stage 3 passed: location already within HealthMap " +
                 "country.");
@@ -51,9 +44,9 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isFalse();
-        assertThat(location.getAdminUnitQC()).isNull();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC stage " +
-                "2 failed: location too distant from land (closest point is (4.916593,53.291621) at distance " +
+                "2 failed: location too distant from land (closest point is (4.916590,53.291620) at distance " +
                 "320.061km).");
     }
 
@@ -69,8 +62,7 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isTrue();
-        assertThat(location.getAdminUnitQC()).isNotNull();
-        assertThat(location.getAdminUnitQC().getGaulCode()).isEqualTo(1006355);
+        assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(1006355);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 10.92% of the square " +
                 "root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: location " +
                 "already within HealthMap country.");
@@ -88,7 +80,7 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isFalse();
-        assertThat(location.getAdminUnitQC()).isNull();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 failed: closest distance is 2841.01% of the square " +
                 "root of the area (GAUL code 1002305: \"Con Dao\").");
     }
@@ -104,11 +96,10 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isFalse();
-        assertThat(location.getAdminUnitQC()).isNotNull();
-        assertThat(location.getAdminUnitQC().getGaulCode()).isEqualTo(1013690);
+        assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(1013690);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 9.01% of the square " +
                 "root of the area. QC stage 2 failed: location too distant from land (closest point is " +
-                "(121.208213,-1.166690) at distance 29.610km).");
+                "(121.208210,-1.166690) at distance 29.610km).");
     }
 
     @Test
@@ -123,11 +114,10 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isFalse();
-        assertThat(location.getAdminUnitQC()).isNotNull();
-        assertThat(location.getAdminUnitQC().getGaulCode()).isEqualTo(31738);
+        assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(31738);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 8.76% of the square " +
                 "root of the area. QC stage 2 passed: location already within land. QC stage 3 failed: location " +
-                "too distant from HealthMap country (closest point is (-87.344992,44.814352) at distance 11.910km).");
+                "too distant from HealthMap country (closest point is (-87.344990,44.814350) at distance 11.910km).");
     }
 
     @Test
@@ -141,8 +131,7 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isTrue();
-        assertThat(location.getAdminUnitQC()).isNotNull();
-        assertThat(location.getAdminUnitQC().getGaulCode()).isEqualTo(31738);
+        assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(31738);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 8.76% of the square " +
                 "root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: no country " +
                 "geometries associated with this location.");
@@ -159,7 +148,7 @@ public class QCManagerIntegrationTest {
 
         // Assert
         assertThat(hasPassedQc).isTrue();
-        assertThat(location.getAdminUnitQC()).isNull();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
                 "stage 2 passed: location is a country. QC stage 3 passed: no country geometries associated with " +
                 "this location.");

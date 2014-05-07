@@ -20,9 +20,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -112,7 +111,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
         DataValidationController target = new DataValidationController(currentUserService, diseaseService, expertService);
-        when(diseaseService.getAdminUnitDiseaseExtentClassMap(anyInt())).thenThrow(new IllegalArgumentException());
+        when(diseaseService.getDiseaseExtentByDiseaseGroupId(anyInt())).thenThrow(new IllegalArgumentException());
 
         // Act
         ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(0);
@@ -130,22 +129,21 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         ExpertService expertService = mock(ExpertService.class);
         DataValidationController target = new DataValidationController(currentUserService, diseaseService, expertService);
 
-        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = createMap();
-        when(diseaseService.getAdminUnitDiseaseExtentClassMap(diseaseGroupId)).thenReturn(map);
+        List<AdminUnitDiseaseExtentClass> diseaseExtent = createDiseaseExtent();
+        when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(diseaseExtent);
 
         // Act
         ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody().getFeatures()).hasSameSizeAs(map.entrySet());
+        assertThat(result.getBody().getFeatures()).hasSameSizeAs(diseaseExtent);
     }
 
-    private Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> createMap() {
-        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> map = new HashMap<>();
-        AdminUnitGlobal adminUnitGlobal = createAdminUnitGlobal();
-        map.put(adminUnitGlobal, DiseaseExtentClass.ABSENCE);
-        return map;
+    private List<AdminUnitDiseaseExtentClass> createDiseaseExtent() {
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+                createAdminUnitGlobal(), new DiseaseGroup(), DiseaseExtentClass.ABSENCE, 0);
+        return Arrays.asList(adminUnitDiseaseExtentClass);
     }
 
     private AdminUnitGlobal createAdminUnitGlobal() {
@@ -163,7 +161,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
     }
 
     @Test
-     public void submitReviewReturnsHttpNoContentForValidInputs() {
+    public void submitReviewReturnsHttpNoContentForValidInputs() {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);

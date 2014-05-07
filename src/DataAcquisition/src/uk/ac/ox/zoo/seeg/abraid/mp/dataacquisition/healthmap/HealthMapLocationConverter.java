@@ -98,7 +98,7 @@ public class HealthMapLocationConverter {
     }
 
     private Location findExistingLocation(HealthMapLocation healthMapLocation, Point point) {
-        Location location = null;
+        Location location;
 
         if (healthMapLocation.getGeoNameId() != null) {
             // Query for an existing location at the specified GeoNames ID
@@ -106,19 +106,33 @@ public class HealthMapLocationConverter {
         } else {
             // Query for an existing location at the specified lat/long and location precision
             LocationPrecision precision = findLocationPrecision(healthMapLocation);
-            List<Location> locations = locationService.getLocationsByPointAndPrecision(point, precision);
-            if (locations.size() > 0) {
-                location = locations.get(0);
-                if (locations.size() > 1) {
-                    // There may be multiple locations at the specified lat/long and location precision. For example:
-                    // - Location 1 is created at point (x,y) with no GeoNames ID and place_basic_type 'p' (precise)
-                    // - Location 2 is created at the same point (x,y) with a specified GeoNames ID, whose feature code
-                    //   indicates a precise location
-                    // It is valid for these to co-exist, but which one wins in this case is arbitrary. So we just pick
-                    // the first one and log that fact.
-                    LOGGER.warn(String.format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision,
-                            location.getId()));
-                }
+            location = findExistingLocation(point, precision);
+        }
+
+        return location;
+    }
+
+    /**
+     * Finds an existing location at the specified point and precision.
+     * @param point The point.
+     * @param precision The precision.
+     * @return The first found location, or null if none found.
+     */
+    public Location findExistingLocation(Point point, LocationPrecision precision) {
+        Location location = null;
+        List<Location> locations = locationService.getLocationsByPointAndPrecision(point, precision);
+
+        if (locations.size() > 0) {
+            location = locations.get(0);
+            if (locations.size() > 1) {
+                // There may be multiple locations at the specified lat/long and location precision. For example:
+                // - Location 1 is created at point (x,y) with no GeoNames ID and place_basic_type 'p' (precise)
+                // - Location 2 is created at the same point (x,y) with a specified GeoNames ID, whose feature code
+                //   indicates a precise location
+                // It is valid for these to co-exist, but which one wins in this case is arbitrary. So we just pick
+                // the first one and log that fact.
+                LOGGER.warn(String.format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision,
+                        location.getId()));
             }
         }
 

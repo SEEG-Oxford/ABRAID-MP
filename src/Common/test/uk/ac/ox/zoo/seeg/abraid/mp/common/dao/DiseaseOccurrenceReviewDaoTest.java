@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -15,7 +15,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOccurrenceReviewDaoTest extends AbstractSpringIntegrationTests {
+public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private AlertDao alertDao;
 

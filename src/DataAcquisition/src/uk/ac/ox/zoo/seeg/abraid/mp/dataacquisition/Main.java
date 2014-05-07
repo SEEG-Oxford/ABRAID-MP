@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 
 /**
@@ -19,6 +20,7 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class);
 
     private HealthMapDataAcquisition healthMapDataAcquisition;
+    private DiseaseExtentGenerator diseaseExtentGenerator;
 
     /**
      * Entry method for the DataAcquisition module.
@@ -49,19 +51,20 @@ public class Main {
      */
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
-        main.acquireData(args);
+        main.runDataAcquisition(args);
     }
 
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition) {
+    public Main(HealthMapDataAcquisition healthMapDataAcquisition, DiseaseExtentGenerator diseaseExtentGenerator) {
         this.healthMapDataAcquisition = healthMapDataAcquisition;
+        this.diseaseExtentGenerator = diseaseExtentGenerator;
     }
 
     /**
-     * Acquires data from all sources.
+     * Acquires data from all sources, then generate an initial disease extent.
      * @param fileNames A list of file names containing HealthMap JSON data to acquire. If no file names are specified
      * (or if null), the HealthMap web service will be called instead.
      */
-    public void acquireData(String[] fileNames) {
+    public void runDataAcquisition(String[] fileNames) {
         if (fileNames != null && fileNames.length > 0) {
             for (String fileName : fileNames) {
                 healthMapDataAcquisition.acquireDataFromFile(fileName);
@@ -69,5 +72,6 @@ public class Main {
         } else {
             healthMapDataAcquisition.acquireDataFromWebService();
         }
+        diseaseExtentGenerator.generateDiseaseExtent();
     }
 }

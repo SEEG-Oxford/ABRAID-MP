@@ -41,7 +41,7 @@ ALTER TABLE provenance
 
 
 -- Primary keys
-ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT pk_admin_unit_disease_extent_class 
+ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT pk_admin_unit_disease_extent_class
     PRIMARY KEY (id);
 
 ALTER TABLE admin_unit_global ADD CONSTRAINT pk_admin_unit_global
@@ -109,27 +109,27 @@ ALTER TABLE validator_disease_group ADD CONSTRAINT pk_validator_disease_group
 
 
 -- Foreign keys
-ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_global 
+ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_global
     FOREIGN KEY (global_gaul_code) REFERENCES admin_unit_global (gaul_code);
 
-ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_tropical 
+ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_tropical
     FOREIGN KEY (tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
 
-ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_disease_group 
+ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
-ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_global 
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_global
     FOREIGN KEY (global_gaul_code) REFERENCES admin_unit_global (gaul_code);
 
-ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_tropical 
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_tropical
     FOREIGN KEY (tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
 
-ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_disease_group 
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
-ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_expert 
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_expert
     FOREIGN KEY (expert_id) REFERENCES expert (id);
-	
+
 ALTER TABLE alert ADD CONSTRAINT fk_alert_feed
     FOREIGN KEY (feed_id) REFERENCES feed (id);
 
@@ -172,6 +172,12 @@ ALTER TABLE healthmap_country_country ADD CONSTRAINT fk_healthmap_country_countr
 ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
+ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_global
+    FOREIGN KEY (admin_unit_global_gaul_code) REFERENCES admin_unit_global (gaul_code);
+
+ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_tropical
+    FOREIGN KEY (admin_unit_tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
+
 ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_qc
     FOREIGN KEY (admin_unit_qc_gaul_code) REFERENCES admin_unit_qc (gaul_code);
 
@@ -182,7 +188,7 @@ ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
 -- Check constraints
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT ck_global_gaul_code_tropical_gaul_code
     CHECK ((global_gaul_code IS NULL AND tropical_gaul_code IS NOT NULL) OR (global_gaul_code IS NOT NULL AND tropical_gaul_code IS NULL));
-	
+
 ALTER TABLE admin_unit_review ADD CONSTRAINT ck_global_gaul_code_tropical_gaul_code
     CHECK ((global_gaul_code IS NULL AND tropical_gaul_code IS NOT NULL) OR (global_gaul_code IS NOT NULL AND tropical_gaul_code IS NULL));
 

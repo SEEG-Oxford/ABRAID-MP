@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitGlobalDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitTropicalDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -12,7 +12,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Tests the AdminUnitDiseaseExtentClass class.
  * Copyright (c) 2014 University of Oxford
  */
-public class AdminUnitDiseaseExtentClassTest extends AbstractSpringIntegrationTests {
+public class AdminUnitDiseaseExtentClassTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private AdminUnitGlobalDao adminUnitGlobalDao;
 

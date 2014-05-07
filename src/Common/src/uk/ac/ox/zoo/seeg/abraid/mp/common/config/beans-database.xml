@@ -32,6 +32,8 @@
     <bean id="provenanceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDaoImpl" autowire="constructor" />
     <bean id="validatorDiseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDaoImpl" autowire="constructor" />
 
+    <bean id="nativeSql" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl" autowire="constructor" />
+
     <!-- Database configuration -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
