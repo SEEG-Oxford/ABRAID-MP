@@ -63,7 +63,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/model/run")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class)))
+                        .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extents\":[1,2,3]}"))
                 .andExpect(status().isNoContent());
     }
 
@@ -86,7 +86,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     private MockHttpServletRequestBuilder createRequest(HttpMethod method) {
         return request(method, "/model/run")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class));
+                .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extents\":[1,2,3]}");
     }
 
 }

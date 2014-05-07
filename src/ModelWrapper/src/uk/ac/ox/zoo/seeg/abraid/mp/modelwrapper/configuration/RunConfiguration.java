@@ -18,6 +18,9 @@ public class RunConfiguration {
     // The path to the R executable to use
     private final File rPath;
 
+    // If the run is for a global disease
+    private final boolean isGlobal;
+
     // The maximum allowable model run time in ms
     private final int maxRuntime;
 
@@ -33,14 +36,16 @@ public class RunConfiguration {
      * @param rPath The file path for the R binary to be executed.
      * @param baseDir The executable which should be run.
      * @param runName The name that should be used to identify the run.
+     * @param isGlobal If the run is for a global disease.
      * @param maxRuntime The maximum allowed time (in ms) for which the model should be allow to run.
      * @param modelVersion The version of the model to use.
      */
-    public RunConfiguration(File rPath, File baseDir, String runName, int maxRuntime, String modelVersion,
-                            String covariateDirectory, Collection<String> covariateFilePaths) {
+    public RunConfiguration(File rPath, File baseDir, String runName, boolean isGlobal, int maxRuntime,
+                            String modelVersion, String covariateDirectory, Collection<String> covariateFilePaths) {
         this.rPath = rPath;
         this.baseDir = baseDir;
         this.runName = runName;
+        this.isGlobal = isGlobal;
         this.maxRuntime = maxRuntime;
         this.modelVersion = modelVersion;
         this.covariateDirectory = covariateDirectory;
@@ -73,5 +78,9 @@ public class RunConfiguration {
 
     public Collection<String> getCovariateFilePaths() {
         return covariateFilePaths;
+    }
+
+    public boolean isGlobal() {
+        return isGlobal;
     }
 }

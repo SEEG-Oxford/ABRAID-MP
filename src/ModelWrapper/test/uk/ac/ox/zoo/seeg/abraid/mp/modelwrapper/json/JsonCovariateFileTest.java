@@ -68,7 +68,7 @@ public class JsonCovariateFileTest {
     @Test
     public void isNotValidForDuplicateEnabledId() {
         // Arrange
-        String path = "";
+        String path = "path";
         String name = "name";
         String info = "info";
         boolean hide = true;

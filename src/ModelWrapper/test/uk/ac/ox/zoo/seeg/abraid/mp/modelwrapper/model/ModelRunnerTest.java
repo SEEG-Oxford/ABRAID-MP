@@ -17,6 +17,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.refEq;
+import static org.mockito.Mockito.anyCollectionOf;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +33,7 @@ public class ModelRunnerTest {
     public void runModelProvisionsADirectoryForTheRun() throws Exception {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class)))
                 .thenReturn(testFolder.getRoot());
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -42,20 +43,20 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, 0, "", "", new ArrayList<String>());
+        RunConfiguration config = new RunConfiguration(null, null, null, true, 0, "", "", new ArrayList<String>());
 
         // Act
-        target.runModel(config, null);
+        target.runModel(config, null, null);
 
         // Assert
-        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class));
+        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class));
     }
 
     @Test
     public void runModelTriggersProcess() throws Exception {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class)))
                 .thenReturn(testFolder.getRoot());
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -65,10 +66,10 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, 0, "", "", new ArrayList<String>());
+        RunConfiguration config = new RunConfiguration(null, null, null, true, 0, "", "", new ArrayList<String>());
 
         // Act
-        target.runModel(config, null);
+        target.runModel(config, null, null);
 
         // Assert
         verify(mockProcessRunner, times(1)).run(any(ModelProcessHandler.class));
@@ -79,7 +80,7 @@ public class ModelRunnerTest {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         File expectedScript = new File("foo/script");
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class)))
                 .thenReturn(expectedScript);
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -93,10 +94,10 @@ public class ModelRunnerTest {
         File expectedBase = new File("base");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(expectedR, expectedBase, null, expectedTimeout, "", "", new ArrayList<String>());
+                new RunConfiguration(expectedR, expectedBase, null, true, expectedTimeout, "", "", new ArrayList<String>());
 
         // Act
-        target.runModel(config, null);
+        target.runModel(config, null, null);
 
         // Assert
         ArgumentCaptor<String[]> stringArgsCaptor = ArgumentCaptor.forClass(String[].class);
