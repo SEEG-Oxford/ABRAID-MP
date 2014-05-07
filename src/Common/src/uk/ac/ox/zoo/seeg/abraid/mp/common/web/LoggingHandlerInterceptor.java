@@ -21,6 +21,7 @@ public class LoggingHandlerInterceptor extends HandlerInterceptorAdapter {
     private static final String DURATION_LOG_MESSAGE = "Took %.3f seconds";
     private static final String START_TIME_ATTRIBUTE_NAME = "LoggingHandlerInterceptor_startTime";
     private static final double MINIMUM_REQUEST_DURATION_SECONDS = 0.3;
+    private static final double MILLISECONDS_TO_SECONDS = 1000.0;
 
     /**
      * Logs an HTTP request, before it is received by a controller.
@@ -109,6 +110,6 @@ public class LoggingHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private double getRequestDuration(long startTime) {
         long endTime = System.currentTimeMillis();
-        return (endTime - startTime) / 1000.0;
+        return (endTime - startTime) / MILLISECONDS_TO_SECONDS;
     }
 }
