@@ -3,7 +3,7 @@
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
  * -- 'layers-changed' - published by SelectedLayerViewModel
- * -- 'point-reviewed' - published by SelectedPointViewModel
+ * -- 'occurrence-reviewed' - published by SelectedPointViewModel
  * - Events published:
  * -- 'point-selected'
  * -- 'admin-unit-selected'
@@ -341,7 +341,7 @@ define([
             if (data !== null) { selectAdminUnit(adminUnitLayerMap[data.id]); }
         });
 
-        ko.postbox.subscribe("point-reviewed", function (id) {
+        ko.postbox.subscribe("occurrence-reviewed", function (id) {
             removeMarkerFromMap(id);
         });
     };

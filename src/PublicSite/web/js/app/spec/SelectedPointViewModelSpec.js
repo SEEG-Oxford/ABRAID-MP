@@ -124,11 +124,11 @@ define([
             });
 
             describe("when successful,", function () {
-                it("fires the 'point-reviewed' event", function () {
+                it("fires the 'occurrence-reviewed' event", function () {
                     // Arrange
                     var expectation = vm.selectedPoint().id;
                     // Arrange assertions
-                    var subscription = ko.postbox.subscribe("point-reviewed", function (value) {
+                    var subscription = ko.postbox.subscribe("occurrence-reviewed", function (value) {
                         expect(value).toBe(expectation);
                     });
                     // Act

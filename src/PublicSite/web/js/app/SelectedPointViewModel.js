@@ -5,7 +5,7 @@
  * -- 'point-selected' - published by MapView.
  * -- 'layers-changed' - published by SelectedLayerViewModel.
  * - Events published:
- * -- 'point-reviewed' on successful submitReview POST
+ * -- 'occurrence-reviewed' on successful submitReview POST
  */
 define([
     "ko",
@@ -59,7 +59,7 @@ define([
                     // Status 2xx
                     // Display a success alert, remove the point from the map and side panel, increment the counter
                     self.selectedPoint(null);
-                    ko.postbox.publish("point-reviewed", occurrenceId);
+                    ko.postbox.publish("occurrence-reviewed", occurrenceId);
                     $("#submitReviewSuccess").fadeIn(1000);
                 })
                 .fail(function () {

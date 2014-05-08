@@ -21,7 +21,7 @@ require(["require.conf"], function () {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
             ko.applyBindings(new SidePanelViewModel(
                     new SelectedPointViewModel(baseUrl, alert,
-                        new CounterViewModel(data.diseaseOccurrenceReviewCount, "point-reviewed")),
+                        new CounterViewModel(data.diseaseOccurrenceReviewCount, "occurrence-reviewed")),
                     new SelectedAdminUnitViewModel(
                         new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed")
                     )
