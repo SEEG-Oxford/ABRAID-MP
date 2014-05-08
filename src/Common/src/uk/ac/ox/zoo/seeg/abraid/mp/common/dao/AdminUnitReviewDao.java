@@ -17,6 +17,13 @@ public interface AdminUnitReviewDao {
     AdminUnitReview getById(Integer id);
 
     /**
+     * Gets the total number of reviews submitted by the specified expert.
+     * @param expertId The expert's Id.
+     * @return The count of the expert's reviews.
+     */
+    Long getCountByExpertId(Integer expertId);
+
+    /**
      * Gets all the reviews of administrative units, submitted by the specified expert.
      * @param expertId The id of the expert.
      * @return A list of the expert's reviews.

@@ -9,11 +9,11 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (initialValue) {
+    return function (initialValue, incrementEventName) {
         var self = this;
         self.count = ko.observable(initialValue);
 
-        ko.postbox.subscribe("point-reviewed", function () {
+        ko.postbox.subscribe(incrementEventName, function () {
             self.count(self.count() + 1);
         });
     };

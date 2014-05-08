@@ -20,8 +20,11 @@ require(["require.conf"], function () {
                  SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
             ko.applyBindings(new SidePanelViewModel(
-                    new SelectedPointViewModel(baseUrl, alert),
-                    new SelectedAdminUnitViewModel()
+                    new SelectedPointViewModel(baseUrl, alert,
+                        new CounterViewModel(data.diseaseOccurrenceReviewCount, "point-reviewed")),
+                    new SelectedAdminUnitViewModel(
+                        new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed")
+                    )
                 ),
                 doc.getElementById("sidePanelContent")
             );
@@ -29,12 +32,7 @@ require(["require.conf"], function () {
                 new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),
                 doc.getElementById("layerSelector")
             );
-            if (data.loggedIn) {
-                ko.applyBindings(
-                    new CounterViewModel(data.diseaseOccurrenceReviewCount),
-                    doc.getElementById("counterDiv")
-                );
-            } else {
+            if (!data.loggedIn) {
                 var refresh = function () {
                     // Refresh function may change, according to location of iframe (eg on TGHN site)
                     window.top.location.reload();

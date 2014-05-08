@@ -13,13 +13,14 @@ define([
 ], function (ko, _) {
     "use strict";
 
-    return function () {
+    return function (counter) {
         var self = this;
 
         ko.postbox.subscribe("admin-units-to-be-reviewed", function (event) {
             self.adminUnits(_(event.data).sortBy(function (unit) { return unit.properties.name; }));
         });
 
+        self.counter = counter;
         self.adminUnits = ko.observable();
         self.selectedAdminUnit = ko.observable(null).subscribeTo("admin-unit-selected");
         self.hasSelectedAdminUnit = ko.computed(function () {

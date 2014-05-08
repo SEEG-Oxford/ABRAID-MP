@@ -13,7 +13,7 @@ define([
 ], function (ko, $) {
     "use strict";
 
-    return function (baseUrl, alert) {
+    return function (baseUrl, alert, counter) {
         var self = this;
 
         var createTranslationUrl = function (langPair, summary) {
@@ -38,6 +38,7 @@ define([
             diseaseId = value.diseaseId;
         });
 
+        self.counter = counter;
         self.selectedPoint = ko.observable(null).syncWith("point-selected");
         self.hasSelectedPoint = ko.computed(function () {
             return self.selectedPoint() !== null;
