@@ -54,7 +54,8 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         assertThat(result).isEqualTo("datavalidationcontent");
         verify(model, times(1)).addAttribute("diseaseInterests", new ArrayList<>());
         verify(model, times(1)).addAttribute("userLoggedIn", true);
-        verify(model, times(1)).addAttribute("reviewCount", 0);
+        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }
 
     private DataValidationController createTarget() {
