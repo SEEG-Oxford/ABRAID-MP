@@ -8,6 +8,9 @@ public class JsonModelRunResponse {
     private String modelRunName;
     private String errorText;
 
+    public JsonModelRunResponse() {
+    }
+
     public JsonModelRunResponse(String modelRunName, String errorText) {
         this.modelRunName = modelRunName;
         this.errorText = errorText;
