@@ -142,7 +142,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
     private List<AdminUnitDiseaseExtentClass> createDiseaseExtent() {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                createAdminUnitGlobal(), new DiseaseGroup(), DiseaseExtentClass.ABSENCE, 0);
+                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(), 0);
         return Arrays.asList(adminUnitDiseaseExtentClass);
     }
 

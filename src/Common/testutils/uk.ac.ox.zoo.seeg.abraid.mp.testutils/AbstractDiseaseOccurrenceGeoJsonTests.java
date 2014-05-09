@@ -90,7 +90,8 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
 
         String modellingViewProperties =
            "            \"locationPrecision\":\"PRECISE\"," +
-           "            \"weighting\":0.5";
+           "            \"weighting\":0.5," +
+           "            \"gaulCode\":0";
 
         return (
             "{" +
