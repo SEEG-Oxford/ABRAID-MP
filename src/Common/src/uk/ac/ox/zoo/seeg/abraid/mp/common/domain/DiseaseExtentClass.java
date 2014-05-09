@@ -16,14 +16,32 @@ import javax.persistence.*;
 @Entity
 @Table(name = "disease_extent_class")
 public class DiseaseExtentClass {
+    /** The disease group is definitely present in the admin unit. */
+    public static final String PRESENCE = "PRESENCE";
+    /** The disease group may be present in the admin unit. */
+    public static final String POSSIBLE_PRESENCE = "POSSIBLE_PRESENCE";
+    /** It is unknown whether the disease group is present or absent. */
+    public static final String UNCERTAIN = "UNCERTAIN";
+    /** The disease group may not be present in the admin unit. */
+    public static final String POSSIBLE_ABSENCE = "POSSIBLE_ABSENCE";
+    /** The disease group is definitely not present in the admin unit. */
+    public static final String ABSENCE = "ABSENCE";
+
     // The class name
     @Id
-    @Column(nullable = false, updatable = false)
+    @Column
     private String name;
 
     // The corresponding weighting used in the R spatial model.
     @Column(nullable = false)
     private Integer weighting;
+
+    public DiseaseExtentClass() {
+    }
+
+    public DiseaseExtentClass(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

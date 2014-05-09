@@ -21,6 +21,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
     private AdminUnitGlobalDao adminUnitGlobalDao;
     private AdminUnitTropicalDao adminUnitTropicalDao;
+    private DiseaseExtentClassDao diseaseExtentClassDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseGroupDao diseaseGroupDao,
@@ -28,7 +29,8 @@ public class DiseaseServiceImpl implements DiseaseService {
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
-                              AdminUnitTropicalDao adminUnitTropicalDao) {
+                              AdminUnitTropicalDao adminUnitTropicalDao,
+                              DiseaseExtentClassDao diseaseExtentClassDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
@@ -36,6 +38,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
         this.adminUnitGlobalDao = adminUnitGlobalDao;
         this.adminUnitTropicalDao = adminUnitTropicalDao;
+        this.diseaseExtentClassDao = diseaseExtentClassDao;
     }
 
     /**
@@ -155,6 +158,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
+    }
+
+    /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    @Override
+    public DiseaseExtentClass getDiseaseExtentClass(String name) {
+        return diseaseExtentClassDao.getByName(name);
     }
 
     /**

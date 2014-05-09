@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
  * Copyright (c) 2014 University of Oxford
  */
 @Repository
-public class DiseaseExtentClassDaoImpl extends AbstractDao<DiseaseExtentClass, Integer>
+public class DiseaseExtentClassDaoImpl extends AbstractDao<DiseaseExtentClass, String>
         implements DiseaseExtentClassDao {
     public DiseaseExtentClassDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
@@ -23,6 +23,6 @@ public class DiseaseExtentClassDaoImpl extends AbstractDao<DiseaseExtentClass, I
      */
     @Override
     public DiseaseExtentClass getByName(String name) {
-        return uniqueResultNamedQuery("getDiseaseExtentClassByName", "name", name);
+        return getById(name);
     }
 }

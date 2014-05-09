@@ -115,7 +115,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2510);
         AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(204001);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(96);
-        DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("ABSENCE");
+        DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName(DiseaseExtentClass.ABSENCE);
         int occurrenceCount = 0;
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
