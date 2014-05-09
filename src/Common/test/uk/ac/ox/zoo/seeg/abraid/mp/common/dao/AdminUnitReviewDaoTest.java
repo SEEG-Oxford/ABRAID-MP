@@ -26,8 +26,8 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     @Autowired
     private ExpertDao expertDao;
 
-    private Integer EXPERT_ID = 1;
-    private Integer DISEASE_GROUP_ID = 1;
+    private static final Integer EXPERT_ID = 1;
+    private static final Integer DISEASE_GROUP_ID = 1;
 
     @Test
     public void saveAndReloadGlobalAdminUnitReview() {

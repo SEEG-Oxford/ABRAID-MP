@@ -1,11 +1,10 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.postqc;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -78,8 +77,8 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     }
 
     @Test
-    public void findsAdminUnitsIfOutsideGeometry() {
-        Location location = new Location(40, 50, LocationPrecision.PRECISE);
+    public void doesNotFindAdminUnitsIfOutsideGeometry() {
+        Location location = new Location(-40, 50, LocationPrecision.PRECISE);
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isNull();
         assertThat(location.getAdminUnitTropicalGaulCode()).isNull();
