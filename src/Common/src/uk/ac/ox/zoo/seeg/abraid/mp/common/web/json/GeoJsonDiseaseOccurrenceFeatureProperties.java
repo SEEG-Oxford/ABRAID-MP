@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
@@ -31,6 +32,9 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
     @JsonView(ModellingJsonView.class)
     private Double weighting;
 
+    @JsonView(ModellingJsonView.class)
+    private Integer gaulCode;
+
     public GeoJsonDiseaseOccurrenceFeatureProperties() {
     }
 
@@ -41,6 +45,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
         setLocationPrecision(occurrence.getLocation().getPrecision());
         setWeighting(occurrence.getValidationWeighting());
+        setGaulCode(getAdminUnitGlobalOrTropicalGaulCode(occurrence));
     }
 
     public String getDiseaseGroupPublicName() {
@@ -89,6 +94,27 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
 
     public void setWeighting(Double weighting) {
         this.weighting = weighting;
+    }
+
+    public Integer getGaulCode() {
+        return gaulCode;
+    }
+
+    public void setGaulCode(Integer gaulCode) {
+        this.gaulCode = gaulCode;
+    }
+
+    /**
+     * Return the Location's global or tropical GAUL code, depending on whether the DiseaseGroup is global or tropical.
+     * @param occurrence The disease occurrence.
+     * @return The GAUL code.
+     */
+    private Integer getAdminUnitGlobalOrTropicalGaulCode(DiseaseOccurrence occurrence) {
+        if (occurrence.getDiseaseGroup().isGlobal()) {
+            return occurrence.getLocation().getAdminUnitGlobalGaulCode();
+        } else {
+            return occurrence.getLocation().getAdminUnitTropicalGaulCode();
+        }
     }
 
     ///COVERAGE:OFF - generated code
