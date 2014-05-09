@@ -15,6 +15,7 @@ public class DiseaseExtentClassDaoTest extends AbstractCommonSpringIntegrationTe
     @Autowired
     private DiseaseExtentClassDao diseaseExtentClassDao;
 
+    @Test
     public void getAllReturnsAllDiseaseExtentClasses() {
         assertThat(diseaseExtentClassDao.getAll()).hasSize(5);
     }
