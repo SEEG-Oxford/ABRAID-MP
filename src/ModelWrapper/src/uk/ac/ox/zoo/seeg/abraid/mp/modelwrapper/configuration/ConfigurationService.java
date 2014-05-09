@@ -109,6 +109,18 @@ public interface ConfigurationService {
     String getAdmin2RasterFile();
 
     /**
+     * Gets the path to the current maximum number of CPUs for the model to use.
+     * @return The path to the maximum number of CPUs.
+     */
+    int getMaxCPUs();
+
+    /**
+     * Gets the path to the current value of the dry run flag.
+     * @return The path to the value of the dry run flag.
+     */
+    boolean getDryRunFlag();
+
+    /**
      * Gets the current directory for covariate files.
      * @return The directory for covariate files.
      */
