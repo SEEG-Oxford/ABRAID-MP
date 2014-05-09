@@ -66,6 +66,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_SHAPEFILE_SUBDIR = "admin_units";
     private static final String DEFAULT_TROPICAL_SHAPEFILE_NAME = "admin_units_tropical.shp";
     private static final String DEFAULT_GLOBAL_SHAPEFILE_NAME = "admin_units_global.shp";
+    private static final String DEFAULT_RASTER_SUBDIR = "rasters";
+    private static final String DEFAULT_ADMIN1_RASTER_NAME = "admin1qc.asc";
+    private static final String DEFAULT_ADMIN2_RASTER_NAME = "admin2qc.asc";
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
@@ -76,6 +79,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
     private static final String GLOBAL_SHAPEFILE_KEY = "shape.file.global";
     private static final String TROPICAL_SHAPEFILE_KEY = "shape.file.tropical";
+    private static final String ADMIN1_RASTER_KEY = "raster.file.admin1";
+    private static final String ADMIN2_RASTER_KEY = "raster.file.admin2";
     private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
 
     private static final String COVARIATE_JSON_FILE = "abraid.json";
@@ -232,11 +237,37 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return getShapeFile(TROPICAL_SHAPEFILE_KEY, DEFAULT_TROPICAL_SHAPEFILE_NAME);
     }
 
+    /**
+     * Gets the path to the current admin 1 raster file.
+     * @return The path to the admin 1 raster file.
+     */
+    @Override
+    public String getAdmin1RasterFile() {
+        return getRasterFile(ADMIN1_RASTER_KEY, DEFAULT_ADMIN1_RASTER_NAME);
+    }
+
+    /**
+     * Gets the path to the current admin 2 raster file.
+     * @return The path to the admin 2 raster file.
+     */
+    @Override
+    public String getAdmin2RasterFile() {
+        return getRasterFile(ADMIN2_RASTER_KEY, DEFAULT_ADMIN2_RASTER_NAME);
+    }
+
+    private String getRasterFile(String propertyKey, String defaultName) {
+        return getFile(propertyKey, DEFAULT_RASTER_SUBDIR, defaultName);
+    }
+
     private String getShapeFile(String propertyKey, String defaultName) {
+        return getFile(propertyKey, DEFAULT_SHAPEFILE_SUBDIR, defaultName);
+    }
+
+    private String getFile(String propertyKey, String defaultSubdir, String defaultName) {
         if (basicProperties.containsKey(propertyKey)) {
             return basicProperties.getString(propertyKey);
         }
-        Path filePath = Paths.get(getCacheDirectory(), DEFAULT_SHAPEFILE_SUBDIR, defaultName);
+        Path filePath = Paths.get(getCacheDirectory(), defaultSubdir, defaultName);
         return filePath.toString();
     }
 

@@ -97,6 +97,18 @@ public interface ConfigurationService {
     String getTropicalShapeFile();
 
     /**
+     * Gets the path to the current admin 1 raster file.
+     * @return The path to the admin 1 raster file.
+     */
+    String getAdmin1RasterFile();
+
+    /**
+     * Gets the path to the current admin 2 raster file.
+     * @return The path to the admin 2 raster file.
+     */
+    String getAdmin2RasterFile();
+
+    /**
      * Gets the current directory for covariate files.
      * @return The directory for covariate files.
      */
