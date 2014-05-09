@@ -80,9 +80,15 @@ define([
                     radius: 13
                 });
             } else {
-                marker._icon.classList.add("marker-question-selected"); // jshint ignore:line
+                var newWidth = iconWidth * 1.5;
+                var newHeight = iconHeight * 1.5;
+                marker._icon.style.width = newWidth.toString() + "px";   // jshint ignore:line
+                marker._icon.style.height = newHeight.toString() + "px";  // jshint ignore:line
             }
         }
+
+        var iconWidth = 16;
+        var iconHeight = 22;
 
         // Define a circle, instead of the default leaflet marker, with listeners for mouse events
         function diseaseOccurrenceLayerPoint(feature, latlng) {
@@ -95,10 +101,10 @@ define([
             } else {
                 // Display a question mark marker
                 marker = L.marker(latlng, { icon:
-                    L.divIcon({
-                        html: "<div><span>?</span></div>",
-                        className: "marker-question",
-                        iconAnchor: [10, 10]
+                    L.icon({
+                        iconUrl: baseUrl + "static/marker.svg",
+                        iconSize: [iconWidth, iconHeight],
+                        iconAnchor: [iconWidth / 2, iconWidth / 2]
                     })
                 });
             }
@@ -150,7 +156,8 @@ define([
                 diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
             } else {
                 Object.keys(layerMap).forEach(function (key) {
-                    layerMap[key]._icon.classList.remove("marker-question-selected"); // jshint ignore:line
+                    layerMap[key]._icon.style.width = iconWidth.toString() + "px";   // jshint ignore:line
+                    layerMap[key]._icon.style.height = iconHeight.toString() + "px"; // jshint ignore:line
                 });
             }
         }

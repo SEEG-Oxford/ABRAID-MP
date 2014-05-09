@@ -54,29 +54,6 @@
         },
         {
             "type": "Feature",
-            "id": 3,
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    122.87871,
-                    11.74183
-                ]
-            },
-            "properties": {
-                "diseaseGroupPublicName": "Dengue",
-                "locationName": "Philippines",
-                "alert": {
-                    "title": "Dengue cases reach 750 in Davao - Manila Bulletin",
-                    "summary": "DOH said that the number of cases this year is lower than the 1,946 cases recorded in the same period last year as well as the mortality rate which dropped to four from 17 deaths the previous year. Among the provinces in the region, Davao City has the most ;...",
-                    "url": "http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNFfME7u6wOhUt8m0LNO5zvSmL8M4w&cid=c3a7d30bb8a4878e06b80cf16b898331&url=http://www.mb.com.ph/dengue-cases-reach-750-in-davao/",
-                    "feedName": "Google News",
-                    "feedLanguage": "en"
-                },
-                "occurrenceDate": "2014-02-25T02:43:58.000Z"
-            }
-        },
-        {
-            "type": "Feature",
             "id": 6,
             "geometry": {
                 "type": "Point",
