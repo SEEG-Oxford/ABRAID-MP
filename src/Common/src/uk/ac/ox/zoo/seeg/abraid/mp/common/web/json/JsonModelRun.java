@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -23,7 +22,7 @@ public class JsonModelRun {
                         Map<Integer, Integer> extentWeightings) {
         setDisease(disease);
         setOccurrences(occurrences);
-        setExtents(extentWeightings);
+        setExtentWeightings(extentWeightings);
     }
 
     public JsonModelDisease getDisease() {
@@ -42,11 +41,11 @@ public class JsonModelRun {
         this.occurrences = occurrences;
     }
 
-    public Map<Integer, Integer> getExtents() {
+    public Map<Integer, Integer> getExtentWeightings() {
         return extentWeightings;
     }
 
-    public void setExtents(Map<Integer, Integer> extents) {
+    public void setExtentWeightings(Map<Integer, Integer> extents) {
         this.extentWeightings = extents;
     }
 

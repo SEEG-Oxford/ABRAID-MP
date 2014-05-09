@@ -63,8 +63,9 @@ public class InputDataManagerImpl implements InputDataManager {
         return StringUtils.join(new String[]{
                 Double.toString(occurrence.getGeometry().getCoordinates().getLongitude()),
                 Double.toString(occurrence.getGeometry().getCoordinates().getLatitude()),
-                occurrence.getProperties().getLocationPrecision().toString(),
-                occurrence.getProperties().getWeighting().toString()
+                occurrence.getProperties().getWeighting().toString(),
+                occurrence.getProperties().getLocationPrecision().getModelValue().toString(),
+                occurrence.getProperties().getGaulCode().toString()
         }, ',');
     }
 }

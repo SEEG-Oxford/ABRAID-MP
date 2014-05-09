@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ public class JsonModelRunTest {
         // Assert
         assertThat(result.getDisease()).isEqualTo(expectedDisease);
         assertThat(result.getOccurrences()).isEqualTo(expectedOccurrences);
-        assertThat(result.getExtents()).isEqualTo(expectedExtents);
+        assertThat(result.getExtentWeightings()).isEqualTo(expectedExtents);
     }
 
     @Test

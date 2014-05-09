@@ -17,7 +17,6 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.refEq;
-import static org.mockito.Mockito.anyCollectionOf;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.*;
 

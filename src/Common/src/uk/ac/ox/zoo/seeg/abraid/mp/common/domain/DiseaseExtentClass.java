@@ -50,16 +50,16 @@ public class DiseaseExtentClass {
 
         DiseaseExtentClass that = (DiseaseExtentClass) o;
 
-        if (!name.equals(that.name)) return false;
-        if (!weighting.equals(that.weighting)) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (weighting != null ? !weighting.equals(that.weighting) : that.weighting != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + weighting.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

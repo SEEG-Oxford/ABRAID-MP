@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;

@@ -57,7 +57,7 @@ public class ModelRunController extends AbstractController {
                     runData.getDisease().getAbbreviation());
 
             // Ignore result for now
-            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtents());
+            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtentWeightings());
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return new ResponseEntity<String>("Could not start model run.", HttpStatus.INTERNAL_SERVER_ERROR);
