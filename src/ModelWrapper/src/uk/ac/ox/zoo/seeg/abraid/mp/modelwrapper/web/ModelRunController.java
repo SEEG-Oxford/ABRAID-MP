@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
@@ -42,15 +43,16 @@ public class ModelRunController extends AbstractController {
      */
     @RequestMapping(value = "/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> startRun(@RequestBody JsonModelRun runData) {
+    public ResponseEntity<JsonModelRunResponse> startRun(@RequestBody JsonModelRun runData) {
         if (runData == null || !runData.isValid() || !runData.getDisease().isValid()) {
-            return new ResponseEntity<String>("Run data must be provided and be valid", HttpStatus.BAD_REQUEST);
+            return createErrorResponse("Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
         }
 
+        RunConfiguration runConfiguration;
         try {
             LOGGER.info(LOG_STARTING_NEW_BACKGROUND_MODEL_RUN);
 
-            RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration(
+            runConfiguration = runConfigurationFactory.createDefaultConfiguration(
                     runData.getDisease().getId(),
                     runData.getDisease().isGlobal(),
                     runData.getDisease().getName(),
@@ -60,9 +62,18 @@ public class ModelRunController extends AbstractController {
             modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtents());
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
-            return new ResponseEntity<String>("Could not start model run.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createErrorResponse("Could not start model run. See server logs for more details.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+        return createSuccessResponse(runConfiguration.getRunName());
+    }
+
+    private ResponseEntity<JsonModelRunResponse> createSuccessResponse(String modelRunName) {
+        return new ResponseEntity<>(new JsonModelRunResponse(modelRunName, null), HttpStatus.OK);
+    }
+
+    private ResponseEntity<JsonModelRunResponse> createErrorResponse(String errorText, HttpStatus status) {
+        return new ResponseEntity<>(new JsonModelRunResponse(null, errorText), status);
     }
 }
