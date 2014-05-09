@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -39,14 +40,14 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
      * Sets up the directory in which a model will run.
      * @param configuration The model run configuration options.
      * @param occurrenceData The occurrences to use in the model.
-     * @param extentData The extents to model with.
+     * @param extentWeightings The mapping from GAUL code to disease extent class weighting, to be used by model.
      * @return The model wrapper script file to run.
      * @throws IOException Thrown if the directory can not be correctly provisioned.
      */
     @Override
     public File provisionWorkspace(RunConfiguration configuration,
                                    GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
-                                   Collection<Integer> extentData)
+                                   Map<Integer, Integer> extentWeightings)
             throws IOException {
         // Create directories
         Path workingDirectoryPath = Paths.get(
@@ -78,7 +79,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
 
         // Rasterize extents
         LOGGER.info(String.format("TODO: Rasterize extent data. Global? %s. GAUL codes: %s",
-                configuration.isGlobal(), extentData));
+                configuration.isGlobal(), extentWeightings));
 
         // Copy input data
         inputDataManager.writeData(occurrenceData, dataDirectory);

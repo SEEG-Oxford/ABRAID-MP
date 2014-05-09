@@ -33,7 +33,7 @@ public class ModelRunnerTest {
     public void runModelProvisionsADirectoryForTheRun() throws Exception {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class)))
                 .thenReturn(testFolder.getRoot());
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -49,14 +49,14 @@ public class ModelRunnerTest {
         target.runModel(config, null, null);
 
         // Assert
-        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class));
+        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class));
     }
 
     @Test
     public void runModelTriggersProcess() throws Exception {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class)))
                 .thenReturn(testFolder.getRoot());
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
@@ -80,7 +80,7 @@ public class ModelRunnerTest {
         // Arrange
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         File expectedScript = new File("foo/script");
-        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyCollectionOf(Integer.class)))
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class)))
                 .thenReturn(expectedScript);
 
         ProcessRunner mockProcessRunner = mock(ProcessRunner.class);

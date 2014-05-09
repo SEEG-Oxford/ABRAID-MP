@@ -3,6 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -16,7 +18,7 @@ public class JsonModelRunTest {
         // Arrange
         JsonModelDisease expectedDisease = new JsonModelDisease();
         GeoJsonDiseaseOccurrenceFeatureCollection expectedOccurrences = new GeoJsonDiseaseOccurrenceFeatureCollection();
-        ArrayList<Integer> expectedExtents = new ArrayList<>();
+        Map<Integer, Integer> expectedExtents = new HashMap<>();
 
         // Act
         JsonModelRun result = new JsonModelRun(
@@ -36,7 +38,7 @@ public class JsonModelRunTest {
         JsonModelRun target = new JsonModelRun(
                 new JsonModelDisease(),
                 new GeoJsonDiseaseOccurrenceFeatureCollection(),
-                new ArrayList<Integer>());
+                new HashMap<Integer, Integer>());
 
         // Act
         boolean result = target.isValid();
@@ -51,7 +53,7 @@ public class JsonModelRunTest {
         JsonModelRun target = new JsonModelRun(
                 null,
                 new GeoJsonDiseaseOccurrenceFeatureCollection(),
-                new ArrayList<Integer>());
+                new HashMap<Integer, Integer>());
 
         // Act
         boolean result = target.isValid();
@@ -66,7 +68,7 @@ public class JsonModelRunTest {
         JsonModelRun target = new JsonModelRun(
                 new JsonModelDisease(),
                 null,
-                new ArrayList<Integer>());
+                new HashMap<Integer, Integer>());
 
         // Act
         boolean result = target.isValid();

@@ -12,6 +12,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -46,7 +48,7 @@ public class ModelRunControllerTest {
 
         GeoJsonDiseaseOccurrenceFeatureCollection occurrence = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
-        ArrayList<Integer> extent = new ArrayList<Integer>();
+        Map<Integer, Integer> extent = new HashMap<>();
 
         // Act
         ResponseEntity result = target.startRun(new JsonModelRun(
@@ -67,7 +69,7 @@ public class ModelRunControllerTest {
 
         // Act
         ResponseEntity result = target.startRun(new JsonModelRun(
-                new JsonModelDisease(1, true, "foo", "foo"), object, new ArrayList<Integer>()));
+                new JsonModelDisease(1, true, "foo", "foo"), object, new HashMap<Integer, Integer>()));
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
