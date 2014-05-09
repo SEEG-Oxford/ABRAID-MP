@@ -96,6 +96,16 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets the number of admin unit reviews an expert has submitted, across all disease groups.
+     * @param expertId The id of the specified expert.
+     * @return The total number of admin unit reviews for the specified expert.
+     */
+    @Override
+    public Long getAdminUnitReviewCount(Integer expertId) {
+        return adminUnitReviewDao.getCountByExpertId(expertId);
+    }
+
+    /**
      * Saves the disease occurrence review.
      * @param expertEmail The email address of the expert providing review.
      * @param occurrenceId The id of the disease occurrence.

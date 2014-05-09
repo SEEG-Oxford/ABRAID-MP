@@ -3,14 +3,33 @@
  */
 define([
     "app/SelectedAdminUnitViewModel",
+    "app/CounterViewModel",
     "ko"
-], function (SelectedAdminUnitViewModel, ko) {
+], function (SelectedAdminUnitViewModel, CounterViewModel, ko) {
     "use strict";
 
     describe("The 'selected admin unit' view model", function () {
         var vm = {};
+        var initialCount = 0;
+        var eventName = "admin-unit-reviewed";
         beforeEach(function () {
-            vm = new SelectedAdminUnitViewModel();
+            vm = new SelectedAdminUnitViewModel(new CounterViewModel(initialCount, eventName));
+        });
+
+        describe("holds the disease occurrence counter view model which", function () {
+            it("takes the expected initial value", function () {
+                expect(vm.counter).not.toBeNull();
+                expect(vm.counter.count()).toEqual(0);
+            });
+
+            it("increments its value when the event is fired", function () {
+                // Arrange
+                // Act
+                ko.postbox.publish(eventName);
+                // Assert
+                var expectedCount = initialCount + 1;
+                expect(vm.counter.count()).toBe(expectedCount);
+            });
         });
 
         describe("holds the list of admin units to be displayed in the table, which", function () {

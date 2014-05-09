@@ -66,9 +66,11 @@ public class DataValidationController extends AbstractController {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);
         Integer diseaseOccurrenceReviewCount = 0;
+        Integer adminUnitReviewCount = 0;
         if (userLoggedIn) {
             int expertId = user.getId();
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
+            adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
             List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
             model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
@@ -79,7 +81,8 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
         model.addAttribute("userLoggedIn", userLoggedIn);
-        model.addAttribute("reviewCount", diseaseOccurrenceReviewCount);
+        model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
+        model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
         return "datavalidationcontent";
     }
 
