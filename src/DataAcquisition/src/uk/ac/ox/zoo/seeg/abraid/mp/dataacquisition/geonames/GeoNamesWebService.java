@@ -65,7 +65,7 @@ public class GeoNamesWebService {
      */
     public GeoName getById(int geoNameId) throws WebServiceClientException, JsonParserException {
         String url = buildUrl(geoNameId);
-        String json = webServiceClient.request(url);
+        String json = webServiceClient.makeGetRequest(url);
         GeoName geoName = parseJson(json);
 
         GeoNameStatus status = geoName.getStatus();

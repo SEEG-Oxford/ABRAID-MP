@@ -69,13 +69,13 @@ public class MainTest extends AbstractMainTests {
     }
 
     private void mockHealthMapRequest() {
-        when(webServiceClient.request(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
+        when(webServiceClient.makeGetRequest(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
     }
 
     private void mockGeoNamesRequests() {
-        when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "1735161")))
+        when(webServiceClient.makeGetRequest(startsWith(GEONAMES_URL_PREFIX + "1735161")))
                 .thenReturn(getGeoNamesJson(1735161, "PPLC"));
-        when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "2186224")))
+        when(webServiceClient.makeGetRequest(startsWith(GEONAMES_URL_PREFIX + "2186224")))
                 .thenReturn(getGeoNamesJson(2186224, "PCLI"));
     }
 

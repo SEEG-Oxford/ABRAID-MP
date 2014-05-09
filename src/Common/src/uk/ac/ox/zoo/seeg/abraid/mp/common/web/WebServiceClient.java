@@ -1,15 +1,20 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.SyncInvoker;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -18,7 +23,8 @@ import javax.ws.rs.core.Response;
  * Copyright (c) 2014 University of Oxford
  */
 public class WebServiceClient {
-    private static final String CALLING_WEB_SERVICE_MESSAGE = "Calling web service URL \"%s\"";
+    private static final String GET_WEB_SERVICE_MESSAGE = "Making GET request to web service URL \"%s\"";
+    private static final String POST_WEB_SERVICE_MESSAGE = "Making POST request to web service URL \"%s\"";
     private static final String CALLED_WEB_SERVICE_MESSAGE =  "Call to web service URL \"%s\" took %d ms";
     private static final String STATUS_UNSUCCESSFUL_MESSAGE =
             "Web service returned status code %d (\"%s\"). Web service URL: \"%s\"";
@@ -39,13 +45,42 @@ public class WebServiceClient {
     }
 
     /**
-     * Calls a web service.
+     * Calls a web service by making a GET request.
      * @param url The web service URL to call.
      * @return The web service response as a string.
      * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
      * or if a response status code other than "successful" is returned.
      */
-    public String request(String url) throws WebServiceClientException {
+    public String makeGetRequest(String url) throws WebServiceClientException {
+        LOGGER.debug(String.format(GET_WEB_SERVICE_MESSAGE, url));
+        return request(url, new SyncInvokerAction() {
+            @Override
+            public Response invoke(SyncInvoker invoker) {
+                return invoker.get();
+            }
+        });
+    }
+
+    /**
+     * Calls a web service by making a POST request.
+     * @param url The web service URL to call.
+     * @param body An object representing the body of the POST request. This will be serialized as JSON.
+     * @return The web service response as a string.
+     * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
+     * or if a response status code other than "successful" is returned.
+     */
+    public String makePostRequestWithJSON(String url, final Object body) throws WebServiceClientException {
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url));
+        return request(url, new SyncInvokerAction() {
+            @Override
+            public Response invoke(SyncInvoker invoker) {
+                String json = serializeJson(body);
+                return invoker.post(Entity.entity(json, MediaType.APPLICATION_JSON_TYPE));
+            }
+        });
+    }
+
+    private String request(String url, SyncInvokerAction action) throws WebServiceClientException {
         try {
             ClientConfig clientConfig = new ClientConfig();
             clientConfig.connectorProvider(new ApacheConnectorProvider());
@@ -54,8 +89,7 @@ public class WebServiceClient {
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 
             DateTime startDate = DateTime.now();
-            LOGGER.debug(String.format(CALLING_WEB_SERVICE_MESSAGE, url));
-            Response response = client.target(url).request().get();
+            Response response = action.invoke(client.target(url).request());
 
             // If the response's status code is not in the "successful" family, throw an exception
             Response.StatusType statusType = response.getStatusInfo();
@@ -85,5 +119,18 @@ public class WebServiceClient {
         } else {
             return getInnermostExceptionMessage(t.getCause());
         }
+    }
+
+    private String serializeJson(Object body) {
+        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(body);
+        } catch (JsonProcessingException e) {
+            throw new ProcessingException(e);
+        }
+    }
+
+    private interface SyncInvokerAction {
+        Response invoke(SyncInvoker invoker);
     }
 }

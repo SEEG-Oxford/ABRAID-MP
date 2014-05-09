@@ -60,7 +60,7 @@ public class MainQCTest extends AbstractMainTests {
     }
 
     private void mockGeoNamesRequests() {
-        when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "2638384")))
+        when(webServiceClient.makeGetRequest(startsWith(GEONAMES_URL_PREFIX + "2638384")))
                 .thenReturn(getGeoNamesJson(2638384, "ADM2"));
     }
 
