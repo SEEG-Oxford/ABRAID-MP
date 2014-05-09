@@ -3,8 +3,9 @@
  */
 define([
     "app/SelectedPointViewModel",
+    "app/CounterViewModel",
     "ko"
-], function (SelectedPointViewModel, ko) {
+], function (SelectedPointViewModel, CounterViewModel, ko) {
     "use strict";
 
     describe("The selected point view model", function () {
@@ -33,8 +34,26 @@ define([
         };
         var baseUrl = "";
         var vm = {};
+        var initialCount = 0;
+        var eventName = "occurrence-reviewed";
         beforeEach(function () {
-            vm = new SelectedPointViewModel(baseUrl, function () {});
+            vm = new SelectedPointViewModel(baseUrl, function () {}, new CounterViewModel(initialCount, eventName));
+        });
+
+        describe("holds the disease occurrence counter view model which", function () {
+            it("takes the expected initial count", function () {
+                expect(vm.counter).not.toBeNull();
+                expect(vm.counter.count()).toBe(initialCount);
+            });
+
+            it("increments its value when the event is fired", function () {
+                // Arrange
+                // Act
+                ko.postbox.publish(eventName);
+                // Assert
+                var expectedCount = initialCount + 1;
+                expect(vm.counter.count()).toBe(expectedCount);
+            });
         });
 
         describe("holds the selected disease occurrence point which", function () {
