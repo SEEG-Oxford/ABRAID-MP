@@ -71,6 +71,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_ADMIN2_RASTER_NAME = "admin2qc.asc";
     private static final int DEFAULT_MAX_CPU = 64;
     private static final boolean DEFAULT_DRY_RUN_FLAG = false;
+    private static final boolean DEFAULT_MODEL_VERBOSE_FLAG = false;
 
     private static final String USERNAME_KEY = "auth.username";
     private static final String PASSWORD_KEY = "auth.password_hash";
@@ -86,6 +87,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
     private static final String MAX_CPU_KEY = "model.max.cpu";
     private static final String DRY_RUN_FLAG_KEY = "model.dry.run";
+    private static final String MODEL_VERBOSE_FLAG_KEY = "model.verbose";
 
     private static final String COVARIATE_JSON_FILE = "abraid.json";
 
@@ -276,8 +278,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /**
-     * Gets the path to the current maximum number of CPUs for the model to use.
-     * @return The path to the maximum number of CPUs.
+     * Gets the current maximum number of CPUs for the model to use.
+     * @return The maximum number of CPUs.
      */
     @Override
     public int getMaxCPUs() {
@@ -285,8 +287,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /**
-     * Gets the path to the current value of the dry run flag.
-     * @return The path to the value of the dry run flag.
+     * Gets the current value of the model verbose run flag.
+     * @return The value of the model verbose run flag.
+     */
+    @Override
+    public boolean getModelVerboseFlag() {
+        return basicProperties.getBoolean(MODEL_VERBOSE_FLAG_KEY, DEFAULT_MODEL_VERBOSE_FLAG);
+    }
+
+    /**
+     * Gets the current value of the dry run flag.
+     * @return The value of the dry run flag.
      */
     @Override
     public boolean getDryRunFlag() {

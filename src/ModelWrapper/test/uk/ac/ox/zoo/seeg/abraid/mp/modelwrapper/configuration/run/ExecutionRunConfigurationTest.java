@@ -17,16 +17,18 @@ public class ExecutionRunConfigurationTest {
         File expectedRPath = new File("xyz");
         int expectedMaxRunTime = 4;
         int expectedMaxCpu = 7;
+        boolean expectedVerbose = true;
         boolean expectedDryRun = true;
 
 
         // Act
-        ExecutionRunConfiguration result = new ExecutionRunConfiguration(expectedRPath, expectedMaxRunTime, expectedMaxCpu, expectedDryRun);
+        ExecutionRunConfiguration result = new ExecutionRunConfiguration(expectedRPath, expectedMaxRunTime, expectedMaxCpu, expectedVerbose, expectedDryRun);
 
         // Assert
         assertThat(result.getRPath()).isEqualTo(expectedRPath);
         assertThat(result.getMaxRuntime()).isEqualTo(expectedMaxRunTime);
         assertThat(result.getMaxCPUs()).isEqualTo(expectedMaxCpu);
+        assertThat(result.getVerboseFlag()).isEqualTo(expectedVerbose);
         assertThat(result.getDryRunFlag()).isEqualTo(expectedDryRun);
 
     }

@@ -39,7 +39,7 @@ public class WorkspaceProvisionerTest {
         RunConfiguration config = new RunConfiguration(
                 expectedRunName, expectedBasePath,
                 new CodeRunConfiguration("", ""),
-                new ExecutionRunConfiguration(new File(""), 60000, 1, false),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
                 new CovariateRunConfiguration("", new ArrayList<String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 

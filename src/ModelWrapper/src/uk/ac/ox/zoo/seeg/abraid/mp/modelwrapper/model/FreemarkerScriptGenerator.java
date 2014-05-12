@@ -91,7 +91,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("run", runConfiguration.getRunName());
         data.put("dry_run", runConfiguration.getExecutionConfig().getDryRunFlag());
         data.put("max_cpu", runConfiguration.getExecutionConfig().getMaxCPUs());
-        data.put("verbosity", 0);
+        data.put("verbose", runConfiguration.getExecutionConfig().getVerboseFlag());
         data.put("model_version", runConfiguration.getCodeConfig().getModelVersion());
         data.put("outbreak_file", "data/outbreakData.csv");
         data.put("extent_file", "data/extentData.asc");

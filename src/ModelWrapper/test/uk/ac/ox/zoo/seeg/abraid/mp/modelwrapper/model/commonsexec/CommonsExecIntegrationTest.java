@@ -33,7 +33,7 @@ public class CommonsExecIntegrationTest {
     public TemporaryFolder testDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     private RunConfiguration createRunConfig() {
-        return new RunConfiguration("foo", testDir.getRoot(), null, new ExecutionRunConfiguration(findR(), 60000, 1, false), null, null);
+        return new RunConfiguration("foo", testDir.getRoot(), null, new ExecutionRunConfiguration(findR(), 60000, 1, false, false), null, null);
     }
 
     /**
@@ -151,7 +151,7 @@ public class CommonsExecIntegrationTest {
         final RunConfiguration config = new RunConfiguration(
                 "foo", testDir.getRoot(),
                 new CodeRunConfiguration("", ""),
-                new ExecutionRunConfiguration(findR(), 60000, 1, true),
+                new ExecutionRunConfiguration(findR(), 60000, 1, false, true),
                 new CovariateRunConfiguration ("", new ArrayList<String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 

@@ -94,7 +94,7 @@ public class ModelRunnerTest {
         File expectedBase = new File("base");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(null,expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, true), null, null);
+                new RunConfiguration(null,expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null, null);
 
         // Act
         target.runModel(config, null, null);
@@ -123,7 +123,7 @@ public class ModelRunnerTest {
         return new RunConfiguration(
                 "foo", testFolder.getRoot(),
                 new CodeRunConfiguration("", ""),
-                new ExecutionRunConfiguration(new File(""), 60000, 1, false),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
                 new CovariateRunConfiguration("", new ArrayList<String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
     }

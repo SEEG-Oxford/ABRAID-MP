@@ -109,14 +109,20 @@ public interface ConfigurationService {
     String getAdmin2RasterFile();
 
     /**
-     * Gets the path to the current maximum number of CPUs for the model to use.
-     * @return The path to the maximum number of CPUs.
+     * Gets the current maximum number of CPUs for the model to use.
+     * @return The maximum number of CPUs.
      */
     int getMaxCPUs();
 
     /**
-     * Gets the path to the current value of the dry run flag.
-     * @return The path to the value of the dry run flag.
+     * Gets the current value of the model verbose flag.
+     * @return The value of the model verbose flag.
+     */
+    boolean getModelVerboseFlag();
+
+    /**
+     * Gets the current value of the dry run flag.
+     * @return The value of the dry run flag.
      */
     boolean getDryRunFlag();
 

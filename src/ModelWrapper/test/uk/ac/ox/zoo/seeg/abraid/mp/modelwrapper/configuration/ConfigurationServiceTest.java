@@ -507,7 +507,7 @@ public class ConfigurationServiceTest {
     }
 
     @Test
-    public void getDryRunFlagReturnsCorrectDefault() throws Exception {
+         public void getDryRunFlagReturnsCorrectDefault() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
@@ -531,6 +531,36 @@ public class ConfigurationServiceTest {
 
         // Act
         Boolean result = target.getDryRunFlag();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void getModelVerboseFlagReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Boolean result = target.getModelVerboseFlag();
+
+        // Assert
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    public void getModelVerboseFlagReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        Boolean expectedValue = true;
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "model.verbose", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Boolean result = target.getModelVerboseFlag();
 
         // Assert
         assertThat(result).isEqualTo(expectedValue);

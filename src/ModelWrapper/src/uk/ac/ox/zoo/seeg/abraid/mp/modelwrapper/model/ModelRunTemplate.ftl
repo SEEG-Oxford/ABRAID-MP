@@ -12,7 +12,7 @@
 # Model version = ${model_version}
 
 # Set verbosity
-verbosity <- ${verbosity}
+verbose <- ${verbose?string("TRUE","FALSE")}
 
 # Set max CPUs
 max_cpu <- ${max_cpu?c}

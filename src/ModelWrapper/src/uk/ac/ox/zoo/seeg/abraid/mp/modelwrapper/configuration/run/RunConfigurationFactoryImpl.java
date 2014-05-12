@@ -82,6 +82,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 Paths.get(configurationService.getRExecutablePath()).toFile(),
                 configurationService.getMaxModelRunDuration(),
                 configurationService.getMaxCPUs(),
+                configurationService.getModelVerboseFlag(),
                 configurationService.getDryRunFlag()
         );
     }
