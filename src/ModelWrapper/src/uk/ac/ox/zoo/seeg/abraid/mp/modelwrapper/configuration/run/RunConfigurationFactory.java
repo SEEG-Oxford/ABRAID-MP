@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
 
 import org.apache.commons.configuration.ConfigurationException;
 
