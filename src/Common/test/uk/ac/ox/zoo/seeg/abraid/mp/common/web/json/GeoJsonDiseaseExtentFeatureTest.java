@@ -1,10 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectType;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseExtentGeoJsonTests;
 
@@ -27,7 +24,7 @@ public class GeoJsonDiseaseExtentFeatureTest extends AbstractDiseaseExtentGeoJso
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 adminUnitGlobal,
                 new DiseaseGroup(),
-                new DiseaseExtentClass("PRESENCE"),
+                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
                 0);
         List<AdminUnitReview> reviews = new ArrayList<>();
 

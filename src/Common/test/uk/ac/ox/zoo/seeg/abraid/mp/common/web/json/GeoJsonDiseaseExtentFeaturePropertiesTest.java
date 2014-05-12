@@ -1,10 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseExtentGeoJsonTests;
 
 import java.util.ArrayList;

@@ -21,7 +21,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
                 new DiseaseGroup(),
-                new DiseaseExtentClass("PRESENCE"),
+                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
                 0);
         adminUnitDiseaseExtentClass.setHasChanged(hasChanged);
         return adminUnitDiseaseExtentClass;
@@ -33,7 +33,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 adminUnitGlobal,
                 new DiseaseGroup(),
-                new DiseaseExtentClass("PRESENCE"),
+                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
                 0);
             adminUnitDiseaseExtentClass.setHasChanged(hasChanged);
             AdminUnitReview review = createAdminUnitReview(adminUnitGlobal);
