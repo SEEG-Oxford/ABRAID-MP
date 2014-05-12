@@ -36,7 +36,6 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
      * Creates a model run script file in the working directory for the given configuration.
      * @param runConfiguration The model run configuration.
      * @param workingDirectory The directory in which the script should be created.
-     * @param dryRun Indicates whether the full model should run.
      * @return The script file.
      * @throws IOException Thrown in response to issues creating the script file.
      */
