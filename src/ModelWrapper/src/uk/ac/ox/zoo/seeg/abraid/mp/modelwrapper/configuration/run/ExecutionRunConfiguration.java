@@ -31,7 +31,7 @@ public class ExecutionRunConfiguration {
         return maxCPUs;
     }
 
-    public boolean isDryRun() {
+    public boolean getDryRunFlag() {
         return dryRun;
     }
 }

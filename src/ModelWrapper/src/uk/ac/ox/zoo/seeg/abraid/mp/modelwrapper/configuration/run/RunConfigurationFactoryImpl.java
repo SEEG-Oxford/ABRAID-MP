@@ -96,8 +96,9 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
         return new AdminUnitRunConfiguration(
                 diseaseGlobal,
                 configurationService.getAdmin1RasterFile(),
-                configurationService.getAdmin2RasterFile()
-        );
+                configurationService.getAdmin2RasterFile(),
+                configurationService.getTropicalShapeFile(),
+                configurationService.getGlobalShapeFile());
     }
 
     private Collection<String> buildCovariateFileList(int diseaseId)

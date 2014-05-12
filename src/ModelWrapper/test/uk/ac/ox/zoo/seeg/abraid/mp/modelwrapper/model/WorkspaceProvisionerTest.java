@@ -41,7 +41,7 @@ public class WorkspaceProvisionerTest {
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false),
                 new CovariateRunConfiguration("", new ArrayList<String>()),
-                new AdminUnitRunConfiguration(true, "", ""));
+                new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         // Act
         File script = target.provisionWorkspace(config, null, null);

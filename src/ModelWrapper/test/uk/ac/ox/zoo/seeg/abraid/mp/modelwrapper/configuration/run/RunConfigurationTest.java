@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
  */
 public class RunConfigurationTest {
     @Test
-    public void runConfigurationBindsParametersCorrectly() {
+    public void constructorBindsParametersCorrectly() {
         // Arrange
         String expectedRunName = "foobar";
         File expectedBaseDir = new File("xyz");

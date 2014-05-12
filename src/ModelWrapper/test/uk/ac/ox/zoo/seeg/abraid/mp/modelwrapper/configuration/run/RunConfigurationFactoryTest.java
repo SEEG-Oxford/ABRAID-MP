@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDateTime;
@@ -9,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,17 +26,16 @@ public class RunConfigurationFactoryTest {
     @Test
     public void createDefaultConfigurationUsesCorrectDefaults() throws Exception {
         // Arrange
+        DateTimeUtils.setCurrentMillisFixed(0);
         ConfigurationService configurationService = mock(ConfigurationService.class);
+        RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
+
         when(configurationService.getCacheDirectory()).thenReturn("expectation1");
         when(configurationService.getModelRepositoryVersion()).thenReturn("expectation2");
-        when(configurationService.getMaxModelRunDuration()).thenReturn(12345);
-        when(configurationService.getRExecutablePath()).thenReturn("");
-        when(configurationService.getCovariateDirectory()).thenReturn("expectation3");
-        JsonCovariateConfiguration expectedCovariates = new JsonCovariateConfiguration(
-                new ArrayList<JsonDisease>(), new ArrayList<JsonCovariateFile>());
-        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariates);
-        RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
-        DateTimeUtils.setCurrentMillisFixed(0);
+        setupExpectedCodeConfiguration(configurationService);
+        setupExpectedExecutionConfiguration(configurationService);
+        setupExpectedCovariateConfiguration(configurationService);
+        setupExpectedAdminUnitConfiguration(configurationService);
 
         // Act
         RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
@@ -42,23 +43,71 @@ public class RunConfigurationFactoryTest {
         // Assert
         assertThat(result.getRunName()).isEqualTo("foo1_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
         assertThat(result.getBaseDir().getName()).isEqualTo("expectation1");
-        assertThat(result.getExecutionConfig().getMaxRuntime()).isEqualTo(12345);
-        assertThat(result.getCodeConfig().getModelVersion()).isEqualTo("expectation2");
-        assertThat(result.getCovariateConfig().getCovariateDirectory()).isEqualTo("expectation3");
-        assertThat(result.getCovariateConfig().getCovariateFilePaths()).isEmpty();
+        assertCorrectCodeConfiguration(result.getCodeConfig());
+        assertCorrectExecutionConfiguration(result.getExecutionConfig());
+        assertCorrectCovariateConfiguration(result.getCovariateConfig());
+        assertCorrectAdminUnitConfiguration(result.getAdminUnitConfig());
+
+    }
+
+    private void setupExpectedCodeConfiguration(ConfigurationService configurationService) {
+        when(configurationService.getModelRepositoryVersion()).thenReturn("modelVersion");
+        when(configurationService.getModelRepositoryUrl()).thenReturn("modelRepository");
+    }
+
+    private void assertCorrectCodeConfiguration(CodeRunConfiguration result) {
+        assertThat(result.getModelVersion()).isEqualTo("modelVersion");
+        assertThat(result.getModelRepository()).isEqualTo("modelRepository");
+    }
+
+    private void setupExpectedExecutionConfiguration(ConfigurationService configurationService) throws Exception {
+        when(configurationService.getRExecutablePath()).thenReturn("rPath");
+        when(configurationService.getMaxModelRunDuration()).thenReturn(1234);
+        when(configurationService.getMaxCPUs()).thenReturn(4321);
+        when(configurationService.getDryRunFlag()).thenReturn(true);
+    }
+
+    private void assertCorrectExecutionConfiguration(ExecutionRunConfiguration result) {
+        assertThat(result.getRPath().toString()).isEqualTo("rPath");
+        assertThat(result.getMaxRuntime()).isEqualTo(1234);
+        assertThat(result.getMaxCPUs()).isEqualTo(4321);
+        assertThat(result.getDryRunFlag()).isEqualTo(true);
+    }
+
+    private void setupExpectedCovariateConfiguration(ConfigurationService configurationService) throws Exception {
+        JsonCovariateConfiguration expectedCovariates = new JsonCovariateConfiguration(
+                new ArrayList<JsonDisease>(), Arrays.asList(
+                    new JsonCovariateFile("covariateFile", "", null, false, Arrays.asList(1))
+        ));
+        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariates);
+        when(configurationService.getCovariateDirectory()).thenReturn("covariateDir");
+    }
+
+    private void assertCorrectCovariateConfiguration(CovariateRunConfiguration result) {
+        assertThat(result.getCovariateDirectory()).isEqualTo("covariateDir");
+        assertThat(result.getCovariateFilePaths()).containsOnly("covariateFile");
+    }
+
+    private void setupExpectedAdminUnitConfiguration(ConfigurationService configurationService) {
+        when(configurationService.getGlobalShapeFile()).thenReturn("globalShape");
+        when(configurationService.getTropicalShapeFile()).thenReturn("tropicalShape");
+        when(configurationService.getAdmin1RasterFile()).thenReturn("admin1Raster");
+        when(configurationService.getAdmin2RasterFile()).thenReturn("admin2Raster");
+    }
+
+    private void assertCorrectAdminUnitConfiguration(AdminUnitRunConfiguration result) {
+        assertThat(result.getUseGlobalShapefile()).isEqualTo(true);
+        assertThat(result.getGlobalShapeFile()).isEqualTo("globalShape");
+        assertThat(result.getTropicalShapeFile()).isEqualTo("tropicalShape");
+        assertThat(result.getAdmin1RasterFile()).isEqualTo("admin1Raster");
+        assertThat(result.getAdmin2RasterFile()).isEqualTo("admin2Raster");
     }
 
     @Test
     public void createDefaultConfigurationHandlesLongNames() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCacheDirectory()).thenReturn("");
-        when(configurationService.getModelRepositoryVersion()).thenReturn("");
-        when(configurationService.getMaxModelRunDuration()).thenReturn(0);
-        when(configurationService.getRExecutablePath()).thenReturn("");
-        when(configurationService.getCovariateDirectory()).thenReturn("");
-        when(configurationService.getCovariateConfiguration()).thenReturn(
-                new JsonCovariateConfiguration(new ArrayList<JsonDisease>(), new ArrayList<JsonCovariateFile>()));
+        setupMinimumConfig(configurationService);
         RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
         DateTimeUtils.setCurrentMillisFixed(0);
 
@@ -75,11 +124,7 @@ public class RunConfigurationFactoryTest {
     public void createDefaultConfigurationExtractsCorrectCovariateFiles() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCacheDirectory()).thenReturn("");
-        when(configurationService.getModelRepositoryVersion()).thenReturn("");
-        when(configurationService.getMaxModelRunDuration()).thenReturn(1);
-        when(configurationService.getRExecutablePath()).thenReturn("");
-        when(configurationService.getCovariateDirectory()).thenReturn("");
+        setupMinimumConfig(configurationService);
         JsonCovariateConfiguration expectedCovariates =
                 new JsonCovariateConfiguration(new ArrayList<JsonDisease>(), Arrays.asList(
                         new JsonCovariateFile("path1", "", "", false, Arrays.asList(1, 2, 3)),
@@ -96,6 +141,13 @@ public class RunConfigurationFactoryTest {
         // Assert
         assertThat(result.getCovariateConfig().getCovariateFilePaths()).contains("path1");
         assertThat(result.getCovariateConfig().getCovariateFilePaths()).contains("path4");
+    }
+
+    private void setupMinimumConfig(ConfigurationService configurationService) throws ConfigurationException, IOException {
+        when(configurationService.getCacheDirectory()).thenReturn("");
+        when(configurationService.getRExecutablePath()).thenReturn("");
+        when(configurationService.getCovariateConfiguration()).thenReturn(
+                new JsonCovariateConfiguration(new ArrayList<JsonDisease>(), new ArrayList<JsonCovariateFile>()));
     }
 
 }

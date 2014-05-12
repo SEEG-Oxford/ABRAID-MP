@@ -125,6 +125,6 @@ public class ModelRunnerTest {
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false),
                 new CovariateRunConfiguration("", new ArrayList<String>()),
-                new AdminUnitRunConfiguration(true, "", ""));
+                new AdminUnitRunConfiguration(true, "", "", "", ""));
     }
 }

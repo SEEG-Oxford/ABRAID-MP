@@ -153,7 +153,7 @@ public class CommonsExecIntegrationTest {
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(findR(), 60000, 1, false),
                 new CovariateRunConfiguration ("", new ArrayList<String>()),
-                new AdminUnitRunConfiguration(true, "", ""));
+                new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);

@@ -8,11 +8,17 @@ public class AdminUnitRunConfiguration {
     private final boolean useGlobalShapefile;
     private final String admin1RasterFile;
     private final String admin2RasterFile;
+    private final String tropicalShapeFile;
+    private final String globalShapeFile;
 
-    public AdminUnitRunConfiguration(boolean useGlobalShapefile, String admin1RasterFile, String admin2RasterFile) {
+    public AdminUnitRunConfiguration(boolean useGlobalShapefile,
+                                     String admin1RasterFile, String admin2RasterFile,
+                                     String tropicalShapeFile, String globalShapeFile) {
         this.useGlobalShapefile = useGlobalShapefile;
         this.admin1RasterFile = admin1RasterFile;
         this.admin2RasterFile = admin2RasterFile;
+        this.tropicalShapeFile = tropicalShapeFile;
+        this.globalShapeFile = globalShapeFile;
     }
 
     public boolean getUseGlobalShapefile() {
@@ -25,5 +31,13 @@ public class AdminUnitRunConfiguration {
 
     public String getAdmin2RasterFile() {
         return admin2RasterFile;
+    }
+
+    public String getTropicalShapeFile() {
+        return tropicalShapeFile;
+    }
+
+    public String getGlobalShapeFile() {
+        return globalShapeFile;
     }
 }
