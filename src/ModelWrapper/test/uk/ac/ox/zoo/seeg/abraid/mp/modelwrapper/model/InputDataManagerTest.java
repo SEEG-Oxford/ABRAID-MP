@@ -5,6 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
 
@@ -16,6 +18,8 @@ import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence;
+import static org.mockito.Mockito.when;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.defaultLocation;
 
 /**
  * Tests for InputDataManagerImpl.
@@ -26,9 +30,52 @@ public class InputDataManagerTest {
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Test
-    public void writeDataCreatesCorrectCsv() throws Exception {
+    public void writeDataCreatesCorrectCsvForDefaultOccurrencePoint() throws Exception {
+        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence());
+
+        // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
+        assertThat(result).isEqualTo("-1.0,1.0,0.5,-999,NA" + System.lineSeparator());
+    }
+
+    @Test
+    public void writeDataCreatesCorrectCsvForGlobalAdminLevel1() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+
+        String result = arrangeAndActWriteDataTest(occurrence);
+
+        // Assert
+        assertThat(result).isEqualTo("-1.0,1.0,0.5,1,102" + System.lineSeparator());
+    }
+
+    @Test
+    public void writeDataCreatesCorrectCsvForGlobalAdminLevel2() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN2);
+
+        String result = arrangeAndActWriteDataTest(occurrence);
+
+        // Assert
+        assertThat(result).isEqualTo("-1.0,1.0,0.5,2,102" + System.lineSeparator());
+    }
+
+    @Test
+    public void writeDataCreatesCorrectCsvForTropicalAdminLevel1() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(false);
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+
+        String result = arrangeAndActWriteDataTest(occurrence);
+
+        // Assert
+        assertThat(result).isEqualTo("-1.0,1.0,0.5,1,101" + System.lineSeparator());
+    }
+
+    private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {
+        // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(occurrence));
         InputDataManager target = new InputDataManagerImpl();
@@ -36,10 +83,7 @@ public class InputDataManagerTest {
 
         // Act
         target.writeData(data, dir);
-        String result = FileUtils.readFileToString(Paths.get(dir.toString(), "outbreak.csv").toFile());
-
-        // Assert
-        assertThat(result).isEqualTo("-1.0,1.0,PRECISE,0.5" + System.lineSeparator());
+        return FileUtils.readFileToString(Paths.get(dir.toString(), "outbreak.csv").toFile());
     }
 
     @Test

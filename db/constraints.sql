@@ -20,9 +20,6 @@ ALTER TABLE admin_unit_review
 
 ALTER TABLE alert
     ADD CONSTRAINT uq_alert_healthmap_alert_id UNIQUE (healthmap_alert_id);
-	
-ALTER TABLE disease_extent_class
-    ADD CONSTRAINT uq_disease_extent_class_name UNIQUE (name);
 
 ALTER TABLE disease_occurrence_review
     ADD CONSTRAINT uq_disease_occurrence_review_expert_id_disease_occurrence_id UNIQUE (expert_id, disease_occurrence_id);

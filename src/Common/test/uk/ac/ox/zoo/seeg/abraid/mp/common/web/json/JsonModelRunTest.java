@@ -17,18 +17,18 @@ public class JsonModelRunTest {
         // Arrange
         JsonModelDisease expectedDisease = new JsonModelDisease();
         GeoJsonDiseaseOccurrenceFeatureCollection expectedOccurrences = new GeoJsonDiseaseOccurrenceFeatureCollection();
-        Map<Integer, Integer> expectedExtents = new HashMap<>();
+        Map<Integer, Integer> expectedExtentWeightings = new HashMap<>();
 
         // Act
         JsonModelRun result = new JsonModelRun(
                 expectedDisease,
                 expectedOccurrences,
-                expectedExtents);
+                expectedExtentWeightings);
 
         // Assert
         assertThat(result.getDisease()).isEqualTo(expectedDisease);
         assertThat(result.getOccurrences()).isEqualTo(expectedOccurrences);
-        assertThat(result.getExtentWeightings()).isEqualTo(expectedExtents);
+        assertThat(result.getExtentWeightings()).isEqualTo(expectedExtentWeightings);
     }
 
     @Test
