@@ -35,8 +35,8 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
     }
 
-    private String formatDisplayString(DiseaseExtentClass diseaseExtentClassObject) {
-        String s = diseaseExtentClassObject.toString();
+    private String formatDisplayString(DiseaseExtentClass diseaseExtentClass) {
+        String s = diseaseExtentClass.getName();
         s = s.replace("_", " ");
         return s.charAt(0) + s.substring(1).toLowerCase();
     }
@@ -82,7 +82,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         this.occurrenceCount = occurrenceCount;
     }
 
-    public boolean isNeedsReview() {
+    public boolean needsReview() {
         return needsReview;
     }
 

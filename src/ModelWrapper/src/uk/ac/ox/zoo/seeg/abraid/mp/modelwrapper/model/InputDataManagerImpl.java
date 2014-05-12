@@ -2,6 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
@@ -65,7 +67,15 @@ public class InputDataManagerImpl implements InputDataManager {
                 Double.toString(occurrence.getGeometry().getCoordinates().getLatitude()),
                 occurrence.getProperties().getWeighting().toString(),
                 occurrence.getProperties().getLocationPrecision().getModelValue().toString(),
-                occurrence.getProperties().getGaulCode().toString()
+                extractGaulCode(occurrence)
         }, ',');
+    }
+
+    private String extractGaulCode(GeoJsonDiseaseOccurrenceFeature occurrence) {
+        if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE) {
+            return "NA";
+        } else {
+            return occurrence.getProperties().getGaulCode().toString();
+        }
     }
 }

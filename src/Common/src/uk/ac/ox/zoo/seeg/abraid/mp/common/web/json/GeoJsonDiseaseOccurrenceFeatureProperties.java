@@ -44,7 +44,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
         setLocationPrecision(occurrence.getLocation().getPrecision());
         setWeighting(occurrence.getValidationWeighting());
-        setGaulCode(getAdminUnitGlobalOrTropicalGaulCode(occurrence));
+        setGaulCode(extractAdminUnitGlobalOrTropicalGaulCode(occurrence));
     }
 
     public String getDiseaseGroupPublicName() {
@@ -108,7 +108,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
      * @param occurrence The disease occurrence.
      * @return The GAUL code.
      */
-    private Integer getAdminUnitGlobalOrTropicalGaulCode(DiseaseOccurrence occurrence) {
+    private Integer extractAdminUnitGlobalOrTropicalGaulCode(DiseaseOccurrence occurrence) {
         if (occurrence.getDiseaseGroup().isGlobal()) {
             return occurrence.getLocation().getAdminUnitGlobalGaulCode();
         } else {

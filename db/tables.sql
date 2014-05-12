@@ -100,7 +100,7 @@ CREATE TABLE country (
 );
 
 CREATE TABLE disease_extent_class (
-    name varchar(17) NOT NULL,
+    name varchar(20) NOT NULL,
     weighting integer NOT NULL
 );
 

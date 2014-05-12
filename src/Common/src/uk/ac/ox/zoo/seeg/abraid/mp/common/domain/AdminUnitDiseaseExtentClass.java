@@ -51,7 +51,7 @@ public class AdminUnitDiseaseExtentClass {
 
     // The disease extent class.
     @ManyToOne
-    @JoinColumn(name = "disease_extent_class")
+    @JoinColumn(name = "disease_extent_class", nullable = false)
     private DiseaseExtentClass diseaseExtentClass;
 
     // The number of disease occurrences giving rise to this extent class.

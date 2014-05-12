@@ -8,8 +8,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
 
-import java.util.TimeZone;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,7 +32,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockAlert("title", "summary", "feedName", "feedLanguage", "url");
     }
 
-    public static Location mockLocation(double longitude, double latitude, String locationName, LocationPrecision locationPrecision) {
+    public static Location mockLocation(double longitude, double latitude, String locationName, LocationPrecision locationPrecision, int tropicalGaul, int globalGaul) {
         Location location = mock(Location.class);
         Point geom = mock(Point.class);
         when(location.getGeom()).thenReturn(geom);
@@ -42,11 +40,13 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         when(geom.getY()).thenReturn(longitude);
         when(location.getName()).thenReturn(locationName);
         when(location.getPrecision()).thenReturn(locationPrecision);
+        when(location.getAdminUnitTropicalGaulCode()).thenReturn(tropicalGaul);
+        when(location.getAdminUnitGlobalGaulCode()).thenReturn(globalGaul);
         return location;
     }
 
     public static Location defaultLocation() {
-        return mockLocation(1.0, -1.0, "locationName", LocationPrecision.PRECISE);
+        return mockLocation(1.0, -1.0, "locationName", LocationPrecision.PRECISE, 101, 102);
     }
 
     public static DiseaseOccurrence mockDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Location location, DateTime occurrenceDate, Alert alert, double weighting) {
@@ -61,16 +61,17 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static DiseaseOccurrence defaultDiseaseOccurrence() {
-        return mockDiseaseOccurrence(1, defaultDiseaseGroup(),defaultLocation(), (new DateTime(0)).withZone(DateTimeZone.UTC), defaultAlert(), 0.5);
+        return mockDiseaseOccurrence(1, defaultDiseaseGroup(), defaultLocation(), (new DateTime(0)).withZone(DateTimeZone.UTC), defaultAlert(), 0.5);
     }
 
     private static DiseaseGroup defaultDiseaseGroup() {
-        return mockDiseaseGroup("diseaseGroupPublicName");
+        return mockDiseaseGroup("diseaseGroupPublicName", true);
     }
 
-    private static DiseaseGroup mockDiseaseGroup(String diseaseGroupPublicName) {
+    private static DiseaseGroup mockDiseaseGroup(String diseaseGroupPublicName, boolean isGlobal) {
         DiseaseGroup mockDiseaseGroup = mock(DiseaseGroup.class);
         when(mockDiseaseGroup.getPublicNameForDisplay()).thenReturn(diseaseGroupPublicName);
+        when(mockDiseaseGroup.isGlobal()).thenReturn(isGlobal);
         return mockDiseaseGroup;
     }
 
@@ -91,7 +92,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         String modellingViewProperties =
            "            \"locationPrecision\":\"PRECISE\"," +
            "            \"weighting\":0.5," +
-           "            \"gaulCode\":0";
+           "            \"gaulCode\":102";
 
         return (
             "{" +
