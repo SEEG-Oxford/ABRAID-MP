@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;

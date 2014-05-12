@@ -5,7 +5,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -91,13 +91,13 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("dry_run", dryRun);
         data.put("verbosity", 0);
         data.put("disease", "P.vivax");
-        data.put("model_version", runConfiguration.getModelVersion());
+        data.put("model_version", runConfiguration.getCodeConfig().getModelVersion());
         data.put("outbreak_file", "data/outbreakData.csv");
         data.put("extent_file", "data/extentData.csv");
 
-        final String covariatePathPrefix = runConfiguration.getCovariateDirectory();
+        final String covariatePathPrefix = runConfiguration.getCovariateConfig().getCovariateDirectory();
         Collection<String> covariatePaths =
-                convert(runConfiguration.getCovariateFilePaths(), new Converter<String, String>() {
+                convert(runConfiguration.getCovariateConfig().getCovariateFilePaths(), new Converter<String, String>() {
                     public String convert(String subpath) {
                         return Paths.get(covariatePathPrefix, subpath).toString();
                     }
