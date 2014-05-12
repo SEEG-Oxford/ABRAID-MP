@@ -86,7 +86,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         sourceCodeManager.provisionVersion(configuration.getCodeConfig().getModelVersion(), modelDirectory);
 
         // Template script
-        File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);
+        File runScript = scriptGenerator.generateScript(configuration, workingDirectory);
 
         LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectoryPath.toString()));
         return runScript;

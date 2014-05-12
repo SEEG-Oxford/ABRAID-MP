@@ -32,7 +32,7 @@ public class FreemarkerScriptGeneratorTest {
         RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot(), false);
+        File result = target.generateScript(conf, testFolder.getRoot());
 
         // Assert
         assertThat(result).isNotNull();
@@ -48,7 +48,7 @@ public class FreemarkerScriptGeneratorTest {
         RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot(), false);
+        File result = target.generateScript(conf, testFolder.getRoot());
 
         // Assert
         assertThat(contentOf(result, defaultCharset())).startsWith("# A launch script for the ABRAID-MP disease risk model");
@@ -62,7 +62,7 @@ public class FreemarkerScriptGeneratorTest {
         RunConfiguration conf = createBasicRunConfiguration(expectedRunName);
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot(), false);
+        File result = target.generateScript(conf, testFolder.getRoot());
 
         // Assert
         assertThat(contentOf(result, Charset.forName("US-ASCII"))).contains("Run name = " + expectedRunName);
@@ -75,7 +75,7 @@ public class FreemarkerScriptGeneratorTest {
         RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        catchException(target).generateScript(conf, new File("non-existent"), false);
+        catchException(target).generateScript(conf, new File("non-existent"));
         Exception result = caughtException();
 
         // Assert
@@ -89,7 +89,7 @@ public class FreemarkerScriptGeneratorTest {
         RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        catchException(target).generateScript(conf, testFolder.newFile(), false);
+        catchException(target).generateScript(conf, testFolder.newFile());
         Exception result = caughtException();
 
         // Assert

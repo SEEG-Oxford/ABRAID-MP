@@ -151,7 +151,7 @@ public class CommonsExecIntegrationTest {
         final RunConfiguration config = new RunConfiguration(
                 "foo", testDir.getRoot(),
                 new CodeRunConfiguration("", ""),
-                new ExecutionRunConfiguration(findR(), 60000, 1, false),
+                new ExecutionRunConfiguration(findR(), 60000, 1, true),
                 new CovariateRunConfiguration ("", new ArrayList<String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 
@@ -160,7 +160,7 @@ public class CommonsExecIntegrationTest {
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
-                return scriptGenerator.generateScript(config, testDir.getRoot(), true);
+                return scriptGenerator.generateScript(config, testDir.getRoot());
             }
         });
 

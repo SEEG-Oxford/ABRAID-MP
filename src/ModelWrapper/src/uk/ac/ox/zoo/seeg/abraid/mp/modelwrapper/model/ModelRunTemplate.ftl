@@ -9,25 +9,35 @@
 
 # Run name = ${run}
 
-# Running for disease = ${disease}
 # Model version = ${model_version}
 
 # Set verbosity
 verbosity <- ${verbosity}
 
+# Set max CPUs
+max_cpu <- ${max_cpu?c}
+
 # Define outbreak data
 outbreakData <- "${outbreak_file}"
+
+# Define disease extent data
+extentData <- "${extent_file}"
 
 # Define covariates to use.
 # If you would like to use these covariate files please contact TBD@TBD.com, as we cannot release them in all circumstances.
 covariates <- c(
-<#list covariates as covariate>
+<#list covariate_files as covariate>
     "${covariate}"<#if covariate_has_next>,</#if>
 </#list>
 )
 
-# Define disease extent data
-extentData <- "${extent_file}"
+# Define admin unit rasters to use.
+# If you would like to use these admin unit rasters (or related shape files) please contact TBD@TBD.com, as we cannot release them in all circumstances.
+admin_units <- c(
+<#list admin_files as admin_level_file>
+    "${admin_level_file}"<#if admin_level_file_has_next>,</#if>
+</#list>
+)
 
 # Load the model
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
@@ -35,11 +45,16 @@ extentData <- "${extent_file}"
 
 # Run the model
 result <- tryCatch({
-    # seegSDM.run(outbreakData, extentData, covariates, verbosity, ${dry_run?c})
-    write(paste("I'm running the model using: ", outbreakData), file="echo")
-    # Temp POC
-    print(covariates)
-    0 # return 0
+    if (${dry_run?string("TRUE","FALSE")}) {
+        # Dry run?
+        0 # return 0
+    } else {
+        # seegSDM.run(outbreakData, extentData, admin_units, covariates, verbosity, max_cpu:c)
+        write(paste("I'm running the model using: ", outbreakData), file="echo")
+        # Temp POC
+        print(covariates)
+        0 # return 0
+    }
 }, warning = function(w) {
     print(paste("Warning:  ", w))
     return(0)
