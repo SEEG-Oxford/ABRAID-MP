@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
@@ -32,14 +32,17 @@ public class CommonsExecIntegrationTest {
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
+    private RunConfiguration createRunConfig() {
+        return new RunConfiguration("foo", testDir.getRoot(), null, new ExecutionRunConfiguration(findR(), 60000, 1, false), null, null);
+    }
+
     /**
      * Verifies that subprocesses can be started.
      */
     @Test
     public void shouldBeAbleToRunEmptyScript() throws Exception {
         // Arrange
-        RunConfiguration config =
-                new RunConfiguration(findR(), testDir.getRoot(), "foo", true, 60000, "", "", new ArrayList<String>());
+        RunConfiguration config = createRunConfig();
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
@@ -62,8 +65,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunHelloWorldScript() throws Exception {
         // Arrange
-        RunConfiguration config =
-                new RunConfiguration(findR(), testDir.getRoot(), "foo", true, 60000, "", "", new ArrayList<String>());
+        RunConfiguration config = createRunConfig();
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
@@ -88,8 +90,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunHelloErrorScript() throws Exception {
         // Arrange
-        RunConfiguration config =
-                new RunConfiguration(findR(), testDir.getRoot(), "foo", true, 60000, "", "", new ArrayList<String>());
+        RunConfiguration config = createRunConfig();
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
@@ -114,8 +115,7 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToRunHelloNameScript() throws Exception {
         // Arrange
-        RunConfiguration config =
-                new RunConfiguration(findR(), testDir.getRoot(), "foo", true, 60000, "", "", new ArrayList<String>());
+        RunConfiguration config = createRunConfig();
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
@@ -148,8 +148,13 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToDoDryRunOfModel() throws Exception {
         // Arrange
-        final RunConfiguration config =
-                new RunConfiguration(findR(), testDir.getRoot(), "foo", true, 60000, "", "", new ArrayList<String>());
+        final RunConfiguration config = new RunConfiguration(
+                "foo", testDir.getRoot(),
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(findR(), 60000, 1, false),
+                new CovariateRunConfiguration ("", new ArrayList<String>()),
+                new AdminUnitRunConfiguration(true, "", ""));
+
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {

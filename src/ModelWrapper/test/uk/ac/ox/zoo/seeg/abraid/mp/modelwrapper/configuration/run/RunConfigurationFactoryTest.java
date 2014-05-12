@@ -1,9 +1,10 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
@@ -41,10 +42,10 @@ public class RunConfigurationFactoryTest {
         // Assert
         assertThat(result.getRunName()).isEqualTo("foo1_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
         assertThat(result.getBaseDir().getName()).isEqualTo("expectation1");
-        assertThat(result.getMaxRuntime()).isEqualTo(12345);
-        assertThat(result.getModelVersion()).isEqualTo("expectation2");
-        assertThat(result.getCovariateDirectory()).isEqualTo("expectation3");
-        assertThat(result.getCovariateFilePaths()).isEqualTo(new ArrayList<String>());
+        assertThat(result.getExecutionConfig().getMaxRuntime()).isEqualTo(12345);
+        assertThat(result.getCodeConfig().getModelVersion()).isEqualTo("expectation2");
+        assertThat(result.getCovariateConfig().getCovariateDirectory()).isEqualTo("expectation3");
+        assertThat(result.getCovariateConfig().getCovariateFilePaths()).isEmpty();
     }
 
     @Test
@@ -93,9 +94,8 @@ public class RunConfigurationFactoryTest {
         RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
 
         // Assert
-        assertThat(result.getCovariateFilePaths()).hasSize(2);
-        assertThat(result.getCovariateFilePaths()).contains("path1");
-        assertThat(result.getCovariateFilePaths()).contains("path4");
+        assertThat(result.getCovariateConfig().getCovariateFilePaths()).contains("path1");
+        assertThat(result.getCovariateConfig().getCovariateFilePaths()).contains("path4");
     }
 
 }

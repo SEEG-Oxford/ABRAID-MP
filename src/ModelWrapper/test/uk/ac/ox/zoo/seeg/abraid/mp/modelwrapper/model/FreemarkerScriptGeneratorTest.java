@@ -1,9 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatItHasCreated() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -44,7 +45,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatIsBasedOnTheCorrectTemplate() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -58,8 +59,7 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         String expectedRunName = "foobar4321";
-        RunConfiguration conf =
-                new RunConfiguration(null, null, expectedRunName, true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(expectedRunName);
 
         // Act
         File result = target.generateScript(conf, testFolder.getRoot(), false);
@@ -72,7 +72,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfScriptCanNotBeWritten() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
         catchException(target).generateScript(conf, new File("non-existent"), false);
@@ -86,7 +86,7 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfWorkingDirectoryIsAFile() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
         catchException(target).generateScript(conf, testFolder.newFile(), false);
@@ -94,5 +94,14 @@ public class FreemarkerScriptGeneratorTest {
 
         // Assert
         assertThat(result).isInstanceOf(IOException.class);
+    }
+
+    private RunConfiguration createBasicRunConfiguration(String runName) {
+        return new RunConfiguration(
+                StringUtils.isNotEmpty(runName) ? runName :"foo", testFolder.getRoot(),
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false),
+                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new AdminUnitRunConfiguration(true, "", ""));
     }
 }

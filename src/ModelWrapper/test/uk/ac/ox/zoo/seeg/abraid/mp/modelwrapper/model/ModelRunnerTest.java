@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, true, 0, "", "", new ArrayList<String>());
+        RunConfiguration config = createBasicRunConfiguration();
 
         // Act
         target.runModel(config, null, null);
@@ -66,7 +66,7 @@ public class ModelRunnerTest {
 
         ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
-        RunConfiguration config = new RunConfiguration(null, null, null, true, 0, "", "", new ArrayList<String>());
+        RunConfiguration config = createBasicRunConfiguration();
 
         // Act
         target.runModel(config, null, null);
@@ -94,7 +94,7 @@ public class ModelRunnerTest {
         File expectedBase = new File("base");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(expectedR, expectedBase, null, true, expectedTimeout, "", "", new ArrayList<String>());
+                new RunConfiguration(null,expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, true), null, null);
 
         // Act
         target.runModel(config, null, null);
@@ -117,5 +117,14 @@ public class ModelRunnerTest {
         String key = stringArgs[3].substring(2, stringArgs[3].length() - 1);
         assertThat(fileArgs).containsKey(key);
         assertThat(fileArgs.get(key)).isEqualTo(expectedScript);
+    }
+
+    private RunConfiguration createBasicRunConfiguration() {
+        return new RunConfiguration(
+                "foo", testFolder.getRoot(),
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false),
+                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new AdminUnitRunConfiguration(true, "", ""));
     }
 }
