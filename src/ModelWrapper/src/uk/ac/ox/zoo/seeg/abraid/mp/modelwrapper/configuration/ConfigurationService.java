@@ -97,6 +97,36 @@ public interface ConfigurationService {
     String getTropicalShapeFile();
 
     /**
+     * Gets the path to the current admin 1 raster file.
+     * @return The path to the admin 1 raster file.
+     */
+    String getAdmin1RasterFile();
+
+    /**
+     * Gets the path to the current admin 2 raster file.
+     * @return The path to the admin 2 raster file.
+     */
+    String getAdmin2RasterFile();
+
+    /**
+     * Gets the current maximum number of CPUs for the model to use.
+     * @return The maximum number of CPUs.
+     */
+    int getMaxCPUs();
+
+    /**
+     * Gets the current value of the model verbose flag.
+     * @return The value of the model verbose flag.
+     */
+    boolean getModelVerboseFlag();
+
+    /**
+     * Gets the current value of the dry run flag.
+     * @return The value of the dry run flag.
+     */
+    boolean getDryRunFlag();
+
+    /**
      * Gets the current directory for covariate files.
      * @return The directory for covariate files.
      */

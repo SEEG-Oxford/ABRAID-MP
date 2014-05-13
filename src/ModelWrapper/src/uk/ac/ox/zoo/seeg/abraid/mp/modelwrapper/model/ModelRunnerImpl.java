@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,10 +49,10 @@ public class ModelRunnerImpl implements ModelRunner {
         fileArguments.put(SCRIPT_FILE_ID, scriptFile);
         ProcessRunner processRunner = processRunnerFactory.createProcessRunner(
                 scriptFile.getParentFile(),
-                configuration.getRPath(),
+                configuration.getExecutionConfig().getRPath(),
                 R_OPTIONS,
                 fileArguments,
-                configuration.getMaxRuntime());
+                configuration.getExecutionConfig().getMaxRuntime());
 
         ModelProcessHandler processHandler = new ModelProcessHandler();
         processRunner.run(processHandler);
