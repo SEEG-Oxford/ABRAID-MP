@@ -96,7 +96,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("extent_file", "data/extent.asc");
         data.put("admin_files", Arrays.asList(
                 escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()),
-                escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
+                escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile())));
 
         final String covariatePathPrefix = runConfiguration.getCovariateConfig().getCovariateDirectory();
         Collection<String> covariatePaths =

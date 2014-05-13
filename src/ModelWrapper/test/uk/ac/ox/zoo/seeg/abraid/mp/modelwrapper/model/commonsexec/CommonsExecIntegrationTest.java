@@ -167,11 +167,9 @@ public class CommonsExecIntegrationTest {
         // Act
         ProcessHandler processHandler = runner.runModel(config, null, null);
         int exitCode = processHandler.waitForCompletion();
-        String output = processHandler.getOutputStream().toString();
 
         // Assert
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
-        //assertThat(output)
     }
 
     /**
