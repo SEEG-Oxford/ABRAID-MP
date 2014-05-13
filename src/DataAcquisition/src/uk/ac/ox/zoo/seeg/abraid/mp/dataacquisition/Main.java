@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -21,6 +22,7 @@ public class Main {
 
     private HealthMapDataAcquisition healthMapDataAcquisition;
     private DiseaseExtentGenerator diseaseExtentGenerator;
+    private WeightingsCalculator weightingsCalculator;
 
     /**
      * Entry method for the DataAcquisition module.
@@ -73,5 +75,6 @@ public class Main {
             healthMapDataAcquisition.acquireDataFromWebService();
         }
         diseaseExtentGenerator.generateDiseaseExtent();
+        weightingsCalculator.calculateDiseaseOccurrenceWeightings();
     }
 }

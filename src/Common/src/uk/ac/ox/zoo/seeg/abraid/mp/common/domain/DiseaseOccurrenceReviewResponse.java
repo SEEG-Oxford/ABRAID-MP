@@ -9,13 +9,23 @@ public enum DiseaseOccurrenceReviewResponse {
     /**
      * The expert believes the disease occurrence point is valid.
      */
-    YES,
+    YES(1),
     /**
      * The expert believes the disease occurrence point is not valid.
      */
-    NO,
+    NO(-1),
     /**
      * The expert is unsure on validity of disease occurrence point.
      */
-    UNSURE
+    UNSURE(0);
+
+    private final int value;
+
+    private DiseaseOccurrenceReviewResponse(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

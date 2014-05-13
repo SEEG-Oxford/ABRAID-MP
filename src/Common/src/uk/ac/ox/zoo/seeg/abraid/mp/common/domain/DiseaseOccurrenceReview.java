@@ -21,6 +21,11 @@ import javax.persistence.*;
         name = "getDiseaseOccurrenceReviewByExpertIdAndDiseaseOccurrenceId",
         query = "select 1 from DiseaseOccurrenceReview where expert.id=:expertId " +
                 "and diseaseOccurrence.id=:diseaseOccurrenceId"
+    ),
+    @NamedQuery(
+        name = "getAllDiseaseOccurrencesReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval",
+        query = "select from DiseaseOccurrenceReview where diseaseOccurrence.id in" +
+                "(select diseaseOccurrence.id from DiseaseOccurrenceReview where createdDate > :lastRetrievalDate)"
     )
 })
 @Entity

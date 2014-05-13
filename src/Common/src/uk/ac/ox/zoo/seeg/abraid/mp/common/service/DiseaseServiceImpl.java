@@ -15,6 +15,7 @@ import java.util.*;
 @Transactional
 public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private DiseaseGroupDao diseaseGroupDao;
     private HealthMapDiseaseDao healthMapDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
@@ -23,6 +24,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitTropicalDao adminUnitTropicalDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
+                              DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
                               DiseaseGroupDao diseaseGroupDao,
                               HealthMapDiseaseDao healthMapDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
@@ -30,6 +32,7 @@ public class DiseaseServiceImpl implements DiseaseService {
                               AdminUnitGlobalDao adminUnitGlobalDao,
                               AdminUnitTropicalDao adminUnitTropicalDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
+        this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
@@ -39,42 +42,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Saves a disease occurrence.
-     * @param diseaseOccurrence The disease occurrence to save.
-     */
-    @Override
-    @Transactional
-    public void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
-        diseaseOccurrenceDao.save(diseaseOccurrence);
-    }
-
-    /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
-     */
-    @Override
-    @Transactional
-    public void saveHealthMapDisease(HealthMapDisease disease) {
-        healthMapDiseaseDao.save(disease);
-    }
-
-    /**
      * Gets all HealthMap diseases.
      * @return All HealthMap diseases.
      */
     @Override
     public List<HealthMapDisease> getAllHealthMapDiseases() {
         return healthMapDiseaseDao.getAll();
-    }
-
-    /**
-     * Gets the disease group by its id.
-     * @param diseaseGroupId The id of the disease group.
-     * @return The disease group.
-     */
-    @Override
-    public DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId) {
-        return diseaseGroupDao.getById(diseaseGroupId);
     }
 
     /**
@@ -93,6 +66,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups() {
         return validatorDiseaseGroupDao.getAll();
+    }
+
+    /**
+     * Gets the disease group by its id.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The disease group.
+     */
+    @Override
+    public DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId) {
+        return diseaseGroupDao.getById(diseaseGroupId);
     }
 
     /**
@@ -117,22 +100,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets the disease extent for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return The disease extent.
-     */
-    @Override
-    public List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId) {
-        if (isDiseaseGroupGlobal(diseaseGroupId)) {
-            return adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
-                    diseaseGroupId);
-        } else {
-            return adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
-                    diseaseGroupId);
-        }
-    }
-
-    /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroupId The ID of the disease group.
@@ -146,15 +113,6 @@ public class DiseaseServiceImpl implements DiseaseService {
         } else {
             return adminUnitTropicalDao.getAll();
         }
-    }
-
-    /**
-     * Saves a disease extent class that is associated with an admin unit (global or tropical).
-     * @param adminUnitDiseaseExtentClass The object to save.
-     */
-    @Override
-    public void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
-        adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
     }
 
     /**
@@ -174,6 +132,33 @@ public class DiseaseServiceImpl implements DiseaseService {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
                 diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds,
                 isDiseaseGroupGlobal(diseaseGroupId));
+    }
+
+    /**
+     * Gets the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
+     */
+    @Override
+    public List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId) {
+        if (isDiseaseGroupGlobal(diseaseGroupId)) {
+            return adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+                    diseaseGroupId);
+        } else {
+            return adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
+                    diseaseGroupId);
+        }
+    }
+
+    /**
+     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
+     * @return A list of the reviews of disease occurrences whose weightings needs updating.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
+            DateTime lastRetrieval) {
+        return diseaseOccurrenceReviewDao.getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
+            lastRetrieval);
     }
 
     /**
@@ -208,7 +193,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
     public boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
-                                                          Integer validatorDiseaseGroupId) {
+                                                                                  Integer validatorDiseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
         return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
     }
@@ -216,5 +201,34 @@ public class DiseaseServiceImpl implements DiseaseService {
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
         return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());
+    }
+
+    /**
+     * Saves a disease occurrence.
+     * @param diseaseOccurrence The disease occurrence to save.
+     */
+    @Override
+    @Transactional
+    public void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
+        diseaseOccurrenceDao.save(diseaseOccurrence);
+    }
+
+    /**
+     * Saves a HealthMap disease.
+     * @param disease The disease to save.
+     */
+    @Override
+    @Transactional
+    public void saveHealthMapDisease(HealthMapDisease disease) {
+        healthMapDiseaseDao.save(disease);
+    }
+
+    /**
+     * Saves a disease extent class that is associated with an admin unit (global or tropical).
+     * @param adminUnitDiseaseExtentClass The object to save.
+     */
+    @Override
+    public void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
+        adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
     }
 }
