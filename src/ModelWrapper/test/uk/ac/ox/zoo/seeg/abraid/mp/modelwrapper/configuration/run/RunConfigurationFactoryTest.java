@@ -149,5 +149,5 @@ public class RunConfigurationFactoryTest {
         when(configurationService.getCovariateConfiguration()).thenReturn(
                 new JsonCovariateConfiguration(new ArrayList<JsonDisease>(), new ArrayList<JsonCovariateFile>()));
     }
-
 }
+

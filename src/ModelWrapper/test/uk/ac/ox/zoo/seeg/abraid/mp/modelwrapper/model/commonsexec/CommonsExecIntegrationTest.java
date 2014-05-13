@@ -152,7 +152,7 @@ public class CommonsExecIntegrationTest {
                 "foo", testDir.getRoot(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(findR(), 60000, 1, false, true),
-                new CovariateRunConfiguration ("", new ArrayList<String>()),
+                new CovariateRunConfiguration("", new ArrayList<String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);

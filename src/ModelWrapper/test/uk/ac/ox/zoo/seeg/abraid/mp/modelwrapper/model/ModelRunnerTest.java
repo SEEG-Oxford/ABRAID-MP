@@ -94,7 +94,7 @@ public class ModelRunnerTest {
         File expectedBase = new File("base");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(null,expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null, null);
+                new RunConfiguration(null, expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null, null);
 
         // Act
         target.runModel(config, null, null);

@@ -24,3 +24,4 @@ public class CovariateRunConfiguration {
         return covariateFilePaths;
     }
 }
+
