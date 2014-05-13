@@ -24,8 +24,8 @@ import javax.persistence.*;
     ),
     @NamedQuery(
         name = "getAllDiseaseOccurrencesReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval",
-        query = "select from DiseaseOccurrenceReview where diseaseOccurrence.id in" +
-                "(select diseaseOccurrence.id from DiseaseOccurrenceReview where createdDate > :lastRetrievalDate)"
+        query = "from DiseaseOccurrenceReview where diseaseOccurrence in " +
+                "(select diseaseOccurrence from DiseaseOccurrenceReview where createdDate > :lastRetrievalDate)"
     )
 })
 @Entity

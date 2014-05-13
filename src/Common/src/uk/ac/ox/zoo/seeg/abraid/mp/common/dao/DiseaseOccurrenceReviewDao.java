@@ -19,6 +19,7 @@ public interface DiseaseOccurrenceReviewDao {
 
     /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
+     * @param lastRetrieval The date on which the disease occurrence reviews were last retrieved.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(

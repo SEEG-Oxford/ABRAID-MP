@@ -56,9 +56,11 @@ public class Main {
         main.runDataAcquisition(args);
     }
 
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition, DiseaseExtentGenerator diseaseExtentGenerator) {
+    public Main(HealthMapDataAcquisition healthMapDataAcquisition, DiseaseExtentGenerator diseaseExtentGenerator,
+                WeightingsCalculator weightingsCalculator) {
         this.healthMapDataAcquisition = healthMapDataAcquisition;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
+        this.weightingsCalculator = weightingsCalculator;
     }
 
     /**
