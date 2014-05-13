@@ -96,10 +96,11 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         String result = target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("userLoggedIn", false);
-        verify(model, times(1)).addAttribute("reviewCount", 0);
         verify(model, times(1)).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
         verify(model, times(1)).addAttribute("defaultDiseaseGroupShortName", "dengue");
+        verify(model, times(1)).addAttribute("userLoggedIn", false);
+        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }
 
     private DataValidationController createTarget() {
