@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
 /**
  * An immutable data structure to hold the model source code related configuration for a single model run.
