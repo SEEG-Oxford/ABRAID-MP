@@ -32,7 +32,7 @@ public class InputDataManagerTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence());
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("-1.0,1.0,0.5,-999,NA" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,-999,NA" + System.lineSeparator());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class InputDataManagerTest {
         String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
-        assertThat(result).isEqualTo("-1.0,1.0,0.5,1,102" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,1,102" + System.lineSeparator());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class InputDataManagerTest {
         String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
-        assertThat(result).isEqualTo("-1.0,1.0,0.5,2,102" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,2,102" + System.lineSeparator());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class InputDataManagerTest {
         String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
-        assertThat(result).isEqualTo("-1.0,1.0,0.5,1,101" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,1,101" + System.lineSeparator());
     }
 
     private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {
@@ -81,7 +81,7 @@ public class InputDataManagerTest {
 
         // Act
         target.writeData(data, dir);
-        return FileUtils.readFileToString(Paths.get(dir.toString(), "outbreak.csv").toFile());
+        return FileUtils.readFileToString(Paths.get(dir.toString(), "occurrence.csv").toFile());
     }
 
     @Test

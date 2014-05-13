@@ -21,7 +21,7 @@ public class InputDataManagerImpl implements InputDataManager {
     private static final String LOG_TOP_LEVEL_CRS_WARN = "Aborted writing occurrence data due to incorrect CRS.";
 
     private static final String UTF_8 = "UTF-8";
-    private static final String OUTBREAK_CSV = "outbreak.csv";
+    private static final String OCCURRENCE_CSV = "occurrence.csv";
 
     /**
      * Write the occurrence data to file ready to run the model.
@@ -39,11 +39,13 @@ public class InputDataManagerImpl implements InputDataManager {
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
 
-        File outbreakFile = Paths.get(dataDirectory.toString(), OUTBREAK_CSV).toFile();
+        File outbreakFile = Paths.get(dataDirectory.toString(), OCCURRENCE_CSV).toFile();
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(
                     new OutputStreamWriter(new FileOutputStream(outbreakFile.getAbsoluteFile()), UTF_8));
+            writer.write(extractCsvHeaderLine());
+            writer.newLine();
             for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
                 if (occurrence.getCrs() != null) {
                     LOGGER.warn(LOG_FEATURE_CRS_WARN);
@@ -67,6 +69,16 @@ public class InputDataManagerImpl implements InputDataManager {
                 occurrence.getProperties().getWeighting().toString(),
                 occurrence.getProperties().getLocationPrecision().getModelValue().toString(),
                 extractGaulCode(occurrence)
+        }, ',');
+    }
+
+    private String extractCsvHeaderLine() {
+        return StringUtils.join(new String[]{
+                "Longitude",
+                "Latitude",
+                "Weight",
+                "Admin",
+                "GAUL"
         }, ',');
     }
 
