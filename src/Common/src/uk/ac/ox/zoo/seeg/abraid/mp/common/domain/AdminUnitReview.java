@@ -14,6 +14,10 @@ import javax.persistence.*;
  */
 @NamedQueries({
         @NamedQuery(
+                name = "getAdminUnitReviewCountByExpertId",
+                query = "select count(*) from AdminUnitReview where expert.id=:expertId"
+        ),
+        @NamedQuery(
                 name = "getAdminUnitReviewsByExpertId",
                 query = "from AdminUnitReview where expert.id=:expertId"
         ),

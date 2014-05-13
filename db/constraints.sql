@@ -200,9 +200,6 @@ ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT ck_global_gaul_code_t
 
 ALTER TABLE admin_unit_review ADD CONSTRAINT ck_global_gaul_code_tropical_gaul_code
     CHECK ((global_gaul_code IS NULL AND tropical_gaul_code IS NOT NULL) OR (global_gaul_code IS NOT NULL AND tropical_gaul_code IS NULL));
-	
-ALTER TABLE disease_extent_class ADD CONSTRAINT ck_disease_extent_class_name
-    CHECK (name IN ('PRESENCE', 'POSSIBLE_PRESENCE', 'UNCERTAIN', 'POSSIBLE_ABSENCE', 'ABSENCE'));
 
 ALTER TABLE disease_group ADD CONSTRAINT ck_disease_group_group_type
     CHECK (group_type IN ('CLUSTER', 'MICROCLUSTER', 'SINGLE'));

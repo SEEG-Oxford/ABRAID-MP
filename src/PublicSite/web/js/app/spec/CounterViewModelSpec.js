@@ -24,12 +24,12 @@ define([
                 expect(vm.count()).toBe(expectedCount);
             });
 
-            it("increments its value when the 'point-reviewed' event is fired", function () {
+            it("increments its value when the specified event is fired", function () {
                 // Arrange
                 var initialCount = 0;
-                var vm = new CounterViewModel(initialCount);
+                var vm = new CounterViewModel(initialCount, "foo");
                 // Act
-                ko.postbox.publish("point-reviewed");
+                ko.postbox.publish("foo");
                 // Assert
                 var expectedCount = initialCount + 1;
                 expect(vm.count()).toBe(expectedCount);

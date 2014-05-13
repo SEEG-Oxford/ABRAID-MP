@@ -8,9 +8,6 @@
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
         <#include "loginform.ftl"/>
     </@security.authorize>
-    <@security.authorize ifAnyGranted="ROLE_USER">
-        <#include "counter.ftl"/>
-    </@security.authorize>
 </div>
 
 <script type="text/html" id="admin-units-template">
@@ -22,13 +19,13 @@
                     <thead>
                         <tr>
                             <th>Occurrences</th>
-                            <th>Admin Unit</th>
+                            <th>Administrative Unit</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
                         <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', this); }">
-                            <td style="text-align: center" data-bind="text: properties.occurrenceCount"></td>
-                            <td style="text-align: left" data-bind="text: properties.name"></td>
+                            <td id="occurrencesColumn" data-bind="text: properties.occurrenceCount"></td>
+                            <td data-bind="text: properties.name"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -41,12 +38,26 @@
             </ul>
         </div>
     </div>
+    <@security.authorize ifAnyGranted="ROLE_USER">
+        <div id="counterDiv" data-bind="with: counter">
+            <span>You have validated</span>
+            <div id="counter" data-bind="counter: count"></div>
+            <span data-bind="text: count() == 1 ? 'region' : 'regions'"></span>
+        </div>
+    </@security.authorize>
     <!-- /ko -->
 </script>
 
 <script type="text/html" id="occurrences-template">
     <!-- ko with:selectedPointViewModel -->
         <div data-bind="template: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template'"></div>
+        <@security.authorize ifAnyGranted="ROLE_USER">
+            <div id="counterDiv" data-bind="with: counter">
+                <span>You have validated</span>
+                <div id="counter" data-bind="counter: count"></div>
+                <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
+            </div>
+        </@security.authorize>
     <!-- /ko -->
 </script>
 

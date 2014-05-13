@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 
@@ -12,6 +13,17 @@ import java.util.List;
 public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer> implements AdminUnitReviewDao {
     public AdminUnitReviewDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
+    }
+
+    /**
+     * Gets the total number of reviews submitted by the specified expert.
+     * @param expertId The expert's Id.
+     * @return The count of the expert's reviews.
+     */
+    @Override
+    public Long getCountByExpertId(Integer expertId) {
+        Query query = getParameterisedNamedQuery("getAdminUnitReviewCountByExpertId", "expertId", expertId);
+        return (Long) query.uniqueResult();
     }
 
     /**

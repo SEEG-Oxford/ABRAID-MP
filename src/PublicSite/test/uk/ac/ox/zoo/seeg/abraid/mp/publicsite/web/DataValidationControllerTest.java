@@ -81,7 +81,8 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         verify(model, times(1)).addAttribute("allOtherDiseases", new ArrayList<>());
         verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
         verify(model, times(1)).addAttribute("userLoggedIn", true);
-        verify(model, times(1)).addAttribute("reviewCount", 0);
+        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }
 
     @Test
