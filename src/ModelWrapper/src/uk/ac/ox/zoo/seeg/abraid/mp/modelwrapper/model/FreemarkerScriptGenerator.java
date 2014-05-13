@@ -92,20 +92,24 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("max_cpu", runConfiguration.getExecutionConfig().getMaxCPUs());
         data.put("verbose", runConfiguration.getExecutionConfig().getVerboseFlag());
         data.put("model_version", runConfiguration.getCodeConfig().getModelVersion());
-        data.put("outbreak_file", "data/outbreakData.csv");
-        data.put("extent_file", "data/extentData.asc");
+        data.put("occurrence_file", "data/occurrence.csv");
+        data.put("extent_file", "data/extent.asc");
         data.put("admin_files", Arrays.asList(
-                runConfiguration.getAdminUnitConfig().getAdmin1RasterFile(),
-                runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
+                escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()),
+                escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
 
         final String covariatePathPrefix = runConfiguration.getCovariateConfig().getCovariateDirectory();
         Collection<String> covariatePaths =
                 convert(runConfiguration.getCovariateConfig().getCovariateFilePaths(), new Converter<String, String>() {
                     public String convert(String subpath) {
-                        return Paths.get(covariatePathPrefix, subpath).toString();
+                        return escapeFilePathForR(Paths.get(covariatePathPrefix, subpath).toString());
                     }
                 });
         data.put("covariate_files", covariatePaths);
         return data;
+    }
+
+    private static String escapeFilePathForR(String path) {
+        return path.replace("\\","\\\\");
     }
 }

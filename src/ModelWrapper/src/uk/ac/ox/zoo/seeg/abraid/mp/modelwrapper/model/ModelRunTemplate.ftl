@@ -15,17 +15,20 @@
 verbose <- ${verbose?string("TRUE","FALSE")}
 
 # Set max CPUs
-max_cpu <- ${max_cpu?c}
+max_cpus <- ${max_cpu?c}
 
-# Define outbreak data
-outbreakData <- "${outbreak_file}"
+# Set dry run
+dry_run <- ${dry_run?string("TRUE","FALSE")}
+
+# Define occurrence data
+occurrence_path <- "${occurrence_file}"
 
 # Define disease extent data
-extentData <- "${extent_file}"
+extent_path <- "${extent_file}"
 
 # Define covariates to use.
 # If you would like to use these covariate files please contact TBD@TBD.com, as we cannot release them in all circumstances.
-covariates <- c(
+covariate_paths <- c(
 <#list covariate_files as covariate>
     "${covariate}"<#if covariate_has_next>,</#if>
 </#list>
@@ -33,31 +36,48 @@ covariates <- c(
 
 # Define admin unit rasters to use.
 # If you would like to use these admin unit rasters (or related shape files) please contact TBD@TBD.com, as we cannot release them in all circumstances.
-admin_units <- c(
+admin_paths <- c(
 <#list admin_files as admin_level_file>
     "${admin_level_file}"<#if admin_level_file_has_next>,</#if>
 </#list>
 )
 
-# Load the model
+# Set CRAN mirror
+local({r <- getOption("repos")
+    r["CRAN"] <- "http://cran.r-project.org"
+    options(repos=r)
+})
+
+# Load devtools
+if (!require('devtools', quietly=TRUE)) {
+    install.packages('devtools', quiet=TRUE)
+    library('devtools', quietly=TRUE)
+}
+
+# Load the model and it's dependencies via devtools
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
-# source(model/seegSDM.R)
+if (!dry_run) {
+    install_deps('model')
+    load_all('model')
+}
 
 # Run the model
 result <- tryCatch({
-    if (${dry_run?string("TRUE","FALSE")}) {
-        # Dry run?
-        0 # return 0
+    if (!dry_run) {
+        runABRAID(
+            occurrence_path,
+            extent_path,
+            admin_paths,
+            covariate_paths,
+            rep(FALSE, length(covariate_paths)),
+            verbose,
+            max_cpus)
     } else {
-        # seegSDM.run(outbreakData, extentData, admin_units, covariates, verbosity, max_cpu:c)
-        write(paste("I'm running the model using: ", outbreakData), file="echo")
-        # Temp POC
-        print(covariates)
         0 # return 0
     }
 }, warning = function(w) {
     print(paste("Warning:  ", w))
-    return(0)
+    return(1)
 }, error = function(e) {
     print(paste("Error:  ", e))
     return(1)
