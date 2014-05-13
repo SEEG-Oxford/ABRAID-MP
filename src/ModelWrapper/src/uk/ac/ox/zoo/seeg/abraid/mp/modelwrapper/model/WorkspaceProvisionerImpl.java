@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,17 +77,16 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         }
 
         // Rasterize extents
-        LOGGER.info(String.format("TODO: Rasterize extent data. Global? %s. GAUL codes: %s",
-                configuration.isGlobal(), extentData));
+        LOGGER.info(String.format("TODO: Rasterize extent data."));
 
         // Copy input data
         inputDataManager.writeData(occurrenceData, dataDirectory);
 
         // Copy model
-        sourceCodeManager.provisionVersion(configuration.getModelVersion(), modelDirectory);
+        sourceCodeManager.provisionVersion(configuration.getCodeConfig().getModelVersion(), modelDirectory);
 
         // Template script
-        File runScript = scriptGenerator.generateScript(configuration, workingDirectory, false);
+        File runScript = scriptGenerator.generateScript(configuration, workingDirectory);
 
         LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectoryPath.toString()));
         return runScript;

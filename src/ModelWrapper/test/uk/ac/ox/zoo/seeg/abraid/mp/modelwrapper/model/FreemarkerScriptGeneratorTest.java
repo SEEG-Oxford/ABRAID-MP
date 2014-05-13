@@ -1,9 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +29,10 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatItHasCreated() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot(), false);
+        File result = target.generateScript(conf, testFolder.getRoot());
 
         // Assert
         assertThat(result).isNotNull();
@@ -44,10 +45,10 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldReturnAFileThatIsBasedOnTheCorrectTemplate() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot(), false);
+        File result = target.generateScript(conf, testFolder.getRoot());
 
         // Assert
         assertThat(contentOf(result, defaultCharset())).startsWith("# A launch script for the ABRAID-MP disease risk model");
@@ -58,11 +59,10 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         String expectedRunName = "foobar4321";
-        RunConfiguration conf =
-                new RunConfiguration(null, null, expectedRunName, true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(expectedRunName);
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot(), false);
+        File result = target.generateScript(conf, testFolder.getRoot());
 
         // Assert
         assertThat(contentOf(result, Charset.forName("US-ASCII"))).contains("Run name = " + expectedRunName);
@@ -72,10 +72,10 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfScriptCanNotBeWritten() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        catchException(target).generateScript(conf, new File("non-existent"), false);
+        catchException(target).generateScript(conf, new File("non-existent"));
         Exception result = caughtException();
 
         // Assert
@@ -86,13 +86,22 @@ public class FreemarkerScriptGeneratorTest {
     public void generateScriptShouldThrowIfWorkingDirectoryIsAFile() throws Exception {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
-        RunConfiguration conf = new RunConfiguration(null, null, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = createBasicRunConfiguration(null);
 
         // Act
-        catchException(target).generateScript(conf, testFolder.newFile(), false);
+        catchException(target).generateScript(conf, testFolder.newFile());
         Exception result = caughtException();
 
         // Assert
         assertThat(result).isInstanceOf(IOException.class);
+    }
+
+    private RunConfiguration createBasicRunConfiguration(String runName) {
+        return new RunConfiguration(
+                StringUtils.isNotEmpty(runName) ? runName : "foo", testFolder.getRoot(),
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
+                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new AdminUnitRunConfiguration(true, "", "", "", ""));
     }
 }
