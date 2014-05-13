@@ -382,6 +382,20 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getDiseaseExtentClass() {
+        // Arrange
+        DiseaseExtentClass expectedExtentClass = new DiseaseExtentClass();
+        String name = DiseaseExtentClass.ABSENCE;
+        when(diseaseExtentClassDao.getByName(name)).thenReturn(expectedExtentClass);
+
+        // Act
+        DiseaseExtentClass actualExtentClass = diseaseService.getDiseaseExtentClass(name);
+
+        // Assert
+        assertThat(actualExtentClass).isSameAs(expectedExtentClass);
+    }
+
+    @Test
     public void getDiseaseOccurrencesForDiseaseExtentForGlobalDisease() {
         getDiseaseOccurrencesForDiseaseExtent(true);
     }

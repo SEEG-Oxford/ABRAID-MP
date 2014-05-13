@@ -5,11 +5,12 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +36,11 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
      * Creates a model run script file in the working directory for the given configuration.
      * @param runConfiguration The model run configuration.
      * @param workingDirectory The directory in which the script should be created.
-     * @param dryRun Indicates whether the full model should run.
      * @return The script file.
      * @throws IOException Thrown in response to issues creating the script file.
      */
     @Override
-    public File generateScript(RunConfiguration runConfiguration, File workingDirectory, boolean dryRun)
+    public File generateScript(RunConfiguration runConfiguration, File workingDirectory)
             throws IOException {
         LOGGER.info(String.format(LOG_ADDING_SCRIPT_FILE_TO_WORKSPACE, workingDirectory.toString()));
 
@@ -48,7 +48,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         Template template = loadTemplate();
 
         // Build the data-model
-        Map<String, Object> data = buildDataModel(runConfiguration, dryRun);
+        Map<String, Object> data = buildDataModel(runConfiguration);
 
         // File output
         File scriptFile = applyTemplate(workingDirectory, template, data);
@@ -85,24 +85,27 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         return config.getTemplate(TEMPLATE_FILE_NAME);
     }
 
-    private static Map<String, Object> buildDataModel(RunConfiguration runConfiguration, boolean dryRun) {
+    private static Map<String, Object> buildDataModel(RunConfiguration runConfiguration) {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("run", runConfiguration.getRunName());
-        data.put("dry_run", dryRun);
-        data.put("verbosity", 0);
-        data.put("disease", "P.vivax");
-        data.put("model_version", runConfiguration.getModelVersion());
+        data.put("dry_run", runConfiguration.getExecutionConfig().getDryRunFlag());
+        data.put("max_cpu", runConfiguration.getExecutionConfig().getMaxCPUs());
+        data.put("verbose", runConfiguration.getExecutionConfig().getVerboseFlag());
+        data.put("model_version", runConfiguration.getCodeConfig().getModelVersion());
         data.put("outbreak_file", "data/outbreakData.csv");
-        data.put("extent_file", "data/extentData.csv");
+        data.put("extent_file", "data/extentData.asc");
+        data.put("admin_files", Arrays.asList(
+                runConfiguration.getAdminUnitConfig().getAdmin1RasterFile(),
+                runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
 
-        final String covariatePathPrefix = runConfiguration.getCovariateDirectory();
+        final String covariatePathPrefix = runConfiguration.getCovariateConfig().getCovariateDirectory();
         Collection<String> covariatePaths =
-                convert(runConfiguration.getCovariateFilePaths(), new Converter<String, String>() {
+                convert(runConfiguration.getCovariateConfig().getCovariateFilePaths(), new Converter<String, String>() {
                     public String convert(String subpath) {
                         return Paths.get(covariatePathPrefix, subpath).toString();
                     }
                 });
-        data.put("covariates", covariatePaths);
+        data.put("covariate_files", covariatePaths);
         return data;
     }
 }

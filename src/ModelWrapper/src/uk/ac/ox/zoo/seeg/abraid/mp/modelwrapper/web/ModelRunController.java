@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfigurationFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 
 /**
@@ -59,7 +59,7 @@ public class ModelRunController extends AbstractController {
                     runData.getDisease().getAbbreviation());
 
             // Ignore result for now
-            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtents());
+            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtentWeightings());
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return createErrorResponse("Could not start model run. See server logs for more details.",

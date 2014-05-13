@@ -25,6 +25,9 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
     private AdminUnitTropicalDao adminUnitTropicalDao;
 
     @Autowired
+    private DiseaseExtentClassDao diseaseExtentClassDao;
+
+    @Autowired
     private DiseaseGroupDao diseaseGroupDao;
 
     @Test
@@ -52,7 +55,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         int diseaseGroupId = 22;
         AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(gaulCode);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        DiseaseExtentClass extentClass = DiseaseExtentClass.PRESENCE;
+        DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("PRESENCE");
         int occurrenceCount = 25;
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
@@ -82,7 +85,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         int diseaseGroupId = 96;
         AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(gaulCode);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        DiseaseExtentClass extentClass = DiseaseExtentClass.ABSENCE;
+        DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("ABSENCE");
         int occurrenceCount = 0;
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
@@ -112,7 +115,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2510);
         AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(204001);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(96);
-        DiseaseExtentClass extentClass = DiseaseExtentClass.ABSENCE;
+        DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName(DiseaseExtentClass.ABSENCE);
         int occurrenceCount = 0;
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(

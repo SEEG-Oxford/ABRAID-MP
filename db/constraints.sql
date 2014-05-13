@@ -62,6 +62,9 @@ ALTER TABLE alert ADD CONSTRAINT pk_alert
 ALTER TABLE country ADD CONSTRAINT pk_country
     PRIMARY KEY (gaul_code);
 
+ALTER TABLE disease_extent_class ADD CONSTRAINT pk_disease_extent_class
+    PRIMARY KEY (name);
+
 ALTER TABLE disease_group ADD CONSTRAINT pk_disease_group
     PRIMARY KEY (id);
 
@@ -114,6 +117,9 @@ ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease
 
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_tropical
     FOREIGN KEY (tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
+	
+ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_disease_extent_class
+    FOREIGN KEY (disease_extent_class) REFERENCES disease_extent_class (name);
 
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
@@ -123,6 +129,9 @@ ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_glo
 
 ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_tropical
     FOREIGN KEY (tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
+	
+ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_disease_extent_class
+    FOREIGN KEY (response) REFERENCES disease_extent_class (name);
 
 ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
@@ -191,9 +200,6 @@ ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT ck_global_gaul_code_t
 
 ALTER TABLE admin_unit_review ADD CONSTRAINT ck_global_gaul_code_tropical_gaul_code
     CHECK ((global_gaul_code IS NULL AND tropical_gaul_code IS NOT NULL) OR (global_gaul_code IS NOT NULL AND tropical_gaul_code IS NULL));
-
-ALTER TABLE admin_unit_review ADD CONSTRAINT ck_admin_unit_review_response
-    CHECK (response IN ('PRESENCE', 'POSSIBLE_PRESENCE', 'UNCERTAIN', 'POSSIBLE_ABSENCE', 'ABSENCE'));
 
 ALTER TABLE disease_group ADD CONSTRAINT ck_disease_group_group_type
     CHECK (group_type IN ('CLUSTER', 'MICROCLUSTER', 'SINGLE'));

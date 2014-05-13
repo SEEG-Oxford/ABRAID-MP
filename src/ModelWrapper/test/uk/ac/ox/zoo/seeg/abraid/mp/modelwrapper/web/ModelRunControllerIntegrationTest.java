@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfigurationFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
@@ -74,9 +74,9 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/model/run")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extents\":[1,2,3]}"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("{\"modelRunName\":\"" + runName + "\"}"));
+                        .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extentWeightings\":{\"1\":1,\"2\":2}}"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string("{\"modelRunName\":\"" + runName + "\"}"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/model/run")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":null,\"extents\":null}"))
+                        .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":null,\"extentWeightings\":null}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorText\":\"Run data must be provided and be valid.\"}"));
     }
@@ -117,6 +117,6 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     private MockHttpServletRequestBuilder createRequest(HttpMethod method) {
         return request(method, "/model/run")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extents\":[1,2,3]}");
+                .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extentWeightings\":{\"1\":1,\"2\":2,\"3\":3}}");
     }
 }

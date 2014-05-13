@@ -6,6 +6,7 @@
 
 CREATE INDEX ix_admin_unit_disease_extent_class_global_gaul_code ON admin_unit_disease_extent_class (global_gaul_code);
 CREATE INDEX ix_admin_unit_disease_extent_class_tropical_gaul_code ON admin_unit_disease_extent_class (tropical_gaul_code);
+CREATE INDEX ix_admin_unit_disease_extent_class_disease_extent_class ON admin_unit_disease_extent_class (disease_extent_class);
 CREATE INDEX ix_admin_unit_disease_extent_class_disease_group_id ON admin_unit_disease_extent_class (disease_group_id);
 CREATE INDEX ix_admin_unit_review_global_gaul_code ON admin_unit_review (global_gaul_code);
 CREATE INDEX ix_admin_unit_review_tropical_gaul_code ON admin_unit_review (tropical_gaul_code);

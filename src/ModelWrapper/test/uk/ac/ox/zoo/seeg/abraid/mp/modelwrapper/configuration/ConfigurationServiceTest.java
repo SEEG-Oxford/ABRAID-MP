@@ -415,6 +415,158 @@ public class ConfigurationServiceTest {
     }
 
     @Test
+    public void getAdmin1RasterFileReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getAdmin1RasterFile();
+
+        // Assert
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin1qc.asc").toString();
+        assertThat(result).isEqualTo(expectedPath);
+    }
+
+    @Test
+    public void getAdmin1RasterFileReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedValue = "Foo";
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "raster.file.admin1", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getAdmin1RasterFile();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void getAdmin2RasterFileReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getAdmin2RasterFile();
+
+        // Assert
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin2qc.asc").toString();
+        assertThat(result).isEqualTo(expectedPath);
+    }
+
+    @Test
+    public void getAdmin2RasterFileReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedValue = "Foo";
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "raster.file.admin2", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getAdmin2RasterFile();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void getMaxCPUsReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Integer result = target.getMaxCPUs();
+
+        // Assert
+        assertThat(result).isEqualTo(64);
+    }
+
+    @Test
+    public void getMaxCPUsReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        Integer expectedValue = 4;
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "model.max.cpu", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Integer result = target.getMaxCPUs();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+         public void getDryRunFlagReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Boolean result = target.getDryRunFlag();
+
+        // Assert
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    public void getDryRunFlagReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        Boolean expectedValue = true;
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "model.dry.run", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Boolean result = target.getDryRunFlag();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
+    public void getModelVerboseFlagReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Boolean result = target.getModelVerboseFlag();
+
+        // Assert
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    public void getModelVerboseFlagReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        Boolean expectedValue = true;
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "model.verbose", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        Boolean result = target.getModelVerboseFlag();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+    @Test
     public void getCovariateDirectoryReturnsCorrectDefault() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();

@@ -73,6 +73,12 @@ public interface DiseaseService {
      */
     List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
 
+    /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    DiseaseExtentClass getDiseaseExtentClass(String name);
 
     /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.

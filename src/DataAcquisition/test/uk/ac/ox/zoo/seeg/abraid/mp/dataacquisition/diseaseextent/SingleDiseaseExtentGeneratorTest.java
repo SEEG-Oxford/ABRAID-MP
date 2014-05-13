@@ -22,9 +22,16 @@ public class SingleDiseaseExtentGeneratorTest {
     private SingleDiseaseExtentGenerator singleDiseaseExtentGenerator;
     private DiseaseService diseaseService = mock(DiseaseService.class);
 
+    private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE);
+    private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE);
+    private DiseaseExtentClass uncertainDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.UNCERTAIN);
+
     @Before
     public void setUp() {
         singleDiseaseExtentGenerator = new SingleDiseaseExtentGenerator(diseaseService);
+        mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
+        mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
+        mockGetDiseaseExtentClass(uncertainDiseaseExtentClass);
     }
 
     @Test
@@ -93,17 +100,17 @@ public class SingleDiseaseExtentGeneratorTest {
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
         expectSaveAdminUnitDiseaseExtentClass(6);
         expectSaveAdminUnitDiseaseExtentClass(new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(adminUnits, 100),
-                diseaseGroup, DiseaseExtentClass.UNCERTAIN, 0));
+                diseaseGroup, uncertainDiseaseExtentClass, 0));
         expectSaveAdminUnitDiseaseExtentClass(new AdminUnitDiseaseExtentClass(getAdminUnitTropical(adminUnits, 125),
-                diseaseGroup, DiseaseExtentClass.UNCERTAIN, 0));
+                diseaseGroup, uncertainDiseaseExtentClass, 0));
         expectSaveAdminUnitDiseaseExtentClass(new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(adminUnits, 150),
-                diseaseGroup, DiseaseExtentClass.POSSIBLE_PRESENCE, 1));
+                diseaseGroup, possiblePresenceDiseaseExtentClass, 1));
         expectSaveAdminUnitDiseaseExtentClass(new AdminUnitDiseaseExtentClass(getAdminUnitTropical(adminUnits, 200),
-                diseaseGroup, DiseaseExtentClass.POSSIBLE_PRESENCE, 4));
+                diseaseGroup, possiblePresenceDiseaseExtentClass, 4));
         expectSaveAdminUnitDiseaseExtentClass(new AdminUnitDiseaseExtentClass(getAdminUnitTropical(adminUnits, 250),
-                diseaseGroup, DiseaseExtentClass.PRESENCE, 5));
+                diseaseGroup, presenceDiseaseExtentClass, 5));
         expectSaveAdminUnitDiseaseExtentClass(new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(adminUnits, 300),
-                diseaseGroup, DiseaseExtentClass.PRESENCE, 10));
+                diseaseGroup, presenceDiseaseExtentClass, 10));
     }
 
     private void mockGetExistingDiseaseExtent(int diseaseGroupId, List<AdminUnitDiseaseExtentClass> diseaseExtent) {
@@ -125,6 +132,10 @@ public class SingleDiseaseExtentGeneratorTest {
 
     private void mockGetDiseaseGroupById(int diseaseGroupId, DiseaseGroup diseaseGroup) {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+    }
+
+    private void mockGetDiseaseExtentClass(DiseaseExtentClass diseaseExtentClass) {
+        when(diseaseService.getDiseaseExtentClass(diseaseExtentClass.getName())).thenReturn(diseaseExtentClass);
     }
 
     private void expectGetDiseaseOccurrencesForDiseaseExtent(int times) {

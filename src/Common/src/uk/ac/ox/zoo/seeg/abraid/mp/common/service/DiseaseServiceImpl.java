@@ -22,6 +22,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
     private AdminUnitGlobalDao adminUnitGlobalDao;
     private AdminUnitTropicalDao adminUnitTropicalDao;
+    private DiseaseExtentClassDao diseaseExtentClassDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
@@ -30,7 +31,8 @@ public class DiseaseServiceImpl implements DiseaseService {
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
-                              AdminUnitTropicalDao adminUnitTropicalDao) {
+                              AdminUnitTropicalDao adminUnitTropicalDao,
+                              DiseaseExtentClassDao diseaseExtentClassDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
@@ -39,6 +41,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
         this.adminUnitGlobalDao = adminUnitGlobalDao;
         this.adminUnitTropicalDao = adminUnitTropicalDao;
+        this.diseaseExtentClassDao = diseaseExtentClassDao;
     }
 
     /**
@@ -113,6 +116,16 @@ public class DiseaseServiceImpl implements DiseaseService {
         } else {
             return adminUnitTropicalDao.getAll();
         }
+    }
+
+    /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    @Override
+    public DiseaseExtentClass getDiseaseExtentClass(String name) {
+        return diseaseExtentClassDao.getByName(name);
     }
 
     /**

@@ -17,6 +17,7 @@ GRANT SELECT, INSERT                ON admin_unit_review TO :application_usernam
 GRANT SELECT                        ON admin_unit_tropical TO :application_username;
 GRANT SELECT, INSERT                ON alert TO :application_username;
 GRANT SELECT                        ON country TO :application_username;
+GRANT SELECT                        ON disease_extent_class TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_occurrence TO :application_username;
 GRANT SELECT, INSERT                ON disease_occurrence_review TO :application_username;

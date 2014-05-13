@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +36,12 @@ public class WorkspaceProvisionerTest {
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
         File expectedBasePath = testFolder.getRoot();
         String expectedRunName = "bar";
-        RunConfiguration config =
-                new RunConfiguration(null, expectedBasePath, expectedRunName, true, 0, "", "", new ArrayList<String>());
+        RunConfiguration config = new RunConfiguration(
+                expectedRunName, expectedBasePath,
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
+                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         // Act
         File script = target.provisionWorkspace(config, null, null);
@@ -57,15 +61,14 @@ public class WorkspaceProvisionerTest {
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         File expectedScript = new File("foobar");
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
-        RunConfiguration config =
-                new RunConfiguration(null, testFolder.getRoot(), "", true, 0, "", "", new ArrayList<String>());
-        when(scriptGenerator.generateScript(eq(config), any(File.class), eq(false))).thenReturn(expectedScript);
+        RunConfiguration config = createRunConfiguration("", testFolder.getRoot());
+        when(scriptGenerator.generateScript(eq(config), any(File.class))).thenReturn(expectedScript);
 
         // Act
         File script = target.provisionWorkspace(config, null, null);
 
         // Assert
-        verify(scriptGenerator, times(1)).generateScript(eq(config), any(File.class), eq(false));
+        verify(scriptGenerator, times(1)).generateScript(eq(config), any(File.class));
         assertThat(script).isEqualTo(expectedScript);
     }
 
@@ -75,11 +78,11 @@ public class WorkspaceProvisionerTest {
         SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         InputDataManager inputDataManager = mock(InputDataManager.class);
-        when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class), anyBoolean())).then(returnsArgAt(1));
+        when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class))).then(returnsArgAt(1));
         String expectedVersion = "foobar";
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
         RunConfiguration config =
-                new RunConfiguration(null, testFolder.getRoot(), "", true, 0, expectedVersion, "", new ArrayList<String>());
+                new RunConfiguration("", testFolder.getRoot(), new CodeRunConfiguration(expectedVersion, ""), null, null, null);
 
         // Act
         File runDir = target.provisionWorkspace(config, null, null);
@@ -99,11 +102,10 @@ public class WorkspaceProvisionerTest {
         SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         InputDataManager inputDataManager = mock(InputDataManager.class);
-        when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class), anyBoolean())).then(returnsArgAt(1));
+        when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class))).then(returnsArgAt(1));
         GeoJsonDiseaseOccurrenceFeatureCollection expectedData = mock(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
-        RunConfiguration config =
-                new RunConfiguration(null, testFolder.getRoot(), "", true, 0, "foobar", "", new ArrayList<String>());
+        RunConfiguration config = createRunConfiguration("", testFolder.getRoot());
 
         // Act
         File runDir = target.provisionWorkspace(config, expectedData, null);
@@ -122,7 +124,7 @@ public class WorkspaceProvisionerTest {
         // Arrange
         File notAValidDirectory = testFolder.newFile();
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(mock(ScriptGenerator.class), mock(SourceCodeManager.class), mock(InputDataManager.class));
-        RunConfiguration conf = new RunConfiguration(null, notAValidDirectory, "", true, 0, "", "", new ArrayList<String>());
+        RunConfiguration conf = new RunConfiguration("", notAValidDirectory, null, null, null, null);
 
         // Act
         catchException(target).provisionWorkspace(conf, null, null);
@@ -130,5 +132,13 @@ public class WorkspaceProvisionerTest {
 
         // Assert
         assertThat(result).isInstanceOf(IOException.class);
+    }
+
+    private RunConfiguration createRunConfiguration(String runName, File baseDir) {
+        RunConfiguration conf = mock(RunConfiguration.class);
+        when(conf.getRunName()).thenReturn(runName);
+        when(conf.getBaseDir()).thenReturn(baseDir);
+        when(conf.getCodeConfig()).thenReturn(mock(CodeRunConfiguration.class));
+        return conf;
     }
 }

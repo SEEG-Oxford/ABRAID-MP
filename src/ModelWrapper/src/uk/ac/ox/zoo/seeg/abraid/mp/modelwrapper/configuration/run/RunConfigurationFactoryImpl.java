@@ -1,12 +1,14 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.hamcrest.Matcher;
 import org.joda.time.LocalDateTime;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -48,14 +50,56 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
             throws ConfigurationException, IOException {
         LOGGER.info(LOG_CREATING_THE_DEFAULT_RUN_CONFIGURATION);
         return new RunConfiguration(
-                Paths.get(configurationService.getRExecutablePath()).toFile(),
-                Paths.get(configurationService.getCacheDirectory()).toFile(),
                 buildRunName(diseaseAbbreviation),
-                diseaseGlobal,
-                configurationService.getMaxModelRunDuration(),
+                buildBaseDir(),
+                buildCodeConfig(),
+                buildExecutionConfig(),
+                buildCovariateConfig(diseaseId),
+                buildAdminUnitConfig(diseaseGlobal));
+    }
+
+    private String buildRunName(String diseaseAbbreviation) {
+        String safeDiseaseName = diseaseAbbreviation.replaceAll("[^A-Za-z0-9]", "-");
+        if (safeDiseaseName.length() > MAX_DISEASE_NAME_LENGTH) {
+            safeDiseaseName = safeDiseaseName.substring(0, MAX_DISEASE_NAME_LENGTH);
+        }
+        return safeDiseaseName + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss");
+    }
+
+    private File buildBaseDir() {
+        return Paths.get(configurationService.getCacheDirectory()).toFile();
+    }
+
+    private CodeRunConfiguration buildCodeConfig() {
+        return new CodeRunConfiguration(
                 configurationService.getModelRepositoryVersion(),
+                configurationService.getModelRepositoryUrl()
+        );
+    }
+
+    private ExecutionRunConfiguration buildExecutionConfig() throws ConfigurationException {
+        return new ExecutionRunConfiguration(
+                Paths.get(configurationService.getRExecutablePath()).toFile(),
+                configurationService.getMaxModelRunDuration(),
+                configurationService.getMaxCPUs(),
+                configurationService.getModelVerboseFlag(),
+                configurationService.getDryRunFlag()
+        );
+    }
+
+    private CovariateRunConfiguration buildCovariateConfig(int diseaseId) throws ConfigurationException, IOException {
+        return new CovariateRunConfiguration(
                 configurationService.getCovariateDirectory(),
                 buildCovariateFileList(diseaseId));
+    }
+
+    private AdminUnitRunConfiguration buildAdminUnitConfig(boolean diseaseGlobal) {
+        return new AdminUnitRunConfiguration(
+                diseaseGlobal,
+                configurationService.getAdmin1RasterFile(),
+                configurationService.getAdmin2RasterFile(),
+                configurationService.getTropicalShapeFile(),
+                configurationService.getGlobalShapeFile());
     }
 
     private Collection<String> buildCovariateFileList(int diseaseId)
@@ -67,13 +111,5 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
         files = filter(having(on(JsonCovariateFile.class).getEnabled(), (Matcher) hasItem(diseaseId)), files);
 
         return extract(files, on(JsonCovariateFile.class).getPath());
-    }
-
-    private String buildRunName(String diseaseAbbreviation) {
-        String safeDiseaseName = diseaseAbbreviation.replaceAll("[^A-Za-z0-9]", "-");
-        if (safeDiseaseName.length() > MAX_DISEASE_NAME_LENGTH) {
-            safeDiseaseName = safeDiseaseName.substring(0, MAX_DISEASE_NAME_LENGTH);
-        }
-        return safeDiseaseName + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss");
     }
 }

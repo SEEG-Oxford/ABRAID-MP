@@ -55,8 +55,8 @@ public class AdminUnitReview {
     private DiseaseGroup diseaseGroup;
 
     // The expert's response.
-    @Column
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "response", nullable = false)
     private DiseaseExtentClass response;
 
     // The database row creation date.
