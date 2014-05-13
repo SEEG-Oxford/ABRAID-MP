@@ -226,6 +226,15 @@ public class DiseaseServiceImpl implements DiseaseService {
         return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
     }
 
+    /**
+     * Gets disease occurrences for the model run.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return Disease occurrences for the model run.
+     */
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRun(diseaseGroupId);
+    }
+
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
         return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());

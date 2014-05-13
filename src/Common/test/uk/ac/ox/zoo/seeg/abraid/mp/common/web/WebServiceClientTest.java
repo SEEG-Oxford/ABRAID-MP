@@ -67,18 +67,6 @@ public class WebServiceClientTest {
     }
 
     @Test
-    public void makePostRequestThrowsExceptionIfBodyIsNull() {
-        // Arrange
-        WebServiceClient client = new WebServiceClient();
-
-        // Act
-        catchException(client).makePostRequestWithJSON(POST_URL, null);
-
-        // Assert
-        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
-    }
-
-    @Test
     public void makePostRequestThrowsExceptionIfUnknownHost() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
@@ -109,8 +97,8 @@ public class WebServiceClientTest {
         String name = "Harry Hill";
 
         // Act
-        JsonParserTestPerson person = new JsonParserTestPerson(name, 49, new DateTime("1964-10-01"));
-        String response = client.makePostRequestWithJSON(POST_URL, person);
+        String json = "{ \"name\": \"" + name + "\", \"age\": 49, \"dateOfBirth\": \"1964-10-01\" }";
+        String response = client.makePostRequestWithJSON(POST_URL, json);
 
         // Assert
         assertThat(response).containsIgnoringCase(name);

@@ -212,16 +212,31 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 22, true);
     }
 
+    @Test
+    public void getDiseaseOccurrencesForModelRun() {
+        // Arrange
+        int diseaseGroupId = 87; // Dengue
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(occurrences).hasSize(39);
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
                                                        boolean isGlobal) {
+        // Arrange
         int diseaseGroupId = 87; // Dengue
         double minimumValidationWeight = 0.6;
         DateTime minimumOccurrenceDate = new DateTime("2014-02-25");
 
+        // Act
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
                         minimumOccurrenceDate, feedIds, isGlobal);
 
+        // Assert
         assertThat(occurrences).hasSize(expectedOccurrenceCount);
     }
 

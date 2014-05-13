@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -19,6 +20,28 @@ public class JsonModelDiseaseTest {
 
         // Act
         JsonModelDisease result = new JsonModelDisease(expectedId, expectedGlobal, expectedName, expectedAbbreviation);
+
+        // Assert
+        assertThat(result.getId()).isEqualTo(expectedId);
+        assertThat(result.isGlobal()).isEqualTo(expectedGlobal);
+        assertThat(result.getName()).isEqualTo(expectedName);
+        assertThat(result.getAbbreviation()).isEqualTo(expectedAbbreviation);
+    }
+
+    @Test
+    public void diseaseGroupConstructorForJsonModelDiseaseBindsParametersCorrectly() throws Exception {
+        // Arrange
+        int expectedId = 64;
+        boolean expectedGlobal = true;
+        String expectedName = "foo";
+        String expectedAbbreviation = "f";
+        DiseaseGroup diseaseGroup = new DiseaseGroup(expectedId);
+        diseaseGroup.setGlobal(expectedGlobal);
+        diseaseGroup.setName(expectedName);
+        diseaseGroup.setAbbreviation(expectedAbbreviation);
+
+        // Act
+        JsonModelDisease result = new JsonModelDisease(diseaseGroup);
 
         // Assert
         assertThat(result.getId()).isEqualTo(expectedId);

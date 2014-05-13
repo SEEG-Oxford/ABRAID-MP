@@ -1,13 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -64,18 +63,17 @@ public class WebServiceClient {
     /**
      * Calls a web service by making a POST request.
      * @param url The web service URL to call.
-     * @param body An object representing the body of the POST request. This will be serialized as JSON.
+     * @param bodyAsJson A string in JSON format that will be the body of the POST request.
      * @return The web service response as a string.
      * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
      * or if a response status code other than "successful" is returned.
      */
-    public String makePostRequestWithJSON(String url, final Object body) throws WebServiceClientException {
+    public String makePostRequestWithJSON(String url, final String bodyAsJson) throws WebServiceClientException {
         LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url));
         return request(url, new SyncInvokerAction() {
             @Override
             public Response invoke(SyncInvoker invoker) {
-                String json = serializeJson(body);
-                return invoker.post(Entity.entity(json, MediaType.APPLICATION_JSON_TYPE));
+                return invoker.post(Entity.entity(bodyAsJson, MediaType.APPLICATION_JSON_TYPE));
             }
         });
     }
@@ -87,6 +85,10 @@ public class WebServiceClient {
             Client client = ClientBuilder.newClient(clientConfig);
             client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
+
+            // Buffer the request body and send it in one go instead of "chunking". This allows Jersey to handle
+            // authentication challenges (e.g. if the server is using HTTP basic auth).
+            client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
 
             DateTime startDate = DateTime.now();
             Response response = action.invoke(client.target(url).request());
@@ -118,15 +120,6 @@ public class WebServiceClient {
             return t.getMessage();
         } else {
             return getInnermostExceptionMessage(t.getCause());
-        }
-    }
-
-    private String serializeJson(Object body) {
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(body);
-        } catch (JsonProcessingException e) {
-            throw new ProcessingException(e);
         }
     }
 

@@ -40,6 +40,10 @@
         <property name="stripHtmlParameterName" value="${healthmap.stripHtmlParameterName}"/>
     </bean>
 
+    <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelWrapperWebService" autowire="constructor">
+        <property name="rootUrl" value="${modelwrapper.rootUrl}"/>
+    </bean>
+
     <!-- HealthMap data processing beans -->
     <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapAlertConverter" autowire="constructor"/>
     <bean id="healthMapDataAcquisition" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition" autowire="constructor"/>
@@ -57,6 +61,9 @@
     <!-- Disease extent generation beans -->
     <bean id="diseaseExtentGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator" autowire="constructor"/>
     <bean id="singleDiseaseExtentGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.SingleDiseaseExtentGenerator" autowire="constructor"/>
+
+    <!-- Model run requesting beans -->
+    <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunRequester" autowire="constructor"/>
 
     <!-- Main bean (program entry point) -->
     <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.Main" autowire="constructor"/>

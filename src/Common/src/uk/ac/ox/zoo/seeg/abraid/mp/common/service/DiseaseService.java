@@ -114,4 +114,11 @@ public interface DiseaseService {
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             List<Integer> feedIds);
+
+    /**
+     * Gets disease occurrences for the model run.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return Disease occurrences for the model run.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId);
 }
