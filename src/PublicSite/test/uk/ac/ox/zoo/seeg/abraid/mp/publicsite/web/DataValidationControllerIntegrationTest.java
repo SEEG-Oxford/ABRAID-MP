@@ -124,7 +124,7 @@ public class DataValidationControllerIntegrationTest {
     @Test
     public void extentResourceAcceptsValidRequest() throws Exception {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                createAdminUnitGlobal(), new DiseaseGroup(), DiseaseExtentClass.ABSENCE, 0);
+                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
         List<AdminUnitDiseaseExtentClass> map = Arrays.asList(adminUnitDiseaseExtentClass);
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(anyInt())).thenReturn(map);
 

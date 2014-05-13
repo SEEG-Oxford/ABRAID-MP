@@ -21,6 +21,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTes
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -42,7 +43,19 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
     }
 
     @Test
-    public void showPageReturnsDataValidationPage() {
+    public void showTabReturnsDataValidationPage() {
+        // Arrange
+        DataValidationController target = createTarget();
+
+        // Act
+        String result = target.showTab();
+
+        // Assert
+        assertThat(result).isEqualTo("datavalidation");
+    }
+
+    @Test
+    public void showPageReturnsDataValidationContentPageWithModelData() {
         // Arrange
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
@@ -52,8 +65,40 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
         // Assert
         assertThat(result).isEqualTo("datavalidationcontent");
+    }
+
+    @Test
+    public void showPageReturnsDataModelForLoggedInUser() {
+        // Arrange
+        Model model = mock(Model.class);
+        DataValidationController target = createTarget();
+
+        // Act
+        String result = target.showPage(model);
+
+        // Assert
         verify(model, times(1)).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model, times(1)).addAttribute("allOtherDiseases", new ArrayList<>());
+        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
         verify(model, times(1)).addAttribute("userLoggedIn", true);
+        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
+    }
+
+    @Test
+    public void showPageReturnsDataModelForAnonymousUser() {
+        // Arrange
+        setupAnonymousUser();
+        Model model = mock(Model.class);
+        DataValidationController target = createTarget();
+
+        // Act
+        String result = target.showPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
+        verify(model, times(1)).addAttribute("defaultDiseaseGroupShortName", "dengue");
+        verify(model, times(1)).addAttribute("userLoggedIn", false);
         verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }
@@ -143,7 +188,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
 
     private List<AdminUnitDiseaseExtentClass> createDiseaseExtent() {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                createAdminUnitGlobal(), new DiseaseGroup(), DiseaseExtentClass.ABSENCE, 0);
+                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
         return Arrays.asList(adminUnitDiseaseExtentClass);
     }
 

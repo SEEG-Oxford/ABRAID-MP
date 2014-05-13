@@ -9,20 +9,20 @@ public enum LocationPrecision {
     /**
      * The location is the centroid of a country (also known as "admin 0").
      */
-    COUNTRY("c"),
+    COUNTRY("c", null, null),
     /**
      * The location is the centroid of a first-level administrative unit (e.g. state, province).
      */
-    ADMIN1("l", '1'),
+    ADMIN1("l", '1', 1),
     /**
      * The location is the centroid of a second-level administrative unit.
      */
-    ADMIN2('2'),
+    ADMIN2(null, '2', 2),
     /**
      * The location is a point, or the centroid of an area, that is equal to or smaller than "admin 3" level
      * (for that area).
      */
-    PRECISE("p");
+    PRECISE("p", null, -999);
 
     /**
      * The location precision string used by HealthMap (where it is called "place basic type").
@@ -32,19 +32,14 @@ public enum LocationPrecision {
     /**
      * The administrative level as specified in the shapefile tables (e.g. admin_unit).
      */
-    private char shapefileTableAdminLevel;
+    private Character shapefileTableAdminLevel;
 
-    private LocationPrecision(String healthMapPlaceBasicType) {
-        this.healthMapPlaceBasicType = healthMapPlaceBasicType;
-    }
+    private Integer modelValue;
 
-    private LocationPrecision(char shapefileTableAdminLevel) {
-        this.shapefileTableAdminLevel = shapefileTableAdminLevel;
-    }
-
-    private LocationPrecision(String healthMapPlaceBasicType, char shapefileTableAdminLevel) {
+    private LocationPrecision(String healthMapPlaceBasicType, Character shapefileTableAdminLevel, Integer modelValue) {
         this.healthMapPlaceBasicType = healthMapPlaceBasicType;
         this.shapefileTableAdminLevel = shapefileTableAdminLevel;
+        this.modelValue = modelValue;
     }
 
     public String getHealthMapPlaceBasicType() {
@@ -68,5 +63,9 @@ public enum LocationPrecision {
             }
         }
         return null;
+    }
+
+    public Integer getModelValue() {
+        return modelValue;
     }
 }

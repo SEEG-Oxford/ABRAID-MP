@@ -31,4 +31,36 @@ public class GeoJsonDiseaseOccurrenceFeaturePropertiesTest extends AbstractDisea
         assertThat(result.getLocationName()).isEqualTo(expectedLocationName);
         assertThat(result.getAlert()).isNotNull();
     }
+
+    @Test
+    public void extractAdminUnitGlobalOrTropicalGaulCodeReturnsExpectedGaulCodeForGlobalDiseaseGroup() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        Integer gaulCode = 1;
+
+        when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(true);
+        when(occurrence.getLocation().getAdminUnitGlobalGaulCode()).thenReturn(gaulCode);
+
+        // Act
+        GeoJsonDiseaseOccurrenceFeatureProperties result = new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);
+
+        // Assert
+        assertThat(result.getGaulCode()).isEqualTo(gaulCode);
+    }
+
+    @Test
+    public void extractAdminUnitGlobalOrTropicalGaulCodeReturnsExpectedGaulCodeForTropicalDiseaseGroup() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        Integer gaulCode = 1;
+
+        when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(false);
+        when(occurrence.getLocation().getAdminUnitTropicalGaulCode()).thenReturn(gaulCode);
+
+        // Act
+        GeoJsonDiseaseOccurrenceFeatureProperties result = new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);
+
+        // Assert
+        assertThat(result.getGaulCode()).isEqualTo(gaulCode);
+    }
 }

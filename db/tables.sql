@@ -99,6 +99,11 @@ CREATE TABLE country (
     geom geometry(MULTIPOLYGON, 4326)
 );
 
+CREATE TABLE disease_extent_class (
+    name varchar(20) NOT NULL,
+    weighting integer NOT NULL
+);
+
 CREATE TABLE disease_group (
     id serial NOT NULL,
     parent_id integer,

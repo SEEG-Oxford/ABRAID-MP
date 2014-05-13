@@ -5,7 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfigurati
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Map;
 
 /**
  * Interface to provide a trigger for setting up the directory in which a model will run.
@@ -16,11 +16,12 @@ public interface WorkspaceProvisioner {
      * Sets up the directory in which a model will run.
      * @param configuration The model run configuration options.
      * @param occurrenceData The occurrences to use in the model.
-     * @param extentData The extents to model with.
+     * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
      * @return The model wrapper script file to run.
      * @throws IOException Thrown if the directory can not be correctly provisioned.
      */
     File provisionWorkspace(RunConfiguration configuration,
-                            GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, Collection<Integer> extentData)
+                            GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
+                            Map<Integer, Integer> extentWeightings)
             throws IOException;
 }

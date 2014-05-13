@@ -21,6 +21,9 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     private AdminUnitReviewDao adminUnitReviewDao;
 
     @Autowired
+    private DiseaseExtentClassDao diseaseExtentClassDao;
+
+    @Autowired
     private DiseaseGroupDao diseaseGroupDao;
 
     @Autowired
@@ -35,7 +38,7 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         Expert expert = expertDao.getById(2);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2);
-        DiseaseExtentClass response = DiseaseExtentClass.PRESENCE;
+        DiseaseExtentClass response = diseaseExtentClassDao.getByName("PRESENCE");
 
         AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobal, diseaseGroup, response);
 
@@ -133,7 +136,7 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         Expert expert = expertDao.getById(EXPERT_ID);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(DISEASE_GROUP_ID);
         AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2);
-        DiseaseExtentClass response = DiseaseExtentClass.PRESENCE;
+        DiseaseExtentClass response = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE);
         AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobal, diseaseGroup, response);
         adminUnitReviewDao.save(review);
         return review;

@@ -50,8 +50,8 @@ public class AdminUnitDiseaseExtentClass {
     private DiseaseGroup diseaseGroup;
 
     // The disease extent class.
-    @Column(name = "disease_extent_class")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "disease_extent_class", nullable = false)
     private DiseaseExtentClass diseaseExtentClass;
 
     // The number of disease occurrences giving rise to this extent class.

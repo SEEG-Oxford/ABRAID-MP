@@ -95,6 +95,13 @@ public interface DiseaseService {
     void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
 
     /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    DiseaseExtentClass getDiseaseExtentClass(String name);
+
+    /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this

@@ -115,12 +115,13 @@ public class SingleDiseaseExtentGenerator {
 
     private DiseaseExtentClass getInitialDiseaseExtentClass(int occurrenceCount, DiseaseExtentParameters parameters) {
         // Convert an occurrence count into a disease extent class, using the disease extent parameters
+        // Although the disease service is called multiple times to get the classes, Hibernate caching will save us
         if (occurrenceCount >= parameters.getMinimumOccurrencesForPresence()) {
-            return DiseaseExtentClass.PRESENCE;
+            return diseaseService.getDiseaseExtentClass(DiseaseExtentClass.PRESENCE);
         } else if (occurrenceCount >= parameters.getMinimumOccurrencesForPossiblePresence()) {
-            return DiseaseExtentClass.POSSIBLE_PRESENCE;
+            return diseaseService.getDiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE);
         } else {
-            return DiseaseExtentClass.UNCERTAIN;
+            return diseaseService.getDiseaseExtentClass(DiseaseExtentClass.UNCERTAIN);
         }
     }
 

@@ -41,6 +41,10 @@ public abstract class AbstractCommonSpringUnitTests extends AbstractSpringIntegr
 
     @ReplaceWithMock
     @Autowired
+    protected DiseaseExtentClassDao diseaseExtentClassDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected DiseaseGroupDao diseaseGroupDao;
 
     @ReplaceWithMock
