@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Top-level beans specification.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+    <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web"/>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true" >
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.ViewAwareJsonMessageConverter">
+                <property name="objectMapper" ref="geoJsonObjectMapper" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support.JsonViewSupportFactoryBean" />
+    <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.support" />
+
+    <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper" />
+
+    <mvc:default-servlet-handler />
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.LoggingHandlerInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>
