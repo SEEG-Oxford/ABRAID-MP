@@ -59,7 +59,7 @@
     <bean id="singleDiseaseExtentGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.SingleDiseaseExtentGenerator" autowire="constructor"/>
 
     <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.config.ConfigurationServiceImpl">
-        <constructor-arg name="basicProperties" value="internal.properties"/>
+        <constructor-arg name="basicProperties" value="DataAcquisition/src/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.internal.properties"/>
     </bean>
 
     <!-- Weightings calculation beans -->

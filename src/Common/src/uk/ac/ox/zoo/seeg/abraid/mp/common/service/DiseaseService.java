@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -81,12 +82,18 @@ public interface DiseaseService {
     DiseaseExtentClass getDiseaseExtentClass(String name);
 
     /**
+     * Gets a list of all the disease occurrence reviews in the database.
+     * @return The disease occurrence reviews.
+     */
+    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
+
+    /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
      * @param lastRetrieval The date on which the disease occurrence reviews were last retrieved.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
-            DateTime lastRetrieval);
+            LocalDateTime lastRetrieval);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an

@@ -77,6 +77,6 @@ public class Main {
             healthMapDataAcquisition.acquireDataFromWebService();
         }
         diseaseExtentGenerator.generateDiseaseExtent();
-        weightingsCalculator.calculateDiseaseOccurrenceWeightings();
+        weightingsCalculator.updateDiseaseOccurrenceWeightings();
     }
 }

@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
@@ -27,7 +27,7 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
      */
     @Override
     public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
-            DateTime lastRetrieval) {
+            LocalDateTime lastRetrieval) {
         return listNamedQuery("getAllDiseaseOccurrencesReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval",
                 "lastRetrieval", lastRetrieval);
     }

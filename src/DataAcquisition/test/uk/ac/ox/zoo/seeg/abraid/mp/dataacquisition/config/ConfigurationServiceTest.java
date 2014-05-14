@@ -1,9 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.config;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -12,17 +14,42 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class ConfigurationServiceTest {
+
     @Test
-    public void testSetLastRetrievalDate() throws Exception {
+    public void getLastRetrievalDateReturnsNullForEmptyProperty() throws Exception {
         // Arrange
-        DateTime date = DateTime.now();
-        File file = new File("foo");
-        ConfigurationService service = new ConfigurationServiceImpl(file);
+        File propertiesFile = createPropertiesFile();
+        ConfigurationService service = new ConfigurationServiceImpl(propertiesFile);
 
         // Act
-        service.setLastRetrievalDate(date);
+        LocalDateTime result = service.getLastRetrievalDate();
+        propertiesFile.delete();
 
         // Assert
-        assertThat(service.getLastRetrievalDate()).isEqualTo(date);
+        assertThat(result).isNull();
+    }
+
+    private File createPropertiesFile() throws FileNotFoundException {
+        File file = new File("foo");
+        PrintWriter out = new PrintWriter(file);
+        out.println("lastRetrievalDate =");
+        out.close();
+        return file;
+    }
+
+    @Test
+    public void getLastRetrievalDateReturnsExpectedDate() throws Exception {
+        // Arrange
+        File file = new File("foo");
+        ConfigurationService service = new ConfigurationServiceImpl(file);
+        LocalDateTime expectedDate = LocalDateTime.now();
+        service.setLastRetrievalDate(expectedDate);
+
+        // Act
+        LocalDateTime result = service.getLastRetrievalDate();
+        file.delete();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedDate);
     }
 }

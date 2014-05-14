@@ -1,6 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.config;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 /**
  * Service interface for configuration data.
@@ -8,14 +8,14 @@ import org.joda.time.DateTime;
  */
 public interface ConfigurationService {
     /**
-     * Updates the date at which DiseaseOccurrenceReviews were last retrieved.
+     * Updates the date on which DiseaseOccurrenceReviews were last retrieved.
      * @param lastRetrievalDate The date.
      */
-    void setLastRetrievalDate(DateTime lastRetrievalDate);
+    void setLastRetrievalDate(LocalDateTime lastRetrievalDate);
 
     /**
      * Gets the date on which DiseaseOccurrenceReviews were last retrieved.
      * @return The date.
      */
-    DateTime getLastRetrievalDate();
+    LocalDateTime getLastRetrievalDate();
 }

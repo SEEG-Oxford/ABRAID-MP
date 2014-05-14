@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
 import ch.lambdaj.function.convert.Converter;
 import org.hamcrest.core.IsEqual;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
@@ -20,10 +20,8 @@ import static ch.lambdaj.Lambda.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@Transactional
 public class WeightingsCalculator {
     private ConfigurationService configurationService;
-
     private DiseaseService diseaseService;
 
     public WeightingsCalculator(ConfigurationService configurationService, DiseaseService diseaseService) {
@@ -36,17 +34,32 @@ public class WeightingsCalculator {
      * calculate its new weighting, by taking the weighted average of every expert review in the database (not just
      * the new reviews).
      */
-    public void calculateDiseaseOccurrenceWeightings() {
-        DateTime lastRetrievalDate = configurationService.getLastRetrievalDate();
-        if (lastRetrievalDate.hourOfDay().roundCeilingCopy().plusWeeks(1).isAfterNow()) {
-            List<DiseaseOccurrenceReview> allReviews =
-                diseaseService.getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(lastRetrievalDate);
+    @Transactional
+    public void updateDiseaseOccurrenceWeightings() {
+        LocalDateTime lastRetrievalDate = configurationService.getLastRetrievalDate();
+        if (shouldContinue(lastRetrievalDate)) {
+            configurationService.setLastRetrievalDate(LocalDateTime.now());
+            List<DiseaseOccurrenceReview> allReviews = getAllReviews(lastRetrievalDate);
             for (DiseaseOccurrence occurrence : extractDistinctDiseaseOccurrences(allReviews)) {
                 List<DiseaseOccurrenceReview> reviews = select(allReviews,
                     having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
                 Double weighting = calculateWeightedAverageResponse(reviews);
                 occurrence.setValidationWeighting(weighting);
             }
+        }
+    }
+
+    // Weightings should be updated if there is no lastRetrievalDate in properties file, or more than a week has elapsed
+    private boolean shouldContinue(LocalDateTime lastRetrievalDate) {
+        return (lastRetrievalDate == null ||
+                lastRetrievalDate.hourOfDay().roundFloorCopy().plusWeeks(1).isBefore(LocalDateTime.now()));
+    }
+
+    private List<DiseaseOccurrenceReview> getAllReviews(LocalDateTime lastRetrievalDate) {
+        if (lastRetrievalDate == null) {
+            return diseaseService.getAllDiseaseOccurrenceReviews();
+        } else {
+            return diseaseService.getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(lastRetrievalDate);
         }
     }
 
@@ -72,6 +85,6 @@ public class WeightingsCalculator {
         for (Double weighting : weightings) {
             total += weighting;
         }
-        return total/weightings.size();
+        return total / weightings.size();
     }
 }

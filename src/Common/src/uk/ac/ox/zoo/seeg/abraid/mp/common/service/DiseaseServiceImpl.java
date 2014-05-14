@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -119,16 +120,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets a disease extent class by name.
-     * @param name The disease extent class name.
-     * @return The corresponding disease extent class, or null if it does not exist.
-     */
-    @Override
-    public DiseaseExtentClass getDiseaseExtentClass(String name) {
-        return diseaseExtentClassDao.getByName(name);
-    }
-
-    /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
@@ -164,13 +155,32 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    @Override
+    public DiseaseExtentClass getDiseaseExtentClass(String name) {
+        return diseaseExtentClassDao.getByName(name);
+    }
+
+    /**
+     *  Gets a list of all the disease occurrence reviews in the database.
+     *  @return The disease occurrence reviews.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews() {
+        return diseaseOccurrenceReviewDao.getAll();
+    }
+
+    /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
      * @param lastRetrieval The date on which the disease occurrence reviews were last retrieved.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     @Override
     public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
-            DateTime lastRetrieval) {
+            LocalDateTime lastRetrieval) {
         return diseaseOccurrenceReviewDao.getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
             lastRetrieval);
     }
