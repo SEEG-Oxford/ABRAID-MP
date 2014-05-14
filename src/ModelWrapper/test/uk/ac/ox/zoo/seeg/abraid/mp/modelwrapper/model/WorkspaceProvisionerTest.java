@@ -113,7 +113,7 @@ public class WorkspaceProvisionerTest {
         // Assert
         ArgumentCaptor<GeoJsonDiseaseOccurrenceFeatureCollection> dataCaptor = ArgumentCaptor.forClass(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         ArgumentCaptor<File> directoryCaptor = ArgumentCaptor.forClass(File.class);
-        verify(inputDataManager, times(1)).writeData(dataCaptor.capture(), directoryCaptor.capture());
+        verify(inputDataManager, times(1)).writeOccurrenceData(dataCaptor.capture(), directoryCaptor.capture());
         assertThat(dataCaptor.getValue()).isEqualTo(expectedData);
         assertThat(directoryCaptor.getValue().getParentFile()).isEqualTo(runDir);
         assertThat(directoryCaptor.getValue().getName()).isEqualTo("data");

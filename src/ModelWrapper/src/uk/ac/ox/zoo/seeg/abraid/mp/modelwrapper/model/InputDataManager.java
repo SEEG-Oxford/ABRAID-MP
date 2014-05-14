@@ -16,5 +16,5 @@ public interface InputDataManager {
      * @param dataDirectory The directory to create the data files in.
      * @throws IOException If the data could not be written.
      */
-    void writeData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory) throws IOException;
+    void writeOccurrenceData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory) throws IOException;
 }

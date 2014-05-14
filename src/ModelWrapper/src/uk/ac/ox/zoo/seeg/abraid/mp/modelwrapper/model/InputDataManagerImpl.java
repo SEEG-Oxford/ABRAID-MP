@@ -30,7 +30,7 @@ public class InputDataManagerImpl implements InputDataManager {
      * @throws IOException If the data could not be written.
      */
     @Override
-    public void writeData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
+    public void writeOccurrenceData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
             throws IOException {
         LOGGER.info(String.format(
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), dataDirectory.getParent()));

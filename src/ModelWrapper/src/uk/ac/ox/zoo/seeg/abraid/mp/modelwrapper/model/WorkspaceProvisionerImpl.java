@@ -80,7 +80,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         LOGGER.info(String.format("TODO: Rasterize extent data."));
 
         // Copy input data
-        inputDataManager.writeData(occurrenceData, dataDirectory);
+        inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory);
 
         // Copy model
         sourceCodeManager.provisionVersion(configuration.getCodeConfig().getModelVersion(), modelDirectory);
