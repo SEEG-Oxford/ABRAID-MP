@@ -123,6 +123,9 @@ public class WebServiceClient {
         }
     }
 
+    /**
+     * Performs an action on a SyncInvoker object. This is used to perform the desired type of HTTP request.
+     */
     private interface SyncInvokerAction {
         Response invoke(SyncInvoker invoker);
     }

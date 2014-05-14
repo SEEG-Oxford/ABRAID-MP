@@ -65,6 +65,11 @@ public class Alert {
         this.id = id;
     }
 
+    public Alert(String title, String feedName) {
+        this.title = title;
+        this.feed = new Feed(feedName);
+    }
+
     public Integer getId() {
         return id;
     }

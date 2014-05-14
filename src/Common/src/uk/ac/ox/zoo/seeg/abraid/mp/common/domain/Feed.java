@@ -54,6 +54,10 @@ public class Feed {
     public Feed() {
     }
 
+    public Feed(String name) {
+        this.name = name;
+    }
+
     public Feed(String name, Provenance provenance, double weighting, String language, Long healthMapFeedId) {
         this.name = name;
         this.provenance = provenance;

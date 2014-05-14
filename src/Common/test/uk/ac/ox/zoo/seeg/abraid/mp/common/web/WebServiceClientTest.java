@@ -1,11 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * Tests the WebServiceClient class.

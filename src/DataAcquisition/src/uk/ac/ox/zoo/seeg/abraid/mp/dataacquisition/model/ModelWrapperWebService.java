@@ -17,8 +17,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the ModelWrapper's web service interface.
@@ -44,16 +44,22 @@ public class ModelWrapperWebService {
 
     /**
      * Starts a model run.
+     * @param diseaseGroup The disease group for this model run.
+     * @param occurrences The disease occurrences for this model run.
+     * @param diseaseExtent Ths disease extent for this model run, expressed as a mapping between GAUL codes
+     *                      and extent class weightings.
      * @return The model run name, or null if the run did not start successfully.
+     * @throws WebServiceClientException If the web service call fails.
+     * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
     public JsonModelRunResponse startRun(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> occurrences,
-                                         Collection<Integer> diseaseExtent)
+                                         Map<Integer, Integer> diseaseExtent)
             throws WebServiceClientException, JsonParserException {
         String url = buildUrl();
         JsonModelRun body = createJsonModelRun(diseaseGroup, occurrences, diseaseExtent);
-        String bodyAsJson = createBodyAsJson(body);
+        String bodyAsJson = createRequestBodyAsJson(body);
         String response = webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
-        return parseJson(response);
+        return parseResponseJson(response);
     }
 
     private String buildUrl() {
@@ -63,17 +69,18 @@ public class ModelWrapperWebService {
     }
 
     private JsonModelRun createJsonModelRun(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> occurrences,
-                                            Collection<Integer> diseaseExtent) {
+                                            Map<Integer, Integer> diseaseExtent) {
         JsonModelDisease jsonModelDisease = new JsonModelDisease(diseaseGroup);
         GeoJsonDiseaseOccurrenceFeatureCollection jsonOccurrences =
                 new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences);
         return new JsonModelRun(jsonModelDisease, jsonOccurrences, diseaseExtent);
     }
 
-    private String createBodyAsJson(Object body) {
+    private String createRequestBodyAsJson(Object body) {
         // To create the JSON body for the POST request:
         // - use the GeoJsonObjectMapper (because the request contains GeoJson)
         // - only serialize properties that are annotated with ModellingJsonView or are not annotated at all
+        //   (this selects the properties that are relevant to the model)
         GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
         ObjectWriter writer = objectMapper.writerWithView(ModellingJsonView.class);
         try {
@@ -83,7 +90,7 @@ public class ModelWrapperWebService {
         }
     }
 
-    private JsonModelRunResponse parseJson(String json) throws JsonParserException {
+    private JsonModelRunResponse parseResponseJson(String json) throws JsonParserException {
         return new JsonParser().parse(json, JsonModelRunResponse.class);
     }
 }

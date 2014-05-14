@@ -39,8 +39,9 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.location.hasPassedQc=true"
+                        "where d.diseaseGroup.id = :diseaseGroupId " +
+                        "and d.location.hasPassedQc = true " +
+                        "and d.location.precision <> 'COUNTRY'"
         )
 })
 @Entity
@@ -116,6 +117,16 @@ public class DiseaseOccurrence {
 
     public DiseaseOccurrence(int id) {
         this.id = id;
+    }
+
+    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert,
+                             Double validationWeighting, DateTime occurrenceDate) {
+        this.id = id;
+        this.diseaseGroup = diseaseGroup;
+        this.location = location;
+        this.alert = alert;
+        this.validationWeighting = validationWeighting;
+        this.occurrenceDate = occurrenceDate;
     }
 
     public Integer getId() {

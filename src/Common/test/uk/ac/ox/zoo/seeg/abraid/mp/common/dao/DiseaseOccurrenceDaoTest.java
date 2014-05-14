@@ -221,7 +221,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRun(diseaseGroupId);
 
         // Assert
-        assertThat(occurrences).hasSize(39);
+        assertThat(occurrences).hasSize(25);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
