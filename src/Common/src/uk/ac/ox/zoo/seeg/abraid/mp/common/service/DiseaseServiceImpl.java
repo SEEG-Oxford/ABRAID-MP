@@ -22,6 +22,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitGlobalDao adminUnitGlobalDao;
     private AdminUnitTropicalDao adminUnitTropicalDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
+    private ModelRunDao modelRunDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseGroupDao diseaseGroupDao,
@@ -30,7 +31,8 @@ public class DiseaseServiceImpl implements DiseaseService {
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
                               AdminUnitTropicalDao adminUnitTropicalDao,
-                              DiseaseExtentClassDao diseaseExtentClassDao) {
+                              DiseaseExtentClassDao diseaseExtentClassDao,
+                              ModelRunDao modelRunDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
@@ -39,6 +41,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.adminUnitGlobalDao = adminUnitGlobalDao;
         this.adminUnitTropicalDao = adminUnitTropicalDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
+        this.modelRunDao = modelRunDao;
     }
 
     /**
@@ -233,6 +236,14 @@ public class DiseaseServiceImpl implements DiseaseService {
      */
     public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRun(diseaseGroupId);
+    }
+
+    /**
+     * Saves a model run.
+     * @param modelRun The model run to save.
+     */
+    public void saveModelRun(ModelRun modelRun) {
+        modelRunDao.save(modelRun);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

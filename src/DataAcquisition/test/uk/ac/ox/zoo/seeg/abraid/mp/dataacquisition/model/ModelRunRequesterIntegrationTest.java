@@ -1,10 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractWebServiceClientIntegrationTests;
 import org.apache.log4j.Logger;
@@ -28,24 +32,34 @@ import static org.mockito.Mockito.*;
 public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIntegrationTests {
     @Autowired
     private ModelRunRequester modelRunRequester;
+    @Autowired
+    private ModelRunDao modelRunDao;
 
     private static final String URL = "http://username:password@localhost:8080/ModelWrapper_war_exploded/model/run";
 
     @Test
     public void requestModelRunSucceeds() {
         // Arrange
-        final String responseJson = "{\"modelRunName\":\"testname\"}";
+        DateTime now = DateTime.now();
+        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
+        String modelName = "testname";
+        String responseJson = "{\"modelRunName\":\"testname\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
         modelRunRequester.requestModelRun();
-        // At the moment there is no output to assert
+
+        // Assert
+        List<ModelRun> modelRuns = modelRunDao.getAll();
+        assertThat(modelRuns).hasSize(1);
+        assertThat(modelRuns.get(0).getName()).isEqualTo(modelName);
+        assertThat(modelRuns.get(0).getRequestDate()).isEqualTo(now);
     }
 
     @Test
     public void requestModelRunWithErrorReturnedByModel() {
         // Arrange
-        final String responseJson = "{\"errorText\":\"testerror\"}";
+        String responseJson = "{\"errorText\":\"testerror\"}";
         String expectedLogMessage = "Error when requesting a model run: testerror";
         Logger logger = mockLogger();
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON

@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
@@ -45,19 +47,23 @@ public class ModelRunRequester {
         Integer diseaseGroupId = diseaseGroup.getId();
         List<DiseaseOccurrence> diseaseOccurrences = diseaseService.getDiseaseOccurrencesForModelRun(diseaseGroupId);
         Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
+        DateTime requestDate = DateTime.now();
 
         try {
             JsonModelRunResponse response =
                     modelWrapperWebService.startRun(diseaseGroup, diseaseOccurrences, diseaseExtent);
-            handleModelRunResponse(response);
+            handleModelRunResponse(response, requestDate);
         } catch (WebServiceClientException|JsonParserException e) {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
         }
     }
 
-    private void handleModelRunResponse(JsonModelRunResponse response) {
+    private void handleModelRunResponse(JsonModelRunResponse response, DateTime requestDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText()));
+        } else {
+            ModelRun modelRun = new ModelRun(response.getModelRunName(), requestDate);
+            diseaseService.saveModelRun(modelRun);
         }
     }
 

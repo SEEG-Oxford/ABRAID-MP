@@ -121,4 +121,10 @@ public interface DiseaseService {
      * @return Disease occurrences for the model run.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId);
+
+    /**
+     * Saves a model run.
+     * @param modelRun The model run to save.
+     */
+    void saveModelRun(ModelRun modelRun);
 }
