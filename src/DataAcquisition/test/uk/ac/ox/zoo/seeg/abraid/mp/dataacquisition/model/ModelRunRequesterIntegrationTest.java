@@ -104,7 +104,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
             Field field = ModelRunRequester.class.getDeclaredField("logger");
             field.setAccessible(true);
             field.set(modelRunRequester, mockLogger);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return mockLogger;
@@ -133,11 +133,12 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
 
         // Reinstate the {"type":"Feature", at the start of the string, and remove trailing comma (if any)
         // Also ignore the first split feature because it should be empty
-        String[] trimmedSplitFeatures = new String[splitFeatures.length-1];
+        String[] trimmedSplitFeatures = new String[splitFeatures.length - 1];
         for (int i = 1; i < splitFeatures.length; i++) {
             String splitFeature = splitFeatures[i];
             if (splitFeature.length() > 2) {
-                trimmedSplitFeatures[i-1] = "{\"type\":\"Feature\"," + StringUtils.trimTrailingCharacter(splitFeature, ',');
+                trimmedSplitFeatures[i - 1] =
+                        "{\"type\":\"Feature\"," + StringUtils.trimTrailingCharacter(splitFeature, ',');
             }
         }
 
@@ -179,6 +180,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         return Arrays.asList(extent.split(","));
     }
 
+    ///CHECKSTYLE:OFF MethodLength - contains test data
     private void assertSplitExtent(List<String> splitExtent) {
         assertThat(splitExtent).hasSize(459);
         assertThat(splitExtent).contains(
@@ -643,4 +645,5 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
                 "\"1013965\":0"
         );
     }
+    ///CHECKSTYLE:ON MethodLength
 }

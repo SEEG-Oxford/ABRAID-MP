@@ -38,8 +38,7 @@ public class ModelRunRequester {
      */
     public void requestModelRun() {
         // This is hardcoded to dengue for now
-        int diseaseGroupId = 87;
-        DiseaseGroup dengue = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DiseaseGroup dengue = diseaseService.getDiseaseGroupById(87); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
         requestModelRun(dengue);
     }
 
