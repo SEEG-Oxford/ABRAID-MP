@@ -85,12 +85,12 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
 
     /**
-     * Gets disease occurrences for the model run.
+     * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for the model run.
+     * @return Disease occurrences for a request to run the model.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrencesForModelRun", "diseaseGroupId", diseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrencesForModelRunRequest", "diseaseGroupId", diseaseGroupId);
     }
 }

@@ -230,12 +230,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets disease occurrences for the model run.
+     * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for the model run.
+     * @return Disease occurrences for a request to run the model.
      */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRun(diseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
     }
 
     /**

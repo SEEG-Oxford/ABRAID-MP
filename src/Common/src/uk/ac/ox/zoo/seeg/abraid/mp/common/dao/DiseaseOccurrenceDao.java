@@ -68,9 +68,9 @@ public interface DiseaseOccurrenceDao {
             List<Integer> feedIds, boolean isGlobal);
 
     /**
-     * Gets disease occurrences for the model run.
+     * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for the model run.
+     * @return Disease occurrences for a request to run the model.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRun(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
 }

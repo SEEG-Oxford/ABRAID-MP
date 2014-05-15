@@ -37,7 +37,7 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_EXTENT_QUERY + " and d.alert.feed.id in :feedIds"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesForModelRun",
+                name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id = :diseaseGroupId " +
                         "and d.location.hasPassedQc = true " +
