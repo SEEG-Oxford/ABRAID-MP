@@ -29,6 +29,7 @@
 -- healthmap_disease:               Represents a disease as defined by HealthMap.
 -- land_sea_border:                 Represents a land-sea border to a 5km resolution as used by the model.
 -- location:                        Represents the location of a disease occurrence.
+-- model_run:                       Represents a run of the SEEG model.
 -- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
 -- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
 
@@ -208,6 +209,12 @@ CREATE TABLE location (
     admin_unit_tropical_gaul_code integer,
     has_passed_qc boolean NOT NULL,
     qc_message varchar(1000)
+);
+
+CREATE TABLE model_run (
+    id serial NOT NULL,
+    name varchar(300) NOT NULL,
+    request_date timestamp NOT NULL
 );
 
 CREATE TABLE provenance (

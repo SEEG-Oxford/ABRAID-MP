@@ -12,6 +12,15 @@ public class JsonParserTestPerson {
     private int age;
     private DateTime dateOfBirth;
 
+    public JsonParserTestPerson() {
+    }
+
+    public JsonParserTestPerson(String name, int age, DateTime dateOfBirth) {
+        this.name = name;
+        this.age = age;
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getName() {
         return name;
     }

@@ -239,7 +239,7 @@ public class HealthMapWebServiceTest {
         String url = getHealthMapBaseUrl();
         WebServiceClient client = mock(WebServiceClient.class);
         //noinspection unchecked
-        when(client.request(url)).thenThrow(WebServiceClientException.class);
+        when(client.makeGetRequest(url)).thenThrow(WebServiceClientException.class);
         HealthMapWebService webService = getHealthMapWebService(client);
 
         // Act
@@ -318,7 +318,7 @@ public class HealthMapWebServiceTest {
 
     private WebServiceClient getMockWebServiceClient(String url, String json) {
         WebServiceClient client = mock(WebServiceClient.class);
-        when(client.request(url)).thenReturn(json);
+        when(client.makeGetRequest(url)).thenReturn(json);
         return client;
     }
 
