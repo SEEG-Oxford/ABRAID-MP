@@ -44,7 +44,8 @@ public class ModelRunRequester {
 
     private void requestModelRun(DiseaseGroup diseaseGroup) {
         Integer diseaseGroupId = diseaseGroup.getId();
-        List<DiseaseOccurrence> diseaseOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> diseaseOccurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
         DateTime requestDate = DateTime.now();
 
