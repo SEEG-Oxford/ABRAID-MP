@@ -17,6 +17,9 @@ verbose <- ${verbose?string("TRUE","FALSE")}
 # Set max CPUs
 max_cpus <- ${max_cpu?c}
 
+# Set parallel execution
+parallel_flag <- FALSE
+
 # Set dry run
 dry_run <- ${dry_run?string("TRUE","FALSE")}
 
@@ -61,6 +64,12 @@ if (!dry_run) {
     load_all('model')
 }
 
+# Define a function that can be used to load the model on cluster nodes
+load_seegSDM <- function () {
+    library('devtools', quietly=TRUE)
+    load_all('model')
+}
+
 # Run the model
 result <- tryCatch({
     if (!dry_run) {
@@ -71,7 +80,9 @@ result <- tryCatch({
             covariate_paths,
             rep(FALSE, length(covariate_paths)),
             verbose,
-            max_cpus)
+            max_cpus,
+            load_seegSDM,
+            parallel_flag)
     } else {
         0 # return 0
     }
