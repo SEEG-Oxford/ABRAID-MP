@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
+import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDateTime;
+import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
@@ -26,6 +28,11 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculatorTest {
+
+    @Before
+    public void setFixedTime() {
+        DateTimeUtils.setCurrentMillisFixed(1400148490000L);
+    }
 
     @Test
     public void updateDiseaseOccurrenceWeightingsExecutesWhenLastRetrievalDateIsNull() throws Exception {

@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
 import ch.lambdaj.function.convert.Converter;
 import org.hamcrest.core.IsEqual;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -51,8 +52,10 @@ public class WeightingsCalculator {
 
     // Weightings should be updated if there is no lastRetrievalDate in properties file, or more than a week has elapsed
     private boolean shouldContinue(LocalDateTime lastRetrievalDate) {
+        LocalDate today = LocalDate.now();
         return (lastRetrievalDate == null ||
-                lastRetrievalDate.hourOfDay().roundFloorCopy().plusWeeks(1).isBefore(LocalDateTime.now()));
+                lastRetrievalDate.toLocalDate().plusDays(7).isEqual(today) ||
+                lastRetrievalDate.toLocalDate().plusDays(7).isBefore(today));
     }
 
     private List<DiseaseOccurrenceReview> getAllReviews(LocalDateTime lastRetrievalDate) {
