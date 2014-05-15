@@ -9,20 +9,20 @@ public enum LocationPrecision {
     /**
      * The location is the centroid of a country (also known as "admin 0").
      */
-    COUNTRY("c", null, null),
+    COUNTRY("c", null, null, 0),
     /**
      * The location is the centroid of a first-level administrative unit (e.g. state, province).
      */
-    ADMIN1("l", '1', 1),
+    ADMIN1("l", '1', 1, 0.3),
     /**
      * The location is the centroid of a second-level administrative unit.
      */
-    ADMIN2(null, '2', 2),
+    ADMIN2(null, '2', 2, 0.7),
     /**
      * The location is a point, or the centroid of an area, that is equal to or smaller than "admin 3" level
      * (for that area).
      */
-    PRECISE("p", null, -999);
+    PRECISE("p", null, -999, 1);
 
     /**
      * The location precision string used by HealthMap (where it is called "place basic type").
@@ -34,12 +34,21 @@ public enum LocationPrecision {
      */
     private Character shapefileTableAdminLevel;
 
+    /**
+     * The value to be sent to, and used in, the model run.
+     */
     private Integer modelValue;
 
-    private LocationPrecision(String healthMapPlaceBasicType, Character shapefileTableAdminLevel, Integer modelValue) {
+    /**
+     * The resolution weighting used in identifying points for validation and when calculating the validation weighting.
+     */
+    private double weighting;
+
+    private LocationPrecision(String healthMapPlaceBasicType, Character shapefileTableAdminLevel, Integer modelValue, double weighting) {
         this.healthMapPlaceBasicType = healthMapPlaceBasicType;
         this.shapefileTableAdminLevel = shapefileTableAdminLevel;
         this.modelValue = modelValue;
+        this.weighting = weighting;
     }
 
     public String getHealthMapPlaceBasicType() {
@@ -48,6 +57,14 @@ public enum LocationPrecision {
 
     public char getShapefileTableAdminLevel() {
         return shapefileTableAdminLevel;
+    }
+
+    public Integer getModelValue() {
+        return modelValue;
+    }
+
+    public double getWeighting() {
+        return weighting;
     }
 
     /**
@@ -63,9 +80,5 @@ public enum LocationPrecision {
             }
         }
         return null;
-    }
-
-    public Integer getModelValue() {
-        return modelValue;
     }
 }

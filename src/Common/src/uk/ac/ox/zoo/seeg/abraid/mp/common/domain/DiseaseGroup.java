@@ -56,6 +56,10 @@ public class DiseaseGroup {
     @JoinColumn(name = "validator_disease_group_id")
     private ValidatorDiseaseGroup validatorDiseaseGroup;
 
+    // The weighting, initially determined by groupType.
+    @Column
+    private Double weighting;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -170,6 +174,14 @@ public class DiseaseGroup {
 
     public void setValidatorDiseaseGroup(ValidatorDiseaseGroup validatorDiseaseGroup) {
         this.validatorDiseaseGroup = validatorDiseaseGroup;
+    }
+
+    public Double getWeighting() {
+        return weighting;
+    }
+
+    public void setWeighting(Double weighting) {
+        this.weighting = weighting;
     }
 
     public Boolean isGlobal() {

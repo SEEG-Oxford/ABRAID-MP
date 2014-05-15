@@ -14,6 +14,11 @@
 \copy geonames_location_precision (geonames_feature_code, location_precision) FROM 'geonames_location_precision.txt' (ENCODING utf8, NULL '')
 \copy disease_extent_class (name, weighting) FROM 'disease_extent_class.txt' (ENCODING utf8, NULL '')
 
+-- Set the initial weighting of the disease groups, according to their type.
+UPDATE disease_group SET weighting = 1 WHERE group_type = 'SINGLE';
+UPDATE disease_group SET weighting = 0.5 WHERE group_type = 'MICROCLUSTER';
+UPDATE disease_group SET weighting = 0 WHERE group_type = 'CLUSTER';
+
 -- Some of the data above contains explicit values of serial primary keys, so that child tables can refer
 -- to known IDs. So now we need to reset the sequences of such primary keys.
 \pset footer off

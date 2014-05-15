@@ -115,6 +115,7 @@ CREATE TABLE disease_group (
     abbreviation varchar(10),
     is_global boolean,
     validator_disease_group_id integer,
+    weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
