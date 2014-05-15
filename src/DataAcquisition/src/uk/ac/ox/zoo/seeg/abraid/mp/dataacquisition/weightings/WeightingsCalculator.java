@@ -54,8 +54,8 @@ public class WeightingsCalculator {
     private boolean shouldContinue(LocalDateTime lastRetrievalDate) {
         LocalDate today = LocalDate.now();
         return (lastRetrievalDate == null ||
-                lastRetrievalDate.toLocalDate().plusDays(7).isEqual(today) ||
-                lastRetrievalDate.toLocalDate().plusDays(7).isBefore(today));
+                lastRetrievalDate.toLocalDate().plusDays(7).isEqual(today) || ///CHECKSTYLE:SUPPRESS MagicNumberCheck
+                lastRetrievalDate.toLocalDate().plusDays(7).isBefore(today)); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
     }
 
     private List<DiseaseOccurrenceReview> getAllReviews(LocalDateTime lastRetrievalDate) {
