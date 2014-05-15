@@ -108,6 +108,6 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
     }
 
     private static String escapeFilePathForR(String path) {
-        return path.replace("\\","\\\\");
+        return path.replace("\\", "\\\\");
     }
 }
