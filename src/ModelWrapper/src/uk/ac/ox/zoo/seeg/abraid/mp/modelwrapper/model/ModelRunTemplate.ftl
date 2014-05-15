@@ -39,11 +39,8 @@ covariate_paths <- c(
 
 # Define admin unit rasters to use.
 # If you would like to use these admin unit rasters (or related shape files) please contact TBD@TBD.com, as we cannot release them in all circumstances.
-admin_paths <- c(
-<#list admin_files as admin_level_file>
-    "${admin_level_file}"<#if admin_level_file_has_next>,</#if>
-</#list>
-)
+admin1_path <- "${admin1_file}"
+admin2_path <- "${admin2_file}"
 
 # Set CRAN mirror
 local({r <- getOption("repos")
@@ -76,7 +73,8 @@ result <- tryCatch({
         runABRAID(
             occurrence_path,
             extent_path,
-            admin_paths,
+            admin1_path,
+            admin2_path,
             covariate_paths,
             rep(FALSE, length(covariate_paths)),
             verbose,
