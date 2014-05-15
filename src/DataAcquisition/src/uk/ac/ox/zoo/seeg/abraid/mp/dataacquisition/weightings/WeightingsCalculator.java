@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
 import ch.lambdaj.function.convert.Converter;
+import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -22,6 +23,10 @@ import static ch.lambdaj.Lambda.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculator {
+    private static final Logger LOGGER = Logger.getLogger(WeightingsCalculator.class);
+    private static final String NO_NEW_REVIEWS = "No new reviews have been submitted - skipping updating weightings";
+    private static final String UPDATING_WEIGHTINGS = "Updating expert weightings for \"%d\" disease occurrences";
+
     private ConfigurationService configurationService;
     private DiseaseService diseaseService;
 
@@ -41,11 +46,15 @@ public class WeightingsCalculator {
         if (shouldContinue(lastRetrievalDate)) {
             configurationService.setLastRetrievalDate(LocalDateTime.now());
             List<DiseaseOccurrenceReview> allReviews = getAllReviews(lastRetrievalDate);
-            for (DiseaseOccurrence occurrence : extractDistinctDiseaseOccurrences(allReviews)) {
-                List<DiseaseOccurrenceReview> reviews = select(allReviews,
-                    having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
-                Double weighting = calculateWeightedAverageResponse(reviews);
-                occurrence.setValidationWeighting(weighting);
+            if (allReviews.isEmpty()) {
+                LOGGER.info(NO_NEW_REVIEWS);
+            } else {
+                for (DiseaseOccurrence occurrence : extractDistinctDiseaseOccurrences(allReviews)) {
+                    List<DiseaseOccurrenceReview> reviews = select(allReviews,
+                        having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+                    Double weighting = calculateWeightedAverageResponse(reviews);
+                    occurrence.setValidationWeighting(weighting);
+                }
             }
         }
     }
@@ -67,7 +76,9 @@ public class WeightingsCalculator {
     }
 
     private Set<DiseaseOccurrence> extractDistinctDiseaseOccurrences(List<DiseaseOccurrenceReview> allReviews) {
-        return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
+        Set<DiseaseOccurrence> distinctOccurrences = new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
+        LOGGER.info(String.format(UPDATING_WEIGHTINGS, distinctOccurrences.size()));
+        return distinctOccurrences;
     }
 
     private Double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
