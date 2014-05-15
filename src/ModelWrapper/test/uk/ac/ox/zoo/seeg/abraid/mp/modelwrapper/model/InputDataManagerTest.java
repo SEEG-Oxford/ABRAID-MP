@@ -36,7 +36,7 @@ public class InputDataManagerTest {
     }
 
     @Test
-    public void writeDataCreatesCorrectCsvForGlobalAdminLevel1() throws Exception {
+    public void writeDataCreatesCorrectCsvForAdminLevel1() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
@@ -48,7 +48,7 @@ public class InputDataManagerTest {
     }
 
     @Test
-    public void writeDataCreatesCorrectCsvForGlobalAdminLevel2() throws Exception {
+    public void writeDataCreatesCorrectCsvForAdminLevel2() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN2);
@@ -57,19 +57,6 @@ public class InputDataManagerTest {
 
         // Assert
         assertThat(result).isEqualTo("-1.0,1.0,0.5,2,102" + System.lineSeparator());
-    }
-
-    @Test
-    public void writeDataCreatesCorrectCsvForTropicalAdminLevel1() throws Exception {
-        // Arrange
-        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
-        when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(false);
-        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
-
-        String result = arrangeAndActWriteDataTest(occurrence);
-
-        // Assert
-        assertThat(result).isEqualTo("-1.0,1.0,0.5,1,101" + System.lineSeparator());
     }
 
     private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {

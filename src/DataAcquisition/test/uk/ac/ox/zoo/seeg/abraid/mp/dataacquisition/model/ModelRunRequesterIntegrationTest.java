@@ -146,33 +146,35 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     }
 
     private void assertSplitFeatures(List<String> splitFeatures) {
-        assertThat(splitFeatures).hasSize(25);
+        assertThat(splitFeatures).hasSize(27);
         assertThat(splitFeatures).contains(
-                "{\"type\":\"Feature\",\"id\":274016,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-47.09179,-21.76979]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.3,\"gaulCode\":689}}",
-                "{\"type\":\"Feature\",\"id\":274444,\"geometry\":{\"type\":\"Point\",\"coordinates\":[121.06667,14.53333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8,\"gaulCode\":196}}",
-                "{\"type\":\"Feature\",\"id\":274763,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-46.60972,-20.71889]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5,\"gaulCode\":677}}",
-                "{\"type\":\"Feature\",\"id\":274780,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.91651,-22.17062]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.6,\"gaulCode\":683}}",
+                "{\"type\":\"Feature\",\"id\":274016,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-47.09179,-21.76979]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.3}}",
+                "{\"type\":\"Feature\",\"id\":274444,\"geometry\":{\"type\":\"Point\",\"coordinates\":[121.06667,14.53333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}}",
+                "{\"type\":\"Feature\",\"id\":274763,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-46.60972,-20.71889]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5}}",
+                "{\"type\":\"Feature\",\"id\":274776,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.66564,-22.18996]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.6,\"gaulCode\":683}}",
+                "{\"type\":\"Feature\",\"id\":274779,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-43.04112,-22.81555]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.9,\"gaulCode\":9966}}",
+                "{\"type\":\"Feature\",\"id\":274780,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.91651,-22.17062]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.6,\"gaulCode\":9970}}",
                 "{\"type\":\"Feature\",\"id\":274788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.0,-30.0]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.4,\"gaulCode\":685}}",
-                "{\"type\":\"Feature\",\"id\":274790,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.66252,-28.05186]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.6,\"gaulCode\":685}}",
-                "{\"type\":\"Feature\",\"id\":274884,\"geometry\":{\"type\":\"Point\",\"coordinates\":[125.43333,7.31667]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.7,\"gaulCode\":196}}",
-                "{\"type\":\"Feature\",\"id\":275100,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-67.81,-9.97472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.4,\"gaulCode\":665}}",
-                "{\"type\":\"Feature\",\"id\":275104,\"geometry\":{\"type\":\"Point\",\"coordinates\":[73.85674,18.52043]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9,\"gaulCode\":1498}}",
-                "{\"type\":\"Feature\",\"id\":275107,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-76.42313,8.84621]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.7,\"gaulCode\":57}}",
-                "{\"type\":\"Feature\",\"id\":275219,\"geometry\":{\"type\":\"Point\",\"coordinates\":[102.25616,2.20569]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9,\"gaulCode\":153}}",
-                "{\"type\":\"Feature\",\"id\":275227,\"geometry\":{\"type\":\"Point\",\"coordinates\":[100.48463,5.26323]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.9,\"gaulCode\":153}}",
-                "{\"type\":\"Feature\",\"id\":275388,\"geometry\":{\"type\":\"Point\",\"coordinates\":[114.0,1.0]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":1.0,\"gaulCode\":1013687}}",
-                "{\"type\":\"Feature\",\"id\":275519,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8,\"gaulCode\":689}}",
-                "{\"type\":\"Feature\",\"id\":275713,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.08934,7.30416]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":196}}",
-                "{\"type\":\"Feature\",\"id\":275714,\"geometry\":{\"type\":\"Point\",\"coordinates\":[125.5,6.33333]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.5,\"gaulCode\":196}}",
-                "{\"type\":\"Feature\",\"id\":275716,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.33333,7.16667]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.7,\"gaulCode\":196}}",
-                "{\"type\":\"Feature\",\"id\":275717,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.0,7.5]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.3,\"gaulCode\":196}}",
-                "{\"type\":\"Feature\",\"id\":275748,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-98.28333,26.08333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.6,\"gaulCode\":1006344}}",
-                "{\"type\":\"Feature\",\"id\":275768,\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.21917,21.51694]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9,\"gaulCode\":2629}}",
-                "{\"type\":\"Feature\",\"id\":275788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-51.38889,-22.12556]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.6,\"gaulCode\":689}}",
-                "{\"type\":\"Feature\",\"id\":275799,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-61.5,-17.5]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":33}}",
-                "{\"type\":\"Feature\",\"id\":275801,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.46666,-17.61667]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.3,\"gaulCode\":83}}",
-                "{\"type\":\"Feature\",\"id\":275802,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.41667,-17.8]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.7,\"gaulCode\":83}}",
-                "{\"type\":\"Feature\",\"id\":275845,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-80.63333,-5.2]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5,\"gaulCode\":1011442}}"
+                "{\"type\":\"Feature\",\"id\":274790,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.66252,-28.05186]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.6,\"gaulCode\":10593}}",
+                "{\"type\":\"Feature\",\"id\":275100,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-67.81,-9.97472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.4}}",
+                "{\"type\":\"Feature\",\"id\":275104,\"geometry\":{\"type\":\"Point\",\"coordinates\":[73.85674,18.52043]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
+                "{\"type\":\"Feature\",\"id\":275107,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-76.42313,8.84621]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.7}}",
+                "{\"type\":\"Feature\",\"id\":275219,\"geometry\":{\"type\":\"Point\",\"coordinates\":[102.25616,2.20569]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
+                "{\"type\":\"Feature\",\"id\":275378,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-45.88694,-23.17944]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.4}}",
+                "{\"type\":\"Feature\",\"id\":275388,\"geometry\":{\"type\":\"Point\",\"coordinates\":[114.0,1.0]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":1.0}}",
+                "{\"type\":\"Feature\",\"id\":275519,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}}",
+                "{\"type\":\"Feature\",\"id\":275713,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.08934,7.30416]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":67161}}",
+                "{\"type\":\"Feature\",\"id\":275715,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.17626,7.51252]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
+                "{\"type\":\"Feature\",\"id\":275716,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.33333,7.16667]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.7,\"gaulCode\":24269}}",
+                "{\"type\":\"Feature\",\"id\":275717,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.0,7.5]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.3,\"gaulCode\":24266}}",
+                "{\"type\":\"Feature\",\"id\":275748,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-98.28333,26.08333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.6}}",
+                "{\"type\":\"Feature\",\"id\":275751,\"geometry\":{\"type\":\"Point\",\"coordinates\":[103.80805,1.29162]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5}}",
+                "{\"type\":\"Feature\",\"id\":275768,\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.21917,21.51694]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
+                "{\"type\":\"Feature\",\"id\":275788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-51.38889,-22.12556]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.6}}",
+                "{\"type\":\"Feature\",\"id\":275799,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-61.5,-17.5]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":40449}}",
+                "{\"type\":\"Feature\",\"id\":275801,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.46666,-17.61667]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.3}}",
+                "{\"type\":\"Feature\",\"id\":275802,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.41667,-17.8]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.7}}",
+                "{\"type\":\"Feature\",\"id\":275845,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-80.63333,-5.2]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5}}"
         );
     }
 

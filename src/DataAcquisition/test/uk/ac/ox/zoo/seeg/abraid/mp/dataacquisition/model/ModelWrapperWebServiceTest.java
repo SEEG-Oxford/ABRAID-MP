@@ -104,12 +104,9 @@ public class ModelWrapperWebServiceTest {
 
     private List<DiseaseOccurrence> getDiseaseOccurrences(DiseaseGroup diseaseGroup) {
         Location location1 = new Location("California, United States", -119.7503, 37.2502, LocationPrecision.ADMIN1);
-        location1.setAdminUnitGlobalGaulCode(100);
-        location1.setAdminUnitTropicalGaulCode(101);
+        location1.setAdminUnitQCGaulCode(100);
 
         Location location2 = new Location("Bauru, São Paulo, Brazil", -49.06055, -22.31472, LocationPrecision.PRECISE);
-        location2.setAdminUnitGlobalGaulCode(200);
-        location2.setAdminUnitTropicalGaulCode(201);
 
         DiseaseOccurrence occurrence1 = new DiseaseOccurrence(1, diseaseGroup, location1,
                 new Alert("occurrence1 title", "feed1"), 0.2, new DateTime("2014-03-01"));
@@ -135,7 +132,7 @@ public class ModelWrapperWebServiceTest {
         String occurrencesCrs = "\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}}";
         String occurrence1 = "\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-119.7503,37.2502]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.2,\"gaulCode\":100}";
         String occurrence2 = "\"type\":\"Feature\",\"id\":2,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-119.7503,37.2502]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":100}";
-        String occurrence3 = "\"type\":\"Feature\",\"id\":3,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8,\"gaulCode\":200}";
+        String occurrence3 = "\"type\":\"Feature\",\"id\":3,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}";
         String extentWeightings = "\"50\":-100,\"2\":0,\"20\":100";
 
         String jsonFormat = "{\"disease\":{%s},\"occurrences\":{%s,%s,\"features\":[{%s},{%s},{%s}]},\"extentWeightings\":{%s}}";

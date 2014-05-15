@@ -194,22 +194,22 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(null, 21, false);
+        getDiseaseOccurrencesForDiseaseExtent(null, 22, false);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithZeroFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 21, false);
+        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 22, false);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(Arrays.asList(1, 4, 8), 18, false);
+        getDiseaseOccurrencesForDiseaseExtent(Arrays.asList(1, 4, 8), 17, false);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
-        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 22, true);
+        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 23, true);
     }
 
     @Test
@@ -221,7 +221,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRun(diseaseGroupId);
 
         // Assert
-        assertThat(occurrences).hasSize(25);
+        assertThat(occurrences).hasSize(27);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
