@@ -24,8 +24,13 @@ import static ch.lambdaj.Lambda.*;
  */
 public class WeightingsCalculator {
     private static final Logger LOGGER = Logger.getLogger(WeightingsCalculator.class);
-    private static final String NO_NEW_REVIEWS = "No new reviews have been submitted - skipping updating weightings";
-    private static final String UPDATING_WEIGHTINGS = "Updating expert weightings for \"%d\" disease occurrences";
+    private static final String STARTING_UPDATE_WEIGHTINGS =
+            "Starting process to update occurrences' expert weightings";
+    private static final String NOT_UPDATING_WEIGHTINGS =
+            "Occurrences' expert weightings will not be updated - a week has not elapsed since last retrieval on %s";
+    private static final String NO_NEW_REVIEWS = "No new reviews have been submitted - weightings will not be updated";
+    private static final String UPDATING_WEIGHTINGS =
+            "Updating expert weightings for %d disease occurrences given %d new reviews";
 
     private ConfigurationService configurationService;
     private DiseaseService diseaseService;
@@ -44,18 +49,23 @@ public class WeightingsCalculator {
     public void updateDiseaseOccurrenceWeightings() {
         LocalDateTime lastRetrievalDate = configurationService.getLastRetrievalDate();
         if (shouldContinue(lastRetrievalDate)) {
+            LOGGER.info(STARTING_UPDATE_WEIGHTINGS);
             configurationService.setLastRetrievalDate(LocalDateTime.now());
             List<DiseaseOccurrenceReview> allReviews = getAllReviews(lastRetrievalDate);
             if (allReviews.isEmpty()) {
                 LOGGER.info(NO_NEW_REVIEWS);
             } else {
-                for (DiseaseOccurrence occurrence : extractDistinctDiseaseOccurrences(allReviews)) {
+                Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
+                LOGGER.info(String.format(UPDATING_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
+                for (DiseaseOccurrence occurrence : distinctOccurrences) {
                     List<DiseaseOccurrenceReview> reviews = select(allReviews,
                         having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
                     Double weighting = calculateWeightedAverageResponse(reviews);
                     occurrence.setValidationWeighting(weighting);
                 }
             }
+        } else {
+            LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, lastRetrievalDate.toString()));
         }
     }
 
@@ -76,9 +86,7 @@ public class WeightingsCalculator {
     }
 
     private Set<DiseaseOccurrence> extractDistinctDiseaseOccurrences(List<DiseaseOccurrenceReview> allReviews) {
-        Set<DiseaseOccurrence> distinctOccurrences = new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
-        LOGGER.info(String.format(UPDATING_WEIGHTINGS, distinctOccurrences.size()));
-        return distinctOccurrences;
+        return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
     private Double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {

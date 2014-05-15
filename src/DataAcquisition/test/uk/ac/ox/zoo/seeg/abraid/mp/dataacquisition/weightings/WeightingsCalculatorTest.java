@@ -68,6 +68,11 @@ public class WeightingsCalculatorTest {
         executeTest(7, 3.0);
     }
 
+    @Test
+    public void updateDiseaseOccurrenceWeightingsExecutesWhenMoreThanAWeekHasPassed() throws Exception {
+        executeTest(8, 3.0);
+    }
+
     // An expert (who has a weighting of 3.0) has reviewed YES (value of 1) to an occurrence.
     // If 1 day has passed, the occurrence's weighting should remain at its initial value of 0.0.
     // If 7 days have passed then it should have updated to take a value of 3.0 (expert's weighting x response value).
