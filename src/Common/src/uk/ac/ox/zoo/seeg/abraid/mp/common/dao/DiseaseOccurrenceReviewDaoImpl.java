@@ -21,17 +21,28 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     }
 
     /**
+     * Gets all reviews for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of the reviews for the disease group.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getAllReviewsByDiseaseGroupId(Integer diseaseGroupId) {
+        return listNamedQuery("getAllDiseaseOccurrenceReviewsByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
      * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate) {
-        return listNamedQuery("getAllDiseaseOccurrencesReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval",
-                "lastRetrievalDate", lastRetrievalDate);
+    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+            LocalDateTime lastRetrievalDate, Integer diseaseGroupId) {
+        return
+            listNamedQuery("getAllDiseaseOccurrenceReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval",
+                "lastRetrievalDate", lastRetrievalDate, "diseaseGroupId", diseaseGroupId);
     }
-
 
     /**
      * Gets the total number of reviews submitted by the specified expert.

@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +44,7 @@ public class WeightingsCalculatorTest {
         WeightingsCalculator target = new WeightingsCalculator(configurationService, diseaseService);
 
         // Act
-        target.updateDiseaseOccurrenceWeightings();
+        target.updateDiseaseOccurrenceWeightings(anyInt());
         file.delete();
 
         // Assert
@@ -78,6 +79,7 @@ public class WeightingsCalculatorTest {
     // If 7 days have passed then it should have updated to take a value of 3.0 (expert's weighting x response value).
     private void executeTest(int daysSinceLastRetrievalDate, double expectedWeighting) throws Exception {
         // Arrange
+        int diseaseGroupId = 87;
         double initialWeighting = 0.0;
         double expertWeighting = 3.0;
 
@@ -93,13 +95,13 @@ public class WeightingsCalculatorTest {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, occurrence,
                                                                      DiseaseOccurrenceReviewResponse.YES);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval((LocalDateTime) any()))
-                .thenReturn(new ArrayList<>(Arrays.asList(review)));
+        when(diseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+                (LocalDateTime) any(), anyInt())).thenReturn(new ArrayList<>(Arrays.asList(review)));
 
         WeightingsCalculator target = new WeightingsCalculator(configurationService, diseaseService);
 
         // Act
-        target.updateDiseaseOccurrenceWeightings();
+        target.updateDiseaseOccurrenceWeightings(diseaseGroupId);
         propertiesFile.delete();
 
         // Assert

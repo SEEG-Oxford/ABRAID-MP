@@ -34,16 +34,11 @@ public class ModelRunRequester {
     }
 
     /**
-     * Requests a model run for all relevant diseases.
+     * Requests a model run for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
      */
-    public void requestModelRun() {
-        // This is hardcoded to dengue for now
-        DiseaseGroup dengue = diseaseService.getDiseaseGroupById(87); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
-        requestModelRun(dengue);
-    }
-
-    private void requestModelRun(DiseaseGroup diseaseGroup) {
-        Integer diseaseGroupId = diseaseGroup.getId();
+    public void requestModelRun(Integer diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         List<DiseaseOccurrence> diseaseOccurrences =
                 diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
