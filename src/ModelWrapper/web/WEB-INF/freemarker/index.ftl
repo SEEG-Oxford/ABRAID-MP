@@ -118,7 +118,7 @@
         <div class="panel-heading">
             <h2 class="panel-title">
                 <a data-toggle="collapse" href="#misc-body">
-                    Misc Settings
+                    Miscellaneous Settings
                 </a>
             </h2>
         </div>
