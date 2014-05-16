@@ -125,7 +125,10 @@ CREATE TABLE disease_occurrence (
     alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     occurrence_date timestamp NOT NULL,
-    validation_weighting double precision
+    expert_weighting double precision,
+    system_weighting double precision,
+    validation_weighting double precision,
+    final_weighting double precision
 );
 
 CREATE TABLE disease_occurrence_review (

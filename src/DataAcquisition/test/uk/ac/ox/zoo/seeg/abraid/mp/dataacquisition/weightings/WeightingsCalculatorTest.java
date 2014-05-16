@@ -79,17 +79,17 @@ public class WeightingsCalculatorTest {
     private void executeTest(int daysSinceLastRetrievalDate, double expectedWeighting) throws Exception {
         // Arrange
         double initialWeighting = 0.0;
-        double expertWeighting = 3.0;
+        double expertsWeighting = 3.0;
 
         File propertiesFile = createPropertiesFile();
         ConfigurationService configurationService = new ConfigurationServiceImpl(propertiesFile);
         configurationService.setLastRetrievalDate(LocalDateTime.now().minusDays(daysSinceLastRetrievalDate));
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        occurrence.setValidationWeighting(initialWeighting);
+        occurrence.setExpertWeighting(initialWeighting);
 
         Expert expert = new Expert();
-        expert.setWeighting(expertWeighting);
+        expert.setWeighting(expertsWeighting);
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, occurrence,
                                                                      DiseaseOccurrenceReviewResponse.YES);
         DiseaseService diseaseService = mock(DiseaseService.class);

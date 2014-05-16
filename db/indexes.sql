@@ -18,6 +18,7 @@ CREATE INDEX ix_disease_group_validator_disease_group_id ON disease_group (valid
 CREATE INDEX ix_disease_occurrence_alert_id ON disease_occurrence (alert_id);
 CREATE INDEX ix_disease_occurrence_disease_group_id ON disease_occurrence (disease_group_id);
 CREATE INDEX ix_disease_occurrence_location_id ON disease_occurrence (location_id);
+CREATE INDEX ix_disease_occurrence_review_created_date ON disease_occurrence_review (created_date);
 CREATE INDEX ix_disease_occurrence_review_disease_occurrence_id ON disease_occurrence_review (disease_occurrence_id);
 CREATE INDEX ix_disease_occurrence_review_expert_id ON disease_occurrence_review (expert_id);
 CREATE INDEX ix_expert_validator_disease_group_validator_disease_group_id ON expert_validator_disease_group (validator_disease_group_id);

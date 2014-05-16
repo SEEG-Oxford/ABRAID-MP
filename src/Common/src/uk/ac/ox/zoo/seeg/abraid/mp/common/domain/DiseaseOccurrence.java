@@ -103,9 +103,23 @@ public class DiseaseOccurrence {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
-    // The weighting as calculated from experts' responses.
+    // The weighting as calculated from experts' responses during data validation process.
+    @Column(name = "expert_weighting")
+    private Double expertWeighting;
+
+    // The weighting as predicted by the system.
+    @Column(name = "system_weighting")
+    private Double systemWeighting;
+
+    // The validation weighting used in the data weighting formula.
+    // Takes the value of the expertWeighting if it exists, otherwise the systemWeighting value.
     @Column(name = "validation_weighting")
     private Double validationWeighting;
+
+    // The final weighting to be used in the model run,
+    // combining location resolution weighting, feed weighting, disease group type weighting and validation weighting.
+    @Column(name = "final_weighting")
+    private Double finalWeighting;
 
     // The date of the disease occurrence.
     @Column(name = "occurrence_date")
@@ -165,12 +179,36 @@ public class DiseaseOccurrence {
         return createdDate;
     }
 
+    public Double getExpertWeighting() {
+        return expertWeighting;
+    }
+
+    public void setExpertWeighting(Double expertWeighting) {
+        this.expertWeighting = expertWeighting;
+    }
+
+    public Double getSystemWeighting() {
+        return systemWeighting;
+    }
+
+    public void setSystemWeighting(Double systemWeighting) {
+        this.systemWeighting = systemWeighting;
+    }
+
     public Double getValidationWeighting() {
         return validationWeighting;
     }
 
     public void setValidationWeighting(Double validationWeighting) {
         this.validationWeighting = validationWeighting;
+    }
+
+    public Double getFinalWeighting() {
+        return finalWeighting;
+    }
+
+    public void setFinalWeighting(Double finalWeighting) {
+        this.finalWeighting = finalWeighting;
     }
 
     public DateTime getOccurrenceDate() {
@@ -186,18 +224,23 @@ public class DiseaseOccurrence {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseOccurrence)) return false;
 
         DiseaseOccurrence that = (DiseaseOccurrence) o;
 
-        if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
-        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
-        if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
+        if (!alert.equals(that.alert)) return false;
+        if (!createdDate.equals(that.createdDate)) return false;
+        if (!diseaseGroup.equals(that.diseaseGroup)) return false;
+        if (expertWeighting != null ? !expertWeighting.equals(that.expertWeighting) : that.expertWeighting != null)
             return false;
-        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (occurrenceDate != null ? !occurrenceDate.equals(that.occurrenceDate) : that.occurrenceDate != null)
+        if (finalWeighting != null ? !finalWeighting.equals(that.finalWeighting) : that.finalWeighting != null)
+            return false;
+        if (!id.equals(that.id)) return false;
+        if (!location.equals(that.location)) return false;
+        if (!occurrenceDate.equals(that.occurrenceDate)) return false;
+        if (systemWeighting != null ? !systemWeighting.equals(that.systemWeighting) : that.systemWeighting != null)
+            return false;
+        if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
             return false;
 
         return true;
@@ -205,13 +248,16 @@ public class DiseaseOccurrence {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (alert != null ? alert.hashCode() : 0);
-        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        int result = id.hashCode();
+        result = 31 * result + diseaseGroup.hashCode();
+        result = 31 * result + location.hashCode();
+        result = 31 * result + alert.hashCode();
+        result = 31 * result + createdDate.hashCode();
+        result = 31 * result + (expertWeighting != null ? expertWeighting.hashCode() : 0);
+        result = 31 * result + (systemWeighting != null ? systemWeighting.hashCode() : 0);
         result = 31 * result + (validationWeighting != null ? validationWeighting.hashCode() : 0);
-        result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
+        result = 31 * result + (finalWeighting != null ? finalWeighting.hashCode() : 0);
+        result = 31 * result + occurrenceDate.hashCode();
         return result;
     }
     ///CHECKSTYLE:ON
