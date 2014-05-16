@@ -36,6 +36,9 @@ ALTER TABLE healthmap_disease
 ALTER TABLE location
     ADD CONSTRAINT uq_location_geoname_id UNIQUE (geoname_id);
 
+ALTER TABLE model_run
+    ADD CONSTRAINT uq_model_run_name UNIQUE (name);
+    
 ALTER TABLE provenance
     ADD CONSTRAINT uq_provenance_name UNIQUE (name);
 
@@ -104,6 +107,9 @@ ALTER TABLE land_sea_border ADD CONSTRAINT pk_land_sea_border
 ALTER TABLE location ADD CONSTRAINT pk_location
     PRIMARY KEY (id);
 
+ALTER TABLE model_run ADD CONSTRAINT pk_model_run
+    PRIMARY KEY (id);
+    
 ALTER TABLE provenance ADD CONSTRAINT pk_provenance
     PRIMARY KEY (id);
 

@@ -13,7 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
  */
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml")
-public abstract class AbstractMainTests extends AbstractDataAcquisitionSpringIntegrationTests {
+public abstract class AbstractWebServiceClientIntegrationTests extends AbstractDataAcquisitionSpringIntegrationTests {
     @ReplaceWithMock
     @Autowired
     protected WebServiceClient webServiceClient;

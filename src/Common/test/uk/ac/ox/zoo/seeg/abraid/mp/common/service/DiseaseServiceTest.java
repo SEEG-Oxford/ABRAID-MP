@@ -405,7 +405,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         getDiseaseOccurrencesForDiseaseExtent(false);
     }
 
-    public void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
+    private void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
         // Arrange
         int diseaseGroupId = 10;
         double minimumValidationWeighting = 0.7;
@@ -425,5 +425,19 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
 
         // Assert
         assertThat(expectedOccurrences).isSameAs(actualOccurrences);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForModelRun() {
+        // Arrange
+        int diseaseGroupId = 87;
+        List<DiseaseOccurrence> occurrences = Arrays.asList(new DiseaseOccurrence());
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(occurrences);
+
+        // Act
+        List<DiseaseOccurrence> testOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+
+        // Assert
+        assertThat(testOccurrences).isSameAs(occurrences);
     }
 }

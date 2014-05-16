@@ -24,6 +24,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitGlobalDao adminUnitGlobalDao;
     private AdminUnitTropicalDao adminUnitTropicalDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
+    private ModelRunDao modelRunDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
@@ -33,7 +34,8 @@ public class DiseaseServiceImpl implements DiseaseService {
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
                               AdminUnitTropicalDao adminUnitTropicalDao,
-                              DiseaseExtentClassDao diseaseExtentClassDao) {
+                              DiseaseExtentClassDao diseaseExtentClassDao,
+                              ModelRunDao modelRunDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
@@ -43,6 +45,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.adminUnitGlobalDao = adminUnitGlobalDao;
         this.adminUnitTropicalDao = adminUnitTropicalDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
+        this.modelRunDao = modelRunDao;
     }
 
     /**
@@ -136,6 +139,15 @@ public class DiseaseServiceImpl implements DiseaseService {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
                 diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds,
                 isDiseaseGroupGlobal(diseaseGroupId));
+    }
+
+    /**
+     * Gets disease occurrences for a request to run the model.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return Disease occurrences for a request to run the model.
+     */
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
     }
 
     /**
@@ -254,5 +266,13 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
+    }
+
+    /**
+     * Saves a model run.
+     * @param modelRun The model run to save.
+     */
+    public void saveModelRun(ModelRun modelRun) {
+        modelRunDao.save(modelRun);
     }
 }

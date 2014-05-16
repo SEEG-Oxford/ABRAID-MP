@@ -68,6 +68,13 @@ public interface DiseaseService {
             List<Integer> feedIds);
 
     /**
+     * Gets disease occurrences for a request to run the model.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return Disease occurrences for a request to run the model.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
+
+    /**
      * Gets the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease extent.
@@ -128,4 +135,10 @@ public interface DiseaseService {
      * @param adminUnitDiseaseExtentClass The object to save.
      */
     void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
+
+    /**
+     * Saves a model run.
+     * @param modelRun The model run to save.
+     */
+    void saveModelRun(ModelRun modelRun);
 }

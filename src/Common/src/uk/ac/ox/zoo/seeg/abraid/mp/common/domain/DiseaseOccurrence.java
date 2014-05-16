@@ -23,13 +23,7 @@ import javax.persistence.Table;
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewed",
-                query = "from DiseaseOccurrence as d " +
-                        "inner join fetch d.location " +
-                        "inner join fetch d.alert " +
-                        "inner join fetch d.alert.feed " +
-                        "inner join fetch d.alert.feed.provenance " +
-                        "inner join fetch d.diseaseGroup " +
-                        "left outer join fetch d.diseaseGroup.validatorDiseaseGroup " +
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
                         "expert.id=:expertId)"
@@ -41,11 +35,30 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForDiseaseExtentByFeedIds",
                 query = DiseaseOccurrence.DISEASE_EXTENT_QUERY + " and d.alert.feed.id in :feedIds"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForModelRunRequest",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id = :diseaseGroupId " +
+                        "and d.location.hasPassedQc = true " +
+                        "and d.location.precision <> 'COUNTRY'"
         )
 })
 @Entity
 @Table(name = "disease_occurrence")
 public class DiseaseOccurrence {
+    /**
+     * An HQL fragment used as a basis for disease occurrence queries. It ensures that Hibernate populate the objects
+     * and their parents using one select statement.
+     */
+    public static final String DISEASE_OCCURRENCE_BASE_QUERY =
+            "from DiseaseOccurrence as d " +
+            "inner join fetch d.location " +
+            "inner join fetch d.alert " +
+            "inner join fetch d.alert.feed " +
+            "inner join fetch d.alert.feed.provenance " +
+            "inner join fetch d.diseaseGroup ";
+
     /**
      * An HQL fragment used to get disease occurrences for a disease extent.
      */
@@ -104,6 +117,16 @@ public class DiseaseOccurrence {
 
     public DiseaseOccurrence(int id) {
         this.id = id;
+    }
+
+    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert,
+                             Double validationWeighting, DateTime occurrenceDate) {
+        this.id = id;
+        this.diseaseGroup = diseaseGroup;
+        this.location = location;
+        this.alert = alert;
+        this.validationWeighting = validationWeighting;
+        this.occurrenceDate = occurrenceDate;
     }
 
     public Integer getId() {

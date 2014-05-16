@@ -31,4 +31,28 @@ public class JsonModelRunResponse {
     public void setErrorText(String errorText) {
         this.errorText = errorText;
     }
+
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JsonModelRunResponse that = (JsonModelRunResponse) o;
+
+        if (errorText != null ? !errorText.equals(that.errorText) : that.errorText != null) return false;
+        if (modelRunName != null ? !modelRunName.equals(that.modelRunName) : that.modelRunName != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = modelRunName != null ? modelRunName.hashCode() : 0;
+        result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
+        return result;
+    }
+    ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }
