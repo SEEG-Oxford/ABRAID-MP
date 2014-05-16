@@ -55,14 +55,7 @@ public class WeightingsCalculator {
             if (allReviews.isEmpty()) {
                 LOGGER.info(NO_NEW_REVIEWS);
             } else {
-                Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
-                LOGGER.info(String.format(UPDATING_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
-                for (DiseaseOccurrence occurrence : distinctOccurrences) {
-                    List<DiseaseOccurrenceReview> reviews = select(allReviews,
-                        having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
-                    Double weighting = calculateWeightedAverageResponse(reviews);
-                    occurrence.setValidationWeighting(weighting);
-                }
+                calculateNewDiseaseOccurrenceWeightings(allReviews);
             }
         } else {
             LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, lastRetrievalDate.toString()));
@@ -71,10 +64,13 @@ public class WeightingsCalculator {
 
     // Weightings should be updated if there is no lastRetrievalDate in properties file, or more than a week has elapsed
     private boolean shouldContinue(LocalDateTime lastRetrievalDate) {
-        LocalDate today = LocalDate.now();
-        return (lastRetrievalDate == null ||
-                lastRetrievalDate.toLocalDate().plusDays(7).isEqual(today) || ///CHECKSTYLE:SUPPRESS MagicNumberCheck
-                lastRetrievalDate.toLocalDate().plusDays(7).isBefore(today)); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
+        if (lastRetrievalDate == null) {
+            return true;
+        } else {
+            LocalDate today = LocalDate.now();
+            LocalDate comparisonDate = lastRetrievalDate.toLocalDate().plusWeeks(1);
+            return (comparisonDate.isEqual(today) || comparisonDate.isBefore(today));
+        }
     }
 
     private List<DiseaseOccurrenceReview> getAllReviews(LocalDateTime lastRetrievalDate) {
@@ -85,13 +81,24 @@ public class WeightingsCalculator {
         }
     }
 
+    private void calculateNewDiseaseOccurrenceWeightings(List<DiseaseOccurrenceReview> allReviews) {
+        Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
+        LOGGER.info(String.format(UPDATING_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
+        for (DiseaseOccurrence occurrence : distinctOccurrences) {
+            List<DiseaseOccurrenceReview> reviews = select(allReviews,
+                    having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+            Double weighting = calculateWeightedAverageResponse(reviews);
+            occurrence.setValidationWeighting(weighting);
+        }
+    }
+
     private Set<DiseaseOccurrence> extractDistinctDiseaseOccurrences(List<DiseaseOccurrenceReview> allReviews) {
         return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
     private Double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
         List<Double> weightings = calculateWeightingForEachReview(reviews);
-        return calculateAverage(weightings);
+        return average(weightings);
     }
 
     private List<Double> calculateWeightingForEachReview(List<DiseaseOccurrenceReview> reviews) {
@@ -102,11 +109,7 @@ public class WeightingsCalculator {
         });
     }
 
-    private Double calculateAverage(List<Double> weightings) {
-        Double total = 0.0;
-        for (Double weighting : weightings) {
-            total += weighting;
-        }
-        return total / weightings.size();
+    private double average(List<Double> weightings) {
+        return ((double) sum(weightings)) / weightings.size();
     }
 }
