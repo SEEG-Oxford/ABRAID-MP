@@ -260,6 +260,19 @@ public class DiseaseOccurrence {
         result = 31 * result + occurrenceDate.hashCode();
         return result;
     }
+
+    public void updateFinalWeighting() {
+        double locationResolutionWeighting = location.getResolutionWeighting();
+        double feedWeighting = alert.getFeed().getWeighting();
+        double diseaseGroupTypeWeighting = diseaseGroup.getWeighting();
+        if (locationResolutionWeighting == 0.0 || feedWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
+            setFinalWeighting(0.0);
+        } else {
+            double finalWeighting =
+                    (locationResolutionWeighting + feedWeighting + diseaseGroupTypeWeighting + expertWeighting) / 4;
+            setFinalWeighting(finalWeighting);
+        }
+    }
     ///CHECKSTYLE:ON
     ///COVERAGE:ON
 }

@@ -87,8 +87,8 @@ public class WeightingsCalculator {
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
             List<DiseaseOccurrenceReview> reviews = select(allReviews,
                     having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
-            Double weighting = calculateWeightedAverageResponse(reviews);
-            occurrence.setValidationWeighting(weighting);
+            Double expertWeighting = calculateWeightedAverageResponse(reviews);
+            setWeightings(occurrence, expertWeighting);
         }
     }
 
@@ -111,5 +111,11 @@ public class WeightingsCalculator {
 
     private double average(List<Double> weightings) {
         return ((double) sum(weightings)) / weightings.size();
+    }
+
+    private void setWeightings(DiseaseOccurrence occurrence, Double expertWeighting) {
+        occurrence.setExpertWeighting(expertWeighting);
+        occurrence.setValidationWeighting(expertWeighting);
+        occurrence.updateFinalWeighting();
     }
 }
