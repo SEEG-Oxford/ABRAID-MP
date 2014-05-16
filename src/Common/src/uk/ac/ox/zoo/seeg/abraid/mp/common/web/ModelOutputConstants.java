@@ -5,7 +5,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelOutputConstants {
+public final class ModelOutputConstants {
     private ModelOutputConstants() {
     }
 
@@ -14,4 +14,7 @@ public class ModelOutputConstants {
 
     /** The mean prediction raster's filename in the model outputs. */
     public static final String MEAN_PREDICTION_RASTER_FILENAME = "mean_prediction.asc";
+
+    /** The prediction uncertainty raster's filename in the model outputs. */
+    public static final String PREDICTION_UNCERTAINTY_RASTER_FILENAME = "prediction_uncertainty.asc";
 }

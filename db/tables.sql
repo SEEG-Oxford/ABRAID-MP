@@ -216,7 +216,8 @@ CREATE TABLE model_run (
     name varchar(300) NOT NULL,
     request_date timestamp NOT NULL,
     response_date timestamp,
-    mean_prediction_raster raster
+    mean_prediction_raster raster,
+    prediction_uncertainty_raster raster
 );
 
 CREATE TABLE provenance (

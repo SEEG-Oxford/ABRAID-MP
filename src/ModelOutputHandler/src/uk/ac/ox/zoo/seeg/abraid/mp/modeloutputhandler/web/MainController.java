@@ -22,6 +22,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
@@ -32,8 +33,8 @@ import java.nio.file.Files;
 @Controller
 public class MainController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(MainController.class);
-    private static final String LOG_RECEIVED_OUTPUTS = "Received model run outputs";
-    private static final String LOG_EXCEPTION_HANDLING_OUTPUTS = "Exception handling model run outputs.";
+    private static final String LOG_RECEIVED_OUTPUTS = "Received model run outputs (body length %s bytes)";
+    private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
 
     private MainHandler mainHandler;
 
@@ -54,7 +55,7 @@ public class MainController extends AbstractController {
         File modelRunZipFile = null;
 
         try {
-            LOGGER.info(LOG_RECEIVED_OUTPUTS);
+            LOGGER.info(String.format(LOG_RECEIVED_OUTPUTS, modelRunZip.length));
 
             // Save the request body to a temporary file
             modelRunZipFile = saveRequestBodyToTemporaryFile(modelRunZip);
@@ -63,13 +64,16 @@ public class MainController extends AbstractController {
             // Continue handling the outputs
             handleOutputs(modelRunZipFile);
         } catch (Exception e) {
-            LOGGER.error(LOG_EXCEPTION_HANDLING_OUTPUTS, e);
+            LOGGER.error(e.getMessage(), e);
             return createErrorResponse("Could not handle model run outputs. See server logs for more details.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             if (modelRunZipFile != null && modelRunZipFile.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                modelRunZipFile.delete();
+                if (!modelRunZipFile.delete()) {
+                    // Could not delete temporary file. This is not enough for the whole model output handling
+                    // to fail, so just log the error.
+                    LOGGER.error(String.format(LOG_COULD_NOT_DELETE_TEMP_FILE, modelRunZipFile.getAbsolutePath()));
+                }
             }
         }
 
@@ -77,7 +81,7 @@ public class MainController extends AbstractController {
     }
 
     private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException {
-        File modelRunZipFile = Files.createTempFile("outputs", "zip").toFile();
+        File modelRunZipFile = Files.createTempFile("model_run_outputs", "zip").toFile();
         FileUtils.writeByteArrayToFile(modelRunZipFile, modelRunZip);
         return modelRunZipFile;
     }
@@ -87,11 +91,17 @@ public class MainController extends AbstractController {
 
         // Retrieve the model run from the metadata JSON
         byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME);
-        ModelRun modelRun = mainHandler.handleMetadataJson(new String(metadataJson));
+        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
+        ModelRun modelRun = mainHandler.handleMetadataJson(metadataJsonAsString);
 
         // Handle mean prediction raster
         byte[] meanPredictionRaster = extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         mainHandler.handleMeanPredictionRaster(modelRun, meanPredictionRaster);
+
+        // Handle prediction uncertainty raster
+        byte[] predictionUncertaintyRaster =
+                extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+        mainHandler.handlePredictionUncertaintyRaster(modelRun, predictionUncertaintyRaster);
 
         // Save model run to database
         mainHandler.saveModelRun(modelRun);

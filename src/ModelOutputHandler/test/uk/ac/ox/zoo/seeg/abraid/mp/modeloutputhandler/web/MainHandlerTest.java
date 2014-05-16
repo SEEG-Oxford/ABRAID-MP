@@ -82,6 +82,20 @@ public class MainHandlerTest {
     }
 
     @Test
+    public void handlePredictionUncertaintyRaster() {
+        // Arrange
+        int modelRunId = 1;
+        ModelRun modelRun = new ModelRun(modelRunId);
+        byte[] raster = new byte[1];
+
+        // Act
+        mainHandler.handlePredictionUncertaintyRaster(modelRun, raster);
+
+        // Assert
+        verify(modelRunService).updatePredictionUncertaintyRasterForModelRun(eq(modelRunId), eq(raster));
+    }
+
+    @Test
     public void saveModelRun() {
         // Arrange
         ModelRun run = new ModelRun();

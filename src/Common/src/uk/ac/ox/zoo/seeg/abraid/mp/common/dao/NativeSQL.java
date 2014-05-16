@@ -29,14 +29,16 @@ public interface NativeSQL {
     /**
      * Loads the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
+     * @param rasterColumnName The column name of the raster in the model_run table.
      * @return The mean prediction raster, in ASCII raster format.
      */
-    byte[] loadMeanPredictionRasterForModelRun(int modelRunId);
+    byte[] loadRasterForModelRun(int modelRunId, String rasterColumnName);
 
     /**
      * Updates the specified model run to include the specified mean prediction raster.
      * @param modelRunId The model run's ID.
-     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
+     * @param gdalRaster The raster, in any GDAL format supported by the PostGIS database.
+     * @param rasterColumnName The column name of the raster in the model_run table.
      */
-    void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster);
+    void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName);
 }

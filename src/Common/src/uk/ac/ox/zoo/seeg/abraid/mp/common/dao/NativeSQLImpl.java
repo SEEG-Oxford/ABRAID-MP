@@ -24,9 +24,13 @@ public class NativeSQLImpl implements NativeSQL {
             "SELECT ST_AsGDALRaster(%s, :gdalFormat) FROM model_run WHERE id = :id";
     private static final String UPDATE_RASTER_QUERY =
             "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
-    private static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";
     // This is PostGIS's name for the ESRI ASCII Raster format
     private static final String GDAL_RASTER_FORMAT = "AAIGrid";
+
+    /** The column name of the mean prediction raster in the model_run table. */
+    public static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";
+    /** The column name of the prediction uncertainty raster in the model_run table. */
+    public static final String PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME = "prediction_uncertainty_raster";
 
     private SessionFactory sessionFactory;
 
@@ -61,11 +65,12 @@ public class NativeSQLImpl implements NativeSQL {
     /**
      * Loads the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
+     * @param rasterColumnName The column name of the raster in the model_run table.
      * @return The mean prediction raster, in ASCII raster format.
      */
     @Override
-    public byte[] loadMeanPredictionRasterForModelRun(int modelRunId) {
-        String query = String.format(LOAD_RASTER_QUERY, MEAN_PREDICTION_RASTER_COLUMN_NAME);
+    public byte[] loadRasterForModelRun(int modelRunId, String rasterColumnName) {
+        String query = String.format(LOAD_RASTER_QUERY, rasterColumnName);
         return (byte[]) createSQLQuery(query)
                 .setParameter("gdalFormat", GDAL_RASTER_FORMAT)
                 .setParameter("id", modelRunId)
@@ -75,11 +80,12 @@ public class NativeSQLImpl implements NativeSQL {
     /**
      * Updates the specified model run to include the specified mean prediction raster.
      * @param modelRunId The model run's ID.
-     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
+     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
+     * @param rasterColumnName The column name of the raster in the model_run table.
      */
     @Override
-    public void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster) {
-        String query = String.format(UPDATE_RASTER_QUERY, MEAN_PREDICTION_RASTER_COLUMN_NAME);
+    public void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName) {
+        String query = String.format(UPDATE_RASTER_QUERY, rasterColumnName);
         createSQLQuery(query)
                 .setParameter("id", modelRunId)
                 .setParameter("gdalRaster", gdalRaster)

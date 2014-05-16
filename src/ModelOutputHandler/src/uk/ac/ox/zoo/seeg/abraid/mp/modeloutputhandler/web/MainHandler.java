@@ -41,6 +41,15 @@ public class MainHandler {
     }
 
     /**
+     * Handles the prediction uncertainty raster from the model outputs.
+     * @param modelRun The model run.
+     * @param raster The prediction uncertainty raster.
+     */
+    public void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
+        modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+    }
+
+    /**
      * Saves the model run.
      * @param modelRun The model run.
      */

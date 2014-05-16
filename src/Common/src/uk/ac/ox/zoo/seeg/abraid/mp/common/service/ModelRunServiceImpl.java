@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
@@ -59,6 +60,17 @@ public class ModelRunServiceImpl implements ModelRunService {
      */
     @Override
     public void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster) {
-        nativeSQL.updateMeanPredictionRasterForModelRun(modelRunId, gdalRaster);
+        nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster, NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+    }
+
+    /**
+     * Updates the specified model run to include the specified prediction uncertainty raster.
+     * @param modelRunId The model run's ID.
+     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
+     */
+    @Override
+    public void updatePredictionUncertaintyRasterForModelRun(int modelRunId, byte[] gdalRaster) {
+        nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster,
+                NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 }

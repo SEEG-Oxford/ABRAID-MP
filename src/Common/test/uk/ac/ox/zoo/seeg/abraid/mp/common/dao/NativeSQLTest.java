@@ -88,6 +88,15 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
     @Test
     public void updateAndReloadMeanPredictionRasterForModelRun() throws IOException {
+        updateAndReloadRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+    }
+
+    @Test
+    public void updateAndReloadPredictionUncertaintyRasterForModelRun() throws IOException {
+        updateAndReloadRasterForModelRun(NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+    }
+
+    private void updateAndReloadRasterForModelRun(String rasterColumnName) throws IOException {
         // Arrange - create a model run
         ModelRun modelRun = new ModelRun("test name", DateTime.now());
         modelRunDao.save(modelRun);
@@ -97,10 +106,10 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         byte[] actualGDALRaster = FileUtils.readFileToByteArray(new File(filename));
 
         // Act - update model run with mean prediction raster
-        nativeSQL.updateMeanPredictionRasterForModelRun(modelRun.getId(), actualGDALRaster);
+        nativeSQL.updateRasterForModelRun(modelRun.getId(), actualGDALRaster, rasterColumnName);
 
         // Assert - load mean prediction raster from model run and compare for equality (ignoring whitespace)
-        byte[] expectedGDALRaster = nativeSQL.loadMeanPredictionRasterForModelRun(modelRun.getId());
+        byte[] expectedGDALRaster = nativeSQL.loadRasterForModelRun(modelRun.getId(), rasterColumnName);
         Assert.assertThat(new String(actualGDALRaster), equalToIgnoringWhiteSpace(new String(expectedGDALRaster)));
     }
 }

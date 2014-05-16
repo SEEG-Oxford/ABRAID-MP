@@ -37,4 +37,11 @@ public interface ModelRunService {
      * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
      */
     void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster);
+
+    /**
+     * Updates the specified model run to include the specified prediction uncertainty raster.
+     * @param modelRunId The model run's ID.
+     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
+     */
+    void updatePredictionUncertaintyRasterForModelRun(int modelRunId, byte[] gdalRaster);
 }
