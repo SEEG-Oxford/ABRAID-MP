@@ -12,4 +12,9 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
     public ModelRunDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
+
+    @Override
+    public ModelRun getByName(String name) {
+        return uniqueResultNamedQuery("getModelRunByName", "name", name);
+    }
 }

@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
@@ -24,13 +25,16 @@ import java.util.Map;
 public class ModelRunRequester {
     private ModelWrapperWebService modelWrapperWebService;
     private DiseaseService diseaseService;
+    private ModelRunService modelRunService;
 
     private static Logger logger = Logger.getLogger(ModelRunRequester.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
 
-    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService) {
+    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
+                             ModelRunService modelRunService) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
+        this.modelRunService = modelRunService;
     }
 
     /**
@@ -45,7 +49,7 @@ public class ModelRunRequester {
     private void requestModelRun(DiseaseGroup diseaseGroup) {
         Integer diseaseGroupId = diseaseGroup.getId();
         List<DiseaseOccurrence> diseaseOccurrences =
-                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+                modelRunService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
         DateTime requestDate = DateTime.now();
 
@@ -63,7 +67,7 @@ public class ModelRunRequester {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText()));
         } else {
             ModelRun modelRun = new ModelRun(response.getModelRunName(), requestDate);
-            diseaseService.saveModelRun(modelRun);
+            modelRunService.saveModelRun(modelRun);
         }
     }
 

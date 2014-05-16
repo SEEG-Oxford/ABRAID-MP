@@ -4,11 +4,12 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.FileUtils;
+import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -73,7 +74,7 @@ public class HealthMapDataAcquisition {
     private List<HealthMapLocation> retrieveDataFromFile(String fileName) {
         String json;
         try {
-            json = FileUtils.loadFileIntoString(fileName, StandardCharsets.UTF_8);
+            json = FileUtils.readFileToString(new File(fileName), StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOGGER.fatal(String.format(FILE_ERROR_MESSAGE, e.getMessage()), e);
             return null;

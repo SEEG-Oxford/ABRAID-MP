@@ -114,17 +114,4 @@ public interface DiseaseService {
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             List<Integer> feedIds);
-
-    /**
-     * Gets disease occurrences for a request to run the model.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for a request to run the model.
-     */
-    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
-
-    /**
-     * Saves a model run.
-     * @param modelRun The model run to save.
-     */
-    void saveModelRun(ModelRun modelRun);
 }

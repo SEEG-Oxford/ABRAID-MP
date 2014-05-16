@@ -198,6 +198,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */
+    @Override
     public boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence) {
         // These are not-null fields in the database, so if any of them are null then there cannot possibly be a
         // matching disease occurrence in the database
@@ -223,27 +224,11 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param validatorDiseaseGroupId The id of the validator disease group.
      * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
+    @Override
     public boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
                                                           Integer validatorDiseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
         return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
-    }
-
-    /**
-     * Gets disease occurrences for a request to run the model.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for a request to run the model.
-     */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-    }
-
-    /**
-     * Saves a model run.
-     * @param modelRun The model run to save.
-     */
-    public void saveModelRun(ModelRun modelRun) {
-        modelRunDao.save(modelRun);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

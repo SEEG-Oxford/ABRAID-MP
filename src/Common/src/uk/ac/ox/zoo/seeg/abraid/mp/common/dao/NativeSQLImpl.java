@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 /**
  * Contains routines that interact with the PostGIS database using native SQL.
@@ -10,13 +11,22 @@ import org.hibernate.SessionFactory;
  * Copyright (c) 2014 University of Oxford
  */
 public class NativeSQLImpl implements NativeSQL {
-    // We use ST_INTERSECTS rather than ST_CONTAINS because the former returns true if the point is on the
-    // geometry border
+    // Query to find the first admin unit that contains the specified point. We use ST_INTERSECTS rather than
+    // ST_CONTAINS because the former returns true if the point is on the geometry border.
     private static final String ADMIN_UNIT_CONTAINS_POINT_QUERY =
-            "select min(gaul_code) from %s where st_intersects(geom, :point)";
-    private static final String ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER = " and level = :adminLevel";
+            "SELECT MIN(gaul_code) FROM %s WHERE ST_Intersects(geom, :point)";
+    private static final String ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER = " AND level = :adminLevel";
     private static final String ADMIN_UNIT_GLOBAL_TABLE_NAME = "admin_unit_global";
     private static final String ADMIN_UNIT_TROPICAL_TABLE_NAME = "admin_unit_tropical";
+
+    // Queries to load and save a model run's output raster. Converts to and from a GDAL raster format.
+    private static final String LOAD_RASTER_QUERY =
+            "SELECT ST_AsGDALRaster(%s, :gdalFormat) FROM model_run WHERE id = :id";
+    private static final String UPDATE_RASTER_QUERY =
+            "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
+    private static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";
+    // This is PostGIS's name for the ESRI ASCII Raster format
+    private static final String GDAL_RASTER_FORMAT = "AAIGrid";
 
     private SessionFactory sessionFactory;
 
@@ -46,6 +56,35 @@ public class NativeSQLImpl implements NativeSQL {
     @Override
     public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
         return findAdminUnitThatContainsPoint(point, adminLevel, ADMIN_UNIT_TROPICAL_TABLE_NAME);
+    }
+
+    /**
+     * Loads the mean prediction raster for a model run.
+     * @param modelRunId The model run's ID.
+     * @return The mean prediction raster, in ASCII raster format.
+     */
+    @Override
+    public byte[] loadMeanPredictionRasterForModelRun(int modelRunId) {
+        String query = String.format(LOAD_RASTER_QUERY, MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        return (byte[]) createSQLQuery(query)
+                .setParameter("gdalFormat", GDAL_RASTER_FORMAT)
+                .setParameter("id", modelRunId)
+                .uniqueResult();
+    }
+
+    /**
+     * Updates the specified model run to include the specified mean prediction raster.
+     * @param modelRunId The model run's ID.
+     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
+     */
+    @Override
+    public void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster) {
+        String query = String.format(UPDATE_RASTER_QUERY, MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        createSQLQuery(query)
+                .setParameter("id", modelRunId)
+                .setParameter("gdalRaster", gdalRaster)
+                .setParameter("srid", GeometryUtils.SRID_FOR_WGS_84)
+                .executeUpdate();
     }
 
     private Integer findAdminUnitThatContainsPoint(Point point, Character adminLevel, String tableName) {

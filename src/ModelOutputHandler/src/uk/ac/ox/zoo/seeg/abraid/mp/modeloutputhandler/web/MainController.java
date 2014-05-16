@@ -1,6 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.io.ZipInputStream;
+import net.lingala.zip4j.model.FileHeader;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Main controller for the model output handler.
@@ -22,6 +35,13 @@ public class MainController extends AbstractController {
     private static final String LOG_RECEIVED_OUTPUTS = "Received model run outputs";
     private static final String LOG_EXCEPTION_HANDLING_OUTPUTS = "Exception handling model run outputs.";
 
+    private MainHandler mainHandler;
+
+    @Autowired
+    public MainController(MainHandler mainHandler) {
+        this.mainHandler = mainHandler;
+    }
+
     /**
      * Handles the output of a model run.
      * @param modelRunZip The model run's outputs, as a zip file.
@@ -30,21 +50,62 @@ public class MainController extends AbstractController {
     @RequestMapping(value = "/modeloutputhandler/handleoutputs", method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<String> handleModelOutputs(@RequestBody Object modelRunZip) {
+    public ResponseEntity<String> handleModelOutputs(@RequestBody byte[] modelRunZip) {
+        File modelRunZipFile = null;
+
         try {
             LOGGER.info(LOG_RECEIVED_OUTPUTS);
-            handleOutputs(modelRunZip);
+
+            // Save the request body to a temporary file
+            modelRunZipFile = saveRequestBodyToTemporaryFile(modelRunZip);
+            // Ensure the request body is eligible for garbage collection
+            modelRunZip = null;
+            // Continue handling the outputs
+            handleOutputs(modelRunZipFile);
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_HANDLING_OUTPUTS, e);
             return createErrorResponse("Could not handle model run outputs. See server logs for more details.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            if (modelRunZipFile != null && modelRunZipFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                modelRunZipFile.delete();
+            }
         }
 
         return createSuccessResponse();
     }
 
-    private void handleOutputs(Object modelRunZip) {
+    private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException {
+        File modelRunZipFile = Files.createTempFile("outputs", "zip").toFile();
+        FileUtils.writeByteArrayToFile(modelRunZipFile, modelRunZip);
+        return modelRunZipFile;
+    }
 
+    private void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
+        ZipFile zipFile = new ZipFile(modelRunZipFile);
+
+        // Retrieve the model run from the metadata JSON
+        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME);
+        ModelRun modelRun = mainHandler.handleMetadataJson(new String(metadataJson));
+
+        // Handle mean prediction raster
+        byte[] meanPredictionRaster = extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
+        mainHandler.handleMeanPredictionRaster(modelRun, meanPredictionRaster);
+
+        // Save model run to database
+        mainHandler.saveModelRun(modelRun);
+    }
+
+    private byte[] extract(ZipFile zipFile, String fileName) throws ZipException, IOException {
+        FileHeader header = zipFile.getFileHeader(fileName);
+        if (header == null) {
+            throw new IllegalArgumentException(String.format("File %s missing from model run outputs.", fileName));
+        } else {
+            try (ZipInputStream inputStream = zipFile.getInputStream(header)) {
+                return IOUtils.toByteArray(inputStream);
+            }
+        }
     }
 
     private ResponseEntity<String> createSuccessResponse() {

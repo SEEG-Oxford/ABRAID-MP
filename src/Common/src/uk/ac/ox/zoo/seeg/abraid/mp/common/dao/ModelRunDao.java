@@ -17,11 +17,11 @@ public interface ModelRunDao {
     List<ModelRun> getAll();
 
     /**
-     * Gets a model run by ID.
-     * @param id The model run ID.
-     * @return The model run with the specified ID, or null if it does not exist.
+     * Gets a model run by name.
+     * @param name The model run name.
+     * @return The model run with the specified name, or null if it does not exist.
      */
-    ModelRun getById(Integer id);
+    ModelRun getByName(String name);
 
     /**
      * Saves the specified model run.

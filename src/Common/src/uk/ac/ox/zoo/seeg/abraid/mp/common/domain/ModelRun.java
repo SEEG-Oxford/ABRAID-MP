@@ -10,6 +10,12 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries(
+        @NamedQuery(
+                name = "getModelRunByName",
+                query = "from ModelRun where name=:name"
+        )
+)
 @Entity
 @Table(name = "model_run")
 public class ModelRun {
@@ -27,7 +33,16 @@ public class ModelRun {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime requestDate;
 
+    // The date that the outputs for this model run were received.
+    @Column(name = "response_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime responseDate;
+
     public ModelRun() {
+    }
+
+    public ModelRun(int id) {
+        this.id = id;
     }
 
     public ModelRun(String name, DateTime requestDate) {
@@ -55,6 +70,14 @@ public class ModelRun {
         this.requestDate = requestDate;
     }
 
+    public DateTime getResponseDate() {
+        return responseDate;
+    }
+
+    public void setResponseDate(DateTime responseDate) {
+        this.responseDate = responseDate;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -68,6 +91,8 @@ public class ModelRun {
         if (name != null ? !name.equals(modelRun.name) : modelRun.name != null) return false;
         if (requestDate != null ? !requestDate.equals(modelRun.requestDate) : modelRun.requestDate != null)
             return false;
+        if (responseDate != null ? !responseDate.equals(modelRun.responseDate) : modelRun.responseDate != null)
+            return false;
 
         return true;
     }
@@ -77,6 +102,7 @@ public class ModelRun {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (requestDate != null ? requestDate.hashCode() : 0);
+        result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

@@ -8,5 +8,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
-       
+
+    <bean id="mainHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.MainHandler" autowire="constructor"/>
+
 </beans>

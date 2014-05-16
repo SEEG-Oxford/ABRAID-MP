@@ -25,4 +25,18 @@ public interface NativeSQL {
      * admin units found.
      */
     Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
+
+    /**
+     * Loads the mean prediction raster for a model run.
+     * @param modelRunId The model run's ID.
+     * @return The mean prediction raster, in ASCII raster format.
+     */
+    byte[] loadMeanPredictionRasterForModelRun(int modelRunId);
+
+    /**
+     * Updates the specified model run to include the specified mean prediction raster.
+     * @param modelRunId The model run's ID.
+     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
+     */
+    void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster);
 }
