@@ -126,6 +126,7 @@ CREATE TABLE disease_occurrence (
     alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     occurrence_date timestamp NOT NULL,
+	is_validated boolean,
     expert_weighting double precision,
     system_weighting double precision,
     validation_weighting double precision,

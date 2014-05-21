@@ -23,8 +23,13 @@ import javax.persistence.*;
                 "and diseaseOccurrence.id=:diseaseOccurrenceId"
     ),
     @NamedQuery(
-        name = "getAllDiseaseOccurrencesReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval",
-        query = "from DiseaseOccurrenceReview where diseaseOccurrence in " +
+        name = "getAllDiseaseOccurrenceReviewsByDiseaseGroupId",
+        query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
+    ),
+    @NamedQuery(
+        name = "getAllDiseaseOccurrenceReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval",
+        query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
+                "and diseaseOccurrence in " +
                 "(select diseaseOccurrence from DiseaseOccurrenceReview where createdDate > :lastRetrievalDate)"
     )
 })

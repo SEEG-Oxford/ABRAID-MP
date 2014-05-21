@@ -18,12 +18,20 @@ public interface DiseaseOccurrenceReviewDao {
     List<DiseaseOccurrenceReview> getAll();
 
     /**
-     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
+     * Gets all reviews for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of the reviews for the disease group.
+     */
+    List<DiseaseOccurrenceReview> getAllReviewsByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets all reviews (for all time) for the occurrences of the specified disease group, which have new reviews.
      * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
-    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate);
+    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+            LocalDateTime lastRetrievalDate, Integer diseaseGroupId);
 
     /**
      * Gets the total number of reviews submitted by the specified expert.

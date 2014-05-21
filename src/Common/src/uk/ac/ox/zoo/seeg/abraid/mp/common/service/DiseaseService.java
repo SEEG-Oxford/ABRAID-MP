@@ -89,18 +89,20 @@ public interface DiseaseService {
     DiseaseExtentClass getDiseaseExtentClass(String name);
 
     /**
-     * Gets a list of all the disease occurrence reviews in the database.
+     * Gets a list of all the disease occurrence reviews in the database for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
      * @return The disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
+    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsByDiseaseGroupId(Integer diseaseGroupId);
 
     /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
      * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
-    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate);
+    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+            LocalDateTime lastRetrievalDate, Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an

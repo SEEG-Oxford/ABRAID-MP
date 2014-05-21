@@ -3,10 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunRequester;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunGateKeeper;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -22,9 +20,8 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class);
 
     private HealthMapDataAcquisition healthMapDataAcquisition;
-    private DiseaseExtentGenerator diseaseExtentGenerator;
-    private WeightingsCalculator weightingsCalculator;
-    private ModelRunRequester modelRunRequester;
+    private ModelRunGateKeeper modelRunGateKeeper;
+
 
     /**
      * Entry method for the DataAcquisition module.
@@ -56,14 +53,14 @@ public class Main {
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
         main.runDataAcquisition(args);
+        main.prepareModelRun();
     }
 
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition, DiseaseExtentGenerator diseaseExtentGenerator,
-                WeightingsCalculator weightingsCalculator, ModelRunRequester modelRunRequester) {
+
+
+    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunGateKeeper modelRunGateKeeper) {
         this.healthMapDataAcquisition = healthMapDataAcquisition;
-        this.diseaseExtentGenerator = diseaseExtentGenerator;
-        this.weightingsCalculator = weightingsCalculator;
-        this.modelRunRequester = modelRunRequester;
+        this.modelRunGateKeeper = modelRunGateKeeper;
     }
 
     /**
@@ -79,8 +76,13 @@ public class Main {
         } else {
             healthMapDataAcquisition.acquireDataFromWebService();
         }
-        diseaseExtentGenerator.generateDiseaseExtent();
-        weightingsCalculator.updateDiseaseOccurrenceWeightings();
-        modelRunRequester.requestModelRun();
+
+    }
+
+    /**
+     * Prepares the model run by recalculating disease extent, weightings, and requesting the model run.
+     */
+    public void prepareModelRun() {
+        modelRunGateKeeper.prepareModelRun();
     }
 }

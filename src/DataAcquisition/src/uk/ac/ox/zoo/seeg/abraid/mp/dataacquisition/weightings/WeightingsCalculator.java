@@ -25,9 +25,10 @@ import static ch.lambdaj.Lambda.*;
 public class WeightingsCalculator {
     private static final Logger LOGGER = Logger.getLogger(WeightingsCalculator.class);
     private static final String STARTING_UPDATE_WEIGHTINGS =
-            "Starting process to update occurrences' expert weightings";
+            "Starting process to update occurrences' expert weightings for disease %d";
     private static final String NOT_UPDATING_WEIGHTINGS =
-            "Occurrences' expert weightings will not be updated - a week has not elapsed since last retrieval on %s";
+            "Occurrences' expert weightings will not be updated for disease %d" +
+                    " - a week has not elapsed since last retrieval on %s";
     private static final String NO_NEW_REVIEWS = "No new reviews have been submitted - weightings will not be updated";
     private static final String UPDATING_WEIGHTINGS =
             "Updating expert weightings for %d disease occurrences given %d new reviews";
@@ -42,21 +43,21 @@ public class WeightingsCalculator {
 
     /**
      * If a week has elapsed since last update of weighting values, recalculate the expert weighting,
-     * validation weighting, and final weighting of disease occurrences.
+     * validation weighting, and final weighting of disease occurrences for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
      */
     @Transactional
-    public void updateDiseaseOccurrenceWeightings() {
+    public void updateDiseaseOccurrenceWeightings(int diseaseGroupId) {
         LocalDateTime lastRetrievalDate = configurationService.getLastRetrievalDate();
         if (shouldContinue(lastRetrievalDate)) {
-            LOGGER.info(STARTING_UPDATE_WEIGHTINGS);
+            LOGGER.info(String.format(STARTING_UPDATE_WEIGHTINGS, diseaseGroupId));
             configurationService.setLastRetrievalDate(LocalDateTime.now());
-            updateDiseaseOccurrenceExpertWeightings(lastRetrievalDate);
+            updateDiseaseOccurrenceExpertWeightings(lastRetrievalDate, diseaseGroupId);
             List<DiseaseOccurrence> validatedOccurrences = getAllValidatedOccurrences();
             updateDiseaseOccurrenceValidationWeightings(validatedOccurrences);
             updateDiseaseOccurrenceFinalWeightings(validatedOccurrences);
-
         } else {
-            LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, lastRetrievalDate.toString()));
+            LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastRetrievalDate.toString()));
         }
     }
 
@@ -76,8 +77,8 @@ public class WeightingsCalculator {
      * calculate its new weighting, by taking the weighted average of every expert review in the database (not just
      * the new reviews).
      */
-    private void updateDiseaseOccurrenceExpertWeightings(LocalDateTime lastRetrievalDate) {
-        List<DiseaseOccurrenceReview> allReviews = getAllReviews(lastRetrievalDate);
+    private void updateDiseaseOccurrenceExpertWeightings(LocalDateTime lastRetrievalDate, int diseaseGroupId) {
+        List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastRetrievalDate, diseaseGroupId);
         if (allReviews.isEmpty()) {
             LOGGER.info(NO_NEW_REVIEWS);
         } else {
@@ -125,11 +126,13 @@ public class WeightingsCalculator {
         }
     }
 
-    private List<DiseaseOccurrenceReview> getAllReviews(LocalDateTime lastRetrievalDate) {
+    private List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroup(LocalDateTime lastRetrievalDate,
+                                                                       int diseaseGroupId) {
         if (lastRetrievalDate == null) {
-            return diseaseService.getAllDiseaseOccurrenceReviews();
+            return diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
         } else {
-            return diseaseService.getAllReviewsForDiseaseOccurrencesWithNewReviewsSinceLastRetrieval(lastRetrievalDate);
+            return diseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+                    lastRetrievalDate, diseaseGroupId);
         }
     }
 

@@ -105,7 +105,7 @@ public class DiseaseOccurrence {
 
     // Boolean indicated whether the occurrence has been through (system or expert) validation.
     @Column(name = "is_validated")
-    private boolean isValidated;
+    private Boolean isValidated;
 
     // The weighting as calculated from experts' responses during data validation process.
     @Column(name = "expert_weighting")
