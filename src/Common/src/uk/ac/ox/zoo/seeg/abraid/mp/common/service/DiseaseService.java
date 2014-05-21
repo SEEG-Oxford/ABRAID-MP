@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -97,12 +96,12 @@ public interface DiseaseService {
 
     /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
-    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate, Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
+            DateTime lastModelRunPrepDate, Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
@@ -125,6 +124,12 @@ public interface DiseaseService {
      * @param diseaseOccurrence The disease occurrence to save.
      */
     void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence);
+
+    /**
+     * Saves a disease group.
+     * @param diseaseGroup The disease group to save.
+     */
+    void saveDiseaseGroup(DiseaseGroup diseaseGroup);
 
     /**
      * Saves a HealthMap disease.

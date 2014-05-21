@@ -27,10 +27,10 @@ import javax.persistence.*;
         query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
     ),
     @NamedQuery(
-        name = "getAllDiseaseOccurrenceReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval",
+        name = "getAllDiseaseOccurrenceReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep",
         query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
                 "and diseaseOccurrence in " +
-                "(select diseaseOccurrence from DiseaseOccurrenceReview where createdDate > :lastRetrievalDate)"
+                "(select diseaseOccurrence from DiseaseOccurrenceReview where createdDate > :lastModelRunPrepDate)"
     )
 })
 @Entity

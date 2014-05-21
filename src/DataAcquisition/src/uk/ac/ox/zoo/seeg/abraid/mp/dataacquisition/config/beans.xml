@@ -61,10 +61,6 @@
     <!-- Disease extent generation bean -->
     <bean id="diseaseExtentGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator" autowire="constructor"/>
 
-    <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.config.ConfigurationServiceImpl">
-        <constructor-arg name="basicProperties" value="${internal.properties.fileLocation}"/>
-    </bean>
-
     <!-- Weightings calculation beans -->
     <bean id="weightingsCalculator" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator" autowire="constructor"/>
 

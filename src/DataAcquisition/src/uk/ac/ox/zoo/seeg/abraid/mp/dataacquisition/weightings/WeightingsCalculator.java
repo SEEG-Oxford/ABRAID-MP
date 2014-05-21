@@ -3,13 +3,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.config.ConfigurationService;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,12 +34,10 @@ public class WeightingsCalculator {
     private static final String UPDATING_WEIGHTINGS =
             "Updating expert weightings for %d disease occurrences given %d new reviews";
 
-    private ConfigurationService configurationService;
     private DiseaseService diseaseService;
     private Set<DiseaseOccurrence> pendingSave;
 
-    public WeightingsCalculator(ConfigurationService configurationService, DiseaseService diseaseService) {
-        this.configurationService = configurationService;
+    public WeightingsCalculator(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
     }
 
@@ -51,32 +49,36 @@ public class WeightingsCalculator {
     @Transactional
     public void updateDiseaseOccurrenceWeightings(int diseaseGroupId) {
         pendingSave = new HashSet<>();
-        LocalDateTime lastRetrievalDate = configurationService.getLastRetrievalDate();
-        if (shouldContinue(lastRetrievalDate)) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
+        if (shouldContinue(lastModelRunPrepDate)) {
             LOGGER.info(String.format(STARTING_UPDATE_WEIGHTINGS, diseaseGroupId));
-            configurationService.setLastRetrievalDate(LocalDateTime.now());
-            updateDiseaseOccurrenceExpertWeightings(lastRetrievalDate, diseaseGroupId);
+            saveModelRunPrepDate(diseaseGroup, lastModelRunPrepDate);
+            updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
             List<DiseaseOccurrence> occurrences =
                     diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
             updateDiseaseOccurrenceValidationWeightings(occurrences);
             updateDiseaseOccurrenceFinalWeightings(occurrences);
             saveChanges();
         } else {
-            LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastRetrievalDate.toString()));
+            LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastModelRunPrepDate.toString()));
         }
     }
 
-
-
-    // Weightings should be updated if there is no lastRetrievalDate in properties file, or more than a week has elapsed
-    private boolean shouldContinue(LocalDateTime lastRetrievalDate) {
-        if (lastRetrievalDate == null) {
+    // Weightings should be updated if there is no lastModelRunPrepDate for disease, or more than a week has elapsed
+    private boolean shouldContinue(DateTime lastModelRunPrepDate) {
+        if (lastModelRunPrepDate == null) {
             return true;
         } else {
             LocalDate today = LocalDate.now();
-            LocalDate comparisonDate = lastRetrievalDate.toLocalDate().plusWeeks(1);
+            LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusWeeks(1);
             return (comparisonDate.isEqual(today) || comparisonDate.isBefore(today));
         }
+    }
+
+    private void saveModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime lastModelRunPrepDate) {
+        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     /**
@@ -84,8 +86,8 @@ public class WeightingsCalculator {
      * calculate its new weighting, by taking the weighted average of every expert review in the database (not just
      * the new reviews).
      */
-    private void updateDiseaseOccurrenceExpertWeightings(LocalDateTime lastRetrievalDate, int diseaseGroupId) {
-        List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastRetrievalDate, diseaseGroupId);
+    private void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
+        List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
         if (allReviews.isEmpty()) {
             LOGGER.info(NO_NEW_REVIEWS);
         } else {
@@ -138,13 +140,13 @@ public class WeightingsCalculator {
         }
     }
 
-    private List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroup(LocalDateTime lastRetrievalDate,
+    private List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroup(DateTime lastModelRunPrepDate,
                                                                        int diseaseGroupId) {
-        if (lastRetrievalDate == null) {
+        if (lastModelRunPrepDate == null) {
             return diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
         } else {
-            return diseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
-                    lastRetrievalDate, diseaseGroupId);
+            return diseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
+                    lastModelRunPrepDate, diseaseGroupId);
         }
     }
 
