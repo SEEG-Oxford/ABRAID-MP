@@ -56,17 +56,17 @@ public class ModelRunRequester {
         try {
             JsonModelRunResponse response =
                     modelWrapperWebService.startRun(diseaseGroup, diseaseOccurrences, diseaseExtent);
-            handleModelRunResponse(response, requestDate);
+            handleModelRunResponse(response, diseaseGroupId, requestDate);
         } catch (WebServiceClientException|JsonParserException e) {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
         }
     }
 
-    private void handleModelRunResponse(JsonModelRunResponse response, DateTime requestDate) {
+    private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText()));
         } else {
-            ModelRun modelRun = new ModelRun(response.getModelRunName(), requestDate);
+            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
             modelRunService.saveModelRun(modelRun);
         }
     }

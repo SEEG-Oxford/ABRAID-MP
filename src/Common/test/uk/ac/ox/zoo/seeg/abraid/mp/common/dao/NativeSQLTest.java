@@ -98,7 +98,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
     private void updateAndReloadRasterForModelRun(String rasterColumnName) throws IOException {
         // Arrange - create a model run
-        ModelRun modelRun = new ModelRun("test name", DateTime.now());
+        ModelRun modelRun = new ModelRun("test name", 87, DateTime.now());
         modelRunDao.save(modelRun);
 
         // Arrange - load raster file

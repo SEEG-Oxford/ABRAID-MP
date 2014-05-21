@@ -28,7 +28,7 @@ public class MainHandlerTest {
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
         String modelRunName = "test name";
         String metadataJson = String.format("{\"modelRunName\":\"%s\"}", modelRunName);
-        ModelRun expectedRun = new ModelRun(modelRunName, DateTime.now().minusDays(7));
+        ModelRun expectedRun = new ModelRun(modelRunName, 87, DateTime.now().minusDays(7));
         when(modelRunService.getModelRunByName(modelRunName)).thenReturn(expectedRun);
 
         // Act

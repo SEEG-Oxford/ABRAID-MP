@@ -42,6 +42,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainControllerIntegrationTest extends AbstractSpringIntegrationTests {
     private static final String OUTPUT_HANDLER_PATH = "/modeloutputhandler/handleoutputs";
+    private static final String TEST_DATA_PATH = "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata";
+
+    private static final String TEST_MODEL_RUN_NAME = "deng_2014-05-16-13-28-57_482ae3ca-ab30-414d-acce-388baae7d83c";
+    private static final int TEST_MODEL_RUN_DISEASE_GROUP_ID = 87;
 
     private MockMvc mockMvc;
 
@@ -57,8 +61,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @Autowired
     private NativeSQL nativeSQL;
 
-    private static final String TEST_MODEL_NAME = "deng_2014-05-16-13-28-57_482ae3ca-ab30-414d-acce-388baae7d83c";
-    private static final String TEST_DATA_PATH = "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata";
 
     @Before
     public void setup() {
@@ -78,25 +80,31 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @Test
     public void handleModelOutputsStoresValidOutputs() throws Exception {
+        // Arrange
         DateTime expectedResponseDate = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
-        insertModelRun(TEST_MODEL_NAME);
+        insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("valid_outputs.zip");
+
+        // Act and assert
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
-        ModelRun run = modelRunDao.getByName(TEST_MODEL_NAME);
+        // Assert
+        ModelRun run = modelRunDao.getByName(TEST_MODEL_RUN_NAME);
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
-
-        AssertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc", NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        AssertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc", NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc", NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc", NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
     @Test
     public void handleModelOutputsRejectsMalformedZipFile() throws Exception {
+        // Arrange
         byte[] malformedZipFile = "This is not a zip file".getBytes();
+
+        // Act and assert
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(malformedZipFile))
                 .andExpect(status().isInternalServerError())
@@ -105,8 +113,11 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @Test
     public void handleModelOutputsRejectsMissingMetadata() throws Exception {
-        insertModelRun(TEST_MODEL_NAME);
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("missing_metadata.zip");
+
+        // Act and assert
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
@@ -115,8 +126,11 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @Test
     public void handleModelOutputsRejectsIncorrectModelRunName() throws Exception {
-        insertModelRun(TEST_MODEL_NAME);
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("incorrect_model_run_name.zip");
+
+        // Act and assert
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
@@ -125,8 +139,11 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @Test
     public void handleModelOutputsRejectsMissingMeanPredictionRaster() throws Exception {
-        insertModelRun(TEST_MODEL_NAME);
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("missing_mean_prediction.zip");
+
+        // Act and assert
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
@@ -135,8 +152,11 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @Test
     public void handleModelOutputsRejectsMissingPredictionUncertaintyRaster() throws Exception {
-        insertModelRun(TEST_MODEL_NAME);
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("missing_prediction_uncertainty.zip");
+
+        // Act and assert
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
@@ -144,7 +164,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void insertModelRun(String name) {
-        ModelRun modelRun = new ModelRun(name, DateTime.now());
+        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, DateTime.now());
         modelRunDao.save(modelRun);
     }
 
@@ -152,7 +172,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         return FileUtils.readFileToByteArray(new File(TEST_DATA_PATH, fileName));
     }
 
-    private void AssertThatRasterInDatabaseMatchesRasterInFile(ModelRun run, String fileName, String rasterColumnName) throws IOException {
+    private void assertThatRasterInDatabaseMatchesRasterInFile(ModelRun run, String fileName, String rasterColumnName) throws IOException {
         byte[] expectedRaster = loadTestFile(fileName);
         byte[] actualRaster = nativeSQL.loadRasterForModelRun(run.getId(), rasterColumnName);
         Assert.assertThat(new String(actualRaster), equalToIgnoringWhiteSpace(new String(expectedRaster)));

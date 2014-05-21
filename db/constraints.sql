@@ -38,7 +38,7 @@ ALTER TABLE location
 
 ALTER TABLE model_run
     ADD CONSTRAINT uq_model_run_name UNIQUE (name);
-    
+
 ALTER TABLE provenance
     ADD CONSTRAINT uq_provenance_name UNIQUE (name);
 
@@ -109,7 +109,7 @@ ALTER TABLE location ADD CONSTRAINT pk_location
 
 ALTER TABLE model_run ADD CONSTRAINT pk_model_run
     PRIMARY KEY (id);
-    
+
 ALTER TABLE provenance ADD CONSTRAINT pk_provenance
     PRIMARY KEY (id);
 
@@ -123,7 +123,7 @@ ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease
 
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_tropical
     FOREIGN KEY (tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
-	
+
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_disease_extent_class
     FOREIGN KEY (disease_extent_class) REFERENCES disease_extent_class (name);
 
@@ -135,7 +135,7 @@ ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_glo
 
 ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_admin_unit_tropical
     FOREIGN KEY (tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
-	
+
 ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_disease_extent_class
     FOREIGN KEY (response) REFERENCES disease_extent_class (name);
 
@@ -198,6 +198,9 @@ ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_qc
 
 ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
     FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
+
+ALTER TABLE model_run ADD CONSTRAINT fk_model_run_disease_group
+    FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
 
 -- Check constraints

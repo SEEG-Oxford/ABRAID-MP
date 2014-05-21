@@ -28,3 +28,4 @@ CREATE INDEX ix_location_admin_unit_global_gaul_code ON location (admin_unit_glo
 CREATE INDEX ix_location_admin_unit_qc_gaul_code ON location (admin_unit_qc_gaul_code);
 CREATE INDEX ix_location_admin_unit_tropical_gaul_code ON location (admin_unit_tropical_gaul_code);
 CREATE INDEX ix_location_healthmap_country_id ON location (healthmap_country_id);
+CREATE INDEX ix_model_run_disease_group_id ON model_run (disease_group_id);

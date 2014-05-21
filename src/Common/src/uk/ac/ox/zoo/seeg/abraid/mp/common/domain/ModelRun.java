@@ -28,6 +28,10 @@ public class ModelRun {
     @Column
     private String name;
 
+    // The ID of the disease group for the model run.
+    @Column(name = "disease_group_id")
+    private int diseaseGroupId;
+
     // The date that the model run was requested.
     @Column(name = "request_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -45,9 +49,10 @@ public class ModelRun {
         this.id = id;
     }
 
-    public ModelRun(String name, DateTime requestDate) {
+    public ModelRun(String name, int diseaseGroupId, DateTime requestDate) {
         this.name = name;
         this.requestDate = requestDate;
+        this.diseaseGroupId = diseaseGroupId;
     }
 
     public Integer getId() {
@@ -60,6 +65,14 @@ public class ModelRun {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getDiseaseGroupId() {
+        return diseaseGroupId;
+    }
+
+    public void setDiseaseGroupId(int diseaseGroupId) {
+        this.diseaseGroupId = diseaseGroupId;
     }
 
     public DateTime getRequestDate() {
@@ -87,6 +100,7 @@ public class ModelRun {
 
         ModelRun modelRun = (ModelRun) o;
 
+        if (diseaseGroupId != modelRun.diseaseGroupId) return false;
         if (id != null ? !id.equals(modelRun.id) : modelRun.id != null) return false;
         if (name != null ? !name.equals(modelRun.name) : modelRun.name != null) return false;
         if (requestDate != null ? !requestDate.equals(modelRun.requestDate) : modelRun.requestDate != null)
@@ -101,6 +115,7 @@ public class ModelRun {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + diseaseGroupId;
         result = 31 * result + (requestDate != null ? requestDate.hashCode() : 0);
         result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
         return result;
