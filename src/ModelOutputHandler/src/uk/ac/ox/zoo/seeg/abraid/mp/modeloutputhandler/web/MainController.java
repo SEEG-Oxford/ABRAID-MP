@@ -35,6 +35,8 @@ public class MainController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(MainController.class);
     private static final String LOG_RECEIVED_OUTPUTS = "Received model run outputs (body length %s bytes)";
     private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
+    private static final String INTERNAL_SERVER_ERROR_MESSAGE =
+            "Model outputs handler failed with error \"%s\". See ModelOutputHandler server logs for more details.";
 
     private MainHandler mainHandler;
 
@@ -65,13 +67,13 @@ public class MainController extends AbstractController {
             handleOutputs(modelRunZipFile);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return createErrorResponse("Could not handle model run outputs. See server logs for more details.",
+            return createErrorResponse(String.format(INTERNAL_SERVER_ERROR_MESSAGE, e.getMessage()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             if (modelRunZipFile != null && modelRunZipFile.exists()) {
                 if (!modelRunZipFile.delete()) {
-                    // Could not delete temporary file. This is not enough for the whole model output handling
-                    // to fail, so just log the error.
+                    // Could not delete temporary file. Just log the error (this is not serious enough to fail the whole
+                    // model output handling).
                     LOGGER.error(String.format(LOG_COULD_NOT_DELETE_TEMP_FILE, modelRunZipFile.getAbsolutePath()));
                 }
             }
@@ -89,7 +91,7 @@ public class MainController extends AbstractController {
     private void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
         ZipFile zipFile = new ZipFile(modelRunZipFile);
 
-        // Retrieve the model run from the metadata JSON
+        // Retrieve the model run name from the metadata JSON, and find the corresponding ModelRun in the database
         byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME);
         String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
         ModelRun modelRun = mainHandler.handleMetadataJson(metadataJsonAsString);
@@ -99,18 +101,14 @@ public class MainController extends AbstractController {
         mainHandler.handleMeanPredictionRaster(modelRun, meanPredictionRaster);
 
         // Handle prediction uncertainty raster
-        byte[] predictionUncertaintyRaster =
-                extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
-        mainHandler.handlePredictionUncertaintyRaster(modelRun, predictionUncertaintyRaster);
-
-        // Save model run to database
-        mainHandler.saveModelRun(modelRun);
+        byte[] predUncertaintyRaster = extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+        mainHandler.handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
     }
 
     private byte[] extract(ZipFile zipFile, String fileName) throws ZipException, IOException {
         FileHeader header = zipFile.getFileHeader(fileName);
         if (header == null) {
-            throw new IllegalArgumentException(String.format("File %s missing from model run outputs.", fileName));
+            throw new IllegalArgumentException(String.format("File %s missing from model run outputs", fileName));
         } else {
             try (ZipInputStream inputStream = zipFile.getInputStream(header)) {
                 return IOUtils.toByteArray(inputStream);
@@ -119,7 +117,7 @@ public class MainController extends AbstractController {
     }
 
     private ResponseEntity<String> createSuccessResponse() {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private ResponseEntity<String> createErrorResponse(String errorText, HttpStatus status) {

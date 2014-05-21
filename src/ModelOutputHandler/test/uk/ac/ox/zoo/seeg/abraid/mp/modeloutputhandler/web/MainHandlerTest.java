@@ -10,10 +10,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the MainHandler class.
@@ -39,6 +37,7 @@ public class MainHandlerTest {
         // Assert
         assertThat(actualRun).isSameAs(expectedRun);
         assertThat(actualRun.getResponseDate()).isEqualTo(DateTime.now());
+        verify(modelRunService).saveModelRun(eq(expectedRun));
     }
 
     @Test
@@ -51,6 +50,7 @@ public class MainHandlerTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
+        verify(modelRunService, never()).saveModelRun(any(ModelRun.class));
     }
 
     @Test
@@ -93,17 +93,5 @@ public class MainHandlerTest {
 
         // Assert
         verify(modelRunService).updatePredictionUncertaintyRasterForModelRun(eq(modelRunId), eq(raster));
-    }
-
-    @Test
-    public void saveModelRun() {
-        // Arrange
-        ModelRun run = new ModelRun();
-
-        // Act
-        mainHandler.saveModelRun(run);
-
-        // Assert
-        verify(modelRunService).saveModelRun(eq(run));
     }
 }

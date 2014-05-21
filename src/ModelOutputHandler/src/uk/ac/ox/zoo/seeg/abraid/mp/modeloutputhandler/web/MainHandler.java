@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
@@ -12,6 +13,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelOutputsMetadata;
  * Copyright (c) 2014 University of Oxford
  */
 public class MainHandler {
+    private static final Logger LOGGER = Logger.getLogger(MainHandler.class);
+    private static final String LOG_MEAN_PREDICTION_RASTER =
+            "Saving mean prediction raster (%s bytes) for model run \"%s\"";
+    private static final String LOG_PREDICTION_UNCERTAINTY_RASTER =
+            "Saving prediction uncertainty raster (%s bytes) for model run \"%s\"";
+
     private ModelRunService modelRunService;
 
     public MainHandler(ModelRunService modelRunService) {
@@ -28,6 +35,7 @@ public class MainHandler {
         JsonModelOutputsMetadata metadata = new JsonParser().parse(metadataJson, JsonModelOutputsMetadata.class);
         ModelRun modelRun = getModelRun(metadata.getModelRunName());
         modelRun.setResponseDate(DateTime.now());
+        modelRunService.saveModelRun(modelRun);
         return modelRun;
     }
 
@@ -37,6 +45,7 @@ public class MainHandler {
      * @param raster The mean prediction raster.
      */
     public void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
+        LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
         modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
     }
 
@@ -46,15 +55,8 @@ public class MainHandler {
      * @param raster The prediction uncertainty raster.
      */
     public void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
+        LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
         modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
-    }
-
-    /**
-     * Saves the model run.
-     * @param modelRun The model run.
-     */
-    public void saveModelRun(ModelRun modelRun) {
-        modelRunService.saveModelRun(modelRun);
     }
 
     private ModelRun getModelRun(String name) {
