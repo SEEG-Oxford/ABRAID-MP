@@ -11,6 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.config.ConfigurationService;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ public class WeightingsCalculator {
 
     private ConfigurationService configurationService;
     private DiseaseService diseaseService;
+    private Set<DiseaseOccurrence> pendingSave;
 
     public WeightingsCalculator(ConfigurationService configurationService, DiseaseService diseaseService) {
         this.configurationService = configurationService;
@@ -48,18 +50,23 @@ public class WeightingsCalculator {
      */
     @Transactional
     public void updateDiseaseOccurrenceWeightings(int diseaseGroupId) {
+        pendingSave = new HashSet<>();
         LocalDateTime lastRetrievalDate = configurationService.getLastRetrievalDate();
         if (shouldContinue(lastRetrievalDate)) {
             LOGGER.info(String.format(STARTING_UPDATE_WEIGHTINGS, diseaseGroupId));
             configurationService.setLastRetrievalDate(LocalDateTime.now());
             updateDiseaseOccurrenceExpertWeightings(lastRetrievalDate, diseaseGroupId);
-            List<DiseaseOccurrence> validatedOccurrences = getAllValidatedOccurrences();
-            updateDiseaseOccurrenceValidationWeightings(validatedOccurrences);
-            updateDiseaseOccurrenceFinalWeightings(validatedOccurrences);
+            List<DiseaseOccurrence> occurrences =
+                    diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+            updateDiseaseOccurrenceValidationWeightings(occurrences);
+            updateDiseaseOccurrenceFinalWeightings(occurrences);
+            saveChanges();
         } else {
             LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastRetrievalDate.toString()));
         }
     }
+
+
 
     // Weightings should be updated if there is no lastRetrievalDate in properties file, or more than a week has elapsed
     private boolean shouldContinue(LocalDateTime lastRetrievalDate) {
@@ -87,14 +94,6 @@ public class WeightingsCalculator {
     }
 
     /**
-     * Gets all disease occurrences that have been through system or expert validation.
-     * @return The disease occurrences with is_validated flag true.
-     */
-    private List<DiseaseOccurrence> getAllValidatedOccurrences() {
-        return diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
-    }
-
-    /**
      * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
      * the expert weighting if it exists, otherwise the system weighting.
      */
@@ -103,6 +102,9 @@ public class WeightingsCalculator {
             Double expertWeighting = occurrence.getExpertWeighting();
             double systemWeighting = occurrence.getSystemWeighting();
             double weighting = (expertWeighting != null) ? expertWeighting : systemWeighting;
+            if (weighting != occurrence.getValidationWeighting()) {
+                pendingSave.add(occurrence);
+            }
             occurrence.setValidationWeighting(weighting);
         }
     }
@@ -116,13 +118,23 @@ public class WeightingsCalculator {
             double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
             double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
             double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
+            double weighting;
             if (locationResolutionWeighting == 0.0 || feedWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
-                occurrence.setFinalWeighting(0.0);
+                weighting = 0.0;
             } else {
-                double weighting = (locationResolutionWeighting + feedWeighting + diseaseGroupTypeWeighting +
-                        occurrence.getValidationWeighting()) / 4;
-                occurrence.setFinalWeighting(weighting);
+                weighting = average(Arrays.asList(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
+                        occurrence.getValidationWeighting()));
             }
+            if (weighting != occurrence.getFinalWeighting()) {
+                pendingSave.add(occurrence);
+            }
+            occurrence.setFinalWeighting(weighting);
+        }
+    }
+
+    private void saveChanges() {
+        for (DiseaseOccurrence occurrence : pendingSave) {
+            diseaseService.saveDiseaseOccurrence(occurrence);
         }
     }
 
@@ -142,7 +154,10 @@ public class WeightingsCalculator {
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
             List<DiseaseOccurrenceReview> reviews = select(allReviews,
                     having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
-            Double expertWeighting = calculateWeightedAverageResponse(reviews);
+            double expertWeighting = calculateWeightedAverageResponse(reviews);
+            if (expertWeighting != occurrence.getExpertWeighting()) {
+                pendingSave.add(occurrence);
+            }
             occurrence.setExpertWeighting(expertWeighting);
         }
     }
@@ -151,7 +166,7 @@ public class WeightingsCalculator {
         return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
-    private Double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
+    private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
         List<Double> weightings = calculateWeightingForEachReview(reviews);
         return average(weightings);
     }
