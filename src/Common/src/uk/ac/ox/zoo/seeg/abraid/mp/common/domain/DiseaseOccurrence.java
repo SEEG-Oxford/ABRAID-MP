@@ -40,7 +40,7 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id = :diseaseGroupId " +
-                        "and d.location.hasPassedQc = true " +
+                        "and d.isValidated = true " +
                         "and d.location.precision <> 'COUNTRY'"
         )
 })
@@ -183,11 +183,11 @@ public class DiseaseOccurrence {
         return createdDate;
     }
 
-    public boolean isValidated() {
+    public Boolean isValidated() {
         return isValidated;
     }
 
-    public void setValidated(boolean isValidated) {
+    public void setValidated(Boolean isValidated) {
         this.isValidated = isValidated;
     }
 

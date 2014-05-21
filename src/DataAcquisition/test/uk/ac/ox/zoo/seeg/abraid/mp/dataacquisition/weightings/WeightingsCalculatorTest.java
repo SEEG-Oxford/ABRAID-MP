@@ -105,6 +105,6 @@ public class WeightingsCalculatorTest {
         propertiesFile.delete();
 
         // Assert
-        assertThat(occurrence.getValidationWeighting()).isEqualTo(expectedWeighting);
+        assertThat(occurrence.getExpertWeighting()).isEqualTo(expectedWeighting);
     }
 }
