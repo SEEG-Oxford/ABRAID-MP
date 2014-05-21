@@ -41,9 +41,8 @@ public class WeightingsCalculator {
     }
 
     /**
-     * For every disease occurrence point that has had new reviews submitted since the last recalculation a week ago,
-     * calculate its new weighting, by taking the weighted average of every expert review in the database (not just
-     * the new reviews).
+     * If a week has elapsed since last update of weighting values, recalculate the expert weighting,
+     * validation weighting, and final weighting of disease occurrences.
      */
     @Transactional
     public void updateDiseaseOccurrenceWeightings() {
@@ -51,12 +50,11 @@ public class WeightingsCalculator {
         if (shouldContinue(lastRetrievalDate)) {
             LOGGER.info(STARTING_UPDATE_WEIGHTINGS);
             configurationService.setLastRetrievalDate(LocalDateTime.now());
-            List<DiseaseOccurrenceReview> allReviews = getAllReviews(lastRetrievalDate);
-            if (allReviews.isEmpty()) {
-                LOGGER.info(NO_NEW_REVIEWS);
-            } else {
-                calculateNewDiseaseOccurrenceWeightings(allReviews);
-            }
+            updateDiseaseOccurrenceExpertWeightings(lastRetrievalDate);
+            List<DiseaseOccurrence> validatedOccurrences = getAllValidatedOccurrences();
+            updateDiseaseOccurrenceValidationWeightings(validatedOccurrences);
+            updateDiseaseOccurrenceFinalWeightings(validatedOccurrences);
+
         } else {
             LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, lastRetrievalDate.toString()));
         }
@@ -73,6 +71,60 @@ public class WeightingsCalculator {
         }
     }
 
+    /**
+     * For every disease occurrence point that has had new reviews submitted since the last recalculation a week ago,
+     * calculate its new weighting, by taking the weighted average of every expert review in the database (not just
+     * the new reviews).
+     */
+    private void updateDiseaseOccurrenceExpertWeightings(LocalDateTime lastRetrievalDate) {
+        List<DiseaseOccurrenceReview> allReviews = getAllReviews(lastRetrievalDate);
+        if (allReviews.isEmpty()) {
+            LOGGER.info(NO_NEW_REVIEWS);
+        } else {
+            calculateNewDiseaseOccurrenceExpertWeightings(allReviews);
+        }
+    }
+
+    /**
+     * Gets all disease occurrences that have been through system or expert validation.
+     * @return The disease occurrences with is_validated flag true.
+     */
+    private List<DiseaseOccurrence> getAllValidatedOccurrences() {
+        return diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
+    }
+
+    /**
+     * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
+     * the expert weighting if it exists, otherwise the system weighting.
+     */
+    private void updateDiseaseOccurrenceValidationWeightings(List<DiseaseOccurrence> validatedOccurrences) {
+        for (DiseaseOccurrence occurrence : validatedOccurrences) {
+            Double expertWeighting = occurrence.getExpertWeighting();
+            double systemWeighting = occurrence.getSystemWeighting();
+            double weighting = (expertWeighting != null) ? expertWeighting : systemWeighting;
+            occurrence.setValidationWeighting(weighting);
+        }
+    }
+
+    /**
+     * Recalculate the final weighting as the average across each of the 4 properties. If the value of any of the
+     * weightings is 0, then the occurrence should be discounted by the model by setting the final weighting to 0.
+     */
+    private void updateDiseaseOccurrenceFinalWeightings(List<DiseaseOccurrence> validatedOccurrences) {
+        for (DiseaseOccurrence occurrence : validatedOccurrences) {
+            double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
+            double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
+            double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
+            if (locationResolutionWeighting == 0.0 || feedWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
+                occurrence.setFinalWeighting(0.0);
+            } else {
+                double weighting = (locationResolutionWeighting + feedWeighting + diseaseGroupTypeWeighting +
+                        occurrence.getValidationWeighting()) / 4;
+                occurrence.setFinalWeighting(weighting);
+            }
+        }
+    }
+
     private List<DiseaseOccurrenceReview> getAllReviews(LocalDateTime lastRetrievalDate) {
         if (lastRetrievalDate == null) {
             return diseaseService.getAllDiseaseOccurrenceReviews();
@@ -81,14 +133,14 @@ public class WeightingsCalculator {
         }
     }
 
-    private void calculateNewDiseaseOccurrenceWeightings(List<DiseaseOccurrenceReview> allReviews) {
+    private void calculateNewDiseaseOccurrenceExpertWeightings(List<DiseaseOccurrenceReview> allReviews) {
         Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
         LOGGER.info(String.format(UPDATING_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
             List<DiseaseOccurrenceReview> reviews = select(allReviews,
                     having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
             Double expertWeighting = calculateWeightedAverageResponse(reviews);
-            setWeightings(occurrence, expertWeighting);
+            occurrence.setExpertWeighting(expertWeighting);
         }
     }
 
@@ -111,11 +163,5 @@ public class WeightingsCalculator {
 
     private double average(List<Double> weightings) {
         return ((double) sum(weightings)) / weightings.size();
-    }
-
-    private void setWeightings(DiseaseOccurrence occurrence, Double expertWeighting) {
-        occurrence.setExpertWeighting(expertWeighting);
-        occurrence.setValidationWeighting(expertWeighting);
-        occurrence.updateFinalWeighting();
     }
 }

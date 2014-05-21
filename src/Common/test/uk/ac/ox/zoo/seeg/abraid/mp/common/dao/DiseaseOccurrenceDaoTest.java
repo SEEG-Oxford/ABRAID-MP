@@ -115,6 +115,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setOccurrenceDate(occurrenceDate);
         occurrence.setSystemWeighting(systemWeighting);
+        occurrence.setValidationWeighting(systemWeighting);
 
         // Act
         diseaseOccurrenceDao.save(occurrence);

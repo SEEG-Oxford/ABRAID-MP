@@ -103,6 +103,10 @@ public class DiseaseOccurrence {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
+    // Boolean indicated whether the occurrence has been through (system or expert) validation.
+    @Column(name = "is_validated")
+    private boolean isValidated;
+
     // The weighting as calculated from experts' responses during data validation process.
     @Column(name = "expert_weighting")
     private Double expertWeighting;
@@ -177,6 +181,14 @@ public class DiseaseOccurrence {
 
     public DateTime getCreatedDate() {
         return createdDate;
+    }
+
+    public boolean isValidated() {
+        return isValidated;
+    }
+
+    public void setValidated(boolean isValidated) {
+        this.isValidated = isValidated;
     }
 
     public Double getExpertWeighting() {
@@ -259,19 +271,6 @@ public class DiseaseOccurrence {
         result = 31 * result + (finalWeighting != null ? finalWeighting.hashCode() : 0);
         result = 31 * result + occurrenceDate.hashCode();
         return result;
-    }
-
-    public void updateFinalWeighting() {
-        double locationResolutionWeighting = location.getResolutionWeighting();
-        double feedWeighting = alert.getFeed().getWeighting();
-        double diseaseGroupTypeWeighting = diseaseGroup.getWeighting();
-        if (locationResolutionWeighting == 0.0 || feedWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
-            setFinalWeighting(0.0);
-        } else {
-            double finalWeighting =
-                    (locationResolutionWeighting + feedWeighting + diseaseGroupTypeWeighting + expertWeighting) / 4;
-            setFinalWeighting(finalWeighting);
-        }
     }
     ///CHECKSTYLE:ON
     ///COVERAGE:ON

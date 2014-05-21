@@ -44,7 +44,8 @@ public enum LocationPrecision {
      */
     private double weighting;
 
-    private LocationPrecision(String healthMapPlaceBasicType, Character shapefileTableAdminLevel, Integer modelValue, double weighting) {
+    private LocationPrecision(String healthMapPlaceBasicType, Character shapefileTableAdminLevel, Integer modelValue,
+                              double weighting) {
         this.healthMapPlaceBasicType = healthMapPlaceBasicType;
         this.shapefileTableAdminLevel = shapefileTableAdminLevel;
         this.modelValue = modelValue;
