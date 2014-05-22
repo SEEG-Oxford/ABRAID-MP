@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
 import java.util.Collection;
 import java.util.Collections;

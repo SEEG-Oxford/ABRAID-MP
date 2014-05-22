@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -19,13 +20,6 @@ public interface DiseaseService {
     List<HealthMapDisease> getAllHealthMapDiseases();
 
     /**
-     * Gets the disease group by its id.
-     * @param diseaseGroupId The id of the disease group.
-     * @return The disease group.
-     */
-    DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
-
-    /**
      * Gets all disease groups.
      * @return All disease groups.
      */
@@ -38,46 +32,17 @@ public interface DiseaseService {
     List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups();
 
     /**
+     * Gets the disease group by its id.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The disease group.
+     */
+    DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
+
+    /**
      * For each validator disease group, get a list of its disease groups.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
     Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
-
-    /**
-     * Saves a disease occurrence.
-     * @param diseaseOccurrence The disease occurrence to save.
-     */
-    void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence);
-
-    /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
-     */
-    void saveHealthMapDisease(HealthMapDisease disease);
-
-    /**
-     * Determines whether the specified disease occurrence already exists in the database. This is true if an
-     * occurrence exists with the same disease group, location, alert and occurrence start date.
-     * @param occurrence The disease occurrence.
-     * @return True if the occurrence already exists in the database, otherwise false.
-     */
-    boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence);
-
-    /**
-     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
-     * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param validatorDiseaseGroupId The id of the validator disease group.
-     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
-     */
-    boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
-                                                                           Integer validatorDiseaseGroupId);
-
-    /**
-     * Gets the disease extent for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return The disease extent.
-     */
-    List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
 
     /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
@@ -87,19 +52,6 @@ public interface DiseaseService {
      */
     List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
             Integer diseaseGroupId);
-
-    /**
-     * Saves a disease extent class that is associated with an admin unit (global or tropical).
-     * @param adminUnitDiseaseExtentClass The object to save.
-     */
-    void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
-
-    /**
-     * Gets a disease extent class by name.
-     * @param name The disease extent class name.
-     * @return The corresponding disease extent class, or null if it does not exist.
-     */
-    DiseaseExtentClass getDiseaseExtentClass(String name);
 
     /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.
@@ -121,6 +73,70 @@ public interface DiseaseService {
      * @return Disease occurrences for a request to run the model.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
+
+    /**
+     * Gets the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
+     */
+    List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    DiseaseExtentClass getDiseaseExtentClass(String name);
+
+    /**
+     * Gets a list of all the disease occurrence reviews in the database for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease occurrence reviews.
+     */
+    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
+     * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of the reviews of disease occurrences whose weightings needs updating.
+     */
+    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+            LocalDateTime lastRetrievalDate, Integer diseaseGroupId);
+
+    /**
+     * Determines whether the specified disease occurrence already exists in the database. This is true if an
+     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * @param occurrence The disease occurrence.
+     * @return True if the occurrence already exists in the database, otherwise false.
+     */
+    boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence);
+
+    /**
+     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
+     */
+    boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
+                                                                           Integer validatorDiseaseGroupId);
+    /**
+     * Saves a disease occurrence.
+     * @param diseaseOccurrence The disease occurrence to save.
+     */
+    void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence);
+
+    /**
+     * Saves a HealthMap disease.
+     * @param disease The disease to save.
+     */
+    void saveHealthMapDisease(HealthMapDisease disease);
+
+    /**
+     * Saves a disease extent class that is associated with an admin unit (global or tropical).
+     * @param adminUnitDiseaseExtentClass The object to save.
+     */
+    void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
 
     /**
      * Saves a model run.

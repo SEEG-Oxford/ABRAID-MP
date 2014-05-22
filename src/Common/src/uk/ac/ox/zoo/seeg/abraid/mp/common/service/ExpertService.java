@@ -26,6 +26,14 @@ public interface ExpertService {
     Expert getExpertByEmail(String email);
 
     /**
+     * Gets the specified expert's disease interests.
+     *
+     * @param expertId The id of the specified expert.
+     * @return The list of validator disease groups the expert can validate.
+     */
+    List<ValidatorDiseaseGroup> getDiseaseInterests(Integer expertId);
+
+    /**
      * Gets a list of occurrence points, for the specified validator disease group, for which the specified expert has
      * not yet submitted a review.
      * @param expertId The id of the specified expert.
@@ -38,27 +46,28 @@ public interface ExpertService {
             throws IllegalArgumentException;
 
     /**
+     * Gets the number of disease occurrence reviews an expert has submitted, across all disease groups.
+     * @param expertId The id of the specified expert.
+     * @return The total number of disease occurrence reviews for the specified expert.
+     */
+    Long getDiseaseOccurrenceReviewCount(Integer expertId);
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert,
+     * already exists in the database.
+     * @param expertId The id of the specified expert.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @return True if the review already exists, otherwise false.
+     */
+    boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
+
+    /**
      * Gets all reviews submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of reviews.
      */
     List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId);
-
-    /**
-     * Gets the specified expert's disease interests.
-     *
-     * @param expertId The id of the specified expert.
-     * @return The list of validator disease groups the expert can validate.
-     */
-    List<ValidatorDiseaseGroup> getDiseaseInterests(Integer expertId);
-
-    /**
-     * Gets the number of disease occurrence reviews an expert has submitted, across all disease groups.
-     * @param expertId The id of the specified expert.
-     * @return The total number of disease occurrence reviews for the specified expert.
-     */
-    Long getDiseaseOccurrenceReviewCount(Integer expertId);
 
     /**
      * Gets the number of admin unit reviews an expert has submitted, across all disease groups.
@@ -81,13 +90,4 @@ public interface ExpertService {
      * @param expert The expert to save.
      */
     void saveExpert(Expert expert);
-
-    /**
-     * Determines whether a review for the specified disease occurrence, by the specified expert,
-     * already exists in the database.
-     * @param expertId The id of the specified expert.
-     * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @return True if the review already exists, otherwise false.
-     */
-    boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
 }

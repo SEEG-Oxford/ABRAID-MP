@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
 
 import java.io.File;
 import java.io.IOException;

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfigurationFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 
 /**

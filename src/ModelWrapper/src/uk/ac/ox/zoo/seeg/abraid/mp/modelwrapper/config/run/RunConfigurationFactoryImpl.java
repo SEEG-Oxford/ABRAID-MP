@@ -1,10 +1,10 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.hamcrest.Matcher;
 import org.joda.time.LocalDateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 

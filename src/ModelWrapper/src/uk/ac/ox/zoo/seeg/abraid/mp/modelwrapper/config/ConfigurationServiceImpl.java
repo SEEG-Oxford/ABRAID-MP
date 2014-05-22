@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.databind.ObjectMapper;
