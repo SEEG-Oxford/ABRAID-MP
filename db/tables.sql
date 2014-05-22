@@ -214,7 +214,11 @@ CREATE TABLE location (
 CREATE TABLE model_run (
     id serial NOT NULL,
     name varchar(300) NOT NULL,
-    request_date timestamp NOT NULL
+    disease_group_id integer NOT NULL,
+    request_date timestamp NOT NULL,
+    response_date timestamp,
+    mean_prediction_raster raster,
+    prediction_uncertainty_raster raster
 );
 
 CREATE TABLE provenance (

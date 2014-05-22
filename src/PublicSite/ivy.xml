@@ -3,7 +3,7 @@
       Ivy dependencies for PublicSite.
       Copyright (c) 2014 University of Oxford
 -->
-<!DOCTYPE project [
+<!DOCTYPE ivy-module [
        <!ENTITY ivy-configurations SYSTEM "../ivy-configurations.xml">
        <!ENTITY ivy-project-dependencies SYSTEM "../ivy-project-dependencies.xml">
        <!ENTITY ivy-excludes SYSTEM "../ivy-excludes.xml">

@@ -18,19 +18,22 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     private ModelRunDao modelRunDao;
 
     @Test
-    public void saveAndReloadModelRun() {
+    public void saveAndReloadModelRunByName() {
+        // Arrange
         String name = "test name";
+        int diseaseGroupId = 87;
         DateTime requestDate = DateTime.now();
-        ModelRun modelRun = new ModelRun(name, requestDate);
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestDate);
         modelRunDao.save(modelRun);
 
-        // Assert
-        Integer id = modelRun.getId();
+        // Act
         flushAndClear();
 
-        modelRun = modelRunDao.getById(id);
+        // Assert
+        modelRun = modelRunDao.getByName(name);
         assertThat(modelRun).isNotNull();
         assertThat(modelRun.getName()).isEqualTo(name);
         assertThat(modelRun.getRequestDate()).isEqualTo(requestDate);
+        assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
     }
 }

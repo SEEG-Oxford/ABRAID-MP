@@ -24,7 +24,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitGlobalDao adminUnitGlobalDao;
     private AdminUnitTropicalDao adminUnitTropicalDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
-    private ModelRunDao modelRunDao;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
@@ -34,8 +33,7 @@ public class DiseaseServiceImpl implements DiseaseService {
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
                               AdminUnitTropicalDao adminUnitTropicalDao,
-                              DiseaseExtentClassDao diseaseExtentClassDao,
-                              ModelRunDao modelRunDao) {
+                              DiseaseExtentClassDao diseaseExtentClassDao) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
@@ -45,7 +43,6 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.adminUnitGlobalDao = adminUnitGlobalDao;
         this.adminUnitTropicalDao = adminUnitTropicalDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
-        this.modelRunDao = modelRunDao;
     }
 
     /**
@@ -205,6 +202,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */
+    @Override
     public boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence) {
         // These are not-null fields in the database, so if any of them are null then there cannot possibly be a
         // matching disease occurrence in the database
@@ -230,16 +228,13 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param validatorDiseaseGroupId The id of the validator disease group.
      * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
      */
+    @Override
     public boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
                                                                                   Integer validatorDiseaseGroupId) {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
         return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
     }
 
-    private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
-        DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
-        return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());
-    }
 
     /**
      * Saves a disease occurrence.
@@ -270,11 +265,8 @@ public class DiseaseServiceImpl implements DiseaseService {
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
     }
 
-    /**
-     * Saves a model run.
-     * @param modelRun The model run to save.
-     */
-    public void saveModelRun(ModelRun modelRun) {
-        modelRunDao.save(modelRun);
+    private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
+        DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
+        return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());
     }
 }
