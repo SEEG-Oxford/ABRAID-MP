@@ -192,10 +192,10 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
-            DateTime lastModelRunPrepDate, Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
-                lastModelRunPrepDate, diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                       Integer diseaseGroupId) {
+        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate,
+                diseaseGroupId);
     }
 
     /**

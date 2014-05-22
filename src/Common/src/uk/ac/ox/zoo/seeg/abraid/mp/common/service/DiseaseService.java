@@ -100,8 +100,8 @@ public interface DiseaseService {
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
-    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
-            DateTime lastModelRunPrepDate, Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an

@@ -28,8 +28,8 @@ public class WeightingsCalculator {
     private static final String STARTING_UPDATE_WEIGHTINGS =
             "Starting process to update occurrences' weightings for disease %d";
     private static final String NOT_UPDATING_WEIGHTINGS =
-            "Occurrences' weightings will not be updated for disease %d" +
-                    " - a week has not elapsed since last model run preparation on %s";
+            "Occurrences' weightings will not be updated for disease %d " +
+                    "- a week has not elapsed since last model run preparation on %s";
     private static final String NO_NEW_REVIEWS =
             "No new reviews have been submitted - expert weightings will not be updated";
     private static final String RECALCULATING_EXPERT_WEIGHTINGS =
@@ -48,8 +48,8 @@ public class WeightingsCalculator {
     }
 
     /**
-     * If a week has elapsed since last update of weighting values, update the expert weightings of disease occurrences
-     * for the specified disease group.
+     * If more than a week has elapsed since last update of weighting values, or weightings have never been calculated
+     * for the specified disease group, update the expert weightings of disease occurrences.
      * @param diseaseGroupId The id of the disease group.
      */
     @Transactional
@@ -58,7 +58,7 @@ public class WeightingsCalculator {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         if (shouldContinue(lastModelRunPrepDate)) {
             LOGGER.info(String.format(STARTING_UPDATE_WEIGHTINGS, diseaseGroupId));
-            saveModelRunPrepDate(diseaseGroup, DateTime.now());
+            updateModelRunPrepDate(diseaseGroup);
             updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastModelRunPrepDate.toString()));
@@ -78,15 +78,19 @@ public class WeightingsCalculator {
         }
     }
 
-    private void saveModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime lastModelRunPrepDate) {
-        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+    /**
+     * Sets the date on the disease_group row in the database as the present time.
+     * @param diseaseGroup The disease group for which occurrence weightings are being calculated.
+     */
+    private void updateModelRunPrepDate(DiseaseGroup diseaseGroup) {
+        diseaseGroup.setLastModelRunPrepDate(DateTime.now());
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     /**
-     * For every disease occurrence point that has had new reviews submitted since the last recalculation a week ago,
-     * calculate its new weighting, by taking the weighted average of every expert review in the database (not just
-     * the new reviews).
+     * Get every disease occurrence point that has had new reviews submitted since the last recalculation a week ago.
+     * Calculate its new weighting, by taking the weighted average of every expert review in the database (not just the
+     * new reviews) and shifting it to be between 0 and 1.
      */
     private void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
@@ -102,8 +106,7 @@ public class WeightingsCalculator {
         if (lastModelRunPrepDate == null) {
             return diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
         } else {
-            return diseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
-                    lastModelRunPrepDate, diseaseGroupId);
+            return diseaseService.getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate, diseaseGroupId);
         }
     }
 
@@ -125,7 +128,8 @@ public class WeightingsCalculator {
 
     private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
         List<Double> weightings = calculateWeightingForEachReview(reviews);
-        return average(weightings);
+        double weighting = average(weightings);
+        return shift(weighting);
     }
 
     private List<Double> calculateWeightingForEachReview(List<DiseaseOccurrenceReview> reviews) {
@@ -138,6 +142,11 @@ public class WeightingsCalculator {
 
     private double average(List<Double> weightings) {
         return ((double) sum(weightings)) / weightings.size();
+    }
+
+    // Shift weighting from range [-1, 1] to desired range of [0, 1]
+    private double shift(double weighting) {
+        return (weighting + 1) / 2;
     }
 
     /**

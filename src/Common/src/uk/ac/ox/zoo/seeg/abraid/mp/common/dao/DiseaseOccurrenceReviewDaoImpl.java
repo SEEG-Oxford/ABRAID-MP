@@ -37,11 +37,11 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
-            DateTime lastModelRunPrepDate, Integer diseaseGroupId) {
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                       Integer diseaseGroupId) {
         return
-            listNamedQuery("getAllDiseaseOccurrenceReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep"
-                    , "lastModelRunPrepDate", lastModelRunPrepDate, "diseaseGroupId", diseaseGroupId);
+            listNamedQuery("getDiseaseOccurrenceReviewsForModelRunPrep",
+                    "lastModelRunPrepDate", lastModelRunPrepDate, "diseaseGroupId", diseaseGroupId);
     }
 
     /**

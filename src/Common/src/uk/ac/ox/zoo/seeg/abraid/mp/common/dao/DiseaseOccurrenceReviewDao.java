@@ -30,8 +30,8 @@ public interface DiseaseOccurrenceReviewDao {
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
-    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
-            DateTime lastModelRunPrepDate, Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                Integer diseaseGroupId);
 
     /**
      * Gets the total number of reviews submitted by the specified expert.
