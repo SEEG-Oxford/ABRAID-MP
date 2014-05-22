@@ -24,8 +24,6 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class WorkspaceProvisionerTest {
-    private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
@@ -49,8 +47,7 @@ public class WorkspaceProvisionerTest {
 
         // Assert
         assertThat(result.getParentFile()).isEqualTo(expectedBasePath);
-        assertThat(result.getName()).startsWith(expectedRunName);
-        assertThat(result.getName()).matches(expectedRunName + "_" + UUID_REGEX);
+        assertThat(result.getName()).isEqualTo(expectedRunName);
         assertThat(result).exists();
         assertThat(result).isDirectory();
     }
@@ -61,7 +58,7 @@ public class WorkspaceProvisionerTest {
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         File expectedScript = new File("foobar");
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
-        RunConfiguration config = createRunConfiguration("", testFolder.getRoot());
+        RunConfiguration config = createRunConfiguration("foo", testFolder.getRoot());
         when(scriptGenerator.generateScript(eq(config), any(File.class))).thenReturn(expectedScript);
 
         // Act
@@ -82,7 +79,7 @@ public class WorkspaceProvisionerTest {
         String expectedVersion = "foobar";
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
         RunConfiguration config =
-                new RunConfiguration("", testFolder.getRoot(), new CodeRunConfiguration(expectedVersion, ""), null, null, null);
+                new RunConfiguration("foo", testFolder.getRoot(), new CodeRunConfiguration(expectedVersion, ""), null, null, null);
 
         // Act
         File runDir = target.provisionWorkspace(config, null, null);
@@ -105,7 +102,7 @@ public class WorkspaceProvisionerTest {
         when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class))).then(returnsArgAt(1));
         GeoJsonDiseaseOccurrenceFeatureCollection expectedData = mock(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
-        RunConfiguration config = createRunConfiguration("", testFolder.getRoot());
+        RunConfiguration config = createRunConfiguration("foo", testFolder.getRoot());
 
         // Act
         File runDir = target.provisionWorkspace(config, expectedData, null);

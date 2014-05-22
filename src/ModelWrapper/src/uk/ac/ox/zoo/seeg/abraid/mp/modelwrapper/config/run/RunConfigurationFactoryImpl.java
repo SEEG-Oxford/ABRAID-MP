@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.UUID;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -63,7 +64,10 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
         if (safeDiseaseName.length() > MAX_DISEASE_NAME_LENGTH) {
             safeDiseaseName = safeDiseaseName.substring(0, MAX_DISEASE_NAME_LENGTH);
         }
-        return safeDiseaseName + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss");
+
+        return safeDiseaseName + "_" +
+               LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_" +
+               UUID.randomUUID();
     }
 
     private File buildBaseDir() {

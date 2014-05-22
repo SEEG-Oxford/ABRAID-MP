@@ -51,7 +51,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         // Create directories
         Path workingDirectoryPath = Paths.get(
                 configuration.getBaseDir().getAbsolutePath(),
-                configuration.getRunName() + "_" + UUID.randomUUID().toString());
+                configuration.getRunName());
         LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
 
         File workingDirectory = workingDirectoryPath.toFile();
