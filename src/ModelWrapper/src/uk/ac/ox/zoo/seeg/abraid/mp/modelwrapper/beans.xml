@@ -9,13 +9,13 @@
 
     <bean id="osChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl" />
 
-    <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationServiceImpl" >
+    <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationServiceImpl" >
         <constructor-arg name="basicProperties" value="WEB-INF/modelwrapper.properties"/>
         <constructor-arg name="defaultCovariateConfig" value="WEB-INF/defaultCovariateConfig.json"/>
         <constructor-arg name="osChecker" ref="osChecker"/>
     </bean>
 
-    <bean id="runConfigurationFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfigurationFactoryImpl" autowire="constructor" />
+    <bean id="runConfigurationFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactoryImpl" autowire="constructor" />
     <bean id="scriptGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.FreemarkerScriptGenerator" />
     <bean id="processRunnerFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec.CommonsExecProcessRunnerFactory"/>
     <bean id="sourceCodeManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.GitSourceCodeManager" autowire="constructor" />

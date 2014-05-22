@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -19,13 +20,6 @@ public interface DiseaseService {
     List<HealthMapDisease> getAllHealthMapDiseases();
 
     /**
-     * Gets the disease group by its id.
-     * @param diseaseGroupId The id of the disease group.
-     * @return The disease group.
-     */
-    DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
-
-    /**
      * Gets all disease groups.
      * @return All disease groups.
      */
@@ -38,22 +32,77 @@ public interface DiseaseService {
     List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroups();
 
     /**
+     * Gets the disease group by its id.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The disease group.
+     */
+    DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
+
+    /**
      * For each validator disease group, get a list of its disease groups.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
     Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
 
     /**
-     * Saves a disease occurrence.
-     * @param diseaseOccurrence The disease occurrence to save.
+     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
+     * is a global or a tropical disease.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
      */
-    void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence);
+    List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
+            Integer diseaseGroupId);
 
     /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
+     * Gets disease occurrences for generating the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
+     *                                   value.
+     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
+     * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
+     *                accepts all feeds.
+     * @return A list of disease occurrences.
      */
-    void saveHealthMapDisease(HealthMapDisease disease);
+    List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
+            List<Integer> feedIds);
+
+    /**
+     * Gets disease occurrences for a request to run the model.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return Disease occurrences for a request to run the model.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
+
+    /**
+     * Gets the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease extent.
+     */
+    List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets a disease extent class by name.
+     * @param name The disease extent class name.
+     * @return The corresponding disease extent class, or null if it does not exist.
+     */
+    DiseaseExtentClass getDiseaseExtentClass(String name);
+
+    /**
+     * Gets a list of all the disease occurrence reviews in the database for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The disease occurrence reviews.
+     */
+    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
+     * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of the reviews of disease occurrences whose weightings needs updating.
+     */
+    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
+            LocalDateTime lastRetrievalDate, Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
@@ -71,47 +120,21 @@ public interface DiseaseService {
      */
     boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
                                                                            Integer validatorDiseaseGroupId);
+    /**
+     * Saves a disease occurrence.
+     * @param diseaseOccurrence The disease occurrence to save.
+     */
+    void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence);
 
     /**
-     * Gets the disease extent for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return The disease extent.
+     * Saves a HealthMap disease.
+     * @param disease The disease to save.
      */
-    List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
-
-    /**
-     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
-     * is a global or a tropical disease.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return The disease extent.
-     */
-    List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
-            Integer diseaseGroupId);
+    void saveHealthMapDisease(HealthMapDisease disease);
 
     /**
      * Saves a disease extent class that is associated with an admin unit (global or tropical).
      * @param adminUnitDiseaseExtentClass The object to save.
      */
     void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
-
-    /**
-     * Gets a disease extent class by name.
-     * @param name The disease extent class name.
-     * @return The corresponding disease extent class, or null if it does not exist.
-     */
-    DiseaseExtentClass getDiseaseExtentClass(String name);
-
-    /**
-     * Gets disease occurrences for generating the disease extent for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
-     *                                   value.
-     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
-     * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
-     *                accepts all feeds.
-     * @return A list of disease occurrences.
-     */
-    List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
-            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds);
 }

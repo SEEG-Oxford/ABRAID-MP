@@ -1,7 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitReviewDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -49,6 +52,17 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets a set of the specified expert's disease interests.
+     * @param expertId The id of the specified expert.
+     * @return The list of validator disease groups the expert can validate.
+     */
+    @Override
+    public List<ValidatorDiseaseGroup> getDiseaseInterests(Integer expertId) {
+        Expert expert = expertDao.getById(expertId);
+        return expert.getValidatorDiseaseGroups();
+    }
+
+    /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
@@ -64,6 +78,28 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets the number of disease occurrence reviews an expert has submitted, across all disease groups.
+     * @param expertId The id of the specified expert.
+     * @return The total number of disease occurrence reviews for the specified expert.
+     */
+    @Override
+    public Long getDiseaseOccurrenceReviewCount(Integer expertId) {
+        return diseaseOccurrenceReviewDao.getCountByExpertId(expertId);
+    }
+
+    /**
+     * Determines whether a review for the specified disease occurrence, by the specified expert,
+     * already exists in the database.
+     * @param diseaseOccurrenceId The id of the disease group.
+     * @param expertId The id of the specified expert.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId) {
+        return diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expertId, diseaseOccurrenceId);
+    }
+
+    /**
      * Gets all reviews submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the disease group.
@@ -72,27 +108,6 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId) {
         return adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
-    }
-
-    /**
-     * Gets a set of the specified expert's disease interests.
-     * @param expertId The id of the specified expert.
-     * @return The list of validator disease groups the expert can validate.
-     */
-    @Override
-    public List<ValidatorDiseaseGroup> getDiseaseInterests(Integer expertId) {
-        Expert expert = expertDao.getById(expertId);
-        return expert.getValidatorDiseaseGroups();
-    }
-
-    /**
-     * Gets the number of disease occurrence reviews an expert has submitted, across all disease groups.
-     * @param expertId The id of the specified expert.
-     * @return The total number of disease occurrence reviews for the specified expert.
-     */
-    @Override
-    public Long getDiseaseOccurrenceReviewCount(Integer expertId) {
-        return diseaseOccurrenceReviewDao.getCountByExpertId(expertId);
     }
 
     /**
@@ -130,17 +145,5 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     public void saveExpert(Expert expert) {
         expertDao.save(expert);
-    }
-
-    /**
-     * Determines whether a review for the specified disease occurrence, by the specified expert,
-     * already exists in the database.
-     * @param diseaseOccurrenceId The id of the disease group.
-     * @param expertId The id of the specified expert.
-     * @return True if the review already exists, otherwise false.
-     */
-    @Override
-    public boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId) {
-        return diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expertId, diseaseOccurrenceId);
     }
 }

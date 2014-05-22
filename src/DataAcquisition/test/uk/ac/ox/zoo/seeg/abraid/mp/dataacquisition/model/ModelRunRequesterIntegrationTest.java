@@ -40,15 +40,15 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     @Test
     public void requestModelRunSucceeds() {
         // Arrange
+        int diseaseGroupId = 87;
         DateTime now = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
         String modelName = "testname";
-        int diseaseGroupId = 87;
         String responseJson = "{\"modelRunName\":\"testname\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
-        modelRunRequester.requestModelRun();
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -62,13 +62,14 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     @Test
     public void requestModelRunWithErrorReturnedByModel() {
         // Arrange
+        int diseaseGroupId = 87;
         String responseJson = "{\"errorText\":\"testerror\"}";
         String expectedLogMessage = "Error when requesting a model run: testerror";
         Logger logger = mockLogger();
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
-        modelRunRequester.requestModelRun();
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         verify(logger, times(1)).fatal(eq(expectedLogMessage));
@@ -77,6 +78,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     @Test
     public void requestModelRunWithWebClientExceptionThrown() {
         // Arrange
+        int diseaseGroupId = 87;
         String exceptionMessage = "Web service failed";
         String expectedLogMessage = "Error when requesting a model run: " + exceptionMessage;
         Logger logger = mockLogger();
@@ -84,7 +86,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
 
         // Act
-        modelRunRequester.requestModelRun();
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         verify(logger, times(1)).fatal(eq(expectedLogMessage), any(WebServiceClientException.class));

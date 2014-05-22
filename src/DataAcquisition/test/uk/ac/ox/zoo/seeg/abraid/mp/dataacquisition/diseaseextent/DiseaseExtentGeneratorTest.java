@@ -11,15 +11,21 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 
 import java.util.*;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the SingleDiseaseExtentGenerator class.
+ * Tests the DiseaseExtentGenerator class.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class SingleDiseaseExtentGeneratorTest {
-    private SingleDiseaseExtentGenerator singleDiseaseExtentGenerator;
+public class DiseaseExtentGeneratorTest {
+    private DiseaseExtentGenerator diseaseExtentGenerator;
     private DiseaseService diseaseService = mock(DiseaseService.class);
 
     private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE);
@@ -28,7 +34,7 @@ public class SingleDiseaseExtentGeneratorTest {
 
     @Before
     public void setUp() {
-        singleDiseaseExtentGenerator = new SingleDiseaseExtentGenerator(diseaseService);
+        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService);
         mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(uncertainDiseaseExtentClass);
@@ -43,7 +49,7 @@ public class SingleDiseaseExtentGeneratorTest {
         DiseaseExtentParameters diseaseExtentParameters = new DiseaseExtentParameters(null, 1, 0.2, 5, 1);
 
         // Act
-        singleDiseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(0);
@@ -67,7 +73,7 @@ public class SingleDiseaseExtentGeneratorTest {
                 getFixedYearsAgo(maximumYearsAgo), feedIds, new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
 
         // Act
-        singleDiseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -94,7 +100,7 @@ public class SingleDiseaseExtentGeneratorTest {
         mockGetDiseaseGroupById(diseaseGroupId, diseaseGroup);
 
         // Act
-        singleDiseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
