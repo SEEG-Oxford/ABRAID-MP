@@ -116,7 +116,7 @@ CREATE TABLE disease_group (
     is_global boolean,
     validator_disease_group_id integer,
     weighting double precision,
-    last_model_run_prep_date timestamp DEFAULT LOCALTIMESTAMP,
+    last_model_run_prep_date timestamp,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 

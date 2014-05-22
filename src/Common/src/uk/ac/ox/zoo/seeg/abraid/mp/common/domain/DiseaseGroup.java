@@ -62,6 +62,7 @@ public class DiseaseGroup {
 
     // The last date on which the weightings were last updated in preparation for a model run request.
     @Column(name = "last_model_run_prep_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastModelRunPrepDate;
 
     // The database row creation date.
