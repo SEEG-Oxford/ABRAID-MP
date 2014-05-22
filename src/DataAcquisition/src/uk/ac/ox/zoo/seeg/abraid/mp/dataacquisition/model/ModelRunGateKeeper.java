@@ -29,10 +29,15 @@ public class ModelRunGateKeeper {
     public void prepareModelRun() {
         ///CHECKSTYLE:OFF MagicNumberCheck - Dengue hard-coded for now
         int diseaseGroupId = 87;
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,  new DiseaseExtentParameters(null, 5, 0.6, 5, 1));
-        weightingsCalculator.updateDiseaseOccurrenceWeightings(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, new DiseaseExtentParameters(null, 5, 0.6, 5, 1));
+        prepareDiseaseOccurrenceWeightings(diseaseGroupId);
         modelRunRequester.requestModelRun(diseaseGroupId);
         ///CHECKSTYLE:ON
     }
 
+    private void prepareDiseaseOccurrenceWeightings(int diseaseGroupId) {
+        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
+        // Here, determine whether occurrences should come off DataValidator, and set their is_validated value to true
+        weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+    }
 }

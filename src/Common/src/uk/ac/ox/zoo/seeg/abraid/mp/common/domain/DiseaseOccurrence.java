@@ -103,7 +103,7 @@ public class DiseaseOccurrence {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
-    // Boolean indicated whether the occurrence has been through (system or expert) validation.
+    // Boolean indicating whether the occurrence has been through (system or expert) validation.
     @Column(name = "is_validated")
     private Boolean isValidated;
 

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,11 +22,9 @@ import static org.mockito.Mockito.when;
  * Tests the WeightingsCalculator class.
  * Copyright (c) 2014 University of Oxford
  */
-
-public class WeightingsCalculatorTest {
-
+public class WeightingsCalculatorTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
-    DiseaseService diseaseService;
+    private DiseaseService diseaseService;
 
     @Before
     public void setFixedTime() {
@@ -33,30 +32,50 @@ public class WeightingsCalculatorTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceWeightingsExecutesWhenLastRetrievalDateIsNull() throws Exception {
+    public void updateDiseaseOccurrenceExpertWeightingsShouldContinueWhenLastModelRunPrepDateIsNull() throws Exception {
         // Arrange
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
+        int diseaseGroupId = 87; // Dengue
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(null);
         WeightingsCalculator target = new WeightingsCalculator(diseaseService);
 
         // Act
-        target.updateDiseaseOccurrenceWeightings(anyInt());
+        target.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
 
         // Assert
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isNotNull();
     }
 
     @Test
-    public void updateDiseaseOccurrenceWeightingsDoesNotExecuteWhenAWeekHasNotPassed() throws Exception {
+    public void updateDiseaseOccurrenceWeightingsSetsFinalWeightingForEveryOccurrenceForModelRunRequest() {
+        // Arrange
+        int diseaseGroupId = 87; // Dengue
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(null);
+        WeightingsCalculator target = new WeightingsCalculator(diseaseService);
+
+        // Act
+        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+
+        // Assert
+        for (DiseaseOccurrence occurrence : diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)) {
+            assertThat(occurrence.getFinalWeighting()).isNotNull();
+        }
+    }
+
+    @Test
+    public void updateDiseaseOccurrenceExpertWeightingsShouldNotContinueWhenAWeekHasNotPassed() throws Exception {
+        System.out.println("\"Now\" in test context: " + DateTime.now());
         executeTest(1, 0.0);
     }
 
     @Test
-    public void updateDiseaseOccurrenceWeightingsExecutesWhenAWeekHasPassed() throws Exception {
+    public void updateDiseaseOccurrenceExpertWeightingsShouldContinueWhenAWeekHasPassed() throws Exception {
         executeTest(7, 3.0);
     }
 
     @Test
-    public void updateDiseaseOccurrenceWeightingsExecutesWhenMoreThanAWeekHasPassed() throws Exception {
+    public void updateDiseaseOccurrenceExpertWeightingsShouldContinueWhenMoreThanAWeekHasPassed() throws Exception {
         executeTest(8, 3.0);
     }
 
@@ -80,14 +99,15 @@ public class WeightingsCalculatorTest {
         expert.setWeighting(expertsWeighting);
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, occurrence,
                                                                      DiseaseOccurrenceReviewResponse.YES);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
+        DiseaseService mockDiseaseService = mock(DiseaseService.class);
+        when(mockDiseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(mockDiseaseService.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastModelRunPrep(
                 (DateTime) any(), anyInt())).thenReturn(new ArrayList<>(Arrays.asList(review)));
 
-        WeightingsCalculator target = new WeightingsCalculator(diseaseService);
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService);
 
         // Act
-        target.updateDiseaseOccurrenceWeightings(diseaseGroupId);
+        target.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occurrence.getExpertWeighting()).isEqualTo(expectedWeighting);

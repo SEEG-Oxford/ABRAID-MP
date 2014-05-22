@@ -35,7 +35,7 @@ public enum LocationPrecision {
     private Character shapefileTableAdminLevel;
 
     /**
-     * The value to be sent to, and used in, the model run.
+     * The value to be sent to the model, to be used in the model run.
      */
     private Integer modelValue;
 

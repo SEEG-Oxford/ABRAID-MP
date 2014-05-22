@@ -56,11 +56,11 @@ public class DiseaseGroup {
     @JoinColumn(name = "validator_disease_group_id")
     private ValidatorDiseaseGroup validatorDiseaseGroup;
 
-    // The weighting, initially determined by groupType.
+    // The weighting, initially determined by group type.
     @Column
     private Double weighting;
 
-    // The last date on which the weightings were last updated in preparation for a model run request.
+    // The date on which the weightings were last updated, in preparation for a model run.
     @Column(name = "last_model_run_prep_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastModelRunPrepDate;
