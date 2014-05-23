@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="modeloutputhandler-lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ModelOutputHandler/lib-local/external" />
+      <root url="file://$PROJECT_DIR$/ModelOutputHandler/lib/external" />
+      <root url="file://$PROJECT_DIR$/ModelOutputHandler/lib/test" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ModelOutputHandler/lib-local/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ModelOutputHandler/lib/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ModelOutputHandler/lib/test" recursive="false" />
+  </library>
+</component>

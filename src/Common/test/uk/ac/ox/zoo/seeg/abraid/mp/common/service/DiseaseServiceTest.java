@@ -405,7 +405,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         getDiseaseOccurrencesForDiseaseExtent(false);
     }
 
-    public void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
+    private void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
         // Arrange
         int diseaseGroupId = 10;
         double minimumValidationWeighting = 0.7;

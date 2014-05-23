@@ -7,8 +7,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.RunConfigurationFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
 
 import java.util.Arrays;

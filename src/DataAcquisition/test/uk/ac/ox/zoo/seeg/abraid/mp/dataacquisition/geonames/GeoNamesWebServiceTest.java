@@ -85,7 +85,7 @@ public class GeoNamesWebServiceTest {
         String url = getGeoNamesUrl(geoNameId);
         WebServiceClient client = mock(WebServiceClient.class);
         //noinspection unchecked
-        when(client.request(url)).thenThrow(WebServiceClientException.class);
+        when(client.makeGetRequest(url)).thenThrow(WebServiceClientException.class);
         GeoNamesWebService webService = getGeoNamesWebService(client);
 
         // Act
@@ -127,7 +127,7 @@ public class GeoNamesWebServiceTest {
 
     private WebServiceClient getMockWebServiceClient(String url, String json) {
         WebServiceClient client = mock(WebServiceClient.class);
-        when(client.request(url)).thenReturn(json);
+        when(client.makeGetRequest(url)).thenReturn(json);
         return client;
     }
 }

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 
 import java.util.Arrays;
 import java.util.List;

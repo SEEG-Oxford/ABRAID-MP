@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Top-level middle tier beans specification.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/beans.xml"/>
+
+</beans>

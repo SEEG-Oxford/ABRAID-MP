@@ -14,6 +14,6 @@ application.username=abraid_mp_application
 # The password for the ABRAID-MP application user
 application.password=tessella
 
-# The path to a folder containing shapefiles to be imported into the database, e.g. shapefiles.path=C:/Users/zool1251/Documents/admin_units
+# The path to a folder containing shapefiles to be imported into the database, e.g. shapefiles.path=C:/Users/zool1251/Documents/data/admin_units
 # If not specified, the shapefile tables will be populated with test data (this is the same as the shapefile data but with no geometries)
 # shapefiles.path=

@@ -29,50 +29,37 @@ public class InputDataManagerTest {
 
     @Test
     public void writeOccurrenceDataCreatesCorrectCsvForDefaultOccurrencePoint() throws Exception {
-        String result = arrangeAndActWriteOccurrenceDataTest(defaultDiseaseOccurrence());
+        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence());
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
         assertThat(result).isEqualTo("-1.0,1.0,0.5,-999,NA" + System.lineSeparator());
     }
 
     @Test
-    public void writeOccurrenceDataCreatesCorrectCsvForGlobalAdminLevel1() throws Exception {
+    public void writeOccurrenceDataCreatesCorrectCsvForAdminLevel1() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
 
-        String result = arrangeAndActWriteOccurrenceDataTest(occurrence);
+        String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
         assertThat(result).isEqualTo("-1.0,1.0,0.5,1,102" + System.lineSeparator());
     }
 
     @Test
-    public void writeOccurrenceDataCreatesCorrectCsvForGlobalAdminLevel2() throws Exception {
+    public void writeOccurrenceDataCreatesCorrectCsvForAdminLevel2() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN2);
 
-        String result = arrangeAndActWriteOccurrenceDataTest(occurrence);
+        String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
         assertThat(result).isEqualTo("-1.0,1.0,0.5,2,102" + System.lineSeparator());
     }
 
-    @Test
-    public void writeOccurrenceDataCreatesCorrectCsvForTropicalAdminLevel1() throws Exception {
-        // Arrange
-        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
-        when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(false);
-        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
-
-        String result = arrangeAndActWriteOccurrenceDataTest(occurrence);
-
-        // Assert
-        assertThat(result).isEqualTo("-1.0,1.0,0.5,1,101" + System.lineSeparator());
-    }
-
-    private String arrangeAndActWriteOccurrenceDataTest(DiseaseOccurrence occurrence) throws Exception {
+    private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {
         // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(occurrence));

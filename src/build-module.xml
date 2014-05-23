@@ -294,7 +294,7 @@
   </target>
 
   <target name="download.phantom" depends="determine.phantom.os.properties">
-    <get skipexisting="true" src="https://bitbucket.org/ariya/phantomjs/downloads/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" />
+    <get skipexisting="true" src="http://bitbucket.org/ariya/phantomjs/downloads/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" />
   </target>
 
   <target name="unzip.phantom" unless="phantom-is-tar">

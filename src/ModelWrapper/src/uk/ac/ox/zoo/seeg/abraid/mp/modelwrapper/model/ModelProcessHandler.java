@@ -34,7 +34,7 @@ public class ModelProcessHandler implements ProcessHandler {
      */
     @Override
     public void onProcessFailed(ProcessException e) {
-        LOGGER.warn(LOG_MODEL_RUN_FAILED);
+        LOGGER.warn(LOG_MODEL_RUN_FAILED, e);
     }
 
     /**

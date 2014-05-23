@@ -13,12 +13,14 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public final class GeometryUtils {
+    /** The SRID number for the co-ordinate reference system WGS 84. */
+    public static final int SRID_FOR_WGS_84 = 4326;
+
     // Enforces co-ordinate precision to 5 decimal places
     private static final PrecisionModel PRECISION_MODEL = new PrecisionModel(100000);
 
-    // Constructs a geometry, using the above precision and the co-ordinate reference system SRID 4326
-    // (equivalent to WGS 84).
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(PRECISION_MODEL, 4326);
+    // Constructs a geometry using the above precision and the preferred SRID.
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(PRECISION_MODEL, SRID_FOR_WGS_84);
 
     private static final double METRES_IN_A_KILOMETRE = 1000.0;
     private static final double RADIUS_OF_THE_EARTH_IN_KILOMETRES = 6371;

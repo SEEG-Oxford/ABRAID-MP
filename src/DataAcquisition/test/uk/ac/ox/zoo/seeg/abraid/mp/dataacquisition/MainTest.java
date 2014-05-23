@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.startsWith;
 import static org.mockito.Mockito.when;
 
@@ -22,9 +23,10 @@ import static org.mockito.Mockito.when;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class MainTest extends AbstractMainTests {
+public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
+    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/ModelWrapper";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -40,6 +42,7 @@ public class MainTest extends AbstractMainTests {
         // Arrange
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockModelWrapperRequest();
 
         // Act
         Main.runMain(applicationContext, new String[] {});
@@ -58,6 +61,7 @@ public class MainTest extends AbstractMainTests {
                 "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json2.txt"
         };
         mockGeoNamesRequests();
+        mockModelWrapperRequest();
 
         // Act
         Main.runMain(applicationContext, fileNames);
@@ -69,14 +73,19 @@ public class MainTest extends AbstractMainTests {
     }
 
     private void mockHealthMapRequest() {
-        when(webServiceClient.request(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
+        when(webServiceClient.makeGetRequest(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
     }
 
     private void mockGeoNamesRequests() {
-        when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "1735161")))
+        when(webServiceClient.makeGetRequest(startsWith(GEONAMES_URL_PREFIX + "1735161")))
                 .thenReturn(getGeoNamesJson(1735161, "PPLC"));
-        when(webServiceClient.request(startsWith(GEONAMES_URL_PREFIX + "2186224")))
+        when(webServiceClient.makeGetRequest(startsWith(GEONAMES_URL_PREFIX + "2186224")))
                 .thenReturn(getGeoNamesJson(2186224, "PCLI"));
+    }
+
+    private void mockModelWrapperRequest() {
+        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
+                .thenReturn("{\"modelRunName\":\"testname\"}");
     }
 
     private void assertFirstLocation(DiseaseOccurrence occurrence) {
