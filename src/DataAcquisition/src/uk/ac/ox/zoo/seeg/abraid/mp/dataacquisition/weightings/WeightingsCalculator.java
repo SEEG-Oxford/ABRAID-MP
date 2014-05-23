@@ -4,9 +4,6 @@ import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
@@ -25,11 +22,6 @@ import static ch.lambdaj.Lambda.*;
  */
 public class WeightingsCalculator {
     private static final Logger LOGGER = Logger.getLogger(WeightingsCalculator.class);
-    private static final String STARTING_UPDATE_WEIGHTINGS =
-            "Starting process to update occurrences' weightings for disease %d";
-    private static final String NOT_UPDATING_WEIGHTINGS =
-            "Occurrences' weightings will not be updated for disease %d " +
-                    "- a week has not elapsed since last model run preparation on %s";
     private static final String NO_NEW_REVIEWS =
             "No new reviews have been submitted - expert weightings will not be updated";
     private static final String RECALCULATING_EXPERT_WEIGHTINGS =
@@ -48,41 +40,13 @@ public class WeightingsCalculator {
     }
 
     /**
-     * If more than a week has elapsed since last update of weighting values, or weightings have never been calculated
-     * for the specified disease group, update the expert weightings of disease occurrences.
-     * @param diseaseGroupId The id of the disease group.
-     */
-    @Transactional
-    public void updateDiseaseOccurrenceExpertWeightings(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
-        if (shouldContinue(lastModelRunPrepDate)) {
-            LOGGER.info(String.format(STARTING_UPDATE_WEIGHTINGS, diseaseGroupId));
-            updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
-        } else {
-            LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastModelRunPrepDate.toString()));
-        }
-    }
-
-    /**
-     * Weightings should be updated if there is no lastModelRunPrepDate for disease, or more than a week has elapsed.
-     */
-    private boolean shouldContinue(DateTime lastModelRunPrepDate) {
-        if (lastModelRunPrepDate == null) {
-            return true;
-        } else {
-            LocalDate today = LocalDate.now();
-            LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusWeeks(1);
-            return (comparisonDate.isEqual(today) || comparisonDate.isBefore(today));
-        }
-    }
-
-    /**
      * Get every disease occurrence point that has had new reviews submitted since the last recalculation a week ago.
      * Calculate its new weighting, by taking the weighted average of every expert review in the database (not just the
      * new reviews) and shifting it to be between 0 and 1.
+     * @param lastModelRunPrepDate The date on which the model was last run for the disease group.
+     * @param diseaseGroupId The id of the disease group.
      */
-    private void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
+    public void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
         if (allReviews.isEmpty()) {
             LOGGER.info(NO_NEW_REVIEWS);
@@ -144,7 +108,6 @@ public class WeightingsCalculator {
      * weighting and final weighting.
      * @param diseaseGroupId The id of the disease group.
      */
-    @Transactional
     public void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         if (occurrences.size() == 0) {
@@ -169,7 +132,7 @@ public class WeightingsCalculator {
      * the expert weighting if it exists, otherwise the system weighting.
      */
     private void updateDiseaseOccurrenceValidationWeighting(DiseaseOccurrence occurrence,
-                                                             Set<DiseaseOccurrence> pendingSave) {
+                                                            Set<DiseaseOccurrence> pendingSave) {
         Double expertWeighting = occurrence.getExpertWeighting();
         double systemWeighting = occurrence.getSystemWeighting();
         double weighting = (expertWeighting != null) ? expertWeighting : systemWeighting;
@@ -184,12 +147,12 @@ public class WeightingsCalculator {
      * weightings is 0, then the occurrence should be discounted by the model by setting the final weighting to 0.
      */
     private void updateDiseaseOccurrenceFinalWeighting(DiseaseOccurrence occurrence,
-                                                        Set<DiseaseOccurrence> pendingSave) {
+                                                       Set<DiseaseOccurrence> pendingSave) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
         double weighting;
-        if (locationResolutionWeighting == 0.0 || feedWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
+        if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
             weighting = 0.0;
         } else {
             weighting = average(Arrays.asList(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
@@ -208,15 +171,5 @@ public class WeightingsCalculator {
         }
     }
 
-    /**
-     * Having finished necessary preparatory actions, save the time at which preparation started.
-     * @param diseaseGroupId The ID of the disease group for which occurrence weightings are being calculated.
-     * @param modelRunPrepStartTime The time at which this week's prep process started.
-     */
-    @Transactional
-    public void updateModelRunPrepDate(int diseaseGroupId, DateTime modelRunPrepStartTime) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setLastModelRunPrepDate(modelRunPrepStartTime);
-        diseaseService.saveDiseaseGroup(diseaseGroup);
-    }
+
 }
