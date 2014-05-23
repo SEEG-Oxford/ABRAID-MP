@@ -58,7 +58,7 @@ if (!require('devtools', quietly=TRUE)) {
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
 if (!dry_run) {
     install_deps('model')
-    load_all('model')
+    load_all('model', recompile=TRUE)
 }
 
 # Define a function that can be used to load the model on cluster nodes
@@ -93,4 +93,5 @@ result <- tryCatch({
 })
 
 # Set exit code
+print(paste("Exit code:  ", result))
 quit(status=result)
