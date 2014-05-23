@@ -2,13 +2,21 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.gce.arcgrid.ArcGridReader;
+import org.geotools.gce.arcgrid.ArcGridWriter;
+import org.geotools.geometry.Envelope2D;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.AdminUnitRunConfiguration;
 
+import java.awt.image.WritableRaster;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Map;
 
 /**
  * Provides a mechanism for writing model input data into the working directory.
@@ -22,6 +30,7 @@ public class InputDataManagerImpl implements InputDataManager {
 
     private static final String UTF_8 = "UTF-8";
     private static final String OUTBREAK_CSV = "outbreak.csv";
+    private static final String EXTENT_RASTER = "extent.asc";
 
     /**
      * Write the occurrence data to file ready to run the model.
@@ -76,5 +85,52 @@ public class InputDataManagerImpl implements InputDataManager {
         } else {
             return occurrence.getProperties().getGaulCode().toString();
         }
+    }
+
+    @Override
+    public void writeExtentData(Map<Integer, Integer> extentData, AdminUnitRunConfiguration config, File dataDirectory)
+            throws IOException {
+        File loadLocation = extractRasterFilePath(config);
+        GridCoverage2D sourceRaster = loadRaster(loadLocation);
+
+        Envelope2D rasterExtent = sourceRaster.getGridGeometry().getEnvelope2D();
+        WritableRaster rasterData = (WritableRaster) sourceRaster.getRenderedImage().getData();
+
+        transformRaster(extentData, rasterData);
+
+        File saveLocation = Paths.get(dataDirectory.toString(), EXTENT_RASTER).toFile();
+        saveRaster(saveLocation, rasterData, rasterExtent);
+    }
+
+    private void transformRaster(Map<Integer, Integer> transform, WritableRaster data) {
+        for (int i = 0; i < data.getWidth(); i++) {
+            for (int j = 0; j < data.getHeight(); j++) {
+                int gaul = data.getSample(i, j, 0);
+                if (transform.containsKey(gaul)) {
+                    data.setSample(i, j, 0, transform.get(gaul));
+                } else {
+                    data.setSample(i, j, 0, Double.NaN);
+                }
+            }
+        }
+    }
+
+    private GridCoverage2D loadRaster(File location) throws IOException {
+        ArcGridReader reader = new ArcGridReader(location.toURI().toURL());
+        return reader.read(null);
+    }
+
+    private void saveRaster(File location, WritableRaster raster, Envelope2D extents) throws IOException {
+        GridCoverageFactory factory = new GridCoverageFactory();
+        GridCoverage2D targetRaster = factory.create(location.getName(), raster, extents);
+        ArcGridWriter writer = new ArcGridWriter(location.toURI().toURL());
+        writer.write(targetRaster, null);
+    }
+
+    private File extractRasterFilePath(AdminUnitRunConfiguration config) {
+        String shapefilePath = config.getUseGlobalRasterFile() ?
+                config.getGlobalRasterFile() :
+                config.getTropicalRasterFile();
+        return Paths.get(shapefilePath).toFile();
     }
 }

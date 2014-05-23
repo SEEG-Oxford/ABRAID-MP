@@ -76,11 +76,9 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
             throw new IOException("Directory structure could not be created.");
         }
 
-        // Rasterize extents
-        LOGGER.info(String.format("TODO: Rasterize extent data."));
-
         // Copy input data
         inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory);
+        inputDataManager.writeExtentData(extentWeightings, configuration.getAdminUnitConfig(), dataDirectory);
 
         // Copy model
         sourceCodeManager.provisionVersion(configuration.getCodeConfig().getModelVersion(), modelDirectory);
