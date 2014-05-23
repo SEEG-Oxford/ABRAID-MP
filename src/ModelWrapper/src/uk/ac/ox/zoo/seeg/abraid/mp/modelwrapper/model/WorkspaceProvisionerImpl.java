@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Provides a trigger for setting up the directory in which a model will run.
@@ -49,9 +48,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
                                    Map<Integer, Integer> extentWeightings)
             throws IOException {
         // Create directories
-        Path workingDirectoryPath = Paths.get(
-                configuration.getBaseDir().getAbsolutePath(),
-                configuration.getRunName());
+        Path workingDirectoryPath = configuration.getWorkingDirectoryPath();
         LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
 
         File workingDirectory = workingDirectoryPath.toFile();

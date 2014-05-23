@@ -151,4 +151,10 @@ public interface ConfigurationService {
      * @throws java.io.IOException thrown if the configuration json file can not be written correctly.
      */
     void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException;
+
+    /**
+     * Gets the root URL for the Model Output Handler web service.
+     * @return The root URL for the Model Output Handler web service.
+     */
+    String getModelOutputHandlerRootUrl();
 }

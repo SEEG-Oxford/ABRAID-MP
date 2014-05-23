@@ -7,6 +7,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-web.xml"/>
+
     <bean id="osChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl" />
 
     <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationServiceImpl" >
@@ -22,5 +24,6 @@
     <bean id="inputDataManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.InputDataManagerImpl" />
     <bean id="workspaceProvisioner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisionerImpl" autowire="constructor"/>
     <bean id="modelRunner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl" autowire="constructor"/>
+    <bean id="modelOutputHandlerWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelOutputHandlerWebService" autowire="constructor"/>
 
 </beans>

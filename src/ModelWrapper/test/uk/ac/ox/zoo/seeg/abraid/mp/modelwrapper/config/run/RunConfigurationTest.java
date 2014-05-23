@@ -33,5 +33,6 @@ public class RunConfigurationTest {
         assertThat(result.getExecutionConfig()).isEqualTo(expectedExecutionConfig);
         assertThat(result.getCovariateConfig()).isEqualTo(expectedCovariateConfig);
         assertThat(result.getAdminUnitConfig()).isEqualTo(expectedAdminUnitConfig);
+        assertThat(result.getWorkingDirectoryPath().toFile()).isEqualTo(new File("xyz/foobar"));
     }
 }

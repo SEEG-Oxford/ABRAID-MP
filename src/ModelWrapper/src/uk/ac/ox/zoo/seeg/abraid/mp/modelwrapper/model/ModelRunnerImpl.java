@@ -21,10 +21,13 @@ public class ModelRunnerImpl implements ModelRunner {
 
     private ProcessRunnerFactory processRunnerFactory;
     private WorkspaceProvisioner workspaceProvisioner;
+    private ModelOutputHandlerWebService modelOutputHandlerWebService;
 
-    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner) {
+    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner,
+                           ModelOutputHandlerWebService modelOutputHandlerWebService) {
         this.processRunnerFactory = processRunnerFactory;
         this.workspaceProvisioner = workspaceProvisioner;
+        this.modelOutputHandlerWebService = modelOutputHandlerWebService;
     }
 
     /**
@@ -54,7 +57,7 @@ public class ModelRunnerImpl implements ModelRunner {
                 fileArguments,
                 configuration.getExecutionConfig().getMaxRuntime());
 
-        ModelProcessHandler processHandler = new ModelProcessHandler();
+        ModelProcessHandler processHandler = new ModelProcessHandler(configuration, modelOutputHandlerWebService);
         processRunner.run(processHandler);
         return processHandler;
     }
