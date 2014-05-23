@@ -1,11 +1,22 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.io.ZipInputStream;
+import net.lingala.zip4j.model.FileHeader;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelOutputsMetadata;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Main model output handler.
@@ -26,12 +37,30 @@ public class MainHandler {
     }
 
     /**
-     * Handles the metadata from the model outputs, which is in JSON format.
-     * This results in retrieving the relevant ModelRun object from the database, and updating it.
-     * @param metadataJson The metadata JSON.
-     * @return The ModelRun object for this model run.
+     * Handles the model outputs contained in the specified zip file.
+     * @param modelRunZipFile The zip file resulting from the model run.
+     * @throws ZipException if a zip-related error occurs
+     * @throws IOException if an IO-related error occurs
      */
-    public ModelRun handleMetadataJson(String metadataJson) {
+    @Transactional
+    public void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
+        ZipFile zipFile = new ZipFile(modelRunZipFile);
+
+        // Retrieve the model run name from the metadata JSON, and find the corresponding ModelRun in the database
+        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME);
+        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
+        ModelRun modelRun = handleMetadataJson(metadataJsonAsString);
+
+        // Handle mean prediction raster
+        byte[] meanPredictionRaster = extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
+        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
+
+        // Handle prediction uncertainty raster
+        byte[] predUncertaintyRaster = extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+        handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
+    }
+
+    private ModelRun handleMetadataJson(String metadataJson) {
         JsonModelOutputsMetadata metadata = new JsonParser().parse(metadataJson, JsonModelOutputsMetadata.class);
         ModelRun modelRun = getModelRun(metadata.getModelRunName());
         modelRun.setResponseDate(DateTime.now());
@@ -39,24 +68,25 @@ public class MainHandler {
         return modelRun;
     }
 
-    /**
-     * Handles the mean prediction raster from the model outputs.
-     * @param modelRun The model run.
-     * @param raster The mean prediction raster.
-     */
-    public void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
+    private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
         LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
         modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
     }
 
-    /**
-     * Handles the prediction uncertainty raster from the model outputs.
-     * @param modelRun The model run.
-     * @param raster The prediction uncertainty raster.
-     */
-    public void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
+    private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
         LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
         modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+    }
+
+    private byte[] extract(ZipFile zipFile, String fileName) throws ZipException, IOException {
+        FileHeader header = zipFile.getFileHeader(fileName);
+        if (header == null) {
+            throw new IllegalArgumentException(String.format("File %s missing from model run outputs", fileName));
+        } else {
+            try (ZipInputStream inputStream = zipFile.getInputStream(header)) {
+                return IOUtils.toByteArray(inputStream);
+            }
+        }
     }
 
     private ModelRun getModelRun(String name) {

@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static com.googlecode.catchexception.CatchException.catchException;
@@ -133,8 +134,7 @@ public class WorkspaceProvisionerTest {
 
     private RunConfiguration createRunConfiguration(String runName, File baseDir) {
         RunConfiguration conf = mock(RunConfiguration.class);
-        when(conf.getRunName()).thenReturn(runName);
-        when(conf.getBaseDir()).thenReturn(baseDir);
+        when(conf.getWorkingDirectoryPath()).thenReturn(Paths.get(baseDir.getAbsolutePath(), runName));
         when(conf.getCodeConfig()).thenReturn(mock(CodeRunConfiguration.class));
         return conf;
     }
