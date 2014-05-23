@@ -137,7 +137,7 @@ public class HealthMapWebService {
         String url = buildUrl(formattedStartDate, formattedEndDate);
 
         LOGGER.info(String.format(CALLING_WEB_SERVICE_MESSAGE, formattedStartDate, formattedEndDate));
-        String json = webServiceClient.request(url);
+        String json = webServiceClient.makeGetRequest(url);
 
         return parseJson(json);
     }

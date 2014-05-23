@@ -96,10 +96,28 @@
     <ant antfile="${module.modelwrapper.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.modelwrapper.dir}"/>
   </target>
 
+  <!-- ModelWrapper -->
+  <property name="module.modeloutputhandler.dir" value="${basedir}/ModelOutputHandler"/>
+  <target name="module.modeloutputhandler.build">
+    <ant antfile="${module.modeloutputhandler.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.modeloutputhandler.dir}"/>
+  </target>
+  <target name="module.modeloutputhandler.clean">
+    <ant antfile="${module.modeloutputhandler.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.modeloutputhandler.dir}"/>
+  </target>
+  <target name="module.modeloutputhandler.quality">
+    <ant antfile="${module.modeloutputhandler.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.modeloutputhandler.dir}"/>
+  </target>
+  <target name="module.modeloutputhandler.test">
+    <ant antfile="${module.modeloutputhandler.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.modeloutputhandler.dir}"/>
+  </target>
+  <target name="module.modeloutputhandler.full">
+    <ant antfile="${module.modeloutputhandler.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.modeloutputhandler.dir}"/>
+  </target>
+  
   <!-- Targets -->
-  <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.publicsite.clean, module.modelwrapper.clean" description="cleanup all"/>
-  <target name="build" depends="module.common.build, module.dataacquisition.build, module.publicsite.build, module.modelwrapper.build" description="build all modules"/>
-  <target name="quality" depends="module.common.quality, module.dataacquisition.quality, module.publicsite.quality, module.modelwrapper.quality" description="check quality of all modules"/>
-  <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.publicsite.test, module.modelwrapper.test" description="test all modules"/>
-  <target name="full" depends="module.common.full, module.dataacquisition.full, module.publicsite.full, module.modelwrapper.full" description="build pipeline" />
+  <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.publicsite.clean, module.modelwrapper.clean, module.modeloutputhandler.clean" description="cleanup all"/>
+  <target name="build" depends="module.common.build, module.dataacquisition.build, module.publicsite.build, module.modelwrapper.build, module.modeloutputhandler.build" description="build all modules"/>
+  <target name="quality" depends="module.common.quality, module.dataacquisition.quality, module.publicsite.quality, module.modelwrapper.quality, module.modeloutputhandler.quality" description="check quality of all modules"/>
+  <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.publicsite.test, module.modelwrapper.test, module.modeloutputhandler.test" description="test all modules"/>
+  <target name="full" depends="module.common.full, module.dataacquisition.full, module.publicsite.full, module.modelwrapper.full, module.modeloutputhandler.full" description="build pipeline" />
 </project>

@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.configuration.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
 
 import java.io.File;
 import java.io.IOException;

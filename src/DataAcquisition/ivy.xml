@@ -3,7 +3,7 @@
       Ivy dependencies for DataAcquisition.
       Copyright (c) 2014 University of Oxford
 -->
-<!DOCTYPE project [
+<!DOCTYPE ivy-module [
        <!ENTITY ivy-configurations SYSTEM "../ivy-configurations.xml">
        <!ENTITY ivy-project-dependencies SYSTEM "../ivy-project-dependencies.xml">
        <!ENTITY ivy-excludes SYSTEM "../ivy-excludes.xml">
@@ -26,6 +26,8 @@
         <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.1" conf="external->default" />
 
         <dependency org="com.vividsolutions" name="jts" rev="1.8" conf="external->default" />
+
+        <dependency org="commons-configuration" name="commons-configuration" rev="1.9" conf="external->default"/>
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>

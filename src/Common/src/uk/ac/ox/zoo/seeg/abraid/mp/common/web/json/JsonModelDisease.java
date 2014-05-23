@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 /**
  * The JSON DTO used identify a disease when triggering model runs.
@@ -21,6 +22,10 @@ public class JsonModelDisease {
         setId(id);
         setName(name);
         setAbbreviation(abbreviation);
+    }
+
+    public JsonModelDisease(DiseaseGroup diseaseGroup) {
+        this(diseaseGroup.getId(), diseaseGroup.isGlobal(), diseaseGroup.getName(), diseaseGroup.getAbbreviation());
     }
 
     public int getId() {
