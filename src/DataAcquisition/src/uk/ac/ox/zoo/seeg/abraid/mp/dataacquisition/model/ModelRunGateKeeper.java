@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentParameters;
@@ -36,8 +37,10 @@ public class ModelRunGateKeeper {
     }
 
     private void prepareDiseaseOccurrenceWeightings(int diseaseGroupId) {
+        DateTime modelRunPrepStartTime = DateTime.now();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
         // Here, determine whether occurrences should come off DataValidator, and set their is_validated value to true
         weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        weightingsCalculator.updateModelRunPrepDate(diseaseGroupId, modelRunPrepStartTime);
     }
 }

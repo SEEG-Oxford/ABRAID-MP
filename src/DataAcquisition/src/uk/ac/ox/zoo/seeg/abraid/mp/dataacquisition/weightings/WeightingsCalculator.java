@@ -58,7 +58,6 @@ public class WeightingsCalculator {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         if (shouldContinue(lastModelRunPrepDate)) {
             LOGGER.info(String.format(STARTING_UPDATE_WEIGHTINGS, diseaseGroupId));
-            updateModelRunPrepDate(diseaseGroup);
             updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(String.format(NOT_UPDATING_WEIGHTINGS, diseaseGroupId, lastModelRunPrepDate.toString()));
@@ -76,15 +75,6 @@ public class WeightingsCalculator {
             LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusWeeks(1);
             return (comparisonDate.isEqual(today) || comparisonDate.isBefore(today));
         }
-    }
-
-    /**
-     * Sets the date on the disease_group row in the database as the present time.
-     * @param diseaseGroup The disease group for which occurrence weightings are being calculated.
-     */
-    private void updateModelRunPrepDate(DiseaseGroup diseaseGroup) {
-        diseaseGroup.setLastModelRunPrepDate(DateTime.now());
-        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     /**
@@ -216,5 +206,17 @@ public class WeightingsCalculator {
         for (DiseaseOccurrence occurrence : pendingSave) {
             diseaseService.saveDiseaseOccurrence(occurrence);
         }
+    }
+
+    /**
+     * Having finished necessary preparatory actions, save the time at which preparation started.
+     * @param diseaseGroupId The ID of the disease group for which occurrence weightings are being calculated.
+     * @param modelRunPrepStartTime The time at which this week's prep process started.
+     */
+    @Transactional
+    public void updateModelRunPrepDate(int diseaseGroupId, DateTime modelRunPrepStartTime) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(modelRunPrepStartTime);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 }
