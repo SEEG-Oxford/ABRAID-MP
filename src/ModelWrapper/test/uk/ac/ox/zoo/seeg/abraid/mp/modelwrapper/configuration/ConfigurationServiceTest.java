@@ -353,14 +353,14 @@ public class ConfigurationServiceTest {
     }
 
     @Test
-    public void getGlobalShapeFileReturnsCorrectDefault() throws Exception {
+    public void getGlobalRasterFileReturnsCorrectDefault() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
-        String result = target.getGlobalShapeFile();
+        String result = target.getGlobalRasterFile();
 
         // Assert
         String expectedPath = Paths.get(target.getCacheDirectory(), "admin_units", "admin_units_global.shp").toString();
@@ -368,30 +368,30 @@ public class ConfigurationServiceTest {
     }
 
     @Test
-    public void getGlobalShapeFileReturnsCorrectValue() throws Exception {
+    public void getGlobalRasterFileReturnsCorrectValue() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
         String expectedValue = "Foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "shape.file.global", "" + expectedValue);
+                "raster.file.global", "" + expectedValue);
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
-        String result = target.getGlobalShapeFile();
+        String result = target.getGlobalRasterFile();
 
         // Assert
         assertThat(result).isEqualTo(expectedValue);
     }
 
     @Test
-    public void getTropicalShapeFileReturnsCorrectDefault() throws Exception {
+    public void getTropicalRasterFileReturnsCorrectDefault() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
-        String result = target.getTropicalShapeFile();
+        String result = target.getTropicalRasterFile();
 
         // Assert
         String expectedPath = Paths.get(target.getCacheDirectory(), "admin_units", "admin_units_tropical.shp").toString();
@@ -399,16 +399,16 @@ public class ConfigurationServiceTest {
     }
 
     @Test
-    public void getTropicalShapeFileReturnsCorrectValue() throws Exception {
+    public void getTropicalRasterFileReturnsCorrectValue() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
         String expectedValue = "Foo";
         writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "shape.file.tropical", "" + expectedValue);
+                "raster.file.tropical", "" + expectedValue);
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
-        String result = target.getTropicalShapeFile();
+        String result = target.getTropicalRasterFile();
 
         // Assert
         assertThat(result).isEqualTo(expectedValue);

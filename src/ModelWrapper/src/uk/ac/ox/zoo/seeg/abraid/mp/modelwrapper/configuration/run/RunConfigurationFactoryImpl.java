@@ -98,8 +98,8 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 diseaseGlobal,
                 configurationService.getAdmin1RasterFile(),
                 configurationService.getAdmin2RasterFile(),
-                configurationService.getTropicalShapeFile(),
-                configurationService.getGlobalShapeFile());
+                configurationService.getTropicalRasterFile(),
+                configurationService.getGlobalRasterFile());
     }
 
     private Collection<String> buildCovariateFileList(int diseaseId)

@@ -63,9 +63,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_COVARIATE_SUB_DIR = "covariates";
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\R.exe";
-    private static final String DEFAULT_SHAPEFILE_SUBDIR = "admin_units";
-    private static final String DEFAULT_TROPICAL_SHAPEFILE_NAME = "admin_units_tropical.shp";
-    private static final String DEFAULT_GLOBAL_SHAPEFILE_NAME = "admin_units_global.shp";
+    private static final String DEFAULT_TROPICAL_RASTER_NAME = "admin_tropical.asc";
+    private static final String DEFAULT_GLOBAL_RASTER_NAME = "admin_global.asc";
     private static final String DEFAULT_RASTER_SUBDIR = "rasters";
     private static final String DEFAULT_ADMIN1_RASTER_NAME = "admin1qc.asc";
     private static final String DEFAULT_ADMIN2_RASTER_NAME = "admin2qc.asc";
@@ -80,8 +79,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String MODEL_VERSION_KEY = "model.repo.version";
     private static final String R_EXECUTABLE_KEY = "r.executable.path";
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
-    private static final String GLOBAL_SHAPEFILE_KEY = "shape.file.global";
-    private static final String TROPICAL_SHAPEFILE_KEY = "shape.file.tropical";
+    private static final String GLOBAL_RASTER_KEY = "raster.file.global";
+    private static final String TROPICAL_RASTER_KEY = "raster.file.tropical";
     private static final String ADMIN1_RASTER_KEY = "raster.file.admin1";
     private static final String ADMIN2_RASTER_KEY = "raster.file.admin2";
     private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
@@ -226,21 +225,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /**
-     * Gets the path to the current global shapefile.
-     * @return The path to the global shapefile.
+     * Gets the path to the current global raster file.
+     * @return The path to the global raster file.
      */
     @Override
-    public String getGlobalShapeFile() {
-        return getShapeFile(GLOBAL_SHAPEFILE_KEY, DEFAULT_GLOBAL_SHAPEFILE_NAME);
+    public String getGlobalRasterFile() {
+        return getRasterFile(GLOBAL_RASTER_KEY, DEFAULT_GLOBAL_RASTER_NAME);
     }
 
     /**
-     * Gets the path to the current tropical shapefile.
-     * @return The path to the tropical shapefile.
+     * Gets the path to the current tropical raster file.
+     * @return The path to the tropical raster file.
      */
     @Override
-    public String getTropicalShapeFile() {
-        return getShapeFile(TROPICAL_SHAPEFILE_KEY, DEFAULT_TROPICAL_SHAPEFILE_NAME);
+    public String getTropicalRasterFile() {
+        return getRasterFile(TROPICAL_RASTER_KEY, DEFAULT_TROPICAL_RASTER_NAME);
     }
 
     /**
@@ -263,10 +262,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private String getRasterFile(String propertyKey, String defaultName) {
         return getFile(propertyKey, DEFAULT_RASTER_SUBDIR, defaultName);
-    }
-
-    private String getShapeFile(String propertyKey, String defaultName) {
-        return getFile(propertyKey, DEFAULT_SHAPEFILE_SUBDIR, defaultName);
     }
 
     private String getFile(String propertyKey, String defaultSubdir, String defaultName) {
