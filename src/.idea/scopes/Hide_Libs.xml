@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Hide Libs" pattern="!file[Common]:lib//*&amp;&amp;!file[Common]:lib-local//*&amp;&amp;!file[DataAcquisition]:lib//*&amp;&amp;!file[DataAcquisition]:lib-local//*&amp;&amp;!file[ModelOutputHandler]:lib//*&amp;&amp;!file[ModelOutputHandler]:lib-local//*&amp;&amp;!file[ModelWrapper]:lib//*&amp;&amp;!file[ModelWrapper]:lib-local//*&amp;&amp;!file[PublicSite]:lib//*&amp;&amp;!file[PublicSite]:lib-local//*" />
+</component>
