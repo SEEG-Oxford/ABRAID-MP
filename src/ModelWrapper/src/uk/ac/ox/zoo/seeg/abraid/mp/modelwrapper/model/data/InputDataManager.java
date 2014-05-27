@@ -24,7 +24,7 @@ public interface InputDataManager {
     /**
      * Write the extent data to a raster file ready to run the model.
      * @param extentData The data to be written.
-     * @param config A configuration object holding the path of the shapefile to use in rasterisation.
+     * @param config A configuration object holding the path of the gaul code raster to reclassify.
      * @param dataDirectory The directory to create the data files in.
      * @throws IOException If the data could not be written.
      */
