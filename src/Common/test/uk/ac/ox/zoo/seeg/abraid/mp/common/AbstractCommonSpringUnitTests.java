@@ -85,6 +85,10 @@ public abstract class AbstractCommonSpringUnitTests extends AbstractSpringIntegr
 
     @ReplaceWithMock
     @Autowired
+    protected ModelRunDao modelRunDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected NativeSQL nativeSQL;
 
     @ReplaceWithMock

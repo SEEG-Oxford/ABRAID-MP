@@ -53,8 +53,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
         assertThat(modelRuns).hasSize(1);
-        assertThat(modelRuns.get(0).getName()).isEqualTo(modelName);
-        assertThat(modelRuns.get(0).getRequestDate()).isEqualTo(now);
+        ModelRun modelRun = modelRuns.get(0);
+        assertThat(modelRun.getName()).isEqualTo(modelName);
+        assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+        assertThat(modelRun.getRequestDate()).isEqualTo(now);
     }
 
     @Test

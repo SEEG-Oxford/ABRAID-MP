@@ -261,12 +261,13 @@ public class ConfigurationServiceTest {
         File testFile = testFolder.newFile();
         writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, osChecker);
-        if (Paths.get(System.getenv("R_HOME") + "\\bin\\R.exe").toFile().exists()) {
+        String defaultWindowsRPath = System.getenv("R_HOME") + "\\bin\\x64\\R.exe";
+        if (Paths.get(defaultWindowsRPath).toFile().exists()) {
             // Act
             String result = target.getRExecutablePath();
 
             // Assert
-            assertThat(result).isEqualTo(System.getenv("R_HOME") + "\\bin\\R.exe");
+            assertThat(result).isEqualTo(defaultWindowsRPath);
         } else {
             // Act
             catchException(target).getRExecutablePath();

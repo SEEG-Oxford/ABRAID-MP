@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
@@ -24,13 +25,16 @@ import java.util.Map;
 public class ModelRunRequester {
     private ModelWrapperWebService modelWrapperWebService;
     private DiseaseService diseaseService;
+    private ModelRunService modelRunService;
 
     private static Logger logger = Logger.getLogger(ModelRunRequester.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
 
-    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService) {
+    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
+                             ModelRunService modelRunService) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
+        this.modelRunService = modelRunService;
     }
 
     /**
@@ -40,25 +44,25 @@ public class ModelRunRequester {
     public void requestModelRun(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         List<DiseaseOccurrence> diseaseOccurrences =
-                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+                modelRunService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
         DateTime requestDate = DateTime.now();
 
         try {
             JsonModelRunResponse response =
                     modelWrapperWebService.startRun(diseaseGroup, diseaseOccurrences, diseaseExtent);
-            handleModelRunResponse(response, requestDate);
+            handleModelRunResponse(response, diseaseGroupId, requestDate);
         } catch (WebServiceClientException|JsonParserException e) {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
         }
     }
 
-    private void handleModelRunResponse(JsonModelRunResponse response, DateTime requestDate) {
+    private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             logger.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText()));
         } else {
-            ModelRun modelRun = new ModelRun(response.getModelRunName(), requestDate);
-            diseaseService.saveModelRun(modelRun);
+            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
+            modelRunService.saveModelRun(modelRun);
         }
     }
 

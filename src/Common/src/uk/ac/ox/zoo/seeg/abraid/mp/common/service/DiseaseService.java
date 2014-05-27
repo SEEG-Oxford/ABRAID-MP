@@ -142,10 +142,4 @@ public interface DiseaseService {
      * @param adminUnitDiseaseExtentClass The object to save.
      */
     void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
-
-    /**
-     * Saves a model run.
-     * @param modelRun The model run to save.
-     */
-    void saveModelRun(ModelRun modelRun);
 }

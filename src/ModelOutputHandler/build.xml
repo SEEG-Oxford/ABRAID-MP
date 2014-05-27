@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Ant build file for ModelOutputHandler.
+      Copyright (c) 2014 University of Oxford
+-->
+<project name="module_modeloutputhandler" default="build">
+  <import file="${basedir}/../build-module.xml"/>
+
+  <!-- Override the imported build.package task, to switch it from building a JAR to a WAR -->
+  <target name="build.package" depends="build.war"/>
+
+  <target name="retrieve.manual.libs" depends="module_build.retrieve.manual.libs, retrieve.hibernatespatial"/>
+
+  <!-- Retrieve Hibernate Spatial 4.3 (not currently released) -->
+  <target name="retrieve.hibernatespatial">
+    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib.local.external.dir}"/>
+  </target>
+</project>
