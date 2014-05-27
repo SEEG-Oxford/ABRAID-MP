@@ -8,6 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManagerImpl;
 
 import java.io.File;
 import java.nio.file.Paths;
