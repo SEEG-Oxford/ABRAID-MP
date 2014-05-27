@@ -3,8 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

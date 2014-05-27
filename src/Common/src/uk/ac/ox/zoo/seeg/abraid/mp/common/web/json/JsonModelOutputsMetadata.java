@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+
 /**
  * Contains metadata associated with the outputs of a model run.
  *
@@ -7,12 +9,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
  */
 public class JsonModelOutputsMetadata {
     private String modelRunName;
+    private ModelRunStatus modelRunStatus;
+    private String outputText;
+    private String errorText;
 
     public JsonModelOutputsMetadata() {
-    }
-
-    public JsonModelOutputsMetadata(String modelRunName) {
-        this.modelRunName = modelRunName;
     }
 
     public String getModelRunName() {
@@ -21,5 +22,29 @@ public class JsonModelOutputsMetadata {
 
     public void setModelRunName(String modelRunName) {
         this.modelRunName = modelRunName;
+    }
+
+    public ModelRunStatus getModelRunStatus() {
+        return modelRunStatus;
+    }
+
+    public void setModelRunStatus(ModelRunStatus modelRunStatus) {
+        this.modelRunStatus = modelRunStatus;
+    }
+
+    public String getOutputText() {
+        return outputText;
+    }
+
+    public void setOutputText(String outputText) {
+        this.outputText = outputText;
+    }
+
+    public String getErrorText() {
+        return errorText;
+    }
+
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
     }
 }

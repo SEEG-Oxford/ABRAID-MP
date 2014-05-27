@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
@@ -46,42 +47,63 @@ public class MainHandler {
     public void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
         ZipFile zipFile = new ZipFile(modelRunZipFile);
 
-        // Retrieve the model run name from the metadata JSON, and find the corresponding ModelRun in the database
-        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME);
+        // Handle the model run metadata
+        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME, true);
         String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
         ModelRun modelRun = handleMetadataJson(metadataJsonAsString);
 
+        boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
+
         // Handle mean prediction raster
-        byte[] meanPredictionRaster = extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
+        byte[] meanPredictionRaster =
+                extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME, areOutputsMandatory);
         handleMeanPredictionRaster(modelRun, meanPredictionRaster);
 
         // Handle prediction uncertainty raster
-        byte[] predUncertaintyRaster = extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+        byte[] predUncertaintyRaster =
+                extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
     }
 
     private ModelRun handleMetadataJson(String metadataJson) {
+        // Parse the JSON and retrieve the model run from the database with the specified name
         JsonModelOutputsMetadata metadata = new JsonParser().parse(metadataJson, JsonModelOutputsMetadata.class);
         ModelRun modelRun = getModelRun(metadata.getModelRunName());
+
+        // Transfer the metadata to the model run from the database
+        modelRun.setStatus(metadata.getModelRunStatus());
         modelRun.setResponseDate(DateTime.now());
+        modelRun.setOutputText(metadata.getOutputText());
+        modelRun.setErrorText(metadata.getErrorText());
         modelRunService.saveModelRun(modelRun);
+
         return modelRun;
     }
 
     private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
-        LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+        if (raster != null) {
+            LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
+            modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+        }
     }
 
     private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
-        LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-        modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+        if (raster != null) {
+            LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
+            modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+        }
     }
 
-    private byte[] extract(ZipFile zipFile, String fileName) throws ZipException, IOException {
+    private byte[] extract(ZipFile zipFile, String fileName, boolean isFileMandatory) throws ZipException, IOException {
         FileHeader header = zipFile.getFileHeader(fileName);
         if (header == null) {
-            throw new IllegalArgumentException(String.format("File %s missing from model run outputs", fileName));
+            if (isFileMandatory) {
+                // Mandatory file not found - throw exception
+                throw new IllegalArgumentException(String.format("File %s missing from model run outputs", fileName));
+            } else {
+                // Optional file not found - return null
+                return null;
+            }
         } else {
             try (ZipInputStream inputStream = zipFile.getInputStream(header)) {
                 return IOUtils.toByteArray(inputStream);

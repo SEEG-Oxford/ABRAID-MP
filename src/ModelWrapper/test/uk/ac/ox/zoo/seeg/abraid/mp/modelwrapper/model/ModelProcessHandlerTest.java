@@ -54,6 +54,9 @@ public class ModelProcessHandlerTest {
         String rootUrl = "http://localhost:8080/ModelOutputHandler/";
         String url = rootUrl + "modeloutputhandler/handleoutputs";
         String modelRunName = "deng_2014-05-13-14-49-14_652cc144-3836-4819-b489-e271212a96ed";
+        String outputText = "test output text";
+
+        target.getOutputStream().write(outputText.getBytes());
 
         // Arrange - stub methods
         when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
@@ -64,7 +67,7 @@ public class ModelProcessHandlerTest {
         // Arrange - create matcher for zip file
         File meanPredictionRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         File predictionUncertaintyRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
-        File metadataJsonTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.METADATA_JSON_FILENAME);
+        File metadataJsonTestFile = new File(TEST_DATA_FOLDER + "/completed", ModelOutputConstants.METADATA_JSON_FILENAME);
 
         ZipFileMatcher zipFileMatcher = new ZipFileMatcher(Arrays.asList(meanPredictionRasterTestFile,
                 predictionUncertaintyRasterTestFile, metadataJsonTestFile));
@@ -74,7 +77,7 @@ public class ModelProcessHandlerTest {
         FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, workingDirectory);
 
         // Act
-        target.onProcessComplete(0);
+        target.onProcessComplete();
 
         // Assert
         verify(webServiceClient, times(1)).makePostRequest(eq(url), argThat(zipFileMatcher));
@@ -90,7 +93,7 @@ public class ModelProcessHandlerTest {
         when(runConfiguration.getWorkingDirectoryPath()).thenReturn(Paths.get("this path does not exist"));
 
         // Act
-        target.onProcessComplete(0);
+        target.onProcessComplete();
 
         // Assert
         verify(logger, times(1)).fatal(
@@ -111,7 +114,7 @@ public class ModelProcessHandlerTest {
         FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, workingDirectory);
 
         // Act
-        target.onProcessComplete(0);
+        target.onProcessComplete();
 
         // Assert
         verify(logger, times(1)).fatal(
@@ -132,7 +135,7 @@ public class ModelProcessHandlerTest {
         FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, workingDirectory);
 
         // Act
-        target.onProcessComplete(0);
+        target.onProcessComplete();
 
         // Assert
         verify(logger, times(1)).fatal(
@@ -159,10 +162,50 @@ public class ModelProcessHandlerTest {
         FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, workingDirectory);
 
         // Act
-        target.onProcessComplete(0);
+        target.onProcessComplete();
 
         // Assert
         verify(logger, times(1)).error(eq("Error received from model output handler: " + webServiceResponseMessage));
+    }
+
+    @Test
+    public void onProcessFailedSendsCorrectOutputs() throws Exception {
+        // Arrange - construct main objects
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        WebServiceClient webServiceClient = mock(WebServiceClient.class);
+        modelOutputHandlerWebService = new ModelOutputHandlerWebService(webServiceClient, configurationService);
+        ModelProcessHandler target = new ModelProcessHandler(runConfiguration, modelOutputHandlerWebService);
+        Logger logger = GeneralTestUtils.createMockLogger(target);
+        File workingDirectory = testFolder.getRoot();
+
+        // Arrange - string constants
+        String rootUrl = "http://localhost:8080/ModelOutputHandler/";
+        String url = rootUrl + "modeloutputhandler/handleoutputs";
+        String modelRunName = "deng_2014-05-13-14-49-14_652cc144-3836-4819-b489-e271212a96ed";
+        String outputText = "test output text";
+        String errorMessage = "test error message";
+        String errorStreamText = "test error stream text";
+
+        target.getOutputStream().write(outputText.getBytes());
+        target.getErrorStream().write(errorStreamText.getBytes());
+
+        // Arrange - stub methods
+        when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn(Paths.get(workingDirectory.toURI()));
+        when(runConfiguration.getRunName()).thenReturn(modelRunName);
+        when(webServiceClient.makePostRequest(anyString(), any(byte[].class))).thenReturn("");
+
+        // Arrange - create matcher for zip file
+        File metadataJsonTestFile = new File(TEST_DATA_FOLDER + "/failed", ModelOutputConstants.METADATA_JSON_FILENAME);
+
+        ZipFileMatcher zipFileMatcher = new ZipFileMatcher(Arrays.asList(metadataJsonTestFile));
+
+        // Act
+        target.onProcessFailed(new ProcessException(errorMessage, new IllegalAccessException()));
+
+        // Assert
+        verify(webServiceClient, times(1)).makePostRequest(eq(url), argThat(zipFileMatcher));
+        verify(logger, times(1)).info(eq("Successfully sent model outputs to model output handler."));
     }
 
     @Test
@@ -262,7 +305,8 @@ public class ModelProcessHandlerTest {
                     String actualFileContents = FileUtils.readFileToString(actualFile);
                     if (!expectedFileContents.equals(actualFileContents)) {
                         // Expected and actual files are not equal
-                        System.out.println(String.format("Unzipped files named %s are not equal", expectedFileName));
+                        System.out.println(String.format("Unzipped files named %s are not equal.\nExpected: %s\nActual:   %s",
+                                expectedFileName, expectedFileContents, actualFileContents));
                         return false;
                     }
                 }
