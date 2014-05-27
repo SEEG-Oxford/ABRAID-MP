@@ -16,7 +16,7 @@ import java.util.Map;
 public class InputDataManagerImpl implements InputDataManager {
     private static final Logger LOGGER = Logger.getLogger(InputDataManagerImpl.class);
 
-    private static final String OUTBREAK_CSV = "outbreak.csv";
+    private static final String OCCURRENCE_CSV = "occurrence.csv";
     private static final String EXTENT_RASTER = "extent.asc";
     private final ExtentDataWriter extentDataWriter;
     private final OccurrenceDataWriter occurrenceDataWriter;
@@ -35,7 +35,7 @@ public class InputDataManagerImpl implements InputDataManager {
     @Override
     public void writeOccurrenceData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
             throws IOException {
-        File outbreakFile = Paths.get(dataDirectory.toString(), OUTBREAK_CSV).toFile();
+        File outbreakFile = Paths.get(dataDirectory.toString(), OCCURRENCE_CSV).toFile();
 
         occurrenceDataWriter.write(occurrenceData, outbreakFile);
     }

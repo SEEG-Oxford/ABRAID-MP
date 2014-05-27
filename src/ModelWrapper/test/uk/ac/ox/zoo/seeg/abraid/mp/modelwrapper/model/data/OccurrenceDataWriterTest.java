@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
@@ -8,8 +8,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriter;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriterImpl;
 
 import java.io.File;
 import java.nio.file.Paths;
