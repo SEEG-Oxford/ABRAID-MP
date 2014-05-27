@@ -17,9 +17,9 @@ public class HealthMapLocationValidator {
             "HealthMap country \"%s\" (ID %d) does not exist in ABRAID database (place name \"%s\")";
 
     private HealthMapLocation location;
-    private Map<Long, HealthMapCountry> countryMap;
+    private Map<Integer, HealthMapCountry> countryMap;
 
-    public HealthMapLocationValidator(HealthMapLocation location, Map<Long, HealthMapCountry> countryMap) {
+    public HealthMapLocationValidator(HealthMapLocation location, Map<Integer, HealthMapCountry> countryMap) {
         this.location = location;
         this.countryMap = countryMap;
     }

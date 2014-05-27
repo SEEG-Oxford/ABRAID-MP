@@ -22,5 +22,5 @@ public interface HealthMapCountryDao {
      * @return The country, or null if not found.
      * @throws org.springframework.dao.DataAccessException if multiple countries with this name are found
      */
-    HealthMapCountry getById(Long id);
+    HealthMapCountry getById(Integer id);
 }

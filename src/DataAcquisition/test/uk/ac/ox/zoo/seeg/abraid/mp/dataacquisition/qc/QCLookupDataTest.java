@@ -68,25 +68,25 @@ public class QCLookupDataTest {
 
         // Act
         QCLookupData lookupData = new QCLookupData(locationService, healthMapLookupData);
-        Map<Long, MultiPolygon> healthMapCountryGeometryMap = lookupData.getHealthMapCountryGeometryMap();
+        Map<Integer, MultiPolygon> healthMapCountryGeometryMap = lookupData.getHealthMapCountryGeometryMap();
 
         // Assert
         assertThat(healthMapCountryGeometryMap).hasSize(2);
-        assertThat(healthMapCountryGeometryMap.get(1L)).isNotNull();
-        assertThat(healthMapCountryGeometryMap.get(2L)).isNull();
-        assertThat(healthMapCountryGeometryMap.get(3L)).isNotNull();
-        assertThat(healthMapCountryGeometryMap.get(1L).equals(expectedGeometry1)).isTrue();
-        assertThat(healthMapCountryGeometryMap.get(3L).equals(expectedGeometry2)).isTrue();
+        assertThat(healthMapCountryGeometryMap.get(1)).isNotNull();
+        assertThat(healthMapCountryGeometryMap.get(2)).isNull();
+        assertThat(healthMapCountryGeometryMap.get(3)).isNotNull();
+        assertThat(healthMapCountryGeometryMap.get(1).equals(expectedGeometry1)).isTrue();
+        assertThat(healthMapCountryGeometryMap.get(3).equals(expectedGeometry2)).isTrue();
     }
 
-    private Map<Long, HealthMapCountry> getCountryMap() {
+    private Map<Integer, HealthMapCountry> getCountryMap() {
         Country country1 = new Country(1, "Triangle", GeometryUtils.createMultiPolygon(getTriangle()));
         Country country2 = new Country(2, "Square", GeometryUtils.createMultiPolygon(getSquare()));
         Country country3 = new Country(3, "Five-pointed", GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
         List<HealthMapCountry> healthMapCountries = Arrays.asList(
-                new HealthMapCountry(1L, "HealthMap country 1", country1),
-                new HealthMapCountry(2L, "HealthMap country 2"),
-                new HealthMapCountry(3L, "HealthMap country 3", country2, country3));
+                new HealthMapCountry(1, "HealthMap country 1", country1),
+                new HealthMapCountry(2, "HealthMap country 2"),
+                new HealthMapCountry(3, "HealthMap country 3", country2, country3));
         return index(healthMapCountries, on(HealthMapCountry.class).getId());
     }
 

@@ -22,7 +22,7 @@ public class AlertDaoImpl extends AbstractDao<Alert, Integer> implements AlertDa
      * @return The alert, or null if not found.
      */
     @Override
-    public Alert getByHealthMapAlertId(Long healthMapAlertId) {
+    public Alert getByHealthMapAlertId(Integer healthMapAlertId) {
         return uniqueResultNamedQuery("getAlertByHealthMapAlertId", "healthMapAlertId", healthMapAlertId);
     }
 }

@@ -29,13 +29,13 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = null;
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -78,13 +78,13 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "vi";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/doesnotcontainalertid";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -127,13 +127,13 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "zh";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -171,13 +171,13 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "zh";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -230,14 +230,14 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "zh";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String healthMapDiseaseNewName = "Test disease new name";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -278,16 +278,16 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = null;
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
-        Long existingDiseaseId = 2L;
+        int diseaseId = 1;
+        int feedId = 1;
+        int existingDiseaseId = 2;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String existingHealthMapDiseaseName = "Test existing disease";
         String diseaseGroupName = "NEW FROM HEALTHMAP: Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup existingDiseaseGroup = new DiseaseGroup();
@@ -330,11 +330,11 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "fr";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long feedId = 1L;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         Alert alert = new Alert();
@@ -366,13 +366,13 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "de";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         Alert alert = new Alert();
@@ -406,13 +406,13 @@ public class HealthMapAlertConverterTest {
         String feedLanguage = "de";
         String summary = "Test summary";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -453,13 +453,13 @@ public class HealthMapAlertConverterTest {
         String feedNewLanguage = "zh";
         String summary = "Test summary";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -499,13 +499,13 @@ public class HealthMapAlertConverterTest {
         String summary = "Test summary";
         String feedLanguage = "en";
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        Long diseaseId = 1L;
-        Long feedId = 1L;
+        int diseaseId = 1;
+        int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
         String healthMapDiseaseName = "Test disease";
         String description = "Test description";
-        long healthMapAlertId = 2154965L;
+        int healthMapAlertId = 2154965;
 
         Location location = new Location();
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -532,7 +532,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence).isNull();
     }
 
-    private void mockOutGetAlertByID(AlertService alertService, long healthMapAlertId, Alert alert) {
+    private void mockOutGetAlertByID(AlertService alertService, int healthMapAlertId, Alert alert) {
         when(alertService.getAlertByHealthMapAlertId(healthMapAlertId)).thenReturn(alert);
     }
 
@@ -544,17 +544,17 @@ public class HealthMapAlertConverterTest {
     }
 
     private void mockOutGetFeed(HealthMapLookupData lookupData, Feed feed) {
-        Map<Long, Feed> feedMap = new HashMap<>();
+        Map<Integer, Feed> feedMap = new HashMap<>();
         if (feed != null) {
             feedMap.put(feed.getHealthMapFeedId(), feed);
         }
         when(lookupData.getFeedMap()).thenReturn(feedMap);
     }
 
-    private HealthMapDisease mockOutGetExistingHealthMapDisease(HealthMapLookupData lookupData, Long diseaseId,
+    private HealthMapDisease mockOutGetExistingHealthMapDisease(HealthMapLookupData lookupData, Integer diseaseId,
                                                     String healthMapDiseaseName, DiseaseGroup diseaseGroup) {
         HealthMapDisease healthMapDisease = new HealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        Map<Long, HealthMapDisease> diseaseMap = new HashMap<>();
+        Map<Integer, HealthMapDisease> diseaseMap = new HashMap<>();
         diseaseMap.put(diseaseId, healthMapDisease);
         when(lookupData.getDiseaseMap()).thenReturn(diseaseMap);
         return healthMapDisease;

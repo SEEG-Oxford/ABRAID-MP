@@ -43,7 +43,7 @@ public class Feed {
 
     // The feed ID used for this provenance in HealthMap.
     @Column(name = "healthmap_feed_id")
-    private Long healthMapFeedId;
+    private Integer healthMapFeedId;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -58,7 +58,7 @@ public class Feed {
         this.name = name;
     }
 
-    public Feed(String name, Provenance provenance, double weighting, String language, Long healthMapFeedId) {
+    public Feed(String name, Provenance provenance, double weighting, String language, Integer healthMapFeedId) {
         this.name = name;
         this.provenance = provenance;
         this.weighting = weighting;
@@ -67,7 +67,7 @@ public class Feed {
     }
 
     public Feed(Integer id, String name, Provenance provenance, String language, double weighting,
-                Long healthMapFeedId) {
+                Integer healthMapFeedId) {
         this.id = id;
         this.name = name;
         this.provenance = provenance;
@@ -112,11 +112,11 @@ public class Feed {
         this.language = language;
     }
 
-    public Long getHealthMapFeedId() {
+    public Integer getHealthMapFeedId() {
         return healthMapFeedId;
     }
 
-    public void setHealthMapFeedId(Long healthMapFeedId) {
+    public void setHealthMapFeedId(Integer healthMapFeedId) {
         this.healthMapFeedId = healthMapFeedId;
     }
 
