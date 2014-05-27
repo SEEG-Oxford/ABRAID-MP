@@ -40,7 +40,7 @@ public class WeightingsCalculator {
     }
 
     /**
-     * Get every disease occurrence point that has had new reviews submitted since the last recalculation a week ago.
+     * Get every disease occurrence point that has had new reviews submitted since the last recalculation.
      * Calculate its new weighting, by taking the weighted average of every expert review in the database (not just the
      * new reviews) and shifting it to be between 0 and 1.
      * @param lastModelRunPrepDate The date on which the model was last run for the disease group.
@@ -82,7 +82,7 @@ public class WeightingsCalculator {
 
     private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
         List<Double> weightings = calculateWeightingForEachReview(reviews);
-        double weighting = average(weightings);
+        double weighting = (double) avg(weightings);
         return shift(weighting);
     }
 
@@ -92,10 +92,6 @@ public class WeightingsCalculator {
                 return review.getResponse().getValue() * review.getExpert().getWeighting();
             }
         });
-    }
-
-    private double average(List<Double> weightings) {
-        return ((double) sum(weightings)) / weightings.size();
     }
 
     // Shift weighting from range [-1, 1] to desired range of [0, 1]
@@ -136,7 +132,7 @@ public class WeightingsCalculator {
         Double expertWeighting = occurrence.getExpertWeighting();
         double systemWeighting = occurrence.getSystemWeighting();
         double weighting = (expertWeighting != null) ? expertWeighting : systemWeighting;
-        if (occurrence.getValidationWeighting() == null || occurrence.getValidationWeighting() != weighting) {
+        if (hasWeightingChanged(occurrence.getValidationWeighting(), weighting)) {
             pendingSave.add(occurrence);
             occurrence.setValidationWeighting(weighting);
         }
@@ -155,13 +151,18 @@ public class WeightingsCalculator {
         if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
             weighting = 0.0;
         } else {
-            weighting = average(Arrays.asList(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
+            weighting = (double) avg(Arrays.asList(locationResolutionWeighting, feedWeighting,
+                    diseaseGroupTypeWeighting,
                     occurrence.getValidationWeighting()));
         }
-        if (occurrence.getFinalWeighting() == null || occurrence.getFinalWeighting() != weighting) {
+        if (hasWeightingChanged(occurrence.getFinalWeighting(), weighting)) {
             pendingSave.add(occurrence);
             occurrence.setFinalWeighting(weighting);
         }
+    }
+
+    private boolean hasWeightingChanged(Double currentWeighting, double newWeighting) {
+        return (currentWeighting == null || currentWeighting != newWeighting);
     }
 
     private void saveChanges(Set<DiseaseOccurrence> pendingSave) {
@@ -170,6 +171,4 @@ public class WeightingsCalculator {
             diseaseService.saveDiseaseOccurrence(occurrence);
         }
     }
-
-
 }

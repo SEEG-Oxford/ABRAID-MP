@@ -52,10 +52,10 @@ public class ModelRunManager {
     public void prepareModelRun(int diseaseGroupId) {
         DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate)) {
-            DateTime modelRunPrepStartTime = DateTime.now();
+            DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(String.format(STARTING_MODEL_PREP, diseaseGroupId));
             executeModelRunPrep(lastModelRunPrepDate, diseaseGroupId);
-            lastModelRunPrepDateManager.saveDate(modelRunPrepStartTime, diseaseGroupId);
+            lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(String.format(NOT_STARTING_MODEL_PREP, diseaseGroupId, lastModelRunPrepDate));
         }

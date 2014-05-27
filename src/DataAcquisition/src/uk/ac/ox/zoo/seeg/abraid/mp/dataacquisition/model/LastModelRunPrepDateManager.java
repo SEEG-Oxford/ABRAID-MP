@@ -28,12 +28,12 @@ public class LastModelRunPrepDateManager {
 
     /**
      * Having finished necessary preparatory actions for the disease group, save the time at which preparation started.
-     * @param modelRunPrepStartTime The time at which this week's prep process started.
+     * @param modelRunPrepDate The time at which this week's prep process started.
      * @param diseaseGroupId The ID of the disease group for which the model run is being prepared.
      */
-    public void saveDate(DateTime modelRunPrepStartTime, int diseaseGroupId) {
+    public void saveDate(DateTime modelRunPrepDate, int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setLastModelRunPrepDate(modelRunPrepStartTime);
+        diseaseGroup.setLastModelRunPrepDate(modelRunPrepDate);
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 }
