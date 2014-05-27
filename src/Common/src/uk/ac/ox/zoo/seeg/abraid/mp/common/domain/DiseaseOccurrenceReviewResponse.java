@@ -17,15 +17,15 @@ public enum DiseaseOccurrenceReviewResponse {
     /**
      * The expert is unsure on validity of disease occurrence point.
      */
-    UNSURE(0);
+    UNSURE(0.01);
 
-    private final int value;
+    private final double value;
 
-    private DiseaseOccurrenceReviewResponse(int value) {
+    private DiseaseOccurrenceReviewResponse(double value) {
         this.value = value;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 }

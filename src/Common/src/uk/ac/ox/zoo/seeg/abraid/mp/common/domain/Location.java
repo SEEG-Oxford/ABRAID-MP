@@ -49,6 +49,9 @@ public class Location {
     @Column(name = "geoname_id")
     private Integer geoNameId;
 
+    @Column(name = "resolution_weighting")
+    private Double resolutionWeighting;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -131,6 +134,14 @@ public class Location {
 
     public void setPrecision(LocationPrecision precision) {
         this.precision = precision;
+    }
+
+    public Double getResolutionWeighting() {
+        return resolutionWeighting;
+    }
+
+    public void setResolutionWeighting(Double resolutionWeighting) {
+        this.resolutionWeighting = resolutionWeighting;
     }
 
     public Long getHealthMapCountryId() {

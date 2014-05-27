@@ -207,11 +207,11 @@ public class DiseaseExtentGeneratorTest {
         // The occurrence date adn weighting isn't used in the current disease extent calculations, so just supply the
         // same one
         DateTime occurrenceDate = new DateTime("2014-01-01");
-        double weighting = 0.7;
+        double systemWeighting = 0.7;
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
-            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, weighting, adminUnitGlobalGaulCode,
-                    adminUnitTropicalGaulCode));
+            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, systemWeighting,
+                    adminUnitGlobalGaulCode, adminUnitTropicalGaulCode));
         }
         return occurrences;
     }

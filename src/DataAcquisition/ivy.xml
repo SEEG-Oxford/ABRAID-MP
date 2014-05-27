@@ -27,8 +27,6 @@
 
         <dependency org="com.vividsolutions" name="jts" rev="1.8" conf="external->default" />
 
-        <dependency org="commons-configuration" name="commons-configuration" rev="1.9" conf="external->default"/>
-
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
 
