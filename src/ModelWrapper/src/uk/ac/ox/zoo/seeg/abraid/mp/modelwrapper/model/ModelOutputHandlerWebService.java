@@ -29,7 +29,9 @@ public class ModelOutputHandlerWebService {
     /**
      * Sends the model outputs to the model output handler.
      * @param outputZipFile The output zip file.
-     * @throws uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException If the web service call fails.
+     * @throws IOException if there is a problem with reading the output zip file into memory.
+     * @throws uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException if the web service call fails.
+     * @return Any error message returned by the model output handler. An empty string indicates success.
      */
     public String handleOutputs(File outputZipFile) throws IOException, WebServiceClientException {
         String url = buildUrl();

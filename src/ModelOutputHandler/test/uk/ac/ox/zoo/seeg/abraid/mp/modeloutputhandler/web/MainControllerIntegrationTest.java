@@ -110,7 +110,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         DateTime expectedResponseDate = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
         insertModelRun(TEST_MODEL_RUN_NAME);
-        byte[] body = loadTestFile("valid_failed_outputs.zip");
+        byte[] body = loadTestFile("valid_failed_outputs_without_rasters.zip");
         String expectedErrorText = "test error text";
 
         // Act and assert
