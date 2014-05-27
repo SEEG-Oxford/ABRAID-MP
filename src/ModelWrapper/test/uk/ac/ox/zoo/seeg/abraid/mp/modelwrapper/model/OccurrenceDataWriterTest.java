@@ -8,8 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManagerImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriter;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriterImpl;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -22,15 +22,15 @@ import static org.mockito.Mockito.when;
 import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence;
 
 /**
- * Tests for InputDataManagerImpl.
+ * Tests for OccurrenceDataWriter.
  * Copyright (c) 2014 University of Oxford
  */
-public class InputDataManagerTest {
+public class OccurrenceDataWriterTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Test
-    public void writeOccurrenceDataCreatesCorrectCsvForDefaultOccurrencePoint() throws Exception {
+    public void writeCreatesCorrectCsvForDefaultOccurrencePoint() throws Exception {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence());
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
@@ -38,7 +38,7 @@ public class InputDataManagerTest {
     }
 
     @Test
-    public void writeOccurrenceDataCreatesCorrectCsvForAdminLevel1() throws Exception {
+    public void writeCreatesCorrectCsvForAdminLevel1() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
@@ -50,7 +50,7 @@ public class InputDataManagerTest {
     }
 
     @Test
-    public void writeOccurrenceDataCreatesCorrectCsvForAdminLevel2() throws Exception {
+    public void writeCreatesCorrectCsvForAdminLevel2() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN2);
@@ -65,43 +65,43 @@ public class InputDataManagerTest {
         // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(occurrence));
-        InputDataManager target = new InputDataManagerImpl();
-        File dir = testFolder.newFolder();
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
 
         // Act
-        target.writeOccurrenceData(data, dir);
-        return FileUtils.readFileToString(Paths.get(dir.toString(), "outbreak.csv").toFile());
+        target.write(data, targetFile);
+        return FileUtils.readFileToString(targetFile);
     }
 
     @Test
-    public void writeOccurrenceDataRequiresEPSG4326() throws Exception {
+    public void writeRequiresEPSG4326() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(occurrence));
-        InputDataManager target = new InputDataManagerImpl();
-        File dir = testFolder.newFolder();
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
 
         // Act
         data.setCrs(new GeoJsonNamedCrs());
-        catchException(target).writeOccurrenceData(data, dir);
+        catchException(target).write(data, targetFile);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Only EPSG:4326 is supported.");
     }
 
     @Test
-    public void writeOccurrenceDataRejectsFeatureLevelCrs() throws Exception {
+    public void writeRejectsFeatureLevelCrs() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(occurrence));
-        InputDataManager target = new InputDataManagerImpl();
-        File dir = testFolder.newFolder();
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
 
         // Act
         data.getFeatures().get(0).setCrs(new GeoJsonNamedCrs());
-        catchException(target).writeOccurrenceData(data, dir);
+        catchException(target).write(data, targetFile);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Feature level CRS are not supported.");
