@@ -1,6 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
 import java.util.List;
@@ -26,12 +26,12 @@ public interface DiseaseOccurrenceReviewDao {
 
     /**
      * Gets all reviews (for all time) for the occurrences of the specified disease group, which have new reviews.
-     * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
-    List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate, Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                Integer diseaseGroupId);
 
     /**
      * Gets the total number of reviews submitted by the specified expert.

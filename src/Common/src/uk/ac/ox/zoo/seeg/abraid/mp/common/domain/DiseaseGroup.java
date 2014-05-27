@@ -1,12 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease
@@ -55,6 +55,15 @@ public class DiseaseGroup {
     @ManyToOne
     @JoinColumn(name = "validator_disease_group_id")
     private ValidatorDiseaseGroup validatorDiseaseGroup;
+
+    // The weighting, initially determined by group type.
+    @Column
+    private Double weighting;
+
+    // The date on which the weightings were last updated, in preparation for a model run.
+    @Column(name = "last_model_run_prep_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastModelRunPrepDate;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -164,6 +173,13 @@ public class DiseaseGroup {
         this.abbreviation = abbreviation;
     }
 
+    public Boolean isGlobal() {
+        return isGlobal;
+    }
+
+    public void setGlobal(Boolean isGlobal) {
+        this.isGlobal = isGlobal;
+    }
     public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
         return validatorDiseaseGroup;
     }
@@ -172,12 +188,20 @@ public class DiseaseGroup {
         this.validatorDiseaseGroup = validatorDiseaseGroup;
     }
 
-    public Boolean isGlobal() {
-        return isGlobal;
+    public Double getWeighting() {
+        return weighting;
     }
 
-    public void setGlobal(Boolean isGlobal) {
-        this.isGlobal = isGlobal;
+    public void setWeighting(Double weighting) {
+        this.weighting = weighting;
+    }
+
+    public DateTime getLastModelRunPrepDate() {
+        return lastModelRunPrepDate;
+    }
+
+    public void setLastModelRunPrepDate(DateTime lastModelRunPrepDate) {
+        this.lastModelRunPrepDate = lastModelRunPrepDate;
     }
 
     public DateTime getCreatedDate() {

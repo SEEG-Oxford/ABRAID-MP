@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.joda.time.LocalDateTime;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
@@ -32,16 +32,16 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
 
     /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate, Integer diseaseGroupId) {
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                       Integer diseaseGroupId) {
         return
-            listNamedQuery("getAllDiseaseOccurrenceReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval",
-                "lastRetrievalDate", lastRetrievalDate, "diseaseGroupId", diseaseGroupId);
+            listNamedQuery("getDiseaseOccurrenceReviewsForModelRunPrep",
+                    "lastModelRunPrepDate", lastModelRunPrepDate, "diseaseGroupId", diseaseGroupId);
     }
 
     /**

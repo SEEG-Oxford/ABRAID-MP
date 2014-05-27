@@ -115,6 +115,8 @@ CREATE TABLE disease_group (
     abbreviation varchar(10),
     is_global boolean,
     validator_disease_group_id integer,
+    weighting double precision,
+    last_model_run_prep_date timestamp,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -125,7 +127,11 @@ CREATE TABLE disease_occurrence (
     alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     occurrence_date timestamp NOT NULL,
-    validation_weighting double precision
+    is_validated boolean,
+    expert_weighting double precision,
+    system_weighting double precision,
+    validation_weighting double precision,
+    final_weighting double precision
 );
 
 CREATE TABLE disease_occurrence_review (

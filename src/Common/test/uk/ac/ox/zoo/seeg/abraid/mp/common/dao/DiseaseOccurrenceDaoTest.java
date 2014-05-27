@@ -107,14 +107,15 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         Location location = new Location("Karachi", 25.0111455, 67.0647043, LocationPrecision.PRECISE);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         DateTime occurrenceDate = DateTime.now().minusDays(5);
-        double validationWeighting = 0.5;
+        double systemWeighting = 0.5;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
         occurrence.setLocation(location);
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setOccurrenceDate(occurrenceDate);
-        occurrence.setValidationWeighting(validationWeighting);
+        occurrence.setSystemWeighting(systemWeighting);
+        occurrence.setValidationWeighting(systemWeighting);
 
         // Act
         diseaseOccurrenceDao.save(occurrence);
@@ -137,7 +138,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrence.getCreatedDate()).isNotNull();
         assertThat(occurrence.getLocation()).isNotNull();
         assertThat(occurrence.getLocation().getId()).isNotNull();
-        assertThat(occurrence.getValidationWeighting()).isEqualTo(validationWeighting);
+        assertThat(occurrence.getValidationWeighting()).isEqualTo(systemWeighting);
         assertThat(occurrence.getDiseaseGroup()).isNotNull();
         assertThat(occurrence.getDiseaseGroup().getId()).isNotNull();
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(occurrenceDate);
