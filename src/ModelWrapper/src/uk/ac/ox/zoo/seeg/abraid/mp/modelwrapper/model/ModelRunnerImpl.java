@@ -37,7 +37,7 @@ public class ModelRunnerImpl implements ModelRunner {
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
-     * @throws IOException Thrown if the workspace can not be correctly provisioned.
+     * @throws IOException Thrown if the workspace cannot be correctly provisioned.
      */
     @Override
     public ModelProcessHandler runModel(RunConfiguration configuration,

@@ -42,8 +42,8 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      * @param diseaseName The disease name
      * @param diseaseAbbreviation The disease abbreviation
      * @return The new RunConfiguration
-     * @throws ConfigurationException When the R executable can not be found.
-     * @throws IOException When the covariate configuration can not be read.
+     * @throws ConfigurationException When the R executable cannot be found.
+     * @throws IOException When the covariate configuration cannot be read.
      */
     @Override
     public RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseGlobal,

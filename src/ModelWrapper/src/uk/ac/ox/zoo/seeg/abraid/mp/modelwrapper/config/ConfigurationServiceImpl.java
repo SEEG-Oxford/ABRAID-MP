@@ -329,7 +329,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Gets the current covariate configuration.
      * @return The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file can not be parsed correctly.
+     * @throws java.io.IOException thrown if the configuration json file cannot be parsed correctly.
      */
     @Override
     public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
@@ -365,7 +365,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Sets the current covariate configuration.
      * @param config The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file can not be written correctly.
+     * @throws java.io.IOException thrown if the configuration json file cannot be written correctly.
      */
     @Override
     public void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
