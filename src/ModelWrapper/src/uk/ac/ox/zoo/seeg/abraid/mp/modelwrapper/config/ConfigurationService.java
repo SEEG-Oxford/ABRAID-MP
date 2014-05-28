@@ -85,16 +85,16 @@ public interface ConfigurationService {
     void setMaxModelRunDuration(int value);
 
     /**
-     * Gets the path to the current global shapefile.
-     * @return The path to the global shapefile.
+     * Gets the path to the current global raster file.
+     * @return The path to the global raster file.
      */
-    String getGlobalShapeFile();
+    String getGlobalRasterFile();
 
     /**
-     * Gets the path to the current tropical shapefile.
-     * @return The path to the tropical shapefile.
+     * Gets the path to the current tropical raster file.
+     * @return The path to the tropical raster file.
      */
-    String getTropicalShapeFile();
+    String getTropicalRasterFile();
 
     /**
      * Gets the path to the current admin 1 raster file.

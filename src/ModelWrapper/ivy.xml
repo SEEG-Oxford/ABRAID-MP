@@ -24,6 +24,25 @@
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" conf="external->default"/>
         <dependency org="org.eclipse.jgit" name="org.eclipse.jgit" rev="3.2.0.201312181205-r" conf="external->default"/>
 
+        <!-- Geo -->
+        <dependency org="com.vividsolutions" name="jts" rev="1.8" conf="external->default" />
+        <dependency org="org.geotools" name="gt-api" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-main" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-referencing" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-opengis" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-data" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-metadata" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-coverage" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-arcgrid" rev="11.0" conf="external->default" />
+        <dependency org="org.geotools" name="gt-grid" rev="11.0" conf="external->default" />
+        <dependency org="it.geosolutions.imageio-ext" name="imageio-ext-arcgrid"  rev="1.1.10" conf="external->default" />
+        <dependency org="it.geosolutions.imageio-ext" name="imageio-ext-utilities"  rev="1.1.10" conf="external->default" />
+        <dependency org="org.jaitools" name="jt-all" rev="1.3.1" conf="external->default" />
+        <dependency org="javax.media" name="jai_core" rev="1.1.3" conf="external->default" />
+        <dependency org="javax.media" name="jai_codec" rev="1.1.3" conf="external->default" />
+        <dependency org="javax.media" name="jai_imageio" rev="1.1" conf="external->default" />
+        <dependency org="java3d" name="vecmath" rev="1.3.1"  conf="external->default"/>
+
         <!-- Spring -->
         <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
