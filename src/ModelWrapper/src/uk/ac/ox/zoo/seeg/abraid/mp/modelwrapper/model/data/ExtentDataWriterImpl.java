@@ -11,7 +11,6 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Provides a mechanism for writing model input extent data into the working directory.
@@ -19,15 +18,16 @@ import java.util.logging.Level;
  */
 public class ExtentDataWriterImpl implements ExtentDataWriter {
     private static final Logger LOGGER = Logger.getLogger(ExtentDataWriterImpl.class);
-    private static final String LOG_FAILED_TO_READ_SOURCE_RASTER = "Failed to read gaul code source raster: %s.";
-    private static final String LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER = "Failed to save transformed weighting raster: %s.";
-    private static final String LOG_SAVING_TRANSFORMED_RASTER = "Saving transformed weighting raster: %s";
-    private static final String LOG_LOADING_SOURCE_RASTER = "Loading gaul code source raster: %s.";
-    private static final Object LOG_TRANSFORMING_RASTER_DATA = "Transforming gaul code raster to weightings raster.";
-
-    public ExtentDataWriterImpl() {
-        java.util.logging.Logger.getLogger("org.geotools.gce.arcgrid").setLevel(Level.WARNING);
-    }
+    private static final String LOG_FAILED_TO_READ_SOURCE_RASTER =
+            "Failed to read gaul code source raster: %s.";
+    private static final String LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER =
+            "Failed to save transformed weighting raster: %s.";
+    private static final String LOG_SAVING_TRANSFORMED_RASTER =
+            "Saving transformed weighting raster: %s";
+    private static final String LOG_LOADING_SOURCE_RASTER =
+            "Loading gaul code source raster: %s.";
+    private static final Object LOG_TRANSFORMING_RASTER_DATA =
+            "Transforming gaul code raster to weightings raster.";
 
     /**
      * Write the extent data to a raster file ready to run the model.

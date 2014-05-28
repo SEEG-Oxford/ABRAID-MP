@@ -144,7 +144,7 @@ public class ExtentDataWriterTest {
 
     private String createExpectation(Map<Integer, Integer> transform, Collection<Integer> allValuesInRaster, String initial) {
         String expectation = initial;
-        for(Integer sourceInt : allValuesInRaster) {
+        for (Integer sourceInt : allValuesInRaster) {
             String sourceValue = sourceInt.toString();
             Integer targetInt = transform.containsKey(sourceInt) ? transform.get(sourceInt) : null;
 
