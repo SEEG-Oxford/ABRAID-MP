@@ -26,7 +26,7 @@ public class AlertServiceTest extends AbstractCommonSpringUnitTests {
     public void getAlertByHealthMapAlertId() {
         // Arrange
         Alert alert = new Alert();
-        long healthMapAlertId = 123L;
+        int healthMapAlertId = 123;
         when(alertDao.getByHealthMapAlertId(healthMapAlertId)).thenReturn(alert);
 
         // Act

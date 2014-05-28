@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
  * Copyright (c) 2014 University of Oxford
  */
 @Repository
-public class HealthMapCountryDaoImpl extends AbstractDao<HealthMapCountry, Long> implements HealthMapCountryDao {
+public class HealthMapCountryDaoImpl extends AbstractDao<HealthMapCountry, Integer> implements HealthMapCountryDao {
     public HealthMapCountryDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }

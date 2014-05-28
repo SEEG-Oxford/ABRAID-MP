@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -185,15 +184,15 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastRetrievalDate The date on which the disease occurrence reviews were last retrieved.
+     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
-            LocalDateTime lastRetrievalDate, Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getAllReviewsForDiseaseGroupOccurrencesWithNewReviewsSinceLastRetrieval(
-            lastRetrievalDate, diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
+                                                                                       Integer diseaseGroupId) {
+        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate,
+                diseaseGroupId);
     }
 
     /**
@@ -244,6 +243,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Transactional
     public void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
         diseaseOccurrenceDao.save(diseaseOccurrence);
+    }
+
+    /**
+     * Saves a disease group.
+     * @param diseaseGroup The disease group to save.
+     */
+    @Override
+    @Transactional
+    public void saveDiseaseGroup(DiseaseGroup diseaseGroup) {
+        diseaseGroupDao.save(diseaseGroup);
     }
 
     /**

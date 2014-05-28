@@ -49,6 +49,9 @@ public class Location {
     @Column(name = "geoname_id")
     private Integer geoNameId;
 
+    @Column(name = "resolution_weighting")
+    private Double resolutionWeighting;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -57,7 +60,7 @@ public class Location {
 
     // The HealthMap country ID (if any).
     @Column(name = "healthmap_country_id")
-    private Long healthMapCountryId;
+    private Integer healthMapCountryId;
 
     // The GAUL code of the admin 1/2 unit assigned to the location during QC stage 1.
     @Column(name = "admin_unit_qc_gaul_code")
@@ -100,7 +103,7 @@ public class Location {
         this.name = name;
     }
 
-    public Location(String name, double x, double y, LocationPrecision precision, long healthMapCountryId) {
+    public Location(String name, double x, double y, LocationPrecision precision, int healthMapCountryId) {
         this(name, x, y, precision);
         this.healthMapCountryId = healthMapCountryId;
     }
@@ -133,11 +136,19 @@ public class Location {
         this.precision = precision;
     }
 
-    public Long getHealthMapCountryId() {
+    public Double getResolutionWeighting() {
+        return resolutionWeighting;
+    }
+
+    public void setResolutionWeighting(Double resolutionWeighting) {
+        this.resolutionWeighting = resolutionWeighting;
+    }
+
+    public Integer getHealthMapCountryId() {
         return healthMapCountryId;
     }
 
-    public void setHealthMapCountryId(Long healthMapCountryId) {
+    public void setHealthMapCountryId(Integer healthMapCountryId) {
         this.healthMapCountryId = healthMapCountryId;
     }
 

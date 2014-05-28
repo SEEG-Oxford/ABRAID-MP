@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunGateKeeper;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -20,7 +20,7 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class);
 
     private HealthMapDataAcquisition healthMapDataAcquisition;
-    private ModelRunGateKeeper modelRunGateKeeper;
+    private ModelRunManager modelRunManager;
 
 
     /**
@@ -53,14 +53,14 @@ public class Main {
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
         main.runDataAcquisition(args);
-        main.prepareModelRun();
+        main.manageModelRuns();
     }
 
 
 
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunGateKeeper modelRunGateKeeper) {
+    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunManager modelRunManager) {
         this.healthMapDataAcquisition = healthMapDataAcquisition;
-        this.modelRunGateKeeper = modelRunGateKeeper;
+        this.modelRunManager = modelRunManager;
     }
 
     /**
@@ -81,8 +81,11 @@ public class Main {
 
     /**
      * Prepares the model run by recalculating disease extent, weightings, and requesting the model run.
+     * These tasks are only executed once per week.
      */
-    public void prepareModelRun() {
-        modelRunGateKeeper.prepareModelRun();
+    public void manageModelRuns() {
+        for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
+            modelRunManager.prepareModelRun(diseaseGroupId);
+        }
     }
 }

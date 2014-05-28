@@ -20,7 +20,7 @@ public interface AlertDao {
      * @param healthMapAlertId The HealthMap alert ID.
      * @return The alert, or null if not found.
      */
-    Alert getByHealthMapAlertId(Long healthMapAlertId);
+    Alert getByHealthMapAlertId(Integer healthMapAlertId);
 
     /**
      * Saves an alert.

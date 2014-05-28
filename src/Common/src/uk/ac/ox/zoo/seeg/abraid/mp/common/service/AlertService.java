@@ -17,7 +17,7 @@ public interface AlertService {
      * @param healthMapAlertId The HealthMap alert ID.
      * @return The alert with this HealthMap alert ID, or null if not found.
      */
-    Alert getAlertByHealthMapAlertId(Long healthMapAlertId);
+    Alert getAlertByHealthMapAlertId(Integer healthMapAlertId);
 
     /**
      * Gets a list of alert feeds with the specified provenance name.

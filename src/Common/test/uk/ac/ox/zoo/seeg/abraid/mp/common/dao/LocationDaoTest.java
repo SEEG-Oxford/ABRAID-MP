@@ -24,7 +24,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveAndReloadCountryLocation() {
         // Arrange
-        long healthMapCountryId = 1;
+        int healthMapCountryId = 1;
         String placeName = "Botswana";
         double x = -22.34284;
         double y = -24.6871;
@@ -58,7 +58,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveAndReloadAdmin1LocationByGeoNameId() {
         // Arrange
-        long healthMapCountryId = 2;
+        int healthMapCountryId = 2;
         String placeName = "England";
         double x = 52.88496;
         double y = -1.97703;
@@ -135,7 +135,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveAndReloadPreciseLocationByPoint() {
         // Arrange
-        long healthMapCountryId = 3;
+        int healthMapCountryId = 3;
         String placeName = "Oxford";
         double x = 51.75042;
         double y = -1.24759;

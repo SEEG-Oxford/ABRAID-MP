@@ -135,15 +135,15 @@ public class HealthMapLocationValidatorTest {
                 " (place name \"Test Place Name\")");
     }
 
-    private Map<Long, HealthMapCountry> getCountryMap() {
+    private Map<Integer, HealthMapCountry> getCountryMap() {
         Country country1 = new Country(167, "Mongolia");
         Country country2 = new Country(212, "Samoa");
-        HealthMapCountry healthMapCountry1 = new HealthMapCountry(1L, "Mongolia", country1);
-        HealthMapCountry healthMapCountry2 = new HealthMapCountry(2L, "Samoa", country2);
+        HealthMapCountry healthMapCountry1 = new HealthMapCountry(1, "Mongolia", country1);
+        HealthMapCountry healthMapCountry2 = new HealthMapCountry(2, "Samoa", country2);
 
-        Map<Long, HealthMapCountry> countryMap = new HashMap<>();
-        countryMap.put(1L, healthMapCountry1);
-        countryMap.put(2L, healthMapCountry2);
+        Map<Integer, HealthMapCountry> countryMap = new HashMap<>();
+        countryMap.put(1, healthMapCountry1);
+        countryMap.put(2, healthMapCountry2);
 
         return countryMap;
     }

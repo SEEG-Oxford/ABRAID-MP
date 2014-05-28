@@ -50,7 +50,7 @@ public class Alert {
 
     // The HealthMap alert ID (if this alert has originated in HealthMap).
     @Column(name = "healthmap_alert_id")
-    private Long healthMapAlertId;
+    private Integer healthMapAlertId;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -114,11 +114,11 @@ public class Alert {
         this.summary = summary;
     }
 
-    public Long getHealthMapAlertId() {
+    public Integer getHealthMapAlertId() {
         return healthMapAlertId;
     }
 
-    public void setHealthMapAlertId(Long healthMapAlertId) {
+    public void setHealthMapAlertId(Integer healthMapAlertId) {
         this.healthMapAlertId = healthMapAlertId;
     }
 

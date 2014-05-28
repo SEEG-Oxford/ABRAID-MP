@@ -54,8 +54,8 @@ public class HealthMapAlertConverter {
             occurrence.setAlert(alert);
             occurrence.setLocation(location);
 
-            // For now, hardcode all validation weightings to 0.7
-            occurrence.setValidationWeighting(0.7); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
+            // For now, hardcode all system weightings to 0.7
+            occurrence.setSystemWeighting(0.7); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
 
             if (diseaseService.doesDiseaseOccurrenceExist(occurrence)) {
                 // If this disease occurrence already exists, do not write it again
@@ -70,7 +70,7 @@ public class HealthMapAlertConverter {
         Alert alert = null;
 
         // Try to find an alert with the given ID (if specified)
-        Long alertId = healthMapAlert.getAlertId();
+        Integer alertId = healthMapAlert.getAlertId();
         if (alertId != null) {
             alert = alertService.getAlertByHealthMapAlertId(alertId);
         } else {
@@ -84,7 +84,7 @@ public class HealthMapAlertConverter {
         return alert;
     }
 
-    private Alert createAlert(HealthMapAlert healthMapAlert, Long alertId) {
+    private Alert createAlert(HealthMapAlert healthMapAlert, Integer alertId) {
         Alert alert = new Alert();
         alert.setFeed(retrieveFeed(healthMapAlert));
         alert.setTitle(healthMapAlert.getSummary());

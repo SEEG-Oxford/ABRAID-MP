@@ -24,6 +24,7 @@ public class PostQCManager {
      */
     public void runPostQCProcesses(Location location) {
         assignDiseaseExtentAdminUnits(location);
+        setResolutionWeighting(location);
     }
 
     /**
@@ -49,6 +50,11 @@ public class PostQCManager {
                     locationService.findAdminUnitTropicalThatContainsPoint(location.getGeom(), adminLevel);
             location.setAdminUnitTropicalGaulCode(adminUnitTropical);
         }
+    }
+
+    private void setResolutionWeighting(Location location) {
+        double weighting = location.getPrecision().getWeighting();
+        location.setResolutionWeighting(weighting);
     }
 
     private void validateLocation(Location location) {
