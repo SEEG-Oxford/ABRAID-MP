@@ -40,8 +40,7 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id = :diseaseGroupId " +
-                        "and d.isValidated = true " +
-                        "and d.location.precision <> 'COUNTRY'"
+                        "and d.isValidated = true"
         )
 })
 @Entity

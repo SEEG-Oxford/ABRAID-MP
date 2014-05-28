@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -53,7 +54,7 @@ public class Main {
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
         main.runDataAcquisition(args);
-        main.manageModelRuns();
+        main.prepareForAndRequestModelRuns();
     }
 
 
@@ -80,12 +81,18 @@ public class Main {
     }
 
     /**
-     * Prepares the model run by recalculating disease extent, weightings, and requesting the model run.
-     * These tasks are only executed once per week.
+     * Requests a model run (after preparation and if relevant), for each disease group that has occurrences.
      */
-    public void manageModelRuns() {
+    public void prepareForAndRequestModelRuns() {
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
-            modelRunManager.prepareModelRun(diseaseGroupId);
+            ///CHECKSTYLE:OFF EmptyBlock - catch is intentionally empty
+            try {
+                modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
+            } catch (ModelRunManagerException e) {
+                // Ignore the exception, because it is thrown to roll back the transaction per disease group if
+                // the model run manager fails.
+            }
+            ///CHECKSTYLE:ON EmptyBlock
         }
     }
 }

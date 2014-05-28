@@ -41,7 +41,7 @@ public class HealthMapDataAcquisition {
     /**
      * Acquires HealthMap data from the HealthMap web service.
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void acquireDataFromWebService() {
         DateTime startDate = getStartDate();
         DateTime endDate = getEndDate(startDate);
@@ -54,7 +54,7 @@ public class HealthMapDataAcquisition {
      * Acquires HealthMap data from a file.
      * @param fileName The name of a file that contains HealthMap JSON.
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void acquireDataFromFile(String fileName) {
         LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, fileName));
         List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(fileName);

@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
@@ -40,10 +41,7 @@ public class InputDataManagerImpl implements InputDataManager {
         }
 
         File outbreakFile = Paths.get(dataDirectory.toString(), OUTBREAK_CSV).toFile();
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(outbreakFile.getAbsoluteFile()), UTF_8));
+        try (BufferedWriter writer = createBufferedWriter(outbreakFile)) {
             for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
                 if (occurrence.getCrs() != null) {
                     LOGGER.warn(LOG_FEATURE_CRS_WARN);
@@ -53,19 +51,20 @@ public class InputDataManagerImpl implements InputDataManager {
                 writer.write(extractCsvLine(occurrence));
                 writer.newLine();
             }
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
+    }
+
+    private BufferedWriter createBufferedWriter(File outbreakFile) throws IOException {
+        return new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(outbreakFile.getAbsoluteFile()), UTF_8));
     }
 
     private String extractCsvLine(GeoJsonDiseaseOccurrenceFeature occurrence) {
         return StringUtils.join(new String[]{
                 Double.toString(occurrence.getGeometry().getCoordinates().getLongitude()),
                 Double.toString(occurrence.getGeometry().getCoordinates().getLatitude()),
-                occurrence.getProperties().getWeighting().toString(),
-                occurrence.getProperties().getLocationPrecision().getModelValue().toString(),
+                ObjectUtils.toString(occurrence.getProperties().getWeighting()),
+                ObjectUtils.toString(occurrence.getProperties().getLocationPrecision().getModelValue()),
                 extractGaulCode(occurrence)
         }, ',');
     }

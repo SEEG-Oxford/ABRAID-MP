@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent;
 
 import ch.lambdaj.function.convert.Converter;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 
@@ -30,7 +29,6 @@ public class DiseaseExtentGenerator {
      * @param diseaseGroupId The disease group.
      * @param parameters Parameters used in generating the disease extent.
      */
-    @Transactional
     public void generateDiseaseExtent(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent =
                 diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);

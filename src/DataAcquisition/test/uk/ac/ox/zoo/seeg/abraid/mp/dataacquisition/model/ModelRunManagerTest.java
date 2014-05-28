@@ -37,7 +37,7 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
         ModelRunManager target = createModelRunGateKeeper();
 
         // Act
-        target.prepareModelRun(diseaseGroupId);
+        target.prepareForAndRequestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isNotNull();
@@ -54,7 +54,7 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
         ModelRunManager target = createModelRunGateKeeper();
 
         // Act
-        target.prepareModelRun(diseaseGroupId);
+        target.prepareForAndRequestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isNotNull();
@@ -71,7 +71,7 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
         ModelRunManager target = createModelRunGateKeeper();
 
         // Act
-        target.prepareModelRun(diseaseGroupId);
+        target.prepareForAndRequestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);

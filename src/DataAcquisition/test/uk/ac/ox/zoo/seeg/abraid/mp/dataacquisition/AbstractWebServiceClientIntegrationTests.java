@@ -2,9 +2,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
+import org.kubek2k.springockito.annotations.WrapWithSpy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelWrapperWebService;
 
 /**
  * Base class for Main class tests in the Data Acquisition module.
@@ -17,4 +19,8 @@ public abstract class AbstractWebServiceClientIntegrationTests extends AbstractD
     @ReplaceWithMock
     @Autowired
     protected WebServiceClient webServiceClient;
+
+    @WrapWithSpy
+    @Autowired
+    protected ModelWrapperWebService modelWrapperWebService;
 }
