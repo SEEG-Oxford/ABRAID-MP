@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
  */
 public class WebServiceClient {
     private static final String GET_WEB_SERVICE_MESSAGE = "Making GET request to web service URL \"%s\"";
-    private static final String POST_WEB_SERVICE_MESSAGE = "Making POST request to web service URL \"%s\"";
+    private static final String POST_WEB_SERVICE_MESSAGE = "Making POST request to web service URL \"%s\" (%s %s)";
     private static final String CALLED_WEB_SERVICE_MESSAGE =  "Call to web service URL \"%s\" took %d ms";
     private static final String STATUS_UNSUCCESSFUL_MESSAGE =
             "Web service returned status code %d (\"%s\"). Web service URL: \"%s\"";
@@ -69,11 +69,37 @@ public class WebServiceClient {
      * or if a response status code other than "successful" is returned.
      */
     public String makePostRequestWithJSON(String url, final String bodyAsJson) throws WebServiceClientException {
-        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url));
+        if (bodyAsJson == null) {
+            throw new IllegalArgumentException("POST body must be non-null");
+        }
+
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, bodyAsJson.length(), "characters"));
         return request(url, new SyncInvokerAction() {
             @Override
             public Response invoke(SyncInvoker invoker) {
                 return invoker.post(Entity.entity(bodyAsJson, MediaType.APPLICATION_JSON_TYPE));
+            }
+        });
+    }
+
+    /**
+     * Calls a web service by making a POST request.
+     * @param url The web service URL to call.
+     * @param body The body as an array of bytes.
+     * @return The web service response as a string.
+     * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
+     * or if a response status code other than "successful" is returned.
+     */
+    public String makePostRequest(String url, final byte[] body) throws WebServiceClientException {
+        if (body == null) {
+            throw new IllegalArgumentException("POST body must be non-null");
+        }
+
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        return request(url, new SyncInvokerAction() {
+            @Override
+            public Response invoke(SyncInvoker invoker) {
+                return invoker.post(Entity.entity(body, MediaType.APPLICATION_OCTET_STREAM_TYPE));
             }
         });
     }

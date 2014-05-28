@@ -17,6 +17,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
@@ -79,12 +80,13 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     @Test
-    public void handleModelOutputsStoresValidOutputs() throws Exception {
+    public void handleModelOutputsStoresValidCompletedOutputs() throws Exception {
         // Arrange
         DateTime expectedResponseDate = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
         insertModelRun(TEST_MODEL_RUN_NAME);
-        byte[] body = loadTestFile("valid_outputs.zip");
+        byte[] body = loadTestFile("valid_completed_outputs.zip");
+        String expectedOutputText = "test output text";
 
         // Act and assert
         this.mockMvc
@@ -94,7 +96,58 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Assert
         ModelRun run = modelRunDao.getByName(TEST_MODEL_RUN_NAME);
+        assertThat(run.getStatus()).isEqualTo(ModelRunStatus.COMPLETED);
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
+        assertThat(run.getOutputText()).isEqualTo(expectedOutputText);
+        assertThat(run.getErrorText()).isNullOrEmpty();
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc", NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc", NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+    }
+
+    @Test
+    public void handleModelOutputsStoresValidFailedOutputsWithoutRasters() throws Exception {
+        // Arrange
+        DateTime expectedResponseDate = DateTime.now();
+        DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("valid_failed_outputs_without_rasters.zip");
+        String expectedErrorText = "test error text";
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+
+        // Assert
+        ModelRun run = modelRunDao.getByName(TEST_MODEL_RUN_NAME);
+        assertThat(run.getStatus()).isEqualTo(ModelRunStatus.FAILED);
+        assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
+        assertThat(run.getOutputText()).isNullOrEmpty();
+        assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
+    }
+
+    @Test
+    public void handleModelOutputsStoresValidFailedOutputsWithRasters() throws Exception {
+        // Arrange
+        DateTime expectedResponseDate = DateTime.now();
+        DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("valid_failed_outputs_with_rasters.zip");
+        String expectedErrorText = "test error text";
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+
+        // Assert
+        ModelRun run = modelRunDao.getByName(TEST_MODEL_RUN_NAME);
+        assertThat(run.getStatus()).isEqualTo(ModelRunStatus.FAILED);
+        assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
+        assertThat(run.getOutputText()).isNullOrEmpty();
+        assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
         assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc", NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
         assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc", NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
@@ -138,7 +191,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     @Test
-    public void handleModelOutputsRejectsMissingMeanPredictionRaster() throws Exception {
+    public void handleModelOutputsRejectsMissingMeanPredictionRasterIfStatusIsCompleted() throws Exception {
         // Arrange
         insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("missing_mean_prediction.zip");
@@ -151,7 +204,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     @Test
-    public void handleModelOutputsRejectsMissingPredictionUncertaintyRaster() throws Exception {
+    public void handleModelOutputsRejectsMissingPredictionUncertaintyRasterIfStatusIsCompleted() throws Exception {
         // Arrange
         insertModelRun(TEST_MODEL_RUN_NAME);
         byte[] body = loadTestFile("missing_prediction_uncertainty.zip");

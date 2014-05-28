@@ -5,7 +5,11 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties"/>
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-web.xml"/>
 
     <bean id="osChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl" />
 
@@ -22,5 +26,6 @@
     <bean id="inputDataManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.InputDataManagerImpl" />
     <bean id="workspaceProvisioner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisionerImpl" autowire="constructor"/>
     <bean id="modelRunner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl" autowire="constructor"/>
+    <bean id="modelOutputHandlerWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelOutputHandlerWebService" autowire="constructor"/>
 
 </beans>

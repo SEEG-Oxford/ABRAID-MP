@@ -66,31 +66,31 @@ public class WebServiceClientTest {
     }
 
     @Test
-    public void makePostRequestThrowsExceptionIfUnknownHost() {
+    public void makePostRequestWithJSONThrowsExceptionIfUnknownHost() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        catchException(client).makePostRequestWithJSON("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", null);
+        catchException(client).makePostRequestWithJSON("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", "");
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void makePostRequestThrowsExceptionIfMalformedURL() {
+    public void makePostRequestWithJSONThrowsExceptionIfMalformedURL() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        catchException(client).makePostRequestWithJSON("this is malformed", null);
+        catchException(client).makePostRequestWithJSON("this is malformed", "");
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void makePostRequestSuccessfullyPostsToValidURL() {
+    public void makePostRequestWithJSONSuccessfullyPostsToValidURL() {
         // Arrange
         WebServiceClient client = new WebServiceClient();
         String name = "Harry Hill";
@@ -100,6 +100,45 @@ public class WebServiceClientTest {
         String response = client.makePostRequestWithJSON(POST_URL, json);
 
         // Assert
+        assertThat(response).containsIgnoringCase("application/json");
         assertThat(response).containsIgnoringCase(name);
+    }
+
+    @Test
+    public void makePostRequestWithByteArrayThrowsExceptionIfUnknownHost() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+
+        // Act
+        catchException(client).makePostRequest("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", new byte[] {});
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void makePostRequestWithByteArrayThrowsExceptionIfMalformedURL() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+
+        // Act
+        catchException(client).makePostRequest("this is malformed", new byte[] {});
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void makePostRequestWithByteArraySuccessfullyPostsToValidURL() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+        String bodyAsString = "Test body";
+
+        // Act
+        String response = client.makePostRequest(POST_URL, bodyAsString.getBytes());
+
+        // Assert
+        assertThat(response).containsIgnoringCase("application/octet-stream");
+        assertThat(response).containsIgnoringCase(bodyAsString);
     }
 }

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Provides a trigger for setting up the directory in which a model will run.
@@ -41,7 +40,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
      * @param occurrenceData The occurrences to use in the model.
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting, to be used by model.
      * @return The model wrapper script file to run.
-     * @throws IOException Thrown if the directory can not be correctly provisioned.
+     * @throws IOException Thrown if the directory cannot be correctly provisioned.
      */
     @Override
     public File provisionWorkspace(RunConfiguration configuration,
@@ -49,9 +48,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
                                    Map<Integer, Integer> extentWeightings)
             throws IOException {
         // Create directories
-        Path workingDirectoryPath = Paths.get(
-                configuration.getBaseDir().getAbsolutePath(),
-                configuration.getRunName() + "_" + UUID.randomUUID().toString());
+        Path workingDirectoryPath = configuration.getWorkingDirectoryPath();
         LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
 
         File workingDirectory = workingDirectoryPath.toFile();
