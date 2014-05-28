@@ -20,7 +20,7 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
     private static final String LOG_TOP_LEVEL_CRS_WARN = "Aborted writing occurrence data due to incorrect CRS.";
 
     private static final String UTF_8 = "UTF-8";
-    public static final String R_CODE_NULL_IDENTIFIER = "NA";
+    private static final String R_CODE_NULL_IDENTIFIER = "NA";
 
     /**
      * Write the occurrence data to a csv file ready to run the model.
@@ -36,7 +36,6 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
             LOGGER.warn(LOG_TOP_LEVEL_CRS_WARN);
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
-
 
         BufferedWriter writer = null;
         try {
