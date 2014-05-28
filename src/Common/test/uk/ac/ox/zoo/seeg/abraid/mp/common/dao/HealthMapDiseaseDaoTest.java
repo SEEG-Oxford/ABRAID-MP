@@ -27,7 +27,7 @@ public class HealthMapDiseaseDaoTest extends AbstractCommonSpringIntegrationTest
         // Arrange
         String healthMapDiseaseName = "Test HealthMap disease";
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(16);
-        long healthMapDiseaseId = 10000;
+        int healthMapDiseaseId = 10000;
 
         HealthMapDisease disease = new HealthMapDisease();
         disease.setId(healthMapDiseaseId);
@@ -50,7 +50,7 @@ public class HealthMapDiseaseDaoTest extends AbstractCommonSpringIntegrationTest
     public void saveAndReloadHealthMapDiseaseWithoutGroup() {
         // Arrange
         String healthMapDiseaseName = "Test HealthMap disease";
-        long healthMapDiseaseId = 10000;
+        int healthMapDiseaseId = 10000;
 
         HealthMapDisease disease = new HealthMapDisease();
         disease.setId(healthMapDiseaseId);
@@ -69,7 +69,7 @@ public class HealthMapDiseaseDaoTest extends AbstractCommonSpringIntegrationTest
 
     @Test
     public void loadNonExistentHealthMapDisease() {
-        HealthMapDisease healthMapDisease = healthMapDiseaseDao.getById(-1L);
+        HealthMapDisease healthMapDisease = healthMapDiseaseDao.getById(-1);
         assertThat(healthMapDisease).isNull();
     }
 

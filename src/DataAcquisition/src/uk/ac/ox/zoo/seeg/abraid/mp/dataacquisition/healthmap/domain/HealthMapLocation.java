@@ -14,7 +14,7 @@ import java.util.List;
 public class HealthMapLocation {
     private String country;
     @JsonProperty("country_id")
-    private Long countryId;
+    private Integer countryId;
     @JsonProperty("place_name")
     private String placeName;
     @JsonProperty("lat")
@@ -28,12 +28,12 @@ public class HealthMapLocation {
 
     private List<HealthMapAlert> alerts;
 
-    public Long getCountryId() {
+    public Integer getCountryId() {
         return countryId;
     }
 
     public void setCountryId(String countryId) {
-        this.countryId = ParseUtils.parseLong(countryId);
+        this.countryId = ParseUtils.parseInteger(countryId);
     }
 
     public String getCountry() {

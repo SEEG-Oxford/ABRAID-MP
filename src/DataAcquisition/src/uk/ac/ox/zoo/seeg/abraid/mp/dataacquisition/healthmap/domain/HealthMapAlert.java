@@ -20,10 +20,10 @@ public class HealthMapAlert {
 
     private String feed;
     @JsonProperty("feed_id")
-    private Long feedId;
+    private Integer feedId;
     private String disease;
     @JsonProperty("disease_id")
-    private Long diseaseId;
+    private Integer diseaseId;
     private String summary;
     private DateTime date;
     private String link;
@@ -37,7 +37,7 @@ public class HealthMapAlert {
     public HealthMapAlert() {
     }
 
-    public HealthMapAlert(String feed, Long feedId, String disease, Long diseaseId, String summary, DateTime date,
+    public HealthMapAlert(String feed, Integer feedId, String disease, Integer diseaseId, String summary, DateTime date,
                           String link, String description, String originalUrl, String feedLanguage) {
         this.feed = feed;
         this.feedId = feedId;
@@ -59,12 +59,12 @@ public class HealthMapAlert {
         this.feed = StringUtils.trimWhitespace(feed);
     }
 
-    public Long getFeedId() {
+    public Integer getFeedId() {
         return feedId;
     }
 
     public void setFeedId(String feedId) {
-        this.feedId = ParseUtils.parseLong(feedId);
+        this.feedId = ParseUtils.parseInteger(feedId);
     }
 
     public String getDisease() {
@@ -75,12 +75,12 @@ public class HealthMapAlert {
         this.disease = StringUtils.trimWhitespace(disease);
     }
 
-    public Long getDiseaseId() {
+    public Integer getDiseaseId() {
         return diseaseId;
     }
 
     public void setDiseaseId(String diseaseId) {
-        this.diseaseId = ParseUtils.parseLong(diseaseId);
+        this.diseaseId = ParseUtils.parseInteger(diseaseId);
     }
 
     public String getSummary() {
@@ -135,12 +135,12 @@ public class HealthMapAlert {
      * Extracts the alert ID from the link.
      * @return The alert ID, or null if it could not be extracted from the link.
      */
-    public Long getAlertId() {
-        Long alertId = null;
+    public Integer getAlertId() {
+        Integer alertId = null;
         if (StringUtils.hasText(link)) {
             Matcher regExMatcher = ALERT_ID_REGEXP.matcher(link.trim());
             while (regExMatcher.find() && regExMatcher.groupCount() == 1) {
-                alertId = ParseUtils.parseLong(regExMatcher.group(1));
+                alertId = ParseUtils.parseInteger(regExMatcher.group(1));
             }
         }
         return alertId;

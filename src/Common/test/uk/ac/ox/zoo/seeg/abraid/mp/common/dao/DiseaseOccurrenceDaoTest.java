@@ -244,7 +244,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     private Alert createAlert() {
         Feed feed = feedDao.getById(1);
         DateTime publicationDate = DateTime.now().minusDays(5);
-        long healthMapAlertId = 100L;
+        int healthMapAlertId = 100;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
         String summary = "This is a summary of the alert";
         String url = "http://www.promedmail.org/direct.php?id=20140217.2283261";

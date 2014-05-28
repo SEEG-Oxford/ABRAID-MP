@@ -70,7 +70,7 @@ public class HealthMapAlertConverter {
         Alert alert = null;
 
         // Try to find an alert with the given ID (if specified)
-        Long alertId = healthMapAlert.getAlertId();
+        Integer alertId = healthMapAlert.getAlertId();
         if (alertId != null) {
             alert = alertService.getAlertByHealthMapAlertId(alertId);
         } else {
@@ -84,7 +84,7 @@ public class HealthMapAlertConverter {
         return alert;
     }
 
-    private Alert createAlert(HealthMapAlert healthMapAlert, Long alertId) {
+    private Alert createAlert(HealthMapAlert healthMapAlert, Integer alertId) {
         Alert alert = new Alert();
         alert.setFeed(retrieveFeed(healthMapAlert));
         alert.setTitle(healthMapAlert.getSummary());

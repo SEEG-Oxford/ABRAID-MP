@@ -21,9 +21,9 @@ public class HealthMapLookupData {
     private LocationService locationService;
     private DiseaseService diseaseService;
 
-    private Map<Long, HealthMapCountry> countryMap;
-    private Map<Long, HealthMapDisease> diseaseMap;
-    private Map<Long, Feed> feedMap;
+    private Map<Integer, HealthMapCountry> countryMap;
+    private Map<Integer, HealthMapDisease> diseaseMap;
+    private Map<Integer, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
     private Provenance healthMapProvenance;
 
@@ -38,7 +38,7 @@ public class HealthMapLookupData {
      * Gets a list of HealthMap countries, indexed by HealthMap country name.
      * @return A list of HealthMap countries, indexed by HealthMap country name.
      */
-    public Map<Long, HealthMapCountry> getCountryMap() {
+    public Map<Integer, HealthMapCountry> getCountryMap() {
         if (countryMap == null) {
             List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
             countryMap = index(countries, on(HealthMapCountry.class).getId());
@@ -50,7 +50,7 @@ public class HealthMapLookupData {
      * Gets a list of HealthMap diseases, indexed by HealthMap disease ID.
      * @return A list of HealthMap diseases, indexed by HealthMap disease ID.
      */
-    public Map<Long, HealthMapDisease> getDiseaseMap() {
+    public Map<Integer, HealthMapDisease> getDiseaseMap() {
         if (diseaseMap == null) {
             List<HealthMapDisease> diseases = diseaseService.getAllHealthMapDiseases();
             diseaseMap = index(diseases, on(HealthMapDisease.class).getId());
@@ -62,7 +62,7 @@ public class HealthMapLookupData {
      * Gets a list of HealthMap feeds, indexed by HealthMap feed ID.
      * @return A list of HealthMap feeds, indexed by HealthMap feed ID.
      */
-    public Map<Long, Feed> getFeedMap() {
+    public Map<Integer, Feed> getFeedMap() {
         if (feedMap == null) {
             List<Feed> feeds = alertService.getFeedsByProvenanceName(ProvenanceNames.HEALTHMAP);
             feedMap = index(feeds, on(Feed.class).getHealthMapFeedId());
