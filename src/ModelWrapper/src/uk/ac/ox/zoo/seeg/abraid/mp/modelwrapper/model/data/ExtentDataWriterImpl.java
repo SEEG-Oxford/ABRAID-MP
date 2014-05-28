@@ -11,6 +11,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Provides a mechanism for writing model input extent data into the working directory.
@@ -23,6 +24,10 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
     private static final String LOG_SAVING_TRANSFORMED_RASTER = "Saving transformed weighting raster: %s";
     private static final String LOG_LOADING_SOURCE_RASTER = "Loading gaul code source raster: %s.";
     private static final Object LOG_TRANSFORMING_RASTER_DATA = "Transforming gaul code raster to weightings raster.";
+
+    public ExtentDataWriterImpl() {
+        java.util.logging.Logger.getLogger("org.geotools.gce.arcgrid").setLevel(Level.WARNING);
+    }
 
     /**
      * Write the extent data to a raster file ready to run the model.
@@ -48,9 +53,9 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
         try {
             ArcGridReader reader = new ArcGridReader(location.toURI().toURL());
             return reader.read(null);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error(String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString()), e);
-            throw e;
+            throw new IOException(String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString()), e);
         }
     }
 
@@ -75,9 +80,9 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             GridCoverage2D targetRaster = factory.create(location.getName(), raster, extents);
             ArcGridWriter writer = new ArcGridWriter(location.toURI().toURL());
             writer.write(targetRaster, null);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error(String.format(LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER, location.toString()), e);
-            throw e;
+            throw new IOException(String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString()), e);
         }
     }
 }
