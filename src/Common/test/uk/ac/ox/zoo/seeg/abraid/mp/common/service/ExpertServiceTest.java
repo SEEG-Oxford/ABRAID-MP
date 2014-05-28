@@ -64,15 +64,15 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustReturnExpectedList() {
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnExpectedList() {
         // Arrange
         List<DiseaseOccurrence> testList = new ArrayList<>();
         when(expertDao.getById(anyInt())).thenReturn(new Expert());
         when(validatorDiseaseGroupDao.getById(anyInt())).thenReturn(new ValidatorDiseaseGroup());
-        when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(anyInt(), anyInt())).thenReturn(testList);
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), anyInt())).thenReturn(testList);
 
         // Act
-        List<DiseaseOccurrence> list = expertService.getDiseaseOccurrencesYetToBeReviewed(1, 1);
+        List<DiseaseOccurrence> list = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1);
 
         // Assert
         assertThat(list).isSameAs(testList);
@@ -80,12 +80,12 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
 
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustReturnEmptyListIfExpertDoesNotExist() {
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnEmptyListIfExpertDoesNotExist() {
         // Arrange
         when(expertDao.getById(anyInt())).thenReturn(null); // For any expertId, act as if the expert does not exist
 
         // Act
-        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(0, 0);
+        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(0, 0);
 
         // Assert
         assertThat(occurrences.size()).isEqualTo(0);
@@ -93,12 +93,12 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedMustReturnEmptyListIfDiseaseGroupDoesNotExist() {
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnEmptyListIfDiseaseGroupDoesNotExist() {
         // Arrange
         when(diseaseGroupDao.getById(anyInt())).thenReturn(null); // For any diseaseGroupId, act as if the group does not exist
 
         // Act
-        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(0, 0);
+        List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(0, 0);
 
         // Assert
         assertThat(occurrences.isEmpty());
