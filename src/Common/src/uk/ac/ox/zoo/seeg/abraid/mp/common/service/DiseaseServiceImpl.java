@@ -173,7 +173,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     *  Gets a list of all the disease occurrence reviews in the database.
+     * Gets a list of all the disease occurrence reviews in the database.
+     * @return The disease occurrence reviews.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews() {
+        return diseaseOccurrenceReviewDao.getAll();
+    }
+
+    /**
+     *  Gets a list of all the disease occurrence reviews in the database for the specified disease group.
      *  @param diseaseGroupId The ID of the disease group.
      *  @return The disease occurrence reviews.
      */

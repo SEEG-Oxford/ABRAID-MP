@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
@@ -21,6 +22,9 @@ import static org.mockito.Mockito.mock;
 public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
+
+    @Autowired
+    private ExpertService expertService;
 
     @Before
     public void setFixedTime() {
@@ -82,7 +86,7 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
                 new ModelRunGatekeeper(),
                 new LastModelRunPrepDateManager(diseaseService),
                 new DiseaseExtentGenerator(diseaseService),
-                new WeightingsCalculator(diseaseService),
+                new WeightingsCalculator(diseaseService, expertService),
                 mock(ModelRunRequester.class));
     }
 }

@@ -6,12 +6,11 @@ import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 
@@ -23,7 +22,7 @@ import static ch.lambdaj.Lambda.*;
 public class WeightingsCalculator {
     private static final Logger LOGGER = Logger.getLogger(WeightingsCalculator.class);
     private static final String NO_NEW_REVIEWS =
-            "No new reviews have been submitted - expert weightings will not be updated";
+            "No new reviews have been submitted - expert weightings of disease occurrences will not be updated";
     private static final String RECALCULATING_EXPERT_WEIGHTINGS =
             "Recalculating expert weightings for %d disease occurrences given %d new reviews";
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
@@ -32,11 +31,17 @@ public class WeightingsCalculator {
             "Recalculating validation and final weightings for %d disease occurrences in preparation for model run";
     private static final String UPDATING_WEIGHTINGS =
             "Updating weightings for %d occurrences";
+    private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
+            "Recalculating weightings of experts";
+    private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
+            "Weightings changed for %d experts - saving to database";
 
     private DiseaseService diseaseService;
+    private ExpertService expertService;
 
-    public WeightingsCalculator(DiseaseService diseaseService) {
+    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService) {
         this.diseaseService = diseaseService;
+        this.expertService = expertService;
     }
 
     /**
@@ -169,6 +174,76 @@ public class WeightingsCalculator {
         LOGGER.info(String.format(UPDATING_WEIGHTINGS, pendingSave.size()));
         for (DiseaseOccurrence occurrence : pendingSave) {
             diseaseService.saveDiseaseOccurrence(occurrence);
+        }
+    }
+
+    /**
+     * For each expert, calculate their new weighting as the absolute difference between their response and the average
+     * response from all other experts, averaged over all the occurrences that they have reviewed.
+     * Record the values in a map, to be saved after updating the occurrences' weightings.
+     * @return The map from expert to new weighting value.
+     */
+    public Map<Expert, Double> calculateNewExpertsWeightings() {
+        LOGGER.info(RECALCULATING_WEIGHTINGS_OF_EXPERTS);
+        Map<Expert, Double> newExpertsWeightings = new HashMap<>();
+        List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
+        for (Expert expert : extractDistinctExperts(allReviews)) {
+            List<Double> differencesInResponse = new ArrayList<>();
+            for (DiseaseOccurrence occurrence : selectExpertsReviewedOccurrences(allReviews, expert)) {
+                differencesInResponse.add(calculateDifference(allReviews, occurrence, expert));
+            }
+            double newWeighting = 1 - (double) avg(differencesInResponse);
+            if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
+                newExpertsWeightings.put(expert, newWeighting);
+            }
+        }
+        return newExpertsWeightings;
+    }
+
+    private Set<Expert> extractDistinctExperts(List<DiseaseOccurrenceReview> allReviews) {
+        return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getExpert()));
+    }
+
+    private Set<DiseaseOccurrence> selectExpertsReviewedOccurrences(List<DiseaseOccurrenceReview> reviews,
+                                                                    Expert expert) {
+        List<DiseaseOccurrenceReview> expertsReviews = select(reviews,
+                having(on(DiseaseOccurrenceReview.class).getExpert(), IsEqual.equalTo(expert)));
+        return new HashSet<>(extract(expertsReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
+    }
+
+    private Double calculateDifference(List<DiseaseOccurrenceReview> reviews, DiseaseOccurrence occurrence,
+                                       Expert expert) {
+        List<DiseaseOccurrenceReview> reviewsOfOccurrence = select(reviews,
+                having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+        DiseaseOccurrenceReview expertsReview = selectUnique(reviewsOfOccurrence,
+                having(on(DiseaseOccurrenceReview.class).getExpert(), IsEqual.equalTo(expert)));
+        reviewsOfOccurrence.remove(expertsReview);
+
+        double expertsResponse = expertsReview.getResponse().getValue();
+        double averageResponse = (double) avg(extractReviewResponseValues(reviewsOfOccurrence));
+        return Math.abs(expertsResponse - averageResponse);
+    }
+
+    private List<Double> extractReviewResponseValues(List<DiseaseOccurrenceReview> reviewsOfOccurrence) {
+        return convert(reviewsOfOccurrence, new Converter<DiseaseOccurrenceReview, Double>() {
+            public Double convert(DiseaseOccurrenceReview review) {
+                return review.getResponse().getValue();
+            }
+        });
+    }
+
+    /**
+     * Saves each expert with a new weighting value.
+     * @param newExpertsWeightings The map from expert to new weighting value.
+     */
+    public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
+        if (newExpertsWeightings.size() > 0) {
+            LOGGER.info(String.format(SAVING_WEIGHTINGS_OF_EXPERTS, newExpertsWeightings.size()));
+            for (Map.Entry<Expert, Double> entry : newExpertsWeightings.entrySet()) {
+                Expert expert = entry.getKey();
+                expert.setWeighting(entry.getValue());
+                expertService.saveExpert(expert);
+            }
         }
     }
 }
