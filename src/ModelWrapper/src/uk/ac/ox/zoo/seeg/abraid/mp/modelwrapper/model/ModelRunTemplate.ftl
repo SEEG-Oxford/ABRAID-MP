@@ -56,8 +56,10 @@ if (!require('devtools', quietly=TRUE)) {
 
 # Load the model and it's dependencies via devtools
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
-install_deps('model')
-load_all('model', recompile=TRUE)
+if (!dry_run) {
+    install_deps('model')
+    load_all('model', recompile=TRUE)
+}
 
 # Define a function that can be used to load the model on cluster nodes
 load_seegSDM <- function () {
@@ -80,12 +82,15 @@ result <- tryCatch({
             load_seegSDM,
             parallel_flag)
     } else {
-        # Create a fake result set
-        ref <- raster(extent_path)
-        rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
-        writeRaster(mask(rand, ref), filename="mean_prediction.asc", format="ascii")
-        rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
-        writeRaster(mask(rand, ref), filename="prediction_uncertainty.asc", format="ascii")
+        # Create a fake result set using extent as a size/geom reference
+        if (file.exists(extent_path)) {
+            library(raster)
+            ref <- raster(extent_path)
+            rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
+            writeRaster(mask(rand, ref), filename="mean_prediction.asc", format="ascii")
+            rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
+            writeRaster(mask(rand, ref), filename="prediction_uncertainty.asc", format="ascii")
+        }
         0 # return 0
     }
 }, warning = function(w) {
