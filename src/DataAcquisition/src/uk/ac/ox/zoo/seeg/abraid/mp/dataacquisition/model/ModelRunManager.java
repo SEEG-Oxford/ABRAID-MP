@@ -53,7 +53,7 @@ public class ModelRunManager {
     @Transactional
     public void prepareModelRun(int diseaseGroupId) {
         DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
-        if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate)) {
+        if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(String.format(STARTING_MODEL_PREP, diseaseGroupId));
             executeModelRunPrep(lastModelRunPrepDate, diseaseGroupId);

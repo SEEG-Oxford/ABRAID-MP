@@ -40,9 +40,14 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id = :diseaseGroupId " +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
                         "and d.isValidated = true " +
                         "and d.location.precision <> 'COUNTRY'"
+        ),
+        @NamedQuery(
+                name = "getNewOccurrencesCountByDiseaseGroup",
+                query = "select count(*) from DiseaseOccurrence where isValidated is not null and " +
+                        "diseaseGroup.id=:diseaseGroupId and createdDate < diseaseGroup.lastModelRunPrepDate"
         )
 })
 @Entity

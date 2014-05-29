@@ -65,6 +65,10 @@ public class DiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastModelRunPrepDate;
 
+    // The minimum number of new occurrences required to trigger a model run.
+    @Column(name = "model_run_min_new_occurrences")
+    private Integer modelRunMinNewOccurrences;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -202,6 +206,14 @@ public class DiseaseGroup {
 
     public void setLastModelRunPrepDate(DateTime lastModelRunPrepDate) {
         this.lastModelRunPrepDate = lastModelRunPrepDate;
+    }
+
+    public Integer getModelRunMinNewOccurrences() {
+        return modelRunMinNewOccurrences;
+    }
+
+    public void setModelRunMinNewOccurrences(Integer modelRunMinNewOccurrences) {
+        this.modelRunMinNewOccurrences = modelRunMinNewOccurrences;
     }
 
     public DateTime getCreatedDate() {
