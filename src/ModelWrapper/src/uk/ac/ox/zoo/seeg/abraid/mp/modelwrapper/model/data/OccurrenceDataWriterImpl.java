@@ -8,7 +8,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
 
 import java.io.*;
-import java.nio.file.Paths;
 
 /**
  * Provides a mechanism for writing model input occurrence data into the working directory.
@@ -42,6 +41,10 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         try {
             writer = new BufferedWriter(
                     new OutputStreamWriter(new FileOutputStream(targetFile.getAbsoluteFile()), UTF_8));
+            
+            writer.write(extractCsvHeaderLine());
+            writer.newLine();
+
             for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
                 if (occurrence.getCrs() != null) {
                     LOGGER.warn(LOG_FEATURE_CRS_WARN);
