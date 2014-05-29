@@ -85,7 +85,7 @@ result <- tryCatch({
     } else {
         # Create a fake result set using extent as a size/geom reference
         if (file.exists(extent_path)) {
-            library(raster)
+            library(raster, quietly=TRUE)
             ref <- raster(extent_path)
             rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
             writeRaster(mask(rand, ref), filename="mean_prediction.asc", format="ascii")
@@ -95,9 +95,6 @@ result <- tryCatch({
         innerResult <- 0
     }
     innerResult # return
-}, warning = function(w) {
-    print(paste("Warning:  ", w))
-    return(1)
 }, error = function(e) {
     print(paste("Error:  ", e))
     return(1)

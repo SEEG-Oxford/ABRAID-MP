@@ -366,6 +366,7 @@
           <include name="**/*Test.class"/>
           <exclude name="**/*IntegrationTest.class"/>
           <exclude name="**/*SystemTest.class"/>
+          <exclude name="**/ModuleTests.class"/>
         </fileset>
       </batchtest>
     </junit>
