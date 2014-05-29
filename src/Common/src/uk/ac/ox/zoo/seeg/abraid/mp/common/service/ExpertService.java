@@ -42,7 +42,8 @@ public interface ExpertService {
      * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the
      * database.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer validatorDiseaseGroupId)
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
+                                                                         Integer validatorDiseaseGroupId)
             throws IllegalArgumentException;
 
     /**

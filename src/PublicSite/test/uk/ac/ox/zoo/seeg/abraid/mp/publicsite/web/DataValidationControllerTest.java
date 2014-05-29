@@ -118,7 +118,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         List<DiseaseOccurrence> occurrences = new ArrayList<>();
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
-        when(expertService.getDiseaseOccurrencesYetToBeReviewed(1, 1)).thenReturn(occurrences);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenReturn(occurrences);
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
                 expertService);
@@ -137,7 +137,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ExpertService expertService = mock(ExpertService.class);
-        when(expertService.getDiseaseOccurrencesYetToBeReviewed(1, 1)).thenThrow(new IllegalArgumentException());
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenThrow(new IllegalArgumentException());
 
         DataValidationController target = new DataValidationController(new CurrentUserServiceImpl(), diseaseService,
                 expertService);
