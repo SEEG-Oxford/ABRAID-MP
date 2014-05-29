@@ -32,7 +32,7 @@
     </resolvers>
 
     <modules>
-        <!-- Ibiblo (maven1) doesn't have jai in an ivy friendly way (reports as present then 404s), so we have to avoid maven1 all together -->
+        <!-- ibiblio (maven1) doesn't have jai in an ivy friendly way (reports as present then 404s), so we have to avoid maven1 altogether -->
         <module organisation="javax.media" name="jai_core" resolver="OSGEO GeoTools repo"/>
         <module organisation="javax.media" name="jai_codec" resolver="OSGEO GeoTools repo"/>
         <module organisation="javax.media" name="jai_imageio" resolver="OSGEO GeoTools repo"/>

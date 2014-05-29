@@ -54,8 +54,9 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             ArcGridReader reader = new ArcGridReader(location.toURI().toURL());
             return reader.read(null);
         } catch (Exception e) {
-            LOGGER.error(String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString()), e);
-            throw new IOException(String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString()), e);
+            final String message = String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString());
+            LOGGER.error(message, e);
+            throw new IOException(message, e);
         }
     }
 
@@ -81,8 +82,9 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             ArcGridWriter writer = new ArcGridWriter(location.toURI().toURL());
             writer.write(targetRaster, null);
         } catch (Exception e) {
-            LOGGER.error(String.format(LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER, location.toString()), e);
-            throw new IOException(String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString()), e);
+            final String message = String.format(LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER, location.toString());
+            LOGGER.error(message, e);
+            throw new IOException(message, e);
         }
     }
 }

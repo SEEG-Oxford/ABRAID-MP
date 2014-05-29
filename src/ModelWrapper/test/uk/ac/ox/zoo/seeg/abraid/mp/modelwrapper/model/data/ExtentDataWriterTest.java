@@ -149,7 +149,7 @@ public class ExtentDataWriterTest {
             Integer targetInt = transform.containsKey(sourceInt) ? transform.get(sourceInt) : null;
 
             // ArcGridWriter writes cell outputs with Double.toString (trailing '.0')
-            String targetValue = targetInt != null ? Double.toString(targetInt) : "-9999";
+            String targetValue = (targetInt != null) ? Double.toString(targetInt) : "-9999";
 
             expectation = expectation.replace(sourceValue, targetValue);
         }
