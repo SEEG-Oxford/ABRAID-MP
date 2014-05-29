@@ -69,8 +69,9 @@ load_seegSDM <- function () {
 
 # Run the model
 result <- tryCatch({
+    innerResult <- -1
     if (!dry_run) {
-        runABRAID(
+        innerResult <- runABRAID(
             occurrence_path,
             extent_path,
             admin1_path,
@@ -91,8 +92,9 @@ result <- tryCatch({
             rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
             writeRaster(mask(rand, ref), filename="prediction_uncertainty.asc", format="ascii")
         }
-        0 # return 0
+        innerResult <- 0
     }
+    innerResult # return
 }, warning = function(w) {
     print(paste("Warning:  ", w))
     return(1)
