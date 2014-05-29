@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
@@ -14,6 +15,10 @@ import java.util.concurrent.Future;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunnerAsyncWrapperImpl implements ModelRunnerAsyncWrapper {
+    private static final Logger LOGGER = Logger.getLogger(ModelRunnerAsyncWrapperImpl.class);
+    public static final String LOG_ERROR_DURING_THE_MODEL_SETUP =
+            "An error occurred during the setup for model run: %s";
+
     private final ExecutorService pool = Executors.newFixedThreadPool(1);
     private final ModelRunner modelRunner;
 
@@ -40,6 +45,7 @@ public class ModelRunnerAsyncWrapperImpl implements ModelRunnerAsyncWrapper {
                     handler = modelRunner.runModel(configuration, occurrenceData, extentWeightings);
                 } catch (Exception e) {
                     // Need to consider failures (ie failures in setup for R rather than in R)
+                    LOGGER.error(String.format(LOG_ERROR_DURING_THE_MODEL_SETUP, configuration.getRunName()), e);
                 }
                 return handler;
             }

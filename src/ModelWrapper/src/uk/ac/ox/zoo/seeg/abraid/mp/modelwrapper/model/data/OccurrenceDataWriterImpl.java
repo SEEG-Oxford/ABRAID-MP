@@ -41,7 +41,7 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         try {
             writer = new BufferedWriter(
                     new OutputStreamWriter(new FileOutputStream(targetFile.getAbsoluteFile()), UTF_8));
-            
+
             writer.write(extractCsvHeaderLine());
             writer.newLine();
 

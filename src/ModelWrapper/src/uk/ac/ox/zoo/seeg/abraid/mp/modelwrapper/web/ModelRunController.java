@@ -31,7 +31,8 @@ public class ModelRunController extends AbstractController {
     private final ModelRunnerAsyncWrapper modelRunnerAsyncWrapper;
 
     @Autowired
-    public ModelRunController(RunConfigurationFactory runConfigurationFactory, ModelRunnerAsyncWrapper modelRunnerAsyncWrapper) {
+    public ModelRunController(
+            RunConfigurationFactory runConfigurationFactory, ModelRunnerAsyncWrapper modelRunnerAsyncWrapper) {
         this.runConfigurationFactory = runConfigurationFactory;
         this.modelRunnerAsyncWrapper = modelRunnerAsyncWrapper;
     }
@@ -59,7 +60,8 @@ public class ModelRunController extends AbstractController {
                     runData.getDisease().getAbbreviation());
 
             // Ignore result for now
-            modelRunnerAsyncWrapper.startModel(runConfiguration, runData.getOccurrences(), runData.getExtentWeightings());
+            modelRunnerAsyncWrapper.startModel(
+                    runConfiguration, runData.getOccurrences(), runData.getExtentWeightings());
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return createErrorResponse("Could not start model run. See server logs for more details.",
