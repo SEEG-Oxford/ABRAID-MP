@@ -30,8 +30,8 @@ public class ModelRunnerAsyncWrapperTest {
 
         // Act
         Future<ModelProcessHandler> future = target.startModel(expectedRunConfig, expectedOccurrences, expectedWeightings);
-            // At this stage ModelRunner.runModel may or may not have been called yet (threads)
-            // Future.get allows use to wait for the model run thread to complete and get the result
+        // At this stage ModelRunner.runModel may or may not have been called yet (threads)
+        // Future.get allows use to wait for the model run thread to complete and get the result
         ModelProcessHandler result = future.get();
 
         // Assert

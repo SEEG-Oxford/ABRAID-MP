@@ -54,7 +54,7 @@ if (!require('devtools', quietly=TRUE)) {
     library('devtools', quietly=TRUE)
 }
 
-# Load the model and it's dependencies via devtools
+# Load the model and its dependencies via devtools
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
 if (!dry_run) {
     install_deps('model')
