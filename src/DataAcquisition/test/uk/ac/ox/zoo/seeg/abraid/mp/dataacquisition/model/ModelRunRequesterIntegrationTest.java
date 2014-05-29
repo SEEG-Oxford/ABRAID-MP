@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
@@ -8,23 +7,27 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractWebServiceClientIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Contains integration tests for the ModelRunRequester class.
@@ -36,6 +39,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     private ModelRunRequester modelRunRequester;
     @Autowired
     private ModelRunDao modelRunDao;
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     private static final String URL = "http://username:password@localhost:8080/ModelWrapper_war_exploded/model/run";
 
@@ -48,9 +53,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         String modelName = "testname";
         String responseJson = "{\"modelRunName\":\"testname\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
+        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -62,36 +68,58 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     }
 
     @Test
-    public void requestModelRunWithErrorReturnedByModel() {
+    public void requestModelRunWithErrorReturnedByModelThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
         String responseJson = "{\"errorText\":\"testerror\"}";
-        String expectedLogMessage = "Error when requesting a model run: testerror";
-        Logger logger = GeneralTestUtils.createMockLogger(modelRunRequester);
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
+        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
 
         // Assert
-        verify(logger, times(1)).fatal(eq(expectedLogMessage));
+        assertThat(caughtException()).isInstanceOf(ModelRunManagerException.class);
     }
 
     @Test
-    public void requestModelRunWithWebClientExceptionThrown() {
+    public void requestModelRunWithWebClientExceptionThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
         String exceptionMessage = "Web service failed";
-        String expectedLogMessage = "Error when requesting a model run: " + exceptionMessage;
-        Logger logger = GeneralTestUtils.createMockLogger(modelRunRequester);
         WebServiceClientException thrownException = new WebServiceClientException(exceptionMessage);
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
+        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
 
         // Assert
-        verify(logger, times(1)).fatal(eq(expectedLogMessage), any(WebServiceClientException.class));
+        assertThat(caughtException()).isInstanceOf(ModelRunManagerException.class);
+    }
+
+    @Test
+    public void requestModelRunWithNoDiseaseOccurrencesDoesNothing() {
+        // Arrange
+        int diseaseGroupId = 87;
+        List<DiseaseOccurrence> occurrences = new ArrayList<>();
+
+        // Act
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+
+        // Assert
+        List<ModelRun> modelRuns = modelRunDao.getAll();
+        assertThat(modelRuns).hasSize(0);
+    }
+
+    private List<DiseaseOccurrence> getDiseaseOccurrencesWithZeroWeightings(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            if (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) {
+                occurrence.setFinalWeighting(0.0);
+            }
+        }
+        return occurrences;
     }
 
     private void mockPostRequest(final String responseJson) {

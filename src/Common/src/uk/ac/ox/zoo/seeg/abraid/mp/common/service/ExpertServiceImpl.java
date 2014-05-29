@@ -14,7 +14,7 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ExpertServiceImpl implements ExpertService {
     private AdminUnitReviewDao adminUnitReviewDao;
     private ExpertDao expertDao;
@@ -72,9 +72,9 @@ public class ExpertServiceImpl implements ExpertService {
      * database.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
-                                                                        Integer validatorDiseaseGroupId) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
+                                                                                Integer validatorDiseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, validatorDiseaseGroupId);
     }
 
     /**
@@ -142,7 +142,6 @@ public class ExpertServiceImpl implements ExpertService {
      * @param expert The expert to save.
      */
     @Override
-    @Transactional
     public void saveExpert(Expert expert) {
         expertDao.save(expert);
     }

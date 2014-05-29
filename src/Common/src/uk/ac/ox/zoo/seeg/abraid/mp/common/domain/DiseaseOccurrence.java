@@ -22,9 +22,10 @@ import javax.persistence.Table;
                         "and alert=:alert and occurrenceDate=:occurrenceDate"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesYetToBeReviewed",
+                name = "getDiseaseOccurrencesYetToBeReviewedByExpert",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
+                        "and d.isValidated = false " +
                         "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
                         "expert.id=:expertId)"
         ),
@@ -40,8 +41,7 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id = :diseaseGroupId " +
-                        "and d.isValidated = true " +
-                        "and d.location.precision <> 'COUNTRY'"
+                        "and d.isValidated = true"
         )
 })
 @Entity
@@ -137,12 +137,13 @@ public class DiseaseOccurrence {
         this.id = id;
     }
 
-    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert,
+    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, boolean isValidated,
                              Double validationWeighting, DateTime occurrenceDate) {
         this.id = id;
         this.diseaseGroup = diseaseGroup;
         this.location = location;
         this.alert = alert;
+        this.isValidated = isValidated;
         this.validationWeighting = validationWeighting;
         this.occurrenceDate = occurrenceDate;
     }

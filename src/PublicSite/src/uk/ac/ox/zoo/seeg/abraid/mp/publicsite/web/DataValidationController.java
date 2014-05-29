@@ -111,7 +111,8 @@ public class DataValidationController extends AbstractController {
         List<DiseaseOccurrence> occurrences;
 
         try {
-            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewed(user.getId(), validatorDiseaseGroupId);
+            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(user.getId(),
+                    validatorDiseaseGroupId);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

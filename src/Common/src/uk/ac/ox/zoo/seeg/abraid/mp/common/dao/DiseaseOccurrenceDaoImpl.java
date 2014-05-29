@@ -26,9 +26,9 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
                                                                         Integer validatorDiseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrencesYetToBeReviewed",
+        return listNamedQuery("getDiseaseOccurrencesYetToBeReviewedByExpert",
                 "expertId", expertId, "validatorDiseaseGroupId", validatorDiseaseGroupId);
     }
 

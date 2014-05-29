@@ -3,8 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
+
+import java.util.Map;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -22,6 +26,10 @@ public class Main {
     private HealthMapDataAcquisition healthMapDataAcquisition;
     private ModelRunManager modelRunManager;
 
+    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunManager modelRunManager) {
+        this.healthMapDataAcquisition = healthMapDataAcquisition;
+        this.modelRunManager = modelRunManager;
+    }
 
     /**
      * Entry method for the DataAcquisition module.
@@ -53,14 +61,7 @@ public class Main {
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
         main.runDataAcquisition(args);
-        main.manageModelRuns();
-    }
-
-
-
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunManager modelRunManager) {
-        this.healthMapDataAcquisition = healthMapDataAcquisition;
-        this.modelRunManager = modelRunManager;
+        main.prepareForAndRequestModelRuns();
     }
 
     /**
@@ -80,12 +81,23 @@ public class Main {
     }
 
     /**
-     * Prepares the model run by recalculating disease extent, weightings, and requesting the model run.
-     * These tasks are only executed once per week.
+     * Requests a model run (after preparation and if relevant), for each disease group that has occurrences.
      */
-    public void manageModelRuns() {
+    public void prepareForAndRequestModelRuns() {
+        Map<Expert, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
-            modelRunManager.prepareModelRun(diseaseGroupId);
+            prepareForAndRequestModelRun(diseaseGroupId);
+        }
+        modelRunManager.saveExpertsWeightings(newExpertWeightings);
+    }
+
+    private void prepareForAndRequestModelRun(int diseaseGroupId) {
+        try {
+            modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
+        } catch (ModelRunManagerException e) {
+            // Ignore the exception, because it is thrown to roll back the transaction per disease group if
+            // the model run manager fails.
+            LOGGER.fatal(e.getMessage(), e);
         }
     }
 }
