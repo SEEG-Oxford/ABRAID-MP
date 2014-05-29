@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
@@ -15,7 +14,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerExceptio
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,7 +24,6 @@ import static org.mockito.Mockito.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
@@ -108,11 +108,12 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
         // Assert that the model wrapper web service has been called once for dengue (disease group 87), with
         // the specified number of occurrence points and disease extent classes
-        verify(modelWrapperWebService, times(1)).startRun(
+        verify(modelWrapperWebService, atLeastOnce()).startRun(
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(28)),
                 argThat(new MapSizeMatcher<Integer, Integer>(459)));
-        verify(webServiceClient, times(1)).makePostRequestWithJSON(anyString(), anyString());
+        verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
+                startsWith(MODELWRAPPER_URL_PREFIX), anyString());
     }
 
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {

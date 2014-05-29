@@ -85,14 +85,13 @@ public class Main {
      */
     public void prepareForAndRequestModelRuns() {
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
-            ///CHECKSTYLE:OFF EmptyBlock - catch is intentionally empty
             try {
                 modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
             } catch (ModelRunManagerException e) {
                 // Ignore the exception, because it is thrown to roll back the transaction per disease group if
                 // the model run manager fails.
+                LOGGER.fatal(e.getMessage(), e);
             }
-            ///CHECKSTYLE:ON EmptyBlock
         }
     }
 }
