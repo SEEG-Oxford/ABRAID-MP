@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
  */
 public class ModelRunnerAsyncWrapperImpl implements ModelRunnerAsyncWrapper {
     private static final Logger LOGGER = Logger.getLogger(ModelRunnerAsyncWrapperImpl.class);
-    public static final String LOG_ERROR_DURING_THE_MODEL_SETUP =
+    private static final String LOG_ERROR_DURING_THE_MODEL_SETUP =
             "An error occurred during the setup for model run: %s";
 
     private final ExecutorService pool = Executors.newFixedThreadPool(1);
