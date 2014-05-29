@@ -6,6 +6,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,7 +112,7 @@ public class WorkspaceProvisionerTest {
         // Assert
         ArgumentCaptor<GeoJsonDiseaseOccurrenceFeatureCollection> dataCaptor = ArgumentCaptor.forClass(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         ArgumentCaptor<File> directoryCaptor = ArgumentCaptor.forClass(File.class);
-        verify(inputDataManager, times(1)).writeData(dataCaptor.capture(), directoryCaptor.capture());
+        verify(inputDataManager, times(1)).writeOccurrenceData(dataCaptor.capture(), directoryCaptor.capture());
         assertThat(dataCaptor.getValue()).isEqualTo(expectedData);
         assertThat(directoryCaptor.getValue().getParentFile()).isEqualTo(runDir);
         assertThat(directoryCaptor.getValue().getName()).isEqualTo("data");

@@ -5,24 +5,24 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminUnitRunConfiguration {
-    private final boolean useGlobalShapefile;
+    private final boolean useGlobalRasterFile;
     private final String admin1RasterFile;
     private final String admin2RasterFile;
-    private final String tropicalShapeFile;
-    private final String globalShapeFile;
+    private final String tropicalRasterFile;
+    private final String globalRasterFile;
 
-    public AdminUnitRunConfiguration(boolean useGlobalShapefile,
+    public AdminUnitRunConfiguration(boolean useGlobalRasterFile,
                                      String admin1RasterFile, String admin2RasterFile,
-                                     String tropicalShapeFile, String globalShapeFile) {
-        this.useGlobalShapefile = useGlobalShapefile;
+                                     String tropicalRasterFile, String globalRasterFile) {
+        this.useGlobalRasterFile = useGlobalRasterFile;
         this.admin1RasterFile = admin1RasterFile;
         this.admin2RasterFile = admin2RasterFile;
-        this.tropicalShapeFile = tropicalShapeFile;
-        this.globalShapeFile = globalShapeFile;
+        this.tropicalRasterFile = tropicalRasterFile;
+        this.globalRasterFile = globalRasterFile;
     }
 
-    public boolean getUseGlobalShapefile() {
-        return useGlobalShapefile;
+    public boolean getUseGlobalRasterFile() {
+        return useGlobalRasterFile;
     }
 
     public String getAdmin1RasterFile() {
@@ -33,12 +33,12 @@ public class AdminUnitRunConfiguration {
         return admin2RasterFile;
     }
 
-    public String getTropicalShapeFile() {
-        return tropicalShapeFile;
+    public String getTropicalRasterFile() {
+        return tropicalRasterFile;
     }
 
-    public String getGlobalShapeFile() {
-        return globalShapeFile;
+    public String getGlobalRasterFile() {
+        return globalRasterFile;
     }
 }
 

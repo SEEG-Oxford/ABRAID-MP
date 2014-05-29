@@ -354,6 +354,7 @@
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
       <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
+      <jvmarg value="-Djava.util.logging.config.file=file:java-util-logging-test.properties"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>
@@ -378,6 +379,7 @@
       <jvmarg value="-Xmn64M"/>
       <jvmarg value="-Xmx512M"/>
       <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
+      <jvmarg value="-Djava.util.logging.config.file=file:java-util-logging-test.properties"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <path refid="test.classpath"/>

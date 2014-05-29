@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,11 +74,9 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
             throw new IOException("Directory structure could not be created.");
         }
 
-        // Rasterize extents
-        LOGGER.info(String.format("TODO: Rasterize extent data."));
-
         // Copy input data
-        inputDataManager.writeData(occurrenceData, dataDirectory);
+        inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory);
+        inputDataManager.writeExtentData(extentWeightings, configuration.getAdminUnitConfig(), dataDirectory);
 
         // Copy model
         sourceCodeManager.provisionVersion(configuration.getCodeConfig().getModelVersion(), modelDirectory);
