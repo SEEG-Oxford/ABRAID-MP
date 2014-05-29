@@ -13,9 +13,9 @@ public interface OccurrenceDataWriter {
     /**
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
-     * @param dataDirectory The directory to create the data files in.
+     * @param targetFile The file to be created.
      * @throws IOException If the data could not be written.
      */
-    void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
+    void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File targetFile)
             throws IOException;
 }

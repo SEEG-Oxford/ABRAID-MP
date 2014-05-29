@@ -9,7 +9,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonNamedCrs;
 
 import java.io.*;
-import java.nio.file.Paths;
 
 /**
  * Provides a mechanism for writing model input occurrence data into the working directory.
@@ -23,26 +22,24 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
 
     private static final String UTF_8 = "UTF-8";
     private static final String R_CODE_NULL_IDENTIFIER = "NA";
-    private static final String OUTBREAK_CSV = "outbreak.csv";
 
     /**
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
-     * @param dataDirectory The directory to create the data files in.
+     * @param targetFile The file to be created.
      * @throws IOException If the data could not be written.
      */
     @Override
-    public void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
+    public void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File targetFile)
             throws IOException {
         LOGGER.info(String.format(
-                LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), dataDirectory.getParent()));
+                LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), targetFile.toString()));
         if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
             LOGGER.warn(LOG_TOP_LEVEL_CRS_WARN);
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
 
-        File outbreakFile = Paths.get(dataDirectory.toString(), OUTBREAK_CSV).toFile();
-        try (BufferedWriter writer = createBufferedWriter(outbreakFile)) {
+        try (BufferedWriter writer = createBufferedWriter(targetFile)) {
             for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
                 if (occurrence.getCrs() != null) {
                     LOGGER.warn(LOG_FEATURE_CRS_WARN);
@@ -55,9 +52,9 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         }
     }
 
-    private BufferedWriter createBufferedWriter(File outbreakFile) throws IOException {
+    private BufferedWriter createBufferedWriter(File file) throws IOException {
         return new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(outbreakFile.getAbsoluteFile()), UTF_8));
+                    new OutputStreamWriter(new FileOutputStream(file.getAbsoluteFile()), UTF_8));
     }
 
     private String extractCsvLine(GeoJsonDiseaseOccurrenceFeature occurrence) {
@@ -74,7 +71,7 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE) {
             return R_CODE_NULL_IDENTIFIER;
         } else {
-            return occurrence.getProperties().getGaulCode().toString();
+            return ObjectUtils.toString(occurrence.getProperties().getGaulCode());
         }
     }
 }
