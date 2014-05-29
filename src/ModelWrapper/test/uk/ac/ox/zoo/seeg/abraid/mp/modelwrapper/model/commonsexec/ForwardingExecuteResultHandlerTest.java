@@ -16,17 +16,16 @@ import static org.mockito.Mockito.verify;
  */
 public class ForwardingExecuteResultHandlerTest {
     @Test
-    public void onProcessCompleteShouldForwardExitCode() throws Exception {
+    public void onProcessCompleteShouldBeWrappedCorrectly() throws Exception {
         // Arrange
         ProcessHandler mockProcessHandler = mock(ProcessHandler.class);
         ForwardingExecuteResultHandler target = new ForwardingExecuteResultHandler(mockProcessHandler);
-        int expectedExitCode = 4321;
 
         // Act
-        target.onProcessComplete(expectedExitCode);
+        target.onProcessComplete(4321);
 
         // Assert
-        verify(mockProcessHandler).onProcessComplete(expectedExitCode);
+        verify(mockProcessHandler).onProcessComplete();
     }
 
     @Test

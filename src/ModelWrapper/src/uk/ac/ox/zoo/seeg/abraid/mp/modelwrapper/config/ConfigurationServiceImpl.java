@@ -87,6 +87,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String MAX_CPU_KEY = "model.max.cpu";
     private static final String DRY_RUN_FLAG_KEY = "model.dry.run";
     private static final String MODEL_VERBOSE_FLAG_KEY = "model.verbose";
+    private static final String MODEL_OUTPUT_HANDLER_ROOT_URL_KEY = "model.output.handler.root.url";
 
     private static final String COVARIATE_JSON_FILE = "abraid.json";
 
@@ -323,7 +324,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Gets the current covariate configuration.
      * @return The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file can not be parsed correctly.
+     * @throws java.io.IOException thrown if the configuration json file cannot be parsed correctly.
      */
     @Override
     public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
@@ -359,7 +360,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Sets the current covariate configuration.
      * @param config The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file can not be written correctly.
+     * @throws java.io.IOException thrown if the configuration json file cannot be written correctly.
      */
     @Override
     public void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
@@ -387,6 +388,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             LOGGER.error(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
             throw new IOException(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
         }
+    }
+
+    @Override
+    public String getModelOutputHandlerRootUrl() {
+        return basicProperties.getString(MODEL_OUTPUT_HANDLER_ROOT_URL_KEY);
     }
 
     private void appendNewCovariateFiles(

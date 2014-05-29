@@ -21,10 +21,13 @@ public class ModelRunnerImpl implements ModelRunner {
 
     private ProcessRunnerFactory processRunnerFactory;
     private WorkspaceProvisioner workspaceProvisioner;
+    private ModelOutputHandlerWebService modelOutputHandlerWebService;
 
-    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner) {
+    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner,
+                           ModelOutputHandlerWebService modelOutputHandlerWebService) {
         this.processRunnerFactory = processRunnerFactory;
         this.workspaceProvisioner = workspaceProvisioner;
+        this.modelOutputHandlerWebService = modelOutputHandlerWebService;
     }
 
     /**
@@ -34,7 +37,7 @@ public class ModelRunnerImpl implements ModelRunner {
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
-     * @throws IOException Thrown if the workspace can not be correctly provisioned.
+     * @throws IOException Thrown if the workspace cannot be correctly provisioned.
      */
     @Override
     public ModelProcessHandler runModel(RunConfiguration configuration,
@@ -54,7 +57,7 @@ public class ModelRunnerImpl implements ModelRunner {
                 fileArguments,
                 configuration.getExecutionConfig().getMaxRuntime());
 
-        ModelProcessHandler processHandler = new ModelProcessHandler();
+        ModelProcessHandler processHandler = new ModelProcessHandler(configuration, modelOutputHandlerWebService);
         processRunner.run(processHandler);
         return processHandler;
     }

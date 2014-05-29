@@ -58,7 +58,7 @@ class CommonsExecProcessRunner implements ProcessRunner {
     @Override
     public void run(ProcessHandler processHandler) throws ProcessException {
         if (hasRun) {
-            throw new ProcessException(new Throwable("Can not use same process runner twice"));
+            throw new ProcessException(new Throwable("Cannot use same process runner twice"));
         }
 
         LOGGER.info(LOG_BG_START);

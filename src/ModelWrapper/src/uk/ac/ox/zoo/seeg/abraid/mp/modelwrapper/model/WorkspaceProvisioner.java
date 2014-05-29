@@ -18,7 +18,7 @@ public interface WorkspaceProvisioner {
      * @param occurrenceData The occurrences to use in the model.
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
      * @return The model wrapper script file to run.
-     * @throws IOException Thrown if the directory can not be correctly provisioned.
+     * @throws IOException Thrown if the directory cannot be correctly provisioned.
      */
     File provisionWorkspace(RunConfiguration configuration,
                             GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,

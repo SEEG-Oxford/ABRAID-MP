@@ -767,6 +767,22 @@ public class ConfigurationServiceTest {
                 .hasMessageStartingWith("Cannot store covariate config.");
     }
 
+    @Test
+    public void getModelOutputHandlerRootUrlReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedValue = "http://localhost/ModelOutputHandler";
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "model.output.handler.root.url", expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getModelOutputHandlerRootUrl();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
     private static JsonCovariateConfiguration createJsonCovariateConfig() {
         JsonCovariateConfiguration conf = new JsonCovariateConfiguration();
         conf.setDiseases(Arrays.asList(

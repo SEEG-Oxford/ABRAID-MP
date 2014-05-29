@@ -1,11 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.io.ZipInputStream;
-import net.lingala.zip4j.model.FileHeader;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
@@ -64,54 +56,30 @@ public class MainController extends AbstractController {
             // Ensure the request body is eligible for garbage collection
             modelRunZip = null;
             // Continue handling the outputs
-            handleOutputs(modelRunZipFile);
+            mainHandler.handleOutputs(modelRunZipFile);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return createErrorResponse(String.format(INTERNAL_SERVER_ERROR_MESSAGE, e.getMessage()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
-            if (modelRunZipFile != null && modelRunZipFile.exists()) {
-                if (!modelRunZipFile.delete()) {
-                    // Could not delete temporary file. Just log the error (this is not serious enough to fail the whole
-                    // model output handling).
-                    LOGGER.error(String.format(LOG_COULD_NOT_DELETE_TEMP_FILE, modelRunZipFile.getAbsolutePath()));
-                }
-            }
+            deleteTemporaryFile(modelRunZipFile);
         }
 
         return createSuccessResponse();
     }
 
     private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException {
-        File modelRunZipFile = Files.createTempFile("model_run_outputs", "zip").toFile();
+        File modelRunZipFile = Files.createTempFile("model_run_outputs", ".zip").toFile();
         FileUtils.writeByteArrayToFile(modelRunZipFile, modelRunZip);
         return modelRunZipFile;
     }
 
-    private void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
-        ZipFile zipFile = new ZipFile(modelRunZipFile);
-
-        // Retrieve the model run name from the metadata JSON, and find the corresponding ModelRun in the database
-        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME);
-        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
-        ModelRun modelRun = mainHandler.handleMetadataJson(metadataJsonAsString);
-
-        // Handle mean prediction raster
-        byte[] meanPredictionRaster = extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
-        mainHandler.handleMeanPredictionRaster(modelRun, meanPredictionRaster);
-
-        // Handle prediction uncertainty raster
-        byte[] predUncertaintyRaster = extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
-        mainHandler.handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
-    }
-
-    private byte[] extract(ZipFile zipFile, String fileName) throws ZipException, IOException {
-        FileHeader header = zipFile.getFileHeader(fileName);
-        if (header == null) {
-            throw new IllegalArgumentException(String.format("File %s missing from model run outputs", fileName));
-        } else {
-            try (ZipInputStream inputStream = zipFile.getInputStream(header)) {
-                return IOUtils.toByteArray(inputStream);
+    private void deleteTemporaryFile(File modelRunZipFile) {
+        if (modelRunZipFile != null && modelRunZipFile.exists()) {
+            if (!modelRunZipFile.delete()) {
+                // Could not delete temporary file. Just log the error (this is not serious enough to fail the whole
+                // model output handling).
+                LOGGER.error(String.format(LOG_COULD_NOT_DELETE_TEMP_FILE, modelRunZipFile.getAbsolutePath()));
             }
         }
     }

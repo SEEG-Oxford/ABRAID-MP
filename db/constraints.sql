@@ -218,3 +218,6 @@ ALTER TABLE disease_occurrence_review ADD CONSTRAINT ck_disease_occurrence_revie
 
 ALTER TABLE location ADD CONSTRAINT ck_location_precision
     CHECK (precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));
+
+ALTER TABLE model_run ADD CONSTRAINT ck_model_run_status
+    CHECK (status IN ('IN_PROGRESS', 'COMPLETED', 'FAILED'));

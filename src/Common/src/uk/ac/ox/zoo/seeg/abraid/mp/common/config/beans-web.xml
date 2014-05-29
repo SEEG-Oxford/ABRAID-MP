@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Contains web-specific beans.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="webServiceClient" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient" autowire="constructor">
+        <property name="connectTimeoutMilliseconds" value="${webserviceclient.connectTimeoutMilliseconds}"/>
+        <property name="readTimeoutMilliseconds" value="${webserviceclient.readTimeoutMilliseconds}"/>
+    </bean>
+
+</beans>

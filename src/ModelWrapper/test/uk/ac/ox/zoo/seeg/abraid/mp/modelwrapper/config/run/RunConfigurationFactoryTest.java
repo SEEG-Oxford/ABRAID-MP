@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class RunConfigurationFactoryTest {
+    private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+
     @Test
     public void createDefaultConfigurationUsesCorrectDefaults() throws Exception {
         // Arrange
@@ -37,11 +39,14 @@ public class RunConfigurationFactoryTest {
         setupExpectedCovariateConfiguration(configurationService);
         setupExpectedAdminUnitConfiguration(configurationService);
 
+        String expectedRunNameStart = "foo1_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
+
         // Act
         RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
 
         // Assert
-        assertThat(result.getRunName()).isEqualTo("foo1_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
+        assertThat(result.getRunName()).startsWith(expectedRunNameStart);
+        assertThat(result.getRunName()).matches(expectedRunNameStart + UUID_REGEX);
         assertThat(result.getBaseDir().getName()).isEqualTo("expectation1");
         assertCorrectCodeConfiguration(result.getCodeConfig());
         assertCorrectExecutionConfiguration(result.getExecutionConfig());
@@ -111,13 +116,16 @@ public class RunConfigurationFactoryTest {
         RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
         DateTimeUtils.setCurrentMillisFixed(0);
 
-        // Act
         String longName = RandomStringUtils.randomAlphanumeric(300);
+        String expectedRunNameStart =
+                longName.substring(0, 195) + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
+
+        // Act
         RunConfiguration result = target.createDefaultConfiguration(1, true, longName, longName);
 
         // Assert
-        assertThat(result.getRunName()).isEqualTo(
-                longName.substring(0, 195) + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss"));
+        assertThat(result.getRunName()).startsWith(expectedRunNameStart);
+        assertThat(result.getRunName()).matches(expectedRunNameStart + UUID_REGEX);
     }
 
     @Test
