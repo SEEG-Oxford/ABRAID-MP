@@ -64,6 +64,24 @@ public class WeightingsCalculatorTest extends AbstractDataAcquisitionSpringInteg
         assertThat(occurrence.getExpertWeighting()).isEqualTo(expectedWeighting);
     }
 
+    @Test
+    public void updateExpertsWeightingsWithEmptyReviewsOfOccurrenceReturnsExpectedResult() {
+        // Arrange - Only one expert has reviewed an occurrence so "reviewsOfOccurrence" in calculateDifference is empty
+        Expert expert = createExpert("expert", 0.9);
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, new DiseaseOccurrence(), DiseaseOccurrenceReviewResponse.YES);
+        DiseaseService mockDiseaseService = mock(DiseaseService.class);
+        when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(Arrays.asList(review));
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+
+        // Act
+        Map<Expert, Double> map = target.calculateNewExpertsWeightings();
+
+        // Assert
+        // The expert's response is "wrong" by the amount of the value that they reviewed (in this case they were "off"
+        // by 1.0 from YES response). The expert's new weighting is then how "right" they were - which is 0.
+        assertThat(map.get(expert)).isEqualTo(0.0);
+    }
+
     private DiseaseService mockUpDiseaseServiceWithOneReview(Expert expert, DiseaseOccurrence occurrence,
                                                 DiseaseOccurrenceReviewResponse response, int diseaseGroupId,
                                                 DiseaseGroup diseaseGroup) {
