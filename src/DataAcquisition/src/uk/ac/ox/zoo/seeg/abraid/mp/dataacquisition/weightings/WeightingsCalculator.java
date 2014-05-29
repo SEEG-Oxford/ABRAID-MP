@@ -24,17 +24,17 @@ public class WeightingsCalculator {
     private static final String NO_NEW_REVIEWS =
             "No new reviews have been submitted - expert weightings of disease occurrences will not be updated";
     private static final String RECALCULATING_EXPERT_WEIGHTINGS =
-            "Recalculating expert weightings for %d disease occurrences given %d new reviews";
+            "Recalculating expert weightings for %d disease occurrence(s) given %d new review(s)";
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
             "No new occurrences - validation and final weightings will not be updated";
     private static final String RECALCULATING_WEIGHTINGS =
-            "Recalculating validation and final weightings for %d disease occurrences in preparation for model run";
+            "Recalculating validation and final weightings for %d disease occurrence(s) in preparation for model run";
     private static final String UPDATING_WEIGHTINGS =
-            "Updating weightings for %d occurrences";
+            "Updating weightings for %d occurrence(s)";
     private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
             "Recalculating weightings of experts";
     private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
-            "Weightings changed for %d experts - saving to database";
+            "Weightings changed for %d expert(s) - saving to database";
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
@@ -108,8 +108,9 @@ public class WeightingsCalculator {
      * For every occurrence of the specified disease group for which is_validated is true, update its validation
      * weighting and final weighting.
      * @param diseaseGroupId The id of the disease group.
+     * @return The list of disease occurrences for requesting a model run.
      */
-    public void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
+    public List<DiseaseOccurrence> updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         if (occurrences.size() == 0) {
             LOGGER.info(NO_OCCURRENCES_FOR_MODEL_RUN);
@@ -117,6 +118,8 @@ public class WeightingsCalculator {
             LOGGER.info(String.format(RECALCULATING_WEIGHTINGS, occurrences.size()));
             updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
         }
+
+        return occurrences;
     }
 
     private void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {

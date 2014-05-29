@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
@@ -26,10 +27,11 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
      * @param targetFile The file to be created.
-     * @throws java.io.IOException If the data could not be written.
+     * @throws IOException If the data could not be written.
      */
     @Override
-    public void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File targetFile) throws IOException {
+    public void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File targetFile)
+            throws IOException {
         LOGGER.info(String.format(
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), targetFile.toString()));
         if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
@@ -37,10 +39,7 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
 
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(targetFile.getAbsoluteFile()), UTF_8));
+        try (BufferedWriter writer = createBufferedWriter(targetFile)) {
             for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
                 if (occurrence.getCrs() != null) {
                     LOGGER.warn(LOG_FEATURE_CRS_WARN);
@@ -50,19 +49,20 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
                 writer.write(extractCsvLine(occurrence));
                 writer.newLine();
             }
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
+    }
+
+    private BufferedWriter createBufferedWriter(File file) throws IOException {
+        return new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(file.getAbsoluteFile()), UTF_8));
     }
 
     private String extractCsvLine(GeoJsonDiseaseOccurrenceFeature occurrence) {
         return StringUtils.join(new String[]{
                 Double.toString(occurrence.getGeometry().getCoordinates().getLongitude()),
                 Double.toString(occurrence.getGeometry().getCoordinates().getLatitude()),
-                occurrence.getProperties().getWeighting().toString(),
-                occurrence.getProperties().getLocationPrecision().getModelValue().toString(),
+                ObjectUtils.toString(occurrence.getProperties().getWeighting()),
+                ObjectUtils.toString(occurrence.getProperties().getLocationPrecision().getModelValue()),
                 extractGaulCode(occurrence)
         }, ',');
     }
@@ -71,7 +71,7 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE) {
             return R_CODE_NULL_IDENTIFIER;
         } else {
-            return occurrence.getProperties().getGaulCode().toString();
+            return ObjectUtils.toString(occurrence.getProperties().getGaulCode());
         }
     }
 }

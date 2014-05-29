@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
  * Tests the WeightingsCalculator class.
  * Copyright (c) 2014 University of Oxford
  */
-public class WeightingsCalculatorTest extends AbstractDataAcquisitionSpringIntegrationTests {
+public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
 
@@ -103,10 +103,14 @@ public class WeightingsCalculatorTest extends AbstractDataAcquisitionSpringInteg
         WeightingsCalculator target = new WeightingsCalculator(diseaseService, mockExpertService);
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        List<DiseaseOccurrence> actualOccurrences =
+                target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
-        for (DiseaseOccurrence occurrence : diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)) {
+        List<DiseaseOccurrence> expectedOccurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        assertThat(actualOccurrences).hasSize(expectedOccurrences.size());
+        for (DiseaseOccurrence occurrence : expectedOccurrences) {
             assertThat(occurrence.getFinalWeighting()).isNotNull();
         }
     }
@@ -188,5 +192,4 @@ public class WeightingsCalculatorTest extends AbstractDataAcquisitionSpringInteg
         expert.setWeighting(expertsWeighting);
         return expert;
     }
-
 }

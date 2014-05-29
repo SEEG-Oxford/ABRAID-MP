@@ -2,21 +2,22 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.startsWith;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the Main class.
@@ -37,6 +38,9 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     @Autowired
     private GeoNameDao geoNameDao;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
     @Test
     public void mainMethodAcquiresDataFromWebService() {
         // Arrange
@@ -45,12 +49,13 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockModelWrapperRequest();
 
         // Act
-        Main.runMain(applicationContext, new String[] {});
+        runMain(new String[]{});
 
         // Assert
-        List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertFirstLocation(occurrences.get(0));
-        assertSecondLocation(occurrences.get(1));
+        assertThatDiseaseOccurrencesAreCorrect();
+        assertThatRelevantDiseaseOccurrencesHaveFinalWeightings();
+        assertThatModelWrapperWebServiceWasCalledCorrectly();
+        assertThatRollbackDidNotOccur();
     }
 
     @Test
@@ -64,12 +69,72 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockModelWrapperRequest();
 
         // Act
-        Main.runMain(applicationContext, fileNames);
+        runMain(fileNames);
 
         // Assert
+        assertThatDiseaseOccurrencesAreCorrect();
+        assertThatRelevantDiseaseOccurrencesHaveFinalWeightings();
+        assertThatModelWrapperWebServiceWasCalledCorrectly();
+        assertThatRollbackDidNotOccur();
+    }
+
+    @Test
+    public void mainMethodRollsBackModelRunIfItFails() {
+        // Arrange
+        mockHealthMapRequest();
+        mockGeoNamesRequests();
+        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
+                .thenThrow(new ModelRunManagerException("Test message"));
+
+        // Act
+        runMain(new String[]{});
+
+        // Assert
+        assertThatDiseaseOccurrencesAreCorrect();
+        assertThatRollbackOccurred();
+    }
+
+    private void runMain(String[] fileNames) {
+        Main.runMain(applicationContext, fileNames);
+    }
+
+    private void assertThatDiseaseOccurrencesAreCorrect() {
+        // Assert that we have created two disease occurrences and they are the correct ones
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
         assertFirstLocation(occurrences.get(0));
         assertSecondLocation(occurrences.get(1));
+    }
+
+    private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
+        // Assert that the model wrapper web service has been called once for dengue (disease group 87), with
+        // the specified number of occurrence points and disease extent classes
+        verify(modelWrapperWebService, atLeastOnce()).startRun(
+                argThat(new DiseaseGroupIdMatcher(87)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(28)),
+                argThat(new MapSizeMatcher<Integer, Integer>(459)));
+        verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
+                startsWith(MODELWRAPPER_URL_PREFIX), anyString());
+    }
+
+    private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
+        List<DiseaseOccurrence> diseaseOccurrences = diseaseOccurrenceDao.getAll();
+        for (DiseaseOccurrence diseaseOccurrence : diseaseOccurrences) {
+            if (diseaseOccurrence.getDiseaseGroup().getId() == 87 && diseaseOccurrence.isValidated()) {
+                assertThat(diseaseOccurrence.getFinalWeighting()).isNotNull();
+            }
+        }
+    }
+
+    private void assertThatRollbackOccurred() {
+        assertThat(getIsRollbackOnly()).isTrue();
+    }
+
+    private void assertThatRollbackDidNotOccur() {
+        assertThat(getIsRollbackOnly()).isFalse();
+    }
+
+    private boolean getIsRollbackOnly() {
+        return transactionManager.getTransaction(null).isRollbackOnly();
     }
 
     private void mockHealthMapRequest() {
@@ -265,5 +330,53 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 "\"fcode\": \"" + featureCode + "\",\n" +
                 "\"geonameId\": " + geoNameId.toString() + "\n" +
                 "}\n";
+    }
+
+    /**
+     * Matches a DiseaseGroup by ID.
+     */
+    private class DiseaseGroupIdMatcher extends ArgumentMatcher<DiseaseGroup> {
+        private Integer expectedId;
+
+        public DiseaseGroupIdMatcher(int expectedId) {
+            this.expectedId = expectedId;
+        }
+
+        @Override
+        public boolean matches(Object actualDiseaseGroup) {
+            return expectedId.equals(((DiseaseGroup) actualDiseaseGroup).getId());
+        }
+    }
+
+    /**
+     * Used to assert the size of a list that is passed in as a parameter.
+     */
+    private class ListSizeMatcher<T> extends ArgumentMatcher<List<T>> {
+        private Integer expectedSize;
+
+        public ListSizeMatcher(int expectedSize) {
+            this.expectedSize = expectedSize;
+        }
+
+        @Override
+        public boolean matches(Object actualCollection) {
+            return expectedSize.equals(((Collection) actualCollection).size());
+        }
+    }
+
+    /**
+     * Used to assert the size of a map that is passed in as a parameter.
+     */
+    private class MapSizeMatcher<K, V> extends ArgumentMatcher<Map<K, V>> {
+        private Integer expectedSize;
+
+        public MapSizeMatcher(int expectedSize) {
+            this.expectedSize = expectedSize;
+        }
+
+        @Override
+        public boolean matches(Object actualMap) {
+            return expectedSize.equals(((Map) actualMap).size());
+        }
     }
 }

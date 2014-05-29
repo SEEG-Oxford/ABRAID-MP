@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class LocationServiceImpl implements LocationService {
     private CountryDao countryDao;
     private HealthMapCountryDao healthMapCountryDao;

@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentParameters;
@@ -41,7 +42,7 @@ public class ModelRunManager {
         this.modelRunRequester = modelRunRequester;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<Integer> getDiseaseGroupsWithOccurrences() {
         return Arrays.asList(87); ///CHECKSTYLE:SUPPRESS MagicNumberCheck - only Dengue hard-coded for now
     }
@@ -50,34 +51,31 @@ public class ModelRunManager {
      * Prepares the model run by updating the disease extent, recalculating weightings and making the request.
      * @param diseaseGroupId The id of the disease group for which the model will be run.
      */
-    @Transactional
-    public void prepareModelRun(int diseaseGroupId) {
+    @Transactional(rollbackFor = Exception.class)
+    public void prepareForAndRequestModelRun(int diseaseGroupId) {
         DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(String.format(STARTING_MODEL_PREP, diseaseGroupId));
-            executeModelRunPrep(lastModelRunPrepDate, diseaseGroupId);
+            List<DiseaseOccurrence> diseaseOccurrences = prepareForModelRun(lastModelRunPrepDate, diseaseGroupId);
+            modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(String.format(NOT_STARTING_MODEL_PREP, diseaseGroupId, lastModelRunPrepDate));
         }
     }
 
-    private void executeModelRunPrep(DateTime lastModelRunPrepDate, int diseaseGroupId) {
+    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate, int diseaseGroupId) {
+        // Task 1
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, new DiseaseExtentParameters(null, 5, 0.6, 5, 1));
         ///CHECKSTYLE:ON
-        prepareDiseaseOccurrenceWeightings(lastModelRunPrepDate, diseaseGroupId);
-        modelRunRequester.requestModelRun(diseaseGroupId);
-    }
-
-    private void prepareDiseaseOccurrenceWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
-        // Task 1
-        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         // Task 2
-        // Determine whether occurrences should come off DataValidator, and set their is_validated value to true
+        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         // Task 3
-        weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        // Determine whether occurrences should come off DataValidator, and set their is_validated value to true
+        // Task 4
+        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
     /**

@@ -12,7 +12,7 @@ import java.util.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
@@ -249,7 +249,6 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param diseaseOccurrence The disease occurrence to save.
      */
     @Override
-    @Transactional
     public void saveDiseaseOccurrence(DiseaseOccurrence diseaseOccurrence) {
         diseaseOccurrenceDao.save(diseaseOccurrence);
     }
@@ -259,7 +258,6 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param diseaseGroup The disease group to save.
      */
     @Override
-    @Transactional
     public void saveDiseaseGroup(DiseaseGroup diseaseGroup) {
         diseaseGroupDao.save(diseaseGroup);
     }
@@ -269,7 +267,6 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @param disease The disease to save.
      */
     @Override
-    @Transactional
     public void saveHealthMapDisease(HealthMapDisease disease) {
         healthMapDiseaseDao.save(disease);
     }
