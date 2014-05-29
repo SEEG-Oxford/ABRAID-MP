@@ -26,7 +26,7 @@ public class ForwardingExecuteResultHandler extends DefaultExecuteResultHandler 
     @Override
     public void onProcessComplete(int exitValue) {
         super.onProcessComplete(exitValue);
-        this.processHandler.onProcessComplete(exitValue);
+        this.processHandler.onProcessComplete();
     }
 
     /**
@@ -36,7 +36,7 @@ public class ForwardingExecuteResultHandler extends DefaultExecuteResultHandler 
     @Override
     public void onProcessFailed(ExecuteException e) {
         super.onProcessFailed(e);
-        this.processHandler.onProcessFailed(new ProcessException(e));
+        this.processHandler.onProcessFailed(new ProcessException(e.getMessage(), e));
     }
 
     /**

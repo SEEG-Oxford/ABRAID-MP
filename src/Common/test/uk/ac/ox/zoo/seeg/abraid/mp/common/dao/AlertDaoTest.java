@@ -26,7 +26,7 @@ public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         Feed feed = feedDao.getById(1);
         DateTime publicationDate = new DateTime("2014-01-03T01:00:00-05:00");
-        long healthMapAlertId = 100L;
+        int healthMapAlertId = 100;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
         String summary = "This is a summary of the alert";
         String url = "http://www.promedmail.org/direct.php?id=20140217.2283261";

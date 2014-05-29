@@ -39,8 +39,9 @@ public class ModelRunnerTest {
         ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
+        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
 
-        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner, modelOutputHandlerWebService);
 
         RunConfiguration config = createBasicRunConfiguration();
 
@@ -62,8 +63,9 @@ public class ModelRunnerTest {
         ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
+        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
 
-        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner, modelOutputHandlerWebService);
 
         RunConfiguration config = createBasicRunConfiguration();
 
@@ -86,8 +88,9 @@ public class ModelRunnerTest {
         ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
+        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
 
-        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner, modelOutputHandlerWebService);
 
         File expectedR = new File("e1");
         File expectedBase = new File("base");

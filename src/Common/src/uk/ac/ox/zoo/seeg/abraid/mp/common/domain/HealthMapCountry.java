@@ -20,7 +20,7 @@ import java.util.Set;
 public class HealthMapCountry {
     // The country ID as used by HealthMap.
     @Id
-    private Long id;
+    private Integer id;
 
     // The country's name.
     @Column(nullable = false)
@@ -37,7 +37,7 @@ public class HealthMapCountry {
     public HealthMapCountry() {
     }
 
-    public HealthMapCountry(Long id, String name, Country... countries) {
+    public HealthMapCountry(Integer id, String name, Country... countries) {
         this.id = id;
         this.name = name;
         this.countries = new HashSet<>();
@@ -46,7 +46,7 @@ public class HealthMapCountry {
         }
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 

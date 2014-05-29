@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class HealthMapDisease {
     // The disease ID from HealthMap.
     @Id
-    private Long id;
+    private Integer id;
 
     // The disease name.
     @Column(nullable = false)
@@ -39,17 +39,17 @@ public class HealthMapDisease {
     public HealthMapDisease() {
     }
 
-    public HealthMapDisease(Long id, String name, DiseaseGroup diseaseGroup) {
+    public HealthMapDisease(Integer id, String name, DiseaseGroup diseaseGroup) {
         this.id = id;
         this.name = name;
         this.diseaseGroup = diseaseGroup;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

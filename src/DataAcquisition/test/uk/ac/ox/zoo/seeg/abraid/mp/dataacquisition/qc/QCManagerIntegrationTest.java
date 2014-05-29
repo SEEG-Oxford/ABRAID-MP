@@ -20,7 +20,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void stage1AndStage2NotRunWhenLocationPrecisionIsCountryAndStage3Passes() {
         // Arrange
-        long japanId = 156L;
+        int japanId = 156;
         Location location = new Location("Japan", 138.47861, 36.09854, LocationPrecision.COUNTRY, japanId);
 
         // Act
@@ -53,7 +53,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void passesStage1AndStage2AndStage3() {
         // Arrange
-        long mexicoId = 14L;
+        int mexicoId = 14;
         Location location = new Location("Estado de México, Mexico", -99.4922, 19.3318, LocationPrecision.ADMIN1,
                 mexicoId);
 
@@ -71,7 +71,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void failsStage1() {
         // Arrange
-        long vietnamId = 152L;
+        int vietnamId = 152;
         Location location = new Location("Huyện Cai Lậy, Tiền Giang, Vietnam", 108.69807, 7.90055,
                 LocationPrecision.ADMIN2, vietnamId);
 
@@ -88,7 +88,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void passesStage1ButFailsStage2() {
         // Arrange
-        long indonesiaId = 184L;
+        int indonesiaId = 184;
         Location location = new Location("Central Sulawesi, Indonesia", 121, -1, LocationPrecision.ADMIN1, indonesiaId);
 
         // Act
@@ -105,7 +105,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void passesStage1AndStage2ButFailsStage3() {
         // Arrange
-        long usId = 106L;
+        int usId = 106;
         Location location = new Location("Door County, Wisconsin, United States", -87.3001, 44.91666,
                 LocationPrecision.ADMIN2, usId);
 
@@ -140,7 +140,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void passesStage3IfHealthMapCountryHasNoGeometries() {
         // Arrange
-        long maldivesId = 143;
+        int maldivesId = 143;
         Location location = new Location("Maldives", 73.46564, 5.84270, LocationPrecision.COUNTRY, maldivesId);
 
         // Act

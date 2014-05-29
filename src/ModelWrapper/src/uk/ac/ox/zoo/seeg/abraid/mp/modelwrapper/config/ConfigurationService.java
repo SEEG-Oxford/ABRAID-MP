@@ -85,16 +85,16 @@ public interface ConfigurationService {
     void setMaxModelRunDuration(int value);
 
     /**
-     * Gets the path to the current global shapefile.
-     * @return The path to the global shapefile.
+     * Gets the path to the current global raster file.
+     * @return The path to the global raster file.
      */
-    String getGlobalShapeFile();
+    String getGlobalRasterFile();
 
     /**
-     * Gets the path to the current tropical shapefile.
-     * @return The path to the tropical shapefile.
+     * Gets the path to the current tropical raster file.
+     * @return The path to the tropical raster file.
      */
-    String getTropicalShapeFile();
+    String getTropicalRasterFile();
 
     /**
      * Gets the path to the current admin 1 raster file.
@@ -141,14 +141,20 @@ public interface ConfigurationService {
     /**
      * Gets the current covariate configuration.
      * @return The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file can not be parsed correctly.
+     * @throws java.io.IOException thrown if the configuration json file cannot be parsed correctly.
      */
     JsonCovariateConfiguration getCovariateConfiguration() throws IOException;
 
     /**
      * Sets the current covariate configuration.
      * @param config The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file can not be written correctly.
+     * @throws java.io.IOException thrown if the configuration json file cannot be written correctly.
      */
     void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException;
+
+    /**
+     * Gets the root URL for the Model Output Handler web service.
+     * @return The root URL for the Model Output Handler web service.
+     */
+    String getModelOutputHandlerRootUrl();
 }

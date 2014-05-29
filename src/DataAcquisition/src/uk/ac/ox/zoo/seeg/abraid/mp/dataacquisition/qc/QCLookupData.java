@@ -23,7 +23,7 @@ import static ch.lambdaj.Lambda.*;
 public class QCLookupData {
     private List<AdminUnitQC> adminUnits;
     private MultiPolygon landSeaBorders;
-    private Map<Long, MultiPolygon> healthMapCountryGeometryMap;
+    private Map<Integer, MultiPolygon> healthMapCountryGeometryMap;
 
     private LocationService locationService;
     private HealthMapLookupData healthMapLookupData;
@@ -62,9 +62,9 @@ public class QCLookupData {
      * If the HealthMap country has no associated geometries, it does not appear in the map.
      * @return A mapping as described above.
      */
-    public Map<Long, MultiPolygon> getHealthMapCountryGeometryMap() {
+    public Map<Integer, MultiPolygon> getHealthMapCountryGeometryMap() {
         if (healthMapCountryGeometryMap == null) {
-            Map<Long, HealthMapCountry> countryMap = healthMapLookupData.getCountryMap();
+            Map<Integer, HealthMapCountry> countryMap = healthMapLookupData.getCountryMap();
             healthMapCountryGeometryMap = new HashMap<>();
 
             for (HealthMapCountry country : countryMap.values()) {

@@ -72,9 +72,9 @@ public class ExpertServiceImpl implements ExpertService {
      * database.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId,
-                                                                        Integer validatorDiseaseGroupId) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewed(expertId, validatorDiseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
+                                                                                Integer validatorDiseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, validatorDiseaseGroupId);
     }
 
     /**

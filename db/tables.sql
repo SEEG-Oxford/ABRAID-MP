@@ -90,7 +90,7 @@ CREATE TABLE alert (
     publication_date timestamp NOT NULL,
     url varchar(2000) NOT NULL,
     summary text,
-    healthmap_alert_id bigint NOT NULL,
+    healthmap_alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -165,7 +165,7 @@ CREATE TABLE feed (
     name varchar(100) NOT NULL,
     weighting double precision NOT NULL,
     language varchar(4),
-    healthmap_feed_id bigint,
+    healthmap_feed_id integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -180,17 +180,17 @@ CREATE TABLE geonames_location_precision (
 );
 
 CREATE TABLE healthmap_country (
-    id bigint NOT NULL,
+    id integer NOT NULL,
     name varchar(100) NOT NULL
 );
 
 CREATE TABLE healthmap_country_country (
-    healthmap_country_id bigint NOT NULL,
+    healthmap_country_id integer NOT NULL,
     gaul_code integer NOT NULL
 );
 
 CREATE TABLE healthmap_disease (
-    id bigint NOT NULL,
+    id integer NOT NULL,
     name varchar(100) NOT NULL,
     disease_group_id integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
@@ -209,7 +209,7 @@ CREATE TABLE location (
     geoname_id integer,
     resolution_weighting double precision,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    healthmap_country_id bigint,
+    healthmap_country_id integer,
     admin_unit_qc_gaul_code integer,
     admin_unit_global_gaul_code integer,
     admin_unit_tropical_gaul_code integer,
@@ -220,9 +220,12 @@ CREATE TABLE location (
 CREATE TABLE model_run (
     id serial NOT NULL,
     name varchar(300) NOT NULL,
+    status varchar(15) NOT NULL,
     disease_group_id integer NOT NULL,
     request_date timestamp NOT NULL,
     response_date timestamp,
+    output_text text,
+    error_text text,
     mean_prediction_raster raster,
     prediction_uncertainty_raster raster
 );

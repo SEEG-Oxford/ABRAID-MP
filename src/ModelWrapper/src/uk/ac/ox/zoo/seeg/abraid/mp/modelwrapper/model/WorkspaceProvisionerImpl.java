@@ -3,13 +3,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Provides a trigger for setting up the directory in which a model will run.
@@ -41,7 +41,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
      * @param occurrenceData The occurrences to use in the model.
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting, to be used by model.
      * @return The model wrapper script file to run.
-     * @throws IOException Thrown if the directory can not be correctly provisioned.
+     * @throws IOException Thrown if the directory cannot be correctly provisioned.
      */
     @Override
     public File provisionWorkspace(RunConfiguration configuration,
@@ -49,9 +49,7 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
                                    Map<Integer, Integer> extentWeightings)
             throws IOException {
         // Create directories
-        Path workingDirectoryPath = Paths.get(
-                configuration.getBaseDir().getAbsolutePath(),
-                configuration.getRunName() + "_" + UUID.randomUUID().toString());
+        Path workingDirectoryPath = configuration.getWorkingDirectoryPath();
         LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
 
         File workingDirectory = workingDirectoryPath.toFile();
@@ -76,11 +74,9 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
             throw new IOException("Directory structure could not be created.");
         }
 
-        // Rasterize extents
-        LOGGER.info(String.format("TODO: Rasterize extent data."));
-
         // Copy input data
-        inputDataManager.writeData(occurrenceData, dataDirectory);
+        inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory);
+        inputDataManager.writeExtentData(extentWeightings, configuration.getAdminUnitConfig(), dataDirectory);
 
         // Copy model
         sourceCodeManager.provisionVersion(configuration.getCodeConfig().getModelVersion(), modelDirectory);

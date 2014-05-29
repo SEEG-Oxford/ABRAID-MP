@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.UUID;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -41,8 +42,8 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      * @param diseaseName The disease name
      * @param diseaseAbbreviation The disease abbreviation
      * @return The new RunConfiguration
-     * @throws ConfigurationException When the R executable can not be found.
-     * @throws IOException When the covariate configuration can not be read.
+     * @throws ConfigurationException When the R executable cannot be found.
+     * @throws IOException When the covariate configuration cannot be read.
      */
     @Override
     public RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseGlobal,
@@ -63,7 +64,10 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
         if (safeDiseaseName.length() > MAX_DISEASE_NAME_LENGTH) {
             safeDiseaseName = safeDiseaseName.substring(0, MAX_DISEASE_NAME_LENGTH);
         }
-        return safeDiseaseName + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss");
+
+        return safeDiseaseName + "_" +
+               LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_" +
+               UUID.randomUUID();
     }
 
     private File buildBaseDir() {
@@ -98,8 +102,8 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 diseaseGlobal,
                 configurationService.getAdmin1RasterFile(),
                 configurationService.getAdmin2RasterFile(),
-                configurationService.getTropicalShapeFile(),
-                configurationService.getGlobalShapeFile());
+                configurationService.getTropicalRasterFile(),
+                configurationService.getGlobalRasterFile());
     }
 
     private Collection<String> buildCovariateFileList(int diseaseId)

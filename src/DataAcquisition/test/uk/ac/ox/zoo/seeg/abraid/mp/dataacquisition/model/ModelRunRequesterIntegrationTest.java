@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
@@ -14,9 +15,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractWebServiceClientIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,9 +26,10 @@ import java.util.regex.Pattern;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Contains integration tests for the ModelRunRequester class.
@@ -72,6 +74,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         // Arrange
         int diseaseGroupId = 87;
         String responseJson = "{\"errorText\":\"testerror\"}";
+        String expectedLogMessage = "Error when requesting a model run: testerror";
+        Logger logger = GeneralTestUtils.createMockLogger(modelRunRequester);
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
         List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
@@ -87,6 +91,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         // Arrange
         int diseaseGroupId = 87;
         String exceptionMessage = "Web service failed";
+        String expectedLogMessage = "Error when requesting a model run: " + exceptionMessage;
+        Logger logger = GeneralTestUtils.createMockLogger(modelRunRequester);
         WebServiceClientException thrownException = new WebServiceClientException(exceptionMessage);
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
         List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);

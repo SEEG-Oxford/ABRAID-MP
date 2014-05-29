@@ -40,7 +40,7 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
     @Test
     public void getHealthMapCountryWithNoAssociatedSEEGCountries() {
         // Arrange
-        long id = 143;
+        int id = 143;
         String healthMapCountryName = "Maldives";
 
         // Act
@@ -57,7 +57,7 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
     @Test
     public void getHealthMapCountryWithOneAssociatedSEEGCountry() {
         // Arrange
-        long id = 28;
+        int id = 28;
         String healthMapCountryName = "Trinidad & Tobago";
 
         // Act
@@ -78,7 +78,7 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
     @Test
     public void getHealthMapCountryWithTwoAssociatedSEEGCountries() {
         // Arrange
-        long id = 104;
+        int id = 104;
         String healthMapCountryName = "Netherlands";
 
         // Act
@@ -103,7 +103,7 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
 
     @Test
     public void getHealthMapCountryByInvalidId() {
-        long id = 5000;
+        int id = 5000;
         HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
         assertThat(healthMapCountry).isNull();
     }

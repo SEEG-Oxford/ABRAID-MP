@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -12,26 +12,27 @@ import java.io.*;
 import java.nio.file.Paths;
 
 /**
- * Provides a mechanism for writing model input data into the working directory.
+ * Provides a mechanism for writing model input occurrence data into the working directory.
  * Copyright (c) 2014 University of Oxford
  */
-public class InputDataManagerImpl implements InputDataManager {
-    private static final Logger LOGGER = Logger.getLogger(FreemarkerScriptGenerator.class);
+public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
+    private static final Logger LOGGER = Logger.getLogger(OccurrenceDataWriterImpl.class);
     private static final String LOG_FEATURE_CRS_WARN = "Aborted writing occurrence data due to feature level CRS.";
     private static final String LOG_WRITING_OCCURRENCE_DATA = "Writing %d occurrence data points to workspace at %s";
     private static final String LOG_TOP_LEVEL_CRS_WARN = "Aborted writing occurrence data due to incorrect CRS.";
 
     private static final String UTF_8 = "UTF-8";
+    private static final String R_CODE_NULL_IDENTIFIER = "NA";
     private static final String OUTBREAK_CSV = "outbreak.csv";
 
     /**
-     * Write the occurrence data to file ready to run the model.
+     * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
      * @param dataDirectory The directory to create the data files in.
      * @throws IOException If the data could not be written.
      */
     @Override
-    public void writeData(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
+    public void write(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData, File dataDirectory)
             throws IOException {
         LOGGER.info(String.format(
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), dataDirectory.getParent()));
@@ -71,7 +72,7 @@ public class InputDataManagerImpl implements InputDataManager {
 
     private String extractGaulCode(GeoJsonDiseaseOccurrenceFeature occurrence) {
         if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE) {
-            return "NA";
+            return R_CODE_NULL_IDENTIFIER;
         } else {
             return occurrence.getProperties().getGaulCode().toString();
         }

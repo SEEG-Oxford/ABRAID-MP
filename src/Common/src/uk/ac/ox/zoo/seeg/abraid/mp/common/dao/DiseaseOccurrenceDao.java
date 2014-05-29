@@ -31,7 +31,8 @@ public interface DiseaseOccurrenceDao {
      * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewed(Integer expertId, Integer validatorDiseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
+                                                                         Integer validatorDiseaseGroupId);
 
     /**
      * Saves the specified disease occurrence.

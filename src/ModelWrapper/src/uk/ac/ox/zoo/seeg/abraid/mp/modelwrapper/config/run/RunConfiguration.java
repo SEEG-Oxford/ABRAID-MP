@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * An immutable data structure to hold the configuration for a single model run.
@@ -53,5 +55,9 @@ public class RunConfiguration {
 
     public AdminUnitRunConfiguration getAdminUnitConfig() {
         return adminUnitConfig;
+    }
+
+    public Path getWorkingDirectoryPath() {
+        return Paths.get(getBaseDir().getAbsolutePath(), getRunName());
     }
 }

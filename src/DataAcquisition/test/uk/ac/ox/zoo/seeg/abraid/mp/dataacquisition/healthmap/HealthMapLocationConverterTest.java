@@ -28,8 +28,8 @@ import static org.mockito.Mockito.*;
 public class HealthMapLocationConverterTest {
     private static final String MAPPED_COUNTRY_NAME = "Argentina";
     private static final String UNMAPPED_COUNTRY_NAME = "Maldives";
-    private static final long MAPPED_COUNTRY_ID = 4L;
-    private static final long UNMAPPED_COUNTRY_ID = 143L;
+    private static final int MAPPED_COUNTRY_ID = 4;
+    private static final int UNMAPPED_COUNTRY_ID = 143;
 
     private HealthMapCountry mappedHealthMapCountry;
     private HealthMapCountry unMappedHealthMapCountry;
@@ -51,7 +51,7 @@ public class HealthMapLocationConverterTest {
     }
 
     private void setUpCountryMap() {
-        Map<Long, HealthMapCountry> countryMap = new HashMap<>();
+        Map<Integer, HealthMapCountry> countryMap = new HashMap<>();
         mappedHealthMapCountry = new HealthMapCountry(MAPPED_COUNTRY_ID, MAPPED_COUNTRY_NAME,
                 new Country(12, MAPPED_COUNTRY_NAME));
         unMappedHealthMapCountry = new HealthMapCountry(UNMAPPED_COUNTRY_ID, UNMAPPED_COUNTRY_NAME);

@@ -31,7 +31,7 @@ public class AlertServiceImpl implements AlertService {
      * @return The alert with this HealthMap alert ID, or null if not found.
      */
     @Override
-    public Alert getAlertByHealthMapAlertId(Long healthMapAlertId) {
+    public Alert getAlertByHealthMapAlertId(Integer healthMapAlertId) {
         return alertDao.getByHealthMapAlertId(healthMapAlertId);
     }
 

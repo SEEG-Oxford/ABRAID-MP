@@ -10,9 +10,8 @@ import java.io.PipedInputStream;
 public interface ProcessHandler {
     /**
      * Called when asynchronous execution completes.
-     * @param exitValue The return code of the model.
      */
-    void onProcessComplete(int exitValue);
+    void onProcessComplete();
 
     /**
      * Called when asynchronous execution fails.

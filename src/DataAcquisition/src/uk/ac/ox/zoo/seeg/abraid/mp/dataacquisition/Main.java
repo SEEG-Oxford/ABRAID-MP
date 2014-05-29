@@ -3,9 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
+
+import java.util.Map;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -23,6 +26,10 @@ public class Main {
     private HealthMapDataAcquisition healthMapDataAcquisition;
     private ModelRunManager modelRunManager;
 
+    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunManager modelRunManager) {
+        this.healthMapDataAcquisition = healthMapDataAcquisition;
+        this.modelRunManager = modelRunManager;
+    }
 
     /**
      * Entry method for the DataAcquisition module.
@@ -57,13 +64,6 @@ public class Main {
         main.prepareForAndRequestModelRuns();
     }
 
-
-
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunManager modelRunManager) {
-        this.healthMapDataAcquisition = healthMapDataAcquisition;
-        this.modelRunManager = modelRunManager;
-    }
-
     /**
      * Acquires data from all sources, then generate an initial disease extent.
      * @param fileNames A list of file names containing HealthMap JSON data to acquire. If no file names are specified
@@ -84,14 +84,20 @@ public class Main {
      * Requests a model run (after preparation and if relevant), for each disease group that has occurrences.
      */
     public void prepareForAndRequestModelRuns() {
+        Map<Expert, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
-            try {
-                modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-            } catch (ModelRunManagerException e) {
-                // Ignore the exception, because it is thrown to roll back the transaction per disease group if
-                // the model run manager fails.
-                LOGGER.fatal(e.getMessage(), e);
-            }
+            prepareForAndRequestModelRun(diseaseGroupId);
+        }
+        modelRunManager.saveExpertsWeightings(newExpertWeightings);
+    }
+
+    private void prepareForAndRequestModelRun(int diseaseGroupId) {
+        try {
+            modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
+        } catch (ModelRunManagerException e) {
+            // Ignore the exception, because it is thrown to roll back the transaction per disease group if
+            // the model run manager fails.
+            LOGGER.fatal(e.getMessage(), e);
         }
     }
 }

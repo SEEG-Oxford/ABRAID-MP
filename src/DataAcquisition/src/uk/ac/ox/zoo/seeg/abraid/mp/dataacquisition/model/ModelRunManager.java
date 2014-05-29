@@ -4,12 +4,14 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentParameters;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Prepares the model run by updating the disease extent and recalculating weightings.
@@ -74,5 +76,23 @@ public class ModelRunManager {
         // Determine whether occurrences should come off DataValidator, and set their is_validated value to true
         // Task 4
         return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+    }
+
+    /**
+     * Gets the new weighting for each active expert.
+     * @return The map from expert to the new weighting value.
+     */
+    @Transactional
+    public Map<Expert, Double> prepareExpertsWeightings() {
+        return weightingsCalculator.calculateNewExpertsWeightings();
+    }
+
+    /**
+     * Saves the new weighting for each expert.
+     * @param newExpertsWeightings The map from expert to the new weighting value.
+     */
+    @Transactional
+    public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
+        weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
 }

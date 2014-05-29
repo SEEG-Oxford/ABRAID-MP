@@ -88,6 +88,12 @@ public interface DiseaseService {
     DiseaseExtentClass getDiseaseExtentClass(String name);
 
     /**
+     * Gets a list of all the disease occurrence reviews in the database.
+     * @return The disease occurrence reviews.
+     */
+    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
+
+    /**
      * Gets a list of all the disease occurrence reviews in the database for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease occurrence reviews.
