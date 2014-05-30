@@ -49,7 +49,7 @@ local({r <- getOption("repos")
 })
 
 # Load devtools
-if (!require('devtools', quietly=TRUE)) {
+if (!dry_run && !require('devtools', quietly=TRUE)) {
     install.packages('devtools', quiet=TRUE)
     library('devtools', quietly=TRUE)
 }
