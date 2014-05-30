@@ -174,6 +174,7 @@ public class CommonsExecIntegrationTest {
         int exitCode = processHandler.waitForCompletion();
 
         // Assert
+        assertThat(processHandler.getOutputStream() + " " + processHandler.getErrorStream()).isEmpty();
         assertThat(exitCode).isEqualTo(SUCCESSFUL);
     }
 
