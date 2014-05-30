@@ -43,6 +43,19 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getAllDiseaseExtentClasses() {
+        // Arrange
+        List<DiseaseExtentClass> diseaseExtentClasses = Arrays.asList(new DiseaseExtentClass());
+        when(diseaseExtentClassDao.getAll()).thenReturn(diseaseExtentClasses);
+
+        // Act
+        List<DiseaseExtentClass> testDiseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
+
+        // Assert
+        assertThat(testDiseaseExtentClasses).isSameAs(diseaseExtentClasses);
+    }
+
+    @Test
     public void getAllHealthMapDiseases() {
         // Arrange
         List<HealthMapDisease> diseases = Arrays.asList(new HealthMapDisease());
