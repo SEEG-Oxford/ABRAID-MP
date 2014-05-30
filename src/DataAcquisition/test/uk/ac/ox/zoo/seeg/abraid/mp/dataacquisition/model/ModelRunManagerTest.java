@@ -110,10 +110,8 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
     }
 
     private DateTime setLastModelRunPrepDate(DiseaseGroup diseaseGroup, Boolean weekHasElapsed) {
-        DateTime lastModelRunPrepDate;
-        if (weekHasElapsed == null) {
-            lastModelRunPrepDate = null;
-        } else {
+        DateTime lastModelRunPrepDate = null;
+        if (weekHasElapsed != null) {
             int days = weekHasElapsed ? 7 : 1;
             lastModelRunPrepDate = DateTime.now().minusDays(days);
         }
@@ -122,10 +120,8 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
     }
 
     private void setModelRunMinNewOccurrences(DiseaseGroup diseaseGroup, Boolean newOccurrenceCountOverThreshold) {
-        Integer n;
-        if (newOccurrenceCountOverThreshold == null) {
-            n = null;
-        } else {
+        Integer n = null;
+        if (newOccurrenceCountOverThreshold != null) {
             int thresholdAdjustment = newOccurrenceCountOverThreshold ? -1 : +1;
             n = (int) diseaseService.getNewOccurrencesCountByDiseaseGroup(diseaseGroup.getId()) + thresholdAdjustment;
         }

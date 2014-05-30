@@ -225,7 +225,7 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseGroup)) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
@@ -234,12 +234,17 @@ public class DiseaseGroup {
         if (groupType != that.groupType) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
+        if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
+            return false;
+        if (modelRunMinNewOccurrences != null ? !modelRunMinNewOccurrences.equals(that.modelRunMinNewOccurrences) : that.modelRunMinNewOccurrences != null)
+            return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
         if (shortName != null ? !shortName.equals(that.shortName) : that.shortName != null) return false;
         if (validatorDiseaseGroup != null ? !validatorDiseaseGroup.equals(that.validatorDiseaseGroup) : that.validatorDiseaseGroup != null)
             return false;
+        if (weighting != null ? !weighting.equals(that.weighting) : that.weighting != null) return false;
 
         return true;
     }
@@ -255,6 +260,9 @@ public class DiseaseGroup {
         result = 31 * result + (abbreviation != null ? abbreviation.hashCode() : 0);
         result = 31 * result + (isGlobal != null ? isGlobal.hashCode() : 0);
         result = 31 * result + (validatorDiseaseGroup != null ? validatorDiseaseGroup.hashCode() : 0);
+        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
+        result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
+        result = 31 * result + (modelRunMinNewOccurrences != null ? modelRunMinNewOccurrences.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

@@ -254,6 +254,20 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrences).hasSize(45);
     }
 
+    @Test
+    public void getNewOccurrencesCountByDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(diseaseGroup.getCreatedDate().minusDays(1));
+
+        // Act
+        long count = diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+
+        // Assert
+        assertThat(count).isEqualTo(48);
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
                                                        boolean isGlobal) {
         // Arrange
