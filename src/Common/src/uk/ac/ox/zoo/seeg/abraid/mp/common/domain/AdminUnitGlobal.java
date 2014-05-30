@@ -10,7 +10,7 @@ import javax.persistence.Table;
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
-@Table(name = "admin_unit_global")
+@Table(name = "admin_unit_global_view")
 @Immutable
 public class AdminUnitGlobal extends AdminUnitGlobalOrTropical {
     public AdminUnitGlobal() {

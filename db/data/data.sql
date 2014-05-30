@@ -4,6 +4,7 @@
 --
 -- Copyright (c) 2014 University of Oxford
 
+\copy admin_unit_country (admin_unit_gaul_code, country_gaul_code) FROM 'admin_unit_country.txt' (ENCODING utf8, NULL '')
 \copy provenance (id, name, default_feed_weighting) FROM 'provenance.txt' (ENCODING utf8, NULL '')
 \copy feed (provenance_id, name, weighting, language, healthmap_feed_id) FROM 'feed.txt' (ENCODING utf8, NULL '')
 \copy healthmap_country (id, name) FROM 'healthmap_country.txt' (ENCODING utf8, NULL '')
@@ -27,12 +28,13 @@ SET client_min_messages TO WARNING;
 VACUUM ANALYZE;
 
 -- To refresh the above data, use the following statements (these use subqueries to order the data, which aids difference comparisons):
--- \copy (select name, weighting from disease_extent_class order by id) TO 'disease_extent_class.txt' (ENCODING utf8, NULL '')
--- \copy (select id, parent_id, name, group_type, public_name, short_name, abbreviation, is_global, validator_disease_group_id, weighting from disease_group order by id) TO 'disease_group.txt' (ENCODING utf8, NULL '')
+-- \copy (select admin_unit_gaul_code, country_gaul_code from admin_unit_country order by admin_unit_gaul_code) TO 'admin_unit_country.txt' (ENCODING utf8, NULL '')
+-- \copy (select id, name, default_feed_weighting from provenance order by id) TO 'provenance.txt' (ENCODING utf8, NULL '')
 -- \copy (select provenance_id, name, weighting, language, healthmap_feed_id from feed order by id) TO 'feed.txt' (ENCODING utf8, NULL '')
--- \copy (select geonames_feature_code, location_precision from geonames_location_precision order by id) TO 'geonames_location_precision.txt' (ENCODING utf8, NULL '')
 -- \copy (select id, name from healthmap_country order by id) TO 'healthmap_country.txt' (ENCODING utf8, NULL '')
 -- \copy (select healthmap_country_id, gaul_code from healthmap_country_country order by id) TO 'healthmap_country_country.txt' (ENCODING utf8, NULL '')
--- \copy (select id, name, disease_group_id from healthmap_disease order by id) TO 'healthmap_disease.txt' (ENCODING utf8, NULL '')
--- \copy (select id, name, default_feed_weighting from provenance order by id) TO 'provenance.txt' (ENCODING utf8, NULL '')
 -- \copy (select id, name from validator_disease_group order by id) TO 'validator_disease_group.txt' (ENCODING utf8, NULL '')
+-- \copy (select id, parent_id, name, group_type, public_name, short_name, abbreviation, is_global, validator_disease_group_id, weighting from disease_group order by id) TO 'disease_group.txt' (ENCODING utf8, NULL '')
+-- \copy (select id, name, disease_group_id from healthmap_disease order by id) TO 'healthmap_disease.txt' (ENCODING utf8, NULL '')
+-- \copy (select geonames_feature_code, location_precision from geonames_location_precision order by id) TO 'geonames_location_precision.txt' (ENCODING utf8, NULL '')
+-- \copy (select name, weighting from disease_extent_class order by id) TO 'disease_extent_class.txt' (ENCODING utf8, NULL '')

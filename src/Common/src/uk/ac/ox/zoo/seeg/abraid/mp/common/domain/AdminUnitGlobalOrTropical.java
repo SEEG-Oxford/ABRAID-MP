@@ -24,9 +24,14 @@ public abstract class AdminUnitGlobalOrTropical {
     @Column(name = "pub_name")
     private String publicName;
 
+    // The admin unit's geometry, with simplified borders for efficient display.
     @Column(name = "simplified_geom")
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon simplifiedGeom;
+
+    // The country that contains this admin unit (if any).
+    @Column(name = "country_gaul_code")
+    private Integer countryGaulCode;
 
     protected AdminUnitGlobalOrTropical() {
     }
@@ -67,6 +72,14 @@ public abstract class AdminUnitGlobalOrTropical {
         this.simplifiedGeom = simplifiedGeom;
     }
 
+    public Integer getCountryGaulCode() {
+        return countryGaulCode;
+    }
+
+    public void setCountryGaulCode(Integer countryGaulCode) {
+        this.countryGaulCode = countryGaulCode;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -77,6 +90,8 @@ public abstract class AdminUnitGlobalOrTropical {
         AdminUnitGlobalOrTropical that = (AdminUnitGlobalOrTropical) o;
 
         if (level != that.level) return false;
+        if (countryGaulCode != null ? !countryGaulCode.equals(that.countryGaulCode) : that.countryGaulCode != null)
+            return false;
         if (gaulCode != null ? !gaulCode.equals(that.gaulCode) : that.gaulCode != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
         if (simplifiedGeom != null ? !simplifiedGeom.equals(that.simplifiedGeom) : that.simplifiedGeom != null)
@@ -91,6 +106,7 @@ public abstract class AdminUnitGlobalOrTropical {
         result = 31 * result + (int) level;
         result = 31 * result + (publicName != null ? publicName.hashCode() : 0);
         result = 31 * result + (simplifiedGeom != null ? simplifiedGeom.hashCode() : 0);
+        result = 31 * result + (countryGaulCode != null ? countryGaulCode.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

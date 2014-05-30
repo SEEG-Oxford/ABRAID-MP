@@ -89,6 +89,15 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     * Finds the first admin unit for global diseases that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the first country that contains the specified point, or null if no countries found.
+     */
+    public Integer findCountryThatContainsPoint(Point point) {
+        return nativeSQL.findCountryThatContainsPoint(point);
+    }
+
+    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */

@@ -44,6 +44,9 @@ ALTER TABLE provenance
 
 
 -- Primary keys
+ALTER TABLE admin_unit_country ADD CONSTRAINT pk_admin_unit_country
+    PRIMARY KEY (admin_unit_gaul_code);
+
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT pk_admin_unit_disease_extent_class
     PRIMARY KEY (id);
 
@@ -118,6 +121,9 @@ ALTER TABLE validator_disease_group ADD CONSTRAINT pk_validator_disease_group
 
 
 -- Foreign keys
+ALTER TABLE admin_unit_country ADD CONSTRAINT fk_admin_unit_country_country
+    FOREIGN KEY (country_gaul_code) REFERENCES country (gaul_code);
+
 ALTER TABLE admin_unit_disease_extent_class ADD CONSTRAINT fk_admin_unit_disease_extent_class_admin_unit_global
     FOREIGN KEY (global_gaul_code) REFERENCES admin_unit_global (gaul_code);
 
@@ -190,11 +196,14 @@ ALTER TABLE healthmap_disease ADD CONSTRAINT fk_healthmap_disease_disease_group
 ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_global
     FOREIGN KEY (admin_unit_global_gaul_code) REFERENCES admin_unit_global (gaul_code);
 
+ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_qc
+    FOREIGN KEY (admin_unit_qc_gaul_code) REFERENCES admin_unit_qc (gaul_code);
+
 ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_tropical
     FOREIGN KEY (admin_unit_tropical_gaul_code) REFERENCES admin_unit_tropical (gaul_code);
 
-ALTER TABLE location ADD CONSTRAINT fk_location_admin_unit_qc
-    FOREIGN KEY (admin_unit_qc_gaul_code) REFERENCES admin_unit_qc (gaul_code);
+ALTER TABLE location ADD CONSTRAINT fk_location_country
+    FOREIGN KEY (country_gaul_code) REFERENCES country (gaul_code);
 
 ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
     FOREIGN KEY (healthmap_country_id) REFERENCES healthmap_country (id);
