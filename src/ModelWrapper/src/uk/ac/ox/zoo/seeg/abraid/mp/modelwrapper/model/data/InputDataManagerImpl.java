@@ -16,7 +16,7 @@ import java.util.Map;
 public class InputDataManagerImpl implements InputDataManager {
     private static final Logger LOGGER = Logger.getLogger(InputDataManagerImpl.class);
 
-    private static final String OCCURRENCE_CSV = "occurrence.csv";
+    private static final String OCCURRENCE_CSV = "occurrences.csv";
     private static final String EXTENT_RASTER = "extent.asc";
     private final ExtentDataWriter extentDataWriter;
     private final OccurrenceDataWriter occurrenceDataWriter;

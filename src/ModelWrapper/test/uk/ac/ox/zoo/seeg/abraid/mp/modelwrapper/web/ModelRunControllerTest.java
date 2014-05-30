@@ -9,7 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerAsyncWrapperImpl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class ModelRunControllerTest {
     @Test
     public void startRunDoesNotAcceptNull() {
         // Arrange
-        ModelRunController target = new ModelRunController(mock(RunConfigurationFactory.class), mock(ModelRunner.class));
+        ModelRunController target = new ModelRunController(mock(RunConfigurationFactory.class), mock(ModelRunnerAsyncWrapperImpl.class));
 
         // Act
         ResponseEntity result = target.startRun(null);
@@ -42,7 +42,7 @@ public class ModelRunControllerTest {
         String runName = "foo_2014-04-24-10-50-27_cd0efc75-42d3-4d96-94b4-287e28fbcdac";
         RunConfigurationFactory mockFactory = mock(RunConfigurationFactory.class);
         RunConfiguration mockConf = mock(RunConfiguration.class);
-        ModelRunner mockRunner = mock(ModelRunner.class);
+        ModelRunnerAsyncWrapperImpl mockRunner = mock(ModelRunnerAsyncWrapperImpl.class);
         when(mockConf.getRunName()).thenReturn(runName);
         when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString(), anyString())).thenReturn(mockConf);
 
@@ -57,7 +57,7 @@ public class ModelRunControllerTest {
                 new JsonModelDisease(1, true, "foo", "foo"), occurrence, extent));
 
         // Assert
-        verify(mockRunner, times(1)).runModel(mockConf, occurrence, extent);
+        verify(mockRunner, times(1)).startModel(mockConf, occurrence, extent);
         assertResponseEntity(result, runName, null, HttpStatus.OK);
     }
 
