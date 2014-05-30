@@ -39,15 +39,13 @@ public class AdminUnitReview {
     @JoinColumn(name = "expert_id", nullable = false)
     private Expert expert;
 
-    // The global administrative unit.
-    @ManyToOne
-    @JoinColumn(name = "global_gaul_code")
-    private AdminUnitGlobal adminUnitGlobal;
+    // The GAUL code of the global administrative unit.
+    @Column(name = "admin_unit_global_gaul_code")
+    private Integer adminUnitGlobalGaulCode;
 
-    // The tropical administrative unit.
-    @ManyToOne
-    @JoinColumn(name = "tropical_gaul_code")
-    private AdminUnitTropical adminUnitTropical;
+    // The GAUL code of the tropical administrative unit.
+    @Column(name = "admin_unit_tropical_gaul_code")
+    private Integer adminUnitTropicalGaulCode;
 
     // The disease group (to clarify, this is not referring to the validator disease group).
     @ManyToOne
@@ -66,11 +64,11 @@ public class AdminUnitReview {
     private DateTime createdDate;
 
     /**
-     * The AdminUnitGlobal or the AdminUnitTropical, whichever of the pair is not null.
+     * The GAUL code of the global or tropical admin unit, whichever is not null.
      * @return The (global or tropical) admin unit.
      */
-    public AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropical() {
-        return (adminUnitGlobal == null) ? adminUnitTropical : adminUnitGlobal;
+    public Integer getAdminUnitGlobalOrTropical() {
+        return (adminUnitGlobalGaulCode == null) ? adminUnitTropicalGaulCode : adminUnitGlobalGaulCode;
     }
 
     public Integer getId() {
@@ -89,20 +87,20 @@ public class AdminUnitReview {
         this.expert = expert;
     }
 
-    public AdminUnitGlobal getAdminUnitGlobal() {
-        return adminUnitGlobal;
+    public Integer getAdminUnitGlobalGaulCode() {
+        return adminUnitGlobalGaulCode;
     }
 
-    public void setAdminUnitGlobal(AdminUnitGlobal adminUnitGlobal) {
-        this.adminUnitGlobal = adminUnitGlobal;
+    public void setAdminUnitGlobalGaulCode(Integer adminUnitGlobalGaulCode) {
+        this.adminUnitGlobalGaulCode = adminUnitGlobalGaulCode;
     }
 
-    public AdminUnitTropical getAdminUnitTropical() {
-        return adminUnitTropical;
+    public Integer getAdminUnitTropicalGaulCode() {
+        return adminUnitTropicalGaulCode;
     }
 
-    public void setAdminUnitTropical(AdminUnitTropical adminUnitTropical) {
-        this.adminUnitTropical = adminUnitTropical;
+    public void setAdminUnitTropicalGaulCode(Integer adminUnitTropicalGaulCode) {
+        this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
     }
 
     public DiseaseGroup getDiseaseGroup() {
@@ -130,32 +128,32 @@ public class AdminUnitReview {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AdminUnitReview)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        AdminUnitReview review = (AdminUnitReview) o;
+        AdminUnitReview that = (AdminUnitReview) o;
 
-        if (!createdDate.equals(review.createdDate)) return false;
-        if (!diseaseGroup.equals(review.diseaseGroup)) return false;
-        if (!expert.equals(review.expert)) return false;
-        if (adminUnitGlobal != null ? !adminUnitGlobal.equals(review.adminUnitGlobal) : review.adminUnitGlobal != null)
+        if (adminUnitGlobalGaulCode != null ? !adminUnitGlobalGaulCode.equals(that.adminUnitGlobalGaulCode) : that.adminUnitGlobalGaulCode != null)
             return false;
-        if (!id.equals(review.id)) return false;
-        if (response != review.response) return false;
-        if (adminUnitTropical != null ? !adminUnitTropical.equals(review.adminUnitTropical) : review.adminUnitTropical != null)
+        if (adminUnitTropicalGaulCode != null ? !adminUnitTropicalGaulCode.equals(that.adminUnitTropicalGaulCode) : that.adminUnitTropicalGaulCode != null)
             return false;
+        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
+        if (expert != null ? !expert.equals(that.expert) : that.expert != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (response != null ? !response.equals(that.response) : that.response != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + expert.hashCode();
-        result = 31 * result + (adminUnitGlobal != null ? adminUnitGlobal.hashCode() : 0);
-        result = 31 * result + (adminUnitTropical != null ? adminUnitTropical.hashCode() : 0);
-        result = 31 * result + diseaseGroup.hashCode();
-        result = 31 * result + response.hashCode();
-        result = 31 * result + createdDate.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (expert != null ? expert.hashCode() : 0);
+        result = 31 * result + (adminUnitGlobalGaulCode != null ? adminUnitGlobalGaulCode.hashCode() : 0);
+        result = 31 * result + (adminUnitTropicalGaulCode != null ? adminUnitTropicalGaulCode.hashCode() : 0);
+        result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
+        result = 31 * result + (response != null ? response.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

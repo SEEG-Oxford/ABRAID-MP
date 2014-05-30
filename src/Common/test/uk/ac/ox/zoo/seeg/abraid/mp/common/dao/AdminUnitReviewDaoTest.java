@@ -15,9 +15,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
-    private AdminUnitGlobalDao adminUnitGlobalDao;
-
-    @Autowired
     private AdminUnitReviewDao adminUnitReviewDao;
 
     @Autowired
@@ -37,10 +34,10 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         // Arrange
         Expert expert = expertDao.getById(2);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
-        AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2);
+        int adminUnitGlobalGaulCode = 2;
         DiseaseExtentClass response = diseaseExtentClassDao.getByName("PRESENCE");
 
-        AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobal, diseaseGroup, response);
+        AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobalGaulCode, diseaseGroup, response);
 
         // Act
         adminUnitReviewDao.save(review);
@@ -56,8 +53,8 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         assertThat(review.getExpert().getEmail()).isEqualTo(expert.getEmail());
         assertThat(review.getExpert().getValidatorDiseaseGroups()).containsAll(expert.getValidatorDiseaseGroups());
         assertThat(review.getDiseaseGroup()).isEqualTo(diseaseGroup);
-        assertThat(review.getAdminUnitGlobal()).isEqualTo(adminUnitGlobal);
-        assertThat(review.getAdminUnitTropical()).isNull();
+        assertThat(review.getAdminUnitGlobalGaulCode()).isEqualTo(adminUnitGlobalGaulCode);
+        assertThat(review.getAdminUnitTropicalGaulCode()).isNull();
         assertThat(review.getResponse()).isEqualTo(response);
     }
 
@@ -101,7 +98,7 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     @Test
     public void getByExpertIdAndDiseaseGroupReturnsEmptyListForWrongDisease() {
         // Arrange
-        AdminUnitReview review = createAndSaveAdminUnitReview();
+        createAndSaveAdminUnitReview();
 
         // Act
         List<AdminUnitReview> reviews = adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(EXPERT_ID, 2);
@@ -122,11 +119,11 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         assertThat(count).isEqualTo(1);
     }
 
-    private AdminUnitReview createAdminUnitReview(Expert expert, AdminUnitGlobal adminUnitGlobal,
+    private AdminUnitReview createAdminUnitReview(Expert expert, int adminUnitGlobalGaulCode,
                                                   DiseaseGroup diseaseGroup, DiseaseExtentClass response) {
         AdminUnitReview review = new AdminUnitReview();
         review.setExpert(expert);
-        review.setAdminUnitGlobal(adminUnitGlobal);
+        review.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
         review.setDiseaseGroup(diseaseGroup);
         review.setResponse(response);
         return review;
@@ -135,9 +132,9 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     private AdminUnitReview createAndSaveAdminUnitReview() {
         Expert expert = expertDao.getById(EXPERT_ID);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(DISEASE_GROUP_ID);
-        AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(2);
+        int adminUnitGlobalGaulCode = 2;
         DiseaseExtentClass response = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE);
-        AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobal, diseaseGroup, response);
+        AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobalGaulCode, diseaseGroup, response);
         adminUnitReviewDao.save(review);
         return review;
     }
