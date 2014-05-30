@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
 import java.util.List;
 
@@ -13,9 +14,11 @@ import java.util.List;
  */
 public class DiseaseExtentGenerator {
     private DiseaseService diseaseService;
+    private ExpertService expertService;
 
-    public DiseaseExtentGenerator(DiseaseService diseaseService) {
+    public DiseaseExtentGenerator(DiseaseService diseaseService, ExpertService expertService) {
         this.diseaseService = diseaseService;
+        this.expertService = expertService;
     }
 
     /**
@@ -26,9 +29,12 @@ public class DiseaseExtentGenerator {
     public void generateDiseaseExtent(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
         DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroupId, parameters);
 
-        // If there is currently no disease extent for this disease group, create an initial extent
+        // If there is currently no disease extent for this disease group, create an initial extent, otherwise
+        // update existing extent
         if (helper.getCurrentDiseaseExtent().size() == 0) {
             createInitialExtent(helper);
+        } else {
+            updateExistingExtent(helper);
         }
     }
 
@@ -65,9 +71,22 @@ public class DiseaseExtentGenerator {
         writeDiseaseExtent(helper.getDiseaseExtentToSave());
     }
 
+    private void updateExistingExtent(DiseaseExtentGeneratorHelper helper) {
+        helper.groupOccurrencesByAdminUnit();
+        helper.groupOccurrencesByCountry();
+        helper.groupReviewsByAdminUnit(getRelevantReviews(helper));
+        helper.computeUpdatedDiseaseExtentClasses();
+        writeDiseaseExtent(helper.getDiseaseExtentToSave());
+    }
+
     private void writeDiseaseExtent(List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClassesToSave) {
         for (AdminUnitDiseaseExtentClass row : adminUnitDiseaseExtentClassesToSave) {
             diseaseService.saveAdminUnitDiseaseExtentClass(row);
         }
+    }
+
+    private List<AdminUnitReview> getRelevantReviews(DiseaseExtentGeneratorHelper helper) {
+        Integer diseaseGroupId = helper.getDiseaseGroup().getId();
+        return expertService.getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
     }
 }

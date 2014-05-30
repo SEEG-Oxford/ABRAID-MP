@@ -8,6 +8,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
 import java.util.*;
 
@@ -27,26 +28,33 @@ import static org.mockito.Mockito.*;
 public class DiseaseExtentGeneratorTest {
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private DiseaseService diseaseService = mock(DiseaseService.class);
+    private ExpertService expertService = mock(ExpertService.class);
 
-    private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE);
-    private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE);
-    private DiseaseExtentClass uncertainDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.UNCERTAIN);
+    private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE, 100);
+    private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE, 50);
+    private DiseaseExtentClass uncertainDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.UNCERTAIN, 0);
+    private DiseaseExtentClass possibleAbsenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_ABSENCE, -50);
+    private DiseaseExtentClass absenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.ABSENCE, -100);
 
     @Before
     public void setUp() {
-        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService);
+        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService);
         mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(uncertainDiseaseExtentClass);
     }
 
-    @Test
     public void generateDiseaseExtentDoesNothingIfExtentAlreadyExists() {
         // Arrange
         int diseaseGroupId = 87;
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+
+        DiseaseExtentParameters diseaseExtentParameters = new DiseaseExtentParameters(null, 1, 0.2, 5, 1, 2, 1, 2);
+
         mockGetExistingDiseaseExtent(diseaseGroupId, Arrays.asList(adminUnitDiseaseExtentClass));
-        DiseaseExtentParameters diseaseExtentParameters = new DiseaseExtentParameters(null, 1, 0.2, 5, 1);
+        mockGetAllDiseaseExtentClasses();
+        mockGetDiseaseGroupById(diseaseGroupId, diseaseGroup);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
@@ -64,13 +72,21 @@ public class DiseaseExtentGeneratorTest {
         double minimumValidationWeighting = 0.2;
         int minimumOccurrencesForPresence = 5;
         int minimumOccurrencesForPossiblePresence = 1;
+        int minimumYearsAgoForHigherOccurrenceScore = 2;
+        int lowerOccurrenceScore = 1;
+        int higherOccurrenceScore = 2;
         List<Integer> feedIds = new ArrayList<>();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         DiseaseExtentParameters diseaseExtentParameters = new DiseaseExtentParameters(feedIds, maximumYearsAgo,
-                minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence);
+                minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence,
+                minimumYearsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
+
         mockGetExistingDiseaseExtent(diseaseGroupId, new ArrayList<AdminUnitDiseaseExtentClass>());
+        mockGetAllDiseaseExtentClasses();
         mockGetDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
                 getFixedYearsAgo(maximumYearsAgo), feedIds, new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
+        mockGetDiseaseGroupById(diseaseGroupId, diseaseGroup);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, diseaseExtentParameters);
@@ -87,13 +103,19 @@ public class DiseaseExtentGeneratorTest {
         double minimumValidationWeighting = 0.2;
         int minimumOccurrencesForPresence = 5;
         int minimumOccurrencesForPossiblePresence = 1;
+        int minimumYearsAgoForHigherOccurrenceScore = 2;
+        int lowerOccurrenceScore = 1;
+        int higherOccurrenceScore = 2;
         List<Integer> feedIds = new ArrayList<>();
         List<? extends AdminUnitGlobalOrTropical> adminUnits = getTypicalAdminUnits();
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         DiseaseExtentParameters diseaseExtentParameters = new DiseaseExtentParameters(feedIds, maximumYearsAgo,
-                minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence);
+                minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence,
+                minimumYearsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
+
         mockGetExistingDiseaseExtent(diseaseGroupId, new ArrayList<AdminUnitDiseaseExtentClass>());
+        mockGetAllDiseaseExtentClasses();
         mockGetDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
                 getFixedYearsAgo(maximumYearsAgo), feedIds, getTypicalOccurrences());
         mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId, adminUnits);
@@ -121,6 +143,13 @@ public class DiseaseExtentGeneratorTest {
 
     private void mockGetExistingDiseaseExtent(int diseaseGroupId, List<AdminUnitDiseaseExtentClass> diseaseExtent) {
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(diseaseExtent);
+    }
+
+    private void mockGetAllDiseaseExtentClasses() {
+        when(diseaseService.getAllDiseaseExtentClasses()).thenReturn(Arrays.asList(
+                presenceDiseaseExtentClass, possiblePresenceDiseaseExtentClass, uncertainDiseaseExtentClass,
+                possibleAbsenceDiseaseExtentClass, absenceDiseaseExtentClass
+        ));
     }
 
     private void mockGetDiseaseOccurrencesForDiseaseExtent(Integer diseaseGroupId, Double minimumValidationWeighting,

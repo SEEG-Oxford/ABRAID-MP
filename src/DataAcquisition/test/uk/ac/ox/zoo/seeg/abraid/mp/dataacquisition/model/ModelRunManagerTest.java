@@ -85,7 +85,7 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
         return new ModelRunManager(
                 new ModelRunGatekeeper(),
                 new LastModelRunPrepDateManager(diseaseService),
-                new DiseaseExtentGenerator(diseaseService),
+                new DiseaseExtentGenerator(diseaseService, expertService),
                 new WeightingsCalculator(diseaseService, expertService),
                 mock(ModelRunRequester.class));
     }

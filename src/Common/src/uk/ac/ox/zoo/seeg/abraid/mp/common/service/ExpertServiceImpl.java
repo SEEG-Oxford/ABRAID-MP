@@ -100,6 +100,16 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets all reviews for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of reviews.
+     */
+    @Override
+    public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId) {
+        return adminUnitReviewDao.getByDiseaseGroupId(diseaseGroupId);
+    }
+
+    /**
      * Gets all reviews submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the disease group.

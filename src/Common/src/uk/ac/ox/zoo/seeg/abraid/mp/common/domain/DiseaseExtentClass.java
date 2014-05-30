@@ -43,6 +43,11 @@ public class DiseaseExtentClass {
         this.name = name;
     }
 
+    public DiseaseExtentClass(String name, Integer weighting) {
+        this.name = name;
+        this.weighting = weighting;
+    }
+
     public String getName() {
         return name;
     }

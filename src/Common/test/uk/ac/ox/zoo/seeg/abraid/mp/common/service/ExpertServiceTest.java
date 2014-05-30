@@ -132,6 +132,37 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getAllAdminReviewsForDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 87;
+        List<AdminUnitReview> adminUnitReviews = new ArrayList<>();
+        when(adminUnitReviewDao.getByDiseaseGroupId(diseaseGroupId)).thenReturn(adminUnitReviews);
+
+        // Act
+        List<AdminUnitReview> testAdminUnitReviews =
+                expertService.getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
+
+        // Assert
+        assertThat(testAdminUnitReviews).isSameAs(adminUnitReviews);
+    }
+
+    @Test
+    public void getAllAdminReviewsForExpertAndDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 87;
+        int expertId = 1;
+        List<AdminUnitReview> adminUnitReviews = new ArrayList<>();
+        when(adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId)).thenReturn(adminUnitReviews);
+
+        // Act
+        List<AdminUnitReview> testAdminUnitReviews =
+                expertService.getAllAdminUnitReviewsForDiseaseGroup(expertId, diseaseGroupId);
+
+        // Assert
+        assertThat(testAdminUnitReviews).isSameAs(adminUnitReviews);
+    }
+
+    @Test
     public void saveDiseaseOccurrenceReview() {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(new Expert());

@@ -12,8 +12,8 @@ CREATE INDEX ix_admin_unit_disease_extent_class_disease_group_id ON admin_unit_d
 CREATE INDEX ix_admin_unit_review_global_gaul_code ON admin_unit_review (global_gaul_code);
 CREATE INDEX ix_admin_unit_review_tropical_gaul_code ON admin_unit_review (tropical_gaul_code);
 CREATE INDEX ix_admin_unit_review_disease_group_id ON admin_unit_review (disease_group_id);
-CREATE INDEX ix_admin_unit_review_disease_extent_class ON admin_unit_review (disease_extent_class);
 CREATE INDEX ix_admin_unit_review_expert_id ON admin_unit_review (expert_id);
+CREATE INDEX ix_admin_unit_review_response ON admin_unit_review (response);
 CREATE INDEX ix_alert_feed_id ON alert (feed_id);
 CREATE INDEX ix_disease_group_parent_id ON disease_group (parent_id);
 CREATE INDEX ix_disease_group_validator_disease_group_id ON disease_group (validator_disease_group_id);

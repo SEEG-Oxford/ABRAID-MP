@@ -37,6 +37,16 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
     }
 
     /**
+     * Gets all the reviews of administrative units, for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of the reviews for the disease group.
+     */
+    @Override
+    public List<AdminUnitReview> getByDiseaseGroupId(Integer diseaseGroupId) {
+        return listNamedQuery("getAdminUnitReviewsByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
      * Gets all the reviews of administrative units, submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the expert.
      * @param diseaseGroupId The id of the disease group.

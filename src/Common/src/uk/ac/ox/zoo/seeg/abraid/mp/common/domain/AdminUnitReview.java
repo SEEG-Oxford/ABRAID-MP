@@ -22,6 +22,10 @@ import javax.persistence.*;
                 query = "from AdminUnitReview where expert.id=:expertId"
         ),
         @NamedQuery(
+                name = "getAdminUnitReviewsByDiseaseGroupId",
+                query = "from AdminUnitReview where diseaseGroup.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
                 name = "getAdminUnitReviewsByExpertIdAndDiseaseGroupId",
                 query = "from AdminUnitReview where expert.id=:expertId and diseaseGroup.id=:diseaseGroupId"
         )
@@ -40,11 +44,11 @@ public class AdminUnitReview {
     private Expert expert;
 
     // The GAUL code of the global administrative unit.
-    @Column(name = "admin_unit_global_gaul_code")
+    @Column(name = "global_gaul_code")
     private Integer adminUnitGlobalGaulCode;
 
     // The GAUL code of the tropical administrative unit.
-    @Column(name = "admin_unit_tropical_gaul_code")
+    @Column(name = "tropical_gaul_code")
     private Integer adminUnitTropicalGaulCode;
 
     // The disease group (to clarify, this is not referring to the validator disease group).
@@ -67,7 +71,7 @@ public class AdminUnitReview {
      * The GAUL code of the global or tropical admin unit, whichever is not null.
      * @return The (global or tropical) admin unit.
      */
-    public Integer getAdminUnitGlobalOrTropical() {
+    public Integer getAdminUnitGlobalOrTropicalGaulCode() {
         return (adminUnitGlobalGaulCode == null) ? adminUnitTropicalGaulCode : adminUnitGlobalGaulCode;
     }
 
