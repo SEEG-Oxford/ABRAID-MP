@@ -6,6 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public class Main {
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
         main.runDataAcquisition(args);
-        main.manageModelRuns();
+        main.prepareForAndRequestModelRuns();
     }
 
     /**
@@ -80,14 +81,23 @@ public class Main {
     }
 
     /**
-     * Prepares the model run by recalculating disease extent, weightings, and requesting the model run.
-     * These tasks are only executed once per week.
+     * Requests a model run (after preparation and if relevant), for each disease group that has occurrences.
      */
-    public void manageModelRuns() {
+    public void prepareForAndRequestModelRuns() {
         Map<Expert, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
-            modelRunManager.prepareModelRun(diseaseGroupId);
+            prepareForAndRequestModelRun(diseaseGroupId);
         }
         modelRunManager.saveExpertsWeightings(newExpertWeightings);
+    }
+
+    private void prepareForAndRequestModelRun(int diseaseGroupId) {
+        try {
+            modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
+        } catch (ModelRunManagerException e) {
+            // Ignore the exception, because it is thrown to roll back the transaction per disease group if
+            // the model run manager fails.
+            LOGGER.fatal(e.getMessage(), e);
+        }
     }
 }

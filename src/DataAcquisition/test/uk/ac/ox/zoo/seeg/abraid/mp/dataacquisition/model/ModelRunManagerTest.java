@@ -101,10 +101,10 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
         // Arrange
         DateTime lastModelRunPrepDate = setLastModelRunPrepDate(diseaseGroup, weekHasElapsed);
         setModelRunMinNewOccurrences(diseaseGroup, newOccurrenceCountOverThreshold);
-        ModelRunManager target = createModelRunGateKeeper();
+        ModelRunManager target = createModelRunManager();
 
         // Act
-        target.prepareModelRun(diseaseGroup.getId());
+        target.prepareForAndRequestModelRun(diseaseGroup.getId());
 
         return lastModelRunPrepDate;
     }
@@ -132,7 +132,7 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
         diseaseGroup.setModelRunMinNewOccurrences(n);
     }
 
-    private ModelRunManager createModelRunGateKeeper() {
+    private ModelRunManager createModelRunManager() {
         return new ModelRunManager(
                 new ModelRunGatekeeper(diseaseService),
                 new LastModelRunPrepDateManager(diseaseService),
