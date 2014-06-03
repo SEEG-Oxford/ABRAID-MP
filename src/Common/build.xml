@@ -37,7 +37,7 @@
     </copy>
   </target>
 
-  <target name="build.jar" depends="module_build.build.jar, compile.tests, create.testutil.jar.manifest">
+  <target name="build.jar" depends="module_build.build.jar, compile.tests, create.testutil.jar.manifest, local.publish.hibernatespatial">
     <jar jarfile="${dist.out.dir}/ABRAID-MP_testutils.jar" manifest="${dist.out.dir}/MANIFEST.MF">
       <fileset dir="${test.out.dir}">
         <include name="**/testutils/**/*.class"/>
@@ -53,5 +53,9 @@
       <attribute name="Version" value="${repository.version}"/>
       <attribute name="Built-On" value="${time.stamp}"/>
     </manifest>
+  </target>
+
+  <target name="local.publish.hibernatespatial">
+    <copy file="${lib.local.external.dir}/hibernate-spatial-4.3-20140213.224750-4.jar" todir="${dist.out.dir}" />
   </target>
 </project>
