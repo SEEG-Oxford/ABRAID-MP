@@ -21,26 +21,14 @@
 .marker-cluster span {
     line-height: 30px;
 }
-.marker-question div {
-    background-color: #bb619b;
-    opacity: 0.8;
-    width: 20px;
-    height: 20px;
-
-    text-align: center;
-    border-radius: 10px;
-    font: 15px "Helvetica Neue", Arial, Helvetica, sans-serif;
-    color: white;
-}
 .marker-question span {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #bb619b;
     line-height: 20px;
-}
-.marker-question-selected div {
-    background-color: #9e1e71;
-    width: 26px;
-    height: 26px;
-    border-radius: 13px;
+    font-size: 25px;
+    opacity: 0.8;
 }
 .marker-question-selected span {
-    line-height: 26px;
+    font-size: 35px;
+    opacity: 1;
 }

@@ -96,7 +96,7 @@ define([
                 // Display a question mark marker
                 marker = L.marker(latlng, { icon:
                     L.divIcon({
-                        html: "<div><span>?</span></div>",
+                        html: "<span>?</span>",
                         className: "marker-question",
                         iconAnchor: [10, 10]
                     })
