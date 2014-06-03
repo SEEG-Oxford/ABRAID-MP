@@ -21,3 +21,14 @@
 .marker-cluster span {
     line-height: 30px;
 }
+.marker-question span {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #bb619b;
+    line-height: 20px;
+    font-size: 25px;
+    opacity: 0.8;
+}
+.marker-question-selected span {
+    font-size: 35px;
+    opacity: 1;
+}
