@@ -80,7 +80,7 @@ define([
                     radius: 13
                 });
             } else {
-                marker._icon.classList.add("marker-question-selected"); // jshint ignore:line
+                $(marker._icon).addClass("marker-question-selected"); // jshint ignore:line
             }
         }
 
@@ -96,7 +96,7 @@ define([
                 // Display a question mark marker
                 marker = L.marker(latlng, { icon:
                     L.divIcon({
-                        html: "<div><span>?</span></div>",
+                        html: "<span>?</span>",
                         className: "marker-question",
                         iconAnchor: [10, 10]
                     })
@@ -149,9 +149,7 @@ define([
             if (loggedIn) {
                 diseaseOccurrenceLayer.setStyle(diseaseOccurrenceLayerStyle);
             } else {
-                Object.keys(layerMap).forEach(function (key) {
-                    layerMap[key]._icon.classList.remove("marker-question-selected"); // jshint ignore:line
-                });
+                $(".marker-question-selected").removeClass("marker-question-selected");
             }
         }
 
