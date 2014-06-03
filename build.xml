@@ -47,6 +47,11 @@
         <include name="*.war" />
       </fileset>
     </copy>
+    <copy todir="${artifacts.dir}">
+      <fileset dir="${code.root}/ModelOutputHandler/out/artifacts/">
+        <include name="*.war" />
+      </fileset>
+    </copy>
     <mkdir dir="${artifacts.dir}/DataAcquisition"/>
     <copy todir="${artifacts.dir}/DataAcquisition">
       <fileset dir="${code.root}/DataAcquisition/out/artifacts/">
