@@ -141,7 +141,7 @@ public class DiseaseOccurrence {
         this.id = id;
     }
 
-    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, boolean isValidated,
+    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, Boolean isValidated,
                              Double validationWeighting, DateTime occurrenceDate) {
         this.id = id;
         this.diseaseGroup = diseaseGroup;
