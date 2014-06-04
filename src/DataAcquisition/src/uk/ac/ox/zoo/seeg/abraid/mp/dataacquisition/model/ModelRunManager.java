@@ -54,7 +54,7 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
-        if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate)) {
+        if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(String.format(STARTING_MODEL_PREP, diseaseGroupId));
             List<DiseaseOccurrence> diseaseOccurrences = prepareForModelRun(lastModelRunPrepDate, diseaseGroupId);

@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -9,18 +10,16 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the WeightingsCalculator class.
@@ -29,6 +28,9 @@ import static org.mockito.Mockito.when;
 public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
+
+    @Autowired
+    private ExpertService expertService;
 
     @Before
     public void setFixedTime() {
@@ -116,6 +118,23 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     }
 
     @Test
+    public void updateDiseaseOccurrenceWeightingsOnlyLogsMessageWhenNoOccurrencesForModelRunRequest() {
+        // Arrange
+        DiseaseService mockDiseaseService = mock(DiseaseService.class);
+        List<DiseaseOccurrence> emptyList = new ArrayList<>();
+        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(anyInt())).thenReturn(emptyList);
+
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, expertService);
+        Logger logger = GeneralTestUtils.createMockLogger(target);
+
+        // Act
+        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
+
+        // Assert
+        verify(logger, times(1)).info(eq("No new occurrences - validation and final weightings will not be updated"));
+    }
+
+    @Test
     public void calculateNewExpertsWeightingsReturnsExpectedMap() {
         // Arrange - Experts 1 and 2 submit YES reviews for an occurrence. Their new weightings will be 1.0
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
@@ -184,6 +203,25 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(reviews);
         return mockDiseaseService;
+    }
+
+    @Test
+    public void saveExpertsWeightingsUpdatesAllExpertsInMap() {
+        // Arrange
+        Map<Expert, Double> newExpertsWeightings =  new HashMap<>();
+        for (Expert expert : expertService.getAllExperts()) {
+            newExpertsWeightings.put(expert, 0.2);
+        }
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
+        flushAndClear();
+
+        // Assert
+        for (Expert expert : expertService.getAllExperts()) {
+            assertThat(expert.getWeighting()).isEqualTo(0.2);
+        }
     }
 
     private Expert createExpert(String name, Double expertsWeighting) {

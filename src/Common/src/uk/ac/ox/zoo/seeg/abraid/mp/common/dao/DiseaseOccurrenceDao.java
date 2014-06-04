@@ -74,4 +74,12 @@ public interface DiseaseOccurrenceDao {
      * @return Disease occurrences for a request to run the model.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
+
+    /**
+     * Gets the number of new disease occurrences for the specified disease group. A "new" occurrence has is_validated
+     * not null and a created_date that is more recent than the last_mode_run_prep_date for the disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The count.
+     */
+    long getNewOccurrencesCountByDiseaseGroup(Integer diseaseGroupId);
 }

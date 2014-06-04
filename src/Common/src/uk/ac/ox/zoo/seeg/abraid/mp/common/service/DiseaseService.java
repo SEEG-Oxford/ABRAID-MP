@@ -74,6 +74,13 @@ public interface DiseaseService {
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
 
     /**
+     * Gets the number of new disease occurrences for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The count.
+     */
+    long getNewOccurrencesCountByDiseaseGroup(int diseaseGroupId);
+
+    /**
      * Gets the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease extent.

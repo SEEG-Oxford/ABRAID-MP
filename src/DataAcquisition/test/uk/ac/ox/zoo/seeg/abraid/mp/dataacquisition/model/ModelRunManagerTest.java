@@ -26,64 +26,111 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
     @Autowired
     private ExpertService expertService;
 
+    private static final int DISEASE_GROUP_ID = 87;
+
     @Before
     public void setFixedTime() {
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
     }
 
     @Test
-    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNull() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setLastModelRunPrepDate(null);
+    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewOccurrencesIsOverThreshold() throws Exception {
+        expectModelPrepToRun(null, true);
+    }
 
-        ModelRunManager target = createModelRunGateKeeper();
+    @Test
+    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewOccurrencesIsUnderThreshold() throws Exception {
+        expectModelPrepToRun(null, false);
+    }
 
-        // Act
-        target.prepareForAndRequestModelRun(diseaseGroupId);
+    @Test
+    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewOccurrencesIsOverThreshold() throws Exception {
+        expectModelPrepToRun(true, true);
+    }
+
+    @Test
+    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewOccurrencesIsUnderThreshold() throws Exception {
+        expectModelPrepToRun(true, false);
+    }
+
+    @Test
+    public void modelPrepShouldRunWhenAWeekHasNotElapsedAndNewOccurrencesIsOverThreshold() throws Exception {
+        expectModelPrepToRun(false, true);
+    }
+
+    @Test
+    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndNewOccurrencesIsUnderThreshold() throws Exception {
+        expectModelPrepNotToRun(false, false);
+    }
+
+    @Test
+    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndThresholdIsNull() throws Exception {
+        expectModelPrepNotToRun(false, null);
+    }
+
+    @Test
+    public void modelPrepShouldNotRunWhenAWeekHasPassedAndThresholdIsNull() throws Exception {
+        expectModelPrepNotToRun(true, null);
+    }
+
+    @Test
+    public void modelPrepShouldNotRunWhenLastModelRunPrepDateIsNullAndThresholdIsNull() throws Exception {
+        expectModelPrepNotToRun(null, null);
+    }
+
+    private void expectModelPrepToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
+        // Arrange and Act
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
+        arrangeAndAct(diseaseGroup, weekHasElapsed, newOccurrenceCountOverThreshold);
 
         // Assert
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isNotNull();
     }
 
-    @Test
-    public void modelPrepShouldRunWhenAWeekHasElapsed() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        DateTime lastModelRunPrepDate = DateTime.now().minusDays(7);
-        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
-
-        ModelRunManager target = createModelRunGateKeeper();
-
-        // Act
-        target.prepareForAndRequestModelRun(diseaseGroupId);
-
-        // Assert
-        assertThat(diseaseGroup.getLastModelRunPrepDate()).isNotNull();
-    }
-
-    @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotPassed() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        DateTime lastModelRunPrepDate = DateTime.now().minusDays(1);
-        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
-
-        ModelRunManager target = createModelRunGateKeeper();
-
-        // Act
-        target.prepareForAndRequestModelRun(diseaseGroupId);
+    private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
+        // Arrange and Act
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
+        DateTime lastModelRunPrepDate = arrangeAndAct(diseaseGroup, weekHasElapsed, newOccurrenceCountOverThreshold);
 
         // Assert
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
     }
 
-    private ModelRunManager createModelRunGateKeeper() {
+    private DateTime arrangeAndAct(DiseaseGroup diseaseGroup, Boolean weekHasElapsed,
+                                   Boolean newOccurrenceCountOverThreshold) {
+        // Arrange
+        DateTime lastModelRunPrepDate = setLastModelRunPrepDate(diseaseGroup, weekHasElapsed);
+        setModelRunMinNewOccurrences(diseaseGroup, newOccurrenceCountOverThreshold);
+        ModelRunManager target = createModelRunManager();
+
+        // Act
+        target.prepareForAndRequestModelRun(diseaseGroup.getId());
+
+        return lastModelRunPrepDate;
+    }
+
+    private DateTime setLastModelRunPrepDate(DiseaseGroup diseaseGroup, Boolean weekHasElapsed) {
+        DateTime lastModelRunPrepDate = null;
+        if (weekHasElapsed != null) {
+            int days = weekHasElapsed ? 7 : 1;
+            lastModelRunPrepDate = DateTime.now().minusDays(days);
+        }
+        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        return lastModelRunPrepDate;
+    }
+
+    private void setModelRunMinNewOccurrences(DiseaseGroup diseaseGroup, Boolean newOccurrenceCountOverThreshold) {
+        Integer n = null;
+        if (newOccurrenceCountOverThreshold != null) {
+            int thresholdAdjustment = newOccurrenceCountOverThreshold ? -1 : +1;
+            n = (int) diseaseService.getNewOccurrencesCountByDiseaseGroup(diseaseGroup.getId()) + thresholdAdjustment;
+        }
+        diseaseGroup.setModelRunMinNewOccurrences(n);
+    }
+
+    private ModelRunManager createModelRunManager() {
         return new ModelRunManager(
-                new ModelRunGatekeeper(),
+                new ModelRunGatekeeper(diseaseService),
                 new LastModelRunPrepDateManager(diseaseService),
                 new DiseaseExtentGenerator(diseaseService),
                 new WeightingsCalculator(diseaseService, expertService),

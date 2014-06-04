@@ -20,7 +20,7 @@ import static ch.lambdaj.Lambda.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculator {
-    private static final Logger LOGGER = Logger.getLogger(WeightingsCalculator.class);
+    private static Logger logger = Logger.getLogger(WeightingsCalculator.class);
     private static final String NO_NEW_REVIEWS =
             "No new reviews have been submitted - expert weightings of disease occurrences will not be updated";
     private static final String RECALCULATING_EXPERT_WEIGHTINGS =
@@ -54,7 +54,7 @@ public class WeightingsCalculator {
     public void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
         if (allReviews.isEmpty()) {
-            LOGGER.info(NO_NEW_REVIEWS);
+            logger.info(NO_NEW_REVIEWS);
         } else {
             calculateNewDiseaseOccurrenceExpertWeightings(allReviews);
         }
@@ -71,7 +71,7 @@ public class WeightingsCalculator {
 
     private void calculateNewDiseaseOccurrenceExpertWeightings(List<DiseaseOccurrenceReview> allReviews) {
         Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
-        LOGGER.info(String.format(RECALCULATING_EXPERT_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
+        logger.info(String.format(RECALCULATING_EXPERT_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
             List<DiseaseOccurrenceReview> reviews = select(allReviews,
                     having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
@@ -113,9 +113,9 @@ public class WeightingsCalculator {
     public List<DiseaseOccurrence> updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         if (occurrences.size() == 0) {
-            LOGGER.info(NO_OCCURRENCES_FOR_MODEL_RUN);
+            logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
-            LOGGER.info(String.format(RECALCULATING_WEIGHTINGS, occurrences.size()));
+            logger.info(String.format(RECALCULATING_WEIGHTINGS, occurrences.size()));
             updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
         }
 
@@ -174,7 +174,7 @@ public class WeightingsCalculator {
     }
 
     private void saveChanges(Set<DiseaseOccurrence> pendingSave) {
-        LOGGER.info(String.format(UPDATING_WEIGHTINGS, pendingSave.size()));
+        logger.info(String.format(UPDATING_WEIGHTINGS, pendingSave.size()));
         for (DiseaseOccurrence occurrence : pendingSave) {
             diseaseService.saveDiseaseOccurrence(occurrence);
         }
@@ -187,7 +187,7 @@ public class WeightingsCalculator {
      * @return The map from expert to new weighting value.
      */
     public Map<Expert, Double> calculateNewExpertsWeightings() {
-        LOGGER.info(RECALCULATING_WEIGHTINGS_OF_EXPERTS);
+        logger.info(RECALCULATING_WEIGHTINGS_OF_EXPERTS);
         Map<Expert, Double> newExpertsWeightings = new HashMap<>();
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
         for (Expert expert : extractDistinctExperts(allReviews)) {
@@ -241,7 +241,7 @@ public class WeightingsCalculator {
      */
     public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
         if (newExpertsWeightings.size() > 0) {
-            LOGGER.info(String.format(SAVING_WEIGHTINGS_OF_EXPERTS, newExpertsWeightings.size()));
+            logger.info(String.format(SAVING_WEIGHTINGS_OF_EXPERTS, newExpertsWeightings.size()));
             for (Map.Entry<Expert, Double> entry : newExpertsWeightings.entrySet()) {
                 Expert expert = entry.getKey();
                 expert.setWeighting(entry.getValue());

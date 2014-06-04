@@ -105,13 +105,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnValidatedOccurrences() {
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnValidatedOrNullOccurrences() {
         // Arrange
         int diseaseGroupId = 87;
         int validatorDiseaseGroupId = 4;
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         DiseaseOccurrence occ1 = createDiseaseOccurrence(1, diseaseGroup, false);
         DiseaseOccurrence occ2 = createDiseaseOccurrence(2, diseaseGroup, true);
+        DiseaseOccurrence occ3 = createDiseaseOccurrence(3, diseaseGroup, null);
 
         // Act
         List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(1, validatorDiseaseGroupId);
@@ -119,9 +120,10 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Assert
         assertThat(list).contains(occ1);
         assertThat(list).doesNotContain(occ2);
+        assertThat(list).doesNotContain(occ3);
     }
 
-    private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, boolean isValidated) {
+    private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Boolean isValidated) {
         Location location = locationDao.getById(6);
         Alert alert = alertDao.getById(212855);
         DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, isValidated, 0.7, new DateTime());
@@ -252,6 +254,20 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Assert
         assertThat(occurrences).hasSize(45);
+    }
+
+    @Test
+    public void getNewOccurrencesCountByDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(diseaseGroup.getCreatedDate().minusDays(1));
+
+        // Act
+        long count = diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+
+        // Assert
+        assertThat(count).isEqualTo(45);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
