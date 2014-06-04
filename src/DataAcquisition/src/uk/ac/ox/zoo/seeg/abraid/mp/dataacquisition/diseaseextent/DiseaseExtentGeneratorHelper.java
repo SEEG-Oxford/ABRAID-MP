@@ -207,10 +207,10 @@ public class DiseaseExtentGeneratorHelper {
             List<DiseaseOccurrenceForDiseaseExtent> occurrencesList, List<AdminUnitReview> reviewsList) {
         // Compute the score for each occurrence and each review, and take the average
         // Be extra careful with int -> double conversions...
-        double occurrencesScore = (double) computeOccurrencesScore(occurrencesList);
+        double occurrencesScore = computeOccurrencesScore(occurrencesList);
         double reviewsScore = computeReviewsScore(reviewsList);
         double totalScore = occurrencesScore + reviewsScore;
-        double totalCount = (double) (occurrencesList.size() + reviewsList.size());
+        double totalCount = occurrencesList.size() + reviewsList.size();
         double overallScore = totalScore / totalCount;
 
         if (overallScore > 1) {
@@ -261,7 +261,7 @@ public class DiseaseExtentGeneratorHelper {
         for (AdminUnitReview review : reviews) {
             // The response weighting is currently divided by 50 so that the weightings in the database (which
             // were chosen for use with the model) can be used for our purposes. Eventually this should be removed.
-            double scaledResponseWeighting = review.getResponse().getWeighting() / SCALING_FACTOR;
+            int scaledResponseWeighting = review.getResponse().getWeighting() / SCALING_FACTOR;
             total += scaledResponseWeighting * review.getExpert().getWeighting();
         }
         return total;
@@ -269,18 +269,16 @@ public class DiseaseExtentGeneratorHelper {
 
     private DiseaseExtentClass findDiseaseExtentClass(String diseaseExtentClass) {
         // Returns the disease extent class with the specified name
-        List<DiseaseExtentClass> matchingClasses = select(diseaseExtentClasses, having(
+        return selectUnique(diseaseExtentClasses, having(
                 on(DiseaseExtentClass.class).getName(), IsEqual.equalTo(diseaseExtentClass)));
-        return matchingClasses.get(0);
     }
 
     private AdminUnitDiseaseExtentClass findAdminUnitDiseaseExtentClass(AdminUnitGlobalOrTropical adminUnit) {
         // Searches the current disease extent for the specified admin unit. Returns it if found, or null if not found.
         int gaulCodeToFind = adminUnit.getGaulCode();
-        List<AdminUnitDiseaseExtentClass> matchingClasses = select(currentDiseaseExtent, having(
+        return selectUnique(currentDiseaseExtent, having(
                 on(AdminUnitDiseaseExtentClass.class).getAdminUnitGlobalOrTropical().getGaulCode(),
                 IsEqual.equalTo(gaulCodeToFind)));
-        return (matchingClasses != null && matchingClasses.size() > 0) ? matchingClasses.get(0) : null;
     }
 
     private AdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(AdminUnitGlobalOrTropical adminUnit) {

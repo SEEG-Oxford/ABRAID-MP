@@ -225,17 +225,4 @@ public class AdminUnitDiseaseExtentClass {
     }
     ///CHECKSTYLE:ON
     ///COVERAGE:ON
-
-    @Override
-    public String toString() {
-        return "AdminUnitDiseaseExtentClass{" +
-                "id=" + id +
-                ", adminUnitGlobal=" + (adminUnitGlobal != null ? adminUnitGlobal.getGaulCode() : "") +
-                ", adminUnitTropical=" + (adminUnitTropical != null ? adminUnitTropical.getGaulCode() : "") +
-                ", diseaseExtentClass=" + diseaseExtentClass.getName() +
-                ", occurrenceCount=" + occurrenceCount +
-                ", hasChanged=" + hasChanged +
-                ", createdDate=" + createdDate +
-                '}';
-    }
 }
