@@ -147,6 +147,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the number of new disease occurrences for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The count.
+     */
+    @Override
+    public long getNewOccurrencesCountByDiseaseGroup(int diseaseGroupId) {
+        return diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+    }
+
+    /**
      * Gets the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease extent.

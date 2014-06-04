@@ -33,7 +33,7 @@ public class InputDataManagerTest {
         target.writeOccurrenceData(mock(GeoJsonDiseaseOccurrenceFeatureCollection.class), dataDir);
 
         // Assert
-        verify(mockOccurrenceWriter, times(1)).write(any(GeoJsonDiseaseOccurrenceFeatureCollection.class), eq(Paths.get(dataDir.toString(), "occurrence.csv").toFile()));
+        verify(mockOccurrenceWriter, times(1)).write(any(GeoJsonDiseaseOccurrenceFeatureCollection.class), eq(Paths.get(dataDir.toString(), "occurrences.csv").toFile()));
     }
 
     @Test

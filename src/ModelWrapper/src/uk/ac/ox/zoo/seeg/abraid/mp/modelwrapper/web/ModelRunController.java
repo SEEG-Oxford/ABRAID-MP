@@ -15,7 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerAsyncWrapper;
 
 /**
  * Controller for the ModelWrapper model run triggers.
@@ -28,12 +28,13 @@ public class ModelRunController extends AbstractController {
     private static final String LOG_EXCEPTION_STARTING_MODEL_RUN = "Exception starting model run.";
 
     private final RunConfigurationFactory runConfigurationFactory;
-    private final ModelRunner modelRunner;
+    private final ModelRunnerAsyncWrapper modelRunnerAsyncWrapper;
 
     @Autowired
-    public ModelRunController(RunConfigurationFactory runConfigurationFactory, ModelRunner modelRunner) {
+    public ModelRunController(
+            RunConfigurationFactory runConfigurationFactory, ModelRunnerAsyncWrapper modelRunnerAsyncWrapper) {
         this.runConfigurationFactory = runConfigurationFactory;
-        this.modelRunner = modelRunner;
+        this.modelRunnerAsyncWrapper = modelRunnerAsyncWrapper;
     }
 
     /**
@@ -59,7 +60,8 @@ public class ModelRunController extends AbstractController {
                     runData.getDisease().getAbbreviation());
 
             // Ignore result for now
-            modelRunner.runModel(runConfiguration, runData.getOccurrences(), runData.getExtentWeightings());
+            modelRunnerAsyncWrapper.startModel(
+                    runConfiguration, runData.getOccurrences(), runData.getExtentWeightings());
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return createErrorResponse("Could not start model run. See server logs for more details.",

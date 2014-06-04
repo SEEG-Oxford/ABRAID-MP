@@ -10,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,20 +91,23 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("max_cpu", runConfiguration.getExecutionConfig().getMaxCPUs());
         data.put("verbose", runConfiguration.getExecutionConfig().getVerboseFlag());
         data.put("model_version", runConfiguration.getCodeConfig().getModelVersion());
-        data.put("outbreak_file", "data/outbreakData.csv");
-        data.put("extent_file", "data/extentData.asc");
-        data.put("admin_files", Arrays.asList(
-                runConfiguration.getAdminUnitConfig().getAdmin1RasterFile(),
-                runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
+        data.put("occurrence_file", "data/occurrences.csv");
+        data.put("extent_file", "data/extent.asc");
+        data.put("admin1_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()));
+        data.put("admin2_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
 
         final String covariatePathPrefix = runConfiguration.getCovariateConfig().getCovariateDirectory();
         Collection<String> covariatePaths =
                 convert(runConfiguration.getCovariateConfig().getCovariateFilePaths(), new Converter<String, String>() {
                     public String convert(String subpath) {
-                        return Paths.get(covariatePathPrefix, subpath).toString();
+                        return escapeFilePathForR(Paths.get(covariatePathPrefix, subpath).toString());
                     }
                 });
         data.put("covariate_files", covariatePaths);
         return data;
+    }
+
+    private static String escapeFilePathForR(String path) {
+        return path.replace("\\", "/");
     }
 }

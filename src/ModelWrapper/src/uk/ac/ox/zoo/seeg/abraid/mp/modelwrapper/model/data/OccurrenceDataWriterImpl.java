@@ -39,7 +39,11 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
 
+
         try (BufferedWriter writer = createBufferedWriter(targetFile)) {
+            writer.write(extractCsvHeaderLine());
+            writer.newLine();
+
             for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
                 if (occurrence.getCrs() != null) {
                     LOGGER.warn(LOG_FEATURE_CRS_WARN);
@@ -64,6 +68,16 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
                 ObjectUtils.toString(occurrence.getProperties().getWeighting()),
                 ObjectUtils.toString(occurrence.getProperties().getLocationPrecision().getModelValue()),
                 extractGaulCode(occurrence)
+        }, ',');
+    }
+
+    private String extractCsvHeaderLine() {
+        return StringUtils.join(new String[]{
+                "Longitude",
+                "Latitude",
+                "Weight",
+                "Admin",
+                "GAUL"
         }, ',');
     }
 

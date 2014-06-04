@@ -93,4 +93,17 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrencesForModelRunRequest", "diseaseGroupId", diseaseGroupId);
     }
+
+    /**
+     * Gets the number of new disease occurrences for the specified disease group. A "new" occurrence has is_validated
+     * not null and a created_date that is more recent than the last_mode_run_prep_date for the disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The count.
+     */
+    @Override
+    public long getNewOccurrencesCountByDiseaseGroup(Integer diseaseGroupId) {
+        Query query = getParameterisedNamedQuery("getNewOccurrencesCountByDiseaseGroup",
+                "diseaseGroupId", diseaseGroupId);
+        return (long) query.uniqueResult();
+    }
 }
