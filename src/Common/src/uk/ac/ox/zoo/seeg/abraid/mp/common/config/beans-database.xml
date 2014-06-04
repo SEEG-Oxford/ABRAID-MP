@@ -8,8 +8,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Property files -->
-    <context:property-placeholder location="file:WEB-INF/common-override.properties" order="-1" ignore-unresolvable="true" ignore-resource-not-found="true" />
-    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties"/>
+    <context:property-placeholder location="
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
+        WEB-INF/common-override.properties" ignore-resource-not-found="true" />
 
     <!-- Data Access Objects -->
     <bean id="alertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDaoImpl" autowire="constructor" />
