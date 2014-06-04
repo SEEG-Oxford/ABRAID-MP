@@ -206,9 +206,12 @@ public class DiseaseExtentGeneratorHelper {
     private DiseaseExtentClass computeDiseaseExtentClassUsingOccurrencesAndReviews(
             List<DiseaseOccurrenceForDiseaseExtent> occurrencesList, List<AdminUnitReview> reviewsList) {
         // Compute the score for each occurrence and each review, and take the average
-        int totalScore = computeOccurrencesScore(occurrencesList) + computeReviewsScore(reviewsList);
-        int totalOccurrencesAndReviews = occurrencesList.size() + reviewsList.size();
-        double overallScore = ((double) totalScore) / ((double) totalOccurrencesAndReviews);
+        // Be extra careful with int -> double conversions...
+        double occurrencesScore = (double) computeOccurrencesScore(occurrencesList);
+        double reviewsScore = computeReviewsScore(reviewsList);
+        double totalScore = occurrencesScore + reviewsScore;
+        double totalCount = (double) (occurrencesList.size() + reviewsList.size());
+        double overallScore = totalScore / totalCount;
 
         if (overallScore > 1) {
             return findDiseaseExtentClass(DiseaseExtentClass.PRESENCE);
@@ -240,6 +243,8 @@ public class DiseaseExtentGeneratorHelper {
         DateTime minimumDateForHigherScore =
                 DateTime.now().minusYears(parameters.getMinimumYearsAgoForHigherOccurrenceScore());
 
+        // Unlike computeReviewsScore(), the total is an integer so that we can maintain full accuracy over multiple
+        // additions
         int total = 0;
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrenceList) {
             // The score for each occurrence depends on the occurrence date. If it is before the "minimum date",
@@ -251,13 +256,13 @@ public class DiseaseExtentGeneratorHelper {
         return total;
     }
 
-    private int computeReviewsScore(List<AdminUnitReview> reviews) {
-        int total = 0;
+    private double computeReviewsScore(List<AdminUnitReview> reviews) {
+        double total = 0;
         for (AdminUnitReview review : reviews) {
             // The response weighting is currently divided by 50 so that the weightings in the database (which
             // were chosen for use with the model) can be used for our purposes. Eventually this should be removed.
-            int scaledResponseWeighting = review.getResponse().getWeighting() / SCALING_FACTOR;
-            total += ((double) scaledResponseWeighting) * review.getExpert().getWeighting();
+            double scaledResponseWeighting = review.getResponse().getWeighting() / SCALING_FACTOR;
+            total += scaledResponseWeighting * review.getExpert().getWeighting();
         }
         return total;
     }

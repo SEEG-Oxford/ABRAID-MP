@@ -19,4 +19,8 @@ public class AdminUnitTropical extends AdminUnitGlobalOrTropical {
     public AdminUnitTropical(Integer gaulCode) {
         super(gaulCode);
     }
+
+    public AdminUnitTropical(Integer gaulCode, Integer countryGaulCode) {
+        super(gaulCode, countryGaulCode);
+    }
 }

@@ -67,6 +67,18 @@ public class AdminUnitReview {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
+    public AdminUnitReview() {
+    }
+
+    public AdminUnitReview(Expert expert, Integer adminUnitGlobalGaulCode, Integer adminUnitTropicalGaulCode,
+                           DiseaseGroup diseaseGroup, DiseaseExtentClass response) {
+        this.expert = expert;
+        this.adminUnitGlobalGaulCode = adminUnitGlobalGaulCode;
+        this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
+        this.diseaseGroup = diseaseGroup;
+        this.response = response;
+    }
+
     /**
      * The GAUL code of the global or tropical admin unit, whichever is not null.
      * @return The (global or tropical) admin unit.
