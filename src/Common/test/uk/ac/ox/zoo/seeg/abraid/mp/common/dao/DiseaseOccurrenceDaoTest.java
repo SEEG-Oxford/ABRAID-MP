@@ -265,7 +265,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         long count = diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
 
         // Assert
-        assertThat(count).isEqualTo(48);
+        assertThat(count).isEqualTo(45);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,

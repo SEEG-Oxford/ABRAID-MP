@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import java.util.*;
 
@@ -16,8 +18,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the WeightingsCalculator class.
@@ -116,6 +118,23 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     }
 
     @Test
+    public void updateDiseaseOccurrenceWeightingsOnlyLogsMessageWhenNoOccurrencesForModelRunRequest() {
+        // Arrange
+        DiseaseService mockDiseaseService = mock(DiseaseService.class);
+        List<DiseaseOccurrence> emptyList = new ArrayList<>();
+        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(anyInt())).thenReturn(emptyList);
+
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, expertService);
+        Logger logger = GeneralTestUtils.createMockLogger(target);
+
+        // Act
+        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
+
+        // Assert
+        verify(logger, times(1)).info(eq("No new occurrences - validation and final weightings will not be updated"));
+    }
+
+    @Test
     public void calculateNewExpertsWeightingsReturnsExpectedMap() {
         // Arrange - Experts 1 and 2 submit YES reviews for an occurrence. Their new weightings will be 1.0
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
@@ -209,12 +228,6 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         Expert expert = new Expert();
         expert.setName(name);
         expert.setWeighting(expertsWeighting);
-        return expert;
-    }
-
-    private Expert createExpert(String name, String email, String password, Double expertsWeighting) {
-        Expert expert = createExpert(name, expertsWeighting);
-        expert.setEmail(email);
         return expert;
     }
 }

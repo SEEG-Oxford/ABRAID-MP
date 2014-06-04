@@ -119,7 +119,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
         List<DiseaseOccurrence> diseaseOccurrences = diseaseOccurrenceDao.getAll();
         for (DiseaseOccurrence diseaseOccurrence : diseaseOccurrences) {
-            if (diseaseOccurrence.getDiseaseGroup().getId() == 87 && diseaseOccurrence.isValidated()) {
+            if (diseaseOccurrence.getDiseaseGroup().getId() == 87 &&
+                    diseaseOccurrence.isValidated() != null && diseaseOccurrence.isValidated()) {
                 assertThat(diseaseOccurrence.getFinalWeighting()).isNotNull();
             }
         }
