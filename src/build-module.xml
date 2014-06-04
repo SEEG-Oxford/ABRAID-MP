@@ -346,7 +346,7 @@
   </target>
 
   <!-- Test targets -->
-  <target name="unit.test" depends="compile.tests">
+  <target name="unit.test" depends="compile.tests" unless="skip.tests">
     <property name="jacoco.coverage.agent" value=""/> <!-- Note this will have no effect if it's already set by jacoco:agent -->
     <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure" dir="${test.run.dir}">
       <jvmarg value="${jacoco.coverage.agent}" />
@@ -372,7 +372,7 @@
     </junit>
   </target>
 
-  <target name="integration.test" depends="compile.tests">
+  <target name="integration.test" depends="compile.tests" unless="skip.tests">
     <property name="jacoco.coverage.agent" value=""/> <!-- Note this will have no effect if it's already set by jacoco:agent -->
     <junit printsummary="off" fork="yes" forkmode="once" failureproperty="test.failure" dir="${test.run.dir}">
       <jvmarg value="${jacoco.coverage.agent}" />
@@ -397,7 +397,7 @@
 
   <target name="run.tests" depends="unit.test, integration.test" />
 
-  <target name="test.coverage" depends="jacoco.agent, run.tests"> <!-- Using both unit and integration tests in coverage metric -->
+  <target name="test.coverage" depends="jacoco.agent, run.tests" unless="skip.tests"> <!-- Using both unit and integration tests in coverage metric -->
     <jacoco:report>
       <options>
         <sourcedirectives/>

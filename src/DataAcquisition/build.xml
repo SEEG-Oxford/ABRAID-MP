@@ -6,13 +6,6 @@
 <project name="module_dataacquisition" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
 
-  <target name="retrieve.manual.libs" depends="module_build.retrieve.manual.libs, retrieve.hibernatespatial"/>
-
-  <!-- Retrieve Hibernate Spatial 4.3 (not currently released) -->
-  <target name="retrieve.hibernatespatial">
-    <get skipexisting="true" src="http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3-SNAPSHOT/hibernate-spatial-4.3-20140213.224750-4.jar" dest="${lib.local.external.dir}"/>
-  </target>
-
   <!-- Collate artifacts for deployment -->
   <target name="collate.artifacts" depends="module_build.collate.artifacts" description="Collates artifacts.">
     <!-- Data Acquisition JAR -->
