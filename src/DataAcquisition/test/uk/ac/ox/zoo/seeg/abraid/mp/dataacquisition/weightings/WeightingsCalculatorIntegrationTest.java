@@ -10,10 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
@@ -29,6 +26,9 @@ import static org.mockito.Mockito.when;
 public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
+
+    @Autowired
+    private ExpertService expertService;
 
     @Before
     public void setFixedTime() {
@@ -186,10 +186,35 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         return mockDiseaseService;
     }
 
+    @Test
+    public void saveExpertsWeightingsUpdatesAllExpertsInMap() {
+        // Arrange
+        Map<Expert, Double> newExpertsWeightings =  new HashMap<>();
+        for (Expert expert : expertService.getAllExperts()) {
+            newExpertsWeightings.put(expert, 0.2);
+        }
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
+        flushAndClear();
+
+        // Assert
+        for (Expert expert : expertService.getAllExperts()) {
+            assertThat(expert.getWeighting()).isEqualTo(0.2);
+        }
+    }
+
     private Expert createExpert(String name, Double expertsWeighting) {
         Expert expert = new Expert();
         expert.setName(name);
         expert.setWeighting(expertsWeighting);
+        return expert;
+    }
+
+    private Expert createExpert(String name, String email, String password, Double expertsWeighting) {
+        Expert expert = createExpert(name, expertsWeighting);
+        expert.setEmail(email);
         return expert;
     }
 }
