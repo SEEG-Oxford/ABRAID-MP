@@ -87,6 +87,26 @@ public class AdminUnitDiseaseExtentClass {
         this.occurrenceCount = occurrenceCount;
     }
 
+    public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
+                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
+                                       boolean hasChanged) {
+        this.adminUnitGlobal = adminUnitGlobal;
+        this.diseaseGroup = diseaseGroup;
+        this.diseaseExtentClass = diseaseExtentClass;
+        this.occurrenceCount = occurrenceCount;
+        this.hasChanged = hasChanged;
+    }
+
+    public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
+                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
+                                       boolean hasChanged) {
+        this.adminUnitTropical = adminUnitTropical;
+        this.diseaseGroup = diseaseGroup;
+        this.diseaseExtentClass = diseaseExtentClass;
+        this.occurrenceCount = occurrenceCount;
+        this.hasChanged = hasChanged;
+    }
+
     /**
      * The AdminUnitGlobal or the AdminUnitTropical, whichever of the pair is not null.
      * @return The (global or tropical) admin unit.

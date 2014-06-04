@@ -62,7 +62,6 @@ public class ModelRunRequester {
         }
     }
 
-
     private void removeOccurrencesWithZeroFinalWeighting(List<DiseaseOccurrence> occurrences) {
         Iterator<DiseaseOccurrence> iterator = occurrences.iterator();
         while (iterator.hasNext()) {

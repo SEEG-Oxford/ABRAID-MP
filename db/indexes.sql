@@ -4,6 +4,7 @@
 --
 -- Copyright (c) 2014 University of Oxford
 
+CREATE INDEX ix_admin_unit_country_country_gaul_code ON admin_unit_country (country_gaul_code);
 CREATE INDEX ix_admin_unit_disease_extent_class_global_gaul_code ON admin_unit_disease_extent_class (global_gaul_code);
 CREATE INDEX ix_admin_unit_disease_extent_class_tropical_gaul_code ON admin_unit_disease_extent_class (tropical_gaul_code);
 CREATE INDEX ix_admin_unit_disease_extent_class_disease_extent_class ON admin_unit_disease_extent_class (disease_extent_class);
@@ -12,6 +13,7 @@ CREATE INDEX ix_admin_unit_review_global_gaul_code ON admin_unit_review (global_
 CREATE INDEX ix_admin_unit_review_tropical_gaul_code ON admin_unit_review (tropical_gaul_code);
 CREATE INDEX ix_admin_unit_review_disease_group_id ON admin_unit_review (disease_group_id);
 CREATE INDEX ix_admin_unit_review_expert_id ON admin_unit_review (expert_id);
+CREATE INDEX ix_admin_unit_review_response ON admin_unit_review (response);
 CREATE INDEX ix_alert_feed_id ON alert (feed_id);
 CREATE INDEX ix_disease_group_parent_id ON disease_group (parent_id);
 CREATE INDEX ix_disease_group_validator_disease_group_id ON disease_group (validator_disease_group_id);
@@ -28,5 +30,6 @@ CREATE INDEX ix_healthmap_disease_disease_group_id ON healthmap_disease (disease
 CREATE INDEX ix_location_admin_unit_global_gaul_code ON location (admin_unit_global_gaul_code);
 CREATE INDEX ix_location_admin_unit_qc_gaul_code ON location (admin_unit_qc_gaul_code);
 CREATE INDEX ix_location_admin_unit_tropical_gaul_code ON location (admin_unit_tropical_gaul_code);
+CREATE INDEX ix_location_country_gaul_code ON location (country_gaul_code);
 CREATE INDEX ix_location_healthmap_country_id ON location (healthmap_country_id);
 CREATE INDEX ix_model_run_disease_group_id ON model_run (disease_group_id);

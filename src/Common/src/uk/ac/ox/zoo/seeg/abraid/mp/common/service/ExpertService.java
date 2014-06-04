@@ -63,6 +63,13 @@ public interface ExpertService {
     boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
 
     /**
+     * Gets all reviews for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of reviews.
+     */
+    List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId);
+
+    /**
      * Gets all reviews submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the disease group.

@@ -34,22 +34,23 @@ public class PostQCManager {
     private void assignDiseaseExtentAdminUnits(Location location) {
         validateLocation(location);
 
-        if (location.getGeom() != null && location.getPrecision() != null) {
-            // If the location is a country, ensure that only admin 0's are searched. This is so that we do not
-            // erroneously associate a country with an admin 1 if the location happens to fall within it (e.g. if the
-            // location is "United States" and the location'spoint lies within Kansas, we should not assign the Kansas
-            // GAUL code to the location).
-            Character adminLevel = (location.getPrecision() == LocationPrecision.COUNTRY) ? ADMIN_LEVEL_ZERO : null;
+        // If the location is a country, ensure that only admin 0's are searched. This is so that we do not
+        // erroneously associate a country with an admin 1 if the location happens to fall within it (e.g. if the
+        // location is "United States" and the location's point lies within Kansas, we should not assign the Kansas
+        // GAUL code to the location).
+        Character adminLevel = (location.getPrecision() == LocationPrecision.COUNTRY) ? ADMIN_LEVEL_ZERO : null;
 
-            // Find and assign the disease extent admin units that contain the location's point
-            Integer adminUnitGlobal =
-                    locationService.findAdminUnitGlobalThatContainsPoint(location.getGeom(), adminLevel);
-            location.setAdminUnitGlobalGaulCode(adminUnitGlobal);
+        // Find and assign the disease extent admin units that contain the location's point
+        Integer adminUnitGlobalGaulCode =
+                locationService.findAdminUnitGlobalThatContainsPoint(location.getGeom(), adminLevel);
+        location.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
 
-            Integer adminUnitTropical =
-                    locationService.findAdminUnitTropicalThatContainsPoint(location.getGeom(), adminLevel);
-            location.setAdminUnitTropicalGaulCode(adminUnitTropical);
-        }
+        Integer adminUnitTropicalGaulCode =
+                locationService.findAdminUnitTropicalThatContainsPoint(location.getGeom(), adminLevel);
+        location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
+
+        Integer countryGaulCode = locationService.findCountryThatContainsPoint(location.getGeom());
+        location.setCountryGaulCode(countryGaulCode);
     }
 
     private void setResolutionWeighting(Location location) {

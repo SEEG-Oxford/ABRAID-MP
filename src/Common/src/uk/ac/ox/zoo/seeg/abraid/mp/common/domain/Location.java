@@ -74,6 +74,10 @@ public class Location {
     @Column(name = "admin_unit_tropical_gaul_code")
     private Integer adminUnitTropicalGaulCode;
 
+    // The GAUL code of the country geometry that contains this location.
+    @Column(name = "country_gaul_code")
+    private Integer countryGaulCode;
+
     // True if this location passed all of the QC checks, false if not.
     @Column(name = "has_passed_qc")
     private boolean hasPassedQc;
@@ -188,6 +192,14 @@ public class Location {
         this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
     }
 
+    public Integer getCountryGaulCode() {
+        return countryGaulCode;
+    }
+
+    public void setCountryGaulCode(Integer countryGaulCode) {
+        this.countryGaulCode = countryGaulCode;
+    }
+
     /**
      * Returns whether the location has passed QC checks.
      * @return Whether the location has passed QC checks.
@@ -217,11 +229,14 @@ public class Location {
 
         Location location = (Location) o;
 
+        if (hasPassedQc != location.hasPassedQc) return false;
         if (adminUnitGlobalGaulCode != null ? !adminUnitGlobalGaulCode.equals(location.adminUnitGlobalGaulCode) : location.adminUnitGlobalGaulCode != null)
             return false;
         if (adminUnitQCGaulCode != null ? !adminUnitQCGaulCode.equals(location.adminUnitQCGaulCode) : location.adminUnitQCGaulCode != null)
             return false;
         if (adminUnitTropicalGaulCode != null ? !adminUnitTropicalGaulCode.equals(location.adminUnitTropicalGaulCode) : location.adminUnitTropicalGaulCode != null)
+            return false;
+        if (countryGaulCode != null ? !countryGaulCode.equals(location.countryGaulCode) : location.countryGaulCode != null)
             return false;
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
@@ -231,9 +246,10 @@ public class Location {
             return false;
         if (id != null ? !id.equals(location.id) : location.id != null) return false;
         if (name != null ? !name.equals(location.name) : location.name != null) return false;
-        if (hasPassedQc != location.hasPassedQc) return false;
         if (precision != location.precision) return false;
         if (qcMessage != null ? !qcMessage.equals(location.qcMessage) : location.qcMessage != null) return false;
+        if (resolutionWeighting != null ? !resolutionWeighting.equals(location.resolutionWeighting) : location.resolutionWeighting != null)
+            return false;
 
         return true;
     }
@@ -245,11 +261,13 @@ public class Location {
         result = 31 * result + (geom != null ? geom.hashCode() : 0);
         result = 31 * result + (precision != null ? precision.hashCode() : 0);
         result = 31 * result + (geoNameId != null ? geoNameId.hashCode() : 0);
+        result = 31 * result + (resolutionWeighting != null ? resolutionWeighting.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (healthMapCountryId != null ? healthMapCountryId.hashCode() : 0);
         result = 31 * result + (adminUnitQCGaulCode != null ? adminUnitQCGaulCode.hashCode() : 0);
         result = 31 * result + (adminUnitGlobalGaulCode != null ? adminUnitGlobalGaulCode.hashCode() : 0);
         result = 31 * result + (adminUnitTropicalGaulCode != null ? adminUnitTropicalGaulCode.hashCode() : 0);
+        result = 31 * result + (countryGaulCode != null ? countryGaulCode.hashCode() : 0);
         result = 31 * result + (hasPassedQc ? 1 : 0);
         result = 31 * result + (qcMessage != null ? qcMessage.hashCode() : 0);
         return result;

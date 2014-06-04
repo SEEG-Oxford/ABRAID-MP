@@ -18,6 +18,7 @@ public class NativeSQLImpl implements NativeSQL {
     private static final String ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER = " AND level = :adminLevel";
     private static final String ADMIN_UNIT_GLOBAL_TABLE_NAME = "admin_unit_global";
     private static final String ADMIN_UNIT_TROPICAL_TABLE_NAME = "admin_unit_tropical";
+    private static final String COUNTRY_TABLE_NAME = "country";
 
     // Queries to load and save a model run's output raster. Converts to and from a GDAL raster format.
     private static final String LOAD_RASTER_QUERY =
@@ -60,6 +61,16 @@ public class NativeSQLImpl implements NativeSQL {
     @Override
     public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
         return findAdminUnitThatContainsPoint(point, adminLevel, ADMIN_UNIT_TROPICAL_TABLE_NAME);
+    }
+
+    /**
+     * Finds the first country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the first country that contains the specified point, or null if no countries found.
+     */
+    @Override
+    public Integer findCountryThatContainsPoint(Point point) {
+        return findAdminUnitThatContainsPoint(point, null, COUNTRY_TABLE_NAME);
     }
 
     /**

@@ -7,6 +7,7 @@
 
 -- List of tables:
 --
+-- admin_unit_country:              Represents an admin 1's country, where the admin 1 is from admin_unit_global or admin_unit_tropical.
 -- admin_unit_disease_extent_class: Represents the extent class (e.g. presence, absence) of a disease group across an administrative unit.
 -- admin_unit_global:               Represents an admin 0/1 area. As admin_unit_tropical, except ten large countries have been divided into admin 1 areas, to use for global diseases.
 -- admin_unit_review:               Represents an expert's response to the presence or absence of a disease group across an admin unit.
@@ -33,6 +34,11 @@
 -- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
 -- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
 
+
+CREATE TABLE admin_unit_country (
+    admin_unit_gaul_code integer NOT NULL,
+    country_gaul_code integer NOT NULL
+);
 
 CREATE TABLE admin_unit_disease_extent_class (
     id serial NOT NULL,
@@ -214,6 +220,7 @@ CREATE TABLE location (
     admin_unit_qc_gaul_code integer,
     admin_unit_global_gaul_code integer,
     admin_unit_tropical_gaul_code integer,
+    country_gaul_code integer,
     has_passed_qc boolean NOT NULL,
     qc_message varchar(1000)
 );

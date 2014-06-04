@@ -49,7 +49,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     private boolean containsAdminUnit(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
         for (AdminUnitReview review : reviews) {
-            if (adminUnit.equals(review.getAdminUnitGlobalOrTropical())) {
+            if (adminUnit.getGaulCode().equals(review.getAdminUnitGlobalOrTropicalGaulCode())) {
                 return true;
             }
         }

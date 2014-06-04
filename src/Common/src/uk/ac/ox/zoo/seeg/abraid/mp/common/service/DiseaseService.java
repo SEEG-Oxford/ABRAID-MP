@@ -95,6 +95,12 @@ public interface DiseaseService {
     DiseaseExtentClass getDiseaseExtentClass(String name);
 
     /**
+     * Gets all disease extent classes.
+     * @return All disease extent classes.
+     */
+    List<DiseaseExtentClass> getAllDiseaseExtentClasses();
+
+    /**
      * Gets a list of all the disease occurrence reviews in the database.
      * @return The disease occurrence reviews.
      */

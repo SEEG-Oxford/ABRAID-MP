@@ -25,6 +25,10 @@ public abstract class AbstractCommonSpringUnitTests extends AbstractSpringIntegr
 
     @ReplaceWithMock
     @Autowired
+    protected AdminUnitReviewDao adminUnitReviewDao;
+
+    @ReplaceWithMock
+    @Autowired
     protected AdminUnitTropicalDao adminUnitTropicalDao;
 
     @ReplaceWithMock

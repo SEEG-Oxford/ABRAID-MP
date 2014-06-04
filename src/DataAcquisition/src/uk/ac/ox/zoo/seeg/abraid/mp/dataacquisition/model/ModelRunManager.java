@@ -68,7 +68,8 @@ public class ModelRunManager {
     private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         // Task 1
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, new DiseaseExtentParameters(null, 5, 0.6, 5, 1));
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, new DiseaseExtentParameters(null, 5, 0.6, 5, 1,
+                2, 1, 2));
         ///CHECKSTYLE:ON
         // Task 2
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);

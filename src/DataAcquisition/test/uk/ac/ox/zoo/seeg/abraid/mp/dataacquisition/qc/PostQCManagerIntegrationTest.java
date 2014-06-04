@@ -50,6 +50,7 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
+        assertThat(location.getCountryGaulCode()).isEqualTo(179);
     }
 
     @Test
@@ -58,6 +59,7 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(153);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(153);
+        assertThat(location.getCountryGaulCode()).isEqualTo(153);
     }
 
     @Test
@@ -72,8 +74,11 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     public void doesNotFindAdminUnitIfCountryPrecisionAndNoAdminZerosMatch() {
         Location britishColumbiaCanadaCentroid = new Location(-124.76033, 54.75946, LocationPrecision.COUNTRY);
         postQCManager.runPostQCProcesses(britishColumbiaCanadaCentroid);
+        // admin_unit_tropical contains Canada (825) as an admin0, whereas admin_unit_global does not (it contains
+        // Canada's admin1s instead e.g. British Columbia). So a country-precision British Columbia location will
+        // not be found in admin_unit_global but will be found in admin_unit_tropical.
         assertThat(britishColumbiaCanadaCentroid.getAdminUnitGlobalGaulCode()).isNull();
-        assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isNull();
+        assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isEqualTo(825);
     }
 
     @Test
@@ -82,5 +87,6 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isNull();
         assertThat(location.getAdminUnitTropicalGaulCode()).isNull();
+        assertThat(location.getCountryGaulCode()).isNull();
     }
 }

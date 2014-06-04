@@ -31,6 +31,13 @@ public interface AdminUnitReviewDao {
     List<AdminUnitReview> getByExpertId(Integer expertId);
 
     /**
+     * Gets all the reviews of administrative units, for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return A list of the reviews for the disease group.
+     */
+    List<AdminUnitReview> getByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
      * Gets all the reviews of administrative units, submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the expert.
      * @param diseaseGroupId The id of the disease group.

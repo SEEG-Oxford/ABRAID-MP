@@ -35,6 +35,11 @@ GRANT SELECT, INSERT, UPDATE        ON model_run TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON provenance TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON validator_disease_group TO :application_username;
 
+-- Privileges for the ABRAID-MP application: views
+GRANT SELECT ON admin_unit_global_view TO :application_username;
+GRANT SELECT ON admin_unit_simplified_global_view TO :application_username;
+GRANT SELECT ON admin_unit_tropical_view TO :application_username;
+
 -- Privileges for the ABRAID-MP application: sequences (one per column of type serial)
 GRANT SELECT, UPDATE ON admin_unit_disease_extent_class_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON admin_unit_review_id_seq TO :application_username;

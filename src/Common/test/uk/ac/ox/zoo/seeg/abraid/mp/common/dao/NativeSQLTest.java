@@ -83,7 +83,8 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         // This point is within British Columbia, which is an admin1
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
         Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, '0');
-        assertThat(gaulCode).isNull();
+        // And it is assigned GAUL code 825 (Canada) which is an admin0
+        assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test

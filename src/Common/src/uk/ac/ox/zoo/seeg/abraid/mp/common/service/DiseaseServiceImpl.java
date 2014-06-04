@@ -182,6 +182,11 @@ public class DiseaseServiceImpl implements DiseaseService {
         return diseaseExtentClassDao.getByName(name);
     }
 
+    @Override
+    public List<DiseaseExtentClass> getAllDiseaseExtentClasses() {
+        return diseaseExtentClassDao.getAll();
+    }
+
     /**
      * Gets a list of all the disease occurrence reviews in the database.
      * @return The disease occurrence reviews.

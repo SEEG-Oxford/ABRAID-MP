@@ -1,16 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent;
 
-import ch.lambdaj.function.convert.Converter;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static ch.lambdaj.Lambda.*;
 
 /**
  * Generates disease extents for all relevant diseases.
@@ -19,9 +14,11 @@ import static ch.lambdaj.Lambda.*;
  */
 public class DiseaseExtentGenerator {
     private DiseaseService diseaseService;
+    private ExpertService expertService;
 
-    public DiseaseExtentGenerator(DiseaseService diseaseService) {
+    public DiseaseExtentGenerator(DiseaseService diseaseService, ExpertService expertService) {
         this.diseaseService = diseaseService;
+        this.expertService = expertService;
     }
 
     /**
@@ -30,114 +27,66 @@ public class DiseaseExtentGenerator {
      * @param parameters Parameters used in generating the disease extent.
      */
     public void generateDiseaseExtent(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
-        List<AdminUnitDiseaseExtentClass> currentDiseaseExtent =
-                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroupId, parameters);
 
-        // If there is currently no disease extent for this disease group, create an initial extent
-        if (currentDiseaseExtent.size() == 0) {
-            createInitialExtent(diseaseGroupId, parameters);
+        // If there is currently no disease extent for this disease group, create an initial extent, otherwise
+        // update existing extent
+        if (helper.getCurrentDiseaseExtent().size() == 0) {
+            createInitialExtent(helper);
+        } else {
+            updateExistingExtent(helper);
         }
     }
 
-    private void createInitialExtent(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
-        // Retrieve relevant disease occurrences and group them by admin unit
-        Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit =
-                findAndGroupOccurrences(diseaseGroupId, parameters);
+    private DiseaseExtentGeneratorHelper createHelper(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
 
-        // Convert the groups of disease occurrences into disease extent classes
-        Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> classesByAdminUnit =
-                findAndGroupInitialDiseaseExtentClasses(occurrencesByAdminUnit, parameters);
-
-        // Write out the disease extent using the two groups above
-        writeDiseaseExtent(diseaseGroupId, occurrencesByAdminUnit, classesByAdminUnit);
-    }
-
-    private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> findAndGroupOccurrences(
-            Integer diseaseGroupId, DiseaseExtentParameters parameters) {
-        // Find all occurrences of this disease group, subject to the disease extent parameters
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences =
-                diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId,
-                        parameters.getMinimumValidationWeighting(),
-                        DateTime.now().minusYears(parameters.getMaximumYearsAgo()),
-                        parameters.getFeedIds());
+        // Find current disease extent
+        List<AdminUnitDiseaseExtentClass> currentDiseaseExtent =
+                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
 
         // Find all admin units, for either global or tropical diseases depending on the disease group
         // This query is necessary so that admin units with no occurrences appear in the disease extent
         List<? extends AdminUnitGlobalOrTropical> adminUnits =
                 diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId);
 
-        // Return all occurrences, grouped by admin unit
-        return groupOccurrencesByAdminUnit(occurrences, adminUnits);
+        // Retrieve relevant disease occurrences
+        List<DiseaseOccurrenceForDiseaseExtent> occurrences =
+                diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId,
+                        parameters.getMinimumValidationWeighting(),
+                        DateTime.now().minusYears(parameters.getMaximumYearsAgo()),
+                        parameters.getFeedIds());
+
+        // Retrieve a lookup table of disease extent classes
+        List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
+
+        return new DiseaseExtentGeneratorHelper(diseaseGroup, parameters, currentDiseaseExtent, adminUnits,
+                occurrences, diseaseExtentClasses);
     }
 
-    private Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> findAndGroupInitialDiseaseExtentClasses(
-            Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit,
-            final DiseaseExtentParameters parameters) {
-        // For each admin unit, convert its list of disease occurrences into a disease extent class
-        return convertMap(occurrencesByAdminUnit,
-                new Converter<List<DiseaseOccurrenceForDiseaseExtent>, DiseaseExtentClass>() {
-                    @Override
-                    public DiseaseExtentClass convert(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
-                        // This is the conversion of one list of disease occurrences into a disease extent class
-                        return getInitialDiseaseExtentClass(occurrences.size(), parameters);
-                    }
-                });
+    private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
+        helper.groupOccurrencesByAdminUnit();
+        helper.groupOccurrencesByCountry();
+        helper.computeInitialDiseaseExtentClasses();
+        writeDiseaseExtent(helper.getDiseaseExtentToSave());
     }
 
-    private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> groupOccurrencesByAdminUnit(
-            List<DiseaseOccurrenceForDiseaseExtent> occurrences,
-            List<? extends AdminUnitGlobalOrTropical> adminUnits) {
-
-        // Group admin units by GAUL code
-        Map<Integer, AdminUnitGlobalOrTropical> adminUnitMapByGaulCode
-                = index(adminUnits, on(AdminUnitGlobalOrTropical.class).getGaulCode());
-
-        // Create empty groups of occurrences by admin unit
-        Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> group = new HashMap<>();
-        for (AdminUnitGlobalOrTropical adminUnit : adminUnits) {
-            group.put(adminUnit, new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
-        }
-
-        // Add occurrences to the groups
-        for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
-            AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(
-                    occurrence.getAdminUnitGlobalOrTropicalGaulCode());
-            // Should never be null, but just in case
-            if (adminUnit != null) {
-                group.get(adminUnit).add(occurrence);
-            }
-        }
-
-        return group;
+    private void updateExistingExtent(DiseaseExtentGeneratorHelper helper) {
+        helper.groupOccurrencesByAdminUnit();
+        helper.groupOccurrencesByCountry();
+        helper.groupReviewsByAdminUnit(getRelevantReviews(helper));
+        helper.computeUpdatedDiseaseExtentClasses();
+        writeDiseaseExtent(helper.getDiseaseExtentToSave());
     }
 
-    private DiseaseExtentClass getInitialDiseaseExtentClass(int occurrenceCount, DiseaseExtentParameters parameters) {
-        // Convert an occurrence count into a disease extent class, using the disease extent parameters
-        // Although the disease service is called multiple times to get the classes, Hibernate caching will save us
-        if (occurrenceCount >= parameters.getMinimumOccurrencesForPresence()) {
-            return diseaseService.getDiseaseExtentClass(DiseaseExtentClass.PRESENCE);
-        } else if (occurrenceCount >= parameters.getMinimumOccurrencesForPossiblePresence()) {
-            return diseaseService.getDiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE);
-        } else {
-            return diseaseService.getDiseaseExtentClass(DiseaseExtentClass.UNCERTAIN);
+    private void writeDiseaseExtent(List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClassesToSave) {
+        for (AdminUnitDiseaseExtentClass row : adminUnitDiseaseExtentClassesToSave) {
+            diseaseService.saveAdminUnitDiseaseExtentClass(row);
         }
     }
 
-    private void writeDiseaseExtent(Integer diseaseGroupId, Map<AdminUnitGlobalOrTropical,
-                                    List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit,
-                                    Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> classesByAdminUnit) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-
-        // Insert a new disease extent row for each admin unit, for this disease group
-        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
-                occurrencesByAdminUnit.entrySet()) {
-            AdminUnitGlobalOrTropical adminUnit = occurrenceByAdminUnit.getKey();
-            AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass();
-            adminUnitDiseaseExtentClass.setDiseaseGroup(diseaseGroup);
-            adminUnitDiseaseExtentClass.setAdminUnitGlobalOrTropical(adminUnit);
-            adminUnitDiseaseExtentClass.setDiseaseExtentClass(classesByAdminUnit.get(adminUnit));
-            adminUnitDiseaseExtentClass.setOccurrenceCount(occurrenceByAdminUnit.getValue().size());
-            diseaseService.saveAdminUnitDiseaseExtentClass(adminUnitDiseaseExtentClass);
-        }
+    private List<AdminUnitReview> getRelevantReviews(DiseaseExtentGeneratorHelper helper) {
+        Integer diseaseGroupId = helper.getDiseaseGroup().getId();
+        return expertService.getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
     }
 }

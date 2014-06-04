@@ -66,6 +66,13 @@ public class Expert {
     @Fetch(FetchMode.SELECT)
     private List<ValidatorDiseaseGroup> validatorDiseaseGroups;
 
+    public Expert() {
+    }
+
+    public Expert(double weighting) {
+        this.weighting = weighting;
+    }
+
     public Integer getId() {
         return id;
     }

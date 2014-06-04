@@ -101,6 +101,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         int adminUnitQCGaulCode = 29863;
         int adminUnitGlobalGaulCode = 3;
         int adminUnitTropicalGaulCode = 4;
+        int countryGaulCode = 5;
 
         Location location = new Location();
         location.setName(placeName);
@@ -109,6 +110,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         location.setAdminUnitQCGaulCode(adminUnitQCGaulCode);
         location.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
         location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
+        location.setCountryGaulCode(countryGaulCode);
         location.setHasPassedQc(true);
 
         // Act
@@ -129,6 +131,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(adminUnitQCGaulCode);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(adminUnitGlobalGaulCode);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(adminUnitTropicalGaulCode);
+        assertThat(location.getCountryGaulCode()).isEqualTo(countryGaulCode);
         assertThat(location.hasPassedQc()).isTrue();
     }
 

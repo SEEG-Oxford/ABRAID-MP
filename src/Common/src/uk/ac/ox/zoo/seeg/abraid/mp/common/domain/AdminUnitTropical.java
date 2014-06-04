@@ -10,7 +10,7 @@ import javax.persistence.Table;
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
-@Table(name = "admin_unit_tropical")
+@Table(name = "admin_unit_tropical_view")
 @Immutable
 public class AdminUnitTropical extends AdminUnitGlobalOrTropical {
     public AdminUnitTropical() {
@@ -18,5 +18,9 @@ public class AdminUnitTropical extends AdminUnitGlobalOrTropical {
 
     public AdminUnitTropical(Integer gaulCode) {
         super(gaulCode);
+    }
+
+    public AdminUnitTropical(Integer gaulCode, Integer countryGaulCode) {
+        super(gaulCode, countryGaulCode);
     }
 }

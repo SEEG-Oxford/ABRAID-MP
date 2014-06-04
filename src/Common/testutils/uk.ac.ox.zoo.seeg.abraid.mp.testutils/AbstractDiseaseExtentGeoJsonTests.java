@@ -60,7 +60,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
 
     private static AdminUnitReview createAdminUnitReview(AdminUnitGlobal adminUnitGlobal) {
         AdminUnitReview review = new AdminUnitReview();
-        review.setAdminUnitGlobal(adminUnitGlobal);
+        review.setAdminUnitGlobalGaulCode(adminUnitGlobal.getGaulCode());
         return review;
     }
 }
