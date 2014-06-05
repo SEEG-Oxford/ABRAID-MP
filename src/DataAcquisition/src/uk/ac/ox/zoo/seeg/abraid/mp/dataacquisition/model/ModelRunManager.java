@@ -21,8 +21,8 @@ import java.util.Map;
 public class ModelRunManager {
     private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
     private static final String STARTING_MODEL_PREP = "Starting model run preparation for disease %d";
-    private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed for disease %d;" +
-            " a week has not elapsed since last model run preparation on %s";
+    private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed for disease %d";
+    private static final String WEEK_NOT_ELAPSED = "; a week has not elapsed since last model run preparation on %s";
 
     private ModelRunGatekeeper modelRunGatekeeper;
     private LastModelRunPrepDateManager lastModelRunPrepDateManager;
@@ -61,7 +61,11 @@ public class ModelRunManager {
             modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
-            LOGGER.info(String.format(NOT_STARTING_MODEL_PREP, diseaseGroupId, lastModelRunPrepDate));
+            String logMessage = String.format(NOT_STARTING_MODEL_PREP, diseaseGroupId);
+            if (lastModelRunPrepDate != null) {
+                logMessage += String.format(WEEK_NOT_ELAPSED, lastModelRunPrepDate);
+            }
+            LOGGER.info(logMessage);
         }
     }
 
