@@ -64,5 +64,11 @@
         <include name="**/*" />
       </fileset>
     </copy>
+    <mkdir dir="${artifacts.dir}/conf"/>
+    <copy todir="${artifacts.dir}/conf">
+      <fileset dir="${basedir}/conf">
+        <include name="**/*" />
+      </fileset>
+    </copy>
   </target>
 </project>
