@@ -22,19 +22,27 @@ import static ch.lambdaj.Lambda.*;
 public class WeightingsCalculator {
     private static Logger logger = Logger.getLogger(WeightingsCalculator.class);
     private static final String NO_NEW_REVIEWS =
-            "No new reviews have been submitted - expert weightings of disease occurrences will not be updated";
-    private static final String RECALCULATING_EXPERT_WEIGHTINGS =
+            "No new reviews have been submitted - ";
+    private static final String NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS =
+            "expert weightings of disease occurrences will not be updated";
+    private static final String NOT_UPDATING_WEIGHTINGS_OF_EXPERTS =
+            "weightings of experts will not be updated";
+    private static final String RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS =
             "Recalculating expert weightings for %d disease occurrence(s) given %d new review(s)";
+    private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
+            "Recalculating weightings of experts given %d new review(s)";
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
             "No new occurrences - validation and final weightings will not be updated";
     private static final String RECALCULATING_WEIGHTINGS =
             "Recalculating validation and final weightings for %d disease occurrence(s) in preparation for model run";
-    private static final String UPDATING_WEIGHTINGS =
-            "Updating weightings for %d occurrence(s)";
-    private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
-            "Recalculating weightings of experts";
+    private static final String SAVING_WEIGHTINGS =
+            "Saving validation and final weightings for %d occurrence(s)";
+    private static final String NOT_SAVING_WEIGHTINGS =
+            "Validation and final weightings have not changed - nothing to save";
     private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
             "Weightings changed for %d expert(s) - saving to database";
+    private static final String NOT_SAVING_WEIGHTINGS_OF_EXPERTS =
+            "Weightings of experts have not changed - nothing to save";
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
@@ -54,7 +62,7 @@ public class WeightingsCalculator {
     public void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
         if (allReviews.isEmpty()) {
-            logger.info(NO_NEW_REVIEWS);
+            logger.info(NO_NEW_REVIEWS + NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS);
         } else {
             calculateNewDiseaseOccurrenceExpertWeightings(allReviews);
         }
@@ -71,7 +79,8 @@ public class WeightingsCalculator {
 
     private void calculateNewDiseaseOccurrenceExpertWeightings(List<DiseaseOccurrenceReview> allReviews) {
         Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
-        logger.info(String.format(RECALCULATING_EXPERT_WEIGHTINGS, distinctOccurrences.size(), allReviews.size()));
+        logger.info(String.format(RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS, distinctOccurrences.size(),
+                allReviews.size()));
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
             List<DiseaseOccurrenceReview> reviews = select(allReviews,
                     having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
@@ -174,9 +183,13 @@ public class WeightingsCalculator {
     }
 
     private void saveChanges(Set<DiseaseOccurrence> pendingSave) {
-        logger.info(String.format(UPDATING_WEIGHTINGS, pendingSave.size()));
-        for (DiseaseOccurrence occurrence : pendingSave) {
-            diseaseService.saveDiseaseOccurrence(occurrence);
+        if (pendingSave.size() > 0) {
+            logger.info(String.format(SAVING_WEIGHTINGS, pendingSave.size()));
+            for (DiseaseOccurrence occurrence : pendingSave) {
+                diseaseService.saveDiseaseOccurrence(occurrence);
+            }
+        } else {
+            logger.info(NOT_SAVING_WEIGHTINGS);
         }
     }
 
@@ -187,17 +200,21 @@ public class WeightingsCalculator {
      * @return The map from expert to new weighting value.
      */
     public Map<Expert, Double> calculateNewExpertsWeightings() {
-        logger.info(RECALCULATING_WEIGHTINGS_OF_EXPERTS);
         Map<Expert, Double> newExpertsWeightings = new HashMap<>();
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
-        for (Expert expert : extractDistinctExperts(allReviews)) {
-            List<Double> differencesInResponse = new ArrayList<>();
-            for (DiseaseOccurrence occurrence : selectExpertsReviewedOccurrences(allReviews, expert)) {
-                differencesInResponse.add(calculateDifference(allReviews, occurrence, expert));
-            }
-            double newWeighting = 1 - (double) avg(differencesInResponse);
-            if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
-                newExpertsWeightings.put(expert, newWeighting);
+        if (allReviews.size() == 0) {
+            logger.info(NO_NEW_REVIEWS + NOT_UPDATING_WEIGHTINGS_OF_EXPERTS);
+        } else {
+            logger.info(String.format(RECALCULATING_WEIGHTINGS_OF_EXPERTS, allReviews.size()));
+            for (Expert expert : extractDistinctExperts(allReviews)) {
+                List<Double> differencesInResponse = new ArrayList<>();
+                for (DiseaseOccurrence occurrence : selectExpertsReviewedOccurrences(allReviews, expert)) {
+                    differencesInResponse.add(calculateDifference(allReviews, occurrence, expert));
+                }
+                double newWeighting = 1 - (double) avg(differencesInResponse);
+                if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
+                    newExpertsWeightings.put(expert, newWeighting);
+                }
             }
         }
         return newExpertsWeightings;
@@ -247,6 +264,8 @@ public class WeightingsCalculator {
                 expert.setWeighting(entry.getValue());
                 expertService.saveExpert(expert);
             }
+        } else {
+            logger.info(String.format(NOT_SAVING_WEIGHTINGS_OF_EXPERTS));
         }
     }
 }
