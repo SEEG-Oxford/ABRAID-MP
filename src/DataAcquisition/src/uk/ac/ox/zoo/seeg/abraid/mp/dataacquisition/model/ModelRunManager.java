@@ -20,9 +20,9 @@ import java.util.Map;
  */
 public class ModelRunManager {
     private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
-    private static final String STARTING_MODEL_PREP = "Starting model run preparation for disease %d";
-    private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed for disease %d";
-    private static final String WEEK_NOT_ELAPSED = "; a week has not elapsed since last model run preparation on %s";
+    private static final String DISEASE_GROUP_ID_MESSAGE = "MODEL RUN PREPARATION FOR DISEASE GROUP %d";
+    private static final String STARTING_MODEL_PREP = "Starting model run preparation";
+    private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed";
 
     private ModelRunGatekeeper modelRunGatekeeper;
     private LastModelRunPrepDateManager lastModelRunPrepDateManager;
@@ -53,19 +53,16 @@ public class ModelRunManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
+        LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
         DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
-            LOGGER.info(String.format(STARTING_MODEL_PREP, diseaseGroupId));
+            LOGGER.info(STARTING_MODEL_PREP);
             List<DiseaseOccurrence> diseaseOccurrences = prepareForModelRun(lastModelRunPrepDate, diseaseGroupId);
             modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
-            String logMessage = String.format(NOT_STARTING_MODEL_PREP, diseaseGroupId);
-            if (lastModelRunPrepDate != null) {
-                logMessage += String.format(WEEK_NOT_ELAPSED, lastModelRunPrepDate);
-            }
-            LOGGER.info(logMessage);
+            LOGGER.info(NOT_STARTING_MODEL_PREP);
         }
     }
 

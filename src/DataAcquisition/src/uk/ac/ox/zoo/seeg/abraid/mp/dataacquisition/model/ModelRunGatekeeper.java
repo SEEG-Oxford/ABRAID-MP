@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
@@ -10,6 +11,15 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunGatekeeper {
+    private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
+    private static final String NO_MODEL_RUN_MIN_NEW_OCCURRENCES =
+            "No min new occurrences threshold defined for this disease group";
+    private static final String NEVER_BEEN_EXECUTED_BEFORE =
+            "Model run has never been executed before for this disease group";
+    private static final String WEEK_HAS_NOT_ELAPSED = "A week has not elapsed since last model run preparation on %s";
+    private static final String WEEK_HAS_ELAPSED = "At least a week has elapsed since last model run preparation on %s";
+    private static final String ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has exceeded minimum required";
+    private static final String NOT_ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has not exceeded minimum";
 
     private DiseaseService diseaseService;
 
@@ -28,6 +38,7 @@ public class ModelRunGatekeeper {
     public boolean dueToRun(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup.getModelRunMinNewOccurrences() == null) {
+            LOGGER.info(NO_MODEL_RUN_MIN_NEW_OCCURRENCES);
             return false;
         } else {
             return weekHasElapsed(lastModelRunPrepDate) || enoughNewOccurrences(diseaseGroup);
@@ -36,17 +47,22 @@ public class ModelRunGatekeeper {
 
     private boolean weekHasElapsed(DateTime lastModelRunPrepDate) {
         if (lastModelRunPrepDate == null) {
+            LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
             return true;
         } else {
             LocalDate today = LocalDate.now();
             LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusWeeks(1);
-            return (comparisonDate.isEqual(today) || comparisonDate.isBefore(today));
+            final boolean weekHasElapsed = comparisonDate.isEqual(today) || comparisonDate.isBefore(today);
+            LOGGER.info(String.format(weekHasElapsed ? WEEK_HAS_ELAPSED : WEEK_HAS_NOT_ELAPSED, lastModelRunPrepDate));
+            return weekHasElapsed;
         }
     }
 
     private boolean enoughNewOccurrences(DiseaseGroup diseaseGroup) {
         long count = diseaseService.getNewOccurrencesCountByDiseaseGroup(diseaseGroup.getId());
         int min = diseaseGroup.getModelRunMinNewOccurrences();
-        return (count > min);
+        final boolean hasEnoughNewOccurrences = count > min;
+        LOGGER.info(hasEnoughNewOccurrences ? ENOUGH_NEW_OCCURRENCES : NOT_ENOUGH_NEW_OCCURRENCES);
+        return hasEnoughNewOccurrences;
     }
 }
