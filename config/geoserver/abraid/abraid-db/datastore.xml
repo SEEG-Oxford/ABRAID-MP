@@ -8,7 +8,7 @@
   </workspace>
   <connectionParameters>
     <entry key="Connection timeout">20</entry>
-    <entry key="port">5432</entry>
+    <entry key="port">PORT_REPLACE</entry>
     <entry key="passwd">PW_REPLACE</entry>
     <entry key="dbtype">postgis</entry>
     <entry key="encode functions">false</entry>
@@ -18,7 +18,7 @@
     <entry key="fetch size">1000</entry>
     <entry key="preparedStatements">false</entry>
     <entry key="min connections">1</entry>
-    <entry key="host">localhost</entry>
+    <entry key="host">HOST_REPLACE</entry>
     <entry key="validate connections">true</entry>
     <entry key="max connections">10</entry>
     <entry key="Support on the fly geometry simplification">true</entry>
