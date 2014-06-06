@@ -90,7 +90,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
-        adminUnitDiseaseExtentClass.setHasChanged(false);
+        adminUnitDiseaseExtentClass.setHasClassChanged(false);
 
         // Act
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);

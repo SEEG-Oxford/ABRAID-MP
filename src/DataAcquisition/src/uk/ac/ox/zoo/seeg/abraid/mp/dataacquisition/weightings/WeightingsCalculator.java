@@ -138,7 +138,7 @@ public class WeightingsCalculator {
     private void updateDiseaseOccurrenceValidationWeighting(DiseaseOccurrence occurrence,
                                                             Set<DiseaseOccurrence> pendingSave) {
         Double expertWeighting = occurrence.getExpertWeighting();
-        double systemWeighting = occurrence.getSystemWeighting();
+        double systemWeighting = occurrence.getMachineWeighting();
         double weighting = (expertWeighting != null) ? expertWeighting : systemWeighting;
         if (hasWeightingChanged(occurrence.getValidationWeighting(), weighting)) {
             pendingSave.add(occurrence);
