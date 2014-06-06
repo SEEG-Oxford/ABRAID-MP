@@ -68,27 +68,30 @@ public class DiseaseExtentGeneratorHelper {
 
         // Add occurrences to the groups
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
-            AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(
-                    occurrence.getAdminUnitGlobalOrTropicalGaulCode());
-            // Should never be null, but just in case
-            if (adminUnit != null) {
-                occurrencesByAdminUnit.get(adminUnit).add(occurrence);
-            }
+            AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(occurrence.getAdminUnitGaulCode());
+            occurrencesByAdminUnit.get(adminUnit).add(occurrence);
         }
     }
 
     /**
      * Groups the occurrences by country (strictly, it groups the number of occurrences by country GAUL code).
+     * The country GAUL code is taken from the admin unit global/tropical entity.
      */
     public void groupOccurrencesByCountry() {
-        // Group the occurrences by country GAUL code
-        Group<DiseaseOccurrenceForDiseaseExtent> group = group(occurrences,
-                by(on(DiseaseOccurrenceForDiseaseExtent.class).getCountryGaulCode()));
+        // Group admin units by GAUL code
+        Map<Integer, AdminUnitGlobalOrTropical> adminUnitMapByGaulCode
+                = index(adminUnits, on(AdminUnitGlobalOrTropical.class).getGaulCode());
 
-        // Convert the grouping to a map from GAUL code to number of occurrences
+        // Add number of occurrences to the groups
         numberOfOccurrencesByCountry = new HashMap<>();
-        for (Group<DiseaseOccurrenceForDiseaseExtent> subgroup : group.subgroups()) {
-            numberOfOccurrencesByCountry.put((Integer) subgroup.key(), subgroup.getSize());
+        for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
+            AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(occurrence.getAdminUnitGaulCode());
+            Integer countryGaulCode = adminUnit.getCountryGaulCode();
+            if (countryGaulCode != null) {
+                // Country GAUL code found, so add 1 to the number of occurrences for this country
+                Integer numberOfOccurrences = numberOfOccurrencesByCountry.get(countryGaulCode);
+                numberOfOccurrencesByCountry.put(countryGaulCode, nullSafeAdd(numberOfOccurrences, 1));
+            }
         }
     }
 
@@ -296,6 +299,10 @@ public class DiseaseExtentGeneratorHelper {
                 iterator.remove();
             }
         }
+    }
+
+    private int nullSafeAdd(Integer a, Integer b) {
+        return ((a != null) ? a : 0) + ((b != null) ? b : 0);
     }
 
     /**

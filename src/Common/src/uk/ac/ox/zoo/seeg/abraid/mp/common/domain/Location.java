@@ -74,10 +74,6 @@ public class Location {
     @Column(name = "admin_unit_tropical_gaul_code")
     private Integer adminUnitTropicalGaulCode;
 
-    // The GAUL code of the country geometry that contains this location.
-    @Column(name = "country_gaul_code")
-    private Integer countryGaulCode;
-
     // True if this location passed all of the QC checks, false if not.
     @Column(name = "has_passed_qc")
     private boolean hasPassedQc;
@@ -192,14 +188,6 @@ public class Location {
         this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
     }
 
-    public Integer getCountryGaulCode() {
-        return countryGaulCode;
-    }
-
-    public void setCountryGaulCode(Integer countryGaulCode) {
-        this.countryGaulCode = countryGaulCode;
-    }
-
     /**
      * Returns whether the location has passed QC checks.
      * @return Whether the location has passed QC checks.
@@ -236,8 +224,6 @@ public class Location {
             return false;
         if (adminUnitTropicalGaulCode != null ? !adminUnitTropicalGaulCode.equals(location.adminUnitTropicalGaulCode) : location.adminUnitTropicalGaulCode != null)
             return false;
-        if (countryGaulCode != null ? !countryGaulCode.equals(location.countryGaulCode) : location.countryGaulCode != null)
-            return false;
         if (createdDate != null ? !createdDate.equals(location.createdDate) : location.createdDate != null)
             return false;
         if (geoNameId != null ? !geoNameId.equals(location.geoNameId) : location.geoNameId != null) return false;
@@ -267,7 +253,6 @@ public class Location {
         result = 31 * result + (adminUnitQCGaulCode != null ? adminUnitQCGaulCode.hashCode() : 0);
         result = 31 * result + (adminUnitGlobalGaulCode != null ? adminUnitGlobalGaulCode.hashCode() : 0);
         result = 31 * result + (adminUnitTropicalGaulCode != null ? adminUnitTropicalGaulCode.hashCode() : 0);
-        result = 31 * result + (countryGaulCode != null ? countryGaulCode.hashCode() : 0);
         result = 31 * result + (hasPassedQc ? 1 : 0);
         result = 31 * result + (qcMessage != null ? qcMessage.hashCode() : 0);
         return result;

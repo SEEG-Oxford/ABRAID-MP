@@ -45,7 +45,7 @@ CREATE TABLE admin_unit_disease_extent_class (
     global_gaul_code integer,
     tropical_gaul_code integer,
     disease_group_id integer NOT NULL,
-    disease_extent_class varchar(17) NOT NULL,
+    disease_extent_class varchar(20) NOT NULL,
     occurrence_count integer NOT NULL,
     has_changed boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
@@ -220,7 +220,6 @@ CREATE TABLE location (
     admin_unit_qc_gaul_code integer,
     admin_unit_global_gaul_code integer,
     admin_unit_tropical_gaul_code integer,
-    country_gaul_code integer,
     has_passed_qc boolean NOT NULL,
     qc_message varchar(1000)
 );
