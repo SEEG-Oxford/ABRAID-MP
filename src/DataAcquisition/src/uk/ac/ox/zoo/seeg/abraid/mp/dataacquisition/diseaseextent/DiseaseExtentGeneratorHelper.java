@@ -24,6 +24,7 @@ public class DiseaseExtentGeneratorHelper {
     private List<? extends AdminUnitGlobalOrTropical> adminUnits;
     private List<DiseaseOccurrenceForDiseaseExtent> occurrences;
     private List<DiseaseExtentClass> diseaseExtentClasses;
+    private List<AdminUnitReview> reviews;
 
     // Working fields
     private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit;
@@ -50,6 +51,14 @@ public class DiseaseExtentGeneratorHelper {
 
     public List<AdminUnitDiseaseExtentClass> getCurrentDiseaseExtent() {
         return currentDiseaseExtent;
+    }
+
+    public List<DiseaseOccurrenceForDiseaseExtent> getOccurrences() {
+        return occurrences;
+    }
+
+    public void setReviews(List<AdminUnitReview> reviews) {
+        this.reviews = reviews;
     }
 
     /**
@@ -97,12 +106,8 @@ public class DiseaseExtentGeneratorHelper {
 
     /**
      * Groups the expert reviews by admin unit (strictly, by admin unit GAUL code).
-     * @param reviews The expert reviews for this disease group.
      */
-    public void groupReviewsByAdminUnit(List<AdminUnitReview> reviews) {
-        // Reviews with null expert weightings are not used when scoring the reviews for disease extent generation
-        removeReviewsWithNullExpertWeightings(reviews);
-
+    public void groupReviewsByAdminUnit() {
         // Group the reviews by admin unit GAUL code
         Group<AdminUnitReview> group = group(reviews,
                 by(on(AdminUnitReview.class).getAdminUnitGlobalOrTropicalGaulCode()));
@@ -289,16 +294,6 @@ public class DiseaseExtentGeneratorHelper {
         row.setDiseaseGroup(diseaseGroup);
         row.setAdminUnitGlobalOrTropical(adminUnit);
         return row;
-    }
-
-    private void removeReviewsWithNullExpertWeightings(List<AdminUnitReview> reviews) {
-        Iterator<AdminUnitReview> iterator = reviews.iterator();
-        while (iterator.hasNext()) {
-            AdminUnitReview review = iterator.next();
-            if (review.getExpert().getWeighting() == null) {
-                iterator.remove();
-            }
-        }
     }
 
     private int nullSafeAdd(Integer a, Integer b) {

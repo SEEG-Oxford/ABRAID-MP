@@ -37,7 +37,7 @@ public class DiseaseExtentGeneratorTest {
     private DiseaseExtentClass absenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.ABSENCE, -100);
 
     private final int diseaseGroupId = 87;
-    private final DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+    private final DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId, null, "Dengue", DiseaseGroupType.SINGLE);
     private final List<? extends AdminUnitGlobalOrTropical> adminUnits = getAdminUnits();
 
     @Before
