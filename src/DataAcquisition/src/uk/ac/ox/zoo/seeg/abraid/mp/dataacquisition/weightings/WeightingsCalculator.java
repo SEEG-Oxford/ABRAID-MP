@@ -15,8 +15,7 @@ import java.util.*;
 import static ch.lambdaj.Lambda.*;
 
 /**
- * Updates the weightings.
- *
+ * Updates the weightings of experts and of disease occurrences, given new reviews.
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculator {
@@ -133,8 +132,8 @@ public class WeightingsCalculator {
     private void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
         for (DiseaseOccurrence occurrence : occurrences) {
             double newValidation = calculateNewValidationWeighting(occurrence);
-            double newFinal = calculateNewFinalWeighting(occurrence);
-            double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(occurrence);
+            double newFinal = calculateNewFinalWeighting(occurrence, newValidation);
+            double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(occurrence, newValidation);
             if (hasAnyWeightingChanged(occurrence, newValidation, newFinal, newFinalExcludingSpatial)) {
                 occurrence.setValidationWeighting(newValidation);
                 occurrence.setFinalWeighting(newFinal);
@@ -158,7 +157,7 @@ public class WeightingsCalculator {
      * Recalculate the final weighting as the average across each of the 4 properties. If the value of any of the
      * weightings is 0, then the occurrence should be discounted by the model by setting the final weighting to 0.
      */
-    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence) {
+    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, double validationWeighting) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
@@ -167,7 +166,7 @@ public class WeightingsCalculator {
             weighting = 0.0;
         } else {
             weighting = average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
-                    occurrence.getValidationWeighting());
+                    validationWeighting);
         }
         return weighting;
     }
@@ -175,11 +174,12 @@ public class WeightingsCalculator {
     /**
      * As above, but excluding the location resolution weighting.
      */
-    private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence) {
+    private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
+                                                              double validationWeighting) {
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
         return (diseaseGroupTypeWeighting == 0.0) ? 0.0 :
-                average(feedWeighting, diseaseGroupTypeWeighting, occurrence.getValidationWeighting());
+                average(feedWeighting, diseaseGroupTypeWeighting, validationWeighting);
     }
 
     private boolean hasAnyWeightingChanged(DiseaseOccurrence occurrence,
