@@ -17,39 +17,39 @@ rm geoserver-2.5.1-war.zip
 
 # Shapefiles
 mkdir admin_units
-scp $SHAPEFILE_SOURCE/admin_unit_qc.* admin_units/
-scp $SHAPEFILE_SOURCE/admin_unit_global.* admin_units/
-scp $SHAPEFILE_SOURCE/admin_unit_simplified_global.* admin_units/
-scp $SHAPEFILE_SOURCE/admin_unit_tropical.* admin_units/
-scp $SHAPEFILE_SOURCE/admin_unit_simplified_tropical.* admin_units/
-scp $SHAPEFILE_SOURCE/country.* admin_units/
-scp $SHAPEFILE_SOURCE/land_sea_border.* admin_units/
+scp -C $SHAPEFILE_SOURCE/admin_unit_qc.* admin_units/
+scp -C $SHAPEFILE_SOURCE/admin_unit_global.* admin_units/
+scp -C $SHAPEFILE_SOURCE/admin_unit_simplified_global.* admin_units/
+scp -C $SHAPEFILE_SOURCE/admin_unit_tropical.* admin_units/
+scp -C $SHAPEFILE_SOURCE/admin_unit_simplified_tropical.* admin_units/
+scp -C $SHAPEFILE_SOURCE/country.* admin_units/
+scp -C $SHAPEFILE_SOURCE/land_sea_border.* admin_units/
 
 # Rasters
 mkdir rasters
-scp $RASTER_SOURCE/admin1qc.asc rasters/
-scp $RASTER_SOURCE/admin1qc.asc rasters/
-scp $RASTER_SOURCE/admin_tropical.asc rasters/
-scp $RASTER_SOURCE/admin_global.asc rasters/
+scp -C $RASTER_SOURCE/admin1qc.asc rasters/
+scp -C $RASTER_SOURCE/admin1qc.asc rasters/
+scp -C $RASTER_SOURCE/admin_tropical.asc rasters/
+scp -C $RASTER_SOURCE/admin_global.asc rasters/
 
 # Covariates
 mkdir covariates
-scp -r $COVARIATE_SOURCE/* covariates/
+scp -C -r $COVARIATE_SOURCE/* covariates/
 
 # Historic healthmap
 mkdir healthmap
-scp $HEALTHMAP_SOURCE/admin_unit_disease_extent_class.txt healthmap/
-scp $HEALTHMAP_SOURCE/admin_unit_review.txt healthmap/
-scp $HEALTHMAP_SOURCE/alert.txt healthmap/
-scp $HEALTHMAP_SOURCE/disease_group.txt healthmap/
-scp $HEALTHMAP_SOURCE/disease_occurrence.txt healthmap/
-scp $HEALTHMAP_SOURCE/disease_occurrence_review.txt healthmap/
-scp $HEALTHMAP_SOURCE/healthmap_disease.txt healthmap/
-scp $HEALTHMAP_SOURCE/location.txt healthmap/
-scp $HEALTHMAP_SOURCE/import_into_abraid.sh healthmap/
-scp $HEALTHMAP_SOURCE/import_into_abraid.sql healthmap/
+scp -C $HEALTHMAP_SOURCE/admin_unit_disease_extent_class.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/admin_unit_review.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/alert.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/disease_group.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/disease_occurrence.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/disease_occurrence_review.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/healthmap_disease.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/location.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/import_into_abraid.sh healthmap/
+scp -C $HEALTHMAP_SOURCE/import_into_abraid.sql healthmap/
 
 # Geonames
 mkdir geonames
-scp $GEONAMES_SOURCE/import_geoname.sh geonames/
-scp $GEONAMES_SOURCE/geoname.txt geonames/
+scp -C $GEONAMES_SOURCE/import_geoname.sh geonames/
+scp -C $GEONAMES_SOURCE/geoname.txt geonames/
