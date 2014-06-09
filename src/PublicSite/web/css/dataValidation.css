@@ -52,7 +52,7 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable {
-    max-height: 750px;
+    max-height: 600px;
     overflow-y: auto;
 }
 #adminUnitTable #occurrencesColumn {

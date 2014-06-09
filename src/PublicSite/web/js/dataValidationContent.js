@@ -20,11 +20,10 @@ require(["require.conf"], function () {
                  SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
             ko.applyBindings(new SidePanelViewModel(
-                    new SelectedPointViewModel(baseUrl, alert,
-                        new CounterViewModel(data.diseaseOccurrenceReviewCount, "occurrence-reviewed")),
-                    new SelectedAdminUnitViewModel(
-                        new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed")
-                    )
+                new SelectedPointViewModel(baseUrl, alert,
+                    new CounterViewModel(data.diseaseOccurrenceReviewCount, "occurrence-reviewed")),
+                new SelectedAdminUnitViewModel(baseUrl, alert,
+                    new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed"))
                 ),
                 doc.getElementById("sidePanelContent")
             );
