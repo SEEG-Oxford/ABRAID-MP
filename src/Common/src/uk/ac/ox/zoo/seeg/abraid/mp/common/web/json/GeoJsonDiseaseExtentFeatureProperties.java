@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web.json;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
@@ -39,21 +40,19 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return s.charAt(0) + s.substring(1).toLowerCase();
     }
 
-    private boolean computeNeedsReview(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
-                                       List<AdminUnitReview> reviews) {
-        boolean extentClassHasChanged = adminUnitDiseaseExtentClass.hasClassChanged();
-        boolean expertHasReviewed = containsAdminUnit(reviews,
-                                                      adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical());
-        return (extentClassHasChanged || !expertHasReviewed);
+    private boolean computeNeedsReview(AdminUnitDiseaseExtentClass extentClass, List<AdminUnitReview> reviews) {
+        DateTime extentClassChangedDate = extentClass.getClassChangedDate();
+        DateTime expertReviewedDate = extractExpertReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
+        return (expertReviewedDate == null || extentClassChangedDate.isAfter(expertReviewedDate));
     }
 
-    private boolean containsAdminUnit(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
+    private DateTime extractExpertReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
         for (AdminUnitReview review : reviews) {
             if (adminUnit.getGaulCode().equals(review.getAdminUnitGlobalOrTropicalGaulCode())) {
-                return true;
+                return review.getChangedDate();
             }
         }
-        return false;
+        return null;
     }
 
     public String getName() {

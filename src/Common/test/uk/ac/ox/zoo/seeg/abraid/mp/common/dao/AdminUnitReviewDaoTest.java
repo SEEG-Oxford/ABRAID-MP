@@ -44,7 +44,7 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
 
         // Assert
         assertThat(review.getId()).isNotNull();
-        assertThat(review.getCreatedDate()).isNotNull();
+        assertThat(review.getChangedDate()).isNotNull();
 
         Integer id = review.getId();
         flushAndClear();

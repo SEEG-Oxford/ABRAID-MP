@@ -2,10 +2,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.testutils;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Base class to ease the setup of mocks in disease occurrence GeoJSON tests.
@@ -14,31 +18,28 @@ import java.util.List;
 public abstract class AbstractDiseaseExtentGeoJsonTests {
 
     public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClass() {
-        return defaultAdminUnitDiseaseExtentClassWithoutReview(false);
+        return defaultAdminUnitDiseaseExtentClassWithoutReview();
     }
 
-    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview(boolean hasClassChanged) {
-        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview() {
+        return new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
                 new DiseaseGroup(),
                 new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
                 0);
-        adminUnitDiseaseExtentClass.setHasClassChanged(hasClassChanged);
-        return adminUnitDiseaseExtentClass;
     }
 
-    public static AdminUnitDiseaseExtentClass
-        defaultAdminUnitDiseaseExtentClassWithReview(List<AdminUnitReview> reviews, boolean hasClassChanged) {
-            AdminUnitGlobal adminUnitGlobal = defaultAdminUnitGlobal();
-            AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                adminUnitGlobal,
-                new DiseaseGroup(),
-                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-                0);
-            adminUnitDiseaseExtentClass.setHasClassChanged(hasClassChanged);
-            AdminUnitReview review = createAdminUnitReview(adminUnitGlobal);
-            reviews.add(review);
-            return adminUnitDiseaseExtentClass;
+    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithReview(
+            List<AdminUnitReview> reviews, boolean classChangedLaterThanReview) {
+        AdminUnitGlobal adminUnitGlobal = defaultAdminUnitGlobal();
+        AdminUnitReview review = mockAdminUnitReview(adminUnitGlobal);
+        reviews.add(review);
+        return new AdminUnitDiseaseExtentClass(
+            adminUnitGlobal,
+            new DiseaseGroup(),
+            new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
+            0,
+            classChangedLaterThanReview ? review.getChangedDate().plusDays(1) : review.getChangedDate().minusDays(1));
     }
 
     public static AdminUnitGlobal defaultAdminUnitGlobal() {
@@ -58,9 +59,10 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
         return GeometryUtils.createMultiPolygon(polygon);
     }
 
-    private static AdminUnitReview createAdminUnitReview(AdminUnitGlobal adminUnitGlobal) {
-        AdminUnitReview review = new AdminUnitReview();
-        review.setAdminUnitGlobalGaulCode(adminUnitGlobal.getGaulCode());
+    private static AdminUnitReview mockAdminUnitReview(AdminUnitGlobal adminUnitGlobal) {
+        AdminUnitReview review = mock(AdminUnitReview.class);
+        when(review.getAdminUnitGlobalOrTropicalGaulCode()).thenReturn(adminUnitGlobal.getGaulCode());
+        when(review.getChangedDate()).thenReturn(DateTime.now());
         return review;
     }
 }

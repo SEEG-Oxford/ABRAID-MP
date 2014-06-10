@@ -166,12 +166,13 @@ public class DiseaseExtentGeneratorHelper {
                 row = createAdminUnitDiseaseExtentClass(adminUnit);
             }
             DiseaseExtentClass newClass = classesByAdminUnit.get(adminUnit);
-            row.setHasClassChanged(!newClass.equals(row.getDiseaseExtentClass()));
-            row.setDiseaseExtentClass(newClass);
+            if (!newClass.equals(row.getDiseaseExtentClass())) {
+                row.setDiseaseExtentClass(newClass);
+                row.setClassChangedDate(DateTime.now());
+            }
             row.setOccurrenceCount(occurrenceByAdminUnit.getValue().size());
             adminUnitDiseaseExtentClasses.add(row);
         }
-
         return adminUnitDiseaseExtentClasses;
     }
 
