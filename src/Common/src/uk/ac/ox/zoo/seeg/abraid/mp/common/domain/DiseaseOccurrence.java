@@ -121,7 +121,7 @@ public class DiseaseOccurrence {
     private Double machineWeighting;
 
     // The validation weighting used in the data weighting formula.
-    // Takes the value of the expertWeighting if it exists, otherwise the systemWeighting value.
+    // Takes the value of the expertWeighting if it exists, otherwise the machineWeighting value.
     @Column(name = "validation_weighting")
     private Double validationWeighting;
 

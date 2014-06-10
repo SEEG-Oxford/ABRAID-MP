@@ -175,12 +175,12 @@ public class AdminUnitDiseaseExtentClass {
      * Returns whether this extent class has changed since it was last generated.
      * @return Whether this extent class has changed since it was last generated.
      */
-    public boolean hasChanged() {
+    public boolean hasClassChanged() {
         return hasClassChanged;
     }
 
-    public void setHasClassChanged(boolean hasChanged) {
-        this.hasClassChanged = hasChanged;
+    public void setHasClassChanged(boolean hasClassChanged) {
+        this.hasClassChanged = hasClassChanged;
     }
 
     public DateTime getCreatedDate() {

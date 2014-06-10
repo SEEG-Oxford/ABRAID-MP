@@ -41,7 +41,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     private boolean computeNeedsReview(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
                                        List<AdminUnitReview> reviews) {
-        boolean extentClassHasChanged = adminUnitDiseaseExtentClass.hasChanged();
+        boolean extentClassHasChanged = adminUnitDiseaseExtentClass.hasClassChanged();
         boolean expertHasReviewed = containsAdminUnit(reviews,
                                                       adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical());
         return (extentClassHasChanged || !expertHasReviewed);

@@ -92,7 +92,7 @@ public class DiseaseExtentGeneratorTest {
         List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent();
 
         // Arrange - set the expected disease extent to be the initial disease extent, with all changed to uncertain
-        // and hasChanged set appropriately
+        // and hasClassChanged set appropriately
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent();
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
             extentClass.setOccurrenceCount(0);
