@@ -132,13 +132,14 @@ CREATE TABLE disease_occurrence (
     disease_group_id integer NOT NULL,
     location_id integer NOT NULL,
     alert_id integer NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     occurrence_date timestamp NOT NULL,
-    is_validated boolean,
     expert_weighting double precision,
     machine_weighting double precision,
     validation_weighting double precision,
-    final_weighting double precision
+    final_weighting double precision,
+    final_weighting_excl_spatial double precision,
+    is_validated boolean,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE disease_occurrence_review (

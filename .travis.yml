@@ -24,6 +24,17 @@ script:
   - ./.travis.main.sh
 after_success:
   - ./.travis.artifacts.sh
+deploy:
+  provider: releases
+  api_key:
+    secure: RJ8zk37A8Ap04ACCI8ij9ktJq5zvwC1yXaNfKlCZWqraHlBIc3AP9COFq7l7D6DVXJGNvCH0XlQpEwa8Ek9Stt7Si4Tyq+U7NPKNX6oOcTmNCH43eVq4PP4IpnPaxqQKM+bPmsMGgApZdk4oUzOBxG/+ntQbhMWq3f3jXCKTV48=
+  file: artifacts.tar.gz
+  skip_cleanup: true
+  on:
+    repo: SEEG-Oxford/ABRAID-MP
+    tags: true
+    all_branches: true
+    jdk: openjdk7
 env:
   global:
     - TERM=dumb

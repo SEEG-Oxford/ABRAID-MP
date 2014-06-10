@@ -1,0 +1,33 @@
+<dataStore>
+  <id>DataStoreInfoImpl--5f32640d:1466746c7a9:-7ff9</id>
+  <name>abraid-db</name>
+  <type>PostGIS</type>
+  <enabled>true</enabled>
+  <workspace>
+    <id>WorkspaceInfoImpl--5f32640d:1466746c7a9:-7ffb</id>
+  </workspace>
+  <connectionParameters>
+    <entry key="Connection timeout">20</entry>
+    <entry key="port">PORT_REPLACE</entry>
+    <entry key="passwd">PW_REPLACE</entry>
+    <entry key="dbtype">postgis</entry>
+    <entry key="encode functions">false</entry>
+    <entry key="namespace">abraid</entry>
+    <entry key="schema">public</entry>
+    <entry key="create database">false</entry>
+    <entry key="fetch size">1000</entry>
+    <entry key="preparedStatements">false</entry>
+    <entry key="min connections">1</entry>
+    <entry key="host">HOST_REPLACE</entry>
+    <entry key="validate connections">true</entry>
+    <entry key="max connections">10</entry>
+    <entry key="Support on the fly geometry simplification">true</entry>
+    <entry key="database">DB_REPLACE</entry>
+    <entry key="Loose bbox">true</entry>
+    <entry key="Expose primary keys">false</entry>
+    <entry key="Max open prepared statements">50</entry>
+    <entry key="Estimated extends">true</entry>
+    <entry key="user">USER_REPLACE</entry>
+  </connectionParameters>
+  <__default>false</__default>
+</dataStore>

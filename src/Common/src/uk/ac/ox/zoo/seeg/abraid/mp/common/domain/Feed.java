@@ -54,6 +54,10 @@ public class Feed {
     public Feed() {
     }
 
+    public Feed(double weighting) {
+        this.weighting = weighting;
+    }
+
     public Feed(String name) {
         this.name = name;
     }
