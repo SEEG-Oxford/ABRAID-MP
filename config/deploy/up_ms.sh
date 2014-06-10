@@ -42,6 +42,7 @@ sed -i "s/healthmap\.authorizationCode\=.*/healthmap.authorizationCode=$HEALTH_M
 sed -i "s/geonames\.username\=.*/geonames.username=$GEONAMES_USER/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
 sed -i "s/modelwrapper\.rootUrl\=.*/modelwrapper.rootUrl=$MW_URL/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
 # Set defaultStartDate?
-sed -i "s|\${user\.home}\/ABRAID\-MP\/logs|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/dataacquisition/log4j.properties
+sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/dataacquisition/log4j.properties
+mkdir -p $ABRAID_SUPPORT_PATH/dataacquisition/logs
 # Cron job
 
