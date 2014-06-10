@@ -47,7 +47,7 @@ CREATE TABLE admin_unit_disease_extent_class (
     disease_group_id integer NOT NULL,
     disease_extent_class varchar(17) NOT NULL,
     occurrence_count integer NOT NULL,
-    has_changed boolean NOT NULL,
+    has_class_changed boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -134,7 +134,7 @@ CREATE TABLE disease_occurrence (
     alert_id integer NOT NULL,
     occurrence_date timestamp NOT NULL,
     expert_weighting double precision,
-    system_weighting double precision,
+    machine_weighting double precision,
     validation_weighting double precision,
     final_weighting double precision,
     final_weighting_excl_spatial double precision,

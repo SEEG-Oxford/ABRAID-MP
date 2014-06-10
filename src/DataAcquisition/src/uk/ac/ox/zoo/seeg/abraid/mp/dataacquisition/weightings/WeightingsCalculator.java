@@ -145,12 +145,12 @@ public class WeightingsCalculator {
 
     /**
      * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
-     * the expert weighting if it exists, otherwise the system weighting.
+     * the expert weighting if it exists, otherwise the machine weighting.
      */
     private double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
         Double expertWeighting = occurrence.getExpertWeighting();
-        double systemWeighting = occurrence.getSystemWeighting();
-        return (expertWeighting != null) ? expertWeighting : systemWeighting;
+        double machineWeighting = occurrence.getMachineWeighting();
+        return (expertWeighting != null) ? expertWeighting : machineWeighting;
     }
 
     /**

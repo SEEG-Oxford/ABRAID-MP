@@ -186,11 +186,11 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     public void updateDiseaseOccurrenceValidationAndFinalWeightingsSetsAppropriateValidationWeighting() {
         // Arrange
         int diseaseGroupId = 87;
-        double systemWeighting = 0.3;
+        double machineWeighting = 0.3;
         double expertWeighting = 0.2;
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-        DiseaseOccurrence occ1 = setWeightings(occurrences.get(0), null, systemWeighting);
-        DiseaseOccurrence occ2 = setWeightings(occurrences.get(1), expertWeighting, systemWeighting);
+        DiseaseOccurrence occ1 = setWeightings(occurrences.get(0), null, machineWeighting);
+        DiseaseOccurrence occ2 = setWeightings(occurrences.get(1), expertWeighting, machineWeighting);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(Arrays.asList(occ1, occ2));
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
@@ -199,13 +199,13 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
-        assertThat(occ1.getValidationWeighting()).isEqualTo(systemWeighting);
+        assertThat(occ1.getValidationWeighting()).isEqualTo(machineWeighting);
         assertThat(occ2.getValidationWeighting()).isEqualTo(expertWeighting);
     }
 
-    private DiseaseOccurrence setWeightings(DiseaseOccurrence occ, Double expertWeighting, double systemWeighting) {
+    private DiseaseOccurrence setWeightings(DiseaseOccurrence occ, Double expertWeighting, double machineWeighting) {
         occ.setExpertWeighting(expertWeighting);
-        occ.setSystemWeighting(systemWeighting);
+        occ.setMachineWeighting(machineWeighting);
         diseaseService.saveDiseaseOccurrence(occ);
         return occ;
     }
@@ -248,7 +248,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
                 createAlertWithFeed(0.5),
                 true, null, DateTime.now());
         occ.setExpertWeighting(null);
-        occ.setSystemWeighting(0.6);
+        occ.setMachineWeighting(0.6);
         DiseaseService mockDiseaseService = mockDiseaseServiceWithOccurrence(diseaseGroupId, occ);
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
@@ -283,7 +283,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
                 locationService.getLocationByGeoNameId(1880252),    // Singapore, a PRECISE location
                 createAlertWithFeed(weighting),
                 true, weighting, DateTime.now());
-        occ.setSystemWeighting(weighting);
+        occ.setMachineWeighting(weighting);
         DiseaseService mockDiseaseService = mockDiseaseServiceWithOccurrence(diseaseGroupId, occ);
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 

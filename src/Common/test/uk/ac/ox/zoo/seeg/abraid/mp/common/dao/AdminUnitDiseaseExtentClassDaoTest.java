@@ -75,7 +75,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical()).isNull();
         assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
         assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
-        assertThat(adminUnitDiseaseExtentClass.hasChanged()).isTrue();
+        assertThat(adminUnitDiseaseExtentClass.hasClassChanged()).isTrue();
     }
 
     @Test
@@ -90,7 +90,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
-        adminUnitDiseaseExtentClass.setHasChanged(false);
+        adminUnitDiseaseExtentClass.setHasClassChanged(false);
 
         // Act
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
@@ -106,7 +106,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal()).isNull();
         assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
         assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
-        assertThat(adminUnitDiseaseExtentClass.hasChanged()).isFalse();
+        assertThat(adminUnitDiseaseExtentClass.hasClassChanged()).isFalse();
     }
 
     @Test(expected = ConstraintViolationException.class)
