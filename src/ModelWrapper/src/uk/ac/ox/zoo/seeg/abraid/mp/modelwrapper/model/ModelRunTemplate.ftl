@@ -83,17 +83,14 @@ result <- tryCatch({
             load_seegSDM,
             parallel_flag)
     } else {
-        # Create a fake result set using extent as a size/geom reference
+        # Create a small fake result set
         if (file.exists(extent_path)) {
             if (!require('raster', quietly=TRUE)) {
                 install.packages('raster', quiet=TRUE)
                 library('raster', quietly=TRUE)
             }
-            ref <- raster(extent_path)
-            rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
-            writeRaster(mask(rand, ref), filename="mean_prediction.asc", format="ascii")
-            rand <- raster(replicate(ncol(ref), runif(nrow(ref))), template=ref)
-            writeRaster(mask(rand, ref), filename="prediction_uncertainty.asc", format="ascii")
+            writeRaster(setExtent(raster(replicate(20, runif(17))), extent(34.54167, 35.375, 29.08333, 29.79167)), filename="mean_prediction.asc", format="ascii")
+            writeRaster(setExtent(raster(replicate(20, runif(17))), extent(34.54167, 35.375, 29.08333, 29.79167)), filename="prediction_uncertainty.asc", format="ascii")
         }
         innerResult <- 0
     }
