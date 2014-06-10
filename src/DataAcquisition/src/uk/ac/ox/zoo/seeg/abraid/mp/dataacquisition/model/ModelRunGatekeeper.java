@@ -13,13 +13,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 public class ModelRunGatekeeper {
     private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
     private static final String NO_MODEL_RUN_MIN_NEW_OCCURRENCES =
-            "No min new occurrences threshold defined for this disease group";
+            "No min new occurrences threshold has been defined for this disease group";
     private static final String NEVER_BEEN_EXECUTED_BEFORE =
             "Model run has never been executed before for this disease group";
     private static final String WEEK_HAS_NOT_ELAPSED = "A week has not elapsed since last model run preparation on %s";
     private static final String WEEK_HAS_ELAPSED = "At least a week has elapsed since last model run preparation on %s";
     private static final String ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has exceeded minimum required";
-    private static final String NOT_ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has not exceeded minimum";
+    private static final String NOT_ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has not exceeded minimum value";
 
     private DiseaseService diseaseService;
 

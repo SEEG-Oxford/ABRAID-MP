@@ -15,8 +15,7 @@ import java.util.*;
 import static ch.lambdaj.Lambda.*;
 
 /**
- * Updates the weightings.
- *
+ * Updates the weightings of experts and of disease occurrences, given new reviews.
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculator {
@@ -33,12 +32,8 @@ public class WeightingsCalculator {
             "Recalculating weightings of experts given %d new review(s)";
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
             "No new occurrences - validation and final weightings will not be updated";
-    private static final String RECALCULATING_WEIGHTINGS =
-            "Recalculating validation and final weightings for %d disease occurrence(s) in preparation for model run";
-    private static final String SAVING_WEIGHTINGS =
-            "Saving validation and final weightings for %d occurrence(s)";
-    private static final String NOT_SAVING_WEIGHTINGS =
-            "Validation and final weightings have not changed - nothing to save";
+    private static final String UPDATING_WEIGHTINGS =
+            "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
     private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
             "Weightings changed for %d expert(s) - saving to database";
     private static final String NOT_SAVING_WEIGHTINGS_OF_EXPERTS =
@@ -82,8 +77,7 @@ public class WeightingsCalculator {
         logger.info(String.format(RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS, distinctOccurrences.size(),
                 allReviews.size()));
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
-            List<DiseaseOccurrenceReview> reviews = select(allReviews,
-                    having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+            List<DiseaseOccurrenceReview> reviews = extractReviewsForOccurrence(allReviews, occurrence);
             double expertWeighting = calculateWeightedAverageResponse(reviews);
             occurrence.setExpertWeighting(expertWeighting);
             diseaseService.saveDiseaseOccurrence(occurrence);
@@ -94,10 +88,15 @@ public class WeightingsCalculator {
         return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
+    private List<DiseaseOccurrenceReview> extractReviewsForOccurrence(List<DiseaseOccurrenceReview> allReviews,
+                                                                      DiseaseOccurrence occurrence) {
+        return select(allReviews,
+               having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+    }
+
     private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
         List<Double> weightings = calculateWeightingForEachReview(reviews);
-        double weighting = (double) avg(weightings);
-        return shift(weighting);
+        return shift(average(weightings));
     }
 
     private List<Double> calculateWeightingForEachReview(List<DiseaseOccurrenceReview> reviews) {
@@ -124,43 +123,41 @@ public class WeightingsCalculator {
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
-            logger.info(String.format(RECALCULATING_WEIGHTINGS, occurrences.size()));
+            logger.info(String.format(UPDATING_WEIGHTINGS, occurrences.size()));
             updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
         }
-
         return occurrences;
     }
 
     private void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
-        Set<DiseaseOccurrence> pendingSave = new HashSet<>();
         for (DiseaseOccurrence occurrence : occurrences) {
-            updateDiseaseOccurrenceValidationWeighting(occurrence, pendingSave);
-            updateDiseaseOccurrenceFinalWeighting(occurrence, pendingSave);
+            double newValidation = calculateNewValidationWeighting(occurrence);
+            double newFinal = calculateNewFinalWeighting(occurrence, newValidation);
+            double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(occurrence, newValidation);
+            if (hasAnyWeightingChanged(occurrence, newValidation, newFinal, newFinalExcludingSpatial)) {
+                occurrence.setValidationWeighting(newValidation);
+                occurrence.setFinalWeighting(newFinal);
+                occurrence.setFinalWeightingExcludingSpatial(newFinalExcludingSpatial);
+                diseaseService.saveDiseaseOccurrence(occurrence);
+            }
         }
-        saveChanges(pendingSave);
     }
 
     /**
      * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
      * the expert weighting if it exists, otherwise the system weighting.
      */
-    private void updateDiseaseOccurrenceValidationWeighting(DiseaseOccurrence occurrence,
-                                                            Set<DiseaseOccurrence> pendingSave) {
+    private double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
         Double expertWeighting = occurrence.getExpertWeighting();
         double systemWeighting = occurrence.getSystemWeighting();
-        double weighting = (expertWeighting != null) ? expertWeighting : systemWeighting;
-        if (hasWeightingChanged(occurrence.getValidationWeighting(), weighting)) {
-            pendingSave.add(occurrence);
-            occurrence.setValidationWeighting(weighting);
-        }
+        return (expertWeighting != null) ? expertWeighting : systemWeighting;
     }
 
     /**
      * Recalculate the final weighting as the average across each of the 4 properties. If the value of any of the
      * weightings is 0, then the occurrence should be discounted by the model by setting the final weighting to 0.
      */
-    private void updateDiseaseOccurrenceFinalWeighting(DiseaseOccurrence occurrence,
-                                                       Set<DiseaseOccurrence> pendingSave) {
+    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, double validationWeighting) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
@@ -168,29 +165,32 @@ public class WeightingsCalculator {
         if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
             weighting = 0.0;
         } else {
-            weighting = (double) avg(Arrays.asList(locationResolutionWeighting, feedWeighting,
-                    diseaseGroupTypeWeighting,
-                    occurrence.getValidationWeighting()));
+            weighting = average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
+                    validationWeighting);
         }
-        if (hasWeightingChanged(occurrence.getFinalWeighting(), weighting)) {
-            pendingSave.add(occurrence);
-            occurrence.setFinalWeighting(weighting);
-        }
+        return weighting;
+    }
+
+    /**
+     * As above, but excluding the location resolution weighting.
+     */
+    private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
+                                                              double validationWeighting) {
+        double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
+        double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
+        return (diseaseGroupTypeWeighting == 0.0) ? 0.0 :
+                average(feedWeighting, diseaseGroupTypeWeighting, validationWeighting);
+    }
+
+    private boolean hasAnyWeightingChanged(DiseaseOccurrence occurrence,
+                                           double newValidation, double newFinal, double newFinalExcludingSpatial) {
+        return (hasWeightingChanged(occurrence.getValidationWeighting(), newValidation) ||
+                hasWeightingChanged(occurrence.getFinalWeighting(), newFinal) ||
+                hasWeightingChanged(occurrence.getFinalWeightingExcludingSpatial(), newFinalExcludingSpatial));
     }
 
     private boolean hasWeightingChanged(Double currentWeighting, double newWeighting) {
         return (currentWeighting == null || currentWeighting != newWeighting);
-    }
-
-    private void saveChanges(Set<DiseaseOccurrence> pendingSave) {
-        if (pendingSave.size() > 0) {
-            logger.info(String.format(SAVING_WEIGHTINGS, pendingSave.size()));
-            for (DiseaseOccurrence occurrence : pendingSave) {
-                diseaseService.saveDiseaseOccurrence(occurrence);
-            }
-        } else {
-            logger.info(NOT_SAVING_WEIGHTINGS);
-        }
     }
 
     /**
@@ -207,11 +207,11 @@ public class WeightingsCalculator {
         } else {
             logger.info(String.format(RECALCULATING_WEIGHTINGS_OF_EXPERTS, allReviews.size()));
             for (Expert expert : extractDistinctExperts(allReviews)) {
-                List<Double> differencesInResponse = new ArrayList<>();
+                List<Double> differencesInResponses = new ArrayList<>();
                 for (DiseaseOccurrence occurrence : selectExpertsReviewedOccurrences(allReviews, expert)) {
-                    differencesInResponse.add(calculateDifference(allReviews, occurrence, expert));
+                    differencesInResponses.add(calculateDifference(allReviews, occurrence, expert));
                 }
-                double newWeighting = 1 - (double) avg(differencesInResponse);
+                double newWeighting = 1 - average(differencesInResponses);
                 if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
                     newExpertsWeightings.put(expert, newWeighting);
                 }
@@ -240,7 +240,7 @@ public class WeightingsCalculator {
         reviewsOfOccurrence.remove(expertsReview);
 
         double expertsResponse = expertsReview.getResponse().getValue();
-        double averageResponse = (double) avg(extractReviewResponseValues(reviewsOfOccurrence));
+        double averageResponse = average(extractReviewResponseValues(reviewsOfOccurrence));
         return Math.abs(expertsResponse - averageResponse);
     }
 
@@ -267,5 +267,13 @@ public class WeightingsCalculator {
         } else {
             logger.info(String.format(NOT_SAVING_WEIGHTINGS_OF_EXPERTS));
         }
+    }
+
+    private double average(Double... args) {
+        return (double) avg(Arrays.asList(args));
+    }
+
+    private double average(List<Double> args) {
+        return (double) avg(args);
     }
 }

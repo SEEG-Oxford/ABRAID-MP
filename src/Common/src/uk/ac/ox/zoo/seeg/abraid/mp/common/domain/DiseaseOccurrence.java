@@ -130,6 +130,12 @@ public class DiseaseOccurrence {
     @Column(name = "final_weighting")
     private Double finalWeighting;
 
+    // The final weighting to be used in later model runs, following a refactor where location's spatial resolution
+    // weighting is handled separately. This value combines feed weighting, disease group type weighting and validation
+    // weighting.
+    @Column(name = "final_weighting_excl_spatial")
+    private Double finalWeightingExcludingSpatial;
+
     // The date of the disease occurrence.
     @Column(name = "occurrence_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -229,6 +235,14 @@ public class DiseaseOccurrence {
         this.finalWeighting = finalWeighting;
     }
 
+    public Double getFinalWeightingExcludingSpatial() {
+        return finalWeightingExcludingSpatial;
+    }
+
+    public void setFinalWeightingExcludingSpatial(Double finalWeightingExcludingSpatial) {
+        this.finalWeightingExcludingSpatial = finalWeightingExcludingSpatial;
+    }
+
     public DateTime getOccurrenceDate() {
         return occurrenceDate;
     }
@@ -252,6 +266,8 @@ public class DiseaseOccurrence {
         if (expertWeighting != null ? !expertWeighting.equals(that.expertWeighting) : that.expertWeighting != null)
             return false;
         if (finalWeighting != null ? !finalWeighting.equals(that.finalWeighting) : that.finalWeighting != null)
+            return false;
+        if (finalWeightingExcludingSpatial != null ? !finalWeightingExcludingSpatial.equals(that.finalWeightingExcludingSpatial) : that.finalWeightingExcludingSpatial != null)
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isValidated != null ? !isValidated.equals(that.isValidated) : that.isValidated != null) return false;
@@ -278,6 +294,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (systemWeighting != null ? systemWeighting.hashCode() : 0);
         result = 31 * result + (validationWeighting != null ? validationWeighting.hashCode() : 0);
         result = 31 * result + (finalWeighting != null ? finalWeighting.hashCode() : 0);
+        result = 31 * result + (finalWeightingExcludingSpatial != null ? finalWeightingExcludingSpatial.hashCode() : 0);
         result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
         return result;
     }
