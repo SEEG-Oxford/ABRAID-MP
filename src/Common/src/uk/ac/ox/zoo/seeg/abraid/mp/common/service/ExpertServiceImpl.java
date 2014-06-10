@@ -1,10 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitReviewDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -18,15 +15,18 @@ import java.util.List;
 public class ExpertServiceImpl implements ExpertService {
     private AdminUnitReviewDao adminUnitReviewDao;
     private ExpertDao expertDao;
+    private DiseaseGroupDao diseaseGroupDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
 
     public ExpertServiceImpl(AdminUnitReviewDao adminUnitReviewDao,
                              ExpertDao expertDao,
+                             DiseaseGroupDao diseaseGroupDao,
                              DiseaseOccurrenceDao diseaseOccurrenceDao,
                              DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
         this.adminUnitReviewDao = adminUnitReviewDao;
         this.expertDao = expertDao;
+        this.diseaseGroupDao = diseaseGroupDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
     }
@@ -100,6 +100,19 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Determines whether a review of the presence of the disease group in the admin unit, by the specified expert,
+     * already exists in the database.
+     * @param expertId The id of the expert.
+     * @param diseaseGroupId The id of the disease group.
+     * @param gaulCode The gaulCode of the administrative unit.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesAdminUnitReviewExist(Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
+        return adminUnitReviewDao.doesAdminUnitReviewExist(expertId, diseaseGroupId, gaulCode);
+    }
+
+    /**
      * Gets all reviews for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of reviews.
@@ -145,6 +158,27 @@ public class ExpertServiceImpl implements ExpertService {
         DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview(expert, diseaseOccurrence,
                 response);
         diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
+    }
+
+    /**
+     * Saves the review of the administrative unit.
+     * @param expertEmail The email address of the expert providing review.
+     * @param diseaseGroupId The id of the disease group.
+     * @param gaulCode The gaulCode of the administrative unit.
+     * @param response The expert's response.
+     */
+    @Override
+    public void saveAdminUnitReview(String expertEmail, Integer diseaseGroupId, Integer gaulCode,
+                                    DiseaseExtentClass response) {
+        Expert expert = getExpertByEmail(expertEmail);
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        AdminUnitReview adminUnitReview;
+        if (diseaseGroup.isGlobal()) {
+            adminUnitReview = new AdminUnitReview(expert, gaulCode, null, diseaseGroup, response);
+        } else {
+            adminUnitReview = new AdminUnitReview(expert, null, gaulCode, diseaseGroup, response);
+        }
+        adminUnitReviewDao.save(adminUnitReview);
     }
 
     /**

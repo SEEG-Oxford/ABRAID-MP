@@ -196,8 +196,9 @@ define([
             style: diseaseExtentLayerStyle,
             onEachFeature: function (feature, layer) {
                 adminUnitLayerMap[feature.id] = layer;
+                var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
                 layer.on({
-                    click: function () { ko.postbox.publish("admin-unit-selected", feature); },
+                    click: function () { ko.postbox.publish("admin-unit-selected", data); },
                     mouseover: function () { layer.setStyle({ fillOpacity: 1 }); },
                     mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
                 });

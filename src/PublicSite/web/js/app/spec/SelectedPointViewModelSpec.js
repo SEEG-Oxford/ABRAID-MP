@@ -8,7 +8,7 @@ define([
 ], function (SelectedPointViewModel, CounterViewModel, ko) {
     "use strict";
 
-    describe("The selected point view model", function () {
+    describe("The 'selected point' view model", function () {
 
         var feature = {
             "type": "Feature",
@@ -131,7 +131,7 @@ define([
             it("when unsuccessful, displays an alert", function () {
                 // Arrange
                 var spy = jasmine.createSpy();
-                vm = new SelectedPointViewModel(baseUrl, spy);
+                vm = new SelectedPointViewModel(baseUrl, spy, new CounterViewModel(initialCount, eventName));
                 vm.selectedPoint(feature);
 
                 var message = "Something went wrong. Please try again.";

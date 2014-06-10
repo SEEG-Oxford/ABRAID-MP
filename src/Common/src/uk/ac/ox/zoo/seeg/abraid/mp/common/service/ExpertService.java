@@ -63,6 +63,16 @@ public interface ExpertService {
     boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
 
     /**
+     * Determines whether a review of presence of the disease group in the admin unit, by the specified expert,
+     * already exists in the database.
+     * @param expertId The id of the expert.
+     * @param diseaseGroupId The id of the disease group.
+     * @param gaulCode The gaulCode of the administrative unit.
+     * @return True if the review already exists, otherwise false.
+     */
+    boolean doesAdminUnitReviewExist(Integer expertId, Integer diseaseGroupId, Integer gaulCode);
+
+    /**
      * Gets all reviews for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of reviews.
@@ -92,6 +102,15 @@ public interface ExpertService {
      */
     void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId,
                                      DiseaseOccurrenceReviewResponse response);
+
+    /**
+     * Saves the review of the administrative unit.
+     * @param expertEmail The email address of the expert providing review.
+     * @param diseaseGroupId The id of the disease group.
+     * @param gaulCode The gaulCode of the administrative unit.
+     * @param response The expert's response.
+     */
+    void saveAdminUnitReview(String expertEmail, Integer diseaseGroupId, Integer gaulCode, DiseaseExtentClass response);
 
     /**
      * Saves the specified expert.

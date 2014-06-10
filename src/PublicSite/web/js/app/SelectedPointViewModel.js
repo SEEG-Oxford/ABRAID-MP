@@ -60,7 +60,7 @@ define([
                     // Display a success alert, remove the point from the map and side panel, increment the counter
                     self.selectedPoint(null);
                     ko.postbox.publish("occurrence-reviewed", occurrenceId);
-                    $("#submitReviewSuccess").fadeIn(1000);
+                    $("#submitReviewSuccess").fadeIn(1000).delay(5000).fadeOut();
                 })
                 .fail(function () {
                     alert("Something went wrong. Please try again.");

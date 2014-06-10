@@ -9,15 +9,21 @@
  */
 define([
     "ko",
-    "underscore"
-], function (ko, _) {
+    "underscore",
+    "jquery"
+], function (ko, _, $) {
     "use strict";
 
-    return function (counter) {
+    return function (baseUrl, alert, counter) {
         var self = this;
 
         ko.postbox.subscribe("admin-units-to-be-reviewed", function (event) {
             self.adminUnits(_(event.data).sortBy(function (unit) { return unit.properties.name; }));
+        });
+
+        var diseaseId = null;
+        ko.postbox.subscribe("layers-changed", function (value) {
+            diseaseId = value.diseaseId;
         });
 
         self.counter = counter;
@@ -26,5 +32,20 @@ define([
         self.hasSelectedAdminUnit = ko.computed(function () {
             return self.selectedAdminUnit() !== null;
         });
+        self.submitReview = function (review) {
+            var gaulCode = self.selectedAdminUnit().id;
+            var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits/" + gaulCode + "/validate";
+            $.post(url, { review: review })
+                .done(function () {
+                    // Status 2xx
+                    // Display a success alert, remove the point from the map and side panel, increment the counter
+                    self.selectedAdminUnit(null);
+                    ko.postbox.publish("admin-unit-reviewed", gaulCode);
+                    $("#submitReviewSuccess").fadeIn(1000).delay(5000).fadeOut();
+                })
+                .fail(function () {
+                    alert("Something went wrong. Please try again.");
+                });
+        };
     };
 });

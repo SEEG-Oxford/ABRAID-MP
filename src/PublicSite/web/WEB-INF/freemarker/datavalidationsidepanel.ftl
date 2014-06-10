@@ -23,7 +23,7 @@
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
-                        <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', this); }">
+                        <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', { id: this.id, name: this.properties.name, count: this.properties.occurrenceCount }); }">
                             <td id="occurrencesColumn" data-bind="text: properties.occurrenceCount"></td>
                             <td data-bind="text: properties.name"></td>
                         </tr>
@@ -33,9 +33,24 @@
         </div>
         <div data-bind="if: hasSelectedAdminUnit()">
             <ul>
-                <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.name"></p></li>
-                <li><i class="fa fa-square-o"></i>&nbsp;<p data-bind="text: selectedAdminUnit().properties.diseaseExtentClass"></p></li>
+                <span data-bind="text: selectedAdminUnit().name"></span> has
+                <span data-bind="text: selectedAdminUnit().count"></span>
+                <span data-bind="text: selectedAdminUnit().count == 1 ? 'occurrence' : 'occurrences'"></span>
             </ul>
+        <@security.authorize ifAnyGranted="ROLE_USER">
+            <div id="reviewButtons">
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('PRESENCE') }">Presence</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_PRESENCE') }">Possible presence</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('UNCERTAIN') }">Uncertain<br /></button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_ABSENCE') }">Possible absence</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('ABSENCE') }">Absence</button>
+            </div>
+        </@security.authorize>
+        </div>
+        <div data-bind="if: !hasSelectedAdminUnit()">
+            <div id="submitReviewSuccess" style="display:none">
+                <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
+            </div>
         </div>
     </div>
     <@security.authorize ifAnyGranted="ROLE_USER">
