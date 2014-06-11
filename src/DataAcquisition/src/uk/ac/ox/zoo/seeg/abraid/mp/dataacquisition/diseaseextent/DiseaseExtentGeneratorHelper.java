@@ -303,9 +303,9 @@ public class DiseaseExtentGeneratorHelper {
         return total;
     }
 
-    private double computeReviewsScore(List<AdminUnitReview> reviews) {
+    private double computeReviewsScore(List<AdminUnitReview> reviewsList) {
         double total = 0;
-        for (AdminUnitReview review : reviews) {
+        for (AdminUnitReview review : reviewsList) {
             // The response weighting is currently divided by 50 so that the weightings in the database (which
             // were chosen for use with the model) can be used for our purposes. Eventually this should be removed.
             int scaledResponseWeighting = review.getResponse().getWeighting() / SCALING_FACTOR;
@@ -315,8 +315,8 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     private List<AdminUnitReview> getReviewsByGaulCode(int adminUnitGaulCode) {
-        List<AdminUnitReview> reviews = reviewsByAdminUnit.get(adminUnitGaulCode);
-        return (reviews == null) ? new ArrayList<AdminUnitReview>() : reviews;
+        List<AdminUnitReview> reviewsList = reviewsByAdminUnit.get(adminUnitGaulCode);
+        return (reviewsList == null) ? new ArrayList<AdminUnitReview>() : reviewsList;
     }
 
     private DiseaseExtentClass findDiseaseExtentClass(String diseaseExtentClass) {
