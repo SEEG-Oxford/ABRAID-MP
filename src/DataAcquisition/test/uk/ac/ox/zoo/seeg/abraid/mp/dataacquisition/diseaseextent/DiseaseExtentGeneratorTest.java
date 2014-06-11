@@ -371,8 +371,6 @@ public class DiseaseExtentGeneratorTest {
                                                                       Integer adminUnitTropicalGaulCode,
                                                                       int numberOfYearsAgo,
                                                                       int numberOfTimes) {
-        // The occurrence date and weighting isn't used in the current disease extent calculations, so just supply the
-        // same one
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {

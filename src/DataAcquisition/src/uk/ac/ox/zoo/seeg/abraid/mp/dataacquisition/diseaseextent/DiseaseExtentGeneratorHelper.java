@@ -57,6 +57,18 @@ public class DiseaseExtentGeneratorHelper {
         return occurrences;
     }
 
+    public Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> getOccurrencesByAdminUnit() {
+        return occurrencesByAdminUnit;
+    }
+
+    public Map<Integer, Integer> getNumberOfOccurrencesByCountry() {
+        return numberOfOccurrencesByCountry;
+    }
+
+    public Map<Integer, List<AdminUnitReview>> getReviewsByAdminUnit() {
+        return reviewsByAdminUnit;
+    }
+
     public void setReviews(List<AdminUnitReview> reviews) {
         this.reviews = reviews;
     }
@@ -159,6 +171,22 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     /**
+     * For each admin unit, convert its list of disease occurrences into a disease extent class.
+     * @param computer A method for converting the disease occurrences for 1 admin unit into a disease extent class.
+     */
+    public void computeDiseaseExtentClasses(DiseaseExtentClassComputer computer) {
+
+        classesByAdminUnit = new HashMap<>();
+        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
+                occurrencesByAdminUnit.entrySet()) {
+            AdminUnitGlobalOrTropical adminUnit = occurrenceByAdminUnit.getKey();
+            List<DiseaseOccurrenceForDiseaseExtent> occurrencesForAdminUnit = occurrenceByAdminUnit.getValue();
+            DiseaseExtentClass extentClass = computer.compute(adminUnit, occurrencesForAdminUnit);
+            classesByAdminUnit.put(occurrenceByAdminUnit.getKey(), extentClass);
+        }
+    }
+
+    /**
      * Forms the disease extent for saving to the database.
      * Updates existing rows or creates new rows as appropriate.
      * @return A list of AdminUnitDiseaseExtentClass rows for saving.
@@ -183,24 +211,13 @@ public class DiseaseExtentGeneratorHelper {
         return adminUnitDiseaseExtentClasses;
     }
 
-    private List<AdminUnitReview> getReviewsByGaulCode(int adminUnitGaulCode) {
-        List<AdminUnitReview> reviews = reviewsByAdminUnit.get(adminUnitGaulCode);
-        return (reviews == null) ? new ArrayList<AdminUnitReview>() : reviews;
-    }
-
-    private void computeDiseaseExtentClasses(DiseaseExtentClassComputer computer) {
-        // For each admin unit, convert its list of disease occurrences into a disease extent class
-        classesByAdminUnit = new HashMap<>();
-        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
-                occurrencesByAdminUnit.entrySet()) {
-            AdminUnitGlobalOrTropical adminUnit = occurrenceByAdminUnit.getKey();
-            List<DiseaseOccurrenceForDiseaseExtent> occurrencesForAdminUnit = occurrenceByAdminUnit.getValue();
-            DiseaseExtentClass extentClass = computer.compute(adminUnit, occurrencesForAdminUnit);
-            classesByAdminUnit.put(occurrenceByAdminUnit.getKey(), extentClass);
-        }
-    }
-
-    private DiseaseExtentClass computeDiseaseExtentClassUsingOccurrenceCount(int occurrenceCount, int factor) {
+    /**
+     * Computes a disease extent class, based on the number of occurrences and a scaling factor.
+     * @param occurrenceCount The number of occurrences.
+     * @param factor A scaling factor that is multiplied by the number of occurrences when doing the comparison.
+     * @return The computed disease extent class.
+     */
+    public DiseaseExtentClass computeDiseaseExtentClassUsingOccurrenceCount(int occurrenceCount, int factor) {
         // Convert an occurrence count into a disease extent class, using the disease extent parameters
         if (occurrenceCount >= parameters.getMinimumOccurrencesForPresence() * factor) {
             return findDiseaseExtentClass(DiseaseExtentClass.PRESENCE);
@@ -211,15 +228,15 @@ public class DiseaseExtentGeneratorHelper {
         }
     }
 
-    private DiseaseExtentClass computeDiseaseExtentClassUsingOccurrencesAndReviews(
+    /**
+     * Computes a disease extent class, based on a list of occurrences and a list of reviews.
+     * @param occurrencesList The list of occurrences.
+     * @param reviewsList The list of reviews.
+     * @return The computed disease extent class.
+     */
+    public DiseaseExtentClass computeDiseaseExtentClassUsingOccurrencesAndReviews(
             List<DiseaseOccurrenceForDiseaseExtent> occurrencesList, List<AdminUnitReview> reviewsList) {
-        // Compute the score for each occurrence and each review, and take the average
-        // Be extra careful with int -> double conversions...
-        double occurrencesScore = computeOccurrencesScore(occurrencesList);
-        double reviewsScore = computeReviewsScore(reviewsList);
-        double totalScore = occurrencesScore + reviewsScore;
-        double totalCount = occurrencesList.size() + reviewsList.size();
-        double overallScore = totalScore / totalCount;
+        double overallScore = computeScoreForOccurrencesAndReviews(occurrencesList, reviewsList);
 
         if (overallScore > 1) {
             return findDiseaseExtentClass(DiseaseExtentClass.PRESENCE);
@@ -234,7 +251,29 @@ public class DiseaseExtentGeneratorHelper {
         }
     }
 
-    private DiseaseExtentClass computeDiseaseExtentClassForCountry(Integer countryGaulCode) {
+    /**
+     * Computes a disease extent class, based on a list of occurrences and a list of reviews.
+     * @param occurrencesList The list of occurrences.
+     * @param reviewsList The list of reviews.
+     * @return The computed disease extent class.
+     */
+    public double computeScoreForOccurrencesAndReviews(List<DiseaseOccurrenceForDiseaseExtent> occurrencesList,
+                                                       List<AdminUnitReview> reviewsList) {
+        // Compute the score for each occurrence and each review, and take the average
+        // Be extra careful with int -> double conversions...
+        double occurrencesScore = computeOccurrencesScore(occurrencesList);
+        double reviewsScore = computeReviewsScore(reviewsList);
+        double totalScore = occurrencesScore + reviewsScore;
+        double totalCount = occurrencesList.size() + reviewsList.size();
+        return (totalCount == 0) ? 0 : (totalScore / totalCount);
+    }
+
+    /**
+     * Computes a disease extent class for a country.
+     * @param countryGaulCode The country's GAUL code.
+     * @return The computed disease extent class.
+     */
+    public DiseaseExtentClass computeDiseaseExtentClassForCountry(Integer countryGaulCode) {
         // The disease extent class for a country uses the "occurrence count" method, but with the parameters
         // multiplied by a factor of 2
         if (countryGaulCode != null) {
@@ -248,17 +287,17 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     private int computeOccurrencesScore(List<DiseaseOccurrenceForDiseaseExtent> occurrenceList) {
-        DateTime minimumDateForHigherScore =
-                DateTime.now().minusYears(parameters.getMinimumYearsAgoForHigherOccurrenceScore());
+        DateTime oldestDateForHigherScore =
+                DateTime.now().minusYears(parameters.getMaximumYearsAgoForHigherOccurrenceScore());
 
         // Unlike computeReviewsScore(), the total is an integer so that we can maintain full accuracy over multiple
         // additions
         int total = 0;
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrenceList) {
-            // The score for each occurrence depends on the occurrence date. If it is before the "minimum date",
-            // it scores the "lower score" otherwise it scores the "higher score". These values are all defined by
-            // the disease extent parameters.
-            boolean useLowerScore = occurrence.getOccurrenceDate().isBefore(minimumDateForHigherScore);
+            // The score for each occurrence depends on the occurrence date. It scores the "higher score" unless it
+            // is older than the oldest date allowed for the higher score, in which case it scores the "lower score".
+            // These values are all defined by the disease extent parameters.
+            boolean useLowerScore = occurrence.getOccurrenceDate().isBefore(oldestDateForHigherScore);
             total += useLowerScore ? parameters.getLowerOccurrenceScore() : parameters.getHigherOccurrenceScore();
         }
         return total;
@@ -273,6 +312,11 @@ public class DiseaseExtentGeneratorHelper {
             total += scaledResponseWeighting * review.getExpert().getWeighting();
         }
         return total;
+    }
+
+    private List<AdminUnitReview> getReviewsByGaulCode(int adminUnitGaulCode) {
+        List<AdminUnitReview> reviews = reviewsByAdminUnit.get(adminUnitGaulCode);
+        return (reviews == null) ? new ArrayList<AdminUnitReview>() : reviews;
     }
 
     private DiseaseExtentClass findDiseaseExtentClass(String diseaseExtentClass) {
