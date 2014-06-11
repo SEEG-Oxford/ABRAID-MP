@@ -92,12 +92,12 @@ public class DiseaseExtentGeneratorTest {
         List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent();
 
         // Arrange - set the expected disease extent to be the initial disease extent, with all changed to uncertain
-        // and hasChanged set appropriately
+        // and hasClassChanged set appropriately
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent();
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
             extentClass.setOccurrenceCount(0);
             if (extentClass.getDiseaseExtentClass().equals(uncertainDiseaseExtentClass)) {
-                extentClass.setHasChanged(false);
+                extentClass.setHasClassChanged(false);
             } else {
                 extentClass.setDiseaseExtentClass(uncertainDiseaseExtentClass);
             }
@@ -372,6 +372,7 @@ public class DiseaseExtentGeneratorTest {
                                                                       int numberOfYearsAgo,
                                                                       int numberOfTimes) {
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
+        double machineWeighting = 0.7;
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
             occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGlobalGaulCode,

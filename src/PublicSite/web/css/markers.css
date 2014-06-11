@@ -21,16 +21,15 @@
 .marker-cluster span {
     line-height: 30px;
 }
-.marker-question span {
-    position: relative;
+.marker-question {
     font-family: 'Source Sans Pro', sans-serif;
     color: #bb619b;
+    line-height: 12px;
     font-size: 30px;
     opacity: 0.8;
 }
-.marker-question-selected span {
-    top: -6px;
-    left: -2px;
+.marker-question-selected {
+    left:-2px;
     font-size: 40px;
     opacity: 1;
 }

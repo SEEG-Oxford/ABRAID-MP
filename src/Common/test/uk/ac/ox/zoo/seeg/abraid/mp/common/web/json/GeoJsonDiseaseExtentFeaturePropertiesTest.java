@@ -62,7 +62,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsFalseIfAdminUnitAppearsInReviewsListAndHasChangedIsFalse() {
+    public void needsReviewIsFalseIfAdminUnitAppearsInReviewsListAndHasClassChangedIsFalse() {
         // Arrange
         List<AdminUnitReview> reviews = new ArrayList<>();
         AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithReview(reviews, false);
@@ -76,7 +76,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsTrueIfAdminUnitAppearsInReviewsListButHasChangedIsTrue() {
+    public void needsReviewIsTrueIfAdminUnitAppearsInReviewsListButHasClassChangedIsTrue() {
         // Arrange
         List<AdminUnitReview> reviews = new ArrayList<>();
         AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithReview(reviews, true);
@@ -90,7 +90,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsListAndHasChangedIsTrue() {
+    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsListAndHasClassChangedIsTrue() {
         // Arrange
         AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithoutReview(true);
 
@@ -103,7 +103,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsListAndHasChangedIsFalse() {
+    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsListAndHasClassChangedIsFalse() {
         // Arrange
         AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithoutReview(false);
 

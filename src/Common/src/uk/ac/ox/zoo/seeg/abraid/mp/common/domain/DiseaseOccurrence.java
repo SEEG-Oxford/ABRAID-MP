@@ -114,12 +114,12 @@ public class DiseaseOccurrence {
     @Column(name = "expert_weighting")
     private Double expertWeighting;
 
-    // The weighting as predicted by the system.
-    @Column(name = "system_weighting")
-    private Double systemWeighting;
+    // The weighting as predicted via the system (which may include machine learning).
+    @Column(name = "machine_weighting")
+    private Double machineWeighting;
 
     // The validation weighting used in the data weighting formula.
-    // Takes the value of the expertWeighting if it exists, otherwise the systemWeighting value.
+    // Takes the value of the expertWeighting if it exists, otherwise the machineWeighting value.
     @Column(name = "validation_weighting")
     private Double validationWeighting;
 
@@ -127,6 +127,12 @@ public class DiseaseOccurrence {
     // combining location resolution weighting, feed weighting, disease group type weighting and validation weighting.
     @Column(name = "final_weighting")
     private Double finalWeighting;
+
+    // The final weighting to be used in later model runs, following a refactor where location's spatial resolution
+    // weighting is handled separately. This value combines feed weighting, disease group type weighting and validation
+    // weighting.
+    @Column(name = "final_weighting_excl_spatial")
+    private Double finalWeightingExcludingSpatial;
 
     // The date of the disease occurrence.
     @Column(name = "occurrence_date")
@@ -203,12 +209,12 @@ public class DiseaseOccurrence {
         this.expertWeighting = expertWeighting;
     }
 
-    public Double getSystemWeighting() {
-        return systemWeighting;
+    public Double getMachineWeighting() {
+        return machineWeighting;
     }
 
-    public void setSystemWeighting(Double systemWeighting) {
-        this.systemWeighting = systemWeighting;
+    public void setMachineWeighting(Double machineWeighting) {
+        this.machineWeighting = machineWeighting;
     }
 
     public Double getValidationWeighting() {
@@ -225,6 +231,14 @@ public class DiseaseOccurrence {
 
     public void setFinalWeighting(Double finalWeighting) {
         this.finalWeighting = finalWeighting;
+    }
+
+    public Double getFinalWeightingExcludingSpatial() {
+        return finalWeightingExcludingSpatial;
+    }
+
+    public void setFinalWeightingExcludingSpatial(Double finalWeightingExcludingSpatial) {
+        this.finalWeightingExcludingSpatial = finalWeightingExcludingSpatial;
     }
 
     public DateTime getOccurrenceDate() {
@@ -251,12 +265,14 @@ public class DiseaseOccurrence {
             return false;
         if (finalWeighting != null ? !finalWeighting.equals(that.finalWeighting) : that.finalWeighting != null)
             return false;
+        if (finalWeightingExcludingSpatial != null ? !finalWeightingExcludingSpatial.equals(that.finalWeightingExcludingSpatial) : that.finalWeightingExcludingSpatial != null)
+            return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isValidated != null ? !isValidated.equals(that.isValidated) : that.isValidated != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
         if (occurrenceDate != null ? !occurrenceDate.equals(that.occurrenceDate) : that.occurrenceDate != null)
             return false;
-        if (systemWeighting != null ? !systemWeighting.equals(that.systemWeighting) : that.systemWeighting != null)
+        if (machineWeighting != null ? !machineWeighting.equals(that.machineWeighting) : that.machineWeighting != null)
             return false;
         if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
             return false;
@@ -273,9 +289,10 @@ public class DiseaseOccurrence {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (isValidated != null ? isValidated.hashCode() : 0);
         result = 31 * result + (expertWeighting != null ? expertWeighting.hashCode() : 0);
-        result = 31 * result + (systemWeighting != null ? systemWeighting.hashCode() : 0);
+        result = 31 * result + (machineWeighting != null ? machineWeighting.hashCode() : 0);
         result = 31 * result + (validationWeighting != null ? validationWeighting.hashCode() : 0);
         result = 31 * result + (finalWeighting != null ? finalWeighting.hashCode() : 0);
+        result = 31 * result + (finalWeightingExcludingSpatial != null ? finalWeightingExcludingSpatial.hashCode() : 0);
         result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
         return result;
     }

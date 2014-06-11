@@ -478,6 +478,7 @@
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
+        <exclude name="**/javax.servlet-api-*-jar.jar" />
         <exclude name="WEB-INF/web.xml" />
         <exclude name="js/app/spec/*" />
       </fileset>

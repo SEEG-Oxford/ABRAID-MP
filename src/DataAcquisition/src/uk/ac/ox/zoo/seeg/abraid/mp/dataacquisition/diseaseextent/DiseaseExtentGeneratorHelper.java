@@ -202,7 +202,7 @@ public class DiseaseExtentGeneratorHelper {
                 row = createAdminUnitDiseaseExtentClass(adminUnit);
             }
             DiseaseExtentClass newClass = classesByAdminUnit.get(adminUnit);
-            row.setHasChanged(!newClass.equals(row.getDiseaseExtentClass()));
+            row.setHasClassChanged(!newClass.equals(row.getDiseaseExtentClass()));
             row.setDiseaseExtentClass(newClass);
             row.setOccurrenceCount(occurrenceByAdminUnit.getValue().size());
             adminUnitDiseaseExtentClasses.add(row);

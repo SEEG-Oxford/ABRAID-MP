@@ -1,0 +1,15 @@
+<layer>
+  <name>simplified_base_layer</name>
+  <id>LayerInfoImpl--5f32640d:1466746c7a9:-7ff7</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--5f32640d:1466746c7a9:-7dc7</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--5f32640d:1466746c7a9:-7ff8</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

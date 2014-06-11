@@ -58,9 +58,9 @@ public class AdminUnitDiseaseExtentClass {
     @Column(name = "occurrence_count")
     private Integer occurrenceCount;
 
-    // Whether this extent class has changed since it was last generated.
-    @Column(name = "has_changed")
-    private boolean hasChanged = true;
+    // Whether the disease extent class has changed since it was last generated.
+    @Column(name = "has_class_changed")
+    private boolean hasClassChanged = true;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -89,22 +89,22 @@ public class AdminUnitDiseaseExtentClass {
 
     public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
                                        DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       boolean hasChanged) {
+                                       boolean hasClassChanged) {
         this.adminUnitGlobal = adminUnitGlobal;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
         this.occurrenceCount = occurrenceCount;
-        this.hasChanged = hasChanged;
+        this.hasClassChanged = hasClassChanged;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
                                        DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       boolean hasChanged) {
+                                       boolean hasClassChanged) {
         this.adminUnitTropical = adminUnitTropical;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
         this.occurrenceCount = occurrenceCount;
-        this.hasChanged = hasChanged;
+        this.hasClassChanged = hasClassChanged;
     }
 
     /**
@@ -175,12 +175,12 @@ public class AdminUnitDiseaseExtentClass {
      * Returns whether this extent class has changed since it was last generated.
      * @return Whether this extent class has changed since it was last generated.
      */
-    public boolean hasChanged() {
-        return hasChanged;
+    public boolean hasClassChanged() {
+        return hasClassChanged;
     }
 
-    public void setHasChanged(boolean hasChanged) {
-        this.hasChanged = hasChanged;
+    public void setHasClassChanged(boolean hasClassChanged) {
+        this.hasClassChanged = hasClassChanged;
     }
 
     public DateTime getCreatedDate() {
@@ -196,7 +196,7 @@ public class AdminUnitDiseaseExtentClass {
 
         AdminUnitDiseaseExtentClass that = (AdminUnitDiseaseExtentClass) o;
 
-        if (hasChanged != that.hasChanged) return false;
+        if (hasClassChanged != that.hasClassChanged) return false;
         if (adminUnitGlobal != null ? !adminUnitGlobal.equals(that.adminUnitGlobal) : that.adminUnitGlobal != null)
             return false;
         if (adminUnitTropical != null ? !adminUnitTropical.equals(that.adminUnitTropical) : that.adminUnitTropical != null)
@@ -219,7 +219,7 @@ public class AdminUnitDiseaseExtentClass {
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (diseaseExtentClass != null ? diseaseExtentClass.hashCode() : 0);
         result = 31 * result + (occurrenceCount != null ? occurrenceCount.hashCode() : 0);
-        result = 31 * result + (hasChanged ? 1 : 0);
+        result = 31 * result + (hasClassChanged ? 1 : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

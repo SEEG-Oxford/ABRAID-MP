@@ -17,25 +17,25 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
         return defaultAdminUnitDiseaseExtentClassWithoutReview(false);
     }
 
-    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview(boolean hasChanged) {
+    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview(boolean hasClassChanged) {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
                 new DiseaseGroup(),
                 new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
                 0);
-        adminUnitDiseaseExtentClass.setHasChanged(hasChanged);
+        adminUnitDiseaseExtentClass.setHasClassChanged(hasClassChanged);
         return adminUnitDiseaseExtentClass;
     }
 
     public static AdminUnitDiseaseExtentClass
-        defaultAdminUnitDiseaseExtentClassWithReview(List<AdminUnitReview> reviews, boolean hasChanged) {
+        defaultAdminUnitDiseaseExtentClassWithReview(List<AdminUnitReview> reviews, boolean hasClassChanged) {
             AdminUnitGlobal adminUnitGlobal = defaultAdminUnitGlobal();
             AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 adminUnitGlobal,
                 new DiseaseGroup(),
                 new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
                 0);
-            adminUnitDiseaseExtentClass.setHasChanged(hasChanged);
+            adminUnitDiseaseExtentClass.setHasClassChanged(hasClassChanged);
             AdminUnitReview review = createAdminUnitReview(adminUnitGlobal);
             reviews.add(review);
             return adminUnitDiseaseExtentClass;
