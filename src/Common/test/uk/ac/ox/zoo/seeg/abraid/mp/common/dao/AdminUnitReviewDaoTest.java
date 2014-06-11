@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -56,6 +57,27 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         assertThat(review.getAdminUnitGlobalGaulCode()).isEqualTo(adminUnitGlobalGaulCode);
         assertThat(review.getAdminUnitTropicalGaulCode()).isNull();
         assertThat(review.getResponse()).isEqualTo(response);
+    }
+
+    @Test
+    public void updateExistingAdminUnitReviewSetsNewValues() {
+        // Arrange
+        createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID);
+        flushAndClear();
+        AdminUnitReview review = adminUnitReviewDao.getAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID, 2);
+        DateTime createdDate = review.getChangedDate();
+        DiseaseExtentClass newResponse = diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE);
+
+        // Act
+        review.setResponse(newResponse);
+        review.setChangedDate(DateTime.now());
+        adminUnitReviewDao.save(review);
+        flushAndClear();
+
+        // Assert
+        AdminUnitReview result = adminUnitReviewDao.getAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID, 2);
+        assertThat(result.getResponse()).isEqualTo(newResponse);
+        assertThat(result.getChangedDate().isAfter(createdDate)).isTrue();
     }
 
     @Test
@@ -137,30 +159,34 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     }
 
     @Test
-    public void doesAdminUnitReviewExistReturnsTrueWhenExpected() {
+    public void getAdminUnitReviewReturnsExpectedReview() {
         // Arrange
         AdminUnitReview review = createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID);
+        flushAndClear();
         // Act
-        boolean result = adminUnitReviewDao.doesAdminUnitReviewExist(review.getExpert().getId(),
+        AdminUnitReview result = adminUnitReviewDao.getAdminUnitReview(review.getExpert().getId(),
                 review.getDiseaseGroup().getId(), review.getAdminUnitGlobalOrTropicalGaulCode());
         // Assert
-        assertThat(result).isTrue();
+        assertThatExpertIsEqual(result.getExpert(), review.getExpert());
+        assertThat(result.getDiseaseGroup()).isEqualTo(review.getDiseaseGroup());
+        assertThat(result.getAdminUnitGlobalOrTropicalGaulCode()).isEqualTo(review.getAdminUnitGlobalOrTropicalGaulCode());
+        assertThat(result.getResponse()).isEqualTo(review.getResponse());
+    }
+
+    private void assertThatExpertIsEqual(Expert expert1, Expert expert2) {
+        assertThat(expert1.getId()).isEqualTo(expert2.getId());
+        assertThat(expert1.getEmail()).isEqualTo(expert2.getEmail());
+        assertThat(expert1.getName()).isEqualTo(expert2.getName());
+        assertThat(expert1.getWeighting()).isEqualTo(expert2.getWeighting());
+        assertThat(expert1.getPassword()).isEqualTo(expert2.getPassword());
     }
 
     @Test
-    public void doesAdminUnitReviewExistReturnsFalseWhenExpected() {
+    public void getAdminUnitReviewReturnsNullIfReviewDoesNotExist() {
         // Act
-        boolean result = adminUnitReviewDao.doesAdminUnitReviewExist(0, 0, 0);
+        AdminUnitReview result = adminUnitReviewDao.getAdminUnitReview(0, 0, 0);
         // Assert
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    public void doesAdminUnitReviewExistReturnsFalseForNullInput() {
-        // Act
-        boolean result = adminUnitReviewDao.doesAdminUnitReviewExist(0, null, 0);
-        // Assert
-        assertThat(result).isFalse();
+        assertThat(result).isNull();
     }
 
     private AdminUnitReview createAdminUnitReview(Expert expert, int adminUnitGlobalGaulCode,
@@ -170,6 +196,7 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         review.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
         review.setDiseaseGroup(diseaseGroup);
         review.setResponse(response);
+        review.setChangedDate(DateTime.now());
         return review;
     }
 
@@ -177,8 +204,8 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         Expert expert = expertDao.getById(expertId);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         int adminUnitGlobalGaulCode = 2;
-        DiseaseExtentClass response = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE);
-        AdminUnitReview review = createAdminUnitReview(expert, adminUnitGlobalGaulCode, diseaseGroup, response);
+        DiseaseExtentClass response = diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE);
+        AdminUnitReview review = new AdminUnitReview(expert, adminUnitGlobalGaulCode, null, diseaseGroup, response);
         adminUnitReviewDao.save(review);
         return review;
     }
