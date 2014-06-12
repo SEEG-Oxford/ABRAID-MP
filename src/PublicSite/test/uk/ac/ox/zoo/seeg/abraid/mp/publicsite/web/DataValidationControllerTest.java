@@ -219,7 +219,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
                 expertService);
 
         // Act
-        ResponseEntity result = target.submitReview(1, 1, "YES");
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -238,7 +238,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
                 expertService);
 
         // Act
-        ResponseEntity result = target.submitReview(1, 1, "YES");
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -257,7 +257,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
                 expertService);
 
         // Act
-        ResponseEntity result = target.submitReview(1, 1, "YES");
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

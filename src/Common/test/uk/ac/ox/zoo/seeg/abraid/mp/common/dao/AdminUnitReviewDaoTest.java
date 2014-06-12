@@ -136,6 +136,33 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         assertThat(count).isEqualTo(1);
     }
 
+    @Test
+    public void doesAdminUnitReviewExistReturnsTrueWhenExpected() {
+        // Arrange
+        AdminUnitReview review = createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID);
+        // Act
+        boolean result = adminUnitReviewDao.doesAdminUnitReviewExist(review.getExpert().getId(),
+                review.getDiseaseGroup().getId(), review.getAdminUnitGlobalOrTropicalGaulCode());
+        // Assert
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void doesAdminUnitReviewExistReturnsFalseWhenExpected() {
+        // Act
+        boolean result = adminUnitReviewDao.doesAdminUnitReviewExist(0, 0, 0);
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void doesAdminUnitReviewExistReturnsFalseForNullInput() {
+        // Act
+        boolean result = adminUnitReviewDao.doesAdminUnitReviewExist(0, null, 0);
+        // Assert
+        assertThat(result).isFalse();
+    }
+
     private AdminUnitReview createAdminUnitReview(Expert expert, int adminUnitGlobalGaulCode,
                                                   DiseaseGroup diseaseGroup, DiseaseExtentClass response) {
         AdminUnitReview review = new AdminUnitReview();

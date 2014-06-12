@@ -57,4 +57,19 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
         return listNamedQuery("getAdminUnitReviewsByExpertIdAndDiseaseGroupId", "expertId", expertId, "diseaseGroupId",
                 diseaseGroupId);
     }
+
+    /**
+     * Determines whether a review of the presence of the disease group in the admin unit, by the specified expert,
+     * already exists in the database.
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroupId The id of the disease group.
+     * @param gaulCode The gaulCode of the administrative unit.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesAdminUnitReviewExist(Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
+        Query query = getParameterisedNamedQuery("getAdminUnitReviewByExpertIdAndDiseaseGroupIdAndGaulCode",
+                "expertId", expertId, "diseaseGroupId", diseaseGroupId, "gaulCode", gaulCode);
+        return query.uniqueResult() != null;
+    }
 }

@@ -9,11 +9,13 @@ define([
     "use strict";
 
     describe("The 'selected admin unit' view model", function () {
+        var adminUnit = { id: 1013965, name: "South Africa", count: 10 };
         var vm = {};
+        var baseUrl = "";
         var initialCount = 0;
         var eventName = "admin-unit-reviewed";
         beforeEach(function () {
-            vm = new SelectedAdminUnitViewModel(new CounterViewModel(initialCount, eventName));
+            vm = new SelectedAdminUnitViewModel(baseUrl, function () {}, new CounterViewModel(initialCount, eventName));
         });
 
         describe("holds the disease occurrence counter view model which", function () {
@@ -46,8 +48,8 @@ define([
             });
 
             it("is sorted alphabetically", function () {
-                var featureA = { properties : { name : "a" }};
-                var featureB = { properties : { name : "b" }};
+                var featureA = { name : "a" };
+                var featureB = { name : "b" };
                 ko.postbox.publish("admin-units-to-be-reviewed", { data : [ featureB, featureA ] });
                 expect(vm.adminUnits()).toEqual([ featureA, featureB ]);
             });
@@ -76,6 +78,70 @@ define([
                 expect(vm.hasSelectedAdminUnit()).toBeFalsy();
                 vm.selectedAdminUnit("foo");
                 expect(vm.hasSelectedAdminUnit()).toBeTruthy();
+            });
+        });
+
+        describe("has a submit review method which", function () {
+            beforeEach(function () {
+                vm.selectedAdminUnit(adminUnit);
+            });
+
+            it("POSTs to the specified URL, with the correct parameters", function () {
+                // Arrange
+                var diseaseId = 1;
+                ko.postbox.publish("layers-changed", { diseaseId: diseaseId });
+                var gaulCode = vm.selectedAdminUnit().id;
+                var expectedUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits/" + gaulCode +
+                    "/validate";
+                var review = "foo";
+                var expectedParams = "review=" + review;
+
+                // Act
+                vm.submitReview(review);
+
+                // Assert
+                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
+                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+            });
+
+            it("when unsuccessful, displays an alert", function () {
+                // Arrange
+                var spy = jasmine.createSpy();
+                vm = new SelectedAdminUnitViewModel(baseUrl, spy, new CounterViewModel(initialCount, eventName));
+                vm.selectedAdminUnit(adminUnit);
+                var message = "Something went wrong. Please try again.";
+
+                // Act
+                vm.submitReview("foo");
+                jasmine.Ajax.requests.mostRecent().response({ status: 500 });
+
+                // Assert
+                expect(spy).toHaveBeenCalledWith(message);
+            });
+
+            describe("when successful", function () {
+                it("fires the 'admin-unit-reviewed' event", function () {
+                    // Arrange
+                    var expectation = vm.selectedAdminUnit().id;
+                    // Arrange assertions
+                    var subscription = ko.postbox.subscribe("admin-unit-reviewed", function (value) {
+                        expect(value).toBe(expectation);
+                    });
+                    // Act
+                    vm.submitReview("foo");
+                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                    subscription.dispose();
+                });
+
+                it("resets the selected admin unit to null", function () {
+                    expect(vm.selectedAdminUnit()).not.toBeNull();
+                    // Act
+                    vm.submitReview("foo");
+                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                    // Assert
+                    expect(vm.selectedAdminUnit()).toBeNull();
+                });
             });
         });
     });

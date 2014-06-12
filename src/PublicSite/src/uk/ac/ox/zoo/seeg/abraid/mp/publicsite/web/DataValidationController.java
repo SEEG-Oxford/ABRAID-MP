@@ -121,6 +121,46 @@ public class DataValidationController extends AbstractController {
     }
 
     /**
+     * Saves the expert's review to the database.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @param occurrenceId The id of the disease occurrence being reviewed.
+     * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
+     * @return A HTTP status code response entity.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
+            method = RequestMethod.POST)
+    public ResponseEntity submitDiseaseOccurrenceReview(@PathVariable Integer validatorDiseaseGroupId,
+                                                        @PathVariable Integer occurrenceId,
+                                                        String review) {
+        PublicSiteUser user = currentUserService.getCurrentUser();
+        Integer expertId = user.getId();
+        String expertEmail = user.getUsername();
+
+        // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
+        // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
+        DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse;
+        try {
+             diseaseOccurrenceReviewResponse = DiseaseOccurrenceReviewResponse.valueOf(review);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        boolean validInputParameters =
+                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
+                        validatorDiseaseGroupId) &&
+                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
+
+        if (validInputParameters) {
+            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, diseaseOccurrenceReviewResponse);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
      * Returns the admin units, and their disease extent class, for a given disease id.
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
      * @return A GeoJSON DTO containing the admin units.
@@ -148,40 +188,36 @@ public class DataValidationController extends AbstractController {
         return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews), HttpStatus.OK);
     }
 
+
     /**
      * Saves the expert's review to the database.
-     * @param validatorDiseaseGroupId The id of the validator disease group.
-     * @param occurrenceId The id of the disease occurrence being reviewed.
-     * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
+     * @param diseaseGroupId The id of the disease group.
+     * @param gaulCode The gaulCode of the admin unit being reviewed.
+     * @param review The string submitted by the expert, should only be one of:
+     *               PRESENCE, POSSIBLE_PRESENCE, UNCERTAIN, POSSIBLE_ABSENCE, or ABSENCE.
      * @return A HTTP status code response entity.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
             method = RequestMethod.POST)
-    public ResponseEntity submitReview(@PathVariable Integer validatorDiseaseGroupId,
-                                       @PathVariable Integer occurrenceId,
-                                       String review) {
+    public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
+                                                String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Integer expertId = user.getId();
         String expertEmail = user.getUsername();
 
-        // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
-        // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
-        DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse;
+        // Convert the submitted string to its matching DiseaseExtentClass row. Return a Bad Request ResponseEntity if
+        // value is anything other than: PRESENCE, POSSIBLE_PRESENCE, UNCERTAIN, POSSIBLE_ABSENCE, or ABSENCE.
+        DiseaseExtentClass adminUnitReviewResponse;
         try {
-             diseaseOccurrenceReviewResponse = DiseaseOccurrenceReviewResponse.valueOf(review);
+            adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        boolean validInputParameters =
-                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
-                        validatorDiseaseGroupId) &&
-                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
-
-        if (validInputParameters) {
-            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, diseaseOccurrenceReviewResponse);
+        if (!expertService.doesAdminUnitReviewExist(expertId, diseaseGroupId, gaulCode)) {
+            expertService.saveAdminUnitReview(expertEmail, diseaseGroupId, gaulCode, adminUnitReviewResponse);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
