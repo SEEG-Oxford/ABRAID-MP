@@ -37,7 +37,7 @@ public class DiseaseExtentGeneratorTest {
     private DiseaseExtentClass absenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.ABSENCE, -100);
 
     private final int diseaseGroupId = 87;
-    private final DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+    private final DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId, null, "Dengue", DiseaseGroupType.SINGLE);
     private final List<? extends AdminUnitGlobalOrTropical> adminUnits = getAdminUnits();
 
     @Before
@@ -244,12 +244,12 @@ public class DiseaseExtentGeneratorTest {
         // 5 occurrences of tropical GAUL code 250 (all over 2 years old)
         // 10 occurrences of global GAUL code 300 (all under 2 years old)
         return randomise(concatenate(
-                createOccurrences(150, null, null, 4, 1),
-                createOccurrences(null, 200, 20, 3, 3),
-                createOccurrences(null, 200, 20, 2, 1),
-                createOccurrences(null, 250, 20, 5, 5),
-                createOccurrences(300, null, 30, 1, 5),
-                createOccurrences(300, null, 30, 3, 5)
+                createOccurrences(150, null, 4, 1),
+                createOccurrences(null, 200, 3, 3),
+                createOccurrences(null, 200, 2, 1),
+                createOccurrences(null, 250, 5, 5),
+                createOccurrences(300, null, 1, 5),
+                createOccurrences(300, null, 3, 5)
         ));
     }
 
@@ -299,9 +299,9 @@ public class DiseaseExtentGeneratorTest {
                 new AdminUnitTropical(125, 20),
                 new AdminUnitTropical(130, 30),
                 new AdminUnitGlobal(150),
-                new AdminUnitTropical(200),
-                new AdminUnitTropical(250),
-                new AdminUnitGlobal(300)
+                new AdminUnitTropical(200, 20),
+                new AdminUnitTropical(250, 20),
+                new AdminUnitGlobal(300, 30)
         );
     }
 
@@ -369,17 +369,13 @@ public class DiseaseExtentGeneratorTest {
 
     private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(Integer adminUnitGlobalGaulCode,
                                                                       Integer adminUnitTropicalGaulCode,
-                                                                      Integer countryGaulCode,
                                                                       int numberOfYearsAgo,
                                                                       int numberOfTimes) {
-        // The occurrence date and weighting isn't used in the current disease extent calculations, so just supply the
-        // same one
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
-        double machineWeighting = 0.7;
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
-            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, machineWeighting,
-                    adminUnitGlobalGaulCode, adminUnitTropicalGaulCode, countryGaulCode));
+            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGlobalGaulCode,
+                    adminUnitTropicalGaulCode));
         }
         return occurrences;
     }

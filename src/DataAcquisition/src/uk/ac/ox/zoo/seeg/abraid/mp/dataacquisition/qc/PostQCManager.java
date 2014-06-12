@@ -48,9 +48,6 @@ public class PostQCManager {
         Integer adminUnitTropicalGaulCode =
                 locationService.findAdminUnitTropicalThatContainsPoint(location.getGeom(), adminLevel);
         location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
-
-        Integer countryGaulCode = locationService.findCountryThatContainsPoint(location.getGeom());
-        location.setCountryGaulCode(countryGaulCode);
     }
 
     private void setResolutionWeighting(Location location) {

@@ -27,13 +27,6 @@ public interface NativeSQL {
     Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
 
     /**
-     * Finds the first country that contains the specified point.
-     * @param point The point.
-     * @return The GAUL code of the first country that contains the specified point, or null if no countries found.
-     */
-    Integer findCountryThatContainsPoint(Point point);
-
-    /**
      * Loads the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
      * @param rasterColumnName The column name of the raster in the model_run table.

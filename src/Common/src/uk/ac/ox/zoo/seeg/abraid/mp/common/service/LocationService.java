@@ -65,13 +65,6 @@ public interface LocationService {
     Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
 
     /**
-     * Finds the first admin unit for global diseases that contains the specified point.
-     * @param point The point.
-     * @return The GAUL code of the first country that contains the specified point, or null if no countries found.
-     */
-    Integer findCountryThatContainsPoint(Point point);
-
-    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */

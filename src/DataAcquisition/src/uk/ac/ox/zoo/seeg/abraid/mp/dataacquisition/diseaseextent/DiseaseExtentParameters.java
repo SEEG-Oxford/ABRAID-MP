@@ -13,20 +13,20 @@ public class DiseaseExtentParameters {
     private double minimumValidationWeighting;
     private int minimumOccurrencesForPresence;
     private int minimumOccurrencesForPossiblePresence;
-    private int minimumYearsAgoForHigherOccurrenceScore;
+    private int maximumYearsAgoForHigherOccurrenceScore;
     private int lowerOccurrenceScore;
     private int higherOccurrenceScore;
 
     public DiseaseExtentParameters(List<Integer> feedIds, int maximumYearsAgo, double minimumValidationWeighting,
                                    int minimumOccurrencesForPresence, int minimumOccurrencesForPossiblePresence,
-                                   int minimumYearsAgoForHigherOccurrenceScore, int lowerOccurrenceScore,
+                                   int maximumYearsAgoForHigherOccurrenceScore, int lowerOccurrenceScore,
                                    int higherOccurrenceScore) {
         this.feedIds = feedIds;
         this.maximumYearsAgo = maximumYearsAgo;
         this.minimumValidationWeighting = minimumValidationWeighting;
         this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
         this.minimumOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
-        this.minimumYearsAgoForHigherOccurrenceScore = minimumYearsAgoForHigherOccurrenceScore;
+        this.maximumYearsAgoForHigherOccurrenceScore = maximumYearsAgoForHigherOccurrenceScore;
         this.lowerOccurrenceScore = lowerOccurrenceScore;
         this.higherOccurrenceScore = higherOccurrenceScore;
     }
@@ -51,8 +51,8 @@ public class DiseaseExtentParameters {
         return minimumOccurrencesForPossiblePresence;
     }
 
-    public int getMinimumYearsAgoForHigherOccurrenceScore() {
-        return minimumYearsAgoForHigherOccurrenceScore;
+    public int getMaximumYearsAgoForHigherOccurrenceScore() {
+        return maximumYearsAgoForHigherOccurrenceScore;
     }
 
     public int getLowerOccurrenceScore() {

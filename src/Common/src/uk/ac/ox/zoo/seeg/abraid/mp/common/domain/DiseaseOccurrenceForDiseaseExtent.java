@@ -9,34 +9,20 @@ import org.joda.time.DateTime;
  */
 public class DiseaseOccurrenceForDiseaseExtent {
     private DateTime occurrenceDate;
-    private Double validationWeighting;
-    private Integer adminUnitGlobalGaulCode;
-    private Integer adminUnitTropicalGaulCode;
-    private Integer countryGaulCode;
+    private int adminUnitGaulCode;
 
-    public DiseaseOccurrenceForDiseaseExtent(DateTime occurrenceDate, Double validationWeighting,
-                                             Integer adminUnitGlobalGaulCode, Integer adminUnitTropicalGaulCode,
-                                             Integer countryGaulCode) {
+    public DiseaseOccurrenceForDiseaseExtent(DateTime occurrenceDate, Integer adminUnitGlobalGaulCode,
+                                             Integer adminUnitTropicalGaulCode) {
         this.occurrenceDate = occurrenceDate;
-        this.validationWeighting = validationWeighting;
-        this.adminUnitGlobalGaulCode = adminUnitGlobalGaulCode;
-        this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
-        this.countryGaulCode = countryGaulCode;
+        this.adminUnitGaulCode = (adminUnitGlobalGaulCode != null) ? adminUnitGlobalGaulCode :
+                adminUnitTropicalGaulCode;
     }
 
     public DateTime getOccurrenceDate() {
         return occurrenceDate;
     }
 
-    public Double getValidationWeighting() {
-        return validationWeighting;
-    }
-
-    public Integer getAdminUnitGlobalOrTropicalGaulCode() {
-        return (adminUnitGlobalGaulCode != null) ? adminUnitGlobalGaulCode : adminUnitTropicalGaulCode;
-    }
-
-    public Integer getCountryGaulCode() {
-        return countryGaulCode;
+    public int getAdminUnitGaulCode() {
+        return adminUnitGaulCode;
     }
 }
