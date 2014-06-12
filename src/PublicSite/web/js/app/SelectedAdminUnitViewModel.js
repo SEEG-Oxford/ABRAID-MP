@@ -26,6 +26,10 @@ define([
             diseaseId = value.diseaseId;
         });
 
+        function removefromSelfAdminUnits(gaulCode) {
+            self.adminUnits(_(self.adminUnits()).filter(function (f) { return f.id !== gaulCode; }));
+        }
+
         self.counter = counter;
         self.adminUnits = ko.observable();
         self.selectedAdminUnit = ko.observable(null).subscribeTo("admin-unit-selected");
@@ -38,8 +42,9 @@ define([
             $.post(url, { review: review })
                 .done(function () {
                     // Status 2xx
-                    // Display a success alert, remove the point from the map and side panel, increment the counter
+                    // Display a success alert, publish the event (so that the counter is incremented)
                     self.selectedAdminUnit(null);
+                    removefromSelfAdminUnits(gaulCode);
                     ko.postbox.publish("admin-unit-reviewed", gaulCode);
                     $("#submitReviewSuccess").fadeIn(1000).delay(5000).fadeOut();
                 })
