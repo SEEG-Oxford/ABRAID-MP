@@ -161,13 +161,14 @@ define([
             "Absence":           "#769766"   // dark green
         };
 
-        function diseaseExtentLayerStyle(feature) {
+        function diseaseExtentLayerStyle(feature, clickable) {
             return {
                 fillColor: diseaseExtentClassColourScale[feature.properties.diseaseExtentClass],
                 fillOpacity: 0.7,
                 opacity: 0.7,
                 weight: 2,
-                color: "#ffffff" // white border
+                color: "#ffffff", // white border
+                clickable: clickable
             };
         }
 
@@ -193,7 +194,7 @@ define([
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
         var adminUnitLayerMap = {};
         var diseaseExtentLayer = L.geoJson([], {
-            style: diseaseExtentLayerStyle,
+            style: function (feature) { return diseaseExtentLayerStyle(feature, true); },
             onEachFeature: function (feature, layer) {
                 adminUnitLayerMap[feature.id] = layer;
                 var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
@@ -203,6 +204,23 @@ define([
                     mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
                 });
             }
+        });
+
+        function addCentroidMarkerToMap(layer) {
+            var centroid = layer.getBounds().getCenter();
+            L.marker([centroid.lat, centroid.lng], {
+                clickable: false,
+                opacity: 0.8,
+                icon: L.divIcon({
+                    html: "<i class='fa fa-check'></i>",
+                    className: "marker-centroid"
+                })
+            }).addTo(map);
+        }
+
+        var diseaseExtentReviewedLayer = L.geoJson([], {
+            style: function (feature) { return diseaseExtentLayerStyle(feature, false); },
+            onEachFeature: function (feature, layer) { addCentroidMarkerToMap(layer); }
         });
 
         function createLegendRow(className, colour) {
@@ -229,10 +247,12 @@ define([
             if (validationTypeIsDiseaseOccurrenceLayer) {
                 if (map.hasLayer(diseaseExtentLayer)) { map.removeControl(legend); }
                 map.removeLayer(diseaseExtentLayer);
+                map.removeLayer(diseaseExtentReviewedLayer);
                 clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
             } else {
                 if (!map.hasLayer(diseaseExtentLayer)) { legend.addTo(map); }
                 diseaseExtentLayer.addTo(map);
+                diseaseExtentReviewedLayer.addTo(map);
                 map.removeLayer(clusterLayer);
             }
         }
@@ -279,14 +299,26 @@ define([
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
             diseaseExtentLayer.clearLayers();
+            diseaseExtentReviewedLayer.clearLayers();
             adminUnitLayerMap = {};
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
-                diseaseExtentLayer.addData(featureCollection);
-                var adminUnitsNeedReview = _(featureCollection.features).filter(function (f) {
+                var featuresNeedReview = _(featureCollection.features).select(function (f) {
                     return f.properties.needsReview;
                 });
-                ko.postbox.publish("admin-units-to-be-reviewed", { data: adminUnitsNeedReview, skipSerialize: true });
-                ko.postbox.publish("no-features-to-review", adminUnitsNeedReview.length === 0);
+                var featureCollectionNeedReview = {
+                    type: featureCollection.type,
+                    crs: featureCollection.crs,
+                    features: featuresNeedReview
+                };
+                var featureCollectionReviewed = {
+                    type: featureCollection.type,
+                    crs: featureCollection.crs,
+                    features: _(featureCollection.features).reject(function (f) { return f.properties.needsReview; })
+                };
+                diseaseExtentLayer.addData(featureCollectionNeedReview);
+                diseaseExtentReviewedLayer.addData(featureCollectionReviewed);
+                ko.postbox.publish("admin-units-to-be-reviewed", { data: featuresNeedReview, skipSerialize: true });
+                ko.postbox.publish("no-features-to-review", featuresNeedReview.length === 0);
             });
         }
 
@@ -341,6 +373,12 @@ define([
 
         ko.postbox.subscribe("occurrence-reviewed", function (id) {
             removeMarkerFromMap(id);
+        });
+
+        ko.postbox.subscribe("admin-unit-reviewed", function (id) {
+            var layer = adminUnitLayerMap[id];
+            diseaseExtentLayer.removeLayer(layer);
+            diseaseExtentReviewedLayer.addData(layer.feature);
         });
     };
 });

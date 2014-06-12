@@ -33,3 +33,7 @@
     font-size: 40px;
     opacity: 1;
 }
+.marker-centroid {
+    font-size: 14px;
+    color: #555;
+}
