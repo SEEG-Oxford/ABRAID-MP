@@ -25,7 +25,7 @@ define([
             attributionControl: false,
             zoomControl: false,
             zoomsliderControl: true,
-            maxBounds: [ [-89, -179], [89, 179] ],
+            maxBounds: [ [-60, -180], [85, 180] ],
             maxZoom: 7,
             minZoom: 3,
             animate: true
@@ -282,8 +282,11 @@ define([
             adminUnitLayerMap = {};
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
                 diseaseExtentLayer.addData(featureCollection);
-                var adminUnitsNeedReview = _(featureCollection.features).filter(function (f) {
+                var adminUnitsNeedReview = _(_(featureCollection.features)
+                .filter(function (f) {
                     return f.properties.needsReview;
+                })).map(function (f) {
+                    return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount };
                 });
                 ko.postbox.publish("admin-units-to-be-reviewed", { data: adminUnitsNeedReview, skipSerialize: true });
                 ko.postbox.publish("no-features-to-review", adminUnitsNeedReview.length === 0);

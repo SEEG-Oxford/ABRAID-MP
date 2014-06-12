@@ -5,7 +5,7 @@
  * -- 'admin-unit-selected' - published by MapView.
  * -- 'layers-changed' - published by SelectedLayerViewModel.
  * - Events published:
- * -- none
+ * -- 'admin-unit-selected' - as triggered by side panel table.
  */
 define([
     "ko",
@@ -18,7 +18,7 @@ define([
         var self = this;
 
         ko.postbox.subscribe("admin-units-to-be-reviewed", function (event) {
-            self.adminUnits(_(event.data).sortBy(function (unit) { return unit.properties.name; }));
+            self.adminUnits(_(event.data).sortBy(function (adminUnit) { return adminUnit.name; }));
         });
 
         var diseaseId = null;
@@ -28,7 +28,7 @@ define([
 
         self.counter = counter;
         self.adminUnits = ko.observable();
-        self.selectedAdminUnit = ko.observable(null).subscribeTo("admin-unit-selected");
+        self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected");
         self.hasSelectedAdminUnit = ko.computed(function () {
             return self.selectedAdminUnit() !== null;
         });

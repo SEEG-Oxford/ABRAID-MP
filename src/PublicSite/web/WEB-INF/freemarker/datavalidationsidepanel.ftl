@@ -23,9 +23,9 @@
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
-                        <tr data-bind="click: function () { ko.postbox.publish('admin-unit-selected', { id: this.id, name: this.properties.name, count: this.properties.occurrenceCount }); }">
-                            <td id="occurrencesColumn" data-bind="text: properties.occurrenceCount"></td>
-                            <td data-bind="text: properties.name"></td>
+                        <tr data-bind="click: function () { $parent.selectedAdminUnit(this); }">
+                            <td id="occurrencesColumn" data-bind="text: count"></td>
+                            <td data-bind="text: name"></td>
                         </tr>
                     </tbody>
                 </table>
