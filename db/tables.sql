@@ -133,6 +133,7 @@ CREATE TABLE disease_occurrence (
     location_id integer NOT NULL,
     alert_id integer NOT NULL,
     occurrence_date timestamp NOT NULL,
+    env_suitability double precision,
     expert_weighting double precision,
     machine_weighting double precision,
     validation_weighting double precision,
