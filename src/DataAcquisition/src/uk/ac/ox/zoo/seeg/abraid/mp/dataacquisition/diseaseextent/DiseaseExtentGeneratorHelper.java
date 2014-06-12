@@ -77,10 +77,6 @@ public class DiseaseExtentGeneratorHelper {
      * Groups the disease occurrences by admin unit (global or tropical).
      */
     public void groupOccurrencesByAdminUnit() {
-        // Group admin units by GAUL code
-        Map<Integer, AdminUnitGlobalOrTropical> adminUnitMapByGaulCode
-                = index(adminUnits, on(AdminUnitGlobalOrTropical.class).getGaulCode());
-
         // Create empty groups of occurrences by admin unit
         occurrencesByAdminUnit = new HashMap<>();
         for (AdminUnitGlobalOrTropical adminUnit : adminUnits) {
@@ -89,7 +85,7 @@ public class DiseaseExtentGeneratorHelper {
 
         // Add occurrences to the groups
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
-            AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(occurrence.getAdminUnitGaulCode());
+            AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(occurrence.getAdminUnitGaulCode());
             occurrencesByAdminUnit.get(adminUnit).add(occurrence);
         }
     }
@@ -99,14 +95,9 @@ public class DiseaseExtentGeneratorHelper {
      * The country GAUL code is taken from the admin unit global/tropical entity.
      */
     public void groupOccurrencesByCountry() {
-        // Group admin units by GAUL code
-        Map<Integer, AdminUnitGlobalOrTropical> adminUnitMapByGaulCode
-                = index(adminUnits, on(AdminUnitGlobalOrTropical.class).getGaulCode());
-
-        // Add number of occurrences to the groups
         numberOfOccurrencesByCountry = new HashMap<>();
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
-            AdminUnitGlobalOrTropical adminUnit = adminUnitMapByGaulCode.get(occurrence.getAdminUnitGaulCode());
+            AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(occurrence.getAdminUnitGaulCode());
             Integer countryGaulCode = adminUnit.getCountryGaulCode();
             if (countryGaulCode != null) {
                 // Country GAUL code found, so add 1 to the number of occurrences for this country
@@ -312,6 +303,11 @@ public class DiseaseExtentGeneratorHelper {
             total += scaledResponseWeighting * review.getExpert().getWeighting();
         }
         return total;
+    }
+
+    private AdminUnitGlobalOrTropical getAdminUnitByGaulCode(int gaulCode) {
+        return selectUnique(adminUnits, having(
+                on(AdminUnitGlobalOrTropical.class).getGaulCode(), IsEqual.equalTo(gaulCode)));
     }
 
     private List<AdminUnitReview> getReviewsByGaulCode(int adminUnitGaulCode) {
