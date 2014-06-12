@@ -43,7 +43,7 @@ public class MainHandler {
      * @throws ZipException if a zip-related error occurs
      * @throws IOException if an IO-related error occurs
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
         ZipFile zipFile = new ZipFile(modelRunZipFile);
 

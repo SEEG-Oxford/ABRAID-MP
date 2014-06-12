@@ -84,7 +84,7 @@ public class ModelRunManager {
      * Gets the new weighting for each active expert.
      * @return The map from expert to the new weighting value.
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Map<Expert, Double> prepareExpertsWeightings() {
         return weightingsCalculator.calculateNewExpertsWeightings();
     }
@@ -93,7 +93,7 @@ public class ModelRunManager {
      * Saves the new weighting for each expert.
      * @param newExpertsWeightings The map from expert to the new weighting value.
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
