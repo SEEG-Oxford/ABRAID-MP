@@ -166,7 +166,6 @@ public class DiseaseExtentGeneratorHelper {
      * @param computer A method for converting the disease occurrences for 1 admin unit into a disease extent class.
      */
     public void computeDiseaseExtentClasses(DiseaseExtentClassComputer computer) {
-
         classesByAdminUnit = new HashMap<>();
         for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
                 occurrencesByAdminUnit.entrySet()) {
