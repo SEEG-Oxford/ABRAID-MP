@@ -138,15 +138,24 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         Location location = new Location("Karachi", 25.0111455, 67.0647043, LocationPrecision.PRECISE);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         DateTime occurrenceDate = DateTime.now().minusDays(5);
-        double machineWeighting = 0.5;
+        double expertWeighting = 0.1;
+        double machineWeighting = 0.2;
+        double validationWeighting = 0.3;
+        double finalWeighting = 0.4;
+        double finalWeightingExclSpatial = 0.5;
+        double environmentalSuitability = 0.6;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
         occurrence.setLocation(location);
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setOccurrenceDate(occurrenceDate);
+        occurrence.setEnvironmentalSuitability(environmentalSuitability);
+        occurrence.setExpertWeighting(expertWeighting);
         occurrence.setMachineWeighting(machineWeighting);
-        occurrence.setValidationWeighting(machineWeighting);
+        occurrence.setValidationWeighting(validationWeighting);
+        occurrence.setFinalWeighting(finalWeighting);
+        occurrence.setFinalWeightingExcludingSpatial(finalWeightingExclSpatial);
 
         // Act
         diseaseOccurrenceDao.save(occurrence);
@@ -169,7 +178,12 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrence.getCreatedDate()).isNotNull();
         assertThat(occurrence.getLocation()).isNotNull();
         assertThat(occurrence.getLocation().getId()).isNotNull();
-        assertThat(occurrence.getValidationWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
+        assertThat(occurrence.getExpertWeighting()).isEqualTo(expertWeighting);
+        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getValidationWeighting()).isEqualTo(validationWeighting);
+        assertThat(occurrence.getFinalWeighting()).isEqualTo(finalWeighting);
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(finalWeightingExclSpatial);
         assertThat(occurrence.getDiseaseGroup()).isNotNull();
         assertThat(occurrence.getDiseaseGroup().getId()).isNotNull();
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(occurrenceDate);

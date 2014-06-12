@@ -40,11 +40,13 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private Double findEnvironmentalSuitability(DiseaseOccurrence occurrence) {
-        return null;
+        return nativeSQL.findEnvironmentalSuitability(occurrence.getDiseaseGroup().getId(),
+                occurrence.getLocation().getGeom());
     }
 
     private Double findMachineWeighting(DiseaseOccurrence occurrence) {
-        return null;
+        // For now, hardcode all machine weightings to 0.7
+        return 0.7; ///CHECKSTYLE:SUPPRESS MagicNumberCheck
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {
