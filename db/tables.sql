@@ -106,6 +106,11 @@ CREATE TABLE country (
     geom geometry(MULTIPOLYGON, 4326)
 );
 
+CREATE TABLE disease_extent (
+    disease_group_id integer NOT NULL,
+    geom geometry(MULTIPOLYGON, 4326) NOT NULL
+);
+
 CREATE TABLE disease_extent_class (
     name varchar(20) NOT NULL,
     weighting integer NOT NULL
@@ -135,6 +140,7 @@ CREATE TABLE disease_occurrence (
     alert_id integer NOT NULL,
     occurrence_date timestamp NOT NULL,
     env_suitability double precision,
+    distance_from_extent double precision,
     expert_weighting double precision,
     machine_weighting double precision,
     validation_weighting double precision,
