@@ -40,21 +40,21 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void findAdminUnitGlobalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
         assertThat(gaulCode).isEqualTo(826);
     }
 
     @Test
     public void findAdminUnitGlobalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
         assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitGlobalWherePointIsOnBorder() {
         Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
         assertThat(gaulCode).isEqualTo(179);
     }
 
@@ -62,28 +62,28 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     public void findAdminUnitGlobalWherePointIsNotInTheRequestedAdminLevel() {
         // This point is within British Columbia, which is an admin1
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitGlobalThatContainsPoint(point, '0');
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, '0');
         assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
         assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test
     public void findAdminUnitTropicalWherePointIsOnBorder() {
         Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
         assertThat(gaulCode).isEqualTo(179);
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
         assertThat(gaulCode).isNull();
     }
 
@@ -91,19 +91,19 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     public void findAdminUnitTropicalWherePointIsNotInTheRequestedAdminLevel() {
         // This point is within British Columbia, which is an admin1
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitTropicalThatContainsPoint(point, '0');
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, '0');
         // And it is assigned GAUL code 825 (Canada) which is an admin0
         assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test
     public void updateAndReloadMeanPredictionRasterForModelRun() throws Exception {
-        updateAndReloadRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
+        updateAndReloadRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
     }
 
     @Test
     public void updateAndReloadPredictionUncertaintyRasterForModelRun() throws Exception {
-        updateAndReloadRasterForModelRun(NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
+        updateAndReloadRasterForModelRun(NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
     }
 
     @Test
@@ -114,10 +114,10 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
         // Arrange - 3 irrelevant model runs
         ModelRun modelRun1 = createAndSaveModelRun("failed with a raster", diseaseGroupId, ModelRunStatus.FAILED);
-        updateRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun1, LARGE_RASTER_FILENAME);
+        updateRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun1, LARGE_RASTER_FILENAME);
         createAndSaveModelRun("completed without a raster (for some reason)", diseaseGroupId, ModelRunStatus.COMPLETED);
         ModelRun modelRun2 = createAndSaveModelRun("different disease group", 1, ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun2, LARGE_RASTER_FILENAME);
+        updateRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun2, LARGE_RASTER_FILENAME);
 
         // Act
         Double suitability = nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point);
@@ -132,7 +132,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         int diseaseGroupId = 87;
         Point point = createOffsetPoint(LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroupId, ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
+        updateRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
 
         // Act
         Double suitability = nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point);
@@ -149,7 +149,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         double upperRightCornerY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 1) * LARGE_RASTER_CELLSIZE;
         Point point = createOffsetPoint(upperRightCornerX, upperRightCornerY);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroupId, ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
+        updateRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
 
         // Act
         Double suitability = nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point);
@@ -166,7 +166,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         double lowerLeftCornerSlightlyShiftedY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
         Point point = createOffsetPoint(lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroupId, ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
+        updateRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
 
         // Act
         Double suitability = nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point);
@@ -183,7 +183,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         double oneCellBeyondUpperRightCornerY = LARGE_RASTER_YLLCORNER + LARGE_RASTER_ROWS * LARGE_RASTER_CELLSIZE;
         Point point = createOffsetPoint(oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroupId, ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
+        updateRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, modelRun, LARGE_RASTER_FILENAME);
 
         // Act
         Double suitability = nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point);

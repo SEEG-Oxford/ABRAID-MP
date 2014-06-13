@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
@@ -100,8 +100,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isEqualTo(expectedOutputText);
         assertThat(run.getErrorText()).isNullOrEmpty();
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc", NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc", NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc",
+                NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc",
+                NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
     @Test
@@ -148,8 +150,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isNullOrEmpty();
         assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc", NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc", NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc",
+                NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc",
+                NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
     @Test

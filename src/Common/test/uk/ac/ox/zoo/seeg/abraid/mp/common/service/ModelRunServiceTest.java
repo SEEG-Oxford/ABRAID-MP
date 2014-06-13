@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
@@ -62,7 +62,8 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
         modelRunService.updateMeanPredictionRasterForModelRun(modelRunId, raster);
 
         // Assert
-        verify(nativeSQL).updateRasterForModelRun(eq(modelRunId), eq(raster), eq(NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME));
+        verify(nativeSQL).updateRasterForModelRun(eq(modelRunId), eq(raster),
+                eq(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME));
     }
 
     @Test
@@ -75,7 +76,8 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
         modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRunId, raster);
 
         // Assert
-        verify(nativeSQL).updateRasterForModelRun(eq(modelRunId), eq(raster), eq(NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME));
+        verify(nativeSQL).updateRasterForModelRun(eq(modelRunId), eq(raster),
+                eq(NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME));
     }
 
     @Test

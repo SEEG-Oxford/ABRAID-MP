@@ -9,22 +9,14 @@ import com.vividsolutions.jts.geom.Point;
  */
 public interface NativeSQL {
     /**
-     * Finds the first admin unit for global diseases that contains the specified point.
+     * Finds the first admin unit that contains the specified point.
      * @param point The point.
+     * @param isGlobal True to use admin units for global diseases, otherwise false.
      * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel);
-
-    /**
-     * Finds the first admin unit for tropical diseases that contains the specified point.
-     * @param point The point.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
-     * @return The GAUL code of the first tropical admin unit that contains the specified point, or null if no
-     * admin units found.
-     */
-    Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
+    Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal, Character adminLevel);
 
     /**
      * Loads the mean prediction raster for a model run.
