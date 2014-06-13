@@ -30,7 +30,9 @@
         <#include "datavalidationsidepanel.ftl"/>
         <#include "layerselector.ftl"/>
 
-        <div id="map"></div>
+        <div id="map">
+            <div id="spinner"><i class="fa fa-3x fa-spinner fa-spin"></i></div>
+        </div>
     </div>
     <script>
         var baseUrl = "<@spring.url "/" />";

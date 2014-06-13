@@ -381,6 +381,7 @@ define([
         map.on("click", resetSelectedFeature);
 
         ko.postbox.subscribe("layers-changed", function (data) {
+            $("#spinner").show();
             validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
             switchValidationTypeView();
             resetSelectedFeature();
@@ -389,6 +390,7 @@ define([
             } else {
                 switchDiseaseExtentLayer(data.diseaseId);
             }
+            $("#spinner").fadeOut(800);
         });
 
         ko.postbox.subscribe("admin-unit-selected", function (data) {

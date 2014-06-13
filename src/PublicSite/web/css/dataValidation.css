@@ -15,7 +15,7 @@ html, body, #dataValidation {
 }
 #layerSelector {
     position: absolute;
-    z-index: 10;                 /* Overlay to ensure clicks*/
+    z-index: 100;                /* Overlay to ensure clicks*/
     margin-left: 50px;           /* Space for zoomslider */
 }
 #layerSelector > h4, select {
@@ -27,6 +27,17 @@ html, body, #dataValidation {
     width: 100%;
     float: left;
     background-color: white;
+}
+#spinner {
+    z-index:10;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+#spinner i {
+    position: absolute;
+    top:50%;
+    left:50%;
 }
 #sidePanel {
     height: 100%;
