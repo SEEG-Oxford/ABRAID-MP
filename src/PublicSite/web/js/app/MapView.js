@@ -20,6 +20,9 @@ define([
     "use strict";
 
     return function (baseUrl, wmsUrl, loggedIn) {
+
+        /** MAP AND BASE LAYER */
+
         // Initialise map at "map" div
         var map = L.map("map", {
             attributionControl: false,
@@ -42,6 +45,8 @@ define([
         var defaultColour = "#c478a9";      // Lighter pink/red
         var highlightColour = "#9e1e71";    // The chosen pink/red compatible with colourblindness
         var strokeColour = "#ce8eb8";       // Darker pink/red
+
+        /** DISEASE OCCURRENCE LAYER */
 
         // Define default style for unselected points
         var diseaseOccurrenceLayerStyle = {
@@ -152,111 +157,6 @@ define([
             }
         }
 
-        // Return the corresponding colour for the disease extent class of the admin unit
-        var diseaseExtentClassColourScale = {
-            "Presence":          "#8e1b65",  // dark pink
-            "Possible presence": "#c478a9",  // light pink
-            "Uncertain":         "#ffffbf",  // yellow
-            "Possible absence":  "#b5caaa",  // light green
-            "Absence":           "#769766"   // dark green
-        };
-
-        function diseaseExtentLayerStyle(feature, clickable) {
-            return {
-                fillColor: diseaseExtentClassColourScale[feature.properties.diseaseExtentClass],
-                fillOpacity: 0.7,
-                opacity: 0.7,
-                weight: 2,
-                color: "#ffffff", // white border
-                clickable: clickable
-            };
-        }
-
-        function resetDiseaseExtentLayerStyle() {
-            diseaseExtentLayer.setStyle({
-                weight: 2,
-                color: "#ffffff"
-            });
-        }
-
-        function selectAdminUnit(layer) {
-            resetDiseaseExtentLayerStyle();
-            layer.setStyle({
-                weight: 2.5,
-                color: "#333333"
-            });
-            if (!L.Browser.ie && !L.Browser.opera) {
-                layer.bringToFront();
-            }
-            map.fitBounds(layer.getBounds(), { maxZoom: 5 });
-        }
-
-        // Define the geoJson layer, to which the disease extent data will be added via AJAX request
-        var adminUnitLayerMap = {};
-        var diseaseExtentLayer = L.geoJson([], {
-            style: function (feature) { return diseaseExtentLayerStyle(feature, true); },
-            onEachFeature: function (feature, layer) {
-                adminUnitLayerMap[feature.id] = layer;
-                var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
-                layer.on({
-                    click: function () { ko.postbox.publish("admin-unit-selected", data); },
-                    mouseover: function () { layer.setStyle({ fillOpacity: 1 }); },
-                    mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
-                });
-            }
-        });
-
-        function addCentroidMarkerToMap(layer) {
-            var centroid = layer.getBounds().getCenter();
-            L.marker([centroid.lat, centroid.lng], {
-                clickable: false,
-                opacity: 0.8,
-                icon: L.divIcon({
-                    html: "<i class='fa fa-check'></i>",
-                    className: "marker-centroid"
-                })
-            }).addTo(map);
-        }
-
-        var diseaseExtentReviewedLayer = L.geoJson([], {
-            style: function (feature) { return diseaseExtentLayerStyle(feature, false); },
-            onEachFeature: function (feature, layer) { addCentroidMarkerToMap(layer); }
-        });
-
-        function createLegendRow(className, colour) {
-            var colourBox = "<i style='background:" + colour + "'></i>";
-            var displayName = "<span>" + className + "</span><br>";
-            return colourBox + displayName;
-        }
-
-        // Add a legend to display the disease extent class colour scale with corresponding class names
-        var legend = L.control({position: "bottomleft"});
-        legend.onAdd = function () {
-            var div = L.DomUtil.create("div", "legend");
-            div.innerHTML = "<span style='text-decoration:underline'>Current classification</span><br>" +
-                _((_(diseaseExtentClassColourScale).pairs()).map(function (pair) {
-                    return createLegendRow(pair[0], pair[1]);
-                })).join("");
-            return div;
-        };
-
-        var validationTypeIsDiseaseOccurrenceLayer;
-
-        // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
-        function switchValidationTypeView() {
-            if (validationTypeIsDiseaseOccurrenceLayer) {
-                if (map.hasLayer(diseaseExtentLayer)) { map.removeControl(legend); }
-                map.removeLayer(diseaseExtentLayer);
-                map.removeLayer(diseaseExtentReviewedLayer);
-                clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
-            } else {
-                if (!map.hasLayer(diseaseExtentLayer)) { legend.addTo(map); }
-                diseaseExtentLayer.addTo(map);
-                diseaseExtentReviewedLayer.addTo(map);
-                map.removeLayer(clusterLayer);
-            }
-        }
-
         // Remove the layers from the map, and clear the record of markers on the layer.
         // The new markers are added to layerMap on addLayer thanks to onEachFeature.
         function clearDiseaseOccurrenceLayer() {
@@ -288,6 +188,110 @@ define([
             });
         }
 
+        // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
+        function removeMarkerFromDiseaseOccurrenceLayer(id) {
+            clusterLayer.clearLayers();
+            diseaseOccurrenceLayer.removeLayer(layerMap[id]);
+            delete layerMap[id];
+            if (_(layerMap).isEmpty()) {
+                ko.postbox.publish("no-features-to-review", true);
+            } else {
+                clusterLayer.addLayer(diseaseOccurrenceLayer);
+            }
+        }
+
+        /** DISEASE EXTENT LAYER */
+
+        // Return the corresponding colour for the disease extent class of the admin unit
+        var diseaseExtentClassColourScale = {
+            "Presence":          "#8e1b65",  // dark pink
+            "Possible presence": "#c478a9",  // light pink
+            "Uncertain":         "#ffffbf",  // yellow
+            "Possible absence":  "#b5caaa",  // light green
+            "Absence":           "#769766"   // dark green
+        };
+
+        function diseaseExtentLayerStyle(feature, clickable) {
+            return {
+                fillColor: diseaseExtentClassColourScale[feature.properties.diseaseExtentClass],
+                fillOpacity: 0.7,
+                opacity: 0.7,
+                weight: 2,
+                color: "#ffffff", // White border
+                clickable: clickable
+            };
+        }
+
+        function adminUnitsNeedReviewLayerStyle(feature) {
+            return diseaseExtentLayerStyle(feature, true);
+        }
+
+        function adminUnitsReviewedLayerStyle(feature) {
+            return diseaseExtentLayerStyle(feature, false);
+        }
+
+        function resetDiseaseExtentLayerStyle() {
+            adminUnitsNeedReviewLayer.setStyle({
+                weight: 2,
+                color: "#ffffff" // Return to a white border
+            });
+        }
+
+        function selectAdminUnit(layer) {
+            resetDiseaseExtentLayerStyle();
+            layer.setStyle({
+                weight: 2.5,
+                color: "#333333" // Highlight the admin unit with a grey border
+            });
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+            }
+            map.fitBounds(layer.getBounds(), { maxZoom: 5 });
+        }
+
+        // Define the geoJson layer, to which the disease extent data will be added via AJAX request
+        var adminUnitLayerMap = {};
+        var adminUnitsNeedReviewLayer = L.geoJson([], {
+            style: adminUnitsNeedReviewLayerStyle,
+            onEachFeature: function (feature, layer) {
+                adminUnitLayerMap[feature.id] = layer;
+                var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
+                layer.on({
+                    click: function () { ko.postbox.publish("admin-unit-selected", data); },
+                    mouseover: function () { layer.setStyle({ fillOpacity: 1 }); },
+                    mouseout: function () { layer.setStyle({ fillOpacity: 0.7 }); }
+                });
+            }
+        });
+
+        var centroidMarkers = L.layerGroup();
+
+        function addCentroidMarkerToMap(layer) {
+            var centroid = layer.getBounds().getCenter();
+            L.marker([centroid.lat, centroid.lng], {
+                clickable: false,
+                opacity: 0.8,
+                icon: L.divIcon({
+                    html: "<i class='fa fa-check'></i>",
+                    className: "marker-centroid"
+                })
+            }).addTo(centroidMarkers);
+        }
+
+        var adminUnitsReviewedLayer = L.geoJson([], {
+            style: adminUnitsReviewedLayerStyle,
+            onEachFeature: function (feature, layer) { addCentroidMarkerToMap(layer); }
+        });
+
+        var diseaseExtentLayer = L.layerGroup([adminUnitsNeedReviewLayer, adminUnitsReviewedLayer, centroidMarkers]);
+
+        function clearDiseaseExtentLayers() {
+            adminUnitsNeedReviewLayer.clearLayers();
+            adminUnitsReviewedLayer.clearLayers();
+            centroidMarkers.clearLayers();
+            adminUnitLayerMap = {};
+        }
+
         function getDiseaseExtentRequestUrl(diseaseId) {
             if (loggedIn) {
                 return baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
@@ -296,41 +300,61 @@ define([
             }
         }
 
+        function createFeatureCollection(fc, features) {
+            return { type: fc.type, crs: fc.crs, features: features };
+        }
+
         // Display the admin units, and disease extent class, for the selected validator disease group.
         function switchDiseaseExtentLayer(diseaseId) {
-            diseaseExtentLayer.clearLayers();
-            diseaseExtentReviewedLayer.clearLayers();
-            adminUnitLayerMap = {};
-            $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (featureCollection) {
-                var featuresNeedReview = _(featureCollection.features).select(function (f) {
-                    return f.properties.needsReview;
-                });
-                var featureCollectionNeedReview = {
-                    type: featureCollection.type,
-                    crs: featureCollection.crs,
-                    features: featuresNeedReview
-                };
-                var featureCollectionReviewed = {
-                    type: featureCollection.type,
-                    crs: featureCollection.crs,
-                    features: _(featureCollection.features).reject(function (f) { return f.properties.needsReview; })
-                };
-                diseaseExtentLayer.addData(featureCollectionNeedReview);
-                diseaseExtentReviewedLayer.addData(featureCollectionReviewed);
+            clearDiseaseExtentLayers();
+            $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (fc) {
+                var featuresNeedReview = _(fc.features).select(function (f) { return f.properties.needsReview; });
+                var featureCollectionNeedReview = createFeatureCollection(fc, featuresNeedReview);
+                adminUnitsNeedReviewLayer.addData(featureCollectionNeedReview);
+
+                var featuresReviewed = _(fc.features).reject(function (f) { return f.properties.needsReview; });
+                var featureCollectionReviewed = createFeatureCollection(fc, featuresReviewed);
+                adminUnitsReviewedLayer.addData(featureCollectionReviewed);
+
                 ko.postbox.publish("admin-units-to-be-reviewed", { data: featuresNeedReview, skipSerialize: true });
                 ko.postbox.publish("no-features-to-review", featuresNeedReview.length === 0);
             });
         }
 
-        // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
-        function removeMarkerFromMap(id) {
-            clusterLayer.clearLayers();
-            diseaseOccurrenceLayer.removeLayer(layerMap[id]);
-            delete layerMap[id];
-            if (_(layerMap).isEmpty()) {
-                ko.postbox.publish("no-features-to-review", true);
+        /** LEGEND */
+
+        function createLegendRow(className, colour) {
+            var colourBox = "<i style='background:" + colour + "'></i>";
+            var displayName = "<span>" + className + "</span><br>";
+            return colourBox + displayName;
+        }
+
+        // Add a legend to display the disease extent class colour scale with corresponding class names
+        var legend = L.control({position: "bottomleft"});
+        legend.onAdd = function () {
+            var div = L.DomUtil.create("div", "legend");
+            div.innerHTML = "<span style='text-decoration:underline'>Current classification</span><br>" +
+                _((_(diseaseExtentClassColourScale).pairs()).map(function (pair) {
+                    return createLegendRow(pair[0], pair[1]);
+                })).join("");
+            div.innerHTML += "<i class='fa fa-check' style='padding-left:3px'></i>Admin unit reviewed";
+            return div;
+        };
+
+        /** REACT TO EVENTS */
+
+        var validationTypeIsDiseaseOccurrenceLayer;
+
+        // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
+        function switchValidationTypeView() {
+            if (validationTypeIsDiseaseOccurrenceLayer) {
+                if (map.hasLayer(adminUnitsNeedReviewLayer)) { map.removeControl(legend); }
+                map.removeLayer(diseaseExtentLayer);
+                clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
             } else {
-                clusterLayer.addLayer(diseaseOccurrenceLayer);
+                if (!map.hasLayer(adminUnitsNeedReviewLayer)) { legend.addTo(map); }
+                diseaseExtentLayer.addTo(map);
+                map.removeLayer(clusterLayer);
             }
         }
 
@@ -372,13 +396,13 @@ define([
         });
 
         ko.postbox.subscribe("occurrence-reviewed", function (id) {
-            removeMarkerFromMap(id);
+            removeMarkerFromDiseaseOccurrenceLayer(id);
         });
 
         ko.postbox.subscribe("admin-unit-reviewed", function (id) {
             var layer = adminUnitLayerMap[id];
-            diseaseExtentLayer.removeLayer(layer);
-            diseaseExtentReviewedLayer.addData(layer.feature);
+            adminUnitsNeedReviewLayer.removeLayer(layer);
+            adminUnitsReviewedLayer.addData(layer.feature);
         });
     };
 });
