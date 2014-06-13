@@ -123,6 +123,7 @@ CREATE TABLE disease_group (
     validator_disease_group_id integer,
     weighting double precision,
     last_model_run_prep_date timestamp,
+    validation_process_start_date timestamp,
     model_run_min_new_occurrences integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

@@ -40,11 +40,12 @@ public class MainHandler {
     /**
      * Handles the model outputs contained in the specified zip file.
      * @param modelRunZipFile The zip file resulting from the model run.
+     * @return The ModelRun object associated with the model run.
      * @throws ZipException if a zip-related error occurs
      * @throws IOException if an IO-related error occurs
      */
     @Transactional(rollbackFor = Exception.class)
-    public void handleOutputs(File modelRunZipFile) throws ZipException, IOException {
+    public ModelRun handleOutputs(File modelRunZipFile) throws ZipException, IOException {
         ZipFile zipFile = new ZipFile(modelRunZipFile);
 
         // Handle the model run metadata
@@ -63,6 +64,8 @@ public class MainHandler {
         byte[] predUncertaintyRaster =
                 extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
+
+        return modelRun;
     }
 
     private ModelRun handleMetadataJson(String metadataJson) {

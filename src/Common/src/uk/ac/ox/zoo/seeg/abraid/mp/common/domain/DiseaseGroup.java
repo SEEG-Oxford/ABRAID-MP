@@ -65,6 +65,12 @@ public class DiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastModelRunPrepDate;
 
+    // The date on which the validation process was started, i.e. when the occurrences of this disease group
+    // received validation parameters.
+    @Column(name = "validation_process_start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime validationProcessStartDate;
+
     // The minimum number of new occurrences required to trigger a model run.
     @Column(name = "model_run_min_new_occurrences")
     private Integer modelRunMinNewOccurrences;
@@ -208,6 +214,14 @@ public class DiseaseGroup {
         this.lastModelRunPrepDate = lastModelRunPrepDate;
     }
 
+    public DateTime getValidationProcessStartDate() {
+        return validationProcessStartDate;
+    }
+
+    public void setValidationProcessStartDate(DateTime validationProcessStartDate) {
+        this.validationProcessStartDate = validationProcessStartDate;
+    }
+
     public Integer getModelRunMinNewOccurrences() {
         return modelRunMinNewOccurrences;
     }
@@ -225,7 +239,7 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseGroup)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
@@ -242,6 +256,8 @@ public class DiseaseGroup {
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
         if (shortName != null ? !shortName.equals(that.shortName) : that.shortName != null) return false;
+        if (validationProcessStartDate != null ? !validationProcessStartDate.equals(that.validationProcessStartDate) : that.validationProcessStartDate != null)
+            return false;
         if (validatorDiseaseGroup != null ? !validatorDiseaseGroup.equals(that.validatorDiseaseGroup) : that.validatorDiseaseGroup != null)
             return false;
         if (weighting != null ? !weighting.equals(that.weighting) : that.weighting != null) return false;
@@ -262,6 +278,7 @@ public class DiseaseGroup {
         result = 31 * result + (validatorDiseaseGroup != null ? validatorDiseaseGroup.hashCode() : 0);
         result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
+        result = 31 * result + (validationProcessStartDate != null ? validationProcessStartDate.hashCode() : 0);
         result = 31 * result + (modelRunMinNewOccurrences != null ? modelRunMinNewOccurrences.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;

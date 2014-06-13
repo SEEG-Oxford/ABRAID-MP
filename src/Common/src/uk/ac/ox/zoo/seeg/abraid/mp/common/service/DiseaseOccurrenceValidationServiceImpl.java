@@ -24,15 +24,14 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
     public boolean addValidationParameters(DiseaseOccurrence occurrence) {
-        if (!isEligibleForValidation(occurrence)) {
-            return false;
+        if (isEligibleForValidation(occurrence)) {
+            occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
+            occurrence.setMachineWeighting(findMachineWeighting(occurrence));
+            occurrence.setValidated(findIsValidated(occurrence));
+            return true;
         }
 
-        occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
-        occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-        occurrence.setValidated(findIsValidated(occurrence));
-
-        return true;
+        return false;
     }
 
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
