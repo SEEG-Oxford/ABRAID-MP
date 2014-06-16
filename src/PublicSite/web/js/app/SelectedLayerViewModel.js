@@ -22,6 +22,12 @@ define(["ko"], function (ko) {
             this.children = children;
         };
 
+        // Return the first validator disease group of the expert's "Disease Interests", if they have any registered.
+        // Otherwise, return the first disease set of the "All Other Diseases" list.
+        var initialSelectedDiseaseSet = function () {
+            return diseaseInterests.length !== 0 ? self.groups[0].children[0] : self.groups[1].children[0];
+        };
+
         // View Model State
         self.validationTypes = [DISEASE_OCCURRENCES, DISEASE_EXTENT];
         self.selectedType = ko.observable(self.validationTypes[0]);
@@ -29,7 +35,7 @@ define(["ko"], function (ko) {
             new Group("Your Disease Interests", diseaseInterests),
             new Group("Other Diseases", allOtherDiseases)
         ];
-        self.selectedDiseaseSet = ko.observable(self.groups[0].children[0]);
+        self.selectedDiseaseSet = ko.observable(initialSelectedDiseaseSet());
         self.selectedDisease = ko.observable(self.selectedDiseaseSet().diseaseGroups[0]);
 
         // View State
