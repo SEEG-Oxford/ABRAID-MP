@@ -93,14 +93,14 @@
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.occurrenceDate"></p></li>
         <li>
             <i class="fa fa-external-link"></i>
-            <a data-bind="attr: {href: selectedPoint().properties.alert.url}">
+            <a data-bind="attr: {href: selectedPoint().properties.alert.url}" target="_blank">
                 <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
             </a>
         </li>
         <li><i class="fa fa-quote-left"></i></li>
         <li>
             <div id="summary" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
-            <div data-bind="if: selectedPoint().properties.alert.summary != null">
+            <div data-bind="if: selectedPoint().properties.alert.summary">
                 <a id="translationLink" data-bind="attr: {href: translationUrl}" target="_blank">View translation</a>
             <div>
         </li>
