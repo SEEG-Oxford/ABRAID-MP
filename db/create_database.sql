@@ -9,6 +9,7 @@
 --
 -- Copyright (c) 2014 University of Oxford
 
+SET client_min_messages TO WARNING;
 
 -- Drop and create the database
 DROP DATABASE IF EXISTS :database_name;

@@ -3,9 +3,11 @@
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
  * -- 'admin-unit-selected' - published by MapView.
+ * -- 'admin-units-to-be-reviewed' - published by MapView.
  * -- 'layers-changed' - published by SelectedLayerViewModel.
  * - Events published:
- * -- none
+ * -- 'admin-unit-reviewed'
+ * -- 'admin-unit-selected' - as triggered by side panel table.
  */
 define([
     "ko",

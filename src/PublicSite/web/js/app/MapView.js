@@ -31,7 +31,7 @@ define([
             attributionControl: false,
             zoomControl: false,
             zoomsliderControl: true,
-            maxBounds: [ [-89, -179], [89, 179] ],
+            maxBounds: [ [-60, -180], [85, 180] ],
             maxZoom: 7,
             minZoom: 3,
             animate: true

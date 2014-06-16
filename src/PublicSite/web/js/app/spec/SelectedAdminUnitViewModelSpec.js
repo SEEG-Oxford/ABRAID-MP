@@ -48,8 +48,8 @@ define([
             });
 
             it("is sorted alphabetically", function () {
-                var featureA = { properties : { name : "a" }};
-                var featureB = { properties : { name : "b" }};
+                var featureA = { name : "a" };
+                var featureB = { name : "b" };
                 ko.postbox.publish("admin-units-to-be-reviewed", { data : [ featureB, featureA ] });
                 expect(vm.adminUnits()).toEqual([ featureA, featureB ]);
             });

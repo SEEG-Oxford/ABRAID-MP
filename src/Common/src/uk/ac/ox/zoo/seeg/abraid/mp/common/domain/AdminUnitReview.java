@@ -30,7 +30,7 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "getAdminUnitReviewByExpertIdAndDiseaseGroupIdAndGaulCode",
                 query = "from AdminUnitReview where expert.id=:expertId and diseaseGroup.id=:diseaseGroupId and " +
-                        "adminUnitGlobalGaulCode=:gaulCode or adminUnitTropicalGaulCode=:gaulCode"
+                        "(adminUnitGlobalGaulCode=:gaulCode or adminUnitTropicalGaulCode=:gaulCode)"
         )
 })
 @Entity

@@ -50,7 +50,6 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
-        assertThat(location.getCountryGaulCode()).isEqualTo(179);
     }
 
     @Test
@@ -59,7 +58,6 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(153);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(153);
-        assertThat(location.getCountryGaulCode()).isEqualTo(153);
     }
 
     @Test
@@ -87,6 +85,5 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isNull();
         assertThat(location.getAdminUnitTropicalGaulCode()).isNull();
-        assertThat(location.getCountryGaulCode()).isNull();
     }
 }
