@@ -1,16 +1,17 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.factory.Hints;
+import org.geotools.gce.geotiff.GeoTiffReader;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,90 +25,42 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class ExtentDataWriterTest {
-    // A small reclassified crop of our real global gaul raster
-    private static final String SMALL_RASTER =
-        "ncols        20\n" +
-        "nrows        17\n" +
-        "xllcorner    34.541666666667\n" +
-        "yllcorner    29.083333333333\n" +
-        "cellsize     0.041666666667\n" +
-        "NODATA_value  -9999\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12321 12321 12321 12321 12321 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12321 12321 12321 12321 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12345 12321 12321 12321 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12345 12321 12321 12321 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12345 12321 12321 12321 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12345 12321 12321 5412 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12345 12321 -9999 -9999 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 12345 -9999 -9999 -9999 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 12345 -9999 -9999 -9999 5412 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 -9999 -9999 -9999 -9999 5412 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 12345 -9999 -9999 -9999 -9999 5412 5412 5412 5412 5412 5412 5412 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 -9999 -9999 -9999 -9999 -9999 4321 4321 4321 4321 4321 4321 4321 5412 5412 5412\n" +
-        " 12345 12345 12345 12345 12345 -9999 -9999 -9999 -9999 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321\n" +
-        " 12345 12345 12345 12345 12345 -9999 -9999 -9999 -9999 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321\n" +
-        " 12345 12345 12345 12345 12345 -9999 -9999 -9999 -9999 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321\n" +
-        " 12345 12345 12345 12345 -9999 -9999 -9999 -9999 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321\n" +
-        " 12345 12345 12345 -9999 -9999 -9999 -9999 -9999 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321 4321\n";
-
-
+    public static final String SMALL_RASTER = "ModelWrapper/test/uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/model/testdata/SmallRaster.tif";
+    public static final String SMALL_RASTER_TRANSFORMED = "ModelWrapper/test/uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/model/testdata/SmallRaster_transformed.tif";
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
-    @Before
-    public void setup() {
-        java.util.logging.Logger.getLogger("class it.geosolutions.imageio.plugins.arcgrid").setLevel(java.util.logging.Level.OFF);
-        java.util.logging.Logger.getLogger("org.geotools.gce.arcgrid").setLevel(java.util.logging.Level.OFF);
-    }
-
-    @After
-    public void tearDown() {
-        java.util.logging.Logger.getLogger("class it.geosolutions.imageio.plugins.arcgrid").setLevel(java.util.logging.Level.ALL);
-        java.util.logging.Logger.getLogger("org.geotools.gce.arcgrid").setLevel(java.util.logging.Level.ALL);
-    }
-
-
     @Test
-    public void writeShouldProduceCorrectOutput() throws Exception {
+    public void writeShouldProduceCorrectOutputAndSetAnyUnknownValuesToNoData() throws Exception {
         // Arrange
-        File sourceRaster = testFolder.newFile();
-        FileUtils.writeStringToFile(sourceRaster, SMALL_RASTER, "UTF-8");
-        File result = Paths.get(testFolder.newFolder().toString(), "foo.asc").toFile();
+        File sourceRaster = new File(SMALL_RASTER);
+        File result = Paths.get(testFolder.newFolder().toString(), "foo.tif").toFile();
         ExtentDataWriter target = new ExtentDataWriterImpl();
         Map<Integer, Integer> transform = new HashMap<>();
-        transform.put(12345, 98765);
-        transform.put(5412, 789);
-        transform.put(12321, 6789);
-        transform.put(4321, 6987);
-        String expectation = createExpectation(transform, transform.keySet(), SMALL_RASTER);
+        transform.put(1, -100);
+        transform.put(2, -50);
+        transform.put(3, 0);
+        transform.put(4, 50);
+        transform.put(5, 100);
 
         // Act
         target.write(transform, sourceRaster, result);
 
         // Assert
-        String resultString = FileUtils.readFileToString(result);
-        assertThat(resultString).isEqualTo(expectation);
-    }
+        GridCoverage2DReader reader = new GeoTiffReader(result, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+        Raster transformed = reader.read(null).getRenderedImage().getData();
+        assertThat(transformed.getSample(0, 0, 0)).isEqualTo(-100);
+        assertThat(transformed.getSample(1, 0, 0)).isEqualTo(-50);
+        assertThat(transformed.getSample(2, 0, 0)).isEqualTo(0);
+        assertThat(transformed.getSample(0, 1, 0)).isEqualTo(50);
+        assertThat(transformed.getSample(1, 1, 0)).isEqualTo(100);
+        assertThat(transformed.getSample(2, 1, 0)).isEqualTo(-9999);
+        assertThat(transformed.getSample(0, 2, 0)).isEqualTo(-9999);
+        assertThat(transformed.getSample(1, 2, 0)).isEqualTo(-9999);
+        assertThat(transformed.getSample(2, 2, 0)).isEqualTo(-9999);
 
-    @Test
-    public void writeShouldSetAnyUnknownValuesToNoData() throws Exception {
-        // Arrange
-        File sourceRaster = testFolder.newFile();
-        FileUtils.writeStringToFile(sourceRaster, SMALL_RASTER, "UTF-8");
-        File result = Paths.get(testFolder.newFolder().toString(), "foo.asc").toFile();
-        ExtentDataWriter target = new ExtentDataWriterImpl();
-        Map<Integer, Integer> transform = new HashMap<>();
-        transform.put(12345, 98765);
-        transform.put(5412, 789);
-        transform.put(12321, 6789);
-        String expectation = createExpectation(transform, Arrays.asList(12345, 5412, 12321, 4321), SMALL_RASTER);
-
-        // Act
-        target.write(transform, sourceRaster, result);
-
-        // Assert
-        String resultString = FileUtils.readFileToString(result);
-        assertThat(resultString).isEqualTo(expectation);
+        // Verify the meta data fields
+        assertThat(result).hasContentEqualTo(new File(SMALL_RASTER_TRANSFORMED));
     }
 
     @Test

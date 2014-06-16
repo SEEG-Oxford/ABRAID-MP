@@ -1,11 +1,19 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
 import org.apache.log4j.Logger;
+import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
-import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.gce.arcgrid.ArcGridWriter;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.factory.Hints;
+import org.geotools.gce.geotiff.GeoTiffFormat;
+import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.geometry.Envelope2D;
+import org.opengis.coverage.grid.GridCoverageWriter;
+import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterValue;
 
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -28,6 +36,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             "Loading gaul code source raster: %s.";
     private static final Object LOG_TRANSFORMING_RASTER_DATA =
             "Transforming gaul code raster to weightings raster.";
+    private static final AbstractGridFormat format = new GeoTiffFormat();
 
     /**
      * Write the extent data to a raster file ready to run the model.
@@ -41,17 +50,18 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
         GridCoverage2D sourceRaster = loadRaster(sourceRasterFile);
 
         Envelope2D rasterExtent = sourceRaster.getGridGeometry().getEnvelope2D();
+        GridSampleDimension[] rasterProperties = sourceRaster.getSampleDimensions();
         WritableRaster rasterData = (WritableRaster) sourceRaster.getRenderedImage().getData();
 
         transformRaster(extentData, rasterData);
 
-        saveRaster(targetFile, rasterData, rasterExtent);
+        saveRaster(targetFile, rasterData, rasterExtent, rasterProperties);
     }
 
     private GridCoverage2D loadRaster(File location) throws IOException {
         LOGGER.info(String.format(LOG_LOADING_SOURCE_RASTER, location.toString()));
         try {
-            ArcGridReader reader = new ArcGridReader(location.toURI().toURL());
+            GridCoverage2DReader reader = new GeoTiffReader(location, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
             return reader.read(null);
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString());
@@ -62,29 +72,46 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
 
     private void transformRaster(Map<Integer, Integer> transform, WritableRaster data) {
         LOGGER.info(LOG_TRANSFORMING_RASTER_DATA);
+
         for (int i = 0; i < data.getWidth(); i++) {
             for (int j = 0; j < data.getHeight(); j++) {
                 int gaul = data.getSample(i, j, 0);
                 if (transform.containsKey(gaul)) {
                     data.setSample(i, j, 0, transform.get(gaul));
                 } else {
-                    data.setSample(i, j, 0, Double.NaN);
+                    if (gaul != -9999) {
+                        data.setSample(i, j, 0, -9999);
+                    }
                 }
             }
         }
     }
 
-    private void saveRaster(File location, WritableRaster raster, Envelope2D extents) throws IOException {
+    private void saveRaster(File location, WritableRaster raster, Envelope2D extents, GridSampleDimension[] properties)
+            throws IOException {
         LOGGER.info(String.format(LOG_SAVING_TRANSFORMED_RASTER, location.toString()));
         try {
             GridCoverageFactory factory = new GridCoverageFactory();
-            GridCoverage2D targetRaster = factory.create(location.getName(), raster, extents);
-            ArcGridWriter writer = new ArcGridWriter(location.toURI().toURL());
-            writer.write(targetRaster, null);
+            GridCoverage2D targetRaster = factory.create(location.getName(), raster, extents, properties);
+
+            GridCoverageWriter writer = format.getWriter(location);
+            writer.write(targetRaster, getGeoTiffWriteParameters());
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER, location.toString());
             LOGGER.error(message, e);
             throw new IOException(message, e);
         }
+    }
+
+    private GeneralParameterValue[] getGeoTiffWriteParameters() {
+        GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
+        writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+        writeParams.setCompressionType("Deflate");
+        writeParams.setCompressionQuality(0.75F);
+        ParameterValue parameterValue = AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.createValue();
+        parameterValue.setValue(writeParams);
+        return new GeneralParameterValue[] {
+                parameterValue
+        };
     }
 }
