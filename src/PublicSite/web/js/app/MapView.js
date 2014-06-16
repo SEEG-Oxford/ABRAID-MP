@@ -2,11 +2,14 @@
  * JS file for adding Leaflet map and layers.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
+ * -- 'admin-unit-reviewed' - published by SelectedAdminUnitViewModel
+ * -- 'admin-unit-selected' - published by MapView
  * -- 'layers-changed' - published by SelectedLayerViewModel
  * -- 'occurrence-reviewed' - published by SelectedPointViewModel
  * - Events published:
- * -- 'point-selected'
  * -- 'admin-unit-selected'
+ * -- 'admin-units-to-be-reviewed'
+ * -- 'point-selected'
  * -- 'no-features-to-review' if
  * --- the FeatureCollection data is empty
  * --- the last point is remove from its layer
@@ -222,14 +225,6 @@ define([
             };
         }
 
-        function adminUnitsNeedReviewLayerStyle(feature) {
-            return diseaseExtentLayerStyle(feature, true);
-        }
-
-        function adminUnitsReviewedLayerStyle(feature) {
-            return diseaseExtentLayerStyle(feature, false);
-        }
-
         function resetDiseaseExtentLayerStyle() {
             adminUnitsNeedReviewLayer.setStyle({
                 weight: 2,
@@ -252,7 +247,7 @@ define([
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
         var adminUnitLayerMap = {};
         var adminUnitsNeedReviewLayer = L.geoJson([], {
-            style: adminUnitsNeedReviewLayerStyle,
+            style: function (feature) { return diseaseExtentLayerStyle(feature, true); },
             onEachFeature: function (feature, layer) {
                 adminUnitLayerMap[feature.id] = layer;
                 var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
@@ -279,7 +274,7 @@ define([
         }
 
         var adminUnitsReviewedLayer = L.geoJson([], {
-            style: adminUnitsReviewedLayerStyle,
+            style: function (feature) { return diseaseExtentLayerStyle(feature, false); },
             onEachFeature: function (feature, layer) { addCentroidMarkerToMap(layer); }
         });
 
@@ -300,8 +295,8 @@ define([
             }
         }
 
-        function createFeatureCollection(fc, features) {
-            return { type: fc.type, crs: fc.crs, features: features };
+        function createFeatureCollection(type, crs, features) {
+            return { type: type, crs: crs, features: features };
         }
 
         // Display the admin units, and disease extent class, for the selected validator disease group.
@@ -309,14 +304,17 @@ define([
             clearDiseaseExtentLayers();
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (fc) {
                 var featuresNeedReview = _(fc.features).select(function (f) { return f.properties.needsReview; });
-                var featureCollectionNeedReview = createFeatureCollection(fc, featuresNeedReview);
+                var featureCollectionNeedReview = createFeatureCollection(fc.type, fc.crs, featuresNeedReview);
                 adminUnitsNeedReviewLayer.addData(featureCollectionNeedReview);
 
                 var featuresReviewed = _(fc.features).reject(function (f) { return f.properties.needsReview; });
-                var featureCollectionReviewed = createFeatureCollection(fc, featuresReviewed);
+                var featureCollectionReviewed = createFeatureCollection(fc.type, fc.crs, featuresReviewed);
                 adminUnitsReviewedLayer.addData(featureCollectionReviewed);
 
-                ko.postbox.publish("admin-units-to-be-reviewed", { data: featuresNeedReview, skipSerialize: true });
+                var data = _(featuresNeedReview).map(function (f) {
+                    return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount };
+                });
+                ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
                 ko.postbox.publish("no-features-to-review", featuresNeedReview.length === 0);
             });
         }
@@ -348,11 +346,11 @@ define([
         // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
         function switchValidationTypeView() {
             if (validationTypeIsDiseaseOccurrenceLayer) {
-                if (map.hasLayer(adminUnitsNeedReviewLayer)) { map.removeControl(legend); }
+                if (map.hasLayer(diseaseExtentLayer)) { map.removeControl(legend); }
                 map.removeLayer(diseaseExtentLayer);
                 clusterLayer.addLayer(diseaseOccurrenceLayer).addTo(map);
             } else {
-                if (!map.hasLayer(adminUnitsNeedReviewLayer)) { legend.addTo(map); }
+                if (!map.hasLayer(diseaseExtentLayer)) { legend.addTo(map); }
                 diseaseExtentLayer.addTo(map);
                 map.removeLayer(clusterLayer);
             }
