@@ -103,6 +103,23 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     }
 
     @Test
+    public void passesStage2BySnappingAPointInALake() {
+        // Arrange
+        int indonesiaId = 184;
+        Location location = new Location("Central Sulawesi, Indonesia", 116.367, -0.270, LocationPrecision.PRECISE,
+                indonesiaId);
+
+        // Act
+        boolean hasPassedQc = qcManager.performQC(location);
+
+        // Assert
+        assertThat(hasPassedQc).isTrue();
+        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. " +
+                "QC stage 2 passed: location (116.367000,-0.270000) snapped to land (distance 2.209km). " +
+                "QC stage 3 passed: no country geometries associated with this location.");
+    }
+
+    @Test
     public void passesStage1AndStage2ButFailsStage3() {
         // Arrange
         int usId = 106;

@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
@@ -14,6 +15,7 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@Transactional(rollbackFor = Exception.class)
 public class ModelRunServiceImpl implements ModelRunService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private ModelRunDao modelRunDao;

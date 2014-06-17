@@ -10,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseOccurrenceValidationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
@@ -37,6 +38,7 @@ public class HealthMapDataConverterTest {
     private HealthMapDataConverter healthMapDataConverter;
     private QCManager qcManager;
     private PostQCManager postQcManager;
+    private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
     private Provenance healthMapProvenance;
 
@@ -49,8 +51,10 @@ public class HealthMapDataConverterTest {
         healthMapLookupData = mock(HealthMapLookupData.class);
         qcManager = mock(QCManager.class);
         postQcManager = mock(PostQCManager.class);
+        diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
         healthMapDataConverter = new HealthMapDataConverter(locationConverter, alertConverter,
-                alertService, diseaseService, healthMapLookupData, qcManager, postQcManager);
+                alertService, diseaseService, healthMapLookupData, qcManager, postQcManager,
+                diseaseOccurrenceValidationService);
 
         healthMapProvenance = new Provenance();
         when(healthMapLookupData.getHealthMapProvenance()).thenReturn(healthMapProvenance);
@@ -120,6 +124,7 @@ public class HealthMapDataConverterTest {
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence2));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence3));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence4));
+        verify(diseaseOccurrenceValidationService, times(4)).addValidationParameters(any(DiseaseOccurrence.class));
     }
 
     @Test

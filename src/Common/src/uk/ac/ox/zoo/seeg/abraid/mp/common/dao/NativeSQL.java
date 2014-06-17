@@ -41,4 +41,13 @@ public interface NativeSQL {
      * @param rasterColumnName The column name of the raster in the model_run table.
      */
     void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName);
+
+    /**
+     * Finds the suitability of the environment for the specified disease group to exist in the specified location.
+     * This is taken from the mean prediction raster of the latest model run for the disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param point The location.
+     * @return The environmental suitability, or null if not found.
+     */
+    Double findEnvironmentalSuitability(int diseaseGroupId, Point point);
 }

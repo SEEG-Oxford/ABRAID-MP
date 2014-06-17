@@ -54,9 +54,6 @@ public class HealthMapAlertConverter {
             occurrence.setAlert(alert);
             occurrence.setLocation(location);
 
-            // For now, hardcode all machine weightings to 0.7
-            occurrence.setMachineWeighting(0.7); ///CHECKSTYLE:SUPPRESS MagicNumberCheck
-
             if (diseaseService.doesDiseaseOccurrenceExist(occurrence)) {
                 // If this disease occurrence already exists, do not write it again
                 occurrence = null;
