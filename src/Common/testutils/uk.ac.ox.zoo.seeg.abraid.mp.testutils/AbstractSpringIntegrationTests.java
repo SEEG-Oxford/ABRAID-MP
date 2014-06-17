@@ -28,12 +28,13 @@ public abstract class AbstractSpringIntegrationTests {
     }
 
     /**
-     * Executes an HQL query.
+     * Executes a SQL select query and returns a single result.
+     *
      * @param query The query to execute.
-     * @return The number of entities updated or deleted.
+     * @return The query result.
      */
-    protected int executeQuery(String query) {
-        return getCurrentSession().createQuery(query).executeUpdate();
+    protected Object uniqueSQLResult(String query) {
+        return getCurrentSession().createSQLQuery(query).uniqueResult();
     }
 
     private Session getCurrentSession() {

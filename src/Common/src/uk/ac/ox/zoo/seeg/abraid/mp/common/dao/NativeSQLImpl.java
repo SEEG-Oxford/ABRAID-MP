@@ -29,8 +29,7 @@ public class NativeSQLImpl implements NativeSQL {
      */
     @Override
     public Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal, Character adminLevel) {
-        String tableName = isGlobal ? ADMIN_UNIT_GLOBAL_TABLE_NAME : ADMIN_UNIT_TROPICAL_TABLE_NAME;
-        String queryString = String.format(ADMIN_UNIT_CONTAINS_POINT_QUERY, tableName);
+        String queryString = String.format(ADMIN_UNIT_CONTAINS_POINT_QUERY, isGlobal ? GLOBAL : TROPICAL);
         if (adminLevel != null) {
             queryString += ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER;
         }
@@ -53,10 +52,7 @@ public class NativeSQLImpl implements NativeSQL {
     @Override
     public byte[] loadRasterForModelRun(int modelRunId, String rasterColumnName) {
         String query = String.format(LOAD_RASTER_QUERY, rasterColumnName);
-        return (byte[]) createSQLQuery(query)
-                .setParameter("gdalFormat", GDAL_RASTER_FORMAT)
-                .setParameter("id", modelRunId)
-                .uniqueResult();
+        return (byte[]) uniqueResult(query, "gdalFormat", GDAL_RASTER_FORMAT, "id", modelRunId);
     }
 
     /**
@@ -68,11 +64,20 @@ public class NativeSQLImpl implements NativeSQL {
     @Override
     public void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName) {
         String query = String.format(UPDATE_RASTER_QUERY, rasterColumnName);
-        createSQLQuery(query)
-                .setParameter("id", modelRunId)
-                .setParameter("gdalRaster", gdalRaster)
-                .setParameter("srid", GeometryUtils.SRID_FOR_WGS_84)
-                .executeUpdate();
+        executeUpdate(query, "id", modelRunId, "gdalRaster", gdalRaster, "srid", GeometryUtils.SRID_FOR_WGS_84);
+    }
+
+    /**
+     * Updates the disease_extent table for the specified disease. This is done by using the
+     * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
+     * table.
+     * @param diseaseGroupId The disease group ID.
+     */
+    @Override
+    public void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal) {
+        executeUpdate(DELETE_DISEASE_EXTENT_QUERY, "diseaseGroupId", diseaseGroupId);
+        String insertQuery = String.format(INSERT_DISEASE_EXTENT_QUERY, isGlobal ? GLOBAL : TROPICAL);
+        executeUpdate(insertQuery, "diseaseGroupId", diseaseGroupId);
     }
 
     /**
@@ -84,13 +89,26 @@ public class NativeSQLImpl implements NativeSQL {
      */
     @Override
     public Double findEnvironmentalSuitability(int diseaseGroupId, Point point) {
-        return (Double) createSQLQuery(ENV_SUITABILITY_QUERY)
-                .setParameter("diseaseGroupId", diseaseGroupId)
-                .setParameter("geom", point)
-                .uniqueResult();
+        return (Double) uniqueResult(ENV_SUITABILITY_QUERY, "diseaseGroupId", diseaseGroupId, "geom", point);
     }
 
-    private SQLQuery createSQLQuery(String query) {
-        return sessionFactory.getCurrentSession().createSQLQuery(query);
+    private SQLQuery createSQLQuery(String queryString) {
+        return sessionFactory.getCurrentSession().createSQLQuery(queryString);
+    }
+
+    private Object uniqueResult(String queryString, Object... parameterNamesAndValues) {
+        return getParameterisedSQLQuery(queryString, parameterNamesAndValues).uniqueResult();
+    }
+
+    private Object executeUpdate(String queryString, Object... parameterNamesAndValues) {
+        return getParameterisedSQLQuery(queryString, parameterNamesAndValues).executeUpdate();
+    }
+
+    public SQLQuery getParameterisedSQLQuery(String queryString, Object... parameterNamesAndValues) {
+        SQLQuery query = createSQLQuery(queryString);
+        for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
+            query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);
+        }
+        return query;
     }
 }

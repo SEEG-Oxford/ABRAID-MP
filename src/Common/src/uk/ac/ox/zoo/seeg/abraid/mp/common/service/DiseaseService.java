@@ -161,4 +161,10 @@ public interface DiseaseService {
      * @param adminUnitDiseaseExtentClass The object to save.
      */
     void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
+
+    /**
+     * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
+     * @param diseaseGroupId The disease group ID.
+     */
+    void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
 }

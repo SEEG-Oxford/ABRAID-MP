@@ -2,17 +2,20 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
+import java.math.BigInteger;
+import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
@@ -23,6 +26,14 @@ import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSp
  * Copyright (c) 2014 University of Oxford
  */
 public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
+    @Autowired
+    private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+    @Autowired
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+    @Autowired
+    private DiseaseExtentClassDao diseaseExtentClassDao;
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
     @Autowired
     private ModelRunDao modelRunDao;
     @Autowired
@@ -104,6 +115,72 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void updateAndReloadPredictionUncertaintyRasterForModelRun() throws Exception {
         updateAndReloadRasterForModelRun(NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
+    }
+
+    @Test
+    public void updateAggregatedDiseaseExtentForNewTropicalExtent() {
+        // Arrange - set the disease extent of admin units that have test geometries
+        int diseaseGroupId = 87;
+        List<AdminUnitDiseaseExtentClass> dengueDiseaseExtent =
+                adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 153, DiseaseExtentClass.ABSENCE);
+        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 179, DiseaseExtentClass.POSSIBLE_PRESENCE);
+        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 825, DiseaseExtentClass.PRESENCE);
+        flushAndClear();
+
+        // Arrange - find the number of polygons in the non-aggregated disease extent (i.e. that in
+        // admin_unit_disease_extent_class)
+        int expectedNumGeoms = getNumberOfPolygonsInAdminUnitDiseaseExtentClasses(diseaseGroupId, false);
+
+        // Act
+        nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, false);
+
+        // Assert - Check that number of polygons in the aggregated disease extent is as expected
+        int actualNumGeoms = getNumberOfPolygonsInDiseaseExtent(diseaseGroupId);
+        assertThat(actualNumGeoms).isEqualTo(expectedNumGeoms);
+    }
+
+    @Test
+    public void updateAggregatedDiseaseExtentForExistingGlobalExtent() {
+        // Arrange - insert and calculate an existing extent, for a global disease (cholera)
+        int diseaseGroupId = 64;
+        insertAdminUnitDiseaseExtentClass(153, 64, DiseaseExtentClass.ABSENCE);
+        insertAdminUnitDiseaseExtentClass(179, 64, DiseaseExtentClass.POSSIBLE_PRESENCE);
+        insertAdminUnitDiseaseExtentClass(826, 64, DiseaseExtentClass.PRESENCE);
+        flushAndClear();
+        nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, true);
+        int oldNumGeoms = getNumberOfPolygonsInAdminUnitDiseaseExtentClasses(diseaseGroupId, true);
+
+        // Arrange - update the extent and find new number of polygons
+        List<AdminUnitDiseaseExtentClass> dengueDiseaseExtent =
+                adminUnitDiseaseExtentClassDao.getAllGlobalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
+        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 179, DiseaseExtentClass.ABSENCE);
+        flushAndClear();
+        int expectedNewNumGeoms = getNumberOfPolygonsInAdminUnitDiseaseExtentClasses(diseaseGroupId, true);
+        assertThat(oldNumGeoms).isNotEqualTo(expectedNewNumGeoms);
+
+        // Act
+        nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, true);
+
+        // Assert - Check that number of polygons in the aggregated disease extent is as expected
+        int actualNewNumGeoms = getNumberOfPolygonsInDiseaseExtent(diseaseGroupId);
+        assertThat(actualNewNumGeoms).isEqualTo(expectedNewNumGeoms);
+    }
+
+    private int getNumberOfPolygonsInAdminUnitDiseaseExtentClasses(int diseaseGroupId, boolean isGlobal) {
+        String globalOrTropical = isGlobal ? "global" : "tropical";
+        String expectedNumGeomsQuery =
+                "SELECT SUM(ST_NumGeometries(geom)) FROM admin_unit_%1$s WHERE gaul_code in " +
+                        "(SELECT %1$s_gaul_code FROM admin_unit_disease_extent_class WHERE disease_group_id = " +
+                        diseaseGroupId + " AND disease_extent_class IN ('POSSIBLE_PRESENCE', 'PRESENCE'))";
+        String formattedQuery = String.format(expectedNumGeomsQuery, globalOrTropical);
+        return ((BigInteger) uniqueSQLResult(formattedQuery)).intValue();
+    }
+
+    private int getNumberOfPolygonsInDiseaseExtent(int diseaseGroupId) {
+        String actualNumGeomsQuery =
+                "SELECT ST_NumGeometries(geom) FROM disease_extent where disease_group_id = " + diseaseGroupId;
+        return (Integer) uniqueSQLResult(actualNumGeomsQuery);
     }
 
     @Test
@@ -220,5 +297,23 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         byte[] gdalRaster = FileUtils.readFileToByteArray(new File(filename));
         nativeSQL.updateRasterForModelRun(modelRun.getId(), gdalRaster, rasterColumnName);
         return gdalRaster;
+    }
+
+    private void insertAdminUnitDiseaseExtentClass(int globalGaulCode, int diseaseGroupId, String extentClassName) {
+        AdminUnitDiseaseExtentClass extentClass = new AdminUnitDiseaseExtentClass();
+        extentClass.setAdminUnitGlobal(adminUnitGlobalDao.getByGaulCode(globalGaulCode));
+        extentClass.setDiseaseGroup(diseaseGroupDao.getById(diseaseGroupId));
+        extentClass.setDiseaseExtentClass(diseaseExtentClassDao.getByName(extentClassName));
+        extentClass.setOccurrenceCount(0);
+        adminUnitDiseaseExtentClassDao.save(extentClass);
+    }
+
+    private void updateAdminUnitDiseaseExtentClass(List<AdminUnitDiseaseExtentClass> dengueDiseaseExtent,
+                                                   int gaulCode, String extentClassName) {
+        AdminUnitDiseaseExtentClass extentClass = selectUnique(dengueDiseaseExtent,
+                having(on(AdminUnitDiseaseExtentClass.class).getAdminUnitGlobalOrTropical().getGaulCode(),
+                        IsEqual.equalTo(gaulCode)));
+        extentClass.setDiseaseExtentClass(diseaseExtentClassDao.getByName(extentClassName));
+        adminUnitDiseaseExtentClassDao.save(extentClass);
     }
 }

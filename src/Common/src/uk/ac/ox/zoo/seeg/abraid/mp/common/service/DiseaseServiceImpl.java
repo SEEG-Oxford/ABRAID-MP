@@ -23,6 +23,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitGlobalDao adminUnitGlobalDao;
     private AdminUnitTropicalDao adminUnitTropicalDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
+    private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
@@ -32,7 +33,8 @@ public class DiseaseServiceImpl implements DiseaseService {
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
                               AdminUnitTropicalDao adminUnitTropicalDao,
-                              DiseaseExtentClassDao diseaseExtentClassDao) {
+                              DiseaseExtentClassDao diseaseExtentClassDao,
+                              NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
@@ -42,6 +44,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.adminUnitGlobalDao = adminUnitGlobalDao;
         this.adminUnitTropicalDao = adminUnitTropicalDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
+        this.nativeSQL = nativeSQL;
     }
 
     /**
@@ -293,6 +296,15 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
+    }
+
+    /**
+     * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
+     * @param diseaseGroupId The disease group ID.
+     */
+    @Override
+    public void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal) {
+        nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

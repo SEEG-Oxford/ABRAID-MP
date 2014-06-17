@@ -35,6 +35,14 @@ public interface NativeSQL {
     void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName);
 
     /**
+     * Updates the disease_extent table for the specified disease. This is done by using the
+     * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
+     * table.
+     * @param diseaseGroupId The disease group ID.
+     */
+    void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
+
+    /**
      * Finds the suitability of the environment for the specified disease group to exist in the specified location.
      * This is taken from the mean prediction raster of the latest model run for the disease group.
      * @param diseaseGroupId The ID of the disease group.
