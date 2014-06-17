@@ -21,11 +21,11 @@ public class NativeSQLImpl implements NativeSQL {
 
     // Queries to load and save a model run's output raster. Converts to and from a GDAL raster format.
     private static final String LOAD_RASTER_QUERY =
-            "SELECT ST_AsGDALRaster(%s, :gdalFormat) FROM model_run WHERE id = :id";
+            "SELECT ST_AsGDALRaster(%s, :gdalFormat, ARRAY['COMPRESS=DEFLATE', 'ZLEVEL=9']) FROM model_run WHERE id = :id";
     private static final String UPDATE_RASTER_QUERY =
             "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
-    // This is PostGIS's name for the ESRI ASCII Raster format
-    private static final String GDAL_RASTER_FORMAT = "AAIGrid";
+    // This is PostGIS's name for the GeoTiff Raster format
+    private static final String GDAL_RASTER_FORMAT = "GTiff";
 
     /** The column name of the mean prediction raster in the model_run table. */
     public static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";
