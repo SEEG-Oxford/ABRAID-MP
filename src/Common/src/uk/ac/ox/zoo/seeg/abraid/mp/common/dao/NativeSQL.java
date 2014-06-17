@@ -39,6 +39,7 @@ public interface NativeSQL {
      * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
      * table.
      * @param diseaseGroupId The disease group ID.
+     * @param isGlobal True if the disease is global, false if tropical.
      */
     void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
 

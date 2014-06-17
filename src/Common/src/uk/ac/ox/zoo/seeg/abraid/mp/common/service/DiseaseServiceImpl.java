@@ -301,6 +301,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     /**
      * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
      * @param diseaseGroupId The disease group ID.
+     * @param isGlobal True if the disease is global, false if tropical.
      */
     @Override
     public void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal) {

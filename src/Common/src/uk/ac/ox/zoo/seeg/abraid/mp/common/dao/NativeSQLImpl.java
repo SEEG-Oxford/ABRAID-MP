@@ -72,6 +72,7 @@ public class NativeSQLImpl implements NativeSQL {
      * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
      * table.
      * @param diseaseGroupId The disease group ID.
+     * @param isGlobal True if the disease is global, false if tropical.
      */
     @Override
     public void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal) {
@@ -104,7 +105,7 @@ public class NativeSQLImpl implements NativeSQL {
         return getParameterisedSQLQuery(queryString, parameterNamesAndValues).executeUpdate();
     }
 
-    public SQLQuery getParameterisedSQLQuery(String queryString, Object... parameterNamesAndValues) {
+    private SQLQuery getParameterisedSQLQuery(String queryString, Object... parameterNamesAndValues) {
         SQLQuery query = createSQLQuery(queryString);
         for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
             query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);
