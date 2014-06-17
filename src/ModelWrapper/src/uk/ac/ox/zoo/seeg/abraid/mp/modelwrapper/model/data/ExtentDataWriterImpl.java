@@ -36,7 +36,11 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             "Loading gaul code source raster: %s.";
     private static final Object LOG_TRANSFORMING_RASTER_DATA =
             "Transforming gaul code raster to weightings raster.";
-    private static final AbstractGridFormat format = new GeoTiffFormat();
+    private static final int RASTER_NO_DATA_VALUE = -9999;
+    private static final AbstractGridFormat GEOTIFF_FORMAT = new GeoTiffFormat();
+    private static final Hints GEOTIFF_HINTS = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+    private static final float GEOTIFF_COMPRESSION_LEVEL = 0.9F;
+    private static final String GEOTIFF_COMPRESSION_TYPE = "Deflate";
 
     /**
      * Write the extent data to a raster file ready to run the model.
@@ -61,7 +65,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
     private GridCoverage2D loadRaster(File location) throws IOException {
         LOGGER.info(String.format(LOG_LOADING_SOURCE_RASTER, location.toString()));
         try {
-            GridCoverage2DReader reader = new GeoTiffReader(location, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+            GridCoverage2DReader reader = new GeoTiffReader(location, GEOTIFF_HINTS);
             return reader.read(null);
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString());
@@ -79,8 +83,8 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
                 if (transform.containsKey(gaul)) {
                     data.setSample(i, j, 0, transform.get(gaul));
                 } else {
-                    if (gaul != -9999) {
-                        data.setSample(i, j, 0, -9999);
+                    if (gaul != RASTER_NO_DATA_VALUE) {
+                        data.setSample(i, j, 0, RASTER_NO_DATA_VALUE);
                     }
                 }
             }
@@ -94,7 +98,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             GridCoverageFactory factory = new GridCoverageFactory();
             GridCoverage2D targetRaster = factory.create(location.getName(), raster, extents, properties);
 
-            GridCoverageWriter writer = format.getWriter(location);
+            GridCoverageWriter writer = GEOTIFF_FORMAT.getWriter(location);
             writer.write(targetRaster, getGeoTiffWriteParameters());
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER, location.toString());
@@ -106,8 +110,8 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
     private GeneralParameterValue[] getGeoTiffWriteParameters() {
         GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
         writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-        writeParams.setCompressionType("Deflate");
-        writeParams.setCompressionQuality(0.75F);
+        writeParams.setCompressionType(GEOTIFF_COMPRESSION_TYPE);
+        writeParams.setCompressionQuality(GEOTIFF_COMPRESSION_LEVEL);
         ParameterValue parameterValue = AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.createValue();
         parameterValue.setValue(writeParams);
         return new GeneralParameterValue[] {
