@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 /**
@@ -26,6 +27,16 @@ public class NativeSQLImpl implements NativeSQL {
             "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
     // This is PostGIS's name for the GeoTiff Raster format
     private static final String GDAL_RASTER_FORMAT = "GTiff";
+
+    // Query to find the environmental suitability for a disease group to exist at a point. This is taken from the
+    // mean prediction raster of the latest successful model run for the disease group.
+    private static final String ENV_SUITABILITY_QUERY =
+            "SELECT DISTINCT ON (disease_group_id) ST_Value(mean_prediction_raster, :geom) " +
+            "FROM model_run " +
+            "WHERE disease_group_id = :diseaseGroupId " +
+            "AND status = '" + ModelRunStatus.COMPLETED + "' " +
+            "AND mean_prediction_raster IS NOT NULL " +
+            "ORDER BY disease_group_id, response_date DESC";
 
     /** The column name of the mean prediction raster in the model_run table. */
     public static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";
@@ -91,6 +102,21 @@ public class NativeSQLImpl implements NativeSQL {
                 .setParameter("gdalRaster", gdalRaster)
                 .setParameter("srid", GeometryUtils.SRID_FOR_WGS_84)
                 .executeUpdate();
+    }
+
+    /**
+     * Finds the suitability of the environment for the specified disease group to exist in the specified location.
+     * This is taken from the mean prediction raster of the latest model run for the disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param point The location.
+     * @return The environmental suitability, or null if not found.
+     */
+    @Override
+    public Double findEnvironmentalSuitability(int diseaseGroupId, Point point) {
+        return (Double) createSQLQuery(ENV_SUITABILITY_QUERY)
+                .setParameter("diseaseGroupId", diseaseGroupId)
+                .setParameter("geom", point)
+                .uniqueResult();
     }
 
     private Integer findAdminUnitThatContainsPoint(Point point, Character adminLevel, String tableName) {

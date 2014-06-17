@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDao;
@@ -14,6 +15,7 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@Transactional(rollbackFor = Exception.class)
 public class AlertServiceImpl implements AlertService {
     private AlertDao alertDao;
     private FeedDao feedDao;

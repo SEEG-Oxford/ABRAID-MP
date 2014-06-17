@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -9,11 +10,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
+import java.io.File;
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.offset;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
@@ -28,6 +32,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
     public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/ModelWrapper";
+    public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.asc";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -41,18 +46,23 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+    @Autowired
+    private ModelRunService modelRunService;
+
     @Test
-    public void mainMethodAcquiresDataFromWebService() {
+    public void mainMethodAcquiresDataFromWebService() throws Exception {
         // Arrange
         mockHealthMapRequest();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
+        createAndSaveTestModelRun(87);
 
         // Act
         runMain(new String[]{});
 
         // Assert
         assertThatDiseaseOccurrencesAreCorrect();
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect();
         assertThatRelevantDiseaseOccurrencesHaveFinalWeightings();
         assertThatModelWrapperWebServiceWasCalledCorrectly();
         assertThatRollbackDidNotOccur();
@@ -101,8 +111,22 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatDiseaseOccurrencesAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertFirstLocation(occurrences.get(0));
-        assertSecondLocation(occurrences.get(1));
+        assertFirstOccurrence(occurrences.get(0));
+        assertSecondOccurrence(occurrences.get(1));
+    }
+
+    private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
+        // Assert that we have created two disease occurrences and they are the correct ones
+        List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 0.7, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.49, 0.7, true);
+    }
+
+    private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
+            Double environmentalSuitability, Double machineWeighting, Boolean isValidated) {
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability, offset(0.0000001));
+        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting, offset(0.0000001));
+        assertThat(occurrence.isValidated()).isEqualTo(isValidated);
     }
 
     private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
@@ -154,7 +178,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 .thenReturn("{\"modelRunName\":\"testname\"}");
     }
 
-    private void assertFirstLocation(DiseaseOccurrence occurrence) {
+    private void assertFirstOccurrence(DiseaseOccurrence occurrence) {
         Location occurrence1Location = occurrence.getLocation();
         assertThat(occurrence1Location.getName()).isEqualTo("Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia");
         assertThat(occurrence1Location.getGeom().getX()).isEqualTo(101.7);
@@ -191,7 +215,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence.getCreatedDate()).isNotNull();
     }
 
-    private void assertSecondLocation(DiseaseOccurrence occurrence) {
+    private void assertSecondOccurrence(DiseaseOccurrence occurrence) {
         Location occurrence2Location = occurrence.getLocation();
         assertThat(occurrence2Location.getName()).isEqualTo("New Zealand");
         assertThat(occurrence2Location.getGeom().getX()).isEqualTo(172.65939);
@@ -331,6 +355,15 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 "\"fcode\": \"" + featureCode + "\",\n" +
                 "\"geonameId\": " + geoNameId.toString() + "\n" +
                 "}\n";
+    }
+
+    private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now());
+        modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRunService.saveModelRun(modelRun);
+
+        byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
+        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
     }
 
     /**
