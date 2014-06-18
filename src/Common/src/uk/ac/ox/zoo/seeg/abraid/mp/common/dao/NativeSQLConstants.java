@@ -12,7 +12,7 @@ public final class NativeSQLConstants {
     private NativeSQLConstants() {
     }
 
-    /** Query: finds the first admin unit that contains the specified point. We use ST_INTERSECTS rather than
+    /** Query: Finds the first admin unit that contains the specified point. We use ST_INTERSECTS rather than
         ST_CONTAINS because the former returns true if the point is on the geometry border. */
     public static final String ADMIN_UNIT_CONTAINS_POINT_QUERY =
             "SELECT MIN(gaul_code) FROM admin_unit_%s WHERE ST_Intersects(geom, :point)";
@@ -30,21 +30,22 @@ public final class NativeSQLConstants {
     public static final String DELETE_DISEASE_EXTENT_QUERY =
             "DELETE FROM disease_extent WHERE disease_group_id = :diseaseGroupId";
 
+    /** Clause for selecting relevant disease extent rows in the queries below. */
+    private static final String DISEASE_EXTENT_CLAUSE =
+            "FROM admin_unit_disease_extent_class c " +
+            "JOIN admin_unit_%1$s a ON c.%1$s_gaul_code = a.gaul_code " +
+            "WHERE c.disease_group_id = :diseaseGroupId " +
+            "AND c.disease_extent_class IN ('" + DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
+                                                 DiseaseExtentClass.PRESENCE + "')";
+
     /** Query: Inserts a disease extent by aggregating the geometries in admin_unit_global/tropical, based on
-        relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_DUMP (split
-        multipolygons into polygons) then ST_COLLECT (concatenate polygons into a multipolygon); this is much quicker
-        than ST_UNION which dissolves boundaries between polygons. */
+     relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_DUMP (split
+     multipolygons into polygons) then ST_COLLECT (concatenate polygons into a multipolygon); this is much quicker
+     than ST_UNION which dissolves boundaries between polygons. */
     public static final String INSERT_DISEASE_EXTENT_QUERY =
             "INSERT INTO disease_extent (disease_group_id, geom) " +
             "SELECT :diseaseGroupId, ST_COLLECT(x.geom) " +
-            "FROM " +
-            "    (SELECT (ST_DUMP(a.geom)).geom " +
-            "     FROM admin_unit_disease_extent_class c " +
-            "     JOIN admin_unit_%1$s a ON c.%1$s_gaul_code = a.gaul_code " +
-            "     WHERE disease_group_id = :diseaseGroupId " +
-            "     AND disease_extent_class IN ('" + DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
-                                                    DiseaseExtentClass.PRESENCE + "')" +
-            "    ) x";
+            "FROM (SELECT (ST_DUMP(a.geom)).geom " + DISEASE_EXTENT_CLAUSE + ") x";
 
     /** Query: Finds the environmental suitability for a disease group to exist at a point. This is taken from the
         mean prediction raster of the latest successful model run for the disease group. */
@@ -55,6 +56,27 @@ public final class NativeSQLConstants {
             "AND status = '" + ModelRunStatus.COMPLETED + "' " +
             "AND mean_prediction_raster IS NOT NULL " +
             "ORDER BY disease_group_id, response_date DESC";
+
+    /** Query: Calculates the distance between the specified point and the disease extent of the specified disease
+               group, as follows:
+               1. ST_ClosestPoint: Find the closest point on the disease extent to the specified point. If the point
+                  is within the disease extent, this returns the specified point itself (giving a distance of 0).
+               2. ST_Distance: Find the orthodromic (surface) distance between the closest point and the specified
+                  point. In theory this can operate without the use of ST_ClosestPoint, but it is much slower.
+               3. Return the value in kilometres by dividing by 1000. */
+    public static final String DISTANCE_OUTSIDE_DISEASE_EXTENT =
+            "SELECT ST_Distance(GEOGRAPHY(ST_ClosestPoint(geom, :geom)), GEOGRAPHY(:geom)) / 1000 " +
+            "FROM disease_extent " +
+            "WHERE disease_group_id = :diseaseGroupId";
+
+    /** Query: Finds the nominal distance to be used for a point that is within a disease extent, based on the
+               disease extent class of the containing geometry. */
+    public static final String DISTANCE_WITHIN_DISEASE_EXTENT =
+            "SELECT distance_if_within_extent " +
+            "FROM disease_extent_class " +
+            "WHERE name IN" +
+            "    (SELECT c.disease_extent_class " + DISEASE_EXTENT_CLAUSE +
+            "     AND ST_Intersects(a.geom, :geom))";
 
     /** Column name: model_run.mean_prediction_raster. */
     public static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";

@@ -51,4 +51,23 @@ public interface NativeSQL {
      * @return The environmental suitability, or null if not found.
      */
     Double findEnvironmentalSuitability(int diseaseGroupId, Point point);
+
+    /**
+     * Calculates the distance between the specified point and the boundaries of the disease extent of the specified
+     * disease group. If the specified point is within the disease extent, it returns zero.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param point The location.
+     * @return The distance outside the disease extent, or null if not found.
+     */
+    Double findDistanceOutsideDiseaseExtent(int diseaseGroupId, Point point);
+
+    /**
+     * Finds the nominal distance to be used for a point that is within a disease extent, based on the disease
+     * extent class of the containing geometry.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param isGlobal True if the disease is global, false if tropical.
+     * @param point The location.
+     * @return The nominal distance within the disease extent, or null if the point is not within the disease extent.
+     */
+    Double findDistanceWithinDiseaseExtent(int diseaseGroupId, boolean isGlobal, Point point);
 }

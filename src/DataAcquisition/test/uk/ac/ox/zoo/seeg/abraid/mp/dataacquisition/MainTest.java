@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
 import java.io.File;
@@ -52,10 +55,12 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     @Test
     public void mainMethodAcquiresDataFromWebService() throws Exception {
         // Arrange
+        int diseaseGroupId = 87;
         mockHealthMapRequest();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
-        createAndSaveTestModelRun(87);
+        createAndSaveTestModelRun(diseaseGroupId);
+        insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
 
         // Act
         runMain(new String[]{});
@@ -118,14 +123,16 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 0.7, true);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.49, 0.7, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 9936.810453, 0.7, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.49, 15749.275209, 0.7, true);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
-            Double environmentalSuitability, Double machineWeighting, Boolean isValidated) {
-        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability, offset(0.0000001));
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting, offset(0.0000001));
+            double environmentalSuitability, double distanceFromDiseaseExtent, double machineWeighting,
+            boolean isValidated) {
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability, offset(5e-7));
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent, offset(5e-7));
+        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting, offset(5e-7));
         assertThat(occurrence.isValidated()).isEqualTo(isValidated);
     }
 
@@ -364,6 +371,15 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
         byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
         modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
+    }
+
+    private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {
+        executeSQLUpdate("INSERT INTO disease_extent VALUES(:diseaseGroupId, :geom)", "diseaseGroupId", diseaseGroupId,
+                "geom", geom);
+    }
+
+    private Polygon getFivePointedPolygon() {
+        return GeometryUtils.createPolygon(3, 4, 5, 11, 12, 8, 9, 5, 5, 6, 3, 4);
     }
 
     /**

@@ -113,7 +113,8 @@ CREATE TABLE disease_extent (
 
 CREATE TABLE disease_extent_class (
     name varchar(20) NOT NULL,
-    weighting integer NOT NULL
+    weighting integer NOT NULL,
+    distance_if_within_extent double precision
 );
 
 CREATE TABLE disease_group (
