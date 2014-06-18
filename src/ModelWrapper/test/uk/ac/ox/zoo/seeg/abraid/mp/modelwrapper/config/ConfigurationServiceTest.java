@@ -364,7 +364,7 @@ public class ConfigurationServiceTest {
         String result = target.getGlobalRasterFile();
 
         // Assert
-        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin_global.asc").toString();
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin_global.tif").toString();
         assertThat(result).isEqualTo(expectedPath);
     }
 
@@ -395,7 +395,7 @@ public class ConfigurationServiceTest {
         String result = target.getTropicalRasterFile();
 
         // Assert
-        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin_tropical.asc").toString();
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin_tropical.tif").toString();
         assertThat(result).isEqualTo(expectedPath);
     }
 
@@ -426,7 +426,7 @@ public class ConfigurationServiceTest {
         String result = target.getAdmin1RasterFile();
 
         // Assert
-        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin1qc.asc").toString();
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin1qc.tif").toString();
         assertThat(result).isEqualTo(expectedPath);
     }
 
@@ -457,7 +457,7 @@ public class ConfigurationServiceTest {
         String result = target.getAdmin2RasterFile();
 
         // Assert
-        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin2qc.asc").toString();
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin2qc.tif").toString();
         assertThat(result).isEqualTo(expectedPath);
     }
 

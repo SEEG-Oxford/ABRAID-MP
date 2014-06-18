@@ -64,10 +64,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\x64\\R.exe";
     private static final String DEFAULT_RASTER_SUBDIR = "rasters";
-    private static final String DEFAULT_ADMIN1_RASTER_NAME = "admin1qc.asc";
-    private static final String DEFAULT_ADMIN2_RASTER_NAME = "admin2qc.asc";
-    private static final String DEFAULT_TROPICAL_RASTER_NAME = "admin_tropical.asc";
-    private static final String DEFAULT_GLOBAL_RASTER_NAME = "admin_global.asc";
+    private static final String DEFAULT_ADMIN1_RASTER_NAME = "admin1qc.tif";
+    private static final String DEFAULT_ADMIN2_RASTER_NAME = "admin2qc.tif";
+    private static final String DEFAULT_TROPICAL_RASTER_NAME = "admin_tropical.tif";
+    private static final String DEFAULT_GLOBAL_RASTER_NAME = "admin_global.tif";
     private static final int DEFAULT_MAX_CPU = 64;
     private static final boolean DEFAULT_DRY_RUN_FLAG = false;
     private static final boolean DEFAULT_MODEL_VERBOSE_FLAG = false;

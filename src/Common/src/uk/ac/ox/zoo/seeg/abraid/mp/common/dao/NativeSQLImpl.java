@@ -20,13 +20,15 @@ public class NativeSQLImpl implements NativeSQL {
     private static final String ADMIN_UNIT_GLOBAL_TABLE_NAME = "admin_unit_global";
     private static final String ADMIN_UNIT_TROPICAL_TABLE_NAME = "admin_unit_tropical";
 
+    // This is PostGIS's name for the GeoTiff Raster format
+    private static final String GDAL_RASTER_FORMAT = "GTiff";
+    private static final String GDAL_OPTIONS = "'COMPRESS=DEFLATE', 'ZLEVEL=9'";
+
     // Queries to load and save a model run's output raster. Converts to and from a GDAL raster format.
     private static final String LOAD_RASTER_QUERY =
-            "SELECT ST_AsGDALRaster(%s, :gdalFormat) FROM model_run WHERE id = :id";
+            "SELECT ST_AsGDALRaster(%s, :gdalFormat, ARRAY[" + GDAL_OPTIONS + "]) FROM model_run WHERE id = :id";
     private static final String UPDATE_RASTER_QUERY =
             "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
-    // This is PostGIS's name for the ESRI ASCII Raster format
-    private static final String GDAL_RASTER_FORMAT = "AAIGrid";
 
     // Query to find the environmental suitability for a disease group to exist at a point. This is taken from the
     // mean prediction raster of the latest successful model run for the disease group.

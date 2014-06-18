@@ -172,6 +172,7 @@ public class ModelProcessHandler implements ProcessHandler {
         for (String outputFilename : outputFilenames) {
             filesToAdd.add(getFileInWorkingDirectory(outputFilename));
         }
+
         zipFile.createZipFile(filesToAdd, zipParameters);
 
         return file;

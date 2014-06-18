@@ -35,7 +35,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @WebAppConfiguration("file:ModelOutputHandler/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ValidationParametersHandlerIntegrationTest extends AbstractSpringIntegrationTests {
-    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.asc";
+    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
 
     @Autowired
     private ModelRunService modelRunService;
