@@ -68,15 +68,19 @@ public class ModelProcessHandlerTest {
         File meanPredictionRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         File predictionUncertaintyRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
         File metadataJsonTestFile = new File(TEST_DATA_FOLDER + "/completed", ModelOutputConstants.METADATA_JSON_FILENAME);
+        File validationStatsTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS);
+        File relativeInfluenceTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE);
 
         ZipFileMatcher zipFileMatcher = new ZipFileMatcher(Arrays.asList(meanPredictionRasterTestFile,
-                predictionUncertaintyRasterTestFile, metadataJsonTestFile));
+                predictionUncertaintyRasterTestFile, metadataJsonTestFile, validationStatsTestFile, relativeInfluenceTestFile));
 
         // Arrange - copy outputs to test folder
         File resultsDir = new File(workingDirectory, "results");
         resultsDir.mkdir();
         FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, resultsDir);
         FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, resultsDir);
+        FileUtils.copyFileToDirectory(validationStatsTestFile, resultsDir);
+        FileUtils.copyFileToDirectory(relativeInfluenceTestFile, resultsDir);
 
         // Act
         target.onProcessComplete();
@@ -159,11 +163,15 @@ public class ModelProcessHandlerTest {
         // Arrange - copy test files to working directory
         File meanPredictionRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         File predictionUncertaintyRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+        File validationStatsTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS);
+        File relativeInfluenceTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE);
         File resultsDir = new File(workingDirectory, "results");
 
         resultsDir.mkdir();
         FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, resultsDir);
         FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, resultsDir);
+        FileUtils.copyFileToDirectory(validationStatsTestFile, resultsDir);
+        FileUtils.copyFileToDirectory(relativeInfluenceTestFile, resultsDir);
 
         // Act
         target.onProcessComplete();

@@ -56,7 +56,9 @@ public class ModelProcessHandler implements ProcessHandler {
         handleOutputs(ModelRunStatus.COMPLETED, null,
                 ModelOutputConstants.METADATA_JSON_FILENAME,
                 ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME,
-                ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+                ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME,
+                ModelOutputConstants.RELATIVE_INFLUENCE,
+                ModelOutputConstants.VALIDATION_STATISTICS);
     }
 
     /**
