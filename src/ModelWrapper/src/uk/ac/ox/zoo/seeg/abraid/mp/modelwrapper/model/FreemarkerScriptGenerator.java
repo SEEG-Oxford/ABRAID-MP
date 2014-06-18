@@ -92,7 +92,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("verbose", runConfiguration.getExecutionConfig().getVerboseFlag());
         data.put("model_version", runConfiguration.getCodeConfig().getModelVersion());
         data.put("occurrence_file", "data/occurrences.csv");
-        data.put("extent_file", "data/extent.asc");
+        data.put("extent_file", "data/extent.tif");
         data.put("admin1_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()));
         data.put("admin2_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
 

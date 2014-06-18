@@ -7,7 +7,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -21,7 +20,6 @@ import java.util.List;
 import static ch.lambdaj.Lambda.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.offset;
-import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 
 /**
  * Tests the NativeSQL class.
@@ -43,8 +41,8 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     private NativeSQLImpl nativeSQL;
 
     // Parameters taken from the test raster files
-    private static final String SMALL_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_small_int.asc";
-    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.asc";
+    private static final String SMALL_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_small_int.tif";
+    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
     private static final double LARGE_RASTER_COLUMNS = 720;
     private static final double LARGE_RASTER_ROWS = 240;
     private static final double LARGE_RASTER_XLLCORNER = -180;
@@ -369,7 +367,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert - load mean prediction raster from model run and compare for equality (ignoring whitespace)
         byte[] expectedGDALRaster = nativeSQL.loadRasterForModelRun(modelRun.getId(), rasterColumnName);
-        Assert.assertThat(new String(actualGDALRaster), equalToIgnoringWhiteSpace(new String(expectedGDALRaster)));
+        assertThat(new String(actualGDALRaster)).isEqualTo(new String(expectedGDALRaster));
     }
 
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {

@@ -89,8 +89,9 @@ result <- tryCatch({
                 install.packages('raster', quiet=TRUE)
                 library('raster', quietly=TRUE)
             }
-            writeRaster(setExtent(raster(replicate(20, runif(17))), extent(34.54167, 35.375, 29.08333, 29.79167)), filename="mean_prediction.asc", format="ascii")
-            writeRaster(setExtent(raster(replicate(20, runif(17))), extent(34.54167, 35.375, 29.08333, 29.79167)), filename="prediction_uncertainty.asc", format="ascii")
+            dir.create('results')
+            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/mean_prediction.tif", format="GTiff", options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
+            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/prediction_uncertainty.tif", format="GTiff", options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
         }
         innerResult <- 0
     }

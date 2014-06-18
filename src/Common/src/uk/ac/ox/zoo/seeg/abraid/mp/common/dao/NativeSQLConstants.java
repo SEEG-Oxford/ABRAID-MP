@@ -19,9 +19,11 @@ public final class NativeSQLConstants {
     /** Filter for above query. */
     public static final String ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER = " AND level = :adminLevel";
 
+    private static final String GDAL_OPTIONS = "'COMPRESS=DEFLATE', 'ZLEVEL=9'";
+
     /** Query: Loads a model run's output raster. Converts to the specified GDAL raster format. */
     public static final String LOAD_RASTER_QUERY =
-            "SELECT ST_AsGDALRaster(%s, :gdalFormat) FROM model_run WHERE id = :id";
+            "SELECT ST_AsGDALRaster(%s, :gdalFormat, ARRAY[" + GDAL_OPTIONS + "]) FROM model_run WHERE id = :id";
     /** Query: Saves a model run's output raster. Converts from any supported GDAL raster format. */
     public static final String UPDATE_RASTER_QUERY =
             "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
@@ -87,6 +89,6 @@ public final class NativeSQLConstants {
     public static final String GLOBAL = "global";
     /** Other: Tropical. */
     public static final String TROPICAL = "tropical";
-    /** Other: PostGIS's name for the ESRI ASCII Raster format. */
-    public static final String GDAL_RASTER_FORMAT = "AAIGrid";
+    /** Other: PostGIS's name for the GeoTiff raster format. */
+    public static final String GDAL_RASTER_FORMAT = "GTiff";
 }

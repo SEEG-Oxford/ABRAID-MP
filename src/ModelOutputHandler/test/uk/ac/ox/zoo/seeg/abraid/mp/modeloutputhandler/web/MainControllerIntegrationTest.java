@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -100,9 +98,9 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isEqualTo(expectedOutputText);
         assertThat(run.getErrorText()).isNullOrEmpty();
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc",
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.tif",
                 NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc",
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
@@ -150,9 +148,9 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isNullOrEmpty();
         assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.asc",
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.tif",
                 NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.asc",
+        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
@@ -204,7 +202,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File mean_prediction.asc missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File results/mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     @Test
@@ -217,7 +215,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File prediction_uncertainty.asc missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File results/prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     private void insertModelRun(String name) {
@@ -232,6 +230,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     private void assertThatRasterInDatabaseMatchesRasterInFile(ModelRun run, String fileName, String rasterColumnName) throws IOException {
         byte[] expectedRaster = loadTestFile(fileName);
         byte[] actualRaster = nativeSQL.loadRasterForModelRun(run.getId(), rasterColumnName);
-        Assert.assertThat(new String(actualRaster), equalToIgnoringWhiteSpace(new String(expectedRaster)));
+
+        assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
     }
 }

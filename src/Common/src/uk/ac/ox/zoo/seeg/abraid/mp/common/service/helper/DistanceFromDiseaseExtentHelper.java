@@ -34,8 +34,8 @@ public class DistanceFromDiseaseExtentHelper {
             distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, locationPoint);
 
             if (distance != null && distance == 0) {
-                // If the distance is 0, the location is within the disease extent and we need to find the closest point on
-                // the geometry via a different method
+                // If the distance is 0, the location is within the disease extent and we need to find the closest point
+                // on the geometry via a different method
                 distance = nativeSQL.findDistanceWithinDiseaseExtent(diseaseGroupId, isGlobal, locationPoint);
             }
         }
