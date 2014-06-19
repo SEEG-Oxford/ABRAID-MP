@@ -26,8 +26,8 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.isValidated = false " +
-                        "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
-                        "expert.id=:expertId)"
+                        "and d.id not in " +
+                        "(select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForDiseaseExtent",
@@ -36,6 +36,11 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForDiseaseExtentByFeedIds",
                 query = DiseaseOccurrence.DISEASE_EXTENT_QUERY + " and d.alert.feed.id in :feedIds"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesInValidation",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = false"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",

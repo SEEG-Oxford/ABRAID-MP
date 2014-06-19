@@ -69,6 +69,13 @@ public interface DiseaseOccurrenceDao {
             List<Integer> feedIds, boolean isGlobal);
 
     /**
+     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of disease occurrences currently being validated by experts.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesInValidation(Integer diseaseGroupId);
+
+    /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
      * @return Disease occurrences for a request to run the model.
