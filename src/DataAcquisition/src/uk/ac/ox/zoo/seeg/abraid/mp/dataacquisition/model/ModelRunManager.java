@@ -60,28 +60,28 @@ public class ModelRunManager {
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> diseaseOccurrences =
-                    prepareForModelRun(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
-            modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
+            List<DiseaseOccurrence> occurrencesForModelRunRequest =
+                    updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
+            generateDiseaseExtent(diseaseGroupId);
+            modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRunRequest);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(NOT_STARTING_MODEL_PREP);
         }
     }
 
-    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate,
+    private List<DiseaseOccurrence> updateWeightingsAndIsValidated(DateTime lastModelRunPrepDate,
                                                                    DateTime modelRunPrepDate, int diseaseGroupId) {
-        // Task 1
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
+        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+    }
+
+    private void generateDiseaseExtent(int diseaseGroupId) {
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        // Task 2
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
                 new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
         ///CHECKSTYLE:ON
-        // Task 3
-        helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
-        // Task 4
-        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
     /**
