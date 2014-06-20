@@ -31,7 +31,7 @@ public class ModelRunManagerHelper {
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
         for (DiseaseOccurrence occurrence : occurrences) {
             boolean validated = occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate);
-            if (occurrence.isValidated() != validated) {
+            if (occurrence.isValidated() != null && occurrence.isValidated() != validated) {
                 occurrence.setValidated(validated);
                 diseaseService.saveDiseaseOccurrence(occurrence);
             }
@@ -50,6 +50,6 @@ public class ModelRunManagerHelper {
         LocalDate createdDate = occ.getCreatedDate().toLocalDate();
         LocalDate comparisonDate = createdDate.plusWeeks(1);
         LocalDate modelRunPrepDate = modelRunPrepDateTime.toLocalDate();
-        return (comparisonDate.isEqual(modelRunPrepDate) || comparisonDate.isBefore(modelRunPrepDate));
+        return !comparisonDate.isAfter(modelRunPrepDate);
     }
 }
