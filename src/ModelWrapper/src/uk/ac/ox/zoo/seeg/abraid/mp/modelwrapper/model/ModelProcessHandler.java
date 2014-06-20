@@ -43,8 +43,8 @@ public class ModelProcessHandler implements ProcessHandler {
 
     public ModelProcessHandler(RunConfiguration runConfiguration,
                                ModelOutputHandlerWebService modelOutputHandlerWebService) {
-        this.modelOutputHandlerWebService = modelOutputHandlerWebService;
         this.runConfiguration = runConfiguration;
+        this.modelOutputHandlerWebService = modelOutputHandlerWebService;
     }
 
     /**
@@ -57,8 +57,8 @@ public class ModelProcessHandler implements ProcessHandler {
                 ModelOutputConstants.METADATA_JSON_FILENAME,
                 ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME,
                 ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME,
-                ModelOutputConstants.RELATIVE_INFLUENCE,
-                ModelOutputConstants.VALIDATION_STATISTICS);
+                ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME,
+                ModelOutputConstants.VALIDATION_STATISTICS_FILENAME);
     }
 
     /**
@@ -148,11 +148,13 @@ public class ModelProcessHandler implements ProcessHandler {
         }
 
         // Create metadata and serialize as JSON
-        JsonModelOutputsMetadata metadata = new JsonModelOutputsMetadata();
-        metadata.setModelRunName(runConfiguration.getRunName());
-        metadata.setModelRunStatus(status);
-        metadata.setOutputText(getOutputStream().toString());
-        metadata.setErrorText(errorText);
+        JsonModelOutputsMetadata metadata = new JsonModelOutputsMetadata(
+                runConfiguration.getRunName(),
+                status,
+                getOutputStream().toString(),
+                errorText
+        );
+
         String metadataJson = new ObjectMapper().writeValueAsString(metadata);
 
         // Write metadata to a file

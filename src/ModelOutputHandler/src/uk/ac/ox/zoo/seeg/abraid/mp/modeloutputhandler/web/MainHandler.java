@@ -30,6 +30,10 @@ public class MainHandler {
             "Saving mean prediction raster (%s bytes) for model run \"%s\"";
     private static final String LOG_PREDICTION_UNCERTAINTY_RASTER =
             "Saving prediction uncertainty raster (%s bytes) for model run \"%s\"";
+    private static final String LOG_VALIDATION_STATISTICS_FILE =
+            "Saving validation statistics file (%s bytes) for model run \"%s\"";
+    private static final String LOG_RELATIVE_INFLUENCE_FILE =
+            "Saving relative influence file (%s bytes) for model run \"%s\"";
 
     private ModelRunService modelRunService;
 
@@ -65,6 +69,16 @@ public class MainHandler {
                 extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
 
+        // Handle validation statistics file
+        byte[] validationStatisticsFile =
+                extract(zipFile, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME, areOutputsMandatory);
+        handleValidationStatisticsFile(modelRun, validationStatisticsFile);
+
+        // Handle relative influence file
+        byte[] relativeInfluenceFile =
+                extract(zipFile, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME, areOutputsMandatory);
+        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
+
         return modelRun;
     }
 
@@ -81,6 +95,20 @@ public class MainHandler {
         modelRunService.saveModelRun(modelRun);
 
         return modelRun;
+    }
+
+    private void handleValidationStatisticsFile(ModelRun modelRun, byte[] file) {
+        if (file != null) {
+            LOGGER.info(String.format(LOG_VALIDATION_STATISTICS_FILE, file.length, modelRun.getName()));
+            //modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+        }
+    }
+
+    private void handleRelativeInfluenceFile(ModelRun modelRun, byte[] file) {
+        if (file != null) {
+            LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
+            //modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+        }
     }
 
     private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {

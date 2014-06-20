@@ -68,8 +68,8 @@ public class ModelProcessHandlerTest {
         File meanPredictionRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         File predictionUncertaintyRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
         File metadataJsonTestFile = new File(TEST_DATA_FOLDER + "/completed", ModelOutputConstants.METADATA_JSON_FILENAME);
-        File validationStatsTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS);
-        File relativeInfluenceTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE);
+        File validationStatsTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME);
+        File relativeInfluenceTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME);
 
         ZipFileMatcher zipFileMatcher = new ZipFileMatcher(Arrays.asList(meanPredictionRasterTestFile,
                 predictionUncertaintyRasterTestFile, metadataJsonTestFile, validationStatsTestFile, relativeInfluenceTestFile));
@@ -163,8 +163,8 @@ public class ModelProcessHandlerTest {
         // Arrange - copy test files to working directory
         File meanPredictionRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         File predictionUncertaintyRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
-        File validationStatsTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS);
-        File relativeInfluenceTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE);
+        File validationStatsTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME);
+        File relativeInfluenceTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME);
         File resultsDir = new File(workingDirectory, "results");
 
         resultsDir.mkdir();
