@@ -296,7 +296,9 @@ public class DiseaseExtentGeneratorHelperTest {
     }
 
     private AdminUnitReview createReview(DiseaseExtentClass extentClass, double expertWeighting) {
-        return new AdminUnitReview(new Expert(expertWeighting), 0, null, new DiseaseGroup(), extentClass);
+        Expert expert = new Expert();
+        expert.setWeighting(expertWeighting);
+        return new AdminUnitReview(expert, 0, null, new DiseaseGroup(), extentClass);
     }
 
     private <T> List<T> createList(T... items) {

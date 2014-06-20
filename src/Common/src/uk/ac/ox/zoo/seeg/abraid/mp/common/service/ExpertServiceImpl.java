@@ -40,6 +40,16 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets an expert by ID.
+     * @param expertId The ID of the expert.
+     * @return The expert, or null if not found.
+     */
+    @Override
+    public Expert getExpertById(int expertId) {
+        return expertDao.getById(expertId);
+    }
+
+    /**
      * Gets an expert by email address.
      * @param email The email address.
      * @return The expert, or null if not found.

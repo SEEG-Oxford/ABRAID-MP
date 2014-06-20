@@ -118,6 +118,20 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getExpertById() {
+        // Arrange
+        int id = 1;
+        Expert expert = new Expert(id);
+        when(expertDao.getById(id)).thenReturn(expert);
+
+        // Act
+        Expert testExpert = expertService.getExpertById(id);
+
+        // Assert
+        assertThat(testExpert).isSameAs(expert);
+    }
+
+    @Test
     public void getExpertByEmail() {
         // Arrange
         String email = "test@test.com";

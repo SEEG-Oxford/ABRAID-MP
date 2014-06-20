@@ -197,10 +197,10 @@ public class WeightingsCalculator {
      * For each expert, calculate their new weighting as the absolute difference between their response and the average
      * response from all other experts, averaged over all the occurrences that they have reviewed.
      * Record the values in a map, to be saved after updating the occurrences' weightings.
-     * @return The map from expert to new weighting value.
+     * @return A map from expert ID to new weighting value.
      */
-    public Map<Expert, Double> calculateNewExpertsWeightings() {
-        Map<Expert, Double> newExpertsWeightings = new HashMap<>();
+    public Map<Integer, Double> calculateNewExpertsWeightings() {
+        Map<Integer, Double> newExpertsWeightings = new HashMap<>();
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
         if (allReviews.size() == 0) {
             logger.info(NO_NEW_REVIEWS + NOT_UPDATING_WEIGHTINGS_OF_EXPERTS);
@@ -213,7 +213,7 @@ public class WeightingsCalculator {
                 }
                 double newWeighting = 1 - average(differencesInResponses);
                 if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
-                    newExpertsWeightings.put(expert, newWeighting);
+                    newExpertsWeightings.put(expert.getId(), newWeighting);
                 }
             }
         }
@@ -256,11 +256,12 @@ public class WeightingsCalculator {
      * Saves each expert with a new weighting value.
      * @param newExpertsWeightings The map from expert to new weighting value.
      */
-    public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
+    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         if (newExpertsWeightings.size() > 0) {
             logger.info(String.format(SAVING_WEIGHTINGS_OF_EXPERTS, newExpertsWeightings.size()));
-            for (Map.Entry<Expert, Double> entry : newExpertsWeightings.entrySet()) {
-                Expert expert = entry.getKey();
+            for (Map.Entry<Integer, Double> entry : newExpertsWeightings.entrySet()) {
+                // We need to reload each expert because you cannot reuse Hibernate objects across transactions
+                Expert expert = expertService.getExpertById(entry.getKey());
                 expert.setWeighting(entry.getValue());
                 expertService.saveExpert(expert);
             }

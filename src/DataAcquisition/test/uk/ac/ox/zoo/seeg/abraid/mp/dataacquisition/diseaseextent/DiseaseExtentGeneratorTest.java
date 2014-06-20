@@ -12,12 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
 import java.util.*;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,8 +22,8 @@ import static org.mockito.Mockito.*;
  */
 public class DiseaseExtentGeneratorTest {
     private DiseaseExtentGenerator diseaseExtentGenerator;
-    private DiseaseService diseaseService = mock(DiseaseService.class);
-    private ExpertService expertService = mock(ExpertService.class);
+    private DiseaseService diseaseService;
+    private ExpertService expertService;
 
     private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE, 100);
     private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE, 50);
@@ -38,10 +33,14 @@ public class DiseaseExtentGeneratorTest {
 
     private int diseaseGroupId = 87;
     private DiseaseGroup diseaseGroup;
-    private List<? extends AdminUnitGlobalOrTropical> adminUnits = getAdminUnits();
+    private List<? extends AdminUnitGlobalOrTropical> adminUnits;
 
     @Before
     public void setUp() {
+        diseaseService = mock(DiseaseService.class);
+        expertService = mock(ExpertService.class);
+        adminUnits = getAdminUnits();
+
         diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService);
         mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
@@ -277,11 +276,11 @@ public class DiseaseExtentGeneratorTest {
         // GAUL code 200: Reviews average exactly -4 -> possible presence (i.e. score is 1 when combined with the occurrences)
         // GAUL code 250: Reviews average just over 1 when combined with the occurrences -> presence
         // GAUL code 300: Reviews average just under 1 when combined with the occurrences -> possible presence
-        Expert expert1 = new Expert(0);
-        Expert expert2 = new Expert(0.25);
-        Expert expert3 = new Expert(0.5);
-        Expert expert4 = new Expert(0.75);
-        Expert expert5 = new Expert(1);
+        Expert expert1 = createExpert(0);
+        Expert expert2 = createExpert(0.25);
+        Expert expert3 = createExpert(0.5);
+        Expert expert4 = createExpert(0.75);
+        Expert expert5 = createExpert(1);
         Expert expert6 = new Expert();
 
         return randomise(createList(
@@ -428,5 +427,11 @@ public class DiseaseExtentGeneratorTest {
         List<T> list = new ArrayList<T>();
         Collections.addAll(list, items);
         return list;
+    }
+
+    private Expert createExpert(double weighting) {
+        Expert expert = new Expert();
+        expert.setWeighting(weighting);
+        return expert;
     }
 }

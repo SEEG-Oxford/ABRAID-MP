@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentParameters;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
@@ -71,7 +70,7 @@ public class ModelRunManager {
     }
 
     private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate,
-                                                       DateTime modelRunPrepDate, int diseaseGroupId) {
+                                                                   DateTime modelRunPrepDate, int diseaseGroupId) {
         // Task 1
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
@@ -87,10 +86,10 @@ public class ModelRunManager {
 
     /**
      * Gets the new weighting for each active expert.
-     * @return The map from expert to the new weighting value.
+     * @return A map from expert ID to the new weighting value.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Map<Expert, Double> prepareExpertsWeightings() {
+    public Map<Integer, Double> prepareExpertsWeightings() {
         return weightingsCalculator.calculateNewExpertsWeightings();
     }
 
@@ -99,7 +98,7 @@ public class ModelRunManager {
      * @param newExpertsWeightings The map from expert to the new weighting value.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
+    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
 }
