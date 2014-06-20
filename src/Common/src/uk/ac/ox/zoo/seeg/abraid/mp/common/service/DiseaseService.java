@@ -120,7 +120,7 @@ public interface DiseaseService {
      * @return A list of the reviews of disease occurrences whose weightings needs updating.
      */
     List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                                Integer diseaseGroupId);
+                                                                             Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
@@ -161,4 +161,11 @@ public interface DiseaseService {
      * @param adminUnitDiseaseExtentClass The object to save.
      */
     void saveAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
+
+    /**
+     * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
+     * @param diseaseGroupId The disease group ID.
+     * @param isGlobal True if the disease is global, false if tropical.
+     */
+    void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
 }

@@ -56,7 +56,7 @@ public class AdminUnitDiseaseExtentClass {
 
     // The number of disease occurrences giving rise to this extent class.
     @Column(name = "occurrence_count")
-    private Integer occurrenceCount;
+    private int occurrenceCount;
 
     // Whether the disease extent class has changed since it was last generated.
     @Column(name = "has_class_changed")
@@ -197,16 +197,16 @@ public class AdminUnitDiseaseExtentClass {
         AdminUnitDiseaseExtentClass that = (AdminUnitDiseaseExtentClass) o;
 
         if (hasClassChanged != that.hasClassChanged) return false;
+        if (occurrenceCount != that.occurrenceCount) return false;
         if (adminUnitGlobal != null ? !adminUnitGlobal.equals(that.adminUnitGlobal) : that.adminUnitGlobal != null)
             return false;
         if (adminUnitTropical != null ? !adminUnitTropical.equals(that.adminUnitTropical) : that.adminUnitTropical != null)
             return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
-        if (diseaseExtentClass != that.diseaseExtentClass) return false;
+        if (diseaseExtentClass != null ? !diseaseExtentClass.equals(that.diseaseExtentClass) : that.diseaseExtentClass != null)
+            return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (occurrenceCount != null ? !occurrenceCount.equals(that.occurrenceCount) : that.occurrenceCount != null)
-            return false;
 
         return true;
     }
@@ -218,7 +218,7 @@ public class AdminUnitDiseaseExtentClass {
         result = 31 * result + (adminUnitTropical != null ? adminUnitTropical.hashCode() : 0);
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (diseaseExtentClass != null ? diseaseExtentClass.hashCode() : 0);
-        result = 31 * result + (occurrenceCount != null ? occurrenceCount.hashCode() : 0);
+        result = 31 * result + occurrenceCount;
         result = 31 * result + (hasClassChanged ? 1 : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;

@@ -80,6 +80,7 @@ public class DiseaseExtentGenerator {
         helper.groupOccurrencesByCountry();
         helper.computeInitialDiseaseExtentClasses();
         writeDiseaseExtent(helper.getDiseaseExtentToSave());
+        updateAggregatedDiseaseExtent(helper.getDiseaseGroup());
     }
 
     private void updateExistingExtent(DiseaseExtentGeneratorHelper helper) {
@@ -91,6 +92,7 @@ public class DiseaseExtentGenerator {
         helper.groupReviewsByAdminUnit();
         helper.computeUpdatedDiseaseExtentClasses();
         writeDiseaseExtent(helper.getDiseaseExtentToSave());
+        updateAggregatedDiseaseExtent(helper.getDiseaseGroup());
     }
 
     private void writeDiseaseExtent(List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClassesToSave) {
@@ -122,5 +124,9 @@ public class DiseaseExtentGenerator {
         DiseaseGroup diseaseGroup = helper.getDiseaseGroup();
         return String.format(DISEASE_GROUP_AND_OCCURRENCES_MESSAGE, diseaseGroup.getId(), diseaseGroup.getName(),
                 helper.getOccurrences().size());
+    }
+
+    private void updateAggregatedDiseaseExtent(DiseaseGroup diseaseGroup) {
+        diseaseService.updateAggregatedDiseaseExtent(diseaseGroup.getId(), diseaseGroup.isGlobal());
     }
 }

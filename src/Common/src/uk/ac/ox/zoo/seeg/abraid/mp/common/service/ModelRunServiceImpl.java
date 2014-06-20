@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
@@ -62,7 +62,8 @@ public class ModelRunServiceImpl implements ModelRunService {
      */
     @Override
     public void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster) {
-        nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster, NativeSQLImpl.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+        nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster,
+                NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
     }
 
     /**
@@ -73,6 +74,6 @@ public class ModelRunServiceImpl implements ModelRunService {
     @Override
     public void updatePredictionUncertaintyRasterForModelRun(int modelRunId, byte[] gdalRaster) {
         nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster,
-                NativeSQLImpl.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+                NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 }

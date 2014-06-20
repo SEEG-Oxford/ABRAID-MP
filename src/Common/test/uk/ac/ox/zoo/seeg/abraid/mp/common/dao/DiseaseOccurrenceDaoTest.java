@@ -144,6 +144,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         double finalWeighting = 0.4;
         double finalWeightingExclSpatial = 0.5;
         double environmentalSuitability = 0.6;
+        double distanceFromDiseaseExtent = 100;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
@@ -151,6 +152,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setOccurrenceDate(occurrenceDate);
         occurrence.setEnvironmentalSuitability(environmentalSuitability);
+        occurrence.setDistanceFromDiseaseExtent(distanceFromDiseaseExtent);
         occurrence.setExpertWeighting(expertWeighting);
         occurrence.setMachineWeighting(machineWeighting);
         occurrence.setValidationWeighting(validationWeighting);
@@ -179,6 +181,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrence.getLocation()).isNotNull();
         assertThat(occurrence.getLocation().getId()).isNotNull();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getExpertWeighting()).isEqualTo(expertWeighting);
         assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
         assertThat(occurrence.getValidationWeighting()).isEqualTo(validationWeighting);
