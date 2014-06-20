@@ -61,7 +61,8 @@ public class ModelRunManager {
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> diseaseOccurrences = prepareForModelRun(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
+            List<DiseaseOccurrence> diseaseOccurrences =
+                    prepareForModelRun(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
             modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
@@ -69,7 +70,8 @@ public class ModelRunManager {
         }
     }
 
-    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate, DateTime modelRunPrepDate, int diseaseGroupId) {
+    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate,
+                                                       DateTime modelRunPrepDate, int diseaseGroupId) {
         // Task 1
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now

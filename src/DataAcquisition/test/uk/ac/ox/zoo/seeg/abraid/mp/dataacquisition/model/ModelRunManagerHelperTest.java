@@ -15,12 +15,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests tge ModelRunManagerHelper
+ * Tests the ModelRunManagerHelper class.
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunManagerHelperTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
-    DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Test
     public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenAWeekHasNotElapsed() {
