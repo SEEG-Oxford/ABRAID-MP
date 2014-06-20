@@ -16,6 +16,13 @@ public class JsonModelOutputsMetadata {
     public JsonModelOutputsMetadata() {
     }
 
+    public JsonModelOutputsMetadata(String modelRunName, ModelRunStatus modelRunStatus, String outputText, String errorText) {
+        setModelRunName(modelRunName);
+        setModelRunStatus(modelRunStatus);
+        setOutputText(outputText);
+        setErrorText(errorText);
+    }
+
     public String getModelRunName() {
         return modelRunName;
     }
