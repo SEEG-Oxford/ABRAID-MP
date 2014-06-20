@@ -18,7 +18,7 @@ verbose <- ${verbose?string("TRUE","FALSE")}
 max_cpus <- ${max_cpu?c}
 
 # Set parallel execution
-parallel_flag <- FALSE
+parallel_flag <- TRUE
 
 # Set dry run
 dry_run <- ${dry_run?string("TRUE","FALSE")}
@@ -34,6 +34,12 @@ extent_path <- "${extent_file}"
 covariate_paths <- c(
 <#list covariate_files as covariate>
     "${covariate}"<#if covariate_has_next>,</#if>
+</#list>
+)
+
+covariate_names <- c(
+<#list covariate_names as covariate>
+"${covariate}"<#if covariate_has_next>,</#if>
 </#list>
 )
 

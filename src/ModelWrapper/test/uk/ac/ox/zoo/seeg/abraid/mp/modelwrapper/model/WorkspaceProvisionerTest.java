@@ -11,7 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -40,7 +40,7 @@ public class WorkspaceProvisionerTest {
                 expectedRunName, expectedBasePath,
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new CovariateRunConfiguration("", new HashMap<String,String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         // Act

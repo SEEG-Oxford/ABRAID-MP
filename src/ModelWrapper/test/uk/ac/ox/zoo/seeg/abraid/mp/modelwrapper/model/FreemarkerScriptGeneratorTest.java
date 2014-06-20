@@ -9,7 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -101,7 +101,7 @@ public class FreemarkerScriptGeneratorTest {
                 StringUtils.isNotEmpty(runName) ? runName : "foo", testFolder.getRoot(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new CovariateRunConfiguration("", new HashMap<String,String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
     }
 }

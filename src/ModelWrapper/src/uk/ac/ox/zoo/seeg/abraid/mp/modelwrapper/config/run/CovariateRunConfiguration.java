@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Map;
 
 /**
  * An immutable data structure to hold the covariate related configuration for a single model run.
@@ -9,19 +8,19 @@ import java.util.Collections;
  */
 public class CovariateRunConfiguration {
     private final String covariateDirectory;
-    private final Collection<String> covariateFilePaths;
+    private final Map<String, String> covariateFiles;
 
-    public CovariateRunConfiguration(String covariateDirectory, Collection<String> covariateFilePaths) {
+    public CovariateRunConfiguration(String covariateDirectory, Map<String, String> covariateFiles) {
         this.covariateDirectory = covariateDirectory;
-        this.covariateFilePaths = Collections.unmodifiableCollection(covariateFilePaths);
+        this.covariateFiles = covariateFiles;
     }
 
     public String getCovariateDirectory() {
         return covariateDirectory;
     }
 
-    public Collection<String> getCovariateFilePaths() {
-        return covariateFilePaths;
+    public Map<String, String> getCovariateFiles() {
+        return covariateFiles;
     }
 }
 

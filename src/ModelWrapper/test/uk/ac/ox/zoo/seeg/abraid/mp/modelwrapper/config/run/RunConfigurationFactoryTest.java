@@ -52,7 +52,6 @@ public class RunConfigurationFactoryTest {
         assertCorrectExecutionConfiguration(result.getExecutionConfig());
         assertCorrectCovariateConfiguration(result.getCovariateConfig());
         assertCorrectAdminUnitConfiguration(result.getAdminUnitConfig());
-
     }
 
     private void setupExpectedCodeConfiguration(ConfigurationService configurationService) {
@@ -82,7 +81,7 @@ public class RunConfigurationFactoryTest {
     private void setupExpectedCovariateConfiguration(ConfigurationService configurationService) throws Exception {
         JsonCovariateConfiguration expectedCovariates = new JsonCovariateConfiguration(
                 new ArrayList<JsonDisease>(), Arrays.asList(
-                    new JsonCovariateFile("covariateFile", "", null, false, Arrays.asList(1))
+                    new JsonCovariateFile("covariateFile", "covariateFileName", null, false, Arrays.asList(1))
         ));
         when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariates);
         when(configurationService.getCovariateDirectory()).thenReturn("covariateDir");
@@ -90,7 +89,9 @@ public class RunConfigurationFactoryTest {
 
     private void assertCorrectCovariateConfiguration(CovariateRunConfiguration result) {
         assertThat(result.getCovariateDirectory()).isEqualTo("covariateDir");
-        assertThat(result.getCovariateFilePaths()).containsOnly("covariateFile");
+        assertThat(result.getCovariateFiles()).hasSize(1);
+        assertThat(result.getCovariateFiles()).containsKey("covariateFile");
+        assertThat(result.getCovariateFiles()).containsValue("covariateFileName");
     }
 
     private void setupExpectedAdminUnitConfiguration(ConfigurationService configurationService) {
@@ -147,8 +148,8 @@ public class RunConfigurationFactoryTest {
         RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
 
         // Assert
-        assertThat(result.getCovariateConfig().getCovariateFilePaths()).contains("path1");
-        assertThat(result.getCovariateConfig().getCovariateFilePaths()).contains("path4");
+        assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("path1");
+        assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("path4");
     }
 
     private void setupMinimumConfig(ConfigurationService configurationService) throws ConfigurationException, IOException {

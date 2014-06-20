@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -126,7 +126,7 @@ public class ModelRunnerTest {
                 "foo", testFolder.getRoot(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
     }
 }
