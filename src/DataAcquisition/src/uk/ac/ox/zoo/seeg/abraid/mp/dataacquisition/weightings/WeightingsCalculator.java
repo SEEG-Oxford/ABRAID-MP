@@ -20,18 +20,16 @@ import static ch.lambdaj.Lambda.*;
  */
 public class WeightingsCalculator {
     private static Logger logger = Logger.getLogger(WeightingsCalculator.class);
-    private static final String NO_NEW_REVIEWS =
-            "No new reviews have been submitted - ";
     private static final String NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS =
-            "expert weightings of disease occurrences will not be updated";
+            "No new reviews have been submitted - expert weightings of disease occurrences will not be updated";
     private static final String NOT_UPDATING_WEIGHTINGS_OF_EXPERTS =
-            "weightings of experts will not be updated";
+            "No reviews have been submitted - weightings of experts will not be updated";
     private static final String RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS =
             "Recalculating expert weightings for %d disease occurrence(s) given %d new review(s)";
     private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
-            "Recalculating weightings of experts given %d new review(s)";
+            "Recalculating weightings of experts given %d review(s)";
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
-            "No new occurrences - validation and final weightings will not be updated";
+            "No occurrences for model run - validation and final weightings will not be updated";
     private static final String UPDATING_WEIGHTINGS =
             "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
     private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
@@ -57,7 +55,7 @@ public class WeightingsCalculator {
     public void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
         List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
         if (allReviews.isEmpty()) {
-            logger.info(NO_NEW_REVIEWS + NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS);
+            logger.info(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS);
         } else {
             calculateNewDiseaseOccurrenceExpertWeightings(allReviews);
         }
@@ -203,7 +201,7 @@ public class WeightingsCalculator {
         Map<Integer, Double> newExpertsWeightings = new HashMap<>();
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
         if (allReviews.size() == 0) {
-            logger.info(NO_NEW_REVIEWS + NOT_UPDATING_WEIGHTINGS_OF_EXPERTS);
+            logger.info(NOT_UPDATING_WEIGHTINGS_OF_EXPERTS);
         } else {
             logger.info(String.format(RECALCULATING_WEIGHTINGS_OF_EXPERTS, allReviews.size()));
             for (Expert expert : extractDistinctExperts(allReviews)) {

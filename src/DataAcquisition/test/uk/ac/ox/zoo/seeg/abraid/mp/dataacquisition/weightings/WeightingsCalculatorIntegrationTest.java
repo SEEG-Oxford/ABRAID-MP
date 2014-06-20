@@ -179,7 +179,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
 
         // Assert
-        verify(logger, times(1)).info(eq("No new occurrences - validation and final weightings will not be updated"));
+        verify(logger, times(1)).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
     }
 
     @Test

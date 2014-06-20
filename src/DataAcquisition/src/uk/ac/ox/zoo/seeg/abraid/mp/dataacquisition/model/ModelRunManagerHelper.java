@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -14,6 +15,9 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunManagerHelper {
+    private static final Logger LOGGER = Logger.getLogger(ModelRunManagerHelper.class);
+    private static final String LOG_MESSAGE =
+            "Removed %d disease occurrence(s) from validation; %d occurrence(s) now remaining";
 
     private DiseaseService diseaseService;
 
@@ -28,14 +32,18 @@ public class ModelRunManagerHelper {
      * @param modelRunPrepDate The official start time of the model run preparation tasks.
      */
     public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate) {
+        int numRemovedFromValidator = 0;
+
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
         for (DiseaseOccurrence occurrence : occurrences) {
-            boolean validated = occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate);
-            if (occurrence.isValidated() != null && occurrence.isValidated() != validated) {
-                occurrence.setValidated(validated);
+            if (occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
+                occurrence.setValidated(true);
                 diseaseService.saveDiseaseOccurrence(occurrence);
+                numRemovedFromValidator++;
             }
         }
+
+        logResults(occurrences.size(), numRemovedFromValidator);
     }
 
     /**
@@ -51,5 +59,10 @@ public class ModelRunManagerHelper {
         LocalDate comparisonDate = createdDate.plusWeeks(1);
         LocalDate modelRunPrepDate = modelRunPrepDateTime.toLocalDate();
         return !comparisonDate.isAfter(modelRunPrepDate);
+    }
+
+    private void logResults(int numOriginallyInValidation, int numRemovedFromValidator) {
+        int numRemaining = numOriginallyInValidation - numRemovedFromValidator;
+        LOGGER.info(String.format(LOG_MESSAGE, numRemovedFromValidator, numRemaining));
     }
 }
