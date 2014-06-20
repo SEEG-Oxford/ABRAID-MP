@@ -292,7 +292,7 @@ public class DiseaseExtentGeneratorHelperTest {
 
     private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfYearsAgo) {
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
-        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, 0, null);
+        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, 0);
     }
 
     private AdminUnitReview createReview(DiseaseExtentClass extentClass, double expertWeighting) {

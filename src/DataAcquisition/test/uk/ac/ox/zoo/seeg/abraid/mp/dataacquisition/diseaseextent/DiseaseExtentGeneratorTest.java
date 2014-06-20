@@ -256,12 +256,12 @@ public class DiseaseExtentGeneratorTest {
         // 5 occurrences of tropical GAUL code 250 (all over 2 years old)
         // 10 occurrences of global GAUL code 300 (all under 2 years old)
         return randomise(concatenate(
-                createOccurrences(150, null, 4, 1),
-                createOccurrences(null, 200, 3, 3),
-                createOccurrences(null, 200, 2, 1),
-                createOccurrences(null, 250, 5, 5),
-                createOccurrences(300, null, 1, 5),
-                createOccurrences(300, null, 3, 5)
+                createOccurrences(150, 4, 1),
+                createOccurrences(200, 3, 3),
+                createOccurrences(200, 2, 1),
+                createOccurrences(250, 5, 5),
+                createOccurrences(300, 1, 5),
+                createOccurrences(300, 3, 5)
         ));
     }
 
@@ -379,15 +379,13 @@ public class DiseaseExtentGeneratorTest {
         return DateTime.now().minusYears(yearsAgo);
     }
 
-    private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(Integer adminUnitGlobalGaulCode,
-                                                                      Integer adminUnitTropicalGaulCode,
+    private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(int adminUnitGaulCode,
                                                                       int numberOfYearsAgo,
                                                                       int numberOfTimes) {
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
-            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGlobalGaulCode,
-                    adminUnitTropicalGaulCode));
+            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGaulCode));
         }
         return occurrences;
     }

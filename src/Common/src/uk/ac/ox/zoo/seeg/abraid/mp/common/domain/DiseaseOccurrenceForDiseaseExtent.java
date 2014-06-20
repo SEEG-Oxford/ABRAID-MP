@@ -11,11 +11,9 @@ public class DiseaseOccurrenceForDiseaseExtent {
     private DateTime occurrenceDate;
     private int adminUnitGaulCode;
 
-    public DiseaseOccurrenceForDiseaseExtent(DateTime occurrenceDate, Integer adminUnitGlobalGaulCode,
-                                             Integer adminUnitTropicalGaulCode) {
+    public DiseaseOccurrenceForDiseaseExtent(DateTime occurrenceDate, int adminUnitGaulCode) {
         this.occurrenceDate = occurrenceDate;
-        this.adminUnitGaulCode = (adminUnitGlobalGaulCode != null) ? adminUnitGlobalGaulCode :
-                adminUnitTropicalGaulCode;
+        this.adminUnitGaulCode = adminUnitGaulCode;
     }
 
     public DateTime getOccurrenceDate() {

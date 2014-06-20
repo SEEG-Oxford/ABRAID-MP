@@ -108,7 +108,7 @@ CREATE TABLE country (
 
 CREATE TABLE disease_extent (
     disease_group_id integer NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326) NOT NULL
+    geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE disease_extent_class (
