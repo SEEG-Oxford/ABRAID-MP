@@ -8,12 +8,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelDisease;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelRunResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.geojson.GeoJsonObjectMapper;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
