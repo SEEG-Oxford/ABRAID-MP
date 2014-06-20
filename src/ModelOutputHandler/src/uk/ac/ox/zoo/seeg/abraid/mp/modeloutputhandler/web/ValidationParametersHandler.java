@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
@@ -19,6 +20,13 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class ValidationParametersHandler {
+    private static final Logger LOGGER = Logger.getLogger(ValidationParametersHandler.class);
+    private static final String HANDLING_LOG_MESSAGE =
+            "Model run %d: adding validation parameters for %d occurrence(s) of disease group %d (%s)";
+    private static final String HANDLING_COMPLETED_LOG_MESSAGE =
+            "Model run %d: validation parameter handling completed";
+    private static final String NO_HANDLING_LOG_MESSAGE = "Model run %d: no validation parameter handling to do";
+
     private DiseaseService diseaseService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
@@ -34,6 +42,7 @@ public class ValidationParametersHandler {
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleValidationParameters(ModelRun modelRun) {
+        boolean handlingToDo = false;
         int diseaseGroupId = modelRun.getDiseaseGroupId();
 
         if (didModelRunComplete(modelRun)) {
@@ -42,10 +51,14 @@ public class ValidationParametersHandler {
             // If the validation process has not yet started for this disease group, start it by adding validation
             // parameters to all relevant disease occurrences
             if (!hasValidationProcessStarted(diseaseGroup)) {
-                addAndSaveValidationParameters(diseaseGroupId);
+                handlingToDo = true;
+                addAndSaveValidationParameters(modelRun, diseaseGroup);
                 updateValidationProcessStartDate(diseaseGroup);
             }
         }
+
+        String message = handlingToDo ? HANDLING_COMPLETED_LOG_MESSAGE : NO_HANDLING_LOG_MESSAGE;
+        LOGGER.info(String.format(message, modelRun.getId()));
     }
 
     private boolean didModelRunComplete(ModelRun modelRun) {
@@ -56,8 +69,11 @@ public class ValidationParametersHandler {
         return diseaseGroup.getValidationProcessStartDate() != null;
     }
 
-    private void addAndSaveValidationParameters(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+    private void addAndSaveValidationParameters(ModelRun modelRun, DiseaseGroup diseaseGroup) {
+        List<DiseaseOccurrence> occurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroup.getId());
+        LOGGER.info(String.format(HANDLING_LOG_MESSAGE, modelRun.getId(), occurrences.size(), diseaseGroup.getId(),
+                diseaseGroup.getName()));
 
         for (DiseaseOccurrence occurrence : occurrences) {
             if (diseaseOccurrenceValidationService.addValidationParameters(occurrence)) {

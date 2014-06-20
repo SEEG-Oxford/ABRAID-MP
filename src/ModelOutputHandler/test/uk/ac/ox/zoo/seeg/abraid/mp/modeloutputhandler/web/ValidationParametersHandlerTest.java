@@ -98,7 +98,10 @@ public class ValidationParametersHandlerTest {
     }
 
     private ModelRun createModelRun(int diseaseGroupId, ModelRunStatus status) {
-        ModelRun modelRun = new ModelRun("test", diseaseGroupId, DateTime.now());
+        ModelRun modelRun = new ModelRun(1);
+        modelRun.setName("test");
+        modelRun.setDiseaseGroupId(diseaseGroupId);
+        modelRun.setRequestDate(DateTime.now());
         modelRun.setStatus(status);
         return modelRun;
     }
