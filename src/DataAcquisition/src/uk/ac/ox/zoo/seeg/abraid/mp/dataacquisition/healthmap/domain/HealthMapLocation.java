@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class HealthMapLocation {
     }
 
     public void setCountry(String country) {
-        this.country = StringUtils.trimWhitespace(country);
+        this.country = ParseUtils.convertString(country);
     }
 
     public String getPlaceName() {
@@ -49,7 +48,7 @@ public class HealthMapLocation {
     }
 
     public void setPlaceName(String placeName) {
-        this.placeName = StringUtils.trimWhitespace(placeName);
+        this.placeName = ParseUtils.convertString(placeName);
     }
 
     public Double getLatitude() {
@@ -81,7 +80,7 @@ public class HealthMapLocation {
     }
 
     public void setPlaceBasicType(String placeBasicType) {
-        this.placeBasicType = StringUtils.trimWhitespace(placeBasicType);
+        this.placeBasicType = ParseUtils.convertString(placeBasicType);
     }
 
     public List<HealthMapAlert> getAlerts() {

@@ -56,7 +56,7 @@ public class HealthMapAlert {
     }
 
     public void setFeed(String feed) {
-        this.feed = StringUtils.trimWhitespace(feed);
+        this.feed = ParseUtils.convertString(feed);
     }
 
     public Integer getFeedId() {
@@ -72,7 +72,7 @@ public class HealthMapAlert {
     }
 
     public void setDisease(String disease) {
-        this.disease = StringUtils.trimWhitespace(disease);
+        this.disease = ParseUtils.convertString(disease);
     }
 
     public Integer getDiseaseId() {
@@ -88,7 +88,7 @@ public class HealthMapAlert {
     }
 
     public void setSummary(String summary) {
-        this.summary = StringUtils.trimWhitespace(summary);
+        this.summary = ParseUtils.convertString(summary);
     }
 
     public DateTime getDate() {
@@ -104,7 +104,7 @@ public class HealthMapAlert {
     }
 
     public void setLink(String link) {
-        this.link = StringUtils.trimWhitespace(link);
+        this.link = ParseUtils.convertString(link);
     }
 
     public String getDescription() {
@@ -112,7 +112,7 @@ public class HealthMapAlert {
     }
 
     public void setDescription(String description) {
-        this.description = StringUtils.trimWhitespace(description);
+        this.description = ParseUtils.convertString(description);
     }
 
     public String getOriginalUrl() {
@@ -120,7 +120,7 @@ public class HealthMapAlert {
     }
 
     public void setOriginalUrl(String originalUrl) {
-        this.originalUrl = StringUtils.trimWhitespace(originalUrl);
+        this.originalUrl = ParseUtils.convertString(originalUrl);
     }
 
     public String getFeedLanguage() {
@@ -128,7 +128,7 @@ public class HealthMapAlert {
     }
 
     public void setFeedLanguage(String feedLanguage) {
-        this.feedLanguage = StringUtils.trimWhitespace(feedLanguage);
+        this.feedLanguage = ParseUtils.convertString(feedLanguage);
     }
 
     /**

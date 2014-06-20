@@ -247,9 +247,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence2Alert.getFeed().getLanguage()).isNull();
         assertThat(occurrence2Alert.getPublicationDate()).isEqualTo(new DateTime("2014-03-10T02:50:58+0000"));
         assertThat(occurrence2Alert.getHealthMapAlertId()).isEqualTo(2323248);
-        assertThat(occurrence2Alert.getUrl()).isEqualTo("http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNF4EFD" +
-                "nuQ1IvVKEkyHzR4WL8Uf0mQ&cid=c3a7d30bb8a4878e06b80cf16b898331&url=http://www.radionz.co.nz/interna" +
-                "tional/programmes/datelinepacific/audio/2588433/regional-dengue-outbreak-unprecedented-spc");
+        assertThat(occurrence2Alert.getUrl()).isNull();
         assertThat(occurrence2Alert.getSummary()).isEqualTo("SPC says the number of dengue fever outbreaks in the" +
                 " Paific over the past year is unprecedented and more research needs to be done into its cause. D" +
                 "uration: 3′ 21″. Play now; Download: Ogg | MP3 ;...");
@@ -346,9 +344,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 "\"species_name\": \"Humans\",\n" +
                 "\"dup_count\": \"0\",\n" +
                 "\"place_category\": [],\n" +
-                "\"original_url\": \"http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNF4EFDnuQ1IvVKEkyHzR4WL8Uf" +
-                "0mQ&cid=c3a7d30bb8a4878e06b80cf16b898331&url=http://www.radionz.co.nz/international/programmes/" +
-                "datelinepacific/audio/2588433/regional-dengue-outbreak-unprecedented-spc\",\n" +
+                "\"original_url\": \"\",\n" +
                 "\"disease_id\": \"33\",\n" +
                 "\"feed_id\": \"4\"\n" +
                 "}\n" +
