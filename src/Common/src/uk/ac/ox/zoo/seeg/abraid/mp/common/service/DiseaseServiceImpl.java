@@ -141,6 +141,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of disease occurrences currently being validated by experts.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesInValidation(Integer diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesInValidation(diseaseGroupId);
+    }
+
+    /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
      * @return Disease occurrences for a request to run the model.

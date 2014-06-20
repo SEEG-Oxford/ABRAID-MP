@@ -29,17 +29,20 @@ public class ModelRunManager {
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private WeightingsCalculator weightingsCalculator;
     private ModelRunRequester modelRunRequester;
+    private ModelRunManagerHelper helper;
 
     public ModelRunManager(ModelRunGatekeeper modelRunGatekeeper,
                            LastModelRunPrepDateManager lastModelRunPrepDateManager,
                            DiseaseExtentGenerator diseaseExtentGenerator,
                            WeightingsCalculator weightingsCalculator,
-                           ModelRunRequester modelRunRequester) {
+                           ModelRunRequester modelRunRequester,
+                           ModelRunManagerHelper helper) {
         this.modelRunGatekeeper = modelRunGatekeeper;
         this.lastModelRunPrepDateManager = lastModelRunPrepDateManager;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
+        this.helper = helper;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -58,7 +61,8 @@ public class ModelRunManager {
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> diseaseOccurrences = prepareForModelRun(lastModelRunPrepDate, diseaseGroupId);
+            List<DiseaseOccurrence> diseaseOccurrences =
+                    prepareForModelRun(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
             modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
@@ -66,16 +70,17 @@ public class ModelRunManager {
         }
     }
 
-    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate, int diseaseGroupId) {
+    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate,
+                                                       DateTime modelRunPrepDate, int diseaseGroupId) {
         // Task 1
-        ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, new DiseaseExtentParameters(null, 5, 0.6, 5, 1,
-                2, 1, 2));
-        ///CHECKSTYLE:ON
-        // Task 2
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
+        // Task 2
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
+                new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
+        ///CHECKSTYLE:ON
         // Task 3
-        // Determine whether occurrences should come off DataValidator, and set their is_validated value to true
+        helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
         // Task 4
         return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }

@@ -70,6 +70,7 @@
     <!-- Model run manager supporting beans -->
     <bean id="modelRunGatekeeper" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunGatekeeper" autowire="constructor"/>
     <bean id="lastModelRunPrepDateManager" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.LastModelRunPrepDateManager" autowire="constructor"/>
+    <bean id="modelRunManagerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerHelper" autowire="constructor"/>
 
     <!-- Model run preparation tasks beans -->
     <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager" autowire="constructor"/>
