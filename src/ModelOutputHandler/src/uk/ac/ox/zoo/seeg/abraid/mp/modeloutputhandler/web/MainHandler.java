@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import ch.lambdaj.function.convert.Converter;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
@@ -8,16 +9,23 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * Main model output handler.
@@ -34,6 +42,10 @@ public class MainHandler {
             "Saving validation statistics file (%s bytes) for model run \"%s\"";
     private static final String LOG_RELATIVE_INFLUENCE_FILE =
             "Saving relative influence file (%s bytes) for model run \"%s\"";
+    public static final String COULD_NOT_SAVE_VALIDATION_STATISTICS =
+            "Could not save validation statistics csv for model run \"%s\"";
+    public static final String COULD_NOT_SAVE_RELATIVE_INFLUENCE =
+            "Could not save relative influence csv for model run \"%s\"";
 
     private ModelRunService modelRunService;
 
@@ -59,16 +71,6 @@ public class MainHandler {
 
         boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
 
-        // Handle mean prediction raster
-        byte[] meanPredictionRaster =
-                extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME, areOutputsMandatory);
-        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
-
-        // Handle prediction uncertainty raster
-        byte[] predUncertaintyRaster =
-                extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
-        handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
-
         // Handle validation statistics file
         byte[] validationStatisticsFile =
                 extract(zipFile, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME, areOutputsMandatory);
@@ -78,6 +80,16 @@ public class MainHandler {
         byte[] relativeInfluenceFile =
                 extract(zipFile, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME, areOutputsMandatory);
         handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
+
+        // Handle mean prediction raster
+        byte[] meanPredictionRaster =
+                extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME, areOutputsMandatory);
+        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
+
+        // Handle prediction uncertainty raster
+        byte[] predUncertaintyRaster =
+                extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
+        handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
 
         return modelRun;
     }
@@ -97,17 +109,43 @@ public class MainHandler {
         return modelRun;
     }
 
-    private void handleValidationStatisticsFile(ModelRun modelRun, byte[] file) {
+    private void handleValidationStatisticsFile(final ModelRun modelRun, byte[] file) throws IOException {
         if (file != null) {
             LOGGER.info(String.format(LOG_VALIDATION_STATISTICS_FILE, file.length, modelRun.getName()));
-            //modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+            try {
+                List<CsvSubmodelStatistic> csvSubmodelStatistics = CsvSubmodelStatistic.readFromCSV(new String(file));
+                List<SubmodelStatistic> submodelStatistics = with(csvSubmodelStatistics)
+                        .convert(new Converter<CsvSubmodelStatistic, SubmodelStatistic>() {
+                            @Override
+                            public SubmodelStatistic convert(CsvSubmodelStatistic csv) {
+                                return new SubmodelStatistic(csv, modelRun);
+                            }
+                        });
+                modelRun.setSubmodelStatistics(submodelStatistics);
+                modelRunService.saveModelRun(modelRun);
+            } catch (IOException e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_VALIDATION_STATISTICS, modelRun.getName()), e);
+            }
         }
     }
 
-    private void handleRelativeInfluenceFile(ModelRun modelRun, byte[] file) {
+    private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file) throws IOException {
         if (file != null) {
             LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
-            //modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+            try {
+                List<CsvCovariateInfluence> csvCovariateInfluence = CsvCovariateInfluence.readFromCSV(new String(file));
+                List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluence)
+                        .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
+                            @Override
+                            public CovariateInfluence convert(CsvCovariateInfluence csv) {
+                                return new CovariateInfluence(csv, modelRun);
+                            }
+                        });
+                modelRun.setCovariateInfluences(covariateInfluences);
+                modelRunService.saveModelRun(modelRun);
+            } catch (IOException e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_RELATIVE_INFLUENCE, modelRun.getName()), e);
+            }
         }
     }
 
