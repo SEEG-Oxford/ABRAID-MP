@@ -138,7 +138,8 @@ public class CsvSubmodelStatistic {
     }
 
     @JsonProperty("pcc_sd")
-    public void setProportionCorrectlyClassifiedStandardDeviation(Double proportionCorrectlyClassifiedStandardDeviation) {
+    public void setProportionCorrectlyClassifiedStandardDeviation(
+            Double proportionCorrectlyClassifiedStandardDeviation) {
         this.proportionCorrectlyClassifiedStandardDeviation = proportionCorrectlyClassifiedStandardDeviation;
     }
 

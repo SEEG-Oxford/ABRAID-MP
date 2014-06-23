@@ -16,7 +16,7 @@ public class CovariateRunConfigurationTest {
     public void constructorBindsParametersCorrectly() {
         // Arrange
         String expectedCovariateDir = "foobar";
-        Map<String,String> expectedCovariateFiles = new HashMap<>();
+        Map<String, String> expectedCovariateFiles = new HashMap<>();
         expectedCovariateFiles.put("a", "a");
         expectedCovariateFiles.put("b", "b");
         expectedCovariateFiles.put("c", "c");

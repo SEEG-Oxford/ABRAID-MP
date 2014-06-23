@@ -189,7 +189,8 @@ public class SubmodelStatistic {
         return proportionCorrectlyClassifiedStandardDeviation;
     }
 
-    public void setProportionCorrectlyClassifiedStandardDeviation(Double proportionCorrectlyClassifiedStandardDeviation) {
+    public void setProportionCorrectlyClassifiedStandardDeviation(
+            Double proportionCorrectlyClassifiedStandardDeviation) {
         this.proportionCorrectlyClassifiedStandardDeviation = proportionCorrectlyClassifiedStandardDeviation;
     }
 

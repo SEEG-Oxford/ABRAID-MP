@@ -22,6 +22,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -42,10 +43,11 @@ public class MainHandler {
             "Saving validation statistics file (%s bytes) for model run \"%s\"";
     private static final String LOG_RELATIVE_INFLUENCE_FILE =
             "Saving relative influence file (%s bytes) for model run \"%s\"";
-    public static final String COULD_NOT_SAVE_VALIDATION_STATISTICS =
+    private static final String COULD_NOT_SAVE_VALIDATION_STATISTICS =
             "Could not save validation statistics csv for model run \"%s\"";
-    public static final String COULD_NOT_SAVE_RELATIVE_INFLUENCE =
+    private static final String COULD_NOT_SAVE_RELATIVE_INFLUENCE =
             "Could not save relative influence csv for model run \"%s\"";
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private ModelRunService modelRunService;
 
@@ -113,7 +115,8 @@ public class MainHandler {
         if (file != null) {
             LOGGER.info(String.format(LOG_VALIDATION_STATISTICS_FILE, file.length, modelRun.getName()));
             try {
-                List<CsvSubmodelStatistic> csvSubmodelStatistics = CsvSubmodelStatistic.readFromCSV(new String(file));
+                List<CsvSubmodelStatistic> csvSubmodelStatistics =
+                        CsvSubmodelStatistic.readFromCSV(new String(file, UTF8));
                 List<SubmodelStatistic> submodelStatistics = with(csvSubmodelStatistics)
                         .convert(new Converter<CsvSubmodelStatistic, SubmodelStatistic>() {
                             @Override
@@ -133,7 +136,8 @@ public class MainHandler {
         if (file != null) {
             LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
             try {
-                List<CsvCovariateInfluence> csvCovariateInfluence = CsvCovariateInfluence.readFromCSV(new String(file));
+                List<CsvCovariateInfluence> csvCovariateInfluence =
+                        CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
                 List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluence)
                         .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
                             @Override

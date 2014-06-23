@@ -59,12 +59,12 @@ public class ModelRun {
     private String errorText;
 
     // List of submodel statistics associated with the model run.
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="modelRun")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     @Fetch(FetchMode.SELECT)
     private List<SubmodelStatistic> submodelStatistics;
 
     // List of covariate influences associated with the model run.
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="modelRun")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     @Fetch(FetchMode.SELECT)
     private List<CovariateInfluence> covariateInfluences;
 

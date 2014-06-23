@@ -101,7 +101,7 @@ public class FreemarkerScriptGeneratorTest {
                 StringUtils.isNotEmpty(runName) ? runName : "foo", testFolder.getRoot(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new HashMap<String,String>()),
+                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
     }
 }

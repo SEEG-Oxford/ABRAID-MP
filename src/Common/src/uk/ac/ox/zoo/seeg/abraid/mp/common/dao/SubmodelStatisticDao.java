@@ -32,7 +32,7 @@ public interface SubmodelStatisticDao {
 
     /**
      * Saves the specified submodel statistic.
-     * @param covariateInfluence The submodel statistic to save.
+     * @param submodelStatistic The submodel statistic to save.
      */
     void save(SubmodelStatistic submodelStatistic);
 }
