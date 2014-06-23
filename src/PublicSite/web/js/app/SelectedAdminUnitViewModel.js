@@ -2,9 +2,9 @@
  * An AMD defining the SelectedAdminUnitModel to hold the state of the selected administrative region on the map.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
- * -- 'admin-unit-selected' - published by MapView.
+ * -- 'admin-unit-selected'        - published by MapView.
  * -- 'admin-units-to-be-reviewed' - published by MapView.
- * -- 'layers-changed' - published by SelectedLayerViewModel.
+ * -- 'layers-changed'             - published by SelectedLayerViewModel.
  * - Events published:
  * -- 'admin-unit-reviewed'
  * -- 'admin-unit-selected' - as triggered by side panel table.
