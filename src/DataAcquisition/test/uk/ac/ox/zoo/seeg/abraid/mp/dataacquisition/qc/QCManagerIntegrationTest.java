@@ -114,9 +114,8 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
 
         // Assert
         assertThat(hasPassedQc).isTrue();
-        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. " +
-                "QC stage 2 passed: location (116.367000,-0.270000) snapped to land (distance 2.209km). " +
-                "QC stage 3 passed: no country geometries associated with this location.");
+        assertThat(location.getQcMessage()).contains("QC stage 2 passed: " +
+                "location (116.367000,-0.270000) snapped to land (distance 2.209km).");
     }
 
     @Test

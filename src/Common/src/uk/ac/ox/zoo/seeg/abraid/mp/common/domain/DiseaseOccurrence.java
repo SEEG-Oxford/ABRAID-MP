@@ -26,8 +26,8 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
                         "and d.isValidated = false " +
-                        "and d.id not in (select diseaseOccurrence.id from DiseaseOccurrenceReview where " +
-                        "expert.id=:expertId)"
+                        "and d.id not in " +
+                        "(select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForDiseaseExtent",
@@ -36,6 +36,11 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForDiseaseExtentByFeedIds",
                 query = DiseaseOccurrence.DISEASE_EXTENT_QUERY + " and d.alert.feed.id in :feedIds"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesInValidation",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = false"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",
@@ -113,6 +118,11 @@ public class DiseaseOccurrence {
     // The suitability of the environment for this disease group to exist in this location.
     @Column(name = "env_suitability")
     private Double environmentalSuitability;
+
+    // The distance between this location and the edge of the disease extent. The value is positive if the location
+    // is outside of the extent, or negative if inside.
+    @Column(name = "distance_from_extent")
+    private Double distanceFromDiseaseExtent;
 
     // The weighting as calculated from experts' responses during data validation process.
     @Column(name = "expert_weighting")
@@ -213,6 +223,14 @@ public class DiseaseOccurrence {
         this.environmentalSuitability = environmentalSuitability;
     }
 
+    public Double getDistanceFromDiseaseExtent() {
+        return distanceFromDiseaseExtent;
+    }
+
+    public void setDistanceFromDiseaseExtent(Double distanceFromDiseaseExtent) {
+        this.distanceFromDiseaseExtent = distanceFromDiseaseExtent;
+    }
+
     public Double getExpertWeighting() {
         return expertWeighting;
     }
@@ -273,6 +291,8 @@ public class DiseaseOccurrence {
         if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
+        if (distanceFromDiseaseExtent != null ? !distanceFromDiseaseExtent.equals(that.distanceFromDiseaseExtent) : that.distanceFromDiseaseExtent != null)
+            return false;
         if (environmentalSuitability != null ? !environmentalSuitability.equals(that.environmentalSuitability) : that.environmentalSuitability != null)
             return false;
         if (expertWeighting != null ? !expertWeighting.equals(that.expertWeighting) : that.expertWeighting != null)
@@ -303,6 +323,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (isValidated != null ? isValidated.hashCode() : 0);
         result = 31 * result + (environmentalSuitability != null ? environmentalSuitability.hashCode() : 0);
+        result = 31 * result + (distanceFromDiseaseExtent != null ? distanceFromDiseaseExtent.hashCode() : 0);
         result = 31 * result + (expertWeighting != null ? expertWeighting.hashCode() : 0);
         result = 31 * result + (machineWeighting != null ? machineWeighting.hashCode() : 0);
         result = 31 * result + (validationWeighting != null ? validationWeighting.hashCode() : 0);

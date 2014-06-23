@@ -10,6 +10,7 @@ import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -416,6 +417,19 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentForTropicalDisease() {
         getDiseaseOccurrencesForDiseaseExtent(false);
+    }
+
+    @Test
+    public void updateAggregatedDiseaseExtent() {
+        // Arrange
+        int diseaseGroupId = 87;
+        boolean isGlobal = true;
+
+        // Act
+        diseaseService.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
+
+        // Assert
+        verify(nativeSQL, times(1)).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {

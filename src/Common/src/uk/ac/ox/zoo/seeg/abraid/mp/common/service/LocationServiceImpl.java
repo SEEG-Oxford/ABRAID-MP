@@ -74,7 +74,7 @@ public class LocationServiceImpl implements LocationService {
      * admin units found.
      */
     public Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel) {
-        return nativeSQL.findAdminUnitGlobalThatContainsPoint(point, adminLevel);
+        return nativeSQL.findAdminUnitThatContainsPoint(point, true, adminLevel);
     }
 
     /**
@@ -85,7 +85,7 @@ public class LocationServiceImpl implements LocationService {
      * admin units found.
      */
     public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
-        return nativeSQL.findAdminUnitTropicalThatContainsPoint(point, adminLevel);
+        return nativeSQL.findAdminUnitThatContainsPoint(point, false, adminLevel);
     }
 
     /**

@@ -52,6 +52,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         Point point = GeometryUtils.createPoint(10, 20);
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
+        double distanceFromDiseaseExtent = 500;
         double machineWeighting = 0.7;
 
         DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(diseaseGroupId);
@@ -59,6 +60,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         occurrence.getLocation().setGeom(point);
 
         when(nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point)).thenReturn(environmentalSuitability);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(distanceFromDiseaseExtent);
 
         // Act
         boolean result = service.addValidationParameters(occurrence);
@@ -66,12 +68,15 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         // Assert
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
         assertThat(occurrence.isValidated()).isTrue();
     }
 
     private DiseaseOccurrence getDefaultDiseaseOccurrence(int diseaseGroupId) {
-        return new DiseaseOccurrence(1, new DiseaseGroup(diseaseGroupId), new Location(), new Alert(), null, null,
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setGlobal(false);
+        return new DiseaseOccurrence(1, diseaseGroup, new Location(), new Alert(), null, null,
                 null);
     }
 }

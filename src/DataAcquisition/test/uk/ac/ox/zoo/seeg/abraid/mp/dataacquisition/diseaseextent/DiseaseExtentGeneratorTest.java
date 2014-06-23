@@ -36,9 +36,9 @@ public class DiseaseExtentGeneratorTest {
     private DiseaseExtentClass possibleAbsenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_ABSENCE, -50);
     private DiseaseExtentClass absenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.ABSENCE, -100);
 
-    private final int diseaseGroupId = 87;
-    private final DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId, null, "Dengue", DiseaseGroupType.SINGLE);
-    private final List<? extends AdminUnitGlobalOrTropical> adminUnits = getAdminUnits();
+    private int diseaseGroupId = 87;
+    private DiseaseGroup diseaseGroup;
+    private List<? extends AdminUnitGlobalOrTropical> adminUnits = getAdminUnits();
 
     @Before
     public void setUp() {
@@ -47,6 +47,9 @@ public class DiseaseExtentGeneratorTest {
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(uncertainDiseaseExtentClass);
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
+
+        diseaseGroup = new DiseaseGroup(diseaseGroupId, null, "Dengue", DiseaseGroupType.SINGLE);
+        diseaseGroup.setGlobal(false);
     }
 
     @Test
@@ -65,6 +68,7 @@ public class DiseaseExtentGeneratorTest {
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
         expectGetRelevantReviews(0);
         expectSaveAdminUnitDiseaseExtentClass(expectedDiseaseExtent);
+        expectUpdateAggregatedDiseaseExtent(1);
     }
 
     @Test
@@ -83,6 +87,7 @@ public class DiseaseExtentGeneratorTest {
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
         expectGetRelevantReviews(0);
         expectSaveAdminUnitDiseaseExtentClass(expectedDiseaseExtent);
+        expectUpdateAggregatedDiseaseExtent(1);
     }
 
     @Test
@@ -116,6 +121,7 @@ public class DiseaseExtentGeneratorTest {
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
         expectGetRelevantReviews(1);
         expectSaveAdminUnitDiseaseExtentClass(expectedDiseaseExtent);
+        expectUpdateAggregatedDiseaseExtent(1);
     }
 
     @Test
@@ -136,6 +142,7 @@ public class DiseaseExtentGeneratorTest {
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
         expectGetRelevantReviews(1);
         expectSaveAdminUnitDiseaseExtentClass(expectedDiseaseExtent);
+        expectUpdateAggregatedDiseaseExtent(1);
     }
 
     @Test
@@ -156,6 +163,7 @@ public class DiseaseExtentGeneratorTest {
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
         expectGetRelevantReviews(1);
         expectSaveAdminUnitDiseaseExtentClass(expectedDiseaseExtent);
+        expectUpdateAggregatedDiseaseExtent(1);
     }
 
     private DiseaseExtentParameters createParameters() {
@@ -233,6 +241,11 @@ public class DiseaseExtentGeneratorTest {
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
             verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(eq(extentClass));
         }
+    }
+
+    private void expectUpdateAggregatedDiseaseExtent(int times) {
+        verify(diseaseService, times(times)).updateAggregatedDiseaseExtent(eq(diseaseGroupId),
+                eq(diseaseGroup.isGlobal()));
     }
 
     private List<DiseaseOccurrenceForDiseaseExtent> getOccurrences() {

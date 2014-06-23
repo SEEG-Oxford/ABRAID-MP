@@ -68,6 +68,9 @@ ALTER TABLE alert ADD CONSTRAINT pk_alert
 ALTER TABLE country ADD CONSTRAINT pk_country
     PRIMARY KEY (gaul_code);
 
+ALTER TABLE disease_extent ADD CONSTRAINT pk_disease_extent
+    PRIMARY KEY (disease_group_id);
+
 ALTER TABLE disease_extent_class ADD CONSTRAINT pk_disease_extent_class
     PRIMARY KEY (name);
 
@@ -150,6 +153,9 @@ ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_expert
 
 ALTER TABLE alert ADD CONSTRAINT fk_alert_feed
     FOREIGN KEY (feed_id) REFERENCES feed (id);
+
+ALTER TABLE disease_extent ADD CONSTRAINT fk_disease_extent_disease_group
+    FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
 
 ALTER TABLE disease_group ADD CONSTRAINT fk_disease_group_disease_group
     FOREIGN KEY (parent_id) REFERENCES disease_group (id);

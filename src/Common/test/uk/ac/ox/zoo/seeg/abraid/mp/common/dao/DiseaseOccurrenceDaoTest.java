@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -144,6 +146,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         double finalWeighting = 0.4;
         double finalWeightingExclSpatial = 0.5;
         double environmentalSuitability = 0.6;
+        double distanceFromDiseaseExtent = 100;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setAlert(alert);
@@ -151,6 +154,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setOccurrenceDate(occurrenceDate);
         occurrence.setEnvironmentalSuitability(environmentalSuitability);
+        occurrence.setDistanceFromDiseaseExtent(distanceFromDiseaseExtent);
         occurrence.setExpertWeighting(expertWeighting);
         occurrence.setMachineWeighting(machineWeighting);
         occurrence.setValidationWeighting(validationWeighting);
@@ -179,6 +183,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrence.getLocation()).isNotNull();
         assertThat(occurrence.getLocation().getId()).isNotNull();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getExpertWeighting()).isEqualTo(expertWeighting);
         assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
         assertThat(occurrence.getValidationWeighting()).isEqualTo(validationWeighting);
@@ -256,6 +261,46 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
         getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 23, true);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesInValidationReturnsOnlyIsValidatedFalse() {
+        // Arrange
+        int diseaseGroupId = 87;
+        int n = setValidatedFlagForAllOccurrencesOfDiseaseGroup(diseaseGroupId, false);
+
+        // Act
+        List<DiseaseOccurrence> result = diseaseOccurrenceDao.getDiseaseOccurrencesInValidation(diseaseGroupId);
+
+        // Assert
+        assertThat(result.size()).isEqualTo(n);
+        for (DiseaseOccurrence occurrence : result) {
+            assertThat(occurrence.isValidated()).isFalse();
+            assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
+        }
+    }
+
+    @Test
+    public void getDiseaseOccurrencesInValidationReturnsNoIsValidated() {
+        // Arrange
+        int diseaseGroupId = 87;
+        int n = setValidatedFlagForAllOccurrencesOfDiseaseGroup(diseaseGroupId, true);
+
+        // Act
+        List<DiseaseOccurrence> result = diseaseOccurrenceDao.getDiseaseOccurrencesInValidation(diseaseGroupId);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    private int setValidatedFlagForAllOccurrencesOfDiseaseGroup(int diseaseGroupId, boolean validated) {
+        List<DiseaseOccurrence> occurrences = select(diseaseOccurrenceDao.getAll(),
+                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), IsEqual.equalTo(diseaseGroupId)));
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setValidated(validated);
+            diseaseOccurrenceDao.save(occurrence);
+        }
+        return occurrences.size();
     }
 
     @Test

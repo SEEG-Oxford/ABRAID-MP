@@ -83,6 +83,15 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         return query.list();
     }
 
+    /**
+     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of disease occurrences currently being validated by experts.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesInValidation(Integer diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrencesInValidation", "diseaseGroupId", diseaseGroupId);
+    }
 
     /**
      * Gets disease occurrences for a request to run the model.
