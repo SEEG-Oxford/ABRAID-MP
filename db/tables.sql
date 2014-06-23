@@ -17,6 +17,7 @@
 --                                  smaller islands etc. Eight large subtropical countries have been divided into admin 1 areas.
 -- alert:                           Represents a report of a disease occurrence or occurrences, from a feed.
 -- country:                         Represents a country as defined by SEEG. Imported from the standard SEEG/GAUL admin 0 shapefile, with smaller islands removed.
+-- covariate_influence:             Contains information of the covariate used in a model run.
 -- disease_group:                   Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
 -- disease_occurrence:              Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- disease_occurrence_review:       Represents an expert's response on the validity of a disease occurrence point.
@@ -32,6 +33,7 @@
 -- location:                        Represents the location of a disease occurrence.
 -- model_run:                       Represents a run of the SEEG model.
 -- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
+-- submodel_statistic:              Contains statistics of a model run.
 -- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
 
 
@@ -104,6 +106,16 @@ CREATE TABLE country (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
     geom geometry(MULTIPOLYGON, 4326)
+);
+
+CREATE TABLE covariate_influence (
+    id serial NOT NULL,
+    model_run_id integer NOT NULL,
+    covariate_name varchar(255),
+    covariate_display_name varchar(255),
+    mean_influence double precision,
+    upper_quantile double precision,
+    lower_quantile double precision
 );
 
 CREATE TABLE disease_extent (
@@ -253,6 +265,24 @@ CREATE TABLE provenance (
     default_feed_weighting double precision NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     last_retrieval_end_date timestamp
+);
+
+CREATE TABLE submodel_statistic (
+    id serial NOT NULL,
+    model_run_id integer NOT NULL,
+    deviance double precision,
+    root_mean_square_error double precision,
+    kappa double precision,
+    area_under_curve double precision,
+    sensitivity double precision,
+    specificity double precision,
+    proportion_correctly_classified double precision,
+    kappa_sd double precision,
+    area_under_curve_sd double precision,
+    sensitivity_sd double precision,
+    specificity_sd double precision,
+    proportion_correctly_classified_sd double precision,
+    threshold double precision
 );
 
 CREATE TABLE validator_disease_group (

@@ -1,9 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Represents a run of the SEEG model.
@@ -54,6 +57,16 @@ public class ModelRun {
     // The error text from the model run (stderr).
     @Column(name = "error_text")
     private String errorText;
+
+    // List of submodel statistics associated with the model run.
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="modelRun")
+    @Fetch(FetchMode.SELECT)
+    private List<SubmodelStatistic> submodelStatistics;
+
+    // List of covariate influences associated with the model run.
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="modelRun")
+    @Fetch(FetchMode.SELECT)
+    private List<CovariateInfluence> covariateInfluences;
 
     public ModelRun() {
     }
@@ -127,6 +140,22 @@ public class ModelRun {
 
     public void setErrorText(String errorText) {
         this.errorText = errorText;
+    }
+
+    public List<SubmodelStatistic> getSubmodelStatistics() {
+        return submodelStatistics;
+    }
+
+    public void setSubmodelStatistics(List<SubmodelStatistic> submodelStatistics) {
+        this.submodelStatistics = submodelStatistics;
+    }
+
+    public List<CovariateInfluence> getCovariateInfluences() {
+        return covariateInfluences;
+    }
+
+    public void setCovariateInfluences(List<CovariateInfluence> covariateInfluences) {
+        this.covariateInfluences = covariateInfluences;
     }
 
     ///COVERAGE:OFF - generated code
