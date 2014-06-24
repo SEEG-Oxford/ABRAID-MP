@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Immutable;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 
 import javax.persistence.*;
@@ -11,7 +10,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "submodel_statistic")
-@Immutable
 @NamedQueries({
         @NamedQuery(
                 name = "getSubmodelStatisticsForModelRun",
