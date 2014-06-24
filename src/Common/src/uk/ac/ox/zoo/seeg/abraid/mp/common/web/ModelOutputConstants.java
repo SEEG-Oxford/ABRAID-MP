@@ -17,4 +17,11 @@ public final class ModelOutputConstants {
 
     /** The prediction uncertainty raster's filename in the model outputs. */
     public static final String PREDICTION_UNCERTAINTY_RASTER_FILENAME = "results/prediction_uncertainty.tif";
+
+    /** The validation statistics filename in the model outputs. */
+    public static final String VALIDATION_STATISTICS_FILENAME = "results/statistics.csv";
+
+    /** The relative influence filename in the model outputs. */
+    public static final String RELATIVE_INFLUENCE_FILENAME = "results/relative_influence.csv";
+
 }

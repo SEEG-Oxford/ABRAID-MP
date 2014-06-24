@@ -20,6 +20,7 @@
     <bean id="adminUnitReviewDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitReviewDaoImpl" autowire="constructor" />
     <bean id="adminUnitTropicalDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitTropicalDaoImpl" autowire="constructor" />
     <bean id="countryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDaoImpl" autowire="constructor" />
+    <bean id="covariateInfluenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CovariateInfluenceDaoImpl" autowire="constructor" />
     <bean id="diseaseExtentClassDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseExtentClassDaoImpl" autowire="constructor" />
     <bean id="diseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />
@@ -34,6 +35,7 @@
     <bean id="locationDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDaoImpl" autowire="constructor" />
     <bean id="modelRunDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDaoImpl" autowire="constructor" />
     <bean id="provenanceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDaoImpl" autowire="constructor" />
+    <bean id="submodelStatisticDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.SubmodelStatisticDaoImpl" autowire="constructor" />
     <bean id="validatorDiseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDaoImpl" autowire="constructor" />
 
     <bean id="nativeSql" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLImpl" autowire="constructor" />

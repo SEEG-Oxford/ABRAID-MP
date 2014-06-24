@@ -17,6 +17,13 @@ public interface ExpertService {
     List<Expert> getAllExperts();
 
     /**
+     * Gets an expert by ID.
+     * @param expertId The ID of the expert.
+     * @return The expert, or null if not found.
+     */
+    Expert getExpertById(int expertId);
+
+    /**
      * Gets an expert by email address.
      * @param email The email address.
      * @return The expert, or null if not found.

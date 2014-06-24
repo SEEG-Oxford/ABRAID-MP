@@ -196,7 +196,7 @@ public class HealthMapWebServiceTest {
         assertThat(location2.getGeoNameId()).isNull();
         assertThat(location2.getLatitude()).isNull();
         assertThat(location2.getLongitude()).isEqualTo(17.987391);
-        assertThat(location2.getPlaceBasicType()).isEqualTo("");
+        assertThat(location2.getPlaceBasicType()).isNull();
         assertThat(location2.getPlaceName()).isEqualTo("Lenvik, Troms, Norway");
         assertThat(location2.getAlerts()).hasSize(1);
 

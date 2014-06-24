@@ -52,12 +52,15 @@ public final class NativeSQLConstants {
     /** Query: Finds the environmental suitability for a disease group to exist at a point. This is taken from the
         mean prediction raster of the latest successful model run for the disease group. */
     public static final String ENV_SUITABILITY_QUERY =
-            "SELECT DISTINCT ON (disease_group_id) ST_Value(mean_prediction_raster, :geom) " +
+            "SELECT ST_Value(mean_prediction_raster, :geom) " +
             "FROM model_run " +
-            "WHERE disease_group_id = :diseaseGroupId " +
-            "AND status = '" + ModelRunStatus.COMPLETED + "' " +
-            "AND mean_prediction_raster IS NOT NULL " +
-            "ORDER BY disease_group_id, response_date DESC";
+            "WHERE id IN" +
+            "    (SELECT DISTINCT ON (disease_group_id) id" +
+            "    FROM model_run" +
+            "    WHERE disease_group_id = :diseaseGroupId" +
+            "    AND status = '" + ModelRunStatus.COMPLETED + "'" +
+            "    AND mean_prediction_raster IS NOT NULL" +
+            "    ORDER BY disease_group_id, response_date DESC)";
 
     /** Query: Calculates the distance between the specified point and the disease extent of the specified disease
                group, as follows:

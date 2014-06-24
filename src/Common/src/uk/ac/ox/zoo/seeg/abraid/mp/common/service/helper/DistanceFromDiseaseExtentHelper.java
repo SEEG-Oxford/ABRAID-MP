@@ -19,7 +19,7 @@ public class DistanceFromDiseaseExtentHelper {
     /**
      * Finds the distance between the occurrence's location and the occurrence's disease group's current extent.
      * @param occurrence The occurrence.
-     * @return The distance from the disease extent,
+     * @return The distance from the disease extent.
      */
     public Double findDistanceFromDiseaseExtent(DiseaseOccurrence occurrence) {
         Point locationPoint = occurrence.getLocation().getGeom();

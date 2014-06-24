@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
 
 import java.io.File;

@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
+import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.hamcrest.Matcher;
@@ -12,9 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.collection.LambdaCollections.with;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionContaining.hasItem;
 
@@ -106,7 +109,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 configurationService.getGlobalRasterFile());
     }
 
-    private Collection<String> buildCovariateFileList(int diseaseId)
+    private Map<String, String> buildCovariateFileList(int diseaseId)
             throws ConfigurationException, IOException {
         JsonCovariateConfiguration covariateConfig = configurationService.getCovariateConfiguration();
 
@@ -114,6 +117,14 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
         files = filter(having(on(JsonCovariateFile.class).getHide(), equalTo(false)), files);
         files = filter(having(on(JsonCovariateFile.class).getEnabled(), (Matcher) hasItem(diseaseId)), files);
 
-        return extract(files, on(JsonCovariateFile.class).getPath());
+        return with(files)
+                .index(on(JsonCovariateFile.class).getPath())
+                .convertValues(on(JsonCovariateFile.class).getName())
+                .convertValues(new Converter<String, String>() {
+                    @Override
+                    public String convert(String input) {
+                        return input == null ? "" : input;
+                    }
+                });
     }
 }

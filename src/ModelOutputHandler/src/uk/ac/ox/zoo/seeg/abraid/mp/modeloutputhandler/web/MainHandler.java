@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import ch.lambdaj.function.convert.Converter;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
@@ -8,16 +9,25 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.JsonModelOutputsMetadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * Main model output handler.
@@ -30,6 +40,15 @@ public class MainHandler {
             "Saving mean prediction raster (%s bytes) for model run \"%s\"";
     private static final String LOG_PREDICTION_UNCERTAINTY_RASTER =
             "Saving prediction uncertainty raster (%s bytes) for model run \"%s\"";
+    private static final String LOG_VALIDATION_STATISTICS_FILE =
+            "Saving validation statistics file (%s bytes) for model run \"%s\"";
+    private static final String LOG_RELATIVE_INFLUENCE_FILE =
+            "Saving relative influence file (%s bytes) for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_VALIDATION_STATISTICS =
+            "Could not save validation statistics csv for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_RELATIVE_INFLUENCE =
+            "Could not save relative influence csv for model run \"%s\"";
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private ModelRunService modelRunService;
 
@@ -54,6 +73,16 @@ public class MainHandler {
         ModelRun modelRun = handleMetadataJson(metadataJsonAsString);
 
         boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
+
+        // Handle validation statistics file
+        byte[] validationStatisticsFile =
+                extract(zipFile, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME, areOutputsMandatory);
+        handleValidationStatisticsFile(modelRun, validationStatisticsFile);
+
+        // Handle relative influence file
+        byte[] relativeInfluenceFile =
+                extract(zipFile, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME, areOutputsMandatory);
+        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
 
         // Handle mean prediction raster
         byte[] meanPredictionRaster =
@@ -83,6 +112,48 @@ public class MainHandler {
         return modelRun;
     }
 
+    private void handleValidationStatisticsFile(final ModelRun modelRun, byte[] file) throws IOException {
+        if (file != null) {
+            LOGGER.info(String.format(LOG_VALIDATION_STATISTICS_FILE, file.length, modelRun.getName()));
+            try {
+                List<CsvSubmodelStatistic> csvSubmodelStatistics =
+                        CsvSubmodelStatistic.readFromCSV(new String(file, UTF8));
+                List<SubmodelStatistic> submodelStatistics = with(csvSubmodelStatistics)
+                        .convert(new Converter<CsvSubmodelStatistic, SubmodelStatistic>() {
+                            @Override
+                            public SubmodelStatistic convert(CsvSubmodelStatistic csv) {
+                                return new SubmodelStatistic(csv, modelRun);
+                            }
+                        });
+                modelRun.setSubmodelStatistics(submodelStatistics);
+                modelRunService.saveModelRun(modelRun);
+            } catch (IOException e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_VALIDATION_STATISTICS, modelRun.getName()), e);
+            }
+        }
+    }
+
+    private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file) throws IOException {
+        if (file != null) {
+            LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
+            try {
+                List<CsvCovariateInfluence> csvCovariateInfluence =
+                        CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
+                List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluence)
+                        .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
+                            @Override
+                            public CovariateInfluence convert(CsvCovariateInfluence csv) {
+                                return new CovariateInfluence(csv, modelRun);
+                            }
+                        });
+                modelRun.setCovariateInfluences(covariateInfluences);
+                modelRunService.saveModelRun(modelRun);
+            } catch (IOException e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_RELATIVE_INFLUENCE, modelRun.getName()), e);
+            }
+        }
+    }
+
     private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
         if (raster != null) {
             LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
@@ -97,7 +168,11 @@ public class MainHandler {
         }
     }
 
-    private byte[] extract(ZipFile zipFile, String fileName, boolean isFileMandatory) throws ZipException, IOException {
+    private byte[] extract(ZipFile zipFile, String file, boolean isFileMandatory) throws ZipException, IOException {
+        // Files in the zip are flattened, so remove the folder prefix if there is one
+        String fileName = getFileNameFromPath(file);
+
+        // Extract from zip
         FileHeader header = zipFile.getFileHeader(fileName);
         if (header == null) {
             if (isFileMandatory) {
@@ -112,6 +187,10 @@ public class MainHandler {
                 return IOUtils.toByteArray(inputStream);
             }
         }
+    }
+
+    private String getFileNameFromPath(String file) {
+        return Paths.get(file).getFileName().toString();
     }
 
     private ModelRun getModelRun(String name) {

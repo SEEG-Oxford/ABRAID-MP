@@ -16,7 +16,7 @@ import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -156,7 +156,7 @@ public class CommonsExecIntegrationTest {
                 "foo", testDir.getRoot(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(findR(), 60000, 1, false, true),
-                new CovariateRunConfiguration("", new ArrayList<String>()),
+                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);

@@ -108,7 +108,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setExpertWeighting(initialWeighting);
 
-        Expert expert = createExpert("expert", expertsWeighting);
+        Expert expert = createExpert(1, "expert", expertsWeighting);
 
         DiseaseService mockDiseaseService = mockUpDiseaseServiceWithOneReview(expert, occurrence,
                 DiseaseOccurrenceReviewResponse.YES, diseaseGroupId);
@@ -159,7 +159,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
 
     private DiseaseService mockUpDiseaseServiceWithManyReviews(DiseaseOccurrence occ1, DiseaseOccurrence occ2, DiseaseOccurrence occ3) {
         List<DiseaseOccurrenceReview> reviews = createListOfManyReviews(occ1, occ2, occ3,
-                createExpert("ex1", 1.0), createExpert("ex2", 0.2), createExpert("ex3", 0.5));
+                createExpert(1, "ex1", 1.0), createExpert(2, "ex2", 0.2), createExpert(3, "ex3", 0.5));
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(87)).thenReturn(reviews);
         return mockDiseaseService;
@@ -179,7 +179,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
 
         // Assert
-        verify(logger, times(1)).info(eq("No new occurrences - validation and final weightings will not be updated"));
+        verify(logger, times(1)).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
     }
 
     @Test
@@ -304,19 +304,20 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     @Test
     public void updateExpertsWeightingsWithEmptyReviewsOfOccurrenceReturnsExpectedResult() {
         // Arrange - Only one expert has reviewed an occurrence so "reviewsOfOccurrence" in calculateDifference is empty
-        Expert expert = createExpert("expert", 0.9);
+        int expertId = 1;
+        Expert expert = createExpert(expertId, "expert", 0.9);
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, new DiseaseOccurrence(), DiseaseOccurrenceReviewResponse.YES);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(Arrays.asList(review));
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        Map<Expert, Double> map = target.calculateNewExpertsWeightings();
+        Map<Integer, Double> map = target.calculateNewExpertsWeightings();
 
         // Assert
         // The expert's response is "wrong" by the amount of the value that they reviewed (in this case they were "off"
         // by 1.0 from YES response). The expert's new weighting is then how "right" they were - which is 0.
-        assertThat(map.get(expert)).isEqualTo(0.0);
+        assertThat(map.get(expertId)).isEqualTo(0.0);
     }
 
     @Test
@@ -324,8 +325,10 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         // Arrange - Experts 1 and 2 submit YES reviews for an occurrence. Their new weightings will be 1.0
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
         DiseaseOccurrence occ = occurrences.get(0);
-        Expert ex1 = createExpert("expert1", 1.0);
-        Expert ex2 = createExpert("expert2", 0.5);
+        int expert1Id = 1;
+        int expert2Id = 2;
+        Expert ex1 = createExpert(expert1Id, "expert1", 1.0);
+        Expert ex2 = createExpert(expert2Id, "expert2", 0.5);
 
         DiseaseOccurrenceReview review1 = new DiseaseOccurrenceReview(ex1, occ, DiseaseOccurrenceReviewResponse.YES);
         DiseaseOccurrenceReview review2 = new DiseaseOccurrenceReview(ex2, occ, DiseaseOccurrenceReviewResponse.YES);
@@ -337,11 +340,11 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator weightingsCalculator = new WeightingsCalculator(mockDiseaseService, mockExpertService);
 
         // Act
-        Map<Expert, Double> map = weightingsCalculator.calculateNewExpertsWeightings();
+        Map<Integer, Double> map = weightingsCalculator.calculateNewExpertsWeightings();
 
         // Assert - NB. The map returns only the experts whose weightings have changed.
-        assertThat(map.keySet().contains(ex2)).isTrue();
-        assertThat(map.get(ex2)).isEqualTo(1.0);
+        assertThat(map.keySet().contains(expert2Id)).isTrue();
+        assertThat(map.get(expert2Id)).isEqualTo(1.0);
     }
 
     @Test
@@ -352,7 +355,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator weightingsCalculator = new WeightingsCalculator(mockDiseaseService, mockExpertService);
 
         // Act
-        Map<Expert, Double> map = weightingsCalculator.calculateNewExpertsWeightings();
+        Map<Integer, Double> map = weightingsCalculator.calculateNewExpertsWeightings();
 
         // Assert - These values were calculated in Weights spreadsheet, according to the formula defined there.
         assertThat(map.keySet()).hasSize(3);
@@ -373,9 +376,9 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     @Test
     public void saveExpertsWeightingsUpdatesAllExpertsInMap() {
         // Arrange
-        Map<Expert, Double> newExpertsWeightings =  new HashMap<>();
+        Map<Integer, Double> newExpertsWeightings =  new HashMap<>();
         for (Expert expert : expertService.getAllExperts()) {
-            newExpertsWeightings.put(expert, 0.2);
+            newExpertsWeightings.put(expert.getId(), 0.2);
         }
         WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
 
@@ -392,16 +395,16 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     private List<DiseaseOccurrenceReview> defaultListOfManyReviews() {
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87).subList(0, 3);
 
-        Expert ex1 = createExpert("ex1", 0.0);
-        Expert ex2 = createExpert("ex2", 0.0);
-        Expert ex3 = createExpert("ex3", 0.0);
+        Expert ex1 = createExpert(1, "ex1", 0.0);
+        Expert ex2 = createExpert(2, "ex2", 0.0);
+        Expert ex3 = createExpert(3, "ex3", 0.0);
 
         return createListOfManyReviews(occurrences.get(0), occurrences.get(1), occurrences.get(2), ex1, ex2, ex3);
     }
 
     private List<DiseaseOccurrenceReview> createListOfManyReviews(DiseaseOccurrence occ1, DiseaseOccurrence occ2,
                                                                   DiseaseOccurrence occ3, Expert ex1, Expert ex2, Expert ex3) {
-        List<DiseaseOccurrenceReview> reviews = Arrays.asList(
+        return Arrays.asList(
                 new DiseaseOccurrenceReview(ex1, occ1, DiseaseOccurrenceReviewResponse.YES),
                 new DiseaseOccurrenceReview(ex2, occ1, DiseaseOccurrenceReviewResponse.YES),
                 new DiseaseOccurrenceReview(ex3, occ1, DiseaseOccurrenceReviewResponse.YES),
@@ -411,11 +414,10 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
                 new DiseaseOccurrenceReview(ex1, occ3, DiseaseOccurrenceReviewResponse.NO),
                 new DiseaseOccurrenceReview(ex2, occ3, DiseaseOccurrenceReviewResponse.NO),
                 new DiseaseOccurrenceReview(ex3, occ3, DiseaseOccurrenceReviewResponse.NO));
-        return reviews;
     }
 
-    private Expert createExpert(String name, Double expertsWeighting) {
-        Expert expert = new Expert();
+    private Expert createExpert(int id, String name, Double expertsWeighting) {
+        Expert expert = new Expert(id);
         expert.setName(name);
         expert.setWeighting(expertsWeighting);
         return expert;

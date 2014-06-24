@@ -24,7 +24,6 @@
                 "species_name": "Humans",
                 "dup_count": "0",
                 "place_category": [],
-                "original_url": "http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNF4EFDnuQ1IvVKEkyHzR4WL8Uf0mQ&cid=c3a7d30bb8a4878e06b80cf16b898331&url=http://www.radionz.co.nz/international/programmes/datelinepacific/audio/2588433/regional-dengue-outbreak-unprecedented-spc",
                 "disease_id": "33",
                 "feed_id": "4"
             }
