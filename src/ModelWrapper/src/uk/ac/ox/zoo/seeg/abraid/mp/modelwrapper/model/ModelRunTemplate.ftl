@@ -98,6 +98,18 @@ result <- tryCatch({
             dir.create('results')
             writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/mean_prediction.tif", format="GTiff", options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
             writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/prediction_uncertainty.tif", format="GTiff", options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
+            fileConn <- file("results/statistics.csv")
+            writeLines(c(
+                '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
+                '1,2,3,4,5,6,7,8,9,10,11,12,13'
+            ), fileConn)
+            close(fileConn)
+            fileConn <- file("results/relative_influence.csv")
+            writeLines(c(
+                '"","mean","2.5%","97.5%"',
+                '"1",2,3,4'
+            ), fileConn)
+            close(fileConn)
         }
         innerResult <- 0
     }

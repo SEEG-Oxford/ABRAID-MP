@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static ch.lambdaj.collection.LambdaCollections.with;
@@ -167,7 +168,11 @@ public class MainHandler {
         }
     }
 
-    private byte[] extract(ZipFile zipFile, String fileName, boolean isFileMandatory) throws ZipException, IOException {
+    private byte[] extract(ZipFile zipFile, String file, boolean isFileMandatory) throws ZipException, IOException {
+        // Files in the zip are flattened, so remove the folder prefix if there is one
+        String fileName = getFileNameFromPath(file);
+
+        // Extract from zip
         FileHeader header = zipFile.getFileHeader(fileName);
         if (header == null) {
             if (isFileMandatory) {
@@ -182,6 +187,10 @@ public class MainHandler {
                 return IOUtils.toByteArray(inputStream);
             }
         }
+    }
+
+    private String getFileNameFromPath(String file) {
+        return Paths.get(file).getFileName().toString();
     }
 
     private ModelRun getModelRun(String name) {

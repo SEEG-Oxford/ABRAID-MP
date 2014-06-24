@@ -214,7 +214,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File results/mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     @Test
@@ -227,7 +227,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File results/prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File results/statistics.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File statistics.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     @Test
@@ -253,7 +253,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File results/relative_influence.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File relative_influence.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     private void insertModelRun(String name) {
