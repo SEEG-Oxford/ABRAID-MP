@@ -8,23 +8,29 @@ require(["require.conf"], function () {
 
     require([
         "ko",
+        "app/CounterViewModel",
         "app/LogInViewModel",
         "app/MapView",
         "app/SelectedPointViewModel",
         "app/SelectedLayerViewModel",
         "app/SelectedAdminUnitViewModel",
         "app/SidePanelViewModel",
-        "app/CounterViewModel",
+        "app/SpinnerViewModel",
         "domReady!"
-    ], function (ko, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
-                 SelectedAdminUnitViewModel, SidePanelViewModel, CounterViewModel, doc) {
+    ], function (ko, CounterViewModel, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
+                 SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn);
-            ko.applyBindings(new SidePanelViewModel(
-                new SelectedPointViewModel(baseUrl, alert,
-                    new CounterViewModel(data.diseaseOccurrenceReviewCount, "occurrence-reviewed")),
-                new SelectedAdminUnitViewModel(baseUrl, alert,
-                    new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed"))
-                ),
+            ko.applyBindings(
+                new SpinnerViewModel(),
+                doc.getElementById("spinner")
+            );
+            ko.applyBindings(
+                new SidePanelViewModel(
+                    new SelectedPointViewModel(baseUrl, alert,
+                        new CounterViewModel(data.diseaseOccurrenceReviewCount, "occurrence-reviewed")),
+                    new SelectedAdminUnitViewModel(baseUrl, alert,
+                        new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed"))
+                    ),
                 doc.getElementById("sidePanelContent")
             );
             ko.applyBindings(

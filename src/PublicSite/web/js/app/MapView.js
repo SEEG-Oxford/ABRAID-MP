@@ -183,9 +183,7 @@ define([
             }
         }
 
-        // Add the new feature collection to the clustered layer, and zoom to its bounds
-        function switchDiseaseOccurrenceLayer(diseaseId) {
-            clearDiseaseOccurrenceLayer();
+        function addDiseaseOccurrenceData(diseaseId) {
             $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId), function (featureCollection) {
                 if (featureCollection.features.length !== 0) {
                     ko.postbox.publish("no-features-to-review", false);
@@ -195,7 +193,14 @@ define([
                     ko.postbox.publish("no-features-to-review", true);
                     map.fitWorld();
                 }
+                ko.postbox.publish("map-view-update-in-progress", false);
             });
+        }
+
+        // Add the new feature collection to the clustered layer, and zoom to its bounds
+        function switchDiseaseOccurrenceLayer(diseaseId) {
+            clearDiseaseOccurrenceLayer();
+            addDiseaseOccurrenceData(diseaseId);
         }
 
         // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
@@ -290,9 +295,23 @@ define([
             return { type: type, crs: crs, features: features };
         }
 
-        // Display the admin units, and disease extent class, for the selected validator disease group.
-        function switchDiseaseExtentLayer(diseaseId) {
-            clearDiseaseExtentLayers();
+        function publishDiseaseExtentEvents(features) {
+            var data = _(features).map(function (f) {
+                return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount };
+            });
+            ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
+            ko.postbox.publish("no-features-to-review", features.length === 0);
+        }
+
+        function fitMapBounds(features, layer) {
+            if (features.length === 0) {
+                map.fitWorld();
+            } else {
+                map.fitBounds(layer.getBounds());
+            }
+        }
+
+        function addDiseaseExtentData(diseaseId) {
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (fc) {
                 var featuresNeedReview = _(fc.features).select(function (f) { return f.properties.needsReview; });
                 var featureCollectionNeedReview = createFeatureCollection(fc.type, fc.crs, featuresNeedReview);
@@ -302,12 +321,16 @@ define([
                 var featureCollectionReviewed = createFeatureCollection(fc.type, fc.crs, featuresReviewed);
                 adminUnitsReviewedLayer.addData(featureCollectionReviewed);
 
-                var data = _(featuresNeedReview).map(function (f) {
-                    return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount };
-                });
-                ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
-                ko.postbox.publish("no-features-to-review", featuresNeedReview.length === 0);
+                fitMapBounds(featuresNeedReview, adminUnitsNeedReviewLayer);
+                publishDiseaseExtentEvents(featuresNeedReview);
+                ko.postbox.publish("map-view-update-in-progress", false);
             });
+        }
+
+        // Display the admin units, and disease extent class, for the selected validator disease group.
+        function switchDiseaseExtentLayer(diseaseId) {
+            clearDiseaseExtentLayers();
+            addDiseaseExtentData(diseaseId);
         }
 
         /** LEGEND */
@@ -326,7 +349,6 @@ define([
                 _((_(extentClassColour).pairs()).map(function (pair) {
                     return createLegendRow(pair[0], pair[1][1]);
                 })).join("");
-            div.innerHTML += "<i class='fa fa-check' style='padding-left:3px'></i>Admin unit reviewed";
             return div;
         };
 
@@ -372,7 +394,7 @@ define([
         map.on("click", resetSelectedFeature);
 
         ko.postbox.subscribe("layers-changed", function (data) {
-            $("#spinner").show();
+            ko.postbox.publish("map-view-update-in-progress", true);
             validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
             switchValidationTypeView();
             resetSelectedFeature();
@@ -381,7 +403,6 @@ define([
             } else {
                 switchDiseaseExtentLayer(data.diseaseId);
             }
-            $("#spinner").fadeOut(800);
         });
 
         ko.postbox.subscribe("admin-unit-selected", function (data) {
