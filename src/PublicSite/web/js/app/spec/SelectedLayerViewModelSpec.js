@@ -8,7 +8,7 @@ define([
 ], function (SelectedLayerViewModel, ko, _) {
     "use strict";
 
-    describe("The selected layer view model", function () {
+    describe("The 'selected layer' view model", function () {
         var diseaseInterests = [ { name: "dengue", diseaseGroups: [ { name: "dengue" } ] } ];
         var vm = {};
         beforeEach(function () {
@@ -56,8 +56,18 @@ define([
                 expect(vm.selectedDiseaseSet).toBeObservable();
             });
 
-            it("is initially the first disease interest", function () {
-                expect(vm.selectedDiseaseSet()).toBe(diseaseInterests[0]);
+            describe("is initially", function () {
+                it("the first disease group from the 'Disease Interests' list, if the list exists", function () {
+                    expect(vm.selectedDiseaseSet()).toBe(diseaseInterests[0]);
+                });
+
+                it("or the first disease group from the 'Other Diseases' list, otherwise", function () {
+                    var diseaseInterests = [];
+                    var allOtherDiseases = [ {name: "ascariasis", diseaseGroups: [ { name: "ascariasis" } ] } ];
+                    vm = new SelectedLayerViewModel(diseaseInterests, allOtherDiseases);
+
+                    expect(vm.selectedDiseaseSet()).toBe(allOtherDiseases[0]);
+                });
             });
 
             it("fires the 'layers-changed' event when its value changes, for 'disease occurrences'", function () {

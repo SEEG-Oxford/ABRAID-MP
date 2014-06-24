@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.testutils;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.runner.RunWith;
@@ -28,15 +29,37 @@ public abstract class AbstractSpringIntegrationTests {
     }
 
     /**
-     * Executes an HQL query.
-     * @param query The query to execute.
-     * @return The number of entities updated or deleted.
+     * Executes a SQL select query and returns a single result.
+     *
+     * @param queryString The query to execute.
+     * @param parameterNamesAndValues The names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
+     * @return The query result.
      */
-    protected int executeQuery(String query) {
-        return getCurrentSession().createQuery(query).executeUpdate();
+    protected Object uniqueSQLResult(String queryString, Object... parameterNamesAndValues) {
+        return getParameterisedSQLQuery(queryString, parameterNamesAndValues).uniqueResult();
+    }
+
+    /**
+     * Executes a SQL update query.
+     *
+     * @param queryString The query to execute.
+     * @param parameterNamesAndValues The names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
+     */
+    protected void executeSQLUpdate(String queryString, Object... parameterNamesAndValues) {
+        getParameterisedSQLQuery(queryString, parameterNamesAndValues).executeUpdate();
     }
 
     private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
+    }
+
+    private SQLQuery getParameterisedSQLQuery(String queryString, Object... parameterNamesAndValues) {
+        SQLQuery query = getCurrentSession().createSQLQuery(queryString);
+        for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
+            query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);
+        }
+        return query;
     }
 }

@@ -13,8 +13,8 @@ public final class ModelOutputConstants {
     public static final String METADATA_JSON_FILENAME = "metadata.json";
 
     /** The mean prediction raster's filename in the model outputs. */
-    public static final String MEAN_PREDICTION_RASTER_FILENAME = "mean_prediction.asc";
+    public static final String MEAN_PREDICTION_RASTER_FILENAME = "results/mean_prediction.tif";
 
     /** The prediction uncertainty raster's filename in the model outputs. */
-    public static final String PREDICTION_UNCERTAINTY_RASTER_FILENAME = "prediction_uncertainty.asc";
+    public static final String PREDICTION_UNCERTAINTY_RASTER_FILENAME = "results/prediction_uncertainty.tif";
 }

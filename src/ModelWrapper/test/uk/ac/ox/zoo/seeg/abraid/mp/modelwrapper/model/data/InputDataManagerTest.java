@@ -65,7 +65,7 @@ public class InputDataManagerTest {
         verify(mockExtentWriter, times(1)).write(
                 anyMapOf(Integer.class, Integer.class),
                 any(File.class),
-                eq(Paths.get(dataDir.toString(), "extent.asc").toFile()));
+                eq(Paths.get(dataDir.toString(), "extent.tif").toFile()));
 
     }
 

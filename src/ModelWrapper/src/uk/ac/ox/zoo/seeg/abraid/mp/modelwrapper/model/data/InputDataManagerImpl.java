@@ -17,7 +17,7 @@ public class InputDataManagerImpl implements InputDataManager {
     private static final Logger LOGGER = Logger.getLogger(InputDataManagerImpl.class);
 
     private static final String OCCURRENCE_CSV = "occurrences.csv";
-    private static final String EXTENT_RASTER = "extent.asc";
+    private static final String EXTENT_RASTER = "extent.tif";
     private final ExtentDataWriter extentDataWriter;
     private final OccurrenceDataWriter occurrenceDataWriter;
 

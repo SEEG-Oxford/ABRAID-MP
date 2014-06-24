@@ -105,9 +105,15 @@ CREATE TABLE country (
     geom geometry(MULTIPOLYGON, 4326)
 );
 
+CREATE TABLE disease_extent (
+    disease_group_id integer NOT NULL,
+    geom geometry(MULTIPOLYGON, 4326) NOT NULL
+);
+
 CREATE TABLE disease_extent_class (
     name varchar(20) NOT NULL,
-    weighting integer NOT NULL
+    weighting integer NOT NULL,
+    distance_if_within_extent double precision
 );
 
 CREATE TABLE disease_group (
@@ -122,6 +128,7 @@ CREATE TABLE disease_group (
     validator_disease_group_id integer,
     weighting double precision,
     last_model_run_prep_date timestamp,
+    validation_process_start_date timestamp,
     model_run_min_new_occurrences integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
@@ -132,6 +139,8 @@ CREATE TABLE disease_occurrence (
     location_id integer NOT NULL,
     alert_id integer NOT NULL,
     occurrence_date timestamp NOT NULL,
+    env_suitability double precision,
+    distance_from_extent double precision,
     expert_weighting double precision,
     machine_weighting double precision,
     validation_weighting double precision,

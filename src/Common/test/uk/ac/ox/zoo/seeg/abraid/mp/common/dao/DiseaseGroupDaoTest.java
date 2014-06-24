@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
@@ -32,6 +33,10 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         String diseaseClusterAbbreviation = "tdc";
         int validatorDiseaseGroupId = 1;
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
+        DateTime validationProcessStartDate = DateTime.now().minusHours(1);
+        DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
+        int modelRunMinNewOccurrences = 100;
+        double weighting = 0.5;
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
@@ -40,6 +45,10 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setShortName(diseaseClusterShortName);
         diseaseGroup.setAbbreviation(diseaseClusterAbbreviation);
         diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        diseaseGroup.setValidationProcessStartDate(validationProcessStartDate);
+        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        diseaseGroup.setModelRunMinNewOccurrences(modelRunMinNewOccurrences);
+        diseaseGroup.setWeighting(weighting);
         diseaseGroup.setGlobal(true);
 
         // Act
@@ -52,12 +61,17 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup = diseaseGroupDao.getById(id);
         assertThat(diseaseGroup).isNotNull();
         assertThat(diseaseGroup.getName()).isEqualTo(diseaseClusterName);
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.CLUSTER);
         assertThat(diseaseGroup.getPublicName()).isEqualTo(diseaseClusterPublicName);
         assertThat(diseaseGroup.getShortName()).isEqualTo(diseaseClusterShortName);
+        assertThat(diseaseGroup.getAbbreviation()).isEqualTo(diseaseClusterAbbreviation);
         assertThat(diseaseGroup.getValidatorDiseaseGroup()).isNotNull();
         assertThat(diseaseGroup.getValidatorDiseaseGroup().getId()).isEqualTo(validatorDiseaseGroupId);
+        assertThat(diseaseGroup.getValidationProcessStartDate()).isEqualTo(validationProcessStartDate);
+        assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
+        assertThat(diseaseGroup.getModelRunMinNewOccurrences()).isEqualTo(modelRunMinNewOccurrences);
+        assertThat(diseaseGroup.getWeighting()).isEqualTo(weighting);
         assertThat(diseaseGroup.isGlobal()).isTrue();
-        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.CLUSTER);
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
     }

@@ -73,8 +73,10 @@ public class ModelProcessHandlerTest {
                 predictionUncertaintyRasterTestFile, metadataJsonTestFile));
 
         // Arrange - copy outputs to test folder
-        FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, workingDirectory);
-        FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, workingDirectory);
+        File resultsDir = new File(workingDirectory, "results");
+        resultsDir.mkdir();
+        FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, resultsDir);
+        FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, resultsDir);
 
         // Act
         target.onProcessComplete();
@@ -157,9 +159,11 @@ public class ModelProcessHandlerTest {
         // Arrange - copy test files to working directory
         File meanPredictionRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
         File predictionUncertaintyRasterTestFile = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+        File resultsDir = new File(workingDirectory, "results");
 
-        FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, workingDirectory);
-        FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, workingDirectory);
+        resultsDir.mkdir();
+        FileUtils.copyFileToDirectory(meanPredictionRasterTestFile, resultsDir);
+        FileUtils.copyFileToDirectory(predictionUncertaintyRasterTestFile, resultsDir);
 
         // Act
         target.onProcessComplete();

@@ -52,7 +52,7 @@ public class ModelRunGatekeeper {
         } else {
             LocalDate today = LocalDate.now();
             LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusWeeks(1);
-            final boolean weekHasElapsed = comparisonDate.isEqual(today) || comparisonDate.isBefore(today);
+            final boolean weekHasElapsed = !comparisonDate.isAfter(today);
             LOGGER.info(String.format(weekHasElapsed ? WEEK_HAS_ELAPSED : WEEK_HAS_NOT_ELAPSED, lastModelRunPrepDate));
             return weekHasElapsed;
         }

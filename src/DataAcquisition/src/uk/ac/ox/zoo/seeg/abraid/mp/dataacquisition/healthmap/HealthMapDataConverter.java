@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseOccurrenceValidationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
@@ -27,6 +28,7 @@ public class HealthMapDataConverter {
     private HealthMapLookupData lookupData;
     private QCManager qcManager;
     private PostQCManager postQcManager;
+    private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquisition.class);
     private static final String CONVERSION_MESSAGE =
@@ -37,7 +39,8 @@ public class HealthMapDataConverter {
                                   HealthMapAlertConverter alertConverter,
                                   AlertService alertService, DiseaseService diseaseService,
                                   HealthMapLookupData lookupData, QCManager qcManager,
-                                  PostQCManager postQcManager) {
+                                  PostQCManager postQcManager,
+                                  DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
         this.locationConverter = locationConverter;
         this.alertConverter = alertConverter;
         this.alertService = alertService;
@@ -45,6 +48,7 @@ public class HealthMapDataConverter {
         this.lookupData = lookupData;
         this.qcManager = qcManager;
         this.postQcManager = postQcManager;
+        this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
     }
 
     /**
@@ -108,13 +112,10 @@ public class HealthMapDataConverter {
                     location = continueLocationConversion(healthMapLocation, location);
 
                     if (location != null) {
-                        // Location was converted successfully, so save it all. Note that the location is saved with the
-                        // disease occurrence.
+                        // Location was converted successfully, so add validation parameters to the occurrence and
+                        // save it all. Note that the location is saved with the disease occurrence.
                         occurrence.setLocation(location);
-                        // For now set the occurrence's isValidated flag based on its location passing QC stages. In
-                        // future, here this will be determined by the formula to identify points for validation (using
-                        // distance from extent and the probability of occurrence at location)
-                        occurrence.setValidated(location.hasPassedQc() ? true : null);
+                        diseaseOccurrenceValidationService.addValidationParameters(occurrence);
                         diseaseService.saveDiseaseOccurrence(occurrence);
                         convertedLocations.add(location);
                         convertedOccurrences.add(occurrence);
