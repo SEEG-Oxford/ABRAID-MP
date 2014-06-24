@@ -11,7 +11,7 @@
             /* Load external libs from cdn. */
             "jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery",
             "bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap",
-            "bootstrap.extensions": "http://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.2/js/jasny-bootstrap",
+            "bootstrap.extensions": "https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.2/js/jasny-bootstrap",
             "knockout": "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-debug",
             // Move to cdn path when next version is published (error template refreshing bug)
             "knockout.validation": baseUrl + "js/lib/knockout-validation.min",
