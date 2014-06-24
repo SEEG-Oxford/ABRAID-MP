@@ -25,12 +25,14 @@
         <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
+        <dependency  org="commons-collections" name="commons-collections" rev="3.2.1" conf="external->default"/>
 
         <!-- Web services -->
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
         <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.6" conf="external->default"/>
         <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.1" conf="external->default" />
         <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.1" conf="external->default" />
+        <dependency org="com.fasterxml.jackson.dataformat" name="jackson-dataformat-csv" rev="2.3.1" conf="external->default" />
 
         <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
         <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true" conf="external->default" />

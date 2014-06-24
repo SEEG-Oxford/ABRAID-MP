@@ -4,14 +4,18 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * Tests the ModelRunDao class.
- *
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
@@ -46,5 +50,68 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getRequestDate()).isEqualTo(requestDate);
         assertThat(modelRun.getOutputText()).isEqualTo(outputText);
         assertThat(modelRun.getErrorText()).isEqualTo(errorText);
+    }
+
+    @Test
+    public void saveAndLoadCascadesToSubmodelStatistics() {
+        // Arrange
+        ModelRun run = createModelRun("name");
+        modelRunDao.save(run);
+        flushAndClear();
+        run = modelRunDao.getByName("name");
+
+        List<SubmodelStatistic> submodelStatistics = new ArrayList<>();
+        submodelStatistics.add(createSubmodelStatistic(run));
+        submodelStatistics.add(createSubmodelStatistic(run));
+        submodelStatistics.add(createSubmodelStatistic(run));
+        run.setSubmodelStatistics(submodelStatistics);
+        modelRunDao.save(run);
+        flushAndClear();
+
+        // Act
+        run = modelRunDao.getByName("name");
+
+        // Assert
+        assertThat(run.getSubmodelStatistics()).hasSize(3);
+    }
+
+    @Test
+    public void saveAndLoadCascadesToCovariateInfluence() {
+        // Arrange
+        ModelRun run = createModelRun("name");
+        modelRunDao.save(run);
+        flushAndClear();
+        run = modelRunDao.getByName("name");
+
+        List<CovariateInfluence> covariateInfluences = new ArrayList<>();
+        covariateInfluences.add(createCovariateInfluence("a", run));
+        covariateInfluences.add(createCovariateInfluence("b", run));
+        covariateInfluences.add(createCovariateInfluence("c", run));
+        run.setCovariateInfluences(covariateInfluences);
+        modelRunDao.save(run);
+        flushAndClear();
+
+        // Act
+        run = modelRunDao.getByName("name");
+
+        // Assert
+        assertThat(run.getCovariateInfluences()).hasSize(3);
+    }
+
+    private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {
+        SubmodelStatistic submodelStatistic = new SubmodelStatistic();
+        submodelStatistic.setModelRun(modelRun);
+        return submodelStatistic;
+    }
+
+    private CovariateInfluence createCovariateInfluence(String covariateName, ModelRun modelRun) {
+        CovariateInfluence covariateInfluence = new CovariateInfluence();
+        covariateInfluence.setModelRun(modelRun);
+        covariateInfluence.setCovariateName(covariateName);
+        return covariateInfluence;
+    }
+
+    private ModelRun createModelRun(String name) {
+        return new ModelRun(name, 87, DateTime.now());
     }
 }

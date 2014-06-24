@@ -21,6 +21,9 @@ ALTER TABLE admin_unit_review
 ALTER TABLE alert
     ADD CONSTRAINT uq_alert_healthmap_alert_id UNIQUE (healthmap_alert_id);
 
+ALTER TABLE covariate_influence
+    ADD CONSTRAINT uq_model_run_id_covariate_name UNIQUE (model_run_id, covariate_name);
+
 ALTER TABLE disease_occurrence_review
     ADD CONSTRAINT uq_disease_occurrence_review_expert_id_disease_occurrence_id UNIQUE (expert_id, disease_occurrence_id);
 
@@ -67,6 +70,9 @@ ALTER TABLE alert ADD CONSTRAINT pk_alert
 
 ALTER TABLE country ADD CONSTRAINT pk_country
     PRIMARY KEY (gaul_code);
+
+ALTER TABLE covariate_influence ADD CONSTRAINT pk_covariate_influence
+    PRIMARY KEY (id);
 
 ALTER TABLE disease_extent ADD CONSTRAINT pk_disease_extent
     PRIMARY KEY (disease_group_id);
@@ -119,6 +125,9 @@ ALTER TABLE model_run ADD CONSTRAINT pk_model_run
 ALTER TABLE provenance ADD CONSTRAINT pk_provenance
     PRIMARY KEY (id);
 
+ALTER TABLE submodel_statistic ADD CONSTRAINT pk_submodel_statistic
+    PRIMARY KEY (id);
+
 ALTER TABLE validator_disease_group ADD CONSTRAINT pk_validator_disease_group
     PRIMARY KEY (id);
 
@@ -153,6 +162,9 @@ ALTER TABLE admin_unit_review ADD CONSTRAINT fk_admin_unit_review_expert
 
 ALTER TABLE alert ADD CONSTRAINT fk_alert_feed
     FOREIGN KEY (feed_id) REFERENCES feed (id);
+
+ALTER TABLE covariate_influence ADD CONSTRAINT fk_covariate_influence_model_run
+    FOREIGN KEY (model_run_id) REFERENCES model_run (id);
 
 ALTER TABLE disease_extent ADD CONSTRAINT fk_disease_extent_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
@@ -210,6 +222,9 @@ ALTER TABLE location ADD CONSTRAINT fk_location_healthmap_country
 
 ALTER TABLE model_run ADD CONSTRAINT fk_model_run_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
+
+ALTER TABLE submodel_statistic ADD CONSTRAINT fk_submodel_statistic_model_run
+    FOREIGN KEY (model_run_id) REFERENCES model_run (id);
 
 
 -- Check constraints

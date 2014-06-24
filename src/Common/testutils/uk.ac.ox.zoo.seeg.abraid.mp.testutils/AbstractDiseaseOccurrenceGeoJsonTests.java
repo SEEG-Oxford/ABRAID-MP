@@ -5,8 +5,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.DisplayJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.json.views.ModellingJsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

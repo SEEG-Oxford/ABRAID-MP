@@ -17,6 +17,7 @@ GRANT SELECT, INSERT                ON admin_unit_review TO :application_usernam
 GRANT SELECT                        ON admin_unit_tropical TO :application_username;
 GRANT SELECT, INSERT                ON alert TO :application_username;
 GRANT SELECT                        ON country TO :application_username;
+GRANT SELECT, INSERT                ON covariate_influence TO :application_username;
 GRANT SELECT, INSERT,        DELETE ON disease_extent TO :application_username;
 GRANT SELECT                        ON disease_extent_class TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
@@ -34,6 +35,7 @@ GRANT SELECT                        ON land_sea_border TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON location TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON model_run TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON provenance TO :application_username;
+GRANT SELECT, INSERT                ON submodel_statistic TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON validator_disease_group TO :application_username;
 
 -- Privileges for the ABRAID-MP application: views
@@ -45,6 +47,7 @@ GRANT SELECT ON admin_unit_tropical_view TO :application_username;
 GRANT SELECT, UPDATE ON admin_unit_disease_extent_class_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON admin_unit_review_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON alert_id_seq TO :application_username;
+GRANT SELECT, UPDATE ON covariate_influence_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON disease_group_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON disease_occurrence_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON disease_occurrence_review_id_seq TO :application_username;
@@ -53,4 +56,5 @@ GRANT SELECT, UPDATE ON feed_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON location_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON model_run_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON provenance_id_seq TO :application_username;
+GRANT SELECT, UPDATE ON submodel_statistic_id_seq TO :application_username;
 GRANT SELECT, UPDATE ON validator_disease_group_id_seq TO :application_username;

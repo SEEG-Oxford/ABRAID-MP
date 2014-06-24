@@ -14,6 +14,7 @@ CREATE INDEX ix_admin_unit_review_disease_group_id ON admin_unit_review (disease
 CREATE INDEX ix_admin_unit_review_expert_id ON admin_unit_review (expert_id);
 CREATE INDEX ix_admin_unit_review_response ON admin_unit_review (response);
 CREATE INDEX ix_alert_feed_id ON alert (feed_id);
+CREATE INDEX ix_covariate_influence_model_run_id ON covariate_influence (model_run_id);
 CREATE INDEX ix_disease_group_parent_id ON disease_group (parent_id);
 CREATE INDEX ix_disease_group_validator_disease_group_id ON disease_group (validator_disease_group_id);
 CREATE INDEX ix_disease_occurrence_alert_id ON disease_occurrence (alert_id);
@@ -31,3 +32,4 @@ CREATE INDEX ix_location_admin_unit_qc_gaul_code ON location (admin_unit_qc_gaul
 CREATE INDEX ix_location_admin_unit_tropical_gaul_code ON location (admin_unit_tropical_gaul_code);
 CREATE INDEX ix_location_healthmap_country_id ON location (healthmap_country_id);
 CREATE INDEX ix_model_run_disease_group_id ON model_run (disease_group_id);
+CREATE INDEX ix_submodel_statistic_model_run_id ON submodel_statistic (model_run_id);

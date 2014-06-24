@@ -15,15 +15,23 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,38 +110,17 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
                 NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
         assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+        assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
+        assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
     }
 
     @Test
-    public void handleModelOutputsStoresValidFailedOutputsWithoutRasters() throws Exception {
+    public void handleModelOutputsStoresValidFailedOutputsWithResults() throws Exception {
         // Arrange
         DateTime expectedResponseDate = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
         insertModelRun(TEST_MODEL_RUN_NAME);
-        byte[] body = loadTestFile("valid_failed_outputs_without_rasters.zip");
-        String expectedErrorText = "test error text";
-
-        // Act and assert
-        this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
-                .andExpect(status().isOk())
-                .andExpect(content().string(""));
-
-        // Assert
-        ModelRun run = modelRunDao.getByName(TEST_MODEL_RUN_NAME);
-        assertThat(run.getStatus()).isEqualTo(ModelRunStatus.FAILED);
-        assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
-        assertThat(run.getOutputText()).isNullOrEmpty();
-        assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
-    }
-
-    @Test
-    public void handleModelOutputsStoresValidFailedOutputsWithRasters() throws Exception {
-        // Arrange
-        DateTime expectedResponseDate = DateTime.now();
-        DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
-        insertModelRun(TEST_MODEL_RUN_NAME);
-        byte[] body = loadTestFile("valid_failed_outputs_with_rasters.zip");
+        byte[] body = loadTestFile("valid_failed_outputs_with_results.zip");
         String expectedErrorText = "test error text";
 
         // Act and assert
@@ -152,6 +139,31 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
                 NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
         assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
+        assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
+        assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
+    }
+
+    @Test
+    public void handleModelOutputsStoresValidFailedOutputsWithoutResults() throws Exception {
+        // Arrange
+        DateTime expectedResponseDate = DateTime.now();
+        DateTimeUtils.setCurrentMillisFixed(expectedResponseDate.getMillis());
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("valid_failed_outputs_without_results.zip");
+        String expectedErrorText = "test error text";
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+
+        // Assert
+        ModelRun run = modelRunDao.getByName(TEST_MODEL_RUN_NAME);
+        assertThat(run.getStatus()).isEqualTo(ModelRunStatus.FAILED);
+        assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
+        assertThat(run.getOutputText()).isNullOrEmpty();
+        assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
     }
 
     @Test
@@ -202,7 +214,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File results/mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     @Test
@@ -215,7 +227,33 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Model outputs handler failed with error \"File results/prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+                .andExpect(content().string("Model outputs handler failed with error \"File prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+    }
+
+    @Test
+    public void handleModelOutputsRejectsMissingStatisticsIfStatusIsCompleted() throws Exception {
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("missing_statistics.zip");
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Model outputs handler failed with error \"File statistics.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+    }
+
+    @Test
+    public void handleModelOutputsRejectsMissingRelativeInfluencesIfStatusIsCompleted() throws Exception {
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("missing_influence.zip");
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Model outputs handler failed with error \"File relative_influence.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     private void insertModelRun(String name) {
@@ -232,5 +270,63 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         byte[] actualRaster = nativeSQL.loadRasterForModelRun(run.getId(), rasterColumnName);
 
         assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
+    }
+
+    private void assertThatStatisticsInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {
+        List<SubmodelStatistic> database = run.getSubmodelStatistics();
+        List<CsvSubmodelStatistic> file = CsvSubmodelStatistic.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
+
+        Collections.sort(database, new Comparator<SubmodelStatistic>() {
+            @Override
+            public int compare(SubmodelStatistic o1, SubmodelStatistic o2) {
+                return o1.getDeviance().compareTo(o2.getDeviance());
+            }
+        });
+
+        Collections.sort(file, new Comparator<CsvSubmodelStatistic>() {
+            @Override
+            public int compare(CsvSubmodelStatistic o1, CsvSubmodelStatistic o2) {
+                return o1.getDeviance().compareTo(o2.getDeviance());
+            }
+        });
+
+        assertThat(extractProperty("deviance").from(database)).isEqualTo(extractProperty("deviance").from(file));
+        assertThat(extractProperty("rootMeanSquareError").from(database)).isEqualTo(extractProperty("rootMeanSquareError").from(file));
+        assertThat(extractProperty("kappa").from(database)).isEqualTo(extractProperty("kappa").from(file));
+        assertThat(extractProperty("areaUnderCurve").from(database)).isEqualTo(extractProperty("areaUnderCurve").from(file));
+        assertThat(extractProperty("sensitivity").from(database)).isEqualTo(extractProperty("sensitivity").from(file));
+        assertThat(extractProperty("specificity").from(database)).isEqualTo(extractProperty("specificity").from(file));
+        assertThat(extractProperty("proportionCorrectlyClassified").from(database)).isEqualTo(extractProperty("proportionCorrectlyClassified").from(file));
+        assertThat(extractProperty("kappaStandardDeviation").from(database)).isEqualTo(extractProperty("kappaStandardDeviation").from(file));
+        assertThat(extractProperty("areaUnderCurveStandardDeviation").from(database)).isEqualTo(extractProperty("areaUnderCurveStandardDeviation").from(file));
+        assertThat(extractProperty("sensitivityStandardDeviation").from(database)).isEqualTo(extractProperty("sensitivityStandardDeviation").from(file));
+        assertThat(extractProperty("specificityStandardDeviation").from(database)).isEqualTo(extractProperty("specificityStandardDeviation").from(file));
+        assertThat(extractProperty("proportionCorrectlyClassifiedStandardDeviation").from(database)).isEqualTo(extractProperty("proportionCorrectlyClassifiedStandardDeviation").from(file));
+        assertThat(extractProperty("threshold").from(database)).isEqualTo(extractProperty("threshold").from(file));
+    }
+
+    private void assertThatRelativeInfluencesInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {
+        List<CovariateInfluence> database = run.getCovariateInfluences();
+        List<CsvCovariateInfluence> file = CsvCovariateInfluence.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
+
+        Collections.sort(database, new Comparator<CovariateInfluence>() {
+            @Override
+            public int compare(CovariateInfluence o1, CovariateInfluence o2) {
+                return o1.getMeanInfluence().compareTo(o2.getMeanInfluence());
+            }
+        });
+
+        Collections.sort(file, new Comparator<CsvCovariateInfluence>() {
+            @Override
+            public int compare(CsvCovariateInfluence o1, CsvCovariateInfluence o2) {
+                return o1.getMeanInfluence().compareTo(o2.getMeanInfluence());
+            }
+        });
+
+        assertThat(extractProperty("covariateName").from(database)).isEqualTo(extractProperty("covariateName").from(file));
+        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
+        assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
+        assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
     }
 }
