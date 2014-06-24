@@ -421,6 +421,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         extentClass.setDiseaseGroup(diseaseGroupDao.getById(diseaseGroupId));
         extentClass.setDiseaseExtentClass(diseaseExtentClassDao.getByName(extentClassName));
         extentClass.setOccurrenceCount(0);
+        extentClass.setClassChangedDate(DateTime.now());
         adminUnitDiseaseExtentClassDao.save(extentClass);
     }
 
