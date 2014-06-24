@@ -111,7 +111,7 @@ CREATE TABLE country (
 CREATE TABLE covariate_influence (
     id serial NOT NULL,
     model_run_id integer NOT NULL,
-    covariate_name varchar(255),
+    covariate_name varchar(255) NOT NULL,
     covariate_display_name varchar(255),
     mean_influence double precision,
     upper_quantile double precision,
