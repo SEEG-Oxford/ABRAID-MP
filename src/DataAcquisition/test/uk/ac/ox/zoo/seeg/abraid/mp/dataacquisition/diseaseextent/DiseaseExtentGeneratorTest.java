@@ -10,7 +10,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -55,7 +58,7 @@ public class DiseaseExtentGeneratorTest {
     public void generateDiseaseExtentSetsAllToUncertainIfNoRelevantOccurrencesExist() {
         // Arrange
         DiseaseExtentParameters parameters = createParameters();
-        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtentAllUncertain();
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtentAllUncertain(DateTime.now());
         standardMocks();
         mockGetDiseaseOccurrencesForDiseaseExtent(parameters, new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
@@ -74,7 +77,7 @@ public class DiseaseExtentGeneratorTest {
     public void generateInitialDiseaseExtentForTypicalCase() {
         // Arrange
         DiseaseExtentParameters parameters = createParameters();
-        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent();
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent(DateTime.now());
         standardMocks();
         mockGetDiseaseOccurrencesForDiseaseExtent(parameters, getOccurrences());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
@@ -93,17 +96,17 @@ public class DiseaseExtentGeneratorTest {
     public void generateUpdatedDiseaseExtentSetsAllToUncertainIfNoRelevantOccurrencesOrReviewsExist() {
         // Arrange - variables
         DiseaseExtentParameters parameters = createParameters();
-        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent();
+        DateTime createdDate = DateTime.now().minusDays(1);
+        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent(createdDate);
 
         // Arrange - set the expected disease extent to be the initial disease extent, with all changed to uncertain
-        // and hasClassChanged set appropriately
-        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent();
+        // and classChangedDate set appropriately
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent(createdDate);
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
             extentClass.setOccurrenceCount(0);
-            if (extentClass.getDiseaseExtentClass().equals(uncertainDiseaseExtentClass)) {
-                extentClass.setHasClassChanged(false);
-            } else {
+            if (!extentClass.getDiseaseExtentClass().equals(uncertainDiseaseExtentClass)) {
                 extentClass.setDiseaseExtentClass(uncertainDiseaseExtentClass);
+                extentClass.setClassChangedDate(DateTime.now());
             }
         }
 
@@ -127,8 +130,10 @@ public class DiseaseExtentGeneratorTest {
     public void generateUpdatedDiseaseExtentOccurrencesOnly() {
         // Arrange
         DiseaseExtentParameters parameters = createParameters();
-        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent();
-        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesOnly();
+        DateTime createdDate = DateTime.now().minusDays(1);
+        DateTime updatedDate = DateTime.now();
+        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent(createdDate);
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesOnly(createdDate, updatedDate);
         standardMocks();
         mockGetDiseaseOccurrencesForDiseaseExtent(parameters, getOccurrences());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
@@ -148,8 +153,10 @@ public class DiseaseExtentGeneratorTest {
     public void generateUpdatedDiseaseExtentOccurrencesAndReviews() {
         // Arrange
         DiseaseExtentParameters parameters = createParameters();
-        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent();
-        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesAndReviews();
+        DateTime createdDate = DateTime.now().minusDays(1);
+        DateTime updatedDate = DateTime.now();
+        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent(createdDate);
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesAndReviews(createdDate, updatedDate);
         standardMocks();
         mockGetDiseaseOccurrencesForDiseaseExtent(parameters, getOccurrences());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
@@ -317,51 +324,51 @@ public class DiseaseExtentGeneratorTest {
         );
     }
 
-    private List<AdminUnitDiseaseExtentClass> getInitialDiseaseExtent() {
+    private List<AdminUnitDiseaseExtentClass> getInitialDiseaseExtent(DateTime createdDate) {
         return createList(
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, presenceDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, possiblePresenceDiseaseExtentClass, 1),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, possiblePresenceDiseaseExtentClass, 4),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, presenceDiseaseExtentClass, 5),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, presenceDiseaseExtentClass, 10)
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, presenceDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, possiblePresenceDiseaseExtentClass, 1, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, possiblePresenceDiseaseExtentClass, 4, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, presenceDiseaseExtentClass, 5, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, presenceDiseaseExtentClass, 10, createdDate)
         );
     }
 
-    private List<AdminUnitDiseaseExtentClass> getInitialDiseaseExtentAllUncertain() {
+    private List<AdminUnitDiseaseExtentClass> getInitialDiseaseExtentAllUncertain(DateTime createdDate) {
         return createList(
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, uncertainDiseaseExtentClass, 0),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, uncertainDiseaseExtentClass, 0)
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate)
         );
     }
 
-    private List<AdminUnitDiseaseExtentClass> getUpdatedDiseaseExtentOccurrencesOnly() {
+    private List<AdminUnitDiseaseExtentClass> getUpdatedDiseaseExtentOccurrencesOnly(DateTime createdDate, DateTime updatedDate) {
         return createList(
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, presenceDiseaseExtentClass, 0, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, possiblePresenceDiseaseExtentClass, 1, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, presenceDiseaseExtentClass, 4, true),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, possiblePresenceDiseaseExtentClass, 5, true),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, presenceDiseaseExtentClass, 10, false)
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, presenceDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, possiblePresenceDiseaseExtentClass, 1, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, presenceDiseaseExtentClass, 4, updatedDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, possiblePresenceDiseaseExtentClass, 5, updatedDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, presenceDiseaseExtentClass, 10, createdDate)
         );
     }
 
-    private List<AdminUnitDiseaseExtentClass> getUpdatedDiseaseExtentOccurrencesAndReviews() {
+    private List<AdminUnitDiseaseExtentClass> getUpdatedDiseaseExtentOccurrencesAndReviews(DateTime createdDate, DateTime updatedDate) {
         return createList(
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, absenceDiseaseExtentClass, 0, true),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, uncertainDiseaseExtentClass, 1, true),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, possiblePresenceDiseaseExtentClass, 4, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, presenceDiseaseExtentClass, 5, false),
-                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, possiblePresenceDiseaseExtentClass, 10, true)
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, absenceDiseaseExtentClass, 0, updatedDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, uncertainDiseaseExtentClass, 1, updatedDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, possiblePresenceDiseaseExtentClass, 4, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, presenceDiseaseExtentClass, 5, createdDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(300), diseaseGroup, possiblePresenceDiseaseExtentClass, 10, updatedDate)
         );
     }
 

@@ -46,14 +46,13 @@ public interface AdminUnitReviewDao {
     List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId);
 
     /**
-     * Determines whether a review of the presence of the disease group in the admin unit, by the specified expert,
-     * already exists in the database.
+     * Gets the review, defined by the unique triplet of input arguments, if it exists in the database.
      * @param expertId The id of the expert.
      * @param diseaseGroupId The id of the disease group.
      * @param gaulCode The gaulCode of the administrative unit.
-     * @return True if the review already exists, otherwise false.
+     * @return The adminUnitReview if it exists, otherwise null.
      */
-    boolean doesAdminUnitReviewExist(Integer expertId, Integer diseaseGroupId, Integer gaulCode);
+    AdminUnitReview getAdminUnitReview(Integer expertId, Integer diseaseGroupId, Integer gaulCode);
 
     /**
      * Saves the specified review.

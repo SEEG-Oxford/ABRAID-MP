@@ -49,8 +49,7 @@ CREATE TABLE admin_unit_disease_extent_class (
     disease_group_id integer NOT NULL,
     disease_extent_class varchar(20) NOT NULL,
     occurrence_count integer NOT NULL,
-    has_class_changed boolean NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    class_changed_date timestamp NOT NULL
 );
 
 CREATE TABLE admin_unit_global (
@@ -79,7 +78,7 @@ CREATE TABLE admin_unit_review (
     global_gaul_code integer,
     tropical_gaul_code integer,
     response varchar(17) NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    changed_date timestamp NOT NULL
 );
 
 CREATE TABLE admin_unit_tropical (

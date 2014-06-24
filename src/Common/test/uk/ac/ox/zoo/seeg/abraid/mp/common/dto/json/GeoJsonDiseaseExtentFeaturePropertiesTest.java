@@ -62,7 +62,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsFalseIfAdminUnitAppearsInReviewsListAndHasClassChangedIsFalse() {
+    public void needsReviewIsFalseIfAdminUnitAppearsInReviewsListAndClassChangedIsNotLaterThanReviewDate() {
         // Arrange
         List<AdminUnitReview> reviews = new ArrayList<>();
         AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithReview(reviews, false);
@@ -76,7 +76,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsTrueIfAdminUnitAppearsInReviewsListButHasClassChangedIsTrue() {
+    public void needsReviewIsTrueIfAdminUnitAppearsInReviewsListButClassChangedDateIsLaterThanReviewDate() {
         // Arrange
         List<AdminUnitReview> reviews = new ArrayList<>();
         AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithReview(reviews, true);
@@ -90,22 +90,9 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     }
 
     @Test
-    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsListAndHasClassChangedIsTrue() {
+    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsList() {
         // Arrange
-        AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithoutReview(true);
-
-        // Act
-        GeoJsonDiseaseExtentFeatureProperties result =
-                new GeoJsonDiseaseExtentFeatureProperties(extentClass, new ArrayList<AdminUnitReview>());
-
-        // Assert
-        assertThat(result.needsReview()).isTrue();
-    }
-
-    @Test
-    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsListAndHasClassChangedIsFalse() {
-        // Arrange
-        AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithoutReview(false);
+        AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithoutReview();
 
         // Act
         GeoJsonDiseaseExtentFeatureProperties result =

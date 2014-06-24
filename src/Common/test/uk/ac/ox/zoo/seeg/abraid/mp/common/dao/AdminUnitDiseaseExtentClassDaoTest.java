@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -57,16 +58,17 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("PRESENCE");
         int occurrenceCount = 25;
+        DateTime createdDate = DateTime.now();
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                adminUnitGlobal, diseaseGroup, extentClass, occurrenceCount);
+                adminUnitGlobal, diseaseGroup, extentClass, occurrenceCount, createdDate);
 
         // Act
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
         Integer id = adminUnitDiseaseExtentClass.getId();
 
         // Assert
-        assertThat(adminUnitDiseaseExtentClass.getCreatedDate()).isNotNull();
+        assertThat(adminUnitDiseaseExtentClass.getClassChangedDate()).isNotNull();
         flushAndClear();
         adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClassDao.getById(id);
         assertThat(adminUnitDiseaseExtentClass).isNotNull();
@@ -75,7 +77,7 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical()).isNull();
         assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
         assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
-        assertThat(adminUnitDiseaseExtentClass.hasClassChanged()).isTrue();
+        assertThat(adminUnitDiseaseExtentClass.getClassChangedDate()).isEqualTo(createdDate);
     }
 
     @Test
@@ -87,17 +89,18 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("ABSENCE");
         int occurrenceCount = 0;
+        DateTime changedDate = DateTime.now();
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
-        adminUnitDiseaseExtentClass.setHasClassChanged(false);
+        adminUnitDiseaseExtentClass.setClassChangedDate(changedDate);
 
         // Act
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
         Integer id = adminUnitDiseaseExtentClass.getId();
 
         // Assert
-        assertThat(adminUnitDiseaseExtentClass.getCreatedDate()).isNotNull();
+        assertThat(adminUnitDiseaseExtentClass.getClassChangedDate()).isNotNull();
         flushAndClear();
         adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClassDao.getById(id);
         assertThat(adminUnitDiseaseExtentClass).isNotNull();
@@ -106,7 +109,6 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal()).isNull();
         assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
         assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
-        assertThat(adminUnitDiseaseExtentClass.hasClassChanged()).isFalse();
     }
 
     @Test(expected = ConstraintViolationException.class)

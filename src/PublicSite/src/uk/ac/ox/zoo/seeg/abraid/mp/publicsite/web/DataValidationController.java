@@ -216,11 +216,13 @@ public class DataValidationController extends AbstractController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        if (!expertService.doesAdminUnitReviewExist(expertId, diseaseGroupId, gaulCode)) {
-            expertService.saveAdminUnitReview(expertEmail, diseaseGroupId, gaulCode, adminUnitReviewResponse);
+        AdminUnitReview adminUnitReview = expertService.getAdminUnitReview(expertId, diseaseGroupId, gaulCode);
+        if (adminUnitReview == null) {
+            expertService.saveNewAdminUnitReview(expertEmail, diseaseGroupId, gaulCode, adminUnitReviewResponse);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            expertService.updateExistingAdminUnitReview(adminUnitReview, adminUnitReviewResponse);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
     }
 }

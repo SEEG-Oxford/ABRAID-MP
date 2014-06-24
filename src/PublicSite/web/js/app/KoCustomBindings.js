@@ -55,4 +55,17 @@ define([
             ko.selectExtensions.writeValue(element, value);
         }
     };
+
+    // Custom binding to fade the spinner in and out
+    ko.bindingHandlers.fadeVisible = {
+        update: function (element, valueAccessor, allBindings) {
+            var visible = ko.utils.recursiveUnwrap(valueAccessor);
+            var duration = allBindings.get("fadeDuration") || 1000;
+            if (visible) {
+                $(element).show();
+            } else {
+                $(element).delay(500).hide(duration);
+            }
+        }
+    };
 });

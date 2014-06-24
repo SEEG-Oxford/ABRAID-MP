@@ -1,12 +1,12 @@
 <layer>
-  <name>simplified_base_layer</name>
-  <id>LayerInfoImpl--5f32640d:1466746c7a9:-7ff7</id>
+  <name>hatching</name>
+  <id>LayerInfoImpl--7a673008:146c81232d1:-5d80</id>
   <type>VECTOR</type>
   <defaultStyle>
-    <id>StyleInfoImpl--5f32640d:1466746c7a9:-7dc7</id>
+    <id>StyleInfoImpl--7a673008:146c81232d1:-5d85</id>
   </defaultStyle>
   <resource class="featureType">
-    <id>FeatureTypeInfoImpl--5f32640d:1466746c7a9:-7ff8</id>
+    <id>FeatureTypeInfoImpl--7a673008:146c81232d1:-5d81</id>
   </resource>
   <attribution>
     <logoWidth>0</logoWidth>

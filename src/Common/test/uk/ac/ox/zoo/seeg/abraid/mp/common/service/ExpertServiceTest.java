@@ -146,7 +146,7 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
-    public void getAllAdminReviewsForDiseaseGroup() {
+    public void getAllAdminUnitReviewsForDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
         List<AdminUnitReview> adminUnitReviews = new ArrayList<>();
@@ -161,7 +161,7 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
-    public void getAllAdminReviewsForExpertAndDiseaseGroup() {
+    public void getAllAdminUnitReviewsForExpertAndDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
         int expertId = 1;

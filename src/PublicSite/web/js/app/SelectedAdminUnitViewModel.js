@@ -2,9 +2,11 @@
  * An AMD defining the SelectedAdminUnitModel to hold the state of the selected administrative region on the map.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
- * -- 'admin-unit-selected' - published by MapView.
- * -- 'layers-changed' - published by SelectedLayerViewModel.
+ * -- 'admin-unit-selected'        - published by MapView.
+ * -- 'admin-units-to-be-reviewed' - published by MapView.
+ * -- 'layers-changed'             - published by SelectedLayerViewModel.
  * - Events published:
+ * -- 'admin-unit-reviewed'
  * -- 'admin-unit-selected' - as triggered by side panel table.
  */
 define([
@@ -26,6 +28,10 @@ define([
             diseaseId = value.diseaseId;
         });
 
+        function removefromSelfAdminUnits(gaulCode) {
+            self.adminUnits(_(self.adminUnits()).filter(function (f) { return f.id !== gaulCode; }));
+        }
+
         self.counter = counter;
         self.adminUnits = ko.observable();
         self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected");
@@ -38,8 +44,9 @@ define([
             $.post(url, { review: review })
                 .done(function () {
                     // Status 2xx
-                    // Display a success alert, remove the point from the map and side panel, increment the counter
+                    // Display a success alert, publish the event (so that the counter is incremented)
                     self.selectedAdminUnit(null);
+                    removefromSelfAdminUnits(gaulCode);
                     ko.postbox.publish("admin-unit-reviewed", gaulCode);
                     $("#submitReviewSuccess").fadeIn(1000).delay(5000).fadeOut();
                 })

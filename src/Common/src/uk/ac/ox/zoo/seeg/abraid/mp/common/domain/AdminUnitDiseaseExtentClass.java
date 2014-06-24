@@ -1,7 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -58,15 +56,10 @@ public class AdminUnitDiseaseExtentClass {
     @Column(name = "occurrence_count")
     private int occurrenceCount;
 
-    // Whether the disease extent class has changed since it was last generated.
-    @Column(name = "has_class_changed")
-    private boolean hasClassChanged = true;
-
-    // The database row creation date.
-    @Column(name = "created_date", insertable = false, updatable = false)
-    @Generated(value = GenerationTime.INSERT)
+    // The date on which the disease extent class last changed.
+    @Column(name = "class_changed_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdDate;
+    private DateTime classChangedDate;
 
     public AdminUnitDiseaseExtentClass() {
     }
@@ -89,22 +82,22 @@ public class AdminUnitDiseaseExtentClass {
 
     public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
                                        DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       boolean hasClassChanged) {
+                                       DateTime classChangedDate) {
         this.adminUnitGlobal = adminUnitGlobal;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
         this.occurrenceCount = occurrenceCount;
-        this.hasClassChanged = hasClassChanged;
+        this.classChangedDate = classChangedDate;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
                                        DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       boolean hasClassChanged) {
+                                       DateTime classChangedDate) {
         this.adminUnitTropical = adminUnitTropical;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
         this.occurrenceCount = occurrenceCount;
-        this.hasClassChanged = hasClassChanged;
+        this.classChangedDate = classChangedDate;
     }
 
     /**
@@ -171,20 +164,12 @@ public class AdminUnitDiseaseExtentClass {
         this.occurrenceCount = occurrenceCount;
     }
 
-    /**
-     * Returns whether this extent class has changed since it was last generated.
-     * @return Whether this extent class has changed since it was last generated.
-     */
-    public boolean hasClassChanged() {
-        return hasClassChanged;
+    public DateTime getClassChangedDate() {
+        return classChangedDate;
     }
 
-    public void setHasClassChanged(boolean hasClassChanged) {
-        this.hasClassChanged = hasClassChanged;
-    }
-
-    public DateTime getCreatedDate() {
-        return createdDate;
+    public void setClassChangedDate(DateTime classChangedDate) {
+        this.classChangedDate = classChangedDate;
     }
 
     ///COVERAGE:OFF - generated code
@@ -192,17 +177,17 @@ public class AdminUnitDiseaseExtentClass {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AdminUnitDiseaseExtentClass)) return false;
 
         AdminUnitDiseaseExtentClass that = (AdminUnitDiseaseExtentClass) o;
 
-        if (hasClassChanged != that.hasClassChanged) return false;
         if (occurrenceCount != that.occurrenceCount) return false;
         if (adminUnitGlobal != null ? !adminUnitGlobal.equals(that.adminUnitGlobal) : that.adminUnitGlobal != null)
             return false;
         if (adminUnitTropical != null ? !adminUnitTropical.equals(that.adminUnitTropical) : that.adminUnitTropical != null)
             return false;
-        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        if (classChangedDate != null ? !classChangedDate.equals(that.classChangedDate) : that.classChangedDate != null)
+            return false;
         if (diseaseExtentClass != null ? !diseaseExtentClass.equals(that.diseaseExtentClass) : that.diseaseExtentClass != null)
             return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
@@ -219,8 +204,7 @@ public class AdminUnitDiseaseExtentClass {
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (diseaseExtentClass != null ? diseaseExtentClass.hashCode() : 0);
         result = 31 * result + occurrenceCount;
-        result = 31 * result + (hasClassChanged ? 1 : 0);
-        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        result = 31 * result + (classChangedDate != null ? classChangedDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

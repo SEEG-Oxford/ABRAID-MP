@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
 
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -110,16 +111,15 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
-     * Determines whether a review of the presence of the disease group in the admin unit, by the specified expert,
-     * already exists in the database.
+     * Gets the review, defined by the unique triplet of input arguments, if it exists in the database.
      * @param expertId The id of the expert.
      * @param diseaseGroupId The id of the disease group.
      * @param gaulCode The gaulCode of the administrative unit.
-     * @return True if the review already exists, otherwise false.
+     * @return The adminUnitReview if it exists, otherwise null.
      */
     @Override
-    public boolean doesAdminUnitReviewExist(Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
-        return adminUnitReviewDao.doesAdminUnitReviewExist(expertId, diseaseGroupId, gaulCode);
+    public AdminUnitReview getAdminUnitReview(Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
+        return adminUnitReviewDao.getAdminUnitReview(expertId, diseaseGroupId, gaulCode);
     }
 
     /**
@@ -178,7 +178,7 @@ public class ExpertServiceImpl implements ExpertService {
      * @param response The expert's response.
      */
     @Override
-    public void saveAdminUnitReview(String expertEmail, Integer diseaseGroupId, Integer gaulCode,
+    public void saveNewAdminUnitReview(String expertEmail, Integer diseaseGroupId, Integer gaulCode,
                                     DiseaseExtentClass response) {
         Expert expert = getExpertByEmail(expertEmail);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
@@ -189,6 +189,19 @@ public class ExpertServiceImpl implements ExpertService {
             adminUnitReview = new AdminUnitReview(expert, null, gaulCode, diseaseGroup, response);
         }
         adminUnitReviewDao.save(adminUnitReview);
+    }
+
+
+    /**
+     * Saves the updated review of the administrative unit (with a new disease extent class, and new changed date).
+     * @param review The existing AdminUnitReview from the database.
+     * @param response The expert's new response.
+     */
+    @Override
+    public void updateExistingAdminUnitReview(AdminUnitReview review, DiseaseExtentClass response) {
+        review.setResponse(response);
+        review.setChangedDate(DateTime.now());
+        adminUnitReviewDao.save(review);
     }
 
     /**
