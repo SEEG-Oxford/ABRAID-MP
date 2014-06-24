@@ -22,7 +22,7 @@ define([
 ], function (L, $, ko, _) {
     "use strict";
 
-    return function (baseUrl, wmsUrl, loggedIn) {
+    return function (baseUrl, wmsUrl, loggedIn, alert) {
 
         /** MAP AND BASE LAYER */
 
@@ -184,17 +184,21 @@ define([
         }
 
         function addDiseaseOccurrenceData(diseaseId) {
-            $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId), function (featureCollection) {
-                if (featureCollection.features.length !== 0) {
-                    ko.postbox.publish("no-features-to-review", false);
-                    clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
-                    map.fitBounds(diseaseOccurrenceLayer.getBounds());
-                } else {
-                    ko.postbox.publish("no-features-to-review", true);
-                    map.fitWorld();
-                }
-                ko.postbox.publish("map-view-update-in-progress", false);
-            });
+            $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId))
+                .done(function (featureCollection) {
+                    if (featureCollection.features.length !== 0) {
+                        ko.postbox.publish("no-features-to-review", false);
+                        clusterLayer.addLayer(diseaseOccurrenceLayer.addData(featureCollection));
+                        map.fitBounds(diseaseOccurrenceLayer.getBounds());
+                    } else {
+                        ko.postbox.publish("no-features-to-review", true);
+                        map.fitWorld();
+                    }
+                }).fail(function () {
+                    alert("Error fetching occurrences");
+                }).always(function () {
+                    ko.postbox.publish("map-view-update-in-progress", false);
+                });
         }
 
         // Add the new feature collection to the clustered layer, and zoom to its bounds
@@ -324,9 +328,9 @@ define([
 
                     fitMapBounds(featuresNeedReview, adminUnitsNeedReviewLayer);
                     publishDiseaseExtentEvents(featuresNeedReview);
-                    ko.postbox.publish("map-view-update-in-progress", false);
                 }).fail(function () {
-                    alert("Error");
+                    alert("Error fetching disease extent");
+                }).always(function () {
                     ko.postbox.publish("map-view-update-in-progress", false);
                 });
         }

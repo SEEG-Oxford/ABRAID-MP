@@ -19,7 +19,7 @@ require(["require.conf"], function () {
         "domReady!"
     ], function (ko, CounterViewModel, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
                  SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
-            setupMap(baseUrl, data.wmsUrl, data.loggedIn);
+            setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
             ko.applyBindings(
                 new SpinnerViewModel(),
                 doc.getElementById("spinner")
