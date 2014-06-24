@@ -292,11 +292,13 @@ public class DiseaseExtentGeneratorHelperTest {
 
     private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfYearsAgo) {
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
-        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, 0, null);
+        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, 0);
     }
 
     private AdminUnitReview createReview(DiseaseExtentClass extentClass, double expertWeighting) {
-        return new AdminUnitReview(new Expert(expertWeighting), 0, null, new DiseaseGroup(), extentClass);
+        Expert expert = new Expert();
+        expert.setWeighting(expertWeighting);
+        return new AdminUnitReview(expert, 0, null, new DiseaseGroup(), extentClass);
     }
 
     private <T> List<T> createList(T... items) {

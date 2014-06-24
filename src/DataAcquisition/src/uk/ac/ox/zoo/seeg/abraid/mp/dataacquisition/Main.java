@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
@@ -84,7 +83,7 @@ public class Main {
      * Requests a model run (after preparation and if relevant), for each disease group that has occurrences.
      */
     public void prepareForAndRequestModelRuns() {
-        Map<Expert, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
+        Map<Integer, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
             prepareForAndRequestModelRun(diseaseGroupId);
         }

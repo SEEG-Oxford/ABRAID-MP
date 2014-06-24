@@ -18,7 +18,7 @@ public final class ParseUtils {
      */
     public static Integer parseInteger(String toParse) {
         try {
-            return Integer.parseInt(StringUtils.trimWhitespace(toParse));
+            return Integer.parseInt(convertString(toParse));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -31,7 +31,7 @@ public final class ParseUtils {
      */
     public static Long parseLong(String toParse) {
         try {
-            return Long.parseLong(StringUtils.trimWhitespace(toParse));
+            return Long.parseLong(convertString(toParse));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -43,15 +43,30 @@ public final class ParseUtils {
      * @return The parsed double, or null if it could not be parsed.
      */
     public static Double parseDouble(String toParse) {
+        String convertedString = convertString(toParse);
+
         // Null input causes Double.parseDouble to throw a NullPointerException, so handle this separately
-        if (toParse == null) {
+        if (convertedString == null) {
             return null;
         }
 
         try {
-            return Double.parseDouble(StringUtils.trimWhitespace(toParse));
+            return Double.parseDouble(convertedString);
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    /**
+     * Converts a string to a canonical form, by stripping whitespace and converting to a null if an empty string.
+     * @param toConvert The string to convert.
+     * @return The converted string.
+     */
+    public static String convertString(String toConvert) {
+        String convertedString = StringUtils.trimWhitespace(toConvert);
+        if (convertedString != null && convertedString.equals("")) {
+            convertedString = null;
+        }
+        return convertedString;
     }
 }

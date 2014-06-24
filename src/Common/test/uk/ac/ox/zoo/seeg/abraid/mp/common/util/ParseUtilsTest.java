@@ -81,4 +81,22 @@ public class ParseUtilsTest {
         Long parsedLong = ParseUtils.parseLong(null);
         assertThat(parsedLong).isNull();
     }
+
+    @Test
+    public void convertStringWithWhitespace() {
+        String convertedString = ParseUtils.convertString("   test string  ");
+        assertThat(convertedString).isEqualTo("test string");
+    }
+
+    @Test
+    public void convertEmptyString() {
+        String convertedString = ParseUtils.convertString("");
+        assertThat(convertedString).isNull();
+    }
+
+    @Test
+    public void convertNullString() {
+        String convertedString = ParseUtils.convertString(null);
+        assertThat(convertedString).isNull();
+    }
 }

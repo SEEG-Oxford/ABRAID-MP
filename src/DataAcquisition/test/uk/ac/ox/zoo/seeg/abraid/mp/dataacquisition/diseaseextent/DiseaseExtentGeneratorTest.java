@@ -12,12 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
 
 import java.util.*;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,8 +22,8 @@ import static org.mockito.Mockito.*;
  */
 public class DiseaseExtentGeneratorTest {
     private DiseaseExtentGenerator diseaseExtentGenerator;
-    private DiseaseService diseaseService = mock(DiseaseService.class);
-    private ExpertService expertService = mock(ExpertService.class);
+    private DiseaseService diseaseService;
+    private ExpertService expertService;
 
     private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE, 100);
     private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE, 50);
@@ -38,10 +33,14 @@ public class DiseaseExtentGeneratorTest {
 
     private int diseaseGroupId = 87;
     private DiseaseGroup diseaseGroup;
-    private List<? extends AdminUnitGlobalOrTropical> adminUnits = getAdminUnits();
+    private List<? extends AdminUnitGlobalOrTropical> adminUnits;
 
     @Before
     public void setUp() {
+        diseaseService = mock(DiseaseService.class);
+        expertService = mock(ExpertService.class);
+        adminUnits = getAdminUnits();
+
         diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService);
         mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
@@ -257,12 +256,12 @@ public class DiseaseExtentGeneratorTest {
         // 5 occurrences of tropical GAUL code 250 (all over 2 years old)
         // 10 occurrences of global GAUL code 300 (all under 2 years old)
         return randomise(concatenate(
-                createOccurrences(150, null, 4, 1),
-                createOccurrences(null, 200, 3, 3),
-                createOccurrences(null, 200, 2, 1),
-                createOccurrences(null, 250, 5, 5),
-                createOccurrences(300, null, 1, 5),
-                createOccurrences(300, null, 3, 5)
+                createOccurrences(150, 4, 1),
+                createOccurrences(200, 3, 3),
+                createOccurrences(200, 2, 1),
+                createOccurrences(250, 5, 5),
+                createOccurrences(300, 1, 5),
+                createOccurrences(300, 3, 5)
         ));
     }
 
@@ -277,11 +276,11 @@ public class DiseaseExtentGeneratorTest {
         // GAUL code 200: Reviews average exactly -4 -> possible presence (i.e. score is 1 when combined with the occurrences)
         // GAUL code 250: Reviews average just over 1 when combined with the occurrences -> presence
         // GAUL code 300: Reviews average just under 1 when combined with the occurrences -> possible presence
-        Expert expert1 = new Expert(0);
-        Expert expert2 = new Expert(0.25);
-        Expert expert3 = new Expert(0.5);
-        Expert expert4 = new Expert(0.75);
-        Expert expert5 = new Expert(1);
+        Expert expert1 = createExpert(0);
+        Expert expert2 = createExpert(0.25);
+        Expert expert3 = createExpert(0.5);
+        Expert expert4 = createExpert(0.75);
+        Expert expert5 = createExpert(1);
         Expert expert6 = new Expert();
 
         return randomise(createList(
@@ -380,15 +379,13 @@ public class DiseaseExtentGeneratorTest {
         return DateTime.now().minusYears(yearsAgo);
     }
 
-    private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(Integer adminUnitGlobalGaulCode,
-                                                                      Integer adminUnitTropicalGaulCode,
+    private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(int adminUnitGaulCode,
                                                                       int numberOfYearsAgo,
                                                                       int numberOfTimes) {
         DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
-            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGlobalGaulCode,
-                    adminUnitTropicalGaulCode));
+            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGaulCode));
         }
         return occurrences;
     }
@@ -428,5 +425,11 @@ public class DiseaseExtentGeneratorTest {
         List<T> list = new ArrayList<T>();
         Collections.addAll(list, items);
         return list;
+    }
+
+    private Expert createExpert(double weighting) {
+        Expert expert = new Expert();
+        expert.setWeighting(weighting);
+        return expert;
     }
 }

@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentParameters;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
@@ -61,36 +60,36 @@ public class ModelRunManager {
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> diseaseOccurrences =
-                    prepareForModelRun(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
-            modelRunRequester.requestModelRun(diseaseGroupId, diseaseOccurrences);
+            List<DiseaseOccurrence> occurrencesForModelRunRequest =
+                    updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
+            generateDiseaseExtent(diseaseGroupId);
+            modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRunRequest);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(NOT_STARTING_MODEL_PREP);
         }
     }
 
-    private List<DiseaseOccurrence> prepareForModelRun(DateTime lastModelRunPrepDate,
-                                                       DateTime modelRunPrepDate, int diseaseGroupId) {
-        // Task 1
+    private List<DiseaseOccurrence> updateWeightingsAndIsValidated(DateTime lastModelRunPrepDate,
+                                                                   DateTime modelRunPrepDate, int diseaseGroupId) {
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
+        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+    }
+
+    private void generateDiseaseExtent(int diseaseGroupId) {
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        // Task 2
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
                 new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
         ///CHECKSTYLE:ON
-        // Task 3
-        helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
-        // Task 4
-        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
     /**
      * Gets the new weighting for each active expert.
-     * @return The map from expert to the new weighting value.
+     * @return A map from expert ID to the new weighting value.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Map<Expert, Double> prepareExpertsWeightings() {
+    public Map<Integer, Double> prepareExpertsWeightings() {
         return weightingsCalculator.calculateNewExpertsWeightings();
     }
 
@@ -99,7 +98,7 @@ public class ModelRunManager {
      * @param newExpertsWeightings The map from expert to the new weighting value.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveExpertsWeightings(Map<Expert, Double> newExpertsWeightings) {
+    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
 }

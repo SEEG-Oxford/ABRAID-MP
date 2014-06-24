@@ -96,7 +96,7 @@ CREATE TABLE alert (
     feed_id integer NOT NULL,
     title text,
     publication_date timestamp NOT NULL,
-    url varchar(2000) NOT NULL,
+    url varchar(2000),
     summary text,
     healthmap_alert_id integer NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
@@ -120,7 +120,7 @@ CREATE TABLE covariate_influence (
 
 CREATE TABLE disease_extent (
     disease_group_id integer NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326) NOT NULL
+    geom geometry(MULTIPOLYGON, 4326)
 );
 
 CREATE TABLE disease_extent_class (

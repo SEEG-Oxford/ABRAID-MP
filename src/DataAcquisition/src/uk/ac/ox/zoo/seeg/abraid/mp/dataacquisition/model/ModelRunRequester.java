@@ -28,8 +28,10 @@ public class ModelRunRequester {
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
 
-    private static Logger logger = Logger.getLogger(ModelRunRequester.class);
+    private static final Logger LOGGER = Logger.getLogger(ModelRunRequester.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
+    private static final String REQUEST_LOG_MESSAGE =
+            "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
                              ModelRunService modelRunService) {
@@ -52,6 +54,7 @@ public class ModelRunRequester {
             DateTime requestDate = DateTime.now();
 
             try {
+                logRequest(diseaseGroup, diseaseOccurrences);
                 JsonModelRunResponse response =
                         modelWrapperWebService.startRun(diseaseGroup, diseaseOccurrences, diseaseExtent);
                 handleModelRunResponse(response, diseaseGroupId, requestDate);
@@ -70,6 +73,11 @@ public class ModelRunRequester {
                 iterator.remove();
             }
         }
+    }
+
+    private void logRequest(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> diseaseOccurrences) {
+        LOGGER.info(String.format(REQUEST_LOG_MESSAGE, diseaseGroup.getId(), diseaseGroup.getName(),
+                diseaseOccurrences.size()));
     }
 
     private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {

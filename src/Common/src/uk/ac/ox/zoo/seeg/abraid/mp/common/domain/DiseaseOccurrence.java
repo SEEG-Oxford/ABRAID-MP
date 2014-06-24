@@ -73,7 +73,8 @@ public class DiseaseOccurrence {
      */
     public static final String DISEASE_EXTENT_QUERY =
             "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, d.location.adminUnitGlobalGaulCode, d.location.adminUnitTropicalGaulCode) " +
+            "       (d.occurrenceDate, case when :isGlobal = true then " +
+            "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.validationWeighting >= :minimumValidationWeighting " +
