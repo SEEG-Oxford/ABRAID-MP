@@ -234,7 +234,7 @@ define([
                 fillOpacity: needsReview ? 1 : 0.8,
                 color: "#8c8c8c",       // Grey border
                 opacity: 1,
-                weight: 0.5,
+                weight: 0.75,
                 clickable: needsReview  // Determines whether mouse events are listened for
             };
         }

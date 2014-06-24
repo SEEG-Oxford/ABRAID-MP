@@ -60,13 +60,11 @@ define([
     ko.bindingHandlers.fadeVisible = {
         update: function (element, valueAccessor, allBindings) {
             var visible = ko.utils.recursiveUnwrap(valueAccessor);
-            var duration = allBindings.get("fadeDuration") || 800;
+            var duration = allBindings.get("fadeDuration") || 1000;
             if (visible) {
                 $(element).show();
             } else {
-                setTimeout(function () {
-                    $(element).fadeOut(duration);
-                }, 400);
+                $(element).delay(500).hide(duration);
             }
         }
     };
