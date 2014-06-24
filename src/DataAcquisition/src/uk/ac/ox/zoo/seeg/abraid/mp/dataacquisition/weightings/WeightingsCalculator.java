@@ -252,7 +252,7 @@ public class WeightingsCalculator {
 
     /**
      * Saves each expert with a new weighting value.
-     * @param newExpertsWeightings The map from expert to new weighting value.
+     * @param newExpertsWeightings A map from expert ID to new weighting value.
      */
     public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         if (newExpertsWeightings.size() > 0) {
