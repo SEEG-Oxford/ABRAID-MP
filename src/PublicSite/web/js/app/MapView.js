@@ -312,19 +312,23 @@ define([
         }
 
         function addDiseaseExtentData(diseaseId) {
-            $.getJSON(getDiseaseExtentRequestUrl(diseaseId), function (fc) {
-                var featuresNeedReview = _(fc.features).select(function (f) { return f.properties.needsReview; });
-                var featureCollectionNeedReview = createFeatureCollection(fc.type, fc.crs, featuresNeedReview);
-                adminUnitsNeedReviewLayer.addData(featureCollectionNeedReview);
+            $.getJSON(getDiseaseExtentRequestUrl(diseaseId))
+                .done(function (fc) {
+                    var featuresNeedReview = _(fc.features).select(function (f) { return f.properties.needsReview; });
+                    var featureCollectionNeedReview = createFeatureCollection(fc.type, fc.crs, featuresNeedReview);
+                    adminUnitsNeedReviewLayer.addData(featureCollectionNeedReview);
 
-                var featuresReviewed = _(fc.features).reject(function (f) { return f.properties.needsReview; });
-                var featureCollectionReviewed = createFeatureCollection(fc.type, fc.crs, featuresReviewed);
-                adminUnitsReviewedLayer.addData(featureCollectionReviewed);
+                    var featuresReviewed = _(fc.features).reject(function (f) { return f.properties.needsReview; });
+                    var featureCollectionReviewed = createFeatureCollection(fc.type, fc.crs, featuresReviewed);
+                    adminUnitsReviewedLayer.addData(featureCollectionReviewed);
 
-                fitMapBounds(featuresNeedReview, adminUnitsNeedReviewLayer);
-                publishDiseaseExtentEvents(featuresNeedReview);
-                ko.postbox.publish("map-view-update-in-progress", false);
-            });
+                    fitMapBounds(featuresNeedReview, adminUnitsNeedReviewLayer);
+                    publishDiseaseExtentEvents(featuresNeedReview);
+                    ko.postbox.publish("map-view-update-in-progress", false);
+                }).fail(function () {
+                    alert("Error");
+                    ko.postbox.publish("map-view-update-in-progress", false);
+                });
         }
 
         // Display the admin units, and disease extent class, for the selected validator disease group.
