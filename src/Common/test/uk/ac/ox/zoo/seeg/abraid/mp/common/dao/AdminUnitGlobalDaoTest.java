@@ -20,6 +20,6 @@ public class AdminUnitGlobalDaoTest extends AbstractCommonSpringIntegrationTests
     @Test
     public void getAll() {
         List<AdminUnitGlobal> adminUnitGlobals = adminUnitGlobalDao.getAll();
-        assertThat(adminUnitGlobals).hasSize(558);
+        assertThat(adminUnitGlobals).hasSize(559);
     }
 }

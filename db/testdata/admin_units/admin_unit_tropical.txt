@@ -301,6 +301,7 @@
 923	1	Shanxi Sheng	Shanxi sheng,China	
 924	1	Sichuan Sheng	Sichuan sheng,China	
 925	1	Taiwan Sheng	Taiwan sheng,China	
+926	1	Tianjing Shi	Tianjing shi,China	
 927	1	Xinjiang Uygur Zizhiqu	Xinjiang uygur zizhiqu,China	
 928	1	Xizang Zizhiqu	Xizang zizhiqu,China	
 929	1	Yunnan Sheng	Yunnan sheng,China	
