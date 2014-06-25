@@ -64,7 +64,7 @@ define([
             if (visible) {
                 $(element).show();
             } else {
-                $(element).delay(500).hide(duration);
+                $(element).delay(500).fadeOut(duration);
             }
         }
     };
