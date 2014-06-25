@@ -142,7 +142,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         verify(modelWrapperWebService, atLeastOnce()).startRun(
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(28)),
-                argThat(new MapSizeMatcher<Integer, Integer>(459)));
+                argThat(new MapSizeMatcher<Integer, Integer>(460)));
         verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
                 startsWith(MODELWRAPPER_URL_PREFIX), anyString());
     }
