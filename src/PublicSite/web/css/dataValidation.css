@@ -28,6 +28,9 @@ html, body, #dataValidation {
     float: left;
     background-color: white;
 }
+.highlight {
+    border: 3px solid rgb(140, 140, 140);
+}
 #spinner > div {
     z-index:10;
     position: absolute;
@@ -66,8 +69,10 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable {
+    cursor: pointer;  /* or use cursor: default?*/
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 #adminUnitTable #occurrencesColumn {
     width: 90px;
