@@ -33,9 +33,11 @@
         </div>
         <div data-bind="if: hasSelectedAdminUnit()">
             <ul>
-                <span data-bind="text: selectedAdminUnit().name"></span> has
-                <span data-bind="text: selectedAdminUnit().count"></span>
-                <span data-bind="text: selectedAdminUnit().count == 1 ? 'occurrence' : 'occurrences'"></span>
+                <div class="sidePanelText">
+                    <span data-bind="text: selectedAdminUnit().name"></span> has
+                    <span data-bind="text: selectedAdminUnit().count"></span>
+                    <span data-bind="text: selectedAdminUnit().count == 1 ? 'occurrence' : 'occurrences'"></span>
+                </div>
             </ul>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="reviewButtons">
@@ -78,7 +80,7 @@
 
 <script type="text/html" id="no-selected-point-template">
     <ul>
-        <li>Select a feature on the map to view more details here...</li>
+        <div class="sidePanelText">Select a feature on the map to view more details here...</div>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
@@ -99,7 +101,7 @@
         </li>
         <li><i class="fa fa-quote-left"></i></li>
         <li>
-            <div id="summary" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
+            <div class="sidePanelText" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
             <div data-bind="if: selectedPoint().properties.alert.summary">
                 <a id="translationLink" data-bind="attr: {href: translationUrl}" target="_blank">View translation</a>
             <div>
