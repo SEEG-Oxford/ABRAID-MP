@@ -17,23 +17,18 @@ import java.util.List;
  */
 @Controller
 public class AtlasController extends AbstractController {
-    private LocationService locationService;
 
     @Autowired
-    public AtlasController(LocationService locationService) {
-        this.locationService = locationService;
+    public AtlasController() {
     }
 
     /**
      * Gets all countries in the database and adds them to the model map.
      * Return the view to display.
-     * @param model The data model.
      * @return The ftl page name.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String showPage(Model model) {
-        List<Country> allCountries = locationService.getAllCountries();
-        model.addAttribute("countries", allCountries);
+    public String showPage() {
         return "atlas";
     }
 }
