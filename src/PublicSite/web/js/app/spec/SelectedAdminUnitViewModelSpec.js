@@ -142,6 +142,19 @@ define([
                     // Assert
                     expect(vm.selectedAdminUnit()).toBeNull();
                 });
+
+                it("removes the admin unit from the table", function () {
+                    // Arrange
+                    var adminUnit = {id: "gaulCode"};
+                    vm.adminUnits([adminUnit]);
+                    vm.selectedAdminUnit(adminUnit);
+                    // Act
+                    vm.submitReview("review");
+                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                    // Assert
+                    expect(vm.selectedAdminUnit()).toBeNull();
+                    expect(vm.adminUnits()).not.toContain(adminUnit);
+                });
             });
         });
     });
