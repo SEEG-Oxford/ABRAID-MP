@@ -7,8 +7,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseOccurrenceValidationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 import java.util.List;
 

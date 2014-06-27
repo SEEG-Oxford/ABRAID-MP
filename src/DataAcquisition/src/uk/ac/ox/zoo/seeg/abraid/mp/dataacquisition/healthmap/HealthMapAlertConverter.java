@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 
 /**

@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 /**
  * Handles the getting and setting of disease groups' lastModelRunPrepDate.

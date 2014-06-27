@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 /**
  * Manages processes that run after QC but before the location is written to the database.

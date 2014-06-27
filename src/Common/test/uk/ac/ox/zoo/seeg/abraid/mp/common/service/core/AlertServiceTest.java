@@ -1,9 +1,12 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 
 import java.util.Arrays;
 import java.util.List;

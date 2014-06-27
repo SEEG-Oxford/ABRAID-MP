@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

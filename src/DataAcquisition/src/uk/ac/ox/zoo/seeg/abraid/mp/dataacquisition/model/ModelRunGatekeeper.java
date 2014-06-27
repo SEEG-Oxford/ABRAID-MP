@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 /**
  * Determines whether the model run should execute.

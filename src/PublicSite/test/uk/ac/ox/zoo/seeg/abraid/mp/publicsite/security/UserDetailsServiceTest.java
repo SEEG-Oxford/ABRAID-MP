@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertServiceImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 
 import java.util.ArrayList;

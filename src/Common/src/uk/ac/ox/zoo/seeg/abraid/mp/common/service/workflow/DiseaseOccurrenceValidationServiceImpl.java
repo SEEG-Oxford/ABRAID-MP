@@ -1,9 +1,9 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.helper.DistanceFromDiseaseExtentHelper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 
 /**
  * Adds validation parameters to a disease occurrence. Marks it for manual validation (via the Data Validator GUI)

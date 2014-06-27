@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
