@@ -1,19 +1,24 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
+import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
+import org.kubek2k.springockito.annotations.WrapWithSpy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractWebServiceClientIntegrationTests;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +39,17 @@ import static org.mockito.Mockito.when;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIntegrationTests {
+@ContextConfiguration(loader = SpringockitoContextLoader.class,
+                      locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
+public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegrationTests {
+    @ReplaceWithMock
+    @Autowired
+    protected WebServiceClient webServiceClient;
+
+    @WrapWithSpy
+    @Autowired
+    protected ModelWrapperWebService modelWrapperWebService;
+
     @Autowired
     private ModelRunRequester modelRunRequester;
     @Autowired
@@ -79,7 +94,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunManagerException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
     }
 
     @Test
@@ -95,7 +110,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunManagerException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
     }
 
     @Test

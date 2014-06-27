@@ -13,8 +13,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
 import java.io.File;
 import java.util.*;
@@ -99,7 +99,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockHealthMapRequest();
         mockGeoNamesRequests();
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
-                .thenThrow(new ModelRunManagerException("Test message"));
+                .thenThrow(new ModelRunRequesterException("Test message"));
 
         // Act
         runMain(new String[]{});

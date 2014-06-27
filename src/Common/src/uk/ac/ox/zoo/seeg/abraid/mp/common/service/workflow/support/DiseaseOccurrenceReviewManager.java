@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -14,14 +14,14 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunManagerHelper {
-    private static final Logger LOGGER = Logger.getLogger(ModelRunManagerHelper.class);
+public class DiseaseOccurrenceReviewManager {
+    private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceReviewManager.class);
     private static final String LOG_MESSAGE =
             "Removed %d disease occurrence(s) from validation; %d occurrence(s) now remaining";
 
     private DiseaseService diseaseService;
 
-    public ModelRunManagerHelper(DiseaseService diseaseService) {
+    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
     }
 

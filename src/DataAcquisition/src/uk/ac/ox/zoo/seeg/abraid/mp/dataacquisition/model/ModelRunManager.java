@@ -3,17 +3,16 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentParameters;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Prepares the model run by updating the disease extent and recalculating weightings.
+ * Prepares for and requests a model run.
  *
  * Copyright (c) 2014 University of Oxford
  */
@@ -24,24 +23,14 @@ public class ModelRunManager {
     private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed";
 
     private ModelRunGatekeeper modelRunGatekeeper;
-    private LastModelRunPrepDateManager lastModelRunPrepDateManager;
-    private DiseaseExtentGenerator diseaseExtentGenerator;
-    private WeightingsCalculator weightingsCalculator;
-    private ModelRunRequester modelRunRequester;
-    private ModelRunManagerHelper helper;
+    private ModelRunWorkflowService modelRunWorkflowService;
+    private DiseaseService diseaseService;
 
     public ModelRunManager(ModelRunGatekeeper modelRunGatekeeper,
-                           LastModelRunPrepDateManager lastModelRunPrepDateManager,
-                           DiseaseExtentGenerator diseaseExtentGenerator,
-                           WeightingsCalculator weightingsCalculator,
-                           ModelRunRequester modelRunRequester,
-                           ModelRunManagerHelper helper) {
+                           ModelRunWorkflowService modelRunWorkflowService, DiseaseService diseaseService) {
         this.modelRunGatekeeper = modelRunGatekeeper;
-        this.lastModelRunPrepDateManager = lastModelRunPrepDateManager;
-        this.diseaseExtentGenerator = diseaseExtentGenerator;
-        this.weightingsCalculator = weightingsCalculator;
-        this.modelRunRequester = modelRunRequester;
-        this.helper = helper;
+        this.modelRunWorkflowService = modelRunWorkflowService;
+        this.diseaseService = diseaseService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -56,32 +45,13 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
-        DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
+        DateTime lastModelRunPrepDate = getLastModelRunPrepDate(diseaseGroupId);
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
-            DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> occurrencesForModelRunRequest =
-                    updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
-            generateDiseaseExtent(diseaseGroupId);
-            modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRunRequest);
-            lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
         } else {
             LOGGER.info(NOT_STARTING_MODEL_PREP);
         }
-    }
-
-    private List<DiseaseOccurrence> updateWeightingsAndIsValidated(DateTime lastModelRunPrepDate,
-                                                                   DateTime modelRunPrepDate, int diseaseGroupId) {
-        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
-        helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
-        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
-    }
-
-    private void generateDiseaseExtent(int diseaseGroupId) {
-        ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
-                new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
-        ///CHECKSTYLE:ON
     }
 
     /**
@@ -90,7 +60,7 @@ public class ModelRunManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public Map<Integer, Double> prepareExpertsWeightings() {
-        return weightingsCalculator.calculateNewExpertsWeightings();
+        return modelRunWorkflowService.calculateExpertsWeightings();
     }
 
     /**
@@ -99,6 +69,16 @@ public class ModelRunManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
-        weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
+        modelRunWorkflowService.saveExpertsWeightings(newExpertsWeightings);
+    }
+
+    /**
+     * Gets the date on which the model was last run for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group for which the model run is being prepared.
+     * @return The date.
+     */
+    public DateTime getLastModelRunPrepDate(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        return diseaseGroup.getLastModelRunPrepDate();
     }
 }
