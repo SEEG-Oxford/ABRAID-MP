@@ -31,7 +31,7 @@
         <#include "layerselector.ftl"/>
 
         <div id="map">
-            <div id="spinner" data-bind="fadeVisible: visible">
+            <div id="spinner" data-bind="fadeVisible: { visible: visible() }">
                 <i class="fa fa-3x fa-spinner fa-spin"></i>
                 <div></div>
             </div>

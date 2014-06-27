@@ -7,7 +7,6 @@ define([
     describe("KoCustomBindings defines", function () {
         describe("the 'fadeVisible' binding which", function () {
             var showSpy, delaySpy, fadeSpy, jqSpy, injectorWithJQuerySpy;
-            var emptyBindings = { get : function () { return null; } };
             var expectedElement = "expectedElement";
             beforeEach(function () {
                 showSpy = jasmine.createSpy();
@@ -29,7 +28,7 @@ define([
                 it("when taking an unwrapped 'true' value", function (done) {
                     injectorWithJQuerySpy.require(["ko"], function (ko) {
                         // Act
-                        ko.bindingHandlers.fadeVisible.update(expectedElement, true, emptyBindings);
+                        ko.bindingHandlers.fadeVisible.update(expectedElement, { visible: true });
 
                         // Assert
                         expect(jqSpy).toHaveBeenCalledWith(expectedElement);
@@ -41,7 +40,7 @@ define([
                 it("when taking a wrapped 'true' value", function (done) {
                     injectorWithJQuerySpy.require(["ko"], function (ko) {
                         // Act
-                        ko.bindingHandlers.fadeVisible.update(expectedElement, function () { return true; }, emptyBindings);
+                        ko.bindingHandlers.fadeVisible.update(expectedElement, function () { return {visible: true}; });
 
                         // Assert
                         expect(jqSpy).toHaveBeenCalledWith(expectedElement);
@@ -55,7 +54,7 @@ define([
                 it("after a 500 ms delay", function (done) {
                     injectorWithJQuerySpy.require(["ko"], function (ko) {
                         // Act
-                        ko.bindingHandlers.fadeVisible.update(expectedElement, false, emptyBindings);
+                        ko.bindingHandlers.fadeVisible.update(expectedElement, { visible: false });
 
                         // Assert
                         expect(jqSpy).toHaveBeenCalledWith(expectedElement);
@@ -67,15 +66,12 @@ define([
                 it("with the specified duration, when provided", function (done) {
                     // Arrange
                     var duration = 54321;
-                    var bindings =  { get: jasmine.createSpy().and.returnValue(duration) };
 
                     injectorWithJQuerySpy.require(["ko"], function (ko) {
                         // Act
-                        ko.bindingHandlers.fadeVisible.update(expectedElement, false, bindings);
+                        ko.bindingHandlers.fadeVisible.update(expectedElement, { visible: false, duration: duration });
 
                         // Assert
-                        expect(bindings.get).toHaveBeenCalledWith("fadeDuration");
-                        expect(bindings.get.calls.count()).toBe(1);
                         expect(jqSpy).toHaveBeenCalledWith(expectedElement);
                         expect(fadeSpy).toHaveBeenCalledWith(duration);
                         done();
@@ -86,7 +82,7 @@ define([
                     var defaultDuration = 1000;
                     injectorWithJQuerySpy.require(["ko"], function (ko) {
                         // Act
-                        ko.bindingHandlers.fadeVisible.update(expectedElement, false, emptyBindings);
+                        ko.bindingHandlers.fadeVisible.update(expectedElement, { visible: false });
 
                         // Assert
                         expect(jqSpy).toHaveBeenCalledWith(expectedElement);
@@ -97,7 +93,7 @@ define([
             });
         });
 
-        describe("the 'date' binding which", function () {
+        describe("the 'date' binding, which", function () {
             var textSpy, jqSpy, injectorWithJQuerySpy, momentSpy;
             var expectedElement = "expectedElement";
             var expectedText = "expectedText";
@@ -123,6 +119,64 @@ define([
                     expect(jqSpy).toHaveBeenCalledWith(expectedElement);
                     expect(momentSpy).toHaveBeenCalledWith(expectedDate);
                     expect(textSpy).toHaveBeenCalledWith(expectedText);
+                    done();
+                });
+            });
+        });
+
+        describe("the 'highlight' binding, which", function () {
+            // Arrange
+            var expectedElement, removeSpy, addSpy, jqSpy, injectorWithJQuerySpy;
+            beforeEach(function () {
+                removeSpy = jasmine.createSpy();
+                addSpy = jasmine.createSpy();
+                jqSpy = jasmine.createSpy().and.returnValue({removeClass: removeSpy, addClass: addSpy});
+
+                injectorWithJQuerySpy = new Squire();
+                injectorWithJQuerySpy.mock("jquery", jqSpy);
+            });
+
+            it("adds the css class to the selected admin unit", function (done) {
+                // Arrange
+                var expectedAdminUnit = { id: "0" };
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Act
+                    ko.bindingHandlers.highlight.update(expectedElement, { target: expectedAdminUnit, compareOn: "id" },
+                        {}, {}, { "$data": expectedAdminUnit });
+                    // Assert
+                    expect(jqSpy).toHaveBeenCalledWith(expectedElement);
+                    expect(removeSpy).toHaveBeenCalledWith("highlight");
+                    expect(addSpy).toHaveBeenCalledWith("highlight");
+                    done();
+                });
+            });
+
+            it("does not add the css class to any other admin unit", function (done) {
+                // Arrange
+                var expectedAdminUnit = { id: 0 };
+                var anotherAdminUnit = { id: 1 };
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Act
+                    ko.bindingHandlers.highlight.update(expectedElement, { target: expectedAdminUnit, compareOn: "id" },
+                        {}, {}, { "$data": anotherAdminUnit });
+                    // Assert
+                    expect(jqSpy).toHaveBeenCalledWith(expectedElement);
+                    expect(removeSpy).toHaveBeenCalledWith("highlight");
+                    expect(addSpy).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
+            it("does not add the css class when target is null", function (done) {
+                // Arrange
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Act
+                    ko.bindingHandlers.highlight.update(expectedElement, { target: null, compareOn: "id" },
+                        {}, {}, { "$data": {} });
+                    // Assert
+                    expect(jqSpy).toHaveBeenCalledWith(expectedElement);
+                    expect(removeSpy).toHaveBeenCalledWith("highlight");
+                    expect(addSpy).not.toHaveBeenCalled();
                     done();
                 });
             });

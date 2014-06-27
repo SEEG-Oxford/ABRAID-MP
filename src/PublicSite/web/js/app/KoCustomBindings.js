@@ -56,11 +56,12 @@ define([
         }
     };
 
-    // Custom binding to fade the spinner in and out
+    // Custom binding to fade the spinner in and out, using a default value if a duration is not specified.
     ko.bindingHandlers.fadeVisible = {
-        update: function (element, valueAccessor, allBindings) {
-            var visible = ko.utils.recursiveUnwrap(valueAccessor);
-            var duration = allBindings.get("fadeDuration") || 1000;
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var visible = value.visible;
+            var duration = value.duration || 1000;
             if (visible) {
                 $(element).show();
             } else {
