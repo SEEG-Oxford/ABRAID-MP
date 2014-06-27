@@ -74,7 +74,7 @@ html, body, #dataValidation {
     overflow-y: auto;
     overflow-x: hidden;
 }
-#adminUnitTable #occurrencesColumn {
+#adminUnitTable .occurrencesColumn {
     width: 90px;
     text-align: center;
 }

@@ -27,7 +27,7 @@
                             $parent.selectedAdminUnit(this);
                             $(event.target).parent().addClass('highlight').siblings().removeClass('highlight');
                         }">
-                            <td id="occurrencesColumn" data-bind="text: count"></td>
+                            <td class="occurrencesColumn" data-bind="text: count"></td>
                             <td data-bind="text: name"></td>
                         </tr>
                     </tbody>
@@ -98,16 +98,14 @@
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.occurrenceDate"></p></li>
         <li>
             <i class="fa fa-external-link"></i>
-            <a data-bind="attr: {href: selectedPoint().properties.alert.url}" target="_blank">
-                <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
-            </a>
+            <a data-bind="text: selectedPoint().properties.alert.feedName,
+                          attr: {href: selectedPoint().properties.alert.url}" target="_blank"></a>
         </li>
         <li><i class="fa fa-quote-left"></i></li>
         <li>
             <div class="sidePanelText" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
-            <div data-bind="if: selectedPoint().properties.alert.summary">
-                <a id="translationLink" data-bind="attr: {href: translationUrl}" target="_blank">View translation</a>
-            <div>
+            <a id="translationLink" data-bind="if: selectedPoint().properties.alert.summary,
+                                               attr: {href: translationUrl}" target="_blank">View translation</a>
         </li>
         <li><i class="fa fa-quote-right"></i></li>
     </ul>
