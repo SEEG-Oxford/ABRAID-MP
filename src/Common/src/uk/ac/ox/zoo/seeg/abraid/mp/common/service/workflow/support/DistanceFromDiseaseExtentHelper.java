@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service.helper;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import com.vividsolutions.jts.geom.Point;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;

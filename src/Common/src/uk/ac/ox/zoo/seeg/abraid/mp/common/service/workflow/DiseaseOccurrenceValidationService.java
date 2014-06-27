@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 

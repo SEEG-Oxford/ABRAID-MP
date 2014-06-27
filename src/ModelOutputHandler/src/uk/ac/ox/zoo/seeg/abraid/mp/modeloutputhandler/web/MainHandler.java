@@ -16,7 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 

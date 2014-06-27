@@ -2,9 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.Arrays;
 import java.util.HashMap;

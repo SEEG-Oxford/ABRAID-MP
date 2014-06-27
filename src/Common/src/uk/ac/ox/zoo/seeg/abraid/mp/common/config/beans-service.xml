@@ -6,10 +6,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="alertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.AlertServiceImpl" autowire="constructor"/>
-    <bean id="diseaseOccurrenceValidationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseOccurrenceValidationServiceImpl" autowire="constructor"/>
-    <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseServiceImpl" autowire="constructor"/>
-    <bean id="expertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertServiceImpl" autowire="constructor"/>
-    <bean id="locationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationServiceImpl" autowire="constructor"/>
-    <bean id="modelRunService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunServiceImpl" autowire="constructor"/>
+    <!-- Core services -->
+    <bean id="alertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertServiceImpl" autowire="constructor"/>
+    <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor"/>
+    <bean id="expertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertServiceImpl" autowire="constructor"/>
+    <bean id="locationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationServiceImpl" autowire="constructor"/>
+    <bean id="modelRunService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl" autowire="constructor"/>
+
+    <!-- Business workflow services -->
+    <bean id="diseaseOccurrenceValidationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationServiceImpl" autowire="constructor"/>
 </beans>
