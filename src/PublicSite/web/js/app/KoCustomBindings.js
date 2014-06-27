@@ -68,4 +68,18 @@ define([
             }
         }
     };
+
+    ko.bindingHandlers.highlight = {
+        update: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var target = value.target;
+            var compareOn = value.compareOn;
+            var local = bindingContext.$data;
+
+            $(element).removeClass("highlight");
+            if ((target !== null) && (target[compareOn] === local[compareOn])) {
+                $(element).addClass("highlight");
+            }
+        }
+    };
 });

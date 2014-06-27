@@ -23,10 +23,8 @@
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
-                        <tr data-bind="click: function (data, event) {
-                            $parent.selectedAdminUnit(this);
-                            $(event.target).parent().addClass('highlight').siblings().removeClass('highlight');
-                        }">
+                        <tr data-bind="click: function () { $parent.selectedAdminUnit($data); },
+                                       highlight: { target: $parent.selectedAdminUnit(), compareOn: 'id' }">
                             <td class="occurrencesColumn" data-bind="text: count"></td>
                             <td data-bind="text: name"></td>
                         </tr>
