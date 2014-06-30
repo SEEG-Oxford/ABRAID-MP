@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;

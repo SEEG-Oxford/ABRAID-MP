@@ -5,7 +5,6 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 

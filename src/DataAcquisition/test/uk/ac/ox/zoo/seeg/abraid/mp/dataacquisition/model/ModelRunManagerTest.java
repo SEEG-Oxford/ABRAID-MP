@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -12,13 +11,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
  * Tests the ModelRunManager.

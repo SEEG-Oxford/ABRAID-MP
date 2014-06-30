@@ -72,6 +72,15 @@ public class HealthMapDataConverterTest {
 
     @Test
     public void convertTwoSuccessfulLocationsEachWithTwoSuccessfulAlerts() {
+        executeTest(true, 4);
+    }
+
+    @Test
+    public void convertTwoSuccessfulLocationsEachWithTwoSuccessfulAlertsButValidationParametersNotAdded() {
+        executeTest(false, 0);
+    }
+
+    private void executeTest(boolean enabled, int times) {
         // Arrange
         // Create 2 locations each with 2 alerts
         HealthMapLocation healthMapLocation1 = new HealthMapLocation();
@@ -97,19 +106,19 @@ public class HealthMapDataConverterTest {
         mockAddPrecision(healthMapLocation2, location2);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns(enabled);
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // healthMapAlert2 is successfully converted into diseaseOccurrence2
-        DiseaseOccurrence diseaseOccurrence2 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence2 = createDiseaseOccurrenceWithAutomaticModelRuns(enabled);
         when(alertConverter.convert(healthMapAlert2, location1)).thenReturn(diseaseOccurrence2);
 
         // healthMapAlert3 is successfully converted into diseaseOccurrence3
-        DiseaseOccurrence diseaseOccurrence3 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence3 = createDiseaseOccurrenceWithAutomaticModelRuns(enabled);
         when(alertConverter.convert(healthMapAlert3, location2)).thenReturn(diseaseOccurrence3);
 
         // healthMapAlert4 is successfully converted into diseaseOccurrence4
-        DiseaseOccurrence diseaseOccurrence4 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence4 = createDiseaseOccurrenceWithAutomaticModelRuns(enabled);
         when(alertConverter.convert(healthMapAlert4, location2)).thenReturn(diseaseOccurrence4);
 
         // Act
@@ -121,7 +130,7 @@ public class HealthMapDataConverterTest {
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence2));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence3));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence4));
-        verify(diseaseOccurrenceValidationService, times(4)).addValidationParameters(any(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, times(times)).addValidationParameters(any(DiseaseOccurrence.class));
     }
 
     @Test
@@ -149,11 +158,11 @@ public class HealthMapDataConverterTest {
         mockAddPrecision(healthMapLocation2, location2);
 
         // healthMapAlert3 is successfully converted into diseaseOccurrence3
-        DiseaseOccurrence diseaseOccurrence3 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence3 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert3, location2)).thenReturn(diseaseOccurrence3);
 
         // healthMapAlert4 is successfully converted into diseaseOccurrence4
-        DiseaseOccurrence diseaseOccurrence4 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence4 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert4, location2)).thenReturn(diseaseOccurrence4);
 
         // Act
@@ -190,11 +199,11 @@ public class HealthMapDataConverterTest {
         when(locationConverter.convert(healthMapLocation2)).thenReturn(null);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // healthMapAlert2 is successfully converted into diseaseOccurrence2
-        DiseaseOccurrence diseaseOccurrence2 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence2 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert2, location1)).thenReturn(diseaseOccurrence2);
 
         // Act
@@ -249,7 +258,7 @@ public class HealthMapDataConverterTest {
         mockAddPrecision(healthMapLocation1, location1);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // healthMapAlert2 is not successfully converted into diseaseOccurrence2
@@ -308,7 +317,7 @@ public class HealthMapDataConverterTest {
         when(qcManager.performQC(location1)).thenReturn(false);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // Act
@@ -348,11 +357,11 @@ public class HealthMapDataConverterTest {
         when(qcManager.performQC(location2)).thenReturn(false);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
         // healthMapAlert2 is successfully converted into diseaseOccurrence2
-        DiseaseOccurrence diseaseOccurrence2 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence2 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
         when(alertConverter.convert(healthMapAlert2, location2)).thenReturn(diseaseOccurrence2);
 
         // Act
@@ -385,7 +394,7 @@ public class HealthMapDataConverterTest {
         when(locationConverter.convert(healthMapLocation1)).thenReturn(location1);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns();
+        DiseaseOccurrence diseaseOccurrence1 = createDiseaseOccurrenceWithAutomaticModelRuns(true);
 
         when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(diseaseOccurrence1);
 
@@ -397,10 +406,10 @@ public class HealthMapDataConverterTest {
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence1));
     }
 
-    private DiseaseOccurrence createDiseaseOccurrenceWithAutomaticModelRuns() {
+    private DiseaseOccurrence createDiseaseOccurrenceWithAutomaticModelRuns(boolean value) {
         DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence();
         DiseaseGroup mockDiseaseGroup = mock(DiseaseGroup.class);
-        when(mockDiseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        when(mockDiseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(value);
         diseaseOccurrence.setDiseaseGroup(mockDiseaseGroup);
         return diseaseOccurrence;
     }
