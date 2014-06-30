@@ -15,7 +15,7 @@ import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.fest.util.Files.contentOf;
+import static org.assertj.core.util.Files.contentOf;
 
 /**
  * Tests the FreemarkerScriptGenerator class.
