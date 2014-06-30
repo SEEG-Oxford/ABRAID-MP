@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.*;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 

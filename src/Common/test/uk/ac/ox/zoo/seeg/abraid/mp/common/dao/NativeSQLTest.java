@@ -18,8 +18,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
 
 /**
  * Tests the NativeSQL class.

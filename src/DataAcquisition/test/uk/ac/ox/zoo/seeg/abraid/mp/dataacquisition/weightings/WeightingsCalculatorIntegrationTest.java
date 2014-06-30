@@ -17,8 +17,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;

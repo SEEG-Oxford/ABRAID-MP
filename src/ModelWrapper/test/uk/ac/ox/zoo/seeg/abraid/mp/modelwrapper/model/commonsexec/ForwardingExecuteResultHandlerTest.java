@@ -6,7 +6,7 @@ import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessException;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 

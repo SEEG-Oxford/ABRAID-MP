@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the ExecutionRunConfiguration class.
