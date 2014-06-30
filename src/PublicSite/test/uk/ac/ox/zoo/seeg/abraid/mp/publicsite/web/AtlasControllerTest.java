@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 import org.junit.Test;
 import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.ArrayList;
 import java.util.List;

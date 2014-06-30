@@ -27,10 +27,10 @@ scp -C $SHAPEFILE_SOURCE/land_sea_border.* admin_units/
 
 # Rasters
 mkdir rasters
-scp -C $RASTER_SOURCE/admin1qc.asc rasters/
-scp -C $RASTER_SOURCE/admin1qc.asc rasters/
-scp -C $RASTER_SOURCE/admin_tropical.asc rasters/
-scp -C $RASTER_SOURCE/admin_global.asc rasters/
+scp -C $RASTER_SOURCE/admin1qc.tif rasters/
+scp -C $RASTER_SOURCE/admin1qc.tif rasters/
+scp -C $RASTER_SOURCE/admin_tropical.tif rasters/
+scp -C $RASTER_SOURCE/admin_global.tif rasters/
 
 # Covariates
 mkdir covariates
@@ -38,7 +38,6 @@ scp -C -r $COVARIATE_SOURCE/* covariates/
 
 # Historic healthmap
 mkdir healthmap
-scp -C $HEALTHMAP_SOURCE/admin_unit_disease_extent_class.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/alert.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/disease_group.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/disease_occurrence.txt healthmap/

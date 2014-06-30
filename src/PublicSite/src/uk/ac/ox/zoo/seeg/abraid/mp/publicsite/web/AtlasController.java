@@ -13,7 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 public class AtlasController extends AbstractController {
 
     /**
-     * Gets all countries in the database and adds them to the model map.
      * Return the view to display.
      * @return The ftl page name.
      */

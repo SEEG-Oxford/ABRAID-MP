@@ -12,7 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
@@ -142,7 +142,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         verify(modelWrapperWebService, atLeastOnce()).startRun(
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(28)),
-                argThat(new MapSizeMatcher<Integer, Integer>(459)));
+                argThat(new MapSizeMatcher<Integer, Integer>(460)));
         verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
                 startsWith(MODELWRAPPER_URL_PREFIX), anyString());
     }

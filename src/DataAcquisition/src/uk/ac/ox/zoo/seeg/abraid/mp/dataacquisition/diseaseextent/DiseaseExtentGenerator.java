@@ -3,8 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
 import java.util.Iterator;
 import java.util.List;
