@@ -18,10 +18,11 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunManager {
-    private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
+    private static Logger logger = Logger.getLogger(ModelRunManager.class);
     private static final String DISEASE_GROUP_ID_MESSAGE = "MODEL RUN PREPARATION FOR DISEASE GROUP %d";
     private static final String STARTING_MODEL_PREP = "Starting model run preparation";
     private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed";
+    private static final String AUTOMATIC_RUNS_NOT_ENABLED = "Skipping model run preparation and request for disease group %d - Automatic model runs are not enabled";
 
     private ModelRunGatekeeper modelRunGatekeeper;
     private LastModelRunPrepDateManager lastModelRunPrepDateManager;
@@ -55,18 +56,22 @@ public class ModelRunManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
-        LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
-        DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
-        if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
-            DateTime modelRunPrepDate = DateTime.now();
-            LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> occurrencesForModelRunRequest =
-                    updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
-            generateDiseaseExtent(diseaseGroupId);
-            modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRunRequest);
-            lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
+        if (modelRunGatekeeper.automaticModelRunsEnabled(diseaseGroupId)) {
+            logger.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
+            DateTime lastModelRunPrepDate = lastModelRunPrepDateManager.getDate(diseaseGroupId);
+            if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
+                DateTime modelRunPrepDate = DateTime.now();
+                logger.info(STARTING_MODEL_PREP);
+                List<DiseaseOccurrence> occurrencesForModelRunRequest =
+                        updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
+                generateDiseaseExtent(diseaseGroupId);
+                modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRunRequest);
+                lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
+            } else {
+                logger.info(NOT_STARTING_MODEL_PREP);
+            }
         } else {
-            LOGGER.info(NOT_STARTING_MODEL_PREP);
+            logger.info(String.format(AUTOMATIC_RUNS_NOT_ENABLED, diseaseGroupId));
         }
     }
 

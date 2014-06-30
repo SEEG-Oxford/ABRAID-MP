@@ -94,4 +94,26 @@ public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegra
         // Assert
         assertThat(result).isEqualTo(expectedResult);
     }
+
+    @Test
+    public void automaticModelRunsEnabledReturnsTrueWhenExpected() {
+        executeTest(true);
+    }
+
+    @Test
+    public void automaticModelRunsEnabledReturnsFalseWhenExpected() {
+        executeTest(false);
+    }
+
+    private void executeTest(boolean expectedResult) {
+        // Arrange
+        diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID).setAutomaticModelRuns(expectedResult);
+        ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
+
+        // Act
+        boolean result = target.automaticModelRunsEnabled(DISEASE_GROUP_ID);
+
+        // Assert
+        assertThat(result).isEqualTo(expectedResult);
+    }
 }

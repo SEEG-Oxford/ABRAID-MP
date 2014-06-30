@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -11,9 +12,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent.DiseaseExtentGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings.WeightingsCalculator;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests the ModelRunManager.
@@ -31,6 +36,20 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
     @Before
     public void setFixedTime() {
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
+    }
+
+    @Test
+    public void modelPrepShouldNotRunWhenAutomaticModelRunsNotEnabled() throws Exception {
+        // Arrange
+        diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID).setAutomaticModelRuns(false);
+        ModelRunManager target = createModelRunManager();
+        Logger logger = GeneralTestUtils.createMockLogger(target);
+
+        // Act
+        target.prepareForAndRequestModelRun(DISEASE_GROUP_ID);
+
+        // Assert
+        verify(logger, times(1)).info(eq("Skipping model run preparation and request for disease group %d - Automatic model runs are not enabled"));
     }
 
     @Test

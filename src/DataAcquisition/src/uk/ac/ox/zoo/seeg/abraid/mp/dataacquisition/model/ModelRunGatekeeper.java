@@ -27,6 +27,11 @@ public class ModelRunGatekeeper {
         this.diseaseService = diseaseService;
     }
 
+    public Boolean automaticModelRunsEnabled(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        return diseaseGroup.isAutomaticModelRunsEnabled();
+    }
+
     /**
      * Determines whether model run preparation tasks should be carried out.
      * @param lastModelRunPrepDate The date on which the model preparation tasks were last executed.
