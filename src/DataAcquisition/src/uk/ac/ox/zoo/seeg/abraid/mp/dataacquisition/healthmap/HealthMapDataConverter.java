@@ -115,7 +115,9 @@ public class HealthMapDataConverter {
                         // Location was converted successfully, so add validation parameters to the occurrence and
                         // save it all. Note that the location is saved with the disease occurrence.
                         occurrence.setLocation(location);
-                        diseaseOccurrenceValidationService.addValidationParameters(occurrence);
+                        if (automaticModelRunsEnabled(occurrence)) {
+                            diseaseOccurrenceValidationService.addValidationParameters(occurrence);
+                        }
                         diseaseService.saveDiseaseOccurrence(occurrence);
                         convertedLocations.add(location);
                         convertedOccurrences.add(occurrence);
@@ -126,6 +128,10 @@ public class HealthMapDataConverter {
                 }
             }
         }
+    }
+
+    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
     }
 
     // Returns the converted location, or null if the location could not be converted further
