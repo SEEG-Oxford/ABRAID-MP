@@ -75,6 +75,10 @@ public class DiseaseGroup {
     @Column(name = "model_run_min_new_occurrences")
     private Integer modelRunMinNewOccurrences;
 
+    // Whether or not the system has been approved by an administrator to run the weekly model automatically
+    @Column(name = "automatic_model_runs")
+    private boolean automaticModelRuns;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -230,6 +234,14 @@ public class DiseaseGroup {
         this.modelRunMinNewOccurrences = modelRunMinNewOccurrences;
     }
 
+    public boolean isAutomaticModelRunsEnabled() {
+        return automaticModelRuns;
+    }
+
+    public void setAutomaticModelRuns(boolean automaticModelRuns) {
+        this.automaticModelRuns = automaticModelRuns;
+    }
+
     public DateTime getCreatedDate() {
         return createdDate;
     }
@@ -239,10 +251,11 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseGroup)) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
+        if (automaticModelRuns != that.automaticModelRuns) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (groupType != that.groupType) return false;
@@ -280,6 +293,7 @@ public class DiseaseGroup {
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (validationProcessStartDate != null ? validationProcessStartDate.hashCode() : 0);
         result = 31 * result + (modelRunMinNewOccurrences != null ? modelRunMinNewOccurrences.hashCode() : 0);
+        result = 31 * result + (automaticModelRuns ? 1 : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
