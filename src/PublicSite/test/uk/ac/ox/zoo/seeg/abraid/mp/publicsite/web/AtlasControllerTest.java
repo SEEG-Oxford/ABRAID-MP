@@ -2,14 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import org.junit.Test;
 import org.springframework.ui.Model;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the Atlas controller.
