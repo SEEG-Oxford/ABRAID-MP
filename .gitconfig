@@ -1,0 +1,3 @@
+[core]
+    filemode = false
+    autocrlf = true
