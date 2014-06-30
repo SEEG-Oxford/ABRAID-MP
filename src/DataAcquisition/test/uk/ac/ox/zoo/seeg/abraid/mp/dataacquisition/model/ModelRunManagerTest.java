@@ -41,17 +41,21 @@ public class ModelRunManagerTest extends AbstractDataAcquisitionSpringIntegratio
     @Test
     public void modelPrepShouldNotRunWhenAutomaticModelRunsNotEnabled() throws Exception {
         // Arrange
-        diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID).setAutomaticModelRuns(false);
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
+        diseaseGroup.setAutomaticModelRuns(false);
+        DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
+
         ModelRunManager target = createModelRunManager();
-        Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
         target.prepareForAndRequestModelRun(DISEASE_GROUP_ID);
 
-        // Assert
-        verify(logger, times(1)).info(eq("Skipping model run preparation and request for disease group %d - Automatic model runs are not enabled"));
+        // Assert - no change
+        assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
     }
 
+    // NB. Boolean value automatic_model_runs is a non-null field, set to true for Dengue (DISEASE_GROUP_ID = 87)
+    // in test data, so the following tests are working under that assumption
     @Test
     public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewOccurrencesIsOverThreshold() throws Exception {
         expectModelPrepToRun(null, true);

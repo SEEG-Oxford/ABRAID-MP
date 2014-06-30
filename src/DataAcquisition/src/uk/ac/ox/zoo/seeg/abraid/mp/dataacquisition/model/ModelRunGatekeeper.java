@@ -12,6 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
  */
 public class ModelRunGatekeeper {
     private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
+    private static final String DISEASE_GROUP_ID_MESSAGE = "MODEL RUN PREPARATION FOR DISEASE GROUP %d";
     private static final String NO_MODEL_RUN_MIN_NEW_OCCURRENCES =
             "No min new occurrences threshold has been defined for this disease group";
     private static final String NEVER_BEEN_EXECUTED_BEFORE =
@@ -20,16 +21,15 @@ public class ModelRunGatekeeper {
     private static final String WEEK_HAS_ELAPSED = "At least a week has elapsed since last model run preparation on %s";
     private static final String ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has exceeded minimum required";
     private static final String NOT_ENOUGH_NEW_OCCURRENCES = "Number of new occurrences has not exceeded minimum value";
+    private static final String AUTOMATIC_RUNS_NOT_ENABLED =
+            "Skipping model run preparation and request for disease group %d - Automatic model runs are not enabled";
+    private static final String STARTING_MODEL_RUN_PREP = "Starting model run preparation";
+    private static final String NOT_STARTING_MODEL_RUN_PREP = "Model run preparation will not be executed";
 
     private DiseaseService diseaseService;
 
     ModelRunGatekeeper(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
-    }
-
-    public Boolean automaticModelRunsEnabled(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        return diseaseGroup.isAutomaticModelRunsEnabled();
     }
 
     /**
@@ -40,8 +40,20 @@ public class ModelRunGatekeeper {
      * there have been more new occurrences since the last run than the minimum required for the disease group.
      * False if the minimum number of new occurrences value is not specified for the disease group.
      */
-    public boolean dueToRun(DateTime lastModelRunPrepDate, int diseaseGroupId) {
+    public boolean modelShouldRun(int diseaseGroupId, DateTime lastModelRunPrepDate) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
+            boolean dueToRun = dueToRun(lastModelRunPrepDate, diseaseGroup);
+            LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
+            return dueToRun;
+        } else {
+            LOGGER.info(String.format(AUTOMATIC_RUNS_NOT_ENABLED, diseaseGroupId));
+            return false;
+        }
+    }
+
+    private boolean dueToRun(DateTime lastModelRunPrepDate, DiseaseGroup diseaseGroup) {
         if (diseaseGroup.getModelRunMinNewOccurrences() == null) {
             LOGGER.info(NO_MODEL_RUN_MIN_NEW_OCCURRENCES);
             return false;
