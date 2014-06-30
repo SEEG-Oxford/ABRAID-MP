@@ -6,7 +6,7 @@
 <project name="module_common" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
   <import file="${basedir}/../build-module.xml"/>
 
-
+  <!-- Compile overrides -->
   <target name="compile.tests" depends="compile.production" description="Compile module; test classes">
     <mkdir dir="${test.out.dir}"/>
     <!-- Build -->
@@ -31,6 +31,7 @@
     </copy>
   </target>
 
+  <!-- Packaging overrides -->
   <target name="build.jar" depends="module_build.build.jar, build.testutil.jar" />
 
   <target name="build.testutil.jar" depends="compile.tests, create.testutil.jar.manifest">
@@ -51,5 +52,16 @@
     </manifest>
   </target>
 
+  <!-- Check style overrides -->
+  <target name="check.test.style" depends="module_build.check.test.style, check.testutil.style" />
+
+  <target name="check.testutil.style" depends="retrieve.libs" description="Generates a report of code convention violations.">
+    <taskdef resource="checkstyletask.properties" classpathref="analysis.classpath"/>
+    <mkdir dir="${report.out.dir}"/>
+    <checkstyle config="${project.root.dir}/src/code-style-tests.xml" failureProperty="style.failure" failOnViolation="false" classpathref="build.classpath">
+      <formatter type="xml" tofile="${report.out.dir}/checkstyle-report.xml"/>
+      <formatter type="plain" />
+      <fileset dir="${basedir}/testutils" includes="**/*.java"/>
+    </checkstyle>
   </target>
 </project>
