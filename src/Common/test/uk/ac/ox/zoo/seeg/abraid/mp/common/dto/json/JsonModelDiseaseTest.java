@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for JsonModelDisease.

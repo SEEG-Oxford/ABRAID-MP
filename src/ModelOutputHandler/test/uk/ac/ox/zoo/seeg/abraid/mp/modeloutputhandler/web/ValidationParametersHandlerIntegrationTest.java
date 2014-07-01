@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for the ValidationParametersHandler class.

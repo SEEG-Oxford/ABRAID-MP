@@ -18,8 +18,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
 
 /**
  * Tests the NativeSQL class.
@@ -363,11 +363,11 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         ModelRun modelRun = createAndSaveModelRun("test name", 87, ModelRunStatus.COMPLETED);
 
         // Act - update model run with loaded raster
-        byte[] actualGDALRaster = updateRasterForModelRun(rasterColumnName, modelRun, filename);
+        byte[] expectedGDALRasterResult = updateRasterForModelRun(rasterColumnName, modelRun, filename);
 
         // Assert - load mean prediction raster from model run and compare for equality (ignoring whitespace)
-        byte[] expectedGDALRaster = nativeSQL.loadRasterForModelRun(modelRun.getId(), rasterColumnName);
-        assertThat(new String(actualGDALRaster)).isEqualTo(new String(expectedGDALRaster));
+        byte[] actualGDALRasterResult = nativeSQL.loadRasterForModelRun(modelRun.getId(), rasterColumnName);
+        assertThat(new String(actualGDALRasterResult)).isEqualTo(new String(expectedGDALRasterResult));
     }
 
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {

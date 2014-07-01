@@ -11,7 +11,10 @@ import static org.mockito.Mockito.mock;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class GeneralTestUtils {
+public final class GeneralTestUtils {
+    private GeneralTestUtils() {
+    }
+
     /**
      * Mocks out log4j by injecting a mock logger into the specified object.
      * The object must have a field declared as follows (note the lowercase name and that it is not final):
