@@ -72,15 +72,17 @@ public class HealthMapDataConverterTest {
 
     @Test
     public void convertTwoSuccessfulLocationsEachWithTwoSuccessfulAlerts() {
-        executeTest(true, 4);
+        executeTest(true);
     }
 
     @Test
     public void convertTwoSuccessfulLocationsEachWithTwoSuccessfulAlertsButValidationParametersNotAdded() {
-        executeTest(false, 0);
+        executeTest(false);
+        // Even though automatic_model_runs is not enabled, the addValidationParameters method should still be called.
+        // The behaviour of how the values are set is tested in DiseaseOccurrenceValidationServiceTest.
     }
 
-    private void executeTest(boolean enabled, int times) {
+    private void executeTest(boolean enabled) {
         // Arrange
         // Create 2 locations each with 2 alerts
         HealthMapLocation healthMapLocation1 = new HealthMapLocation();
@@ -130,7 +132,7 @@ public class HealthMapDataConverterTest {
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence2));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence3));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence4));
-        verify(diseaseOccurrenceValidationService, times(times)).addValidationParameters(any(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, times(4)).addValidationParameters(any(DiseaseOccurrence.class));
     }
 
     @Test

@@ -35,10 +35,23 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     }
 
     @Test
-    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQC() {
+    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsEnabled() {
         // Arrange
         boolean automaticModelRuns = true;
-        DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(1, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
+
+        // Act
+        boolean result = service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsNotEnabled() {
+        // Arrange
+        boolean automaticModelRuns = false;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
 
         // Act
         boolean result = service.addValidationParameters(occurrence);
@@ -57,7 +70,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         double machineWeighting = 0.7;
         boolean automaticModelRuns = true;
 
-        DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
         occurrence.getLocation().setHasPassedQc(true);
         occurrence.getLocation().setGeom(point);
 
@@ -82,7 +95,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         int diseaseGroupId = 30;
         boolean automaticModelRuns = false;
 
-        DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
         occurrence.getLocation().setHasPassedQc(true);
         occurrence.getLocation().setGeom(point);
 
@@ -97,7 +110,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         assertThat(occurrence.isValidated()).isTrue();
     }
 
-    private DiseaseOccurrence getDefaultDiseaseOccurrence(int diseaseGroupId, boolean automaticModelRuns) {
+    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean automaticModelRuns) {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setAutomaticModelRuns(automaticModelRuns);
         diseaseGroup.setGlobal(false);
