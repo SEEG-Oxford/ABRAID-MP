@@ -147,7 +147,7 @@ public class WeightingsCalculator {
      */
     private double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
         Double expertWeighting = occurrence.getExpertWeighting();
-        double machineWeighting = occurrence.getMachineWeighting();
+        Double machineWeighting = occurrence.getMachineWeighting();
         return (expertWeighting != null) ? expertWeighting : machineWeighting;
     }
 
