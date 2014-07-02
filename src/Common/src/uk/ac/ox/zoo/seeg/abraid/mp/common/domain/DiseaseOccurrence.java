@@ -43,9 +43,14 @@ import javax.persistence.Table;
                         "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = false"
         ),
         @NamedQuery(
+                name = "getDiseaseOccurrencesYetToHaveFinalWeightingAssigned",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting is null"
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true"
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting > 0"
         ),
         @NamedQuery(
                 name = "getNewOccurrencesCountByDiseaseGroup",

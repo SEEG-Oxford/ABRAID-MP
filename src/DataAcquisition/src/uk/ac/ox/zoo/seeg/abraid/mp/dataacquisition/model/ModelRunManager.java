@@ -60,21 +60,20 @@ public class ModelRunManager {
         if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
             DateTime modelRunPrepDate = DateTime.now();
             LOGGER.info(STARTING_MODEL_PREP);
-            List<DiseaseOccurrence> occurrencesForModelRunRequest =
-                    updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
+            updateWeightingsAndIsValidated(lastModelRunPrepDate, modelRunPrepDate, diseaseGroupId);
             generateDiseaseExtent(diseaseGroupId);
-            modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRunRequest);
+            modelRunRequester.requestModelRun(diseaseGroupId);
             lastModelRunPrepDateManager.saveDate(modelRunPrepDate, diseaseGroupId);
         } else {
             LOGGER.info(NOT_STARTING_MODEL_PREP);
         }
     }
 
-    private List<DiseaseOccurrence> updateWeightingsAndIsValidated(DateTime lastModelRunPrepDate,
-                                                                   DateTime modelRunPrepDate, int diseaseGroupId) {
+    private void updateWeightingsAndIsValidated(DateTime lastModelRunPrepDate,
+                                                DateTime modelRunPrepDate, int diseaseGroupId) {
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         helper.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
-        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
     private void generateDiseaseExtent(int diseaseGroupId) {

@@ -16,7 +16,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractWebServiceClientIntegrationTests;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -53,10 +52,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         String modelName = "testname";
         String responseJson = "{\"modelRunName\":\"testname\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
+        setUpOccurrencesInDatabaseSoThatModelWillRun(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -73,10 +72,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
         int diseaseGroupId = 87;
         String responseJson = "{\"errorText\":\"testerror\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
+        setUpOccurrencesInDatabaseSoThatModelWillRun(diseaseGroupId);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunManagerException.class);
@@ -86,40 +85,45 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     public void requestModelRunWithWebClientExceptionThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
+        setUpOccurrencesInDatabaseSoThatModelWillRun(diseaseGroupId);
         String exceptionMessage = "Web service failed";
         WebServiceClientException thrownException = new WebServiceClientException(exceptionMessage);
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunManagerException.class);
     }
 
+    private void setUpOccurrencesInDatabaseSoThatModelWillRun(int diseaseGroupId) {
+        // Currently all the occurrences for dengue in the database have final weightings as null, so set their final
+        // weighting to a value (arbitrarily 0.1) to ensure that they will be returned in the query getDiseaseOccurrencesForModelRunRequest.
+        // For consistency with the real system when working properly, country occurrences have a final weighting of 0.
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            if (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) {
+                occurrence.setFinalWeighting(0.0);
+            } else {
+                occurrence.setFinalWeighting(0.1);
+            }
+            diseaseOccurrenceDao.save(occurrence);
+        }
+    }
+
     @Test
     public void requestModelRunWithNoDiseaseOccurrencesDoesNothing() {
-        // Arrange
+        // Arrange - N.B. All occurrences in database presently do not have a final weighting set, so query
+        // getDiseaseOccurrencesForModelRunRequest will return an empty list. This is desired behaviour for this test.
         int diseaseGroupId = 87;
-        List<DiseaseOccurrence> occurrences = new ArrayList<>();
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
         assertThat(modelRuns).hasSize(0);
-    }
-
-    private List<DiseaseOccurrence> getDiseaseOccurrencesWithZeroWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-        for (DiseaseOccurrence occurrence : occurrences) {
-            if (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) {
-                occurrence.setFinalWeighting(0.0);
-            }
-        }
-        return occurrences;
     }
 
     private void mockPostRequest(final String responseJson) {

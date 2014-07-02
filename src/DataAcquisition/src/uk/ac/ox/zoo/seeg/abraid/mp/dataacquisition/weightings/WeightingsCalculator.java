@@ -111,23 +111,21 @@ public class WeightingsCalculator {
     }
 
     /**
-     * For every occurrence of the specified disease group for which is_validated is true, update its validation
-     * weighting and final weighting.
+     * For every occurrence of the specified disease group for which is_validated is true, and the final weighting is
+     * not currently set, set its validation weighting and final weighting for the first and only time.
      * @param diseaseGroupId The id of the disease group.
-     * @return The list of disease occurrences for requesting a model run.
      */
-    public List<DiseaseOccurrence> updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+    public void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
             logger.info(String.format(UPDATING_WEIGHTINGS, occurrences.size()));
-            updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
+            setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
         }
-        return occurrences;
     }
 
-    private void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
+    private void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
         for (DiseaseOccurrence occurrence : occurrences) {
             double newValidation = calculateNewValidationWeighting(occurrence);
             double newFinal = calculateNewFinalWeighting(occurrence, newValidation);

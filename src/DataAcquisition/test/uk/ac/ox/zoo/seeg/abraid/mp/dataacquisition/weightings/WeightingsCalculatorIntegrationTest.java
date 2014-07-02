@@ -176,7 +176,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
 
         // Assert
         verify(logger, times(1)).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
@@ -196,7 +196,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ1.getValidationWeighting()).isEqualTo(machineWeighting);
@@ -219,7 +219,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ.getLocation().getPrecision().getWeighting()).isEqualTo(0.0);
@@ -253,7 +253,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ.getFinalWeighting()).isEqualTo(0.45, offset(0.000005));                // Average of (0.3, 0.4, 0.5, 0.6)
@@ -288,7 +288,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ.getDiseaseGroup().getWeighting()).isEqualTo(0.0);
