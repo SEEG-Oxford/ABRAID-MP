@@ -153,10 +153,7 @@ public class DiseaseGroup {
      * @return The disease group's public name for display.
      */
     public String getPublicNameForDisplay() {
-        if (StringUtils.hasText(getPublicName())) {
-            return getPublicName();
-        }
-        return getName();
+        return (StringUtils.hasText(getPublicName())) ? getPublicName() : getName();
     }
 
     public String getShortName() {
@@ -173,10 +170,7 @@ public class DiseaseGroup {
      * @return The disease group's short name for display.
      */
     public String getShortNameForDisplay() {
-        if (StringUtils.hasText(getShortName())) {
-            return getShortName();
-        }
-        return getName();
+        return StringUtils.hasText(getShortName()) ? getShortName() : getName();
     }
 
     public String getAbbreviation() {
