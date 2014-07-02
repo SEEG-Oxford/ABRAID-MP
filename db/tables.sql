@@ -142,7 +142,7 @@ CREATE TABLE disease_group (
     last_model_run_prep_date timestamp,
     validation_process_start_date timestamp,
     model_run_min_new_occurrences integer,
-	automatic_model_runs boolean NOT NULL,
+    automatic_model_runs boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 

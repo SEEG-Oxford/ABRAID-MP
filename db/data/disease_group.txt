@@ -1,15 +1,15 @@
 1		Actinomycosis	SINGLE						1		f
 2		Acute febrile respiratory disease	SINGLE						1		f
 3		Adenoviral haemmorrhagic conjunctivitis	SINGLE						1		f
-4		Adenovirus	MICROCLUSTER						0.8		f
+4		Adenovirus	MICROCLUSTER						0.5		f
 5		Adenovirus infection	SINGLE						1		f
 6		Aeromonas & marine Vibrio infx.	SINGLE						1		f
 7		African tick bite fever	SINGLE						1		f
-8		Alga	CLUSTER						0.5		f
+8		Alga	CLUSTER						0		f
 9		Alkhurma hemorrhagic fever	SINGLE						1		f
 10		Amoeba - free living	SINGLE						1		f
 11		Amoebic abscess	SINGLE						1		f
-12		Amoebic abscess-related	MICROCLUSTER						0.8		f
+12		Amoebic abscess-related	MICROCLUSTER						0.5		f
 13		Amoebic colitis	SINGLE						1		f
 14		Anaplasmosis	SINGLE						1		f
 15		Angiostrongyliasis	SINGLE						1		f
@@ -17,7 +17,7 @@
 17		Animal bite-associated infection	SINGLE						1		f
 18		Anisakiasis	SINGLE						1		f
 19		Anthrax	SINGLE						1		f
-20		Arenaviridae	MICROCLUSTER						0.8		f
+20		Arenaviridae	MICROCLUSTER						0.5		f
 21		Argentine hemorrhagic fever (Junin virus)	SINGLE						1		f
 22		Ascariasis	SINGLE	ascariasis	ascariasis	ascar	t	1	1		f
 23		Aspergillosis	SINGLE						1		f
@@ -26,12 +26,12 @@
 26		Babesiosis	SINGLE						1		f
 27		Bacillary angiomatosis	SINGLE						1		f
 28		Bacillus cereus food poisoning	SINGLE						1		f
-29		Bacteria_food/water	CLUSTER						0.5		f
-30		Bacteria_food/water-borne	CLUSTER						0.5		f
+29		Bacteria_food/water	CLUSTER						0		f
+30		Bacteria_food/water-borne	CLUSTER						0		f
 31		Bacterial vaginosis	SINGLE						1		f
 32		Balantidiasis	SINGLE						1		f
 33		Barmah Forest disease	SINGLE						1		f
-34		Bartonellas	MICROCLUSTER						0.8		f
+34		Bartonellas	MICROCLUSTER						0.5		f
 35		Bartonellosis - cat borne	SINGLE						1		f
 36		Bartonellosis - other systemic	SINGLE						1		f
 37		Bartonellosis - South American	SINGLE						1		f
@@ -46,7 +46,7 @@
 46		Brazilian haemorrhagic fever (Sabia virus)	SINGLE						1		f
 47		Brazilian purpuric fever	SINGLE						1		f
 48		Brucellosis	SINGLE						1		f
-49		Bunyaviridae	MICROCLUSTER						0.8		f
+49		Bunyaviridae	MICROCLUSTER						0.5		f
 50		Bunyaviridae infections - misc.	SINGLE						1		f
 51		California encephalitis virus (California serogroup virus)	SINGLE						1		f
 52		Campylobacteriosis	SINGLE						1		f
@@ -54,7 +54,7 @@
 54		Capillariasis - extraintestinal	SINGLE						1		f
 55		Capillariasis - intestinal	SINGLE						1		f
 56		Cercarial dermatitis	SINGLE						1		f
-57		Cestodes	MICROCLUSTER						0.8		f
+57		Cestodes	MICROCLUSTER						0.5		f
 58		Chancroid	SINGLE						1		f
 59		Chandipura and Vesicular stomatitis viruses	SINGLE						1		f
 60		Chikungunya	SINGLE						1		f
@@ -103,7 +103,7 @@
 103		Ehrlichiosis - human monocytic	SINGLE						1		f
 104		Endemic syphilis (bejel)	SINGLE						1		f
 105		Endocarditis	SINGLE						1		f
-106		Endogenous	CLUSTER						0.5		f
+106		Endogenous	CLUSTER						0		f
 107		Entamoeba polecki infection	SINGLE						1		f
 108		Enteritis necroticans	SINGLE						1		f
 109		Enterobiasis	SINGLE						1		f
@@ -117,13 +117,13 @@
 117		Escherichia coli diarrhoea	SINGLE						1		f
 118		Fascioliasis	SINGLE						1		f
 119		Fasciolopsiasis	SINGLE						1		f
-120		Filariasis	MICROCLUSTER	lymphatic filariasis	lymphatic filariasis	lf	f	11	0.8		f
+120		Filariasis	MICROCLUSTER	lymphatic filariasis	lymphatic filariasis	lf	f	11	0.5		f
 121		Filariasis - Bancroftian	SINGLE	<i>Wuchereria bancrofti</i>	Wuchereria bancrofti	lf-wb	f	11	1		f
 122		Filariasis - Brugia malayi	SINGLE	<i>Bugia major</i>	Bugia major	lf-bm	f	11	1		f
 123		Filariasis - Brugia timori	SINGLE	<i>Brugia timori</i>	Brugia timori	lf-bt	f	11	1		f
 124		Flinders Island spotted fever	SINGLE						1		f
 125		Fungal infection - invasive	SINGLE						1		f
-126		Fungus_environment	CLUSTER						0.5		f
+126		Fungus_environment	CLUSTER						0		f
 127		Gastrodiscoidiasis	SINGLE						1		f
 128		Gastroenteritis - viral	SINGLE						1		f
 129		Gastroenteritis - viral	SINGLE						1		f
@@ -155,7 +155,7 @@
 155		HIV infection - initial illness (part)	SINGLE	HIV	HIV	HIV	t	6	1		f
 156		HIV infection (part)	SINGLE	HIV	HIV	HIV	t	6	1		f
 157		Hookworm	SINGLE	hookworm	hookworm	hkwm	t	7	1		f
-158		hospital	CLUSTER						0.5		f
+158		hospital	CLUSTER						0		f
 159		Human papillomavirus	SINGLE						1		f
 160		Hymenolepis diminuta infection	SINGLE						1		f
 161		Hymenolepis nana infection	SINGLE						1		f
@@ -164,7 +164,7 @@
 164		Infectious mononucleosis or EBV infection	SINGLE						1		f
 165		Influenza	SINGLE						1		f
 166		Influenza	SINGLE						1		f
-167		Ingestion-seafood	MICROCLUSTER						0.8		f
+167		Ingestion-seafood	MICROCLUSTER						0.5		f
 168		Intestinal spirochetosis	SINGLE						1		f
 169		Intra-abdominal abscess	SINGLE						1		f
 170		Intracranial venous thrombosis	SINGLE						1		f
@@ -182,10 +182,10 @@
 182		Lagochilascariasis (see Ascaris)	SINGLE						1		f
 183		Langat virus	SINGLE						1		f
 184		Laryngotracheobronchitis	SINGLE						1		f
-185		Laryngotracheobronchitis-related	MICROCLUSTER						0.8		f
+185		Laryngotracheobronchitis-related	MICROCLUSTER						0.5		f
 186		Lassa fever	SINGLE						1		f
 187		Legionellosis	SINGLE						1		f
-188		Leishmaniases	MICROCLUSTER	leishmaniases	leishmaniases	leish	t	9	0.8		f
+188		Leishmaniases	MICROCLUSTER	leishmaniases	leishmaniases	leish	t	9	0.5		f
 189		Leishmaniasis - cutaneous/mucosal, New World	SINGLE	cutaneous leishmaniasis (New World)	cutaneous leishmaniasis (NW)	nwcl	f	9	1		f
 190		Leishmaniasis - cutaneous/mucosal, Old World	SINGLE	cutaneous leishmaniasis (Old World)	cutaneous leishmaniasis (OW)	owcl	f	9	1		f
 191		Leishmaniasis - visceral	SINGLE	visceral leishmaniasis	visceral leishmaniasis	vl	t	9	1		f
@@ -199,7 +199,7 @@
 199		Lyme disease	SINGLE						1		f
 200		Lymphocytic choriomeningitis	SINGLE						1		f
 201		Lymphogranuloma venereum	SINGLE						1		f
-202		Malarias	MICROCLUSTER	malaria (5 species)	malaria (5 species)	mal	f	12	0.8		f
+202		Malarias	MICROCLUSTER	malaria (5 species)	malaria (5 species)	mal	f	12	0.5		f
 203		Malignant otitis externa	SINGLE						1		f
 204		Mammomonogamiasis	SINGLE						1		f
 205		Mansonelliasis - M. ozzardi	SINGLE						1		f
@@ -215,7 +215,7 @@
 215		Metagonimiasis (see Heterophyids)	SINGLE						1		f
 216		Metorchiasis	SINGLE						1		f
 217		Microsporidiosis	SINGLE						1		f
-218		Mixed	CLUSTER						0.5		f
+218		Mixed	CLUSTER						0		f
 219		Moniliformis and Macracanthorhynchus	SINGLE						1		f
 220		Monkey pox	SINGLE						1		f
 221		Mumps	SINGLE						1		f
@@ -297,7 +297,7 @@
 297		Rhodococcus equi infection	SINGLE						1		f
 298		Rickettsia felis infection	SINGLE						1		f
 299		Rickettsia sibirica mongolotimonae infection	SINGLE						1		f
-300		Rickettsiales	CLUSTER						0.5		f
+300		Rickettsiales	CLUSTER						0		f
 301		Rickettsialpox	SINGLE						1		f
 302		Rift Valley fever	SINGLE						1		f
 303		Rocio	SINGLE						1		f
@@ -349,13 +349,13 @@
 349		Toxocariasis	SINGLE						1		f
 350		Toxoplasmosis	SINGLE						1		f
 351		Trachoma	SINGLE						1		f
-352		Trematodes	MICROCLUSTER						0.8		f
+352		Trematodes	MICROCLUSTER						0.5		f
 353		Trichinosis	SINGLE						1		f
 354		Trichomoniasis	SINGLE						1		f
 355		Trichostrongyliasis	SINGLE						1		f
 356		Trichuriasis	SINGLE	trichuriasis	trichuriasis	trich	t	18	1		f
 357		Tropical phagedenic ulcer	SINGLE						1		f
-358		Trypanosomiases	MICROCLUSTER	trypanosomiases	trypanosomiases	trypa	f	19	0.8		f
+358		Trypanosomiases	MICROCLUSTER	trypanosomiases	trypanosomiases	trypa	f	19	0.5		f
 359		Trypanosomiasis - African	SINGLE	human African trypanosomiasis	sleeping sickness	hat	f	19	1		f
 360		Trypanosomiasis - American	SINGLE	Chagas	Chagas	chag	f	19	1		f
 361		Tuberculosis	SINGLE						1		f
@@ -365,23 +365,23 @@
 365		Typhus - endemic/murine (flea-borne)	SINGLE						1		f
 366		Typhus - epidemic	SINGLE						1		f
 367		Typhus - scrub (mite-borne)	SINGLE	scrub typhus	scrub typhus	scrubt	t	17	1		f
-368		Typhus group	MICROCLUSTER						0.8		f
+368		Typhus group	MICROCLUSTER						0.5		f
 369		Urinary tract infection	SINGLE						1		f
 370		Vaccinia and cowpox	SINGLE						1		f
 371		Varicella	SINGLE						1		f
-372		Vector-mosquito	MICROCLUSTER						0.8		f
-373		Vector-tick	MICROCLUSTER						0.8		f
+372		Vector-mosquito	MICROCLUSTER						0.5		f
+373		Vector-tick	MICROCLUSTER						0.5		f
 374		Venezuelan equine encephalitis	SINGLE						1		f
 375		Venezuelen hemorrhagic fever	SINGLE						1		f
-376		veterinary	CLUSTER						0.5		f
+376		veterinary	CLUSTER						0		f
 377		Vibrio parahaemolyticus infection	SINGLE						1		f
 378		Viliuisk encephalomyelitis	SINGLE						1		f
-379		Virus_avian-contact	MICROCLUSTER						0.8		f
-380		Virus_bodilyfluid	CLUSTER						0.5		f
-381		Virus_faecaloral	CLUSTER						0.5		f
-382		Virus_respiratory	CLUSTER						0.5		f
-383		Virus_soil	CLUSTER						0.5		f
-384		Virus_vector-borne	CLUSTER						0.5		f
+379		Virus_avian-contact	MICROCLUSTER						0.5		f
+380		Virus_bodilyfluid	CLUSTER						0		f
+381		Virus_faecaloral	CLUSTER						0		f
+382		Virus_respiratory	CLUSTER						0		f
+383		Virus_soil	CLUSTER						0		f
+384		Virus_vector-borne	CLUSTER						0		f
 385		Wesselsbron	SINGLE						1		f
 386		West Nile fever	SINGLE						1		f
 387		Western equine encephalitis	SINGLE						1		f
@@ -392,7 +392,5 @@
 392		Yersiniosis	SINGLE						1		f
 393		Zika	SINGLE						1		f
 394		Zygomycosis	SINGLE						1		f
-395		Schistosomiasis	MICROCLUSTER	Schistosomiases	Schistosomiases	schis	f	16	0.8		f
-396		Prions	MICROCLUSTER						0.8		f
-397		NEW FROM HEALTHMAP: MERS	CLUSTER						0.5		f
-398		NEW FROM HEALTHMAP: Novel Swine Enteric Coronavirus	CLUSTER						0.5		f
+395		Schistosomiasis	MICROCLUSTER	Schistosomiases	Schistosomiases	schis	f	16	0.5		f
+396		Prions	MICROCLUSTER						0.5		f
