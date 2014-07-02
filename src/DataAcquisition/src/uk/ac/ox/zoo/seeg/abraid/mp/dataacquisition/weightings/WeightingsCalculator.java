@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -127,7 +128,7 @@ public class WeightingsCalculator {
 
     private void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
         for (DiseaseOccurrence occurrence : occurrences) {
-            double newValidation = calculateNewValidationWeighting(occurrence);
+            Double newValidation = calculateNewValidationWeighting(occurrence);
             double newFinal = calculateNewFinalWeighting(occurrence, newValidation);
             double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(occurrence, newValidation);
             if (hasAnyWeightingChanged(occurrence, newValidation, newFinal, newFinalExcludingSpatial)) {
@@ -143,35 +144,37 @@ public class WeightingsCalculator {
      * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
      * the expert weighting if it exists, otherwise the machine weighting.
      */
-    private double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
+    private Double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
         Double expertWeighting = occurrence.getExpertWeighting();
         Double machineWeighting = occurrence.getMachineWeighting();
         return (expertWeighting != null) ? expertWeighting : machineWeighting;
     }
 
     /**
-     * Recalculate the final weighting as the average across each of the 4 properties. If the value of any of the
-     * weightings is 0, then the occurrence should be discounted by the model by setting the final weighting to 0.
+     * If the validation weighting is null and environmental suitability is not null, set the final weighting to the
+     * location resolution weighting. Otherwise, recalculate the final weighting as the average across each of the 4
+     * properties. However, if the value of any of the 4 weightings is 0, then the occurrence should be discounted by
+     * the model by setting the final weighting to 0.
      */
-    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, double validationWeighting) {
+    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, Double validationWeighting) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
+        if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
+            return locationResolutionWeighting;
+        }
+
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
-        double weighting;
         if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
-            weighting = 0.0;
-        } else {
-            weighting = average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
-                    validationWeighting);
+            return 0.0;
         }
-        return weighting;
+        return average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting, validationWeighting);
     }
 
     /**
      * As above, but excluding the location resolution weighting.
      */
     private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
-                                                              double validationWeighting) {
+                                                              Double validationWeighting) {
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
         return (diseaseGroupTypeWeighting == 0.0) ? 0.0 :
@@ -267,10 +270,11 @@ public class WeightingsCalculator {
     }
 
     private double average(Double... args) {
-        return (double) avg(Arrays.asList(args));
+        return average(Arrays.asList(args));
     }
 
     private double average(List<Double> args) {
-        return (double) avg(args);
+        List<Double> notNullValues = filter(Matchers.notNullValue(), args);
+        return (double) avg(notNullValues);
     }
 }

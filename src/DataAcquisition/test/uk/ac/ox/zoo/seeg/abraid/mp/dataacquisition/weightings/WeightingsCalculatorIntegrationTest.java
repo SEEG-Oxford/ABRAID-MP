@@ -138,7 +138,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 87;
 
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(87);
         DiseaseOccurrence occ1 = occurrences.get(0);
         DiseaseOccurrence occ2 = occurrences.get(1);
         DiseaseOccurrence occ3 = occurrences.get(2);
@@ -188,11 +188,11 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         int diseaseGroupId = 87;
         double machineWeighting = 0.3;
         double expertWeighting = 0.2;
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
         DiseaseOccurrence occ1 = setWeightings(occurrences.get(0), null, machineWeighting);
         DiseaseOccurrence occ2 = setWeightings(occurrences.get(1), expertWeighting, machineWeighting);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(Arrays.asList(occ1, occ2));
+        when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId)).thenReturn(Arrays.asList(occ1, occ2));
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
@@ -227,14 +227,14 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     }
 
     private DiseaseOccurrence getDiseaseOccurrenceWithCountryPrecision(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
         return selectFirst(occurrences, having(on(DiseaseOccurrence.class).getLocation().getPrecision(),
                 Matchers.equalTo(LocationPrecision.COUNTRY)));
     }
 
     private DiseaseService mockDiseaseServiceWithOccurrence(int diseaseGroupId, DiseaseOccurrence occ) {
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(Arrays.asList(occ));
+        when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId)).thenReturn(Arrays.asList(occ));
         return mockDiseaseService;
     }
 
@@ -323,7 +323,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     @Test
     public void calculateNewExpertsWeightingsReturnsExpectedMap() {
         // Arrange - Experts 1 and 2 submit YES reviews for an occurrence. Their new weightings will be 1.0
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(87);
         DiseaseOccurrence occ = occurrences.get(0);
         int expert1Id = 1;
         int expert2Id = 2;
@@ -392,8 +392,45 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         }
     }
 
+    @Test
+    public void averageReturnsExpectedValue() {
+        // Arrange
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        double result = weightingsCalculator.average(0.1, 0.2, 0.3);
+
+        // Assert
+        assertThat(result).isEqualTo(0.2, offset(0.0001));
+    }
+
+    @Test
+    public void averageReturnsExpectedValueDiscountingNullValue() {
+        // Arrange
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        double result = weightingsCalculator.average(0.1, 0.2, null);
+
+        // Assert
+        assertThat(result).isEqualTo(0.15, offset(0.0001));
+    }
+
+
+    @Test
+    public void averageReturnsExpectedValueDiscountingAllNulls() {
+        // Arrange
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        double result = weightingsCalculator.average(null, null, null);
+
+        // Assert
+        assertThat(result).isEqualTo(0);
+    }
+
     private List<DiseaseOccurrenceReview> defaultListOfManyReviews() {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87).subList(0, 3);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(87).subList(0, 3);
 
         Expert ex1 = createExpert(1, "ex1", 0.0);
         Expert ex2 = createExpert(2, "ex2", 0.0);
