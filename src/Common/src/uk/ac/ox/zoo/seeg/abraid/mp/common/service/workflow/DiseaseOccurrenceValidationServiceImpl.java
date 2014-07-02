@@ -28,11 +28,16 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (isEligibleForValidation(occurrence)) {
             occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
             occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
-            occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-            occurrence.setValidated(findIsValidated(occurrence));
+            if (occurrence.getEnvironmentalSuitability() == null && occurrence.getDistanceFromDiseaseExtent() == null) {
+                occurrence.setMachineWeighting(null);
+                occurrence.setValidated(true);
+                // This allows the initial model run / disease extent generation to take place.
+            } else {
+                occurrence.setMachineWeighting(findMachineWeighting(occurrence));
+                occurrence.setValidated(findIsValidated(occurrence));
+            }
             return true;
         }
-
         return false;
     }
 
@@ -56,6 +61,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {
+        // For now hardcode to true, but proper behaviour will be implemented in future story.
         return true;
     }
 }
