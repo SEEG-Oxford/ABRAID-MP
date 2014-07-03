@@ -6,7 +6,7 @@ import org.kubek2k.springockito.annotations.WrapWithSpy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelWrapperWebService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService;
 
 /**
  * Base class for Main class tests in the Data Acquisition module.

@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -58,7 +58,7 @@ public class ModelRunRequester {
                 handleModelRunResponse(response, diseaseGroupId, requestDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
-                throw new ModelRunManagerException(message, e);
+                throw new ModelRunRequesterException(message, e);
             }
         }
     }
@@ -71,7 +71,7 @@ public class ModelRunRequester {
     private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
-            throw new ModelRunManagerException(message);
+            throw new ModelRunRequesterException(message);
         } else {
             ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
             modelRunService.saveModelRun(modelRun);

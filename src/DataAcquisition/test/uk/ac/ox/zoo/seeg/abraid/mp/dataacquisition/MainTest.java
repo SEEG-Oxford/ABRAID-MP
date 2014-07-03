@@ -13,8 +13,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
 import java.io.File;
 import java.util.*;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
-    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/ModelWrapper";
+    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/modelwrapper";
     public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
 
     @Autowired
@@ -99,7 +99,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockHealthMapRequest();
         mockGeoNamesRequests();
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
-                .thenThrow(new ModelRunManagerException("Test message"));
+                .thenThrow(new ModelRunRequesterException("Test message"));
 
         // Act
         runMain(new String[]{});
