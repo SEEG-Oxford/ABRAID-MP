@@ -20,24 +20,33 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a disease occurrence.
+     * Adds validation parameters to a disease occurrence - only during the automated process.
+     * If automatic model runs is not enabled, and the occurrence's location has passed QC then only set is_validated to
+     * true, to ensure the occurrence is used in the manually requested model run.
      * @param occurrence The disease occurrence.
      * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
     public boolean addValidationParameters(DiseaseOccurrence occurrence) {
         if (isEligibleForValidation(occurrence)) {
-            occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
-            occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
-            occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-            occurrence.setValidated(findIsValidated(occurrence));
+            if (automaticModelRunsEnabled(occurrence)) {
+                occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
+                occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
+                occurrence.setMachineWeighting(findMachineWeighting(occurrence));
+                occurrence.setValidated(findIsValidated(occurrence));
+            } else {
+                occurrence.setValidated(true);
+            }
             return true;
         }
-
         return false;
     }
 
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
         return (occurrence != null) && (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    }
+
+    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
     }
 
     private Double findEnvironmentalSuitability(DiseaseOccurrence occurrence) {
@@ -56,6 +65,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {
+        // For now hardcode to true, but the proper behaviour will be implemented in a future story.
         return true;
     }
 }

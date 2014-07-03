@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
-import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
@@ -14,11 +13,6 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunManager {
-    private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
-    private static final String DISEASE_GROUP_ID_MESSAGE = "MODEL RUN PREPARATION FOR DISEASE GROUP %d";
-    private static final String STARTING_MODEL_PREP = "Starting model run preparation";
-    private static final String NOT_STARTING_MODEL_PREP = "Model run preparation will not be executed";
-
     private ModelRunGatekeeper modelRunGatekeeper;
     private ModelRunWorkflowService modelRunWorkflowService;
 
@@ -38,12 +32,8 @@ public class ModelRunManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
-        LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
-        if (modelRunGatekeeper.dueToRun(diseaseGroupId)) {
-            LOGGER.info(STARTING_MODEL_PREP);
+        if (modelRunGatekeeper.modelShouldRun(diseaseGroupId)) {
             modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
-        } else {
-            LOGGER.info(NOT_STARTING_MODEL_PREP);
         }
     }
 

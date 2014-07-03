@@ -18,6 +18,7 @@ public class ModelRunManagerTest {
     private DiseaseService diseaseService;
     private ModelRunManager modelRunManager;
     private ModelRunWorkflowService modelRunWorkflowService;
+    private DiseaseGroup diseaseGroup;
 
     private static final int DISEASE_GROUP_ID = 87;
 
@@ -28,7 +29,17 @@ public class ModelRunManagerTest {
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService);
 
+        // The default disease group for dengue has automatic model runs set to true
+        diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
+        diseaseGroup.setAutomaticModelRuns(true);
+
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
+    }
+
+    @Test
+    public void modelPrepShouldNotRunWhenAutomaticModelRunsNotEnabled() throws Exception {
+        diseaseGroup.setAutomaticModelRuns(false);
+        expectModelPrepNotToRun(null, true);
     }
 
     @Test
@@ -126,7 +137,6 @@ public class ModelRunManagerTest {
     }
 
     private DiseaseGroup mockGetDiseaseGroupById() {
-        DiseaseGroup diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
         return diseaseGroup;
     }

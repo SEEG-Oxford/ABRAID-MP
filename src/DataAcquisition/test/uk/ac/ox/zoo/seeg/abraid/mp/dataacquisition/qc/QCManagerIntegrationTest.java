@@ -121,19 +121,19 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     @Test
     public void passesStage1AndStage2ButFailsStage3() {
         // Arrange
-        int usId = 106;
-        Location location = new Location("Door County, Wisconsin, United States", -87.3001, 44.91666,
-                LocationPrecision.ADMIN2, usId);
+        int id = 106;
+        Location location = new Location("Pointe-Noire, DR Congo", 11.86364, -4.77867,
+                LocationPrecision.PRECISE, id);
 
         // Act
         boolean hasPassedQc = qcManager.performQC(location);
 
         // Assert
         assertThat(hasPassedQc).isFalse();
-        assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(31738);
-        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 8.76% of the square " +
-                "root of the area. QC stage 2 passed: location already within land. QC stage 3 failed: location " +
-                "too distant from HealthMap country (closest point is (-87.344990,44.814350) at distance 11.910km).");
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
+        assertThat(location.getQcMessage()).contains("QC stage 1 passed: location not an ADMIN1 or ADMIN2. " +
+                "QC stage 2 passed: location already within land. QC stage 3 failed: location too distant from " +
+                "HealthMap country");
     }
 
     @Test
