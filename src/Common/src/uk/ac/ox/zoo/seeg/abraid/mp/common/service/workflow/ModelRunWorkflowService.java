@@ -14,12 +14,6 @@ public interface ModelRunWorkflowService {
     Map<Integer, Double> calculateExpertsWeightings();
 
     /**
-     * Performs activities required in order to prepare for a model run, for the specified disease group.
-     * @param diseaseGroupId The disease group ID.
-     */
-    void prepareForModelRun(int diseaseGroupId);
-
-    /**
      * Prepares for and requests a model run, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      */

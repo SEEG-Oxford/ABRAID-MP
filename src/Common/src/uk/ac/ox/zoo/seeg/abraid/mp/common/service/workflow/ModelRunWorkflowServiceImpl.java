@@ -40,35 +40,18 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     }
 
     @Override
-    public void prepareForModelRun(int diseaseGroupId) {
-        prepareForAndRequestModelRunIfDesired(diseaseGroupId, false);
-    }
-
-    @Override
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
-        prepareForAndRequestModelRunIfDesired(diseaseGroupId, true);
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DateTime modelRunPrepDate = DateTime.now();
+        List<DiseaseOccurrence> occurrences = updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
+        generateDiseaseExtent(diseaseGroupId);
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+        saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
 
     @Override
     public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
-    }
-
-    private void prepareForAndRequestModelRunIfDesired(int diseaseGroupId, boolean requestModelRun) {
-        DiseaseGroup diseaseGroup = getDiseaseGroup(diseaseGroupId);
-        DateTime modelRunPrepDate = getModelRunPrepDate();
-        List<DiseaseOccurrence> occurrences = updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
-        generateDiseaseExtent(diseaseGroupId);
-        requestModelRun(diseaseGroupId, occurrences, requestModelRun);
-        saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
-    }
-
-    private DiseaseGroup getDiseaseGroup(int diseaseGroupId) {
-        return diseaseService.getDiseaseGroupById(diseaseGroupId);
-    }
-
-    private DateTime getModelRunPrepDate() {
-        return DateTime.now();
     }
 
     private List<DiseaseOccurrence> updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup,
@@ -85,12 +68,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
                 new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
         ///CHECKSTYLE:ON
-    }
-
-    private void requestModelRun(int diseaseGroupId, List<DiseaseOccurrence> occurrences, boolean requestModelRun) {
-        if (requestModelRun) {
-            modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
-        }
     }
 
     private void saveModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
