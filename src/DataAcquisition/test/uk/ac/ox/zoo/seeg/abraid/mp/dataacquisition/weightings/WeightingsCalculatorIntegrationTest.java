@@ -1,12 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
 import org.apache.log4j.Logger;
-import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
@@ -19,6 +19,7 @@ import java.util.*;
 import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -37,6 +38,9 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Before
     public void setFixedTime() {
@@ -138,7 +142,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 87;
 
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(87);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
         DiseaseOccurrence occ1 = occurrences.get(0);
         DiseaseOccurrence occ2 = occurrences.get(1);
         DiseaseOccurrence occ3 = occurrences.get(2);
@@ -188,7 +192,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         int diseaseGroupId = 87;
         double machineWeighting = 0.3;
         double expertWeighting = 0.2;
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         DiseaseOccurrence occ1 = setWeightings(occurrences.get(0), null, machineWeighting);
         DiseaseOccurrence occ2 = setWeightings(occurrences.get(1), expertWeighting, machineWeighting);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
@@ -227,9 +231,11 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     }
 
     private DiseaseOccurrence getDiseaseOccurrenceWithCountryPrecision(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences =
+                filter(having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), equalTo(diseaseGroupId)),
+                       diseaseOccurrenceDao.getAll());
         return selectFirst(occurrences, having(on(DiseaseOccurrence.class).getLocation().getPrecision(),
-                Matchers.equalTo(LocationPrecision.COUNTRY)));
+                equalTo(LocationPrecision.COUNTRY)));
     }
 
     private DiseaseService mockDiseaseServiceWithOccurrence(int diseaseGroupId, DiseaseOccurrence occ) {
@@ -346,7 +352,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     @Test
     public void calculateNewExpertsWeightingsReturnsExpectedMap() {
         // Arrange - Experts 1 and 2 submit YES reviews for an occurrence. Their new weightings will be 1.0
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(87);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
         DiseaseOccurrence occ = occurrences.get(0);
         int expert1Id = 1;
         int expert2Id = 2;
@@ -453,7 +459,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     }
 
     private List<DiseaseOccurrenceReview> defaultListOfManyReviews() {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(87).subList(0, 3);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87).subList(0, 3);
 
         Expert ex1 = createExpert(1, "ex1", 0.0);
         Expert ex2 = createExpert(2, "ex2", 0.0);

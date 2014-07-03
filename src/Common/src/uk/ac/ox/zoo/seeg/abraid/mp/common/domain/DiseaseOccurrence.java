@@ -167,13 +167,13 @@ public class DiseaseOccurrence {
     }
 
     public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, Boolean isValidated,
-                             Double validationWeighting, DateTime occurrenceDate) {
+                             Double finalWeighting, DateTime occurrenceDate) {
         this.id = id;
         this.diseaseGroup = diseaseGroup;
         this.location = location;
         this.alert = alert;
         this.isValidated = isValidated;
-        this.validationWeighting = validationWeighting;
+        this.finalWeighting = finalWeighting;
         this.occurrenceDate = occurrenceDate;
     }
 
