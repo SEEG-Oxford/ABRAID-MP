@@ -42,7 +42,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractWebServiceClientIn
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
-    private static final String URL = "http://username:password@localhost:8080/ModelWrapper_war_exploded/model/run";
+    private static final String URL = "http://username:password@localhost:8080/modelwrapper/model/run";
 
     @Test
     public void requestModelRunSucceeds() {
