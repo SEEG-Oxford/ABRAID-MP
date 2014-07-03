@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
  */
 public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
-    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/ModelWrapper";
+    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/modelwrapper";
 
     @Autowired
     private ApplicationContext applicationContext;
