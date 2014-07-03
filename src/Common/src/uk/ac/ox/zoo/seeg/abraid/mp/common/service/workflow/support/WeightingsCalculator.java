@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;

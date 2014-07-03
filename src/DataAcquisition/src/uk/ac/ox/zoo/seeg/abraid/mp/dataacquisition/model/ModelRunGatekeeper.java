@@ -34,7 +34,7 @@ public class ModelRunGatekeeper {
 
     /**
      * Determines whether model run preparation tasks should be carried out.
-     * @param lastModelRunPrepDate The date on which the model preparation tasks were last executed.
+     *
      * @param diseaseGroupId The id of the disease group for which the model run is being prepared.
      * @return True if automatic model runs have been enabled by an administrator, and the model is "due to run":
      *  - there is no lastModelRunPrepDate for disease, or
@@ -42,11 +42,11 @@ public class ModelRunGatekeeper {
      *  - there have been more new occurrences since the last run than the minimum required for the disease group.
      * False if automatic model runs are not enabled, or the minimum number of new occurrences value is not specified.
      */
-    public boolean modelShouldRun(int diseaseGroupId, DateTime lastModelRunPrepDate) {
+    public boolean modelShouldRun(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId, diseaseGroup.getName()));
-            boolean dueToRun = dueToRun(lastModelRunPrepDate, diseaseGroup);
+            boolean dueToRun = dueToRun(diseaseGroup);
             LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
             return dueToRun;
         } else {
@@ -55,16 +55,17 @@ public class ModelRunGatekeeper {
         }
     }
 
-    private boolean dueToRun(DateTime lastModelRunPrepDate, DiseaseGroup diseaseGroup) {
+    private boolean dueToRun(DiseaseGroup diseaseGroup) {
         if (diseaseGroup.getModelRunMinNewOccurrences() == null) {
             LOGGER.info(NO_MODEL_RUN_MIN_NEW_OCCURRENCES);
             return false;
         } else {
-            return weekHasElapsed(lastModelRunPrepDate) || enoughNewOccurrences(diseaseGroup);
+            return weekHasElapsed(diseaseGroup) || enoughNewOccurrences(diseaseGroup);
         }
     }
 
-    private boolean weekHasElapsed(DateTime lastModelRunPrepDate) {
+    private boolean weekHasElapsed(DiseaseGroup diseaseGroup) {
+        DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         if (lastModelRunPrepDate == null) {
             LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
             return true;

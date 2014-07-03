@@ -1,12 +1,12 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 
 import java.util.Arrays;
 
@@ -15,10 +15,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Integration tests for the ModelRunManagerHelper class.
+ * Integration tests for the DiseaseOccurrenceReviewManager class.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunManagerHelperIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
+public class DiseaseOccurrenceReviewManagerIntegrationTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
@@ -43,7 +43,7 @@ public class ModelRunManagerHelperIntegrationTest extends AbstractDataAcquisitio
         DiseaseOccurrence occurrence = createDiseaseOccurrence();
         DiseaseService diseaseService = mockDiseaseService(diseaseGroupId, occurrence);
 
-        ModelRunManagerHelper target = new ModelRunManagerHelper(diseaseService);
+        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService);
         DateTime modelRunPrepDate = occurrence.getCreatedDate().plusDays(daysElapsed);
 
         // Act
