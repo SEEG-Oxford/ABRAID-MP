@@ -47,7 +47,32 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     }
 
     @Test
-    public void addValidationParametersSetsValidationParametersAndReturnsTrue() {
+    public void addValidationParametersSetsAppropriateValidationParametersAndReturnsTrue() {
+        // Arrange - If environmental suitability and distance from disease extent are both null,
+        // only set the values of: machine weighting to null, and is validated to true
+        Point point = GeometryUtils.createPoint(10, 20);
+        int diseaseGroupId = 30;
+
+        DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(diseaseGroupId);
+        occurrence.getLocation().setHasPassedQc(true);
+        occurrence.getLocation().setGeom(point);
+
+        when(nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point)).thenReturn(null);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(null);
+
+        // Act
+        boolean result = service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    @Test
+    public void addValidationParametersSetsAllValidationParametersAndReturnsTrue() {
         // Arrange
         Point point = GeometryUtils.createPoint(10, 20);
         int diseaseGroupId = 30;

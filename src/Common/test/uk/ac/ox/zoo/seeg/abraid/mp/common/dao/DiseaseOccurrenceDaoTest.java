@@ -138,6 +138,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Arrange
         Alert alert = createAlert();
         Location location = new Location("Karachi", 25.0111455, 67.0647043, LocationPrecision.PRECISE);
+        location.setResolutionWeighting(1.0);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         DateTime occurrenceDate = DateTime.now().minusDays(5);
         double expertWeighting = 0.1;

@@ -161,7 +161,6 @@ public class WeightingsCalculator {
         if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
             return locationResolutionWeighting;
         }
-
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
         if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
@@ -172,9 +171,13 @@ public class WeightingsCalculator {
 
     /**
      * As above, but excluding the location resolution weighting.
+     * In this case, if validation weighting is null and environmental suitability is not null, final weighting is 1.0.
      */
     private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
                                                               Double validationWeighting) {
+        if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
+            return 1.0;
+        }
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
         return (diseaseGroupTypeWeighting == 0.0) ? 0.0 :
@@ -182,13 +185,13 @@ public class WeightingsCalculator {
     }
 
     private boolean hasAnyWeightingChanged(DiseaseOccurrence occurrence,
-                                           double newValidation, double newFinal, double newFinalExcludingSpatial) {
+                                           Double newValidation, double newFinal, double newFinalExcludingSpatial) {
         return (hasWeightingChanged(occurrence.getValidationWeighting(), newValidation) ||
                 hasWeightingChanged(occurrence.getFinalWeighting(), newFinal) ||
                 hasWeightingChanged(occurrence.getFinalWeightingExcludingSpatial(), newFinalExcludingSpatial));
     }
 
-    private boolean hasWeightingChanged(Double currentWeighting, double newWeighting) {
+    private boolean hasWeightingChanged(Double currentWeighting, Double newWeighting) {
         return (currentWeighting == null || currentWeighting != newWeighting);
     }
 

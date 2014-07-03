@@ -3,10 +3,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
 import java.util.List;
 
@@ -34,6 +34,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.COUNTRY);
+        location.setResolutionWeighting(0.0);
         location.setHealthMapCountryId(healthMapCountryId);
 
         // Act
@@ -69,6 +70,7 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN1);
+        location.setResolutionWeighting(0.5);
         location.setHealthMapCountryId(healthMapCountryId);
         location.setGeoNameId(geoNameId);
 
@@ -101,12 +103,12 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         int adminUnitQCGaulCode = 29863;
         int adminUnitGlobalGaulCode = 3;
         int adminUnitTropicalGaulCode = 4;
-        int countryGaulCode = 5;
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.ADMIN2);
+        location.setResolutionWeighting(0.5);
         location.setAdminUnitQCGaulCode(adminUnitQCGaulCode);
         location.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
         location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
@@ -142,11 +144,13 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         double y = -1.24759;
         Point point = GeometryUtils.createPoint(x, y);
         LocationPrecision precision = LocationPrecision.PRECISE;
+        double resolutionWeighting = 1.0;
 
         Location location = new Location();
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(precision);
+        location.setResolutionWeighting(resolutionWeighting);
         location.setHealthMapCountryId(healthMapCountryId);
 
         // Act

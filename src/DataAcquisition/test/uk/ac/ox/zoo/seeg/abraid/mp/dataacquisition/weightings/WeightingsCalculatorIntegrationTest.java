@@ -261,6 +261,29 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         // N.B. Very small rounding error here, should this be corrected before the new weightings are saved?
     }
 
+    @Test
+    public void calculateNewFinalWeightingsSetsExpectedValuesWithNullValidationWeighting() {
+        // Arrange
+        int diseaseGroupId = 1;
+        double locationResolutionWeighting = 0.3;
+        DiseaseOccurrence occ = new DiseaseOccurrence(1,
+                createDiseaseGroupWithWeighting(0.4),
+                createLocationWithWeighting(locationResolutionWeighting),
+                createAlertWithFeed(0.5),
+                true, null, DateTime.now());
+        occ.setExpertWeighting(null);
+        occ.setMachineWeighting(null);
+        occ.setEnvironmentalSuitability(0.5);
+        DiseaseService mockDiseaseService = mockDiseaseServiceWithOccurrence(diseaseGroupId, occ);
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+
+        // Act
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+
+        // Assert
+        assertThat(occ.getFinalWeighting()).isEqualTo(locationResolutionWeighting);
+        assertThat(occ.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
+    }
     private Location createLocationWithWeighting(double weighting) {
         Location location = new Location();
         location.setResolutionWeighting(weighting);

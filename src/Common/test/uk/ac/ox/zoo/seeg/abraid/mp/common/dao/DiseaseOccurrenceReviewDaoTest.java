@@ -159,6 +159,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.PRECISE);
+        location.setResolutionWeighting(1.0);
         locationDao.save(location);
 
         return location;

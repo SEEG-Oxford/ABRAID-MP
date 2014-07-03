@@ -235,7 +235,7 @@ CREATE TABLE location (
     geom geometry(POINT, 4326) NOT NULL,
     precision varchar(10) NOT NULL,
     geoname_id integer,
-    resolution_weighting double precision,
+    resolution_weighting double precision NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     healthmap_country_id integer,
     admin_unit_qc_gaul_code integer,
