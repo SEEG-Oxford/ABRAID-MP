@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import org.apache.commons.io.FileUtils;
-import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -22,6 +21,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Integration tests for the ValidationParametersHandler class.
@@ -83,13 +83,13 @@ public class ValidationParametersHandlerIntegrationTest extends AbstractSpringIn
     private List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(int diseaseGroupId) {
         List<DiseaseOccurrence> allOccurrences = diseaseOccurrenceDao.getAll();
         return select(allOccurrences,
-                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), IsEqual.equalTo(diseaseGroupId)));
+                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), equalTo(diseaseGroupId)));
     }
 
     private List<DiseaseOccurrence> findOccurrencesWithIsValidatedFlag(List<DiseaseOccurrence> occurrences,
                                                                        Boolean isValidated) {
         return select(occurrences,
-                having(on(DiseaseOccurrence.class).isValidated(), IsEqual.equalTo(isValidated)));
+                having(on(DiseaseOccurrence.class).isValidated(), equalTo(isValidated)));
     }
 
     private List<DiseaseOccurrence> getOccurrencesWithNullEnvironmentalSuitability(List<DiseaseOccurrence> occurrences) {

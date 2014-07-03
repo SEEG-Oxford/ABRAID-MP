@@ -2,8 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
 
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
@@ -14,6 +12,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Updates the weightings of experts and of disease occurrences, given new reviews.
@@ -90,7 +90,7 @@ public class WeightingsCalculator {
     private List<DiseaseOccurrenceReview> extractReviewsForOccurrence(List<DiseaseOccurrenceReview> allReviews,
                                                                       DiseaseOccurrence occurrence) {
         return select(allReviews,
-               having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+               having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), equalTo(occurrence)));
     }
 
     private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
@@ -226,16 +226,16 @@ public class WeightingsCalculator {
     private Set<DiseaseOccurrence> selectExpertsReviewedOccurrences(List<DiseaseOccurrenceReview> reviews,
                                                                     Expert expert) {
         List<DiseaseOccurrenceReview> expertsReviews = select(reviews,
-                having(on(DiseaseOccurrenceReview.class).getExpert(), IsEqual.equalTo(expert)));
+                having(on(DiseaseOccurrenceReview.class).getExpert(), equalTo(expert)));
         return new HashSet<>(extract(expertsReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
     private Double calculateDifference(List<DiseaseOccurrenceReview> reviews, DiseaseOccurrence occurrence,
                                        Expert expert) {
         List<DiseaseOccurrenceReview> reviewsOfOccurrence = select(reviews,
-                having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+                having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), equalTo(occurrence)));
         DiseaseOccurrenceReview expertsReview = selectUnique(reviewsOfOccurrence,
-                having(on(DiseaseOccurrenceReview.class).getExpert(), IsEqual.equalTo(expert)));
+                having(on(DiseaseOccurrenceReview.class).getExpert(), equalTo(expert)));
         reviewsOfOccurrence.remove(expertsReview);
 
         double expertsResponse = expertsReview.getResponse().getValue();
@@ -269,12 +269,12 @@ public class WeightingsCalculator {
         }
     }
 
-    private double average(Double... args) {
+    public double average(Double... args) {
         return average(Arrays.asList(args));
     }
 
     private double average(List<Double> args) {
-        List<Double> notNullValues = filter(Matchers.notNullValue(), args);
+        List<Double> notNullValues = filter(notNullValue(), args);
         return (double) avg(notNullValues);
     }
 }

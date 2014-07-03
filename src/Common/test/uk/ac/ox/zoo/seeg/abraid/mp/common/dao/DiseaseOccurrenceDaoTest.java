@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Tests the DiseaseOccurrenceDao class.
@@ -295,7 +295,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private int setValidatedFlagForAllOccurrencesOfDiseaseGroup(int diseaseGroupId, boolean validated) {
         List<DiseaseOccurrence> occurrences = select(diseaseOccurrenceDao.getAll(),
-                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), IsEqual.equalTo(diseaseGroupId)));
+                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), equalTo(diseaseGroupId)));
         for (DiseaseOccurrence occurrence : occurrences) {
             occurrence.setValidated(validated);
             diseaseOccurrenceDao.save(occurrence);

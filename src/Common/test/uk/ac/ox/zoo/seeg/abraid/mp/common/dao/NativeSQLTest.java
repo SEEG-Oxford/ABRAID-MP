@@ -5,12 +5,14 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
-import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
@@ -20,6 +22,7 @@ import java.util.List;
 import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Tests the NativeSQL class.
@@ -429,7 +432,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
                                                    int gaulCode, String extentClassName) {
         AdminUnitDiseaseExtentClass extentClass = selectUnique(dengueDiseaseExtent,
                 having(on(AdminUnitDiseaseExtentClass.class).getAdminUnitGlobalOrTropical().getGaulCode(),
-                        IsEqual.equalTo(gaulCode)));
+                        equalTo(gaulCode)));
         extentClass.setDiseaseExtentClass(diseaseExtentClassDao.getByName(extentClassName));
         adminUnitDiseaseExtentClassDao.save(extentClass);
     }
