@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for GeoJSON serialization of DiseaseOccurrence collections.

@@ -19,8 +19,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import java.io.File;
 import java.util.*;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;

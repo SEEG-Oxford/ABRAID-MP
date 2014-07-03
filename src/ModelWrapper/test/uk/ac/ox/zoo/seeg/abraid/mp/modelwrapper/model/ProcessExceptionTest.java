@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the ProcessException class.
