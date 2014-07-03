@@ -89,8 +89,8 @@ public class ModelRunManagerTest {
 
     private void expectModelPrepToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
         // Arrange and Act
-        DiseaseGroup diseaseGroup = mockGetDiseaseGroupById();
-        arrangeAndAct(diseaseGroup, weekHasElapsed, newOccurrenceCountOverThreshold);
+        mockGetDiseaseGroupById();
+        arrangeAndAct(weekHasElapsed, newOccurrenceCountOverThreshold);
 
         // Assert
         verify(modelRunWorkflowService, times(1)).prepareForAndRequestModelRun(eq(DISEASE_GROUP_ID));
@@ -98,26 +98,25 @@ public class ModelRunManagerTest {
 
     private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
         // Arrange and Act
-        DiseaseGroup diseaseGroup = mockGetDiseaseGroupById();
-        arrangeAndAct(diseaseGroup, weekHasElapsed, newOccurrenceCountOverThreshold);
+        mockGetDiseaseGroupById();
+        arrangeAndAct(weekHasElapsed, newOccurrenceCountOverThreshold);
 
         // Assert
         verify(modelRunWorkflowService, never()).prepareForAndRequestModelRun(eq(DISEASE_GROUP_ID));
     }
 
-    private void arrangeAndAct(DiseaseGroup diseaseGroup, Boolean weekHasElapsed,
-                                   Boolean newOccurrenceCountOverThreshold) {
+    private void arrangeAndAct(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
         // Arrange
         int newOccurrencesCount = 100;
-        setLastModelRunPrepDate(diseaseGroup, weekHasElapsed);
+        setLastModelRunPrepDate(weekHasElapsed);
         mockGetNewOccurrencesCountByDiseaseGroup(newOccurrencesCount);
-        setModelRunMinNewOccurrences(diseaseGroup, newOccurrencesCount, newOccurrenceCountOverThreshold);
+        setModelRunMinNewOccurrences(newOccurrencesCount, newOccurrenceCountOverThreshold);
 
         // Act
         modelRunManager.prepareForAndRequestModelRun(diseaseGroup.getId());
     }
 
-    private void setLastModelRunPrepDate(DiseaseGroup diseaseGroup, Boolean weekHasElapsed) {
+    private void setLastModelRunPrepDate(Boolean weekHasElapsed) {
         DateTime lastModelRunPrepDate = null;
         if (weekHasElapsed != null) {
             int days = weekHasElapsed ? 7 : 1;
@@ -126,8 +125,7 @@ public class ModelRunManagerTest {
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
     }
 
-    private void setModelRunMinNewOccurrences(DiseaseGroup diseaseGroup, int newOccurrencesCount,
-                                              Boolean newOccurrenceCountOverThreshold) {
+    private void setModelRunMinNewOccurrences(int newOccurrencesCount, Boolean newOccurrenceCountOverThreshold) {
         Integer minNewOccurrences = null;
         if (newOccurrenceCountOverThreshold != null) {
             int thresholdAdjustment = newOccurrenceCountOverThreshold ? -1 : +1;
@@ -136,9 +134,8 @@ public class ModelRunManagerTest {
         diseaseGroup.setModelRunMinNewOccurrences(minNewOccurrences);
     }
 
-    private DiseaseGroup mockGetDiseaseGroupById() {
+    private void mockGetDiseaseGroupById() {
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
-        return diseaseGroup;
     }
 
     private void mockGetNewOccurrencesCountByDiseaseGroup(long newOccurrencesCount) {
