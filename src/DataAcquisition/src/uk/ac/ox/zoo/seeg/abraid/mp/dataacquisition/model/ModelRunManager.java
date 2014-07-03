@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
 import java.util.Arrays;
