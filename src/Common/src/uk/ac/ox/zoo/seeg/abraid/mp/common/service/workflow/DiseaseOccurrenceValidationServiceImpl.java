@@ -20,7 +20,9 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a disease occurrence.
+     * Adds validation parameters to a disease occurrence - only during the automated process.
+     * If automatic model runs is not enabled, and the occurrence's location has passed QC then only set is_validated to
+     * true, to ensure the occurrence is used in the manually requested model run.
      * @param occurrence The disease occurrence.
      * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
@@ -28,13 +30,17 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (isEligibleForValidation(occurrence)) {
             occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
             occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
-            if (occurrence.getEnvironmentalSuitability() == null && occurrence.getDistanceFromDiseaseExtent() == null) {
-                occurrence.setMachineWeighting(null);
-                occurrence.setValidated(true);
-                // This allows the initial model run / disease extent generation to take place.
+            if(automaticModelRunsEnabled(occurrence)) {
+                if (occurrence.getEnvironmentalSuitability() == null && occurrence.getDistanceFromDiseaseExtent() == null) {
+                    occurrence.setMachineWeighting(null);
+                    occurrence.setValidated(true);
+                    // This allows the initial model run / disease extent generation to take place.
+                } else {
+                    occurrence.setMachineWeighting(findMachineWeighting(occurrence));
+                    occurrence.setValidated(findIsValidated(occurrence));
+                }
             } else {
-                occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-                occurrence.setValidated(findIsValidated(occurrence));
+                occurrence.setValidated(true);
             }
             return true;
         }
@@ -43,6 +49,10 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
         return (occurrence != null) && (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    }
+
+    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
     }
 
     private Double findEnvironmentalSuitability(DiseaseOccurrence occurrence) {
@@ -61,7 +71,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {
-        // For now hardcode to true, but proper behaviour will be implemented in future story.
+        // For now hardcode to true, but the proper behaviour will be implemented in a future story.
         return true;
     }
 }
