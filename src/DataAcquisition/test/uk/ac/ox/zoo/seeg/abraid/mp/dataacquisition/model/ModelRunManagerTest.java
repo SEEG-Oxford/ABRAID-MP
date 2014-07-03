@@ -26,7 +26,7 @@ public class ModelRunManagerTest {
         diseaseService = mock(DiseaseService.class);
         ModelRunGatekeeper modelRunGatekeeper = new ModelRunGatekeeper(diseaseService);
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
-        modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService, diseaseService);
+        modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService);
 
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
     }

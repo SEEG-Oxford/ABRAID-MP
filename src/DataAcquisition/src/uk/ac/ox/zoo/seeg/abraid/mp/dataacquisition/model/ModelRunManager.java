@@ -1,9 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
@@ -24,13 +22,10 @@ public class ModelRunManager {
 
     private ModelRunGatekeeper modelRunGatekeeper;
     private ModelRunWorkflowService modelRunWorkflowService;
-    private DiseaseService diseaseService;
 
-    public ModelRunManager(ModelRunGatekeeper modelRunGatekeeper,
-                           ModelRunWorkflowService modelRunWorkflowService, DiseaseService diseaseService) {
+    public ModelRunManager(ModelRunGatekeeper modelRunGatekeeper, ModelRunWorkflowService modelRunWorkflowService) {
         this.modelRunGatekeeper = modelRunGatekeeper;
         this.modelRunWorkflowService = modelRunWorkflowService;
-        this.diseaseService = diseaseService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -45,8 +40,7 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId));
-        DateTime lastModelRunPrepDate = getLastModelRunPrepDate(diseaseGroupId);
-        if (modelRunGatekeeper.dueToRun(lastModelRunPrepDate, diseaseGroupId)) {
+        if (modelRunGatekeeper.dueToRun(diseaseGroupId)) {
             LOGGER.info(STARTING_MODEL_PREP);
             modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
         } else {
@@ -70,15 +64,5 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         modelRunWorkflowService.saveExpertsWeightings(newExpertsWeightings);
-    }
-
-    /**
-     * Gets the date on which the model was last run for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group for which the model run is being prepared.
-     * @return The date.
-     */
-    public DateTime getLastModelRunPrepDate(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        return diseaseGroup.getLastModelRunPrepDate();
     }
 }

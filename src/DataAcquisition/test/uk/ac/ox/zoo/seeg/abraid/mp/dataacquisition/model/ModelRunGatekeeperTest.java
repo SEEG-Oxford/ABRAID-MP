@@ -5,6 +5,7 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 
@@ -33,9 +34,9 @@ public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegra
 
         // Set value of modelRunMinNewOccurrences to less than the number of occurrences that there are currently, to
         // ensure that the test for whether there are enough occurrences will pass.
-        enoughOccurrences = (int) (diseaseService.getNewOccurrencesCountByDiseaseGroup(DISEASE_GROUP_ID) - 1);
+        enoughOccurrences = Integer.MIN_VALUE;
         // Vice versa
-        notEnoughOccurrences = (int) (diseaseService.getNewOccurrencesCountByDiseaseGroup(DISEASE_GROUP_ID) + 1);
+        notEnoughOccurrences = Integer.MAX_VALUE;
     }
 
     @Test
@@ -85,11 +86,13 @@ public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegra
 
     private void executeTest(DateTime lastModelRunPrepDate, Integer modelRunMinNewOccurrences, boolean expectedResult) {
         // Arrange
-        diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID).setModelRunMinNewOccurrences(modelRunMinNewOccurrences);
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
+        diseaseGroup.setModelRunMinNewOccurrences(modelRunMinNewOccurrences);
+        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
 
         // Act
-        boolean result = target.dueToRun(lastModelRunPrepDate, DISEASE_GROUP_ID);
+        boolean result = target.dueToRun(DISEASE_GROUP_ID);
 
         // Assert
         assertThat(result).isEqualTo(expectedResult);
