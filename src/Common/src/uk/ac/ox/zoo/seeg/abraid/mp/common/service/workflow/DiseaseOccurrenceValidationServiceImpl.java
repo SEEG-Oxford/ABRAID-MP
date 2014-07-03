@@ -28,17 +28,11 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      */
     public boolean addValidationParameters(DiseaseOccurrence occurrence) {
         if (isEligibleForValidation(occurrence)) {
-            occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
-            occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
-            if(automaticModelRunsEnabled(occurrence)) {
-                if (occurrence.getEnvironmentalSuitability() == null && occurrence.getDistanceFromDiseaseExtent() == null) {
-                    occurrence.setMachineWeighting(null);
-                    occurrence.setValidated(true);
-                    // This allows the initial model run / disease extent generation to take place.
-                } else {
-                    occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-                    occurrence.setValidated(findIsValidated(occurrence));
-                }
+            if (automaticModelRunsEnabled(occurrence)) {
+                occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
+                occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
+                occurrence.setMachineWeighting(findMachineWeighting(occurrence));
+                occurrence.setValidated(findIsValidated(occurrence));
             } else {
                 occurrence.setValidated(true);
             }
@@ -66,12 +60,23 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private Double findMachineWeighting(DiseaseOccurrence occurrence) {
+        if (noModelRunsYet(occurrence)) {
+            return null;
+        }
         // For now, hardcode all machine weightings to 0.7
         return 0.7; ///CHECKSTYLE:SUPPRESS MagicNumberCheck
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {
+        if (noModelRunsYet(occurrence)) {
+            return true;
+        }
         // For now hardcode to true, but the proper behaviour will be implemented in a future story.
         return true;
+    }
+
+    private boolean noModelRunsYet(DiseaseOccurrence occurrence) {
+        return (occurrence.getEnvironmentalSuitability() == null) &&
+               (occurrence.getDistanceFromDiseaseExtent() == null);
     }
 }

@@ -117,7 +117,8 @@ public class WeightingsCalculator {
      * @param diseaseGroupId The id of the disease group.
      */
     public void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences =
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
@@ -192,7 +193,7 @@ public class WeightingsCalculator {
     }
 
     private boolean hasWeightingChanged(Double currentWeighting, Double newWeighting) {
-        return (currentWeighting == null || currentWeighting != newWeighting);
+        return (currentWeighting == null || !currentWeighting.equals(newWeighting));
     }
 
     /**
@@ -272,6 +273,11 @@ public class WeightingsCalculator {
         }
     }
 
+    /**
+     * Calculate the average of the provided values.
+     * @param args The values.
+     * @return The mean of the given values.
+     */
     public double average(Double... args) {
         return average(Arrays.asList(args));
     }
