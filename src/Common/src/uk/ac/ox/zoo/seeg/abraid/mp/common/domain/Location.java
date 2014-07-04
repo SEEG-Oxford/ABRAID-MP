@@ -74,6 +74,10 @@ public class Location {
     @Column(name = "admin_unit_tropical_gaul_code")
     private Integer adminUnitTropicalGaulCode;
 
+    // The GAUL code of the country geometry that contains this location.
+    @Column(name = "country_gaul_code")
+    private Integer countryGaulCode;
+
     // True if this location passed all of the QC checks, false if not.
     @Column(name = "has_passed_qc")
     private boolean hasPassedQc;
@@ -186,6 +190,14 @@ public class Location {
 
     public void setAdminUnitTropicalGaulCode(Integer adminUnitTropicalGaulCode) {
         this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
+    }
+
+    public Integer getCountryGaulCode() {
+        return countryGaulCode;
+    }
+
+    public void setCountryGaulCode(Integer countryGaulCode) {
+        this.countryGaulCode = countryGaulCode;
     }
 
     /**

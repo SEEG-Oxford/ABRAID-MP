@@ -104,6 +104,7 @@ CREATE TABLE alert (
 CREATE TABLE country (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
+	for_min_data_spread boolean,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
@@ -242,6 +243,7 @@ CREATE TABLE location (
     admin_unit_qc_gaul_code integer,
     admin_unit_global_gaul_code integer,
     admin_unit_tropical_gaul_code integer,
+	country_gaul_code integer,
     has_passed_qc boolean NOT NULL,
     qc_message varchar(1000)
 );
