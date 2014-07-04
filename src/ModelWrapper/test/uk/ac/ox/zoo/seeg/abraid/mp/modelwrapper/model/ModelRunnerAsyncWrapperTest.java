@@ -42,5 +42,24 @@ public class ModelRunnerAsyncWrapperTest {
         assertThat(result).isSameAs(expectedResult);
         verify(mockModelRunner, times(1)).runModel(expectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
     }
+
+    @Test
+    public void startModelReportsErrorsDuringModelSetup() throws Exception {
+        // Arrange
+        ModelStatusReporter mockModelStatusReporter = mock(ModelStatusReporter.class);
+
+        ModelRunner mockModelRunner = mock(ModelRunner.class);
+        when(mockModelRunner.runModel(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class), any(ModelStatusReporter.class)))
+                .thenThrow(new IOException("message"));
+
+        ModelRunnerAsyncWrapper target = new ModelRunnerAsyncWrapperImpl(mockModelRunner);
+
+        // Act
+        Future<ModelProcessHandler> future = target.startModel(
+                mock(RunConfiguration.class), mock(GeoJsonDiseaseOccurrenceFeatureCollection.class), new HashMap<Integer, Integer>(), mockModelStatusReporter);
+        future.get();
+
+        // Assert
+        verify(mockModelStatusReporter, times(1)).report(ModelRunStatus.FAILED, "", "Model setup failed: java.io.IOException: message");
     }
 }
