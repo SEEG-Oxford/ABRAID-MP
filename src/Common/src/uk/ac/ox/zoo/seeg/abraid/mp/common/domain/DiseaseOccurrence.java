@@ -50,7 +50,8 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting > 0"
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting > 0 " +
+                        "order by d.occurrenceDate desc"
         ),
         @NamedQuery(
                 name = "getNewOccurrencesCountByDiseaseGroup",
