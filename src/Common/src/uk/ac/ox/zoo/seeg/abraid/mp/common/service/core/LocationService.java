@@ -65,6 +65,13 @@ public interface LocationService {
     Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
 
     /**
+     * Finds the country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the country that contains the specified point.
+     */
+    Integer findCountryThatContainsPoint(Point point);
+
+    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */

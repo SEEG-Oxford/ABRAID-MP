@@ -89,6 +89,15 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     * Finds the country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the country that contains the specified point.
+     */
+    public Integer findCountryThatContainsPoint(Point point) {
+        return nativeSQL.findCountryThatContainsPoint(point);
+    }
+
+    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */

@@ -24,6 +24,7 @@ public class PostQCManager {
      */
     public void runPostQCProcesses(Location location) {
         assignDiseaseExtentAdminUnits(location);
+        assignCountry(location);
         setResolutionWeighting(location);
     }
 
@@ -48,6 +49,15 @@ public class PostQCManager {
         Integer adminUnitTropicalGaulCode =
                 locationService.findAdminUnitTropicalThatContainsPoint(location.getGeom(), adminLevel);
         location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
+    }
+
+    /**
+     * Find and assign the country that contains the location's point.
+     * @param location The location.
+     */
+    private void assignCountry(Location location) {
+        Integer countryGaulCode = locationService.findCountryThatContainsPoint(location.getGeom());
+        location.setCountryGaulCode(countryGaulCode);
     }
 
     private void setResolutionWeighting(Location location) {
