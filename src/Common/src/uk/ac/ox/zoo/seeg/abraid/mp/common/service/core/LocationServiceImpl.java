@@ -58,6 +58,16 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     * Gets the list of African countries that should be considered when calculating
+     * the minimum data spread required for a model run.
+     * @return The list of GAUL codes for the African countries used in minimum data spread calculation.
+     */
+    @Override
+    public List getCountriesForMinDataSpreadCalculation() {
+        return countryDao.getCountriesForMinDataSpreadCalculation();
+    }
+
+    /**
      * Gets all administrative units.
      * @return All administrative units.
      */
