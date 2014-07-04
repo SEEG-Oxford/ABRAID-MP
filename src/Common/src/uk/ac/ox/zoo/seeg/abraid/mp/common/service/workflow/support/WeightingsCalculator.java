@@ -278,7 +278,7 @@ public class WeightingsCalculator {
      * @param args The values.
      * @return The mean of the given values.
      */
-    protected static double average(Double... args) {
+    static double average(Double... args) {
         return average(Arrays.asList(args));
     }
 
