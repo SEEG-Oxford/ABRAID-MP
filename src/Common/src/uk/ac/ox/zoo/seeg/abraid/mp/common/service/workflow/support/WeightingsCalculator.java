@@ -278,11 +278,11 @@ public class WeightingsCalculator {
      * @param args The values.
      * @return The mean of the given values.
      */
-    public double average(Double... args) {
+    protected static double average(Double... args) {
         return average(Arrays.asList(args));
     }
 
-    private double average(List<Double> args) {
+    private static double average(List<Double> args) {
         List<Double> notNullValues = filter(notNullValue(), args);
         return (double) avg(notNullValues);
     }
