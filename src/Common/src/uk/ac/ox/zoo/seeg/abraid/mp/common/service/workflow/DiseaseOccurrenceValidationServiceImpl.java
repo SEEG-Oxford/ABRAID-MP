@@ -60,12 +60,23 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private Double findMachineWeighting(DiseaseOccurrence occurrence) {
+        if (noModelRunsYet(occurrence)) {
+            return null;
+        }
         // For now, hardcode all machine weightings to 0.7
         return 0.7; ///CHECKSTYLE:SUPPRESS MagicNumberCheck
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {
+        if (noModelRunsYet(occurrence)) {
+            return true;
+        }
         // For now hardcode to true, but the proper behaviour will be implemented in a future story.
         return true;
+    }
+
+    private boolean noModelRunsYet(DiseaseOccurrence occurrence) {
+        return (occurrence.getEnvironmentalSuitability() == null) &&
+               (occurrence.getDistanceFromDiseaseExtent() == null);
     }
 }

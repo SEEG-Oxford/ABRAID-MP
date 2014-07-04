@@ -5,13 +5,10 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -57,11 +54,8 @@ public class ModelRunWorkflowServiceTest {
         DateTime lastModelRunPrepDate = DateTime.now().minusWeeks(1);
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
-        List<DiseaseOccurrence> occurrences = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId)).
-                thenReturn(occurrences);
 
         // Act
         modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
@@ -73,7 +67,7 @@ public class ModelRunWorkflowServiceTest {
                 eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
                 eq(diseaseGroupId), any(DiseaseExtentParameters.class));
-        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), same(occurrences));
+        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
     }
 

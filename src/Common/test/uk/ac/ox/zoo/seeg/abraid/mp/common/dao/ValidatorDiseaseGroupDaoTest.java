@@ -1,15 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Tests the ValidatorDiseaseGroupDao class.
@@ -56,6 +56,6 @@ public class ValidatorDiseaseGroupDaoTest extends AbstractCommonSpringIntegratio
 
     private ValidatorDiseaseGroup findById(List<ValidatorDiseaseGroup> validatorDiseaseGroups, int id) {
         return selectUnique(validatorDiseaseGroups,
-                having(on(ValidatorDiseaseGroup.class).getId(), IsEqual.equalTo(id)));
+                having(on(ValidatorDiseaseGroup.class).getId(), equalTo(id)));
     }
 }

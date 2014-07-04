@@ -15,13 +15,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -68,10 +66,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         String modelName = "testname";
         String responseJson = "{\"modelRunName\":\"testname\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -88,10 +85,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         int diseaseGroupId = 87;
         String responseJson = "{\"errorText\":\"testerror\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -104,10 +100,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         String exceptionMessage = "Web service failed";
         WebServiceClientException thrownException = new WebServiceClientException(exceptionMessage);
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesWithZeroWeightings(diseaseGroupId);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -117,24 +112,22 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void requestModelRunWithNoDiseaseOccurrencesDoesNothing() {
         // Arrange
         int diseaseGroupId = 87;
-        List<DiseaseOccurrence> occurrences = new ArrayList<>();
+        clearFinalWeightingsFromDatabase(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+        modelRunRequester.requestModelRun(diseaseGroupId);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
         assertThat(modelRuns).hasSize(0);
     }
 
-    private List<DiseaseOccurrence> getDiseaseOccurrencesWithZeroWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-        for (DiseaseOccurrence occurrence : occurrences) {
-            if (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) {
-                occurrence.setFinalWeighting(0.0);
-            }
+    // Set the final weighting of all occurrences to null so the query will return an empty list - as is desired for this test.
+    private void clearFinalWeightingsFromDatabase(int diseaseGroupId) {
+        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)) {
+            occurrence.setFinalWeighting(null);
+            diseaseOccurrenceDao.save(occurrence);
         }
-        return occurrences;
     }
 
     private void mockPostRequest(final String responseJson) {
@@ -186,33 +179,33 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private void assertSplitFeatures(List<String> splitFeatures) {
         assertThat(splitFeatures).hasSize(27);
         assertThat(splitFeatures).contains(
-                "{\"type\":\"Feature\",\"id\":274016,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-47.09179,-21.76979]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.3}}",
-                "{\"type\":\"Feature\",\"id\":274444,\"geometry\":{\"type\":\"Point\",\"coordinates\":[121.06667,14.53333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}}",
-                "{\"type\":\"Feature\",\"id\":274763,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-46.60972,-20.71889]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5}}",
-                "{\"type\":\"Feature\",\"id\":274776,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.66564,-22.18996]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.6,\"gaulCode\":683}}",
-                "{\"type\":\"Feature\",\"id\":274779,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-43.04112,-22.81555]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.9,\"gaulCode\":9966}}",
-                "{\"type\":\"Feature\",\"id\":274780,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.91651,-22.17062]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.6,\"gaulCode\":9970}}",
-                "{\"type\":\"Feature\",\"id\":274788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.0,-30.0]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.4,\"gaulCode\":685}}",
-                "{\"type\":\"Feature\",\"id\":274790,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.66252,-28.05186]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.6,\"gaulCode\":10593}}",
-                "{\"type\":\"Feature\",\"id\":275100,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-67.81,-9.97472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.4}}",
-                "{\"type\":\"Feature\",\"id\":275104,\"geometry\":{\"type\":\"Point\",\"coordinates\":[73.85674,18.52043]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
-                "{\"type\":\"Feature\",\"id\":275107,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-76.42313,8.84621]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.7}}",
-                "{\"type\":\"Feature\",\"id\":275219,\"geometry\":{\"type\":\"Point\",\"coordinates\":[102.25616,2.20569]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
-                "{\"type\":\"Feature\",\"id\":275378,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-45.88694,-23.17944]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.4}}",
+                "{\"type\":\"Feature\",\"id\":274016,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-47.09179,-21.76979]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.775}}",
+                "{\"type\":\"Feature\",\"id\":274444,\"geometry\":{\"type\":\"Point\",\"coordinates\":[121.06667,14.53333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.95}}",
+                "{\"type\":\"Feature\",\"id\":274763,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-46.60972,-20.71889]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.825}}",
+                "{\"type\":\"Feature\",\"id\":274776,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.66564,-22.18996]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.675,\"gaulCode\":683}}",
+                "{\"type\":\"Feature\",\"id\":274779,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-43.04112,-22.81555]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.85,\"gaulCode\":9966}}",
+                "{\"type\":\"Feature\",\"id\":274780,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-42.91651,-22.17062]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.775,\"gaulCode\":9970}}",
+                "{\"type\":\"Feature\",\"id\":274788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.0,-30.0]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.625,\"gaulCode\":685}}",
+                "{\"type\":\"Feature\",\"id\":274790,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-54.66252,-28.05186]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.775,\"gaulCode\":10593}}",
+                "{\"type\":\"Feature\",\"id\":275100,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-67.81,-9.97472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}}",
+                "{\"type\":\"Feature\",\"id\":275104,\"geometry\":{\"type\":\"Point\",\"coordinates\":[73.85674,18.52043]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.975}}",
+                "{\"type\":\"Feature\",\"id\":275107,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-76.42313,8.84621]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.925}}",
+                "{\"type\":\"Feature\",\"id\":275219,\"geometry\":{\"type\":\"Point\",\"coordinates\":[102.25616,2.20569]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.975}}",
+                "{\"type\":\"Feature\",\"id\":275378,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-45.88694,-23.17944]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}}",
                 "{\"type\":\"Feature\",\"id\":275388,\"geometry\":{\"type\":\"Point\",\"coordinates\":[114.0,1.0]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":1.0}}",
-                "{\"type\":\"Feature\",\"id\":275519,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}}",
-                "{\"type\":\"Feature\",\"id\":275713,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.08934,7.30416]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":67161}}",
-                "{\"type\":\"Feature\",\"id\":275715,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.17626,7.51252]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
-                "{\"type\":\"Feature\",\"id\":275716,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.33333,7.16667]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.7,\"gaulCode\":24269}}",
-                "{\"type\":\"Feature\",\"id\":275717,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.0,7.5]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.3,\"gaulCode\":24266}}",
-                "{\"type\":\"Feature\",\"id\":275748,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-98.28333,26.08333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.6}}",
-                "{\"type\":\"Feature\",\"id\":275751,\"geometry\":{\"type\":\"Point\",\"coordinates\":[103.80805,1.29162]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5}}",
-                "{\"type\":\"Feature\",\"id\":275768,\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.21917,21.51694]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
-                "{\"type\":\"Feature\",\"id\":275788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-51.38889,-22.12556]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.6}}",
-                "{\"type\":\"Feature\",\"id\":275799,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-61.5,-17.5]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":40449}}",
-                "{\"type\":\"Feature\",\"id\":275801,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.46666,-17.61667]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.3}}",
-                "{\"type\":\"Feature\",\"id\":275802,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.41667,-17.8]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.7}}",
-                "{\"type\":\"Feature\",\"id\":275845,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-80.63333,-5.2]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.5}}"
+                "{\"type\":\"Feature\",\"id\":275519,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
+                "{\"type\":\"Feature\",\"id\":275713,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.08934,7.30416]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.7,\"gaulCode\":67161}}",
+                "{\"type\":\"Feature\",\"id\":275715,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.17626,7.51252]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.975}}",
+                "{\"type\":\"Feature\",\"id\":275716,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.33333,7.16667]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.85,\"gaulCode\":24269}}",
+                "{\"type\":\"Feature\",\"id\":275717,\"geometry\":{\"type\":\"Point\",\"coordinates\":[126.0,7.5]},\"properties\":{\"locationPrecision\":\"ADMIN2\",\"weighting\":0.75,\"gaulCode\":24266}}",
+                "{\"type\":\"Feature\",\"id\":275748,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-98.28333,26.08333]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.9}}",
+                "{\"type\":\"Feature\",\"id\":275751,\"geometry\":{\"type\":\"Point\",\"coordinates\":[103.80805,1.29162]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.875}}",
+                "{\"type\":\"Feature\",\"id\":275768,\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.21917,21.51694]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.85}}",
+                "{\"type\":\"Feature\",\"id\":275788,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-51.38889,-22.12556]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.85}}",
+                "{\"type\":\"Feature\",\"id\":275799,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-61.5,-17.5]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.7,\"gaulCode\":40449}}",
+                "{\"type\":\"Feature\",\"id\":275801,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.46666,-17.61667]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.825}}",
+                "{\"type\":\"Feature\",\"id\":275802,\"geometry\":{\"type\":\"Point\",\"coordinates\":[177.41667,-17.8]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.925}}",
+                "{\"type\":\"Feature\",\"id\":275845,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-80.63333,-5.2]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.875}}"
         );
     }
 

@@ -43,7 +43,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         setOccurrenceDate(occurrence.getOccurrenceDate());
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
         setLocationPrecision(occurrence.getLocation().getPrecision());
-        setWeighting(occurrence.getValidationWeighting());
+        setWeighting(occurrence.getFinalWeighting());
         setGaulCode(occurrence.getLocation().getAdminUnitQCGaulCode());
     }
 

@@ -3,11 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,9 +41,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
-        List<DiseaseOccurrence> occurrences = updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
+        updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
         generateDiseaseExtent(diseaseGroupId);
-        modelRunRequester.requestModelRun(diseaseGroupId, occurrences);
+        modelRunRequester.requestModelRun(diseaseGroupId);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
 
@@ -54,13 +52,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
 
-    private List<DiseaseOccurrence> updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup,
-                                                                   DateTime modelRunPrepDate) {
+    private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         int diseaseGroupId = diseaseGroup.getId();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
         reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
-        return weightingsCalculator.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
     private void generateDiseaseExtent(int diseaseGroupId) {
