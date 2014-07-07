@@ -32,7 +32,7 @@ public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegra
         weekHasElapsed = DateTime.now().minusDays(7);
         weekHasNotElapsed = DateTime.now().minusDays(1);
 
-        // Set value of modelRunMinNewOccurrences to less than the number of occurrences that there are currently, to
+        // Set value of minNewOccurrences to less than the number of occurrences that there are currently, to
         // ensure that the test for whether there are enough occurrences will pass.
         enoughOccurrences = Integer.MIN_VALUE;
         // Vice versa
@@ -86,24 +86,24 @@ public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegra
     }
 
     @Test
-    public void dueToRunReturnsFalseForNullModelRunMinNewOccurrencesWhenAWeekHasPassed() {
+    public void dueToRunReturnsFalseForNullMinNewOccurrencesWhenAWeekHasPassed() {
         executeTest(weekHasElapsed, null, false);
     }
 
     @Test
-    public void dueToRunReturnsFalseForNullModelRunMinNewOccurrencesWhenAWeekHasNotPassed() {
+    public void dueToRunReturnsFalseForNullMinNewOccurrencesWhenAWeekHasNotPassed() {
         executeTest(weekHasNotElapsed, null, false);
     }
 
     @Test
-    public void dueToRunReturnsFalseForNullModelRunMinNewOccurrencesWhenLastModelRunPrepDateIsNull() {
+    public void dueToRunReturnsFalseForNullMinNewOccurrencesWhenLastModelRunPrepDateIsNull() {
         executeTest(null, null, false);
     }
 
-    private void executeTest(DateTime lastModelRunPrepDate, Integer modelRunMinNewOccurrences, boolean expectedResult) {
+    private void executeTest(DateTime lastModelRunPrepDate, Integer minNewOccurrences, boolean expectedResult) {
         // Arrange
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
-        diseaseGroup.setModelRunMinNewOccurrences(modelRunMinNewOccurrences);
+        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
 

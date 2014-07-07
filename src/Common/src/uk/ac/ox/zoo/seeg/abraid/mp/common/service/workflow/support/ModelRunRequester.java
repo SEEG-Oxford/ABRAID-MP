@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ public class ModelRunRequester {
      * @param diseaseGroupId The id of the disease group.
      */
     public void requestModelRun(Integer diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> allOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = minimumDataVolume(allOccurrences, diseaseGroupId);
 
         if (occurrences.size() > 0) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -60,6 +62,15 @@ public class ModelRunRequester {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 throw new ModelRunRequesterException(message, e);
             }
+        }
+    }
+
+    private List<DiseaseOccurrence> minimumDataVolume(List<DiseaseOccurrence> allOccurrences, int diseaseGroupId) {
+        int n = diseaseService.getDiseaseGroupById(diseaseGroupId).getModelRunMinNewOccurrences();
+        if (n < allOccurrences.size()) {
+            return allOccurrences.subList(0, n);
+        } else {
+            return new ArrayList<>();
         }
     }
 

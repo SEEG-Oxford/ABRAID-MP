@@ -142,8 +142,13 @@ CREATE TABLE disease_group (
     weighting double precision,
     last_model_run_prep_date timestamp,
     validation_process_start_date timestamp,
-    model_run_min_new_occurrences integer,
     automatic_model_runs boolean NOT NULL,
+    min_new_occurrences_trigger integer,
+	min_data_volume integer,
+	min_distinct_countries integer,
+	high_frequency_threshold integer,
+	min_high_frequency_countries integer,
+	occurs_in_africa integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
