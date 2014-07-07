@@ -69,10 +69,15 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable {
-    cursor: pointer;
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+#adminUnitTable thead {
+    cursor: default;
+}
+#adminUnitTable tbody {
+    cursor: pointer;
 }
 #adminUnitTable .occurrencesColumn {
     width: 90px;
