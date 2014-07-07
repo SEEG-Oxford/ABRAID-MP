@@ -1,10 +1,34 @@
 define([
+    "ko",
     "domReady!",
     "app/spec/lib/squire"
-], function (doc, Squire) {
+], function (ko, doc, Squire) {
     "use strict";
 
     describe("KoCustomBindings defines", function () {
+        describe("the 'option' binding which", function () {
+            it("writes a value to the given element", function () {
+                // Arrange
+                var element = {};
+                var value = "value";
+                // Act
+                ko.bindingHandlers.option.update(element, value);
+                // Assert
+                expect(ko.selectExtensions.readValue(element)).toBe(value);
+            });
+
+            it("writes a wrapped value to the given element", function () {
+                // Arrange
+                var element = {};
+                var value = "value";
+                var wrappedValue = function () { return value; };
+                // Act
+                ko.bindingHandlers.option.update(element, wrappedValue);
+                // Assert
+                expect(ko.selectExtensions.readValue(element)).toBe(value);
+            });
+        });
+
         describe("the 'fadeVisible' binding which", function () {
             var showSpy, delaySpy, fadeSpy, jqSpy, injectorWithJQuerySpy;
             var expectedElement = "expectedElement";

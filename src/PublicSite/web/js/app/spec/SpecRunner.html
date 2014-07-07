@@ -49,7 +49,7 @@
 
                 require(beforeSpecs, function() {
                     if (includeCoverage) {
-                        blanket.options({ filter: baseUrl+"js/app", antifilter: baseUrl+"js/app/spec" });
+                        blanket.options({ filter: baseUrl + "js/app", antifilter: baseUrl + "js/app/spec" });
                         jasmine.getEnv().addReporter(new jasmine.BlanketReporter());
                     }
 
