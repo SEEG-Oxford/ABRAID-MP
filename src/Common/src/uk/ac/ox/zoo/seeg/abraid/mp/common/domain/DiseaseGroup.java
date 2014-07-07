@@ -98,7 +98,7 @@ public class DiseaseGroup {
     // If true, only the subset of countries (determined by forMinDataSpread flag on a Country) should be considered.
     // Otherwise, all countries are considered.
     @Column(name = "occurs_in_africa")
-    private boolean occursInAfrica;
+    private Boolean occursInAfrica;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -292,6 +292,10 @@ public class DiseaseGroup {
         this.minHighFrequencyCountries = minHighFrequencyCountries;
     }
 
+    /**
+     * Whether the disease group is known to occur in Africa.
+     * @return True if the disease group occurs in Africa.
+     */
     public boolean occursInAfrica() {
         return occursInAfrica;
     }

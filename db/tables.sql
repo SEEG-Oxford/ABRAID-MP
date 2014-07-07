@@ -148,7 +148,7 @@ CREATE TABLE disease_group (
 	min_distinct_countries integer,
 	high_frequency_threshold integer,
 	min_high_frequency_countries integer,
-	occurs_in_africa integer,
+	occurs_in_africa boolean,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 

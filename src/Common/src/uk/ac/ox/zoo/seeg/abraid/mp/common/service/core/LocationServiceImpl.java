@@ -63,7 +63,7 @@ public class LocationServiceImpl implements LocationService {
      * @return The list of GAUL codes for the African countries used in minimum data spread calculation.
      */
     @Override
-    public List getCountriesForMinDataSpreadCalculation() {
+    public List<Integer> getCountriesForMinDataSpreadCalculation() {
         return countryDao.getCountriesForMinDataSpreadCalculation();
     }
 

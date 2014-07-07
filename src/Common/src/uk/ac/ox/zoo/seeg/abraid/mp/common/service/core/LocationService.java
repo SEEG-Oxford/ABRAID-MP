@@ -45,7 +45,7 @@ public interface LocationService {
      * the minimum data spread required for a model run.
      * @return The list of GAUL codes for the African countries used in minimum data spread calculation.
      */
-    List getCountriesForMinDataSpreadCalculation();
+    List<Integer> getCountriesForMinDataSpreadCalculation();
 
     /**
      * Gets all administrative units for QC.

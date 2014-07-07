@@ -19,7 +19,7 @@ public final class NativeSQLConstants {
     /** Filter for above query. */
     public static final String ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER = " AND level = :adminLevel";
 
-    /** Query: Finds the first country that contains the specified point, using ST_INTERSECTS as above */
+    /** Query: Finds the first country that contains the specified point, using ST_INTERSECTS as above. */
     public static final String COUNTRY_CONTAINS_POINT_QUERY =
             "SELECT MIN(gaul_code) FROM country WHERE ST_Intersects(geom, :point)";
 

@@ -9,11 +9,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,7 @@ public class ModelRunRequester {
     private ModelWrapperWebService modelWrapperWebService;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
+    private LocationService locationService;
 
     private static final Logger LOGGER = Logger.getLogger(ModelRunRequester.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
@@ -34,10 +35,11 @@ public class ModelRunRequester {
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
-                             ModelRunService modelRunService) {
+                             ModelRunService modelRunService, LocationService locationService) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
+        this.locationService = locationService;
     }
 
     /**
@@ -45,10 +47,9 @@ public class ModelRunRequester {
      * @param diseaseGroupId The id of the disease group.
      */
     public void requestModelRun(Integer diseaseGroupId) {
-        List<DiseaseOccurrence> allOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-        List<DiseaseOccurrence> occurrences = minimumDataVolume(allOccurrences, diseaseGroupId);
-
-        if (occurrences.size() > 0) {
+        ModelRunRequesterHelper helper = createHelper(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        if (occurrences != null) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
             DateTime requestDate = DateTime.now();
@@ -65,13 +66,10 @@ public class ModelRunRequester {
         }
     }
 
-    private List<DiseaseOccurrence> minimumDataVolume(List<DiseaseOccurrence> allOccurrences, int diseaseGroupId) {
-        int n = diseaseService.getDiseaseGroupById(diseaseGroupId).getModelRunMinNewOccurrences();
-        if (n < allOccurrences.size()) {
-            return allOccurrences.subList(0, n);
-        } else {
-            return new ArrayList<>();
-        }
+    private ModelRunRequesterHelper createHelper(Integer diseaseGroupId) {
+        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService);
+        helper.setParameters(diseaseGroupId);
+        return helper;
     }
 
     private void logRequest(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> diseaseOccurrences) {
