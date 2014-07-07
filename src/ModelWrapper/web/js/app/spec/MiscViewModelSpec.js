@@ -16,11 +16,11 @@ define([
                 // Arrange
                 var spy = jasmine.createSpy();
 
-                var injector = new Squire();
-                injector.mock("app/SingleFieldFormViewModel", spy);
-
                 // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
                 jasmine.Ajax.uninstall();
+                var injector = new Squire();
+
+                injector.mock("app/SingleFieldFormViewModel", spy);
 
                 injector.require(["app/MiscViewModel"], function (MiscViewModel) {
                     // Act

@@ -20,7 +20,10 @@ define([
                     { show: noop, delay: noop };
                 });
 
+                // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                jasmine.Ajax.uninstall();
                 injectorWithJQuerySpy = new Squire();
+
                 injectorWithJQuerySpy.mock("jquery", jqSpy);
             });
 
@@ -103,6 +106,9 @@ define([
                     return { format: function () { return expectedText; }};
                 } });
                 jqSpy = jasmine.createSpy().and.returnValue({ text: textSpy });
+
+                // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                jasmine.Ajax.uninstall();
                 injectorWithJQuerySpy = new Squire();
 
                 injectorWithJQuerySpy.mock("jquery", jqSpy);
@@ -132,7 +138,10 @@ define([
                 addSpy = jasmine.createSpy();
                 jqSpy = jasmine.createSpy().and.returnValue({removeClass: removeSpy, addClass: addSpy});
 
+                // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                jasmine.Ajax.uninstall();
                 injectorWithJQuerySpy = new Squire();
+
                 injectorWithJQuerySpy.mock("jquery", jqSpy);
             });
 
