@@ -215,7 +215,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     ///CHECKSTYLE:OFF MethodLength - contains test data
     private void assertSplitExtent(List<String> splitExtent) {
-        assertThat(splitExtent).hasSize(459);
+        assertThat(splitExtent).hasSize(460);
         assertThat(splitExtent).contains(
                 "\"2\":0",
                 "\"3\":0",
@@ -520,6 +520,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"923\":0",
                 "\"924\":0",
                 "\"925\":0",
+                "\"926\":0",
                 "\"927\":0",
                 "\"928\":0",
                 "\"929\":0",
