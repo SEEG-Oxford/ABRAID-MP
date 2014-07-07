@@ -10,7 +10,5 @@
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 
     <bean id="mainHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.MainHandler" autowire="constructor"/>
-    <bean id="validationParametersHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.ValidationParametersHandler" autowire="constructor"/>
-    <bean id="validationParametersHandlerAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.ValidationParametersHandlerAsyncWrapper" autowire="constructor"/>
 
 </beans>

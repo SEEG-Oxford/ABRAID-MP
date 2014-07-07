@@ -43,9 +43,14 @@ import javax.persistence.Table;
                         "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = false"
         ),
         @NamedQuery(
+                name = "getDiseaseOccurrencesYetToHaveFinalWeightingAssigned",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting is null"
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true"
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting > 0"
         ),
         @NamedQuery(
                 name = "getNewOccurrencesCountByDiseaseGroup",
@@ -162,13 +167,13 @@ public class DiseaseOccurrence {
     }
 
     public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, Boolean isValidated,
-                             Double validationWeighting, DateTime occurrenceDate) {
+                             Double finalWeighting, DateTime occurrenceDate) {
         this.id = id;
         this.diseaseGroup = diseaseGroup;
         this.location = location;
         this.alert = alert;
         this.isValidated = isValidated;
-        this.validationWeighting = validationWeighting;
+        this.finalWeighting = finalWeighting;
         this.occurrenceDate = occurrenceDate;
     }
 

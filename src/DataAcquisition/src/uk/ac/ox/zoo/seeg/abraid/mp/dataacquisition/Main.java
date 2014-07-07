@@ -3,9 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManagerException;
 
 import java.util.Map;
 
@@ -93,9 +93,9 @@ public class Main {
     private void prepareForAndRequestModelRun(int diseaseGroupId) {
         try {
             modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-        } catch (ModelRunManagerException e) {
+        } catch (ModelRunRequesterException e) {
             // Ignore the exception, because it is thrown to roll back the transaction per disease group if
-            // the model run manager fails.
+            // the model run request fails.
             LOGGER.fatal(e.getMessage(), e);
         }
     }

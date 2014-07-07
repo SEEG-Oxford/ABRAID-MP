@@ -7,7 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the CountryDao class.

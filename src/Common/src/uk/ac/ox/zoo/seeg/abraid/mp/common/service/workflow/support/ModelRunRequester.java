@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -7,14 +7,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,34 +42,23 @@ public class ModelRunRequester {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @param diseaseOccurrences A list of disease occurrences for this model run request.
      */
-    public void requestModelRun(Integer diseaseGroupId, List<DiseaseOccurrence> diseaseOccurrences) {
-        removeOccurrencesWithZeroFinalWeighting(diseaseOccurrences);
+    public void requestModelRun(Integer diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
 
-        if (diseaseOccurrences.size() > 0) {
+        if (occurrences.size() > 0) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
             DateTime requestDate = DateTime.now();
 
             try {
-                logRequest(diseaseGroup, diseaseOccurrences);
+                logRequest(diseaseGroup, occurrences);
                 JsonModelRunResponse response =
-                        modelWrapperWebService.startRun(diseaseGroup, diseaseOccurrences, diseaseExtent);
+                        modelWrapperWebService.startRun(diseaseGroup, occurrences, diseaseExtent);
                 handleModelRunResponse(response, diseaseGroupId, requestDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
-                throw new ModelRunManagerException(message, e);
-            }
-        }
-    }
-
-    private void removeOccurrencesWithZeroFinalWeighting(List<DiseaseOccurrence> occurrences) {
-        Iterator<DiseaseOccurrence> iterator = occurrences.iterator();
-        while (iterator.hasNext()) {
-            DiseaseOccurrence occurrence = iterator.next();
-            if (occurrence.getFinalWeighting() != null && occurrence.getFinalWeighting() == 0.0) {
-                iterator.remove();
+                throw new ModelRunRequesterException(message, e);
             }
         }
     }
@@ -83,7 +71,7 @@ public class ModelRunRequester {
     private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
-            throw new ModelRunManagerException(message);
+            throw new ModelRunRequesterException(message);
         } else {
             ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
             modelRunService.saveModelRun(modelRun);

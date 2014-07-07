@@ -1,24 +1,25 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.apache.log4j.Logger;
-import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
  * Tests the WeightingsCalculator class.
  * Copyright (c) 2014 University of Oxford
  */
-public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
+public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
 
@@ -37,6 +38,9 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Before
     public void setFixedTime() {
@@ -176,7 +180,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
 
         // Assert
         verify(logger, times(1)).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
@@ -192,11 +196,11 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         DiseaseOccurrence occ1 = setWeightings(occurrences.get(0), null, machineWeighting);
         DiseaseOccurrence occ2 = setWeightings(occurrences.get(1), expertWeighting, machineWeighting);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(Arrays.asList(occ1, occ2));
+        when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId)).thenReturn(Arrays.asList(occ1, occ2));
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ1.getValidationWeighting()).isEqualTo(machineWeighting);
@@ -219,7 +223,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ.getLocation().getPrecision().getWeighting()).isEqualTo(0.0);
@@ -227,14 +231,16 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
     }
 
     private DiseaseOccurrence getDiseaseOccurrenceWithCountryPrecision(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences =
+                filter(having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), equalTo(diseaseGroupId)),
+                       diseaseOccurrenceDao.getAll());
         return selectFirst(occurrences, having(on(DiseaseOccurrence.class).getLocation().getPrecision(),
-                Matchers.equalTo(LocationPrecision.COUNTRY)));
+                equalTo(LocationPrecision.COUNTRY)));
     }
 
     private DiseaseService mockDiseaseServiceWithOccurrence(int diseaseGroupId, DiseaseOccurrence occ) {
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(Arrays.asList(occ));
+        when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId)).thenReturn(Arrays.asList(occ));
         return mockDiseaseService;
     }
 
@@ -253,7 +259,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ.getFinalWeighting()).isEqualTo(0.45, offset(0.000005));                // Average of (0.3, 0.4, 0.5, 0.6)
@@ -261,6 +267,29 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         // N.B. Very small rounding error here, should this be corrected before the new weightings are saved?
     }
 
+    @Test
+    public void calculateNewFinalWeightingsSetsExpectedValuesWithNullValidationWeighting() {
+        // Arrange
+        int diseaseGroupId = 1;
+        double locationResolutionWeighting = 0.3;
+        DiseaseOccurrence occ = new DiseaseOccurrence(1,
+                createDiseaseGroupWithWeighting(0.4),
+                createLocationWithWeighting(locationResolutionWeighting),
+                createAlertWithFeed(0.5),
+                true, null, DateTime.now());
+        occ.setExpertWeighting(null);
+        occ.setMachineWeighting(null);
+        occ.setEnvironmentalSuitability(0.5);
+        DiseaseService mockDiseaseService = mockDiseaseServiceWithOccurrence(diseaseGroupId, occ);
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+
+        // Act
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+
+        // Assert
+        assertThat(occ.getFinalWeighting()).isEqualTo(locationResolutionWeighting);
+        assertThat(occ.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
+    }
     private Location createLocationWithWeighting(double weighting) {
         Location location = new Location();
         location.setResolutionWeighting(weighting);
@@ -288,7 +317,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occ.getDiseaseGroup().getWeighting()).isEqualTo(0.0);
@@ -390,6 +419,43 @@ public class WeightingsCalculatorIntegrationTest extends AbstractDataAcquisition
         for (Expert expert : expertService.getAllExperts()) {
             assertThat(expert.getWeighting()).isEqualTo(0.2);
         }
+    }
+
+    @Test
+    public void averageReturnsExpectedValue() {
+        // Arrange
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        double result = weightingsCalculator.average(0.1, 0.2, 0.3);
+
+        // Assert
+        assertThat(result).isEqualTo(0.2, offset(0.0001));
+    }
+
+    @Test
+    public void averageReturnsExpectedValueDiscountingNullValue() {
+        // Arrange
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        double result = weightingsCalculator.average(0.1, 0.2, null);
+
+        // Assert
+        assertThat(result).isEqualTo(0.15, offset(0.0001));
+    }
+
+
+    @Test
+    public void averageReturnsExpectedValueDiscountingAllNulls() {
+        // Arrange
+        WeightingsCalculator weightingsCalculator = new WeightingsCalculator(diseaseService, expertService);
+
+        // Act
+        double result = weightingsCalculator.average(null, null, null);
+
+        // Assert
+        assertThat(result).isEqualTo(0);
     }
 
     private List<DiseaseOccurrenceReview> defaultListOfManyReviews() {

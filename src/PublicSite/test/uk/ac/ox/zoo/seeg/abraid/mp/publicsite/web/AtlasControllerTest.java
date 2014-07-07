@@ -1,10 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import org.junit.Test;
-import org.springframework.ui.Model;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the Atlas controller.
@@ -15,7 +13,6 @@ public class AtlasControllerTest {
     @Test
     public void showPageReturnsAtlasPage() {
         // Arrange
-        Model model = mock(Model.class);
         AtlasController target = new AtlasController();
 
         // Act

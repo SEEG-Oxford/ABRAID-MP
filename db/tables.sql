@@ -142,6 +142,7 @@ CREATE TABLE disease_group (
     last_model_run_prep_date timestamp,
     validation_process_start_date timestamp,
     model_run_min_new_occurrences integer,
+    automatic_model_runs boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -235,7 +236,7 @@ CREATE TABLE location (
     geom geometry(POINT, 4326) NOT NULL,
     precision varchar(10) NOT NULL,
     geoname_id integer,
-    resolution_weighting double precision,
+    resolution_weighting double precision NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     healthmap_country_id integer,
     admin_unit_qc_gaul_code integer,

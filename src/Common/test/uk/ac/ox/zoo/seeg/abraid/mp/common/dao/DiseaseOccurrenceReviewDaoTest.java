@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the DiseaseOccurrenceReviewDao class.
@@ -159,6 +159,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         location.setName(placeName);
         location.setGeom(point);
         location.setPrecision(LocationPrecision.PRECISE);
+        location.setResolutionWeighting(1.0);
         locationDao.save(location);
 
         return location;

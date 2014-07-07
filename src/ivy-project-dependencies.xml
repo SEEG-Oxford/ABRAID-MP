@@ -16,7 +16,7 @@
 <!-- Testing -->
 <dependency org="junit" name="junit" rev="4.11" conf="test->default" />
 <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default" />
-<dependency org="org.easytesting" name="fest-assert-core" rev="2.0M10" conf="test->default" />
+<dependency org="org.assertj" name="assertj-core" rev="1.6.1" conf="test->default"/>
 <dependency org="com.googlecode.catch-exception" name="catch-exception" rev="1.2.0" conf="test->default"/>
 <dependency org="org.springframework" name="spring-test" rev="4.0.2.RELEASE" conf="test->default"/>
 <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="test->default"/>

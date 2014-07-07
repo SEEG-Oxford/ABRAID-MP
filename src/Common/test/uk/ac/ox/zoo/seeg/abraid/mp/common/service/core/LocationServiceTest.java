@@ -9,7 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.*;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 /**

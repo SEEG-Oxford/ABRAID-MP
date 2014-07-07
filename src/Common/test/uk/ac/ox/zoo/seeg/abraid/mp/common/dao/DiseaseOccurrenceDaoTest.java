@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Tests the DiseaseOccurrenceDao class.
@@ -138,6 +138,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Arrange
         Alert alert = createAlert();
         Location location = new Location("Karachi", 25.0111455, 67.0647043, LocationPrecision.PRECISE);
+        location.setResolutionWeighting(1.0);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
         DateTime occurrenceDate = DateTime.now().minusDays(5);
         double expertWeighting = 0.1;
@@ -295,7 +296,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private int setValidatedFlagForAllOccurrencesOfDiseaseGroup(int diseaseGroupId, boolean validated) {
         List<DiseaseOccurrence> occurrences = select(diseaseOccurrenceDao.getAll(),
-                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), IsEqual.equalTo(diseaseGroupId)));
+                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), equalTo(diseaseGroupId)));
         for (DiseaseOccurrence occurrence : occurrences) {
             occurrence.setValidated(validated);
             diseaseOccurrenceDao.save(occurrence);
@@ -304,7 +305,25 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesForModelRun() {
+    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned() {
+        // Arrange - There are 45 disease occurrences for dengue, none of which have a final weighting.
+        int diseaseGroupId = 87;
+        setWeightingOfAllOccurrencesToNull();
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+
+        // Assert
+        assertThat(occurrences).hasSize(45);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
+            assertThat(occurrence.isValidated()).isTrue();
+            assertThat(occurrence.getFinalWeighting()).isNull();
+        }
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForModelRunRequest() {
         // Arrange
         int diseaseGroupId = 87; // Dengue
 
@@ -312,7 +331,20 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
 
         // Assert
-        assertThat(occurrences).hasSize(45);
+        assertThat(occurrences).hasSize(27);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
+            assertThat(occurrence.isValidated()).isTrue();
+            assertThat(occurrence.getFinalWeighting()).isNotNull();
+            assertThat(occurrence.getFinalWeighting()).isGreaterThan(0);
+        }
+    }
+
+    private void setWeightingOfAllOccurrencesToNull() {
+        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getAll()) {
+            occurrence.setFinalWeighting(null);
+            diseaseOccurrenceDao.save(occurrence);
+        }
     }
 
     @Test

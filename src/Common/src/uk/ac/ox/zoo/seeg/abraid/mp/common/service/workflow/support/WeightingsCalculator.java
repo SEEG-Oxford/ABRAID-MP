@@ -1,8 +1,7 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.weightings;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
-import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
@@ -13,6 +12,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Updates the weightings of experts and of disease occurrences, given new reviews.
@@ -89,7 +90,7 @@ public class WeightingsCalculator {
     private List<DiseaseOccurrenceReview> extractReviewsForOccurrence(List<DiseaseOccurrenceReview> allReviews,
                                                                       DiseaseOccurrence occurrence) {
         return select(allReviews,
-               having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+               having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), equalTo(occurrence)));
     }
 
     private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
@@ -111,25 +112,24 @@ public class WeightingsCalculator {
     }
 
     /**
-     * For every occurrence of the specified disease group for which is_validated is true, update its validation
-     * weighting and final weighting.
+     * For every occurrence of the specified disease group for which is_validated is true, and the final weighting is
+     * not currently set, set its validation weighting and final weighting for the first and only time.
      * @param diseaseGroupId The id of the disease group.
-     * @return The list of disease occurrences for requesting a model run.
      */
-    public List<DiseaseOccurrence> updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+    public void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences =
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
             logger.info(String.format(UPDATING_WEIGHTINGS, occurrences.size()));
-            updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
+            setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
         }
-        return occurrences;
     }
 
-    private void updateDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
+    private void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
         for (DiseaseOccurrence occurrence : occurrences) {
-            double newValidation = calculateNewValidationWeighting(occurrence);
+            Double newValidation = calculateNewValidationWeighting(occurrence);
             double newFinal = calculateNewFinalWeighting(occurrence, newValidation);
             double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(occurrence, newValidation);
             if (hasAnyWeightingChanged(occurrence, newValidation, newFinal, newFinalExcludingSpatial)) {
@@ -145,35 +145,40 @@ public class WeightingsCalculator {
      * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
      * the expert weighting if it exists, otherwise the machine weighting.
      */
-    private double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
+    private Double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
         Double expertWeighting = occurrence.getExpertWeighting();
-        double machineWeighting = occurrence.getMachineWeighting();
+        Double machineWeighting = occurrence.getMachineWeighting();
         return (expertWeighting != null) ? expertWeighting : machineWeighting;
     }
 
     /**
-     * Recalculate the final weighting as the average across each of the 4 properties. If the value of any of the
-     * weightings is 0, then the occurrence should be discounted by the model by setting the final weighting to 0.
+     * If the validation weighting is null and environmental suitability is not null, set the final weighting to the
+     * location resolution weighting. Otherwise, recalculate the final weighting as the average across each of the 4
+     * properties. However, if the value of any of the 4 weightings is 0, then the occurrence should be discounted by
+     * the model by setting the final weighting to 0.
      */
-    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, double validationWeighting) {
+    private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, Double validationWeighting) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
+        if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
+            return locationResolutionWeighting;
+        }
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
-        double weighting;
         if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
-            weighting = 0.0;
-        } else {
-            weighting = average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting,
-                    validationWeighting);
+            return 0.0;
         }
-        return weighting;
+        return average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting, validationWeighting);
     }
 
     /**
      * As above, but excluding the location resolution weighting.
+     * In this case, if validation weighting is null and environmental suitability is not null, final weighting is 1.0.
      */
     private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
-                                                              double validationWeighting) {
+                                                              Double validationWeighting) {
+        if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
+            return 1.0;
+        }
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
         double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
         return (diseaseGroupTypeWeighting == 0.0) ? 0.0 :
@@ -181,14 +186,14 @@ public class WeightingsCalculator {
     }
 
     private boolean hasAnyWeightingChanged(DiseaseOccurrence occurrence,
-                                           double newValidation, double newFinal, double newFinalExcludingSpatial) {
+                                           Double newValidation, double newFinal, double newFinalExcludingSpatial) {
         return (hasWeightingChanged(occurrence.getValidationWeighting(), newValidation) ||
                 hasWeightingChanged(occurrence.getFinalWeighting(), newFinal) ||
                 hasWeightingChanged(occurrence.getFinalWeightingExcludingSpatial(), newFinalExcludingSpatial));
     }
 
-    private boolean hasWeightingChanged(Double currentWeighting, double newWeighting) {
-        return (currentWeighting == null || currentWeighting != newWeighting);
+    private boolean hasWeightingChanged(Double currentWeighting, Double newWeighting) {
+        return (currentWeighting == null || !currentWeighting.equals(newWeighting));
     }
 
     /**
@@ -225,16 +230,16 @@ public class WeightingsCalculator {
     private Set<DiseaseOccurrence> selectExpertsReviewedOccurrences(List<DiseaseOccurrenceReview> reviews,
                                                                     Expert expert) {
         List<DiseaseOccurrenceReview> expertsReviews = select(reviews,
-                having(on(DiseaseOccurrenceReview.class).getExpert(), IsEqual.equalTo(expert)));
+                having(on(DiseaseOccurrenceReview.class).getExpert(), equalTo(expert)));
         return new HashSet<>(extract(expertsReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
     private Double calculateDifference(List<DiseaseOccurrenceReview> reviews, DiseaseOccurrence occurrence,
                                        Expert expert) {
         List<DiseaseOccurrenceReview> reviewsOfOccurrence = select(reviews,
-                having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), IsEqual.equalTo(occurrence)));
+                having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), equalTo(occurrence)));
         DiseaseOccurrenceReview expertsReview = selectUnique(reviewsOfOccurrence,
-                having(on(DiseaseOccurrenceReview.class).getExpert(), IsEqual.equalTo(expert)));
+                having(on(DiseaseOccurrenceReview.class).getExpert(), equalTo(expert)));
         reviewsOfOccurrence.remove(expertsReview);
 
         double expertsResponse = expertsReview.getResponse().getValue();
@@ -268,11 +273,17 @@ public class WeightingsCalculator {
         }
     }
 
-    private double average(Double... args) {
-        return (double) avg(Arrays.asList(args));
+    /**
+     * Calculate the average of the provided values.
+     * @param args The values.
+     * @return The mean of the given values.
+     */
+    static double average(Double... args) {
+        return average(Arrays.asList(args));
     }
 
-    private double average(List<Double> args) {
-        return (double) avg(args);
+    private static double average(List<Double> args) {
+        List<Double> notNullValues = filter(notNullValue(), args);
+        return (double) avg(notNullValues);
     }
 }

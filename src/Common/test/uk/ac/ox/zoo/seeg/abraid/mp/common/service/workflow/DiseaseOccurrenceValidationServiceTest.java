@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
@@ -35,9 +35,22 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     }
 
     @Test
-    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQC() {
+    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsEnabled() {
         // Arrange
-        DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(1);
+        boolean automaticModelRuns = true;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
+
+        // Act
+        boolean result = service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+    @Test
+    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsNotEnabled() {
+        // Arrange
+        boolean automaticModelRuns = false;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
 
         // Act
         boolean result = service.addValidationParameters(occurrence);
@@ -47,15 +60,16 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     }
 
     @Test
-    public void addValidationParametersSetsValidationParametersAndReturnsTrue() {
+    public void addValidationParametersSetsValidationParametersAndReturnsTrueWhenAutomaticModelRunsIsEnabled() {
         // Arrange
         Point point = GeometryUtils.createPoint(10, 20);
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
         double machineWeighting = 0.7;
+        boolean automaticModelRuns = true;
 
-        DiseaseOccurrence occurrence = getDefaultDiseaseOccurrence(diseaseGroupId);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
         occurrence.getLocation().setHasPassedQc(true);
         occurrence.getLocation().setGeom(point);
 
@@ -73,8 +87,85 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         assertThat(occurrence.isValidated()).isTrue();
     }
 
-    private DiseaseOccurrence getDefaultDiseaseOccurrence(int diseaseGroupId) {
+    @Test
+    public void addValidationParametersSetsOnlyIsValidatedAndReturnsTrueWhenAutomaticModelRunsIsNotEnabled() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(10, 20);
+        int diseaseGroupId = 30;
+        boolean automaticModelRuns = false;
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        occurrence.getLocation().setHasPassedQc(true);
+        occurrence.getLocation().setGeom(point);
+
+        // Act
+        boolean result = service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    @Test
+    public void addValidationParametersSetsAppropriateValidationParametersAndReturnsTrue() {
+        // Arrange - If environmental suitability and distance from disease extent are both null,
+        // only set the values of: machine weighting to null, and is validated to true
+        Point point = GeometryUtils.createPoint(10, 20);
+        int diseaseGroupId = 30;
+
+        boolean automaticModelRuns = true;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        occurrence.getLocation().setHasPassedQc(true);
+        occurrence.getLocation().setGeom(point);
+
+        when(nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point)).thenReturn(null);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(null);
+
+        // Act
+        boolean result = service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    @Test
+    public void addValidationParametersSetsAllValidationParametersAndReturnsTrue() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(10, 20);
+        int diseaseGroupId = 30;
+        double environmentalSuitability = 0.42;
+        double distanceFromDiseaseExtent = 500;
+        double machineWeighting = 0.7;
+
+        boolean automaticModelRuns = true;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        occurrence.getLocation().setHasPassedQc(true);
+        occurrence.getLocation().setGeom(point);
+
+        when(nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point)).thenReturn(environmentalSuitability);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(distanceFromDiseaseExtent);
+
+        // Act
+        boolean result = service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
+        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean automaticModelRuns) {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRuns(automaticModelRuns);
         diseaseGroup.setGlobal(false);
         return new DiseaseOccurrence(1, diseaseGroup, new Location(), new Alert(), null, null,
                 null);

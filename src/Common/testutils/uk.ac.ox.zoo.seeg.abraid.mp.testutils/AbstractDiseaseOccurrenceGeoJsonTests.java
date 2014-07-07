@@ -55,7 +55,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         when(occurrence.getLocation()).thenReturn(location);
         when(occurrence.getOccurrenceDate()).thenReturn(occurrenceDate);
         when(occurrence.getAlert()).thenReturn(alert);
-        when(occurrence.getValidationWeighting()).thenReturn(weighting);
+        when(occurrence.getFinalWeighting()).thenReturn(weighting);
         return occurrence;
     }
 

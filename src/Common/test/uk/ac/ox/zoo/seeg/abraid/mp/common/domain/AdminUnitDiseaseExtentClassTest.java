@@ -6,7 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitGlobalDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitTropicalDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the AdminUnitDiseaseExtentClass class.

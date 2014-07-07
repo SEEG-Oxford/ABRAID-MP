@@ -151,6 +151,17 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets disease occurrences for the specified disease group whose isValidated flag is true
+     * and finalWeighting is currently null.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return A list of disease occurrences that need their final weightings to be set.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+    }
+
+    /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
      * @return Disease occurrences for a request to run the model.

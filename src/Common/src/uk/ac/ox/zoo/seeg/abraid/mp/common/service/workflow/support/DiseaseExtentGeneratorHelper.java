@@ -1,13 +1,16 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.diseaseextent;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.group.Group;
-import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * A helper for the DiseaseExtentGenerator class.
@@ -307,7 +310,7 @@ public class DiseaseExtentGeneratorHelper {
 
     private AdminUnitGlobalOrTropical getAdminUnitByGaulCode(int gaulCode) {
         return selectUnique(adminUnits, having(
-                on(AdminUnitGlobalOrTropical.class).getGaulCode(), IsEqual.equalTo(gaulCode)));
+                on(AdminUnitGlobalOrTropical.class).getGaulCode(), equalTo(gaulCode)));
     }
 
     private List<AdminUnitReview> getReviewsByGaulCode(int adminUnitGaulCode) {
@@ -318,7 +321,7 @@ public class DiseaseExtentGeneratorHelper {
     private DiseaseExtentClass findDiseaseExtentClass(String diseaseExtentClass) {
         // Returns the disease extent class with the specified name
         return selectUnique(diseaseExtentClasses, having(
-                on(DiseaseExtentClass.class).getName(), IsEqual.equalTo(diseaseExtentClass)));
+                on(DiseaseExtentClass.class).getName(), equalTo(diseaseExtentClass)));
     }
 
     private AdminUnitDiseaseExtentClass findAdminUnitDiseaseExtentClass(AdminUnitGlobalOrTropical adminUnit) {
@@ -326,7 +329,7 @@ public class DiseaseExtentGeneratorHelper {
         int gaulCodeToFind = adminUnit.getGaulCode();
         return selectUnique(currentDiseaseExtent, having(
                 on(AdminUnitDiseaseExtentClass.class).getAdminUnitGlobalOrTropical().getGaulCode(),
-                IsEqual.equalTo(gaulCodeToFind)));
+                equalTo(gaulCodeToFind)));
     }
 
     private AdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(AdminUnitGlobalOrTropical adminUnit) {
