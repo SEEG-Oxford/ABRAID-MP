@@ -69,7 +69,7 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable {
-    cursor: pointer;  /* or use cursor: default?*/
+    cursor: pointer;
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
