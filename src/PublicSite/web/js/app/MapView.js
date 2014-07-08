@@ -251,7 +251,7 @@ define([
         // Highlight the admin unit with a grey border and centre it on the map
         function selectAdminUnit(layer) {
             resetDiseaseExtentLayerStyle();
-            layer.setStyle({ weight: 2.5, color: "#5c5c5c" });
+            layer.setStyle({ weight: 3.5, color: "#5c5c5c" });
             if (!L.Browser.ie && !L.Browser.opera) { layer.bringToFront(); }
             map.fitBounds(layer.getBounds(), { maxZoom: 5 });
         }

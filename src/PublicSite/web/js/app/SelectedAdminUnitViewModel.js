@@ -29,7 +29,7 @@ define([
         });
 
         function removefromSelfAdminUnits(gaulCode) {
-            self.adminUnits(_(self.adminUnits()).filter(function (f) { return f.id !== gaulCode; }));
+            self.adminUnits(_(self.adminUnits()).reject(function (f) { return f.id === gaulCode; }));
         }
 
         self.counter = counter;

@@ -15,7 +15,7 @@ define([
                 expect(vm.visible).toBeObservable();
             });
 
-            it("takes the expected initial value", function () {
+            it("has the expected initial value", function () {
                 // Arrange
                 var expectedValue = false;
                 // Act

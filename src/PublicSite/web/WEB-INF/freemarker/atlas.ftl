@@ -6,28 +6,13 @@
 <#import "common.ftl" as c/>
 <@c.page title="ABRAID MP">
 
-<div class="container">
-    <div style="padding:10px">
-        <p>This page will present our model outputs and links to download data.</p>
-    </div>
+<div class="container" style="padding:20px">
+    <div class="jumbotron" style="padding:30px; text-align: center">
 
-    <div class="jumbotron" style="padding:10px">
-
-    <@security.authorize  ifAnyGranted="ROLE_USER">
-        <div>All logged in users can see this.<br> </div>
-    </@security.authorize>
-
-    <@security.authorize  ifAnyGranted="ROLE_ADMINISTRATOR">
-        <div>Only administrators can see this.</div>
-    </@security.authorize>
+        <div>This page will present the model outputs and links to download data.</div>
+        <div>Please navigate to the Data Validation page to review disease occurrences.</div>
 
     </div>
-
-    <ul style="padding: 10px">
-        <#list countries as country>
-            <li>${country.name}</li>
-        </#list>
-    </ul>
 </div>
 
 </@c.page>

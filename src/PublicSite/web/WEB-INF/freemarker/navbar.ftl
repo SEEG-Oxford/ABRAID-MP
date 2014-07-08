@@ -20,8 +20,8 @@
             <ul class="nav navbar-nav">
                 <li><a href="<@spring.url "/"/>">Atlas</a></li>
                 <li><a href="<@spring.url "/datavalidation"/>">Data Validation</a></li>
-                <li><a href="<@spring.url "/about"/>">About</a></li>
-                <li><a href="<@spring.url "/publications"/>">Publications</a></li>
+                <li><a>About</a></li>
+                <li><a>Publications</a></li>
             </ul>
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right text-muted">
