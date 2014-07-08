@@ -20,7 +20,7 @@ echo "Importing historic healthmap data"
 cd $BASE
 
 # Load disease extent
-cd $BASE/external/healthmap/disease_extent
+cd $BASE/external/disease_extent
 echo "Importing disease extent"
 psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f import_into_abraid.sql
 cd $BASE
