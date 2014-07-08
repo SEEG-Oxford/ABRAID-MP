@@ -22,7 +22,7 @@ public class ModelRunRequesterHelper {
 
     // Minimum Data Spread parameters for the disease group
     private List<DiseaseOccurrence> allOccurrences;
-    private Integer minDataVolume;
+    private int minDataVolume;
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
@@ -55,12 +55,12 @@ public class ModelRunRequesterHelper {
      * or null if the MDS thresholds are not met and the model should not run.
      */
     public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() {
-        boolean 
         return ((allOccurrences.size() < minDataVolume) || anyParametersNull()) ? null : selectSubset();
     }
 
     private boolean anyParametersNull() {
-        return (minDistinctCountries == null) || (highFrequencyThreshold == null) || (minHighFrequencyCountries == null);
+        return (minDistinctCountries == null) || (highFrequencyThreshold == null) ||
+               (minHighFrequencyCountries == null);
     }
 
     private List<DiseaseOccurrence> selectSubset() {
