@@ -16,7 +16,7 @@ public interface ModelRunner {
      * @param configuration The model run configuration.
      * @param occurrenceData The occurrence data to model with.
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
-     * @param modelStatusReporter The status reporter for to call with the results of the model.
+     * @param modelStatusReporter The status reporter to call with the results of the model.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
      * @throws IOException Thrown if the workspace cannot be correctly provisioned.

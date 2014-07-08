@@ -34,7 +34,7 @@ public class ModelRunnerAsyncWrapperImpl implements ModelRunnerAsyncWrapper {
      * @param configuration The model run configuration.
      * @param occurrenceData The occurrence data to model with.
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
-     * @param modelStatusReporter The status reporter for to call with the results of the model or if the setup fails.
+     * @param modelStatusReporter The status reporter to call with the results of the model or if the setup fails.
      * @return The process handler for the launched process.
      */
     @Override
