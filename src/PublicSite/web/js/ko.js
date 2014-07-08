@@ -5,8 +5,8 @@
 /*global define:false*/
 define([
     "knockout",
-    "knockout.bootstrap",
     "knockout-postbox",
+    "knockout.bootstrap",
     "knockout.validation",
     "app/KoCustomBindings"
 ], function (ko) {
@@ -22,16 +22,6 @@ define([
         if (object && object.skipSerialize) { return {}; }
         return ko.toJSON(object);
     };
-
-    // Configure Knockout validation to use our standard validation template
-    ko.validation.configure({
-        insertMessages: true,
-        messageTemplate: "validation-template",
-        messagesOnModified: true,
-        registerExtenders: true
-    });
-
-    ko.validation.rules.digit.message = "Please enter a whole number";
 
     return ko;
 });

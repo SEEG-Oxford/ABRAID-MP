@@ -8,6 +8,7 @@ require(["require.conf"], function () {
 
     require([
         "ko",
+        "jquery",
         "app/CounterViewModel",
         "app/LogInViewModel",
         "app/MapView",
@@ -17,7 +18,7 @@ require(["require.conf"], function () {
         "app/SidePanelViewModel",
         "app/SpinnerViewModel",
         "domReady!"
-    ], function (ko, CounterViewModel, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
+    ], function (ko, $, CounterViewModel, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
                  SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
             ko.applyBindings(
@@ -42,9 +43,18 @@ require(["require.conf"], function () {
                     // Refresh function may change, according to location of iframe (eg on TGHN site)
                     window.top.location.reload();
                 };
+
+                var forceRebind = function () {
+                    // Force the observables to bind "NOW!" this works around the fact that FF's form auto fill doesn't
+                    // trigger the events that would cause the bind. See:
+                    // https://github.com/knockout/knockout/issues/648
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=87943
+                    $("input.ffAutoFillHack").keyup();
+                };
+
                 ko.applyBindings(
-                    new LogInViewModel(baseUrl, refresh),
-                    doc.getElementById("logIn")
+                    new LogInViewModel(baseUrl, refresh, forceRebind),
+                    doc.getElementById("sidePanelLogin")
                 );
             }
         }

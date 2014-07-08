@@ -6,7 +6,14 @@
 <div id="sidePanel">
     <div id="sidePanelContent" data-bind="template: { name : templateName() }"></div>
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-        <#include "loginform.ftl"/>
+    <div id="sidePanelLogin">
+        <script type="text/html" id="login-template">
+            <#include "loginform.ftl" />
+        </script>
+        <button class="btn btn-primary" data-bind="popover: {template: 'login-template', placement: 'top', title: 'Log In'}">
+            Log in to start validating
+        </button>
+    </div>
     </@security.authorize>
 </div>
 
