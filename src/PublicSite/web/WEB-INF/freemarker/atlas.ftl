@@ -6,7 +6,7 @@
 <#import "common.ftl" as c/>
 <@c.page title="ABRAID MP">
 
-<div class="container" style="padding:20px">
+<div class="container">
     <div class="jumbotron" style="padding:30px; text-align: center">
 
         <div>This page will present the model outputs and links to download data.</div>
