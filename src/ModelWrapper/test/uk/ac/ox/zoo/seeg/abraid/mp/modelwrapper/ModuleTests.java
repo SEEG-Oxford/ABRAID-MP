@@ -181,7 +181,7 @@ public class ModuleTests extends BaseWebIntegrationTests {
                 return lastTriggeredModelRun;
             }
         }).when(modelRunnerAsyncWrapper).startModel(
-                any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class));
+                any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class), any(ModelStatusReporter.class));
     }
 
     private void setupConfigurationServiceSpy() throws IOException {

@@ -9,13 +9,16 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelOutputHandlerWebService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerAsyncWrapperImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelStatusReporter;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence;
 
@@ -27,7 +30,7 @@ public class ModelRunControllerTest {
     @Test
     public void startRunDoesNotAcceptNull() {
         // Arrange
-        ModelRunController target = new ModelRunController(mock(RunConfigurationFactory.class), mock(ModelRunnerAsyncWrapperImpl.class));
+        ModelRunController target = new ModelRunController(mock(RunConfigurationFactory.class), mock(ModelRunnerAsyncWrapperImpl.class), mock(ModelOutputHandlerWebService.class));
 
         // Act
         ResponseEntity result = target.startRun(null);
@@ -46,7 +49,8 @@ public class ModelRunControllerTest {
         when(mockConf.getRunName()).thenReturn(runName);
         when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString(), anyString())).thenReturn(mockConf);
 
-        ModelRunController target = new ModelRunController(mockFactory, mockRunner);
+
+        ModelRunController target = new ModelRunController(mockFactory, mockRunner, mock(ModelOutputHandlerWebService.class));
 
         GeoJsonDiseaseOccurrenceFeatureCollection occurrence = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
@@ -57,14 +61,14 @@ public class ModelRunControllerTest {
                 new JsonModelDisease(1, true, "foo", "foo"), occurrence, extent));
 
         // Assert
-        verify(mockRunner, times(1)).startModel(mockConf, occurrence, extent);
+        verify(mockRunner, times(1)).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
         assertResponseEntity(result, runName, null, HttpStatus.OK);
     }
 
     @Test
     public void startRunHandlesExceptions() {
         // Arrange
-        ModelRunController target = new ModelRunController(null, null);
+        ModelRunController target = new ModelRunController(null, null, null);
 
         GeoJsonDiseaseOccurrenceFeatureCollection object = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
