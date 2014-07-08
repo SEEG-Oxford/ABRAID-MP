@@ -28,7 +28,7 @@ scp -C $SHAPEFILE_SOURCE/land_sea_border.* admin_units/
 # Rasters
 mkdir rasters
 scp -C $RASTER_SOURCE/admin1qc.tif rasters/
-scp -C $RASTER_SOURCE/admin1qc.tif rasters/
+scp -C $RASTER_SOURCE/admin2qc.tif rasters/
 scp -C $RASTER_SOURCE/admin_tropical.tif rasters/
 scp -C $RASTER_SOURCE/admin_global.tif rasters/
 
