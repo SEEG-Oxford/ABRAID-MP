@@ -11,12 +11,15 @@ body {
     margin-bottom: 30px;
     min-width: 320px;
 }
-.navbar-right div {
-    padding:15px;
+#common .container {
+    padding-top: 20px;
 }
 .navbar {
     min-width: 320px;
     margin: 0;
+}
+.navbar-right div {
+    padding:15px;
 }
 #footer {
     position: absolute;
@@ -34,7 +37,7 @@ body {
 #footer .links > a, p {
     display:inline;
 }
-#footer .links > a:link, a:visited {
+#footer .links > a:link, #footer .links > a:visited {
     color:rgb(153, 153, 153);
     text-decoration:none;
 }
@@ -71,8 +74,8 @@ form {
 }
 .input-group > .clear {
     position: absolute;
-    right: 50px;
     top: 0;
+    right: 8px;
     bottom: 0;
     height: 14px;
     margin: auto;
