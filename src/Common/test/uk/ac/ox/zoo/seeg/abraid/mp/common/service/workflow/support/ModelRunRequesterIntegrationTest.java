@@ -14,8 +14,10 @@ import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
@@ -40,6 +42,9 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
 public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegrationTests {
+    @Autowired
+    private DiseaseService diseaseService;
+
     @ReplaceWithMock
     @Autowired
     protected WebServiceClient webServiceClient;
@@ -61,6 +66,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void requestModelRunSucceeds() {
         // Arrange
         int diseaseGroupId = 87;
+        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
         DateTime now = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
         String modelName = "testname";
@@ -79,10 +85,17 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         assertThat(modelRun.getRequestDate()).isEqualTo(now);
     }
 
+    private void setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setMinDataVolume(27);
+        diseaseGroup.setOccursInAfrica(null);
+    }
+
     @Test
     public void requestModelRunWithErrorReturnedByModelThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
+        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
         String responseJson = "{\"errorText\":\"testerror\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
@@ -97,6 +110,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void requestModelRunWithWebClientExceptionThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
+        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
         String exceptionMessage = "Web service failed";
         WebServiceClientException thrownException = new WebServiceClientException(exceptionMessage);
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);

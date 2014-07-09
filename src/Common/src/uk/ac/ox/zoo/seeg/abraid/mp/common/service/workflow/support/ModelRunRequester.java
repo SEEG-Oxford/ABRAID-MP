@@ -47,7 +47,7 @@ public class ModelRunRequester {
      * @param diseaseGroupId The id of the disease group.
      */
     public void requestModelRun(Integer diseaseGroupId) {
-        ModelRunRequesterHelper helper = createHelper(diseaseGroupId);
+        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
         List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
         if (occurrences != null) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -64,12 +64,6 @@ public class ModelRunRequester {
                 throw new ModelRunRequesterException(message, e);
             }
         }
-    }
-
-    private ModelRunRequesterHelper createHelper(Integer diseaseGroupId) {
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService);
-        helper.setParameters(diseaseGroupId);
-        return helper;
     }
 
     private void logRequest(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> diseaseOccurrences) {
