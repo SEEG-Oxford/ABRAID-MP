@@ -18,7 +18,7 @@ define(["app/DiseaseGroupsListViewModel"], function (DiseaseGroupsListViewModel)
                 expect(vm.selectedDisease).toBeObservable();
             });
 
-            it("is initially 'disease occurrences'", function () {
+            it("is initially the first item in the disease groups list", function () {
                 expect(vm.selectedDisease()).toBe(dengue);
             });
         });
@@ -28,7 +28,7 @@ define(["app/DiseaseGroupsListViewModel"], function (DiseaseGroupsListViewModel)
                 expect(vm.diseases).toBeObservable();
             });
 
-            it("has two groups", function () {
+            it("start with the same disease groups as passed to the constructor", function () {
                 expect(vm.diseases().length).toBe(2);
             });
         });
