@@ -22,6 +22,14 @@
                 <li><a href="<@spring.url "/datavalidation"/>">Data Validation</a></li>
                 <li><a>About</a></li>
                 <li><a>Publications</a></li>
+                <@security.authorize ifAnyGranted="ROLE_ADMIN">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="<@spring.url "/admindiseasegroup"/>">Disease Groups</a></li>
+                        </ul>
+                    </li>
+                </@security.authorize>
             </ul>
             <@security.authorize ifAnyGranted="ROLE_USER">
                 <ul class="nav navbar-nav navbar-right text-muted">

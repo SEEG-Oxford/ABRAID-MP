@@ -3,7 +3,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global window:false*/
-define(["jquery"], function ($) {
+define(["jquery", "bootstrap"], function ($) {
     "use strict";
 
     return function () {

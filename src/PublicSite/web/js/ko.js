@@ -6,6 +6,7 @@
 define([
     "knockout",
     "knockout-postbox",
+    "knockout.validation",
     "app/KoCustomBindings"
 ], function (ko) {
     "use strict";
@@ -20,6 +21,14 @@ define([
         if (object && object.skipSerialize) { return {}; }
         return ko.toJSON(object);
     };
+
+    // Configure Knockout validation to use our standard validation template
+    ko.validation.configure({
+        insertMessages: true,
+        messageTemplate: "validation-template",
+        messagesOnModified: true,
+        registerExtenders: true
+    });
 
     return ko;
 });
