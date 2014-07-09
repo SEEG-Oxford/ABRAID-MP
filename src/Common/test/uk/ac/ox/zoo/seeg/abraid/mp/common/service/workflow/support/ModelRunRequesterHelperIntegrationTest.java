@@ -3,12 +3,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.util.List;
 
@@ -20,7 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
         locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
-public class ModelRunRequesterHelperTest extends AbstractSpringIntegrationTests {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
 

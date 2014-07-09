@@ -9,6 +9,7 @@ import org.kubek2k.springockito.annotations.WrapWithSpy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.when;
  */
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
@@ -61,6 +63,18 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     private static final String URL = "http://username:password@localhost:8080/modelwrapper/model/run";
+
+    @Test
+    public void requestModelRunNotExecutedIfNotEnoughOccurrences() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        modelRunRequester.requestModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRunDao.getAll()).isEmpty();
+    }
 
     @Test
     public void requestModelRunSucceeds() {
