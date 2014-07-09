@@ -40,7 +40,9 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     /**
      * Return the initial view to display.
+     * @param model The model.
      * @return The ftl page name.
+     * @throws com.fasterxml.jackson.core.JsonProcessingException if there is an error during JSON serialization
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup", method = RequestMethod.GET)
@@ -64,7 +66,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
         List<JsonDiseaseGroup> jsonDiseaseGroups = new ArrayList<>();
-        for(DiseaseGroup diseaseGroup : diseaseGroups) {
+        for (DiseaseGroup diseaseGroup : diseaseGroups) {
             jsonDiseaseGroups.add(new JsonDiseaseGroup(diseaseGroup));
         }
         return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);

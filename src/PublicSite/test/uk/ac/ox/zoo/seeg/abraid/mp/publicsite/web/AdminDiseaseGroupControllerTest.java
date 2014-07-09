@@ -47,6 +47,7 @@ public class AdminDiseaseGroupControllerTest {
         verify(model, times(1)).addAttribute("initialData", expectedJson);
     }
 
+    ///CHECKSTYLE:OFF ParameterNumber - constructor for tests
     private DiseaseGroup createDiseaseGroup(int id, Integer parentGroupId, String name,
                                             DiseaseGroupType groupType, String publicName, String shortName,
                                             String abbreviation, boolean isGlobal, Integer validatorDiseaseGroupId,
@@ -69,4 +70,5 @@ public class AdminDiseaseGroupControllerTest {
         diseaseGroup.setWeighting(weighting);
         return diseaseGroup;
     }
+    ///CHECKSTYLE:ON ParameterNumber
 }
