@@ -296,11 +296,11 @@ public class DiseaseGroup {
      * Whether the disease group is known to occur in Africa.
      * @return True if the disease group occurs in Africa.
      */
-    public boolean occursInAfrica() {
+    public Boolean occursInAfrica() {
         return occursInAfrica;
     }
 
-    public void setOccursInAfrica(boolean occursInAfrica) {
+    public void setOccursInAfrica(Boolean occursInAfrica) {
         this.occursInAfrica = occursInAfrica;
     }
 

@@ -10,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Return the set of occurrences to be used in the model run, satisfying Minimum Data Spread conditions.
@@ -26,7 +27,7 @@ public class ModelRunRequesterHelper {
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
-    private boolean occursInAfrica;
+    private Boolean occursInAfrica;
     private List<Integer> countriesOfInterest;
 
     public ModelRunRequesterHelper(DiseaseService diseaseService, LocationService locationService) {
@@ -46,7 +47,6 @@ public class ModelRunRequesterHelper {
         highFrequencyThreshold = diseaseGroup.getHighFrequencyThreshold();
         minHighFrequencyCountries = diseaseGroup.getMinHighFrequencyCountries();
         occursInAfrica = diseaseGroup.occursInAfrica();
-        countriesOfInterest = occursInAfrica ? locationService.getCountriesForMinDataSpreadCalculation() : null;
     }
 
     /**
@@ -55,20 +55,48 @@ public class ModelRunRequesterHelper {
      * or null if the MDS thresholds are not met and the model should not run.
      */
     public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() {
-        return ((allOccurrences.size() < minDataVolume) || anyParametersNull()) ? null : selectSubset();
+        List<DiseaseOccurrence> occurrences = null;
+        if (MDVSatisfied()) {
+            occurrences = selectSubset();
+            if (MDSParametersDefined()) {
+                occurrences = refineSubSet(occurrences);
+            }
+        }
+        return occurrences;
     }
 
-    private boolean anyParametersNull() {
-        return (minDistinctCountries == null) || (highFrequencyThreshold == null) ||
-               (minHighFrequencyCountries == null);
+    private boolean MDVSatisfied() {
+        return (allOccurrences.size() > minDataVolume);
     }
 
+    // Select subset of n most recent occurrences (allOccurrences list is sorted by occurrence date)
     private List<DiseaseOccurrence> selectSubset() {
-        // Select subset of n most recent occurrences (allOccurrences list is sorted by occurrence date)
-        int n = minDataVolume;
-        List<DiseaseOccurrence> occurrences = allOccurrences.subList(0, n);
+        return allOccurrences.subList(0, minDataVolume);
+    }
 
+    private boolean MDSParametersDefined() {
+        if (occursInAfrica == null) {
+            return false;
+        } else if (occursInAfrica) {
+            return allParametersNotNull(minDistinctCountries, highFrequencyThreshold, minHighFrequencyCountries);
+        } else {
+            return allParametersNotNull(minDistinctCountries);
+        }
+    }
+
+    static boolean allParametersNotNull(Integer... args) {
+        List<Integer> values = Arrays.asList(args);
+        List<Integer> notNullValues = filter(notNullValue(), values);
+        return (values.size() == notNullValues.size());
+    }
+
+
+    private List<DiseaseOccurrence> refineSubSet(List<DiseaseOccurrence> occurrences) {
         // If MDS is not met, continue to select points until it does, unless we run out of points.
+        int n = minDataVolume;
+        if (occursInAfrica) {
+            countriesOfInterest = locationService.getCountriesForMinDataSpreadCalculation();
+        }
         while (!minimumDataSpreadMet(occurrences)) {
             if (n == allOccurrences.size()) {
                 return null;
@@ -88,32 +116,33 @@ public class ModelRunRequesterHelper {
     }
 
     private boolean distinctCountriesCheck(List<DiseaseOccurrence> occurrences) {
-        List<Integer> countriesWithAtLeastOneOccurrence = extractDistinctGaulCodes(occurrences);
+        Set<Integer> countriesWithAtLeastOneOccurrence = extractDistinctGaulCodes(occurrences);
         if (occursInAfrica) {
             countriesWithAtLeastOneOccurrence = considerOnlyCountriesOfInterest(countriesWithAtLeastOneOccurrence);
         }
         return countriesWithAtLeastOneOccurrence.size() > minDistinctCountries;
     }
 
-    private List<Integer> extractDistinctGaulCodes(List<DiseaseOccurrence> occurrences) {
+    private Set<Integer> extractDistinctGaulCodes(List<DiseaseOccurrence> occurrences) {
         Set<Location> distinctLocations = new HashSet<>(
                extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
-        return convert(distinctLocations, new Converter<Location, Integer>() {
+        List<Integer> gaulCodes = convert(distinctLocations, new Converter<Location, Integer>() {
             public Integer convert(Location location) {
                 return location.getCountryGaulCode();
             }
         });
+        return new HashSet<>(gaulCodes);
     }
 
     // Keep only the countries with occurrences that feature in list of African countries, ignoring all others.
-    private List<Integer> considerOnlyCountriesOfInterest(List<Integer> countries) {
+    private Set<Integer> considerOnlyCountriesOfInterest(Set<Integer> countries) {
         countries.retainAll(countriesOfInterest);
         return countries;
     }
 
     private boolean highFrequencyCountriesCheck(List<DiseaseOccurrence> occurrences) {
         Map<Integer, Integer> occurrenceCountPerCountry = constructOccurrenceCountPerCountryMap(occurrences);
-        List<Integer> highFrequencyOccurrenceCountries = extractHighFrequencyCountries(occurrenceCountPerCountry);
+        Set<Integer> highFrequencyOccurrenceCountries = extractHighFrequencyCountries(occurrenceCountPerCountry);
         highFrequencyOccurrenceCountries = considerOnlyCountriesOfInterest(highFrequencyOccurrenceCountries);
         return highFrequencyOccurrenceCountries.size() > minHighFrequencyCountries;
     }
@@ -128,13 +157,13 @@ public class ModelRunRequesterHelper {
         return map;
     }
 
-    private List<Integer> extractHighFrequencyCountries(Map<Integer, Integer> map) {
-        List<Integer> list = new ArrayList<>();
+    private Set<Integer> extractHighFrequencyCountries(Map<Integer, Integer> map) {
+        Set<Integer> set = new HashSet<>();
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             if (entry.getValue() > highFrequencyThreshold) {
-                list.add(entry.getKey());
+                set.add(entry.getKey());
             }
         }
-        return list;
+        return set;
     }
 }
