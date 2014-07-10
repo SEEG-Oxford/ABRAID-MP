@@ -8,14 +8,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
  */
 public class JsonDiseaseGroup {
     private Integer id;
-    private Integer parentId;
     private String name;
-    private String groupType;
     private String publicName;
     private String shortName;
     private String abbreviation;
+    private String groupType;
     private Boolean isGlobal;
-    private Integer validatorDiseaseGroupId;
+    private JsonDiseaseGroup parentDiseaseGroup;
+    private JsonValidatorDiseaseGroup validatorDiseaseGroup;
     private Double weighting;
     private Integer modelRunMinNewOccurrences;
     private boolean automaticModelRuns;
@@ -25,17 +25,17 @@ public class JsonDiseaseGroup {
 
     public JsonDiseaseGroup(DiseaseGroup diseaseGroup) {
         this.id = diseaseGroup.getId();
-        if (diseaseGroup.getParentGroup() != null) {
-            this.parentId = diseaseGroup.getParentGroup().getId();
-        }
         this.name = diseaseGroup.getName();
-        this.groupType = diseaseGroup.getGroupType().name();
         this.publicName = diseaseGroup.getPublicName();
         this.shortName = diseaseGroup.getShortName();
         this.abbreviation = diseaseGroup.getAbbreviation();
+        this.groupType = diseaseGroup.getGroupType().name();
         this.isGlobal = diseaseGroup.isGlobal();
+        if (diseaseGroup.getParentGroup() != null) {
+            this.parentDiseaseGroup = new JsonDiseaseGroup(diseaseGroup.getParentGroup());
+        }
         if (diseaseGroup.getValidatorDiseaseGroup() != null) {
-            this.validatorDiseaseGroupId = diseaseGroup.getValidatorDiseaseGroup().getId();
+            this.validatorDiseaseGroup = new JsonValidatorDiseaseGroup(diseaseGroup.getValidatorDiseaseGroup());
         }
         this.weighting = diseaseGroup.getWeighting();
         this.modelRunMinNewOccurrences = diseaseGroup.getModelRunMinNewOccurrences();
@@ -48,14 +48,6 @@ public class JsonDiseaseGroup {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
     }
 
     public String getName() {
@@ -106,12 +98,20 @@ public class JsonDiseaseGroup {
         this.isGlobal = isGlobal;
     }
 
-    public Integer getValidatorDiseaseGroupId() {
-        return validatorDiseaseGroupId;
+    public JsonValidatorDiseaseGroup getValidatorDiseaseGroup() {
+        return validatorDiseaseGroup;
     }
 
-    public void setValidatorDiseaseGroupId(Integer validatorDiseaseGroupId) {
-        this.validatorDiseaseGroupId = validatorDiseaseGroupId;
+    public void setValidatorDiseaseGroup(JsonValidatorDiseaseGroup validatorDiseaseGroup) {
+        this.validatorDiseaseGroup = validatorDiseaseGroup;
+    }
+
+    public JsonDiseaseGroup getParentDiseaseGroup() {
+        return parentDiseaseGroup;
+    }
+
+    public void setParentDiseaseGroup(JsonDiseaseGroup parentDiseaseGroup) {
+        this.parentDiseaseGroup = parentDiseaseGroup;
     }
 
     public Double getWeighting() {

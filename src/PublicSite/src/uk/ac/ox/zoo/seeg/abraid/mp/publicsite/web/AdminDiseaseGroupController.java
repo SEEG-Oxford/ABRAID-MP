@@ -9,10 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +50,8 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = "/admindiseasegroup", method = RequestMethod.GET)
     public String showPage(Model model) throws JsonProcessingException {
         try {
-            // Include information about all disease groups in the "initialData" attribute
-            List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
-            String diseaseGroupJson = convertDiseaseGroupsToJson(diseaseGroups);
-            model.addAttribute("initialData", diseaseGroupJson);
+            model.addAttribute("diseaseGroups", getSortedDiseaseGroupsJson());
+            model.addAttribute("validatorDiseaseGroups", getSortedValidatorDiseaseGroups());
             return "admindiseasegroup";
         } catch (JsonProcessingException e) {
             LOGGER.error(DISEASE_GROUP_JSON_CONVERSION_ERROR, e);
@@ -59,9 +59,16 @@ public class AdminDiseaseGroupController extends AbstractController {
         }
     }
 
-    private List<DiseaseGroup> getSortedDiseaseGroups() {
+    private String getSortedDiseaseGroupsJson() throws JsonProcessingException {
         List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
-        return sort(diseaseGroups, on(DiseaseGroup.class).getName());
+        sort(diseaseGroups, on(DiseaseGroup.class).getName());
+        return convertDiseaseGroupsToJson(diseaseGroups);
+    }
+
+    private String getSortedValidatorDiseaseGroups() throws JsonProcessingException {
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
+        sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
+        return convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
     }
 
     private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
@@ -70,5 +77,13 @@ public class AdminDiseaseGroupController extends AbstractController {
             jsonDiseaseGroups.add(new JsonDiseaseGroup(diseaseGroup));
         }
         return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
+    }
+
+    private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups) throws JsonProcessingException {
+        List<JsonValidatorDiseaseGroup> jsonValidatorDiseaseGroups = new ArrayList<>();
+        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
+            jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
+        }
+        return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
     }
 }
