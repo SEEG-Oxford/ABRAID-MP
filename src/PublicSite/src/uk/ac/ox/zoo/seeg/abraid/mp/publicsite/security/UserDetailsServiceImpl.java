@@ -20,7 +20,7 @@ import java.util.Collection;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final String ROLE_USER = "ROLE_USER";
-    private static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     private ExpertService expertService;
 
@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(ROLE_USER));
         if (expert.isAdministrator()) {
-            authorities.add(new SimpleGrantedAuthority(ROLE_ADMINISTRATOR));
+            authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
         }
 
         return new PublicSiteUser(

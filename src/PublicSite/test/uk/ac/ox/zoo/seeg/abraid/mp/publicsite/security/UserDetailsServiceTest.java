@@ -41,7 +41,7 @@ public class UserDetailsServiceTest {
         boolean isAdministrator = true;
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
         UserDetails user = new PublicSiteUser(id, email, fullName, hashedPassword, authorities);
         Expert expert = mock(Expert.class);

@@ -30,6 +30,6 @@ public class AdminUnitDiseaseExtentClassTest extends AbstractCommonSpringIntegra
         AdminUnitGlobalOrTropical adminUnitGlobalOrTropical = adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical();
 
         // Assert
-        assertThat(adminUnitGlobalOrTropical).isEqualsToByComparingFields(adminUnitGlobal);
+        assertThat(adminUnitGlobalOrTropical).isEqualToComparingFieldByField(adminUnitGlobal);
     }
 }
