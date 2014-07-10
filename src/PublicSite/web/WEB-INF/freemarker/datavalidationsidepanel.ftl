@@ -23,8 +23,9 @@
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: adminUnits" >
-                        <tr data-bind="click: function () { $parent.selectedAdminUnit(this); }">
-                            <td id="occurrencesColumn" data-bind="text: count"></td>
+                        <tr data-bind="click: function () { $parent.selectedAdminUnit($data); },
+                                       highlight: { target: $parent.selectedAdminUnit(), compareOn: 'id' }">
+                            <td class="occurrencesColumn" data-bind="text: count"></td>
                             <td data-bind="text: name"></td>
                         </tr>
                     </tbody>
@@ -33,9 +34,11 @@
         </div>
         <div data-bind="if: hasSelectedAdminUnit()">
             <ul>
-                <span data-bind="text: selectedAdminUnit().name"></span> has
-                <span data-bind="text: selectedAdminUnit().count"></span>
-                <span data-bind="text: selectedAdminUnit().count == 1 ? 'occurrence' : 'occurrences'"></span>
+                <div class="sidePanelText">
+                    <span data-bind="text: selectedAdminUnit().name"></span> has
+                    <span data-bind="text: selectedAdminUnit().count"></span>
+                    <span data-bind="text: selectedAdminUnit().count == 1 ? 'occurrence' : 'occurrences'"></span>
+                </div>
             </ul>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="reviewButtons">
@@ -78,7 +81,7 @@
 
 <script type="text/html" id="no-selected-point-template">
     <ul>
-        <li>Select a feature on the map to view more details here...</li>
+        <div class="sidePanelText">Select a feature on the map to view more details here...</div>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
@@ -93,16 +96,14 @@
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.occurrenceDate"></p></li>
         <li>
             <i class="fa fa-external-link"></i>
-            <a data-bind="attr: {href: selectedPoint().properties.alert.url}" target="_blank">
-                <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
-            </a>
+            <a data-bind="text: selectedPoint().properties.alert.feedName,
+                          attr: {href: selectedPoint().properties.alert.url}" target="_blank"></a>
         </li>
         <li><i class="fa fa-quote-left"></i></li>
         <li>
-            <div id="summary" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
-            <div data-bind="if: selectedPoint().properties.alert.summary">
-                <a id="translationLink" data-bind="attr: {href: translationUrl}" target="_blank">View translation</a>
-            <div>
+            <div class="sidePanelText" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
+            <a id="translationLink" data-bind="if: selectedPoint().properties.alert.summary,
+                                               attr: {href: translationUrl}" target="_blank">View translation</a>
         </li>
         <li><i class="fa fa-quote-right"></i></li>
     </ul>

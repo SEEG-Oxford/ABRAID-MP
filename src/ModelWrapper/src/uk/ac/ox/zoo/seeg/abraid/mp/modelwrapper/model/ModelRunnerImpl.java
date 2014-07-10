@@ -21,13 +21,10 @@ public class ModelRunnerImpl implements ModelRunner {
 
     private ProcessRunnerFactory processRunnerFactory;
     private WorkspaceProvisioner workspaceProvisioner;
-    private ModelOutputHandlerWebService modelOutputHandlerWebService;
 
-    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner,
-                           ModelOutputHandlerWebService modelOutputHandlerWebService) {
+    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner) {
         this.processRunnerFactory = processRunnerFactory;
         this.workspaceProvisioner = workspaceProvisioner;
-        this.modelOutputHandlerWebService = modelOutputHandlerWebService;
     }
 
     /**
@@ -35,6 +32,7 @@ public class ModelRunnerImpl implements ModelRunner {
      * @param configuration The model run configuration.
      * @param occurrenceData The occurrence data to model with.
      * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
+     * @param modelStatusReporter The status reporter to call with the results of the model.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
      * @throws IOException Thrown if the workspace cannot be correctly provisioned.
@@ -42,7 +40,8 @@ public class ModelRunnerImpl implements ModelRunner {
     @Override
     public ModelProcessHandler runModel(RunConfiguration configuration,
                                         GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
-                                        Map<Integer, Integer> extentWeightings)
+                                        Map<Integer, Integer> extentWeightings,
+                                        ModelStatusReporter modelStatusReporter)
             throws ProcessException, IOException {
         // Provision workspace
         File scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData, extentWeightings);
@@ -57,7 +56,7 @@ public class ModelRunnerImpl implements ModelRunner {
                 fileArguments,
                 configuration.getExecutionConfig().getMaxRuntime());
 
-        ModelProcessHandler processHandler = new ModelProcessHandler(configuration, modelOutputHandlerWebService);
+        ModelProcessHandler processHandler = new ModelProcessHandler(modelStatusReporter);
         processRunner.run(processHandler);
         return processHandler;
     }

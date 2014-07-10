@@ -11,7 +11,7 @@ html, body, #dataValidation {
 #dataValidation  {
     padding-right: 280px;        /* Side panel width */
     min-width: 800px;            /* Side panel width + layer selector width */
-    min-height: 550px;
+    min-height: 775px;
 }
 #layerSelector {
     position: absolute;
@@ -27,6 +27,9 @@ html, body, #dataValidation {
     width: 100%;
     float: left;
     background-color: white;
+}
+.highlight {
+    border: 3px solid rgb(140, 140, 140);
 }
 #spinner > div {
     z-index:10;
@@ -66,14 +69,21 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable {
-    max-height: 600px;
+    max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
-#adminUnitTable #occurrencesColumn {
+#adminUnitTable thead {
+    cursor: default;
+}
+#adminUnitTable tbody {
+    cursor: pointer;
+}
+#adminUnitTable .occurrencesColumn {
     width: 90px;
     text-align: center;
 }
-#summary {
+.sidePanelText {
     margin: 5px;
     padding: 10px;
     max-height: 600px;

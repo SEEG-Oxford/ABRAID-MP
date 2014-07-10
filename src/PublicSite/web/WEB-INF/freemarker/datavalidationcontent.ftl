@@ -31,14 +31,20 @@
         <#include "layerselector.ftl"/>
 
         <div id="map">
-            <div id="spinner" data-bind="fadeVisible: visible">
+            <div id="spinner" data-bind="fadeVisible: { visible: visible() }">
                 <i class="fa fa-3x fa-spinner fa-spin"></i>
                 <div></div>
             </div>
         </div>
     </div>
+
+    <!-- Base url -->
     <script>
-        var baseUrl = "<@spring.url "/" />";
+        var baseUrl = "<@spring.url '/'/>";
+    </script>
+
+    <!-- Bootstrapped JS data for KO view models -->
+    <script>
         var data = {
             wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
             loggedIn: ${userLoggedIn?c},
@@ -91,6 +97,8 @@
             ]
         };
     </script>
+
+    <!-- Require -->
     <script type="text/javascript" data-main="<@spring.url '/js/dataValidationContent' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>
 </html>

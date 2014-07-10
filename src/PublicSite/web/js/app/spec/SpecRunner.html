@@ -19,6 +19,8 @@
     <script type="text/javascript">
         var specs = [
             "app/spec/CounterViewModelSpec",
+            "app/spec/CustomBindingsSpec",
+            "app/spec/DiseaseGroupsListViewModelSpec",
             "app/spec/LogInViewModelSpec",
             "app/spec/MapViewSpec",
             "app/spec/SelectedAdminUnitViewModelSpec",
@@ -48,7 +50,7 @@
 
                 require(beforeSpecs, function() {
                     if (includeCoverage) {
-                        blanket.options({ filter: baseUrl+"js/app", antifilter: baseUrl+"js/app/spec" });
+                        blanket.options({ filter: baseUrl + "js/app", antifilter: baseUrl + "js/app/spec" });
                         jasmine.getEnv().addReporter(new jasmine.BlanketReporter());
                     }
 

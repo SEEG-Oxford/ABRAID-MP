@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMapOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.refEq;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.refEq;
 
 /**
  * Tests the ModelRunnerImpl class.
@@ -39,14 +39,13 @@ public class ModelRunnerTest {
         ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
-        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
 
-        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner, modelOutputHandlerWebService);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
         RunConfiguration config = createBasicRunConfiguration();
 
         // Act
-        target.runModel(config, null, null);
+        target.runModel(config, null, null, null);
 
         // Assert
         verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class));
@@ -63,14 +62,13 @@ public class ModelRunnerTest {
         ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
-        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
 
-        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner, modelOutputHandlerWebService);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
         RunConfiguration config = createBasicRunConfiguration();
 
         // Act
-        target.runModel(config, null, null);
+        target.runModel(config, null, null, null);
 
         // Assert
         verify(mockProcessRunner, times(1)).run(any(ModelProcessHandler.class));
@@ -88,9 +86,8 @@ public class ModelRunnerTest {
         ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
         when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
                 .thenReturn(mockProcessRunner);
-        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
 
-        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner, modelOutputHandlerWebService);
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
 
         File expectedR = new File("e1");
         File expectedBase = new File("base");
@@ -99,7 +96,7 @@ public class ModelRunnerTest {
                 new RunConfiguration(null, expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null, null);
 
         // Act
-        target.runModel(config, null, null);
+        target.runModel(config, null, null, null);
 
         // Assert
         ArgumentCaptor<String[]> stringArgsCaptor = ArgumentCaptor.forClass(String[].class);

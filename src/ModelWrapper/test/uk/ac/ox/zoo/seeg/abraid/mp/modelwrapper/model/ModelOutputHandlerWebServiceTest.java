@@ -27,19 +27,22 @@ public class ModelOutputHandlerWebServiceTest {
         byte[] testBody = "This is a test POST body".getBytes();
         File testBodyFile = testFolder.newFile();
         FileUtils.writeByteArrayToFile(testBodyFile, testBody);
-        String rootUrl = "http://localhost:8080/ModelOutputHandler/";
-        String expectedUrl = "http://localhost:8080/ModelOutputHandler/modeloutputhandler/handleoutputs";
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        String rootUrl = "http://localhost:8080/modeloutputhandler/";
+        when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
 
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        ModelOutputHandlerWebService webService = new ModelOutputHandlerWebService(webServiceClient, configurationService);
-        when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
-        when(webServiceClient.makePostRequest(expectedUrl, testBody)).thenReturn("");
+        String expectedUrl = rootUrl + "modeloutputhandler/handleoutputs";
+        when(webServiceClient.makePostRequest(expectedUrl, testBody)).thenReturn("expected Result");
+
+        ModelOutputHandlerWebService target = new ModelOutputHandlerWebService(webServiceClient, configurationService);
 
         // Act
-        String actualResponse = webService.handleOutputs(testBodyFile);
+        String actualResponse = target.handleOutputs(testBodyFile);
 
         // Assert
-        assertThat(actualResponse).isEqualTo("");
+        assertThat(actualResponse).isEqualTo("expected Result");
+        verify(webServiceClient, times(1)).makePostRequest(expectedUrl, testBody);
     }
 }
