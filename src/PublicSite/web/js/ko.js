@@ -8,7 +8,8 @@ define([
     "knockout-postbox",
     "knockout.bootstrap",
     "knockout.validation",
-    "app/KoCustomBindings"
+    "app/KoCustomBindings",
+    "app/KoCustomRules"
 ], function (ko) {
     "use strict";
 
