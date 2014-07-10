@@ -3,7 +3,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global require:false, baseUrl:false, data:false, window:false, alert:false*/
-require(["require.conf"], function () {
+require([baseUrl + "js/require.conf.js"], function () {
     "use strict";
 
     require([

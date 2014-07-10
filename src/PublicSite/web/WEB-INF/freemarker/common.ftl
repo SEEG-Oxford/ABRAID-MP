@@ -2,7 +2,7 @@
     The page template, including header and footer.
     Copyright (c) 2014 University of Oxford
 -->
-<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="/js/default">
+<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="/js/kickstart/default">
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html class="no-js">

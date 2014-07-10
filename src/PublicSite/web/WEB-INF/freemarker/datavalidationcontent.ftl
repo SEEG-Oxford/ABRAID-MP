@@ -100,6 +100,6 @@
     </script>
 
     <!-- Require -->
-    <script type="text/javascript" data-main="<@spring.url '/js/dataValidationContent' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
+    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/datavalidation/content' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>
 </html>
