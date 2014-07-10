@@ -32,8 +32,8 @@ public class ModelRunRequesterHelper {
 
     // Reference structures used to compare values against in MDS checks
     private List<Integer> countriesOfInterest;
-    private Set<Integer> countriesWithAtLeastOneOccurrence;
-    private Map<Integer, Integer> occurrenceCountPerCountry;
+    private Set<Integer> countriesWithAtLeastOneOccurrence;     // For disease groups using all countries
+    private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
     public ModelRunRequesterHelper(DiseaseService diseaseService, LocationService locationService, int diseaseGroupId) {
         this.diseaseService = diseaseService;
@@ -61,8 +61,9 @@ public class ModelRunRequesterHelper {
         List<DiseaseOccurrence> occurrences = null;
         if (minDataVolumeSatisfied()) {
             occurrences = selectSubset();
-            if (minDataSpreadParametersDefined()) {
-                occurrences = refineSubset(occurrences);
+            if (occursInAfrica != null) {
+                occurrences = occursInAfrica ? refineSubsetForAfricanDiseaseGroup(occurrences) :
+                                               refineSubsetForOtherDiseaseGroup(occurrences);
             }
         }
         return occurrences;
@@ -77,56 +78,28 @@ public class ModelRunRequesterHelper {
         return allOccurrences.subList(0, minDataVolume);
     }
 
-    private boolean minDataSpreadParametersDefined() {
-        if (occursInAfrica == null) {
-            return false;
-        } else if (occursInAfrica) {
-            return allParametersNotNull(minDistinctCountries, highFrequencyThreshold, minHighFrequencyCountries);
-        } else {
-            return allParametersNotNull(minDistinctCountries);
-        }
-    }
+    // If MDS is not met, continue to select points until it does, unless we run out of points.
+    private List<DiseaseOccurrence> refineSubsetForAfricanDiseaseGroup(List<DiseaseOccurrence> occurrences) {
+        if (parametersNotNull(minDistinctCountries, highFrequencyThreshold, minHighFrequencyCountries)) {
+            countriesOfInterest = locationService.getCountriesForMinDataSpreadCalculation();
+            constructOccurrenceCountPerCountryMap(occurrences);
+            while (!minDataSpreadCheckForAfricanDiseaseGroup()) {
+                if (occurrences.equals(allOccurrences)) {
+                    return null;
+                }
 
-    private static boolean allParametersNotNull(Integer... args) {
-        List<Integer> values = Arrays.asList(args);
-        List<Integer> notNullValues = filter(notNullValue(), values);
-        return (values.size() == notNullValues.size());
-    }
-
-    private List<DiseaseOccurrence> refineSubset(List<DiseaseOccurrence> occurrences) {
-        // If MDS is not met, continue to select points until it does, unless we run out of points.
-        constructReferenceStructures(occurrences);
-        while (!minimumDataSpreadMet()) {
-            int n = occurrences.size();
-            if (n == allOccurrences.size()) {
-                return null;
+                int n = occurrences.size();
+                occurrences = allOccurrences.subList(0, n + 1);
+                addCountryToOccurrenceCountMap(occurrences.get(n).getLocation().getCountryGaulCode());
             }
-            occurrences = allOccurrences.subList(0, n + 1);
-            updateReferenceStructures(occurrences.get(n));
         }
         return occurrences;
     }
 
-    private void constructReferenceStructures(List<DiseaseOccurrence> occurrences) {
-        extractDistinctGaulCodes(occurrences);
-        if (occursInAfrica) {
-            considerOnlyCountriesOfInterest();
-            constructOccurrenceCountPerCountryMap(occurrences);
-        }
-    }
-
-    private void extractDistinctGaulCodes(List<DiseaseOccurrence> occurrences) {
-        Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
-        List<Integer> gaulCodes = convert(locations, new Converter<Location, Integer>() {
-            public Integer convert(Location location) { return location.getCountryGaulCode(); }
-        });
-        countriesWithAtLeastOneOccurrence = new HashSet<>(gaulCodes);
-    }
-
-    // Keep only the countries with occurrences that feature in list of African countries, ignoring all others.
-    private void considerOnlyCountriesOfInterest() {
-        countriesOfInterest = locationService.getCountriesForMinDataSpreadCalculation();
-        countriesWithAtLeastOneOccurrence.retainAll(countriesOfInterest);
+    private static boolean parametersNotNull(Integer... args) {
+        List<Integer> values = Arrays.asList(args);
+        List<Integer> notNullValues = filter(notNullValue(), values);
+        return (values.size() == notNullValues.size());
     }
 
     private void constructOccurrenceCountPerCountryMap(List<DiseaseOccurrence> occurrences) {
@@ -145,21 +118,12 @@ public class ModelRunRequesterHelper {
         }
     }
 
-    private boolean minimumDataSpreadMet() {
-        if (occursInAfrica) {
-            return distinctCountriesCheck() && highFrequencyCountriesCheck();
-        } else {
-            return distinctCountriesCheck();
-        }
-    }
-
-    private boolean distinctCountriesCheck() {
-        return countriesWithAtLeastOneOccurrence.size() >= minDistinctCountries;
-    }
-
-    private boolean highFrequencyCountriesCheck() {
+    private boolean minDataSpreadCheckForAfricanDiseaseGroup() {
+        Set<Integer> distinctCountries = occurrenceCountPerCountry.keySet();
+        boolean distinctCountriesCheck = distinctCountries.size() >= minDistinctCountries;
         Set<Integer> highFrequencyOccurrenceCountries = extractHighFrequencyCountries();
-        return highFrequencyOccurrenceCountries.size() >= minHighFrequencyCountries;
+        boolean highFrequencyCountriesCheck = highFrequencyOccurrenceCountries.size() >= minHighFrequencyCountries;
+        return (distinctCountriesCheck & highFrequencyCountriesCheck);
     }
 
     private Set<Integer> extractHighFrequencyCountries() {
@@ -172,15 +136,32 @@ public class ModelRunRequesterHelper {
         return set;
     }
 
-    private void updateReferenceStructures(DiseaseOccurrence newOccurrence) {
-        int countryGaulCode = newOccurrence.getLocation().getCountryGaulCode();
-        if (occursInAfrica) {
-            if (countriesOfInterest.contains(countryGaulCode)) {
-                countriesWithAtLeastOneOccurrence.add(countryGaulCode);
-                addCountryToOccurrenceCountMap(countryGaulCode);
+    private List<DiseaseOccurrence> refineSubsetForOtherDiseaseGroup(List<DiseaseOccurrence> occurrences) {
+        if (minDistinctCountries != null) {
+            extractDistinctGaulCodes(occurrences);
+            while (!minDataSpreadCheckForOtherDiseaseGroup()) {
+                if (occurrences.equals(allOccurrences)) {
+                    return null;
+                }
+
+                int n = occurrences.size();
+                occurrences = allOccurrences.subList(0, n + 1);
+                countriesWithAtLeastOneOccurrence.add(occurrences.get(n).getLocation().getCountryGaulCode());
             }
-        } else {
-            countriesWithAtLeastOneOccurrence.add(countryGaulCode);
         }
+        return occurrences;
     }
+
+    private void extractDistinctGaulCodes(List<DiseaseOccurrence> occurrences) {
+        Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
+        List<Integer> gaulCodes = convert(locations, new Converter<Location, Integer>() {
+            public Integer convert(Location location) { return location.getCountryGaulCode(); }
+        });
+        countriesWithAtLeastOneOccurrence = new HashSet<>(gaulCodes);
+    }
+
+    private boolean minDataSpreadCheckForOtherDiseaseGroup() {
+        return countriesWithAtLeastOneOccurrence.size() >= minDistinctCountries;
+    }
+
 }
