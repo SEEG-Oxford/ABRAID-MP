@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 <div class="login-pane">
     <form action="">
         <p class="form-group">
@@ -27,10 +28,10 @@
             <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': submitting }">Log in</a>
         </p>
         <p class="form-group form-info">
-            Forgotten password? <a href="#">Reset it</a>.
+            Forgotten password? <a href="#" target="_top">Reset it</a>.
         </p>
         <p class="form-group form-info">
-            New user? <a href="#">Create account</a>.
+            New user? <a href="<@spring.url "/register/account" />" target="_top">Create account</a>.
         </p>
     </form>
 </div>
