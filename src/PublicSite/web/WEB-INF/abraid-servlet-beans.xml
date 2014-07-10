@@ -19,6 +19,12 @@
 
     <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web"/>
 
+    <bean id="reCaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
+        <property name="privateKey" value="6Lc5p_YSAAAAALa_QgdMdUEcK8zj2PvIkxexxxAy" />
+        <property name="publicKey" value="6Lc5p_YSAAAAAK33kOBsM31SpKPgQnpvgJNqooYD" />
+        <property name="includeNoscript" value="false" />
+    </bean>
+
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
     </bean>
