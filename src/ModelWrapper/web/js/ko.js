@@ -17,6 +17,13 @@ define([
         return ko.utils.recursiveUnwrap(func());
     };
 
+    ko.validation.configure({
+        insertMessages: true,
+        messageTemplate: "validation-template",
+        messagesOnModified: true,
+        registerExtenders: true
+    });
+
     // Bundle up all the knockout stuff
     return ko;
 });

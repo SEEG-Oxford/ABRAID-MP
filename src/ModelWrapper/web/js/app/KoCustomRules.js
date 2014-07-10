@@ -37,11 +37,4 @@ define([
         },
         message: "Username must be between 3 and 15 characters long and consist of only letters, numbers, '_' or '-'"
     };
-
-    ko.validation.configure({
-        insertMessages: true,
-        messageTemplate: "validation-template",
-        messagesOnModified: true,
-        registerExtenders: true
-    });
 });
