@@ -34,6 +34,62 @@
         </div>
         <div class="panel-collapse collapse in" id="setup-body">
             <div class="panel-body">
+                <div class="col-sm-6">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="disease-group-name" class="col-sm-3 control-label">Name</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="disease-group-name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="public-name" class="col-sm-3 control-label">Public Name</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="public-name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="short-name" class="col-sm-3 control-label">Short Name</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="short-name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="abbreviation" class="col-sm-3 control-label">Abbreviation</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="abbreviation">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-6">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="disease-group-type" class="col-sm-5 control-label">Type</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="disease-group-type"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="global-or-tropical" class="col-sm-5 control-label">Global or Tropical</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="global-or-tropical"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="parent-disease-group" class="col-sm-5 control-label">Parent Disease Group</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="parent-disease-group"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="validator-disease-group" class="col-sm-5 control-label">Validator Disease Group</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="validator-disease-group"></select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
