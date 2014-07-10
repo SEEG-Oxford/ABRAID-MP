@@ -12,6 +12,13 @@ define([
 ], function (ko) {
     "use strict";
 
+    ko.utils.recursiveUnwrap = function (func) {
+        if (typeof func !== "function") {
+            return func;
+        }
+        return ko.utils.recursiveUnwrap(func());
+    };
+
     ko.validation.configure({
         insertMessages: true,
         messageTemplate: "validation-template",

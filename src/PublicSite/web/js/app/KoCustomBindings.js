@@ -10,13 +10,6 @@ define([
 ], function (ko, $, moment) {
     "use strict";
 
-    ko.utils.recursiveUnwrap = function (func) {
-        if (typeof func !== "function") {
-            return func;
-        }
-        return ko.utils.recursiveUnwrap(func());
-    };
-
     // Set the width of the element to fit the number of digits (2, 3 or 4)
     function adjustElementWidthForCounterValue(element, value) {
         if ((value > 999) && ($(element).width() !== 280)) {
