@@ -35,7 +35,7 @@ define([
                     .fail(function () { pushMessage("Authentication details could not be saved.", "warning"); })
                     .always(function () { self.saving(false); });
             } else {
-                self.notices.push({ message: "All field must be valid before saving.", priority: "warning"});
+                self.notices.push({ message: "All fields must be valid before saving.", priority: "warning"});
             }
         };
     };

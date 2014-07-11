@@ -5,6 +5,7 @@
 /*global define:false*/
 define([
     "knockout",
+    "knockout.bootstrap",
     "knockout-postbox",
     "knockout.validation",
     "app/KoCustomBindings"

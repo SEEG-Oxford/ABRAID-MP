@@ -56,12 +56,13 @@ define([
                 }
 
                 self.runningModel(true);
-                $.post(baseUrl + "admin/diseasegroup/requestmodelrun", { diseaseGroupId: self.selectedDiseaseGroupId })
+                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId + "/requestmodelrun";
+                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId })
                     .done(function () {
-                        self.notices.push({ "message": "Model run requested.", "priority": "success"});
+                        self.notices.push({ message: "Model run requested.", priority: "success"});
                     })
                     .fail(function () {
-                        self.notices.push({ "message": "Model run could not be requested.", "priority": "warning"});
+                        self.notices.push({ message: "Model run could not be requested.", priority: "warning"});
                     })
                     .always(function () { self.runningModel(false); });
             }
