@@ -75,7 +75,11 @@ public class ModelRunRequesterHelper {
 
     // Select subset of n most recent occurrences (allOccurrences list is sorted by occurrence date)
     private List<DiseaseOccurrence> selectSubset() {
-        return allOccurrences.subList(0, minDataVolume);
+        List<DiseaseOccurrence> occurrences = new ArrayList<>();
+        for (int i = 0; i < minDataVolume; i++) {
+            occurrences.add(allOccurrences.get(i));
+        }
+        return occurrences;
     }
 
     // If MDS is not met, continue to select points until it does, unless we run out of points.
@@ -84,13 +88,29 @@ public class ModelRunRequesterHelper {
             countriesOfInterest = locationService.getCountriesForMinDataSpreadCalculation();
             constructOccurrenceCountPerCountryMap(occurrences);
             while (!minDataSpreadCheckForAfricanDiseaseGroup()) {
-                if (occurrences.equals(allOccurrences)) {
+                int n = occurrences.size();
+                if (n == allOccurrences.size()) {
                     return null;
                 }
+                DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
+                occurrences.add(nextOccurrence);
+                addCountryToOccurrenceCountMap(nextOccurrence.getLocation().getCountryGaulCode());
+            }
+        }
+        return occurrences;
+    }
 
+    private List<DiseaseOccurrence> refineSubsetForOtherDiseaseGroup(List<DiseaseOccurrence> occurrences) {
+        if (minDistinctCountries != null) {
+            extractDistinctGaulCodes(occurrences);
+            while (!minDataSpreadCheckForOtherDiseaseGroup()) {
                 int n = occurrences.size();
-                occurrences = allOccurrences.subList(0, n + 1);
-                addCountryToOccurrenceCountMap(occurrences.get(n).getLocation().getCountryGaulCode());
+                if (n == allOccurrences.size()) {
+                    return null;
+                }
+                DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
+                occurrences.add(nextOccurrence);
+                countriesWithAtLeastOneOccurrence.add(nextOccurrence.getLocation().getCountryGaulCode());
             }
         }
         return occurrences;
@@ -120,9 +140,9 @@ public class ModelRunRequesterHelper {
 
     private boolean minDataSpreadCheckForAfricanDiseaseGroup() {
         Set<Integer> distinctCountries = occurrenceCountPerCountry.keySet();
-        boolean distinctCountriesCheck = distinctCountries.size() >= minDistinctCountries;
+        boolean distinctCountriesCheck = (distinctCountries.size() >= minDistinctCountries);
         Set<Integer> highFrequencyOccurrenceCountries = extractHighFrequencyCountries();
-        boolean highFrequencyCountriesCheck = highFrequencyOccurrenceCountries.size() >= minHighFrequencyCountries;
+        boolean highFrequencyCountriesCheck = (highFrequencyOccurrenceCountries.size() >= minHighFrequencyCountries);
         return (distinctCountriesCheck & highFrequencyCountriesCheck);
     }
 
@@ -136,22 +156,6 @@ public class ModelRunRequesterHelper {
         return set;
     }
 
-    private List<DiseaseOccurrence> refineSubsetForOtherDiseaseGroup(List<DiseaseOccurrence> occurrences) {
-        if (minDistinctCountries != null) {
-            extractDistinctGaulCodes(occurrences);
-            while (!minDataSpreadCheckForOtherDiseaseGroup()) {
-                if (occurrences.equals(allOccurrences)) {
-                    return null;
-                }
-
-                int n = occurrences.size();
-                occurrences = allOccurrences.subList(0, n + 1);
-                countriesWithAtLeastOneOccurrence.add(occurrences.get(n).getLocation().getCountryGaulCode());
-            }
-        }
-        return occurrences;
-    }
-
     private void extractDistinctGaulCodes(List<DiseaseOccurrence> occurrences) {
         Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
         List<Integer> gaulCodes = convert(locations, new Converter<Location, Integer>() {
@@ -161,7 +165,7 @@ public class ModelRunRequesterHelper {
     }
 
     private boolean minDataSpreadCheckForOtherDiseaseGroup() {
-        return countriesWithAtLeastOneOccurrence.size() >= minDistinctCountries;
+        return (countriesWithAtLeastOneOccurrence.size() >= minDistinctCountries);
     }
 
 }

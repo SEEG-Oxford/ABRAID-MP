@@ -84,7 +84,7 @@ public class DiseaseGroup {
     private Integer minDataVolume;
 
     // The following parameters define the Minimum Data Spread conditions, which must be satisfied for a model run to
-    // go ahead: There must be at least one occurrence in [minDistinctCountries] and at least [minHighFrequency]
+    // go ahead: There must be at least one occurrence in [minDistinctCountries] and more than [highFrequencyThreshold]
     // occurrences in [minHighFrequencyCountries].
     @Column(name = "min_distinct_countries")
     private Integer minDistinctCountries;
