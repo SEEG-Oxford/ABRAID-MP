@@ -35,9 +35,10 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     /**
      * Prepares for and requests a model run, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
+     * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestModelRun(int diseaseGroupId) {
+    public void prepareForAndRequestModelRun(int diseaseGroupId) throws ModelRunRequesterException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(diseaseGroupId);
         saveExpertsWeightings(newExpertWeightings);
@@ -48,9 +49,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * Does not recalculate expert weightings (i.e. it is assumed that calculateExpertsWeightings and
      * saveExpertsWeightings are being call separately).
      * @param diseaseGroupId The disease group ID.
+     * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(int diseaseGroupId) {
+    public void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(int diseaseGroupId)
+            throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
         updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);

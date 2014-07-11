@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
@@ -19,11 +20,26 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class ModelRunRequesterHelper {
 
+    // Log messages
+    private static final String NOT_REQUESTING_LOG_MESSAGE =
+            "Not requesting a model run for disease group %d (%s) because ";
+    private static final String MDV_NOT_SATISFIED_LOG_MESSAGE = "minimum data volume (%d) not satisfied";
+    private static final String MDS_NOT_SATISFIED_LOG_MESSAGE = "minimum data spread not satisfied";
+
+    // Exception messages (these might be displayed in the user interface)
+    private static final String MDV_NOT_SATISFIED_EXCEPTION_MESSAGE =
+            "Model cannot run because minimum data volume not satisfied.";
+    private static final String MDS_NOT_SATISFIED_EXCEPTION_MESSAGE =
+            "Model cannot run because minimum data spread not satisfied.";
+
+    private static final Logger LOGGER = Logger.getLogger(ModelRunRequesterHelper.class);
+
     private DiseaseService diseaseService;
     private LocationService locationService;
 
     // Minimum Data Spread parameters for the disease group
     private List<DiseaseOccurrence> allOccurrences;
+    private DiseaseGroup diseaseGroup;
     private int minDataVolume;
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
@@ -44,7 +60,7 @@ public class ModelRunRequesterHelper {
     // Set the MDS calculation parameters for the specified disease group.
     private void initialise(int diseaseGroupId) {
         allOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         minDataVolume = diseaseGroup.getMinDataVolume();
         minDistinctCountries = diseaseGroup.getMinDistinctCountries();
         highFrequencyThreshold = diseaseGroup.getHighFrequencyThreshold();
@@ -55,9 +71,10 @@ public class ModelRunRequesterHelper {
     /**
      * Gets the list of occurrences to be used in the model run.
      * @return The list of occurrences with which to run the model,
-     * or null if the MDS thresholds are not met and the model should not run.
+     * @throws ModelRunRequesterException if the model should not run because the required thresholds have not been
+     * reached.
      */
-    public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() {
+    public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() throws ModelRunRequesterException {
         List<DiseaseOccurrence> occurrences = null;
         if (minDataVolumeSatisfied()) {
             occurrences = selectSubset();
@@ -65,6 +82,9 @@ public class ModelRunRequesterHelper {
                 occurrences = occursInAfrica ? refineSubsetForAfricanDiseaseGroup(occurrences) :
                                                refineSubsetForOtherDiseaseGroup(occurrences);
             }
+        } else {
+            handleCannotRunModel(String.format(MDV_NOT_SATISFIED_LOG_MESSAGE, minDataVolume),
+                    MDV_NOT_SATISFIED_EXCEPTION_MESSAGE);
         }
         return occurrences;
     }
@@ -90,7 +110,7 @@ public class ModelRunRequesterHelper {
             while (!minDataSpreadCheckForAfricanDiseaseGroup()) {
                 int n = occurrences.size();
                 if (n == allOccurrences.size()) {
-                    return null;
+                    handleCannotRunModel(MDS_NOT_SATISFIED_LOG_MESSAGE, MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
                 }
                 DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
                 occurrences.add(nextOccurrence);
@@ -106,7 +126,7 @@ public class ModelRunRequesterHelper {
             while (!minDataSpreadCheckForOtherDiseaseGroup()) {
                 int n = occurrences.size();
                 if (n == allOccurrences.size()) {
-                    return null;
+                    handleCannotRunModel(MDS_NOT_SATISFIED_LOG_MESSAGE, MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
                 }
                 DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
                 occurrences.add(nextOccurrence);
@@ -168,4 +188,9 @@ public class ModelRunRequesterHelper {
         return (countriesWithAtLeastOneOccurrence.size() >= minDistinctCountries);
     }
 
+    private void handleCannotRunModel(String logSuffixMessage, String exceptionMessage) {
+        LOGGER.warn(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
+                diseaseGroup.getName()));
+        throw new ModelRunRequesterException(exceptionMessage);
+    }
 }

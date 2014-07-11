@@ -61,8 +61,12 @@ define([
                     .done(function () {
                         self.notices.push({ message: "Model run requested.", priority: "success"});
                     })
-                    .fail(function () {
-                        self.notices.push({ message: "Model run could not be requested.", priority: "warning"});
+                    .fail(function (data) {
+                        var errorMessage = data.responseJSON;
+                        if (!errorMessage) {
+                            errorMessage = "Model run could not be requested.";
+                        }
+                        self.notices.push({ message: errorMessage, priority: "warning"});
                     })
                     .always(function () { self.runningModel(false); });
             }

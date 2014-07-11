@@ -20,6 +20,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
@@ -117,10 +118,13 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> requestModelRun(@PathVariable Integer diseaseGroupId) {
-        modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
-        // If an exception is thrown, it will just fall through as a non-OK status
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId) {
+        try {
+            modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (ModelRunRequesterException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private List<DiseaseGroup> getSortedDiseaseGroups() {

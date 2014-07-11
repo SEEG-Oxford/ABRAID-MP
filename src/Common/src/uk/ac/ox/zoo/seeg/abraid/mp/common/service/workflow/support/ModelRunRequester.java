@@ -45,8 +45,9 @@ public class ModelRunRequester {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
+     * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    public void requestModelRun(Integer diseaseGroupId) {
+    public void requestModelRun(Integer diseaseGroupId) throws ModelRunRequesterException {
         ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
         List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
         if (occurrences != null) {
