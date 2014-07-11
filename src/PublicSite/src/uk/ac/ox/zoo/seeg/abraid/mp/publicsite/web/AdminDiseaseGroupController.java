@@ -3,12 +3,16 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -85,5 +89,23 @@ public class AdminDiseaseGroupController extends AbstractController {
             jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
         }
         return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
+    }
+
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/save",
+                    method = RequestMethod.POST)
+    public ResponseEntity saveChanges(@PathVariable Integer diseaseGroupId, String name, String publicName,
+                                      String shortName, String abbreviation, String groupType, boolean isGlobal,
+                                      JsonDiseaseGroup parentDiseaseGroup, JsonValidatorDiseaseGroup validatorDiseaseGroup) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setName(name);
+        diseaseGroup.setPublicName(publicName);
+        diseaseGroup.setShortName(shortName);
+        diseaseGroup.setAbbreviation(abbreviation);
+        diseaseGroup.setGroupType(DiseaseGroupType.valueOf(groupType));
+        diseaseGroup.setGlobal(isGlobal);
+        diseaseGroup.setParentGroup(parentDiseaseGroup);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

@@ -99,6 +99,9 @@
                         </div>
                     </form>
                 </div>
+                <div class="col-sm-12">
+                    <button style="float:right" type="button" class="btn btn-primary" data-bind="enable: enableButton(), click: saveChanges">Save changes</button>
+                </div>
             </div>
         </div>
     </div>
