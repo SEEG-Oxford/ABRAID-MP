@@ -33,7 +33,7 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         if (modelRunGatekeeper.modelShouldRun(diseaseGroupId)) {
-            modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(diseaseGroupId);
         }
     }
 

@@ -28,4 +28,18 @@ public interface ModelRunDao {
      * @param modelRun The model run to save.
      */
     void save(ModelRun modelRun);
+
+    /**
+     * Gets the last requested model run for the specified disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return The last requested model run, or null if there are no model runs.
+     */
+    ModelRun getLastRequestedModelRun(int diseaseGroupId);
+
+    /**
+     * Gets the last completed model run for the specified disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return The last completed model run, or null if there are no completed model runs.
+     */
+    ModelRun getLastCompletedModelRun(int diseaseGroupId);
 }

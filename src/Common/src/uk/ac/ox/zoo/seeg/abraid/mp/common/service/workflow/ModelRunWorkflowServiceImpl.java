@@ -32,13 +32,25 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         this.diseaseExtentGenerator = diseaseExtentGenerator;
     }
 
-    @Override
-    public Map<Integer, Double> calculateExpertsWeightings() {
-        return weightingsCalculator.calculateNewExpertsWeightings();
-    }
-
+    /**
+     * Prepares for and requests a model run, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     */
     @Override
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
+        Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
+        prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(diseaseGroupId);
+        saveExpertsWeightings(newExpertWeightings);
+    }
+
+    /**
+     * Prepares for and requests a model run, for the specified disease group.
+     * Does not recalculate expert weightings (i.e. it is assumed that calculateExpertsWeightings and
+     * saveExpertsWeightings are being call separately).
+     * @param diseaseGroupId The disease group ID.
+     */
+    @Override
+    public void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
         updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
@@ -47,6 +59,19 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
 
+    /**
+     * Gets the new weighting for each active expert.
+     * @return A map from expert ID to the new weighting value.
+     */
+    @Override
+    public Map<Integer, Double> calculateExpertsWeightings() {
+        return weightingsCalculator.calculateNewExpertsWeightings();
+    }
+
+    /**
+     * Saves the new weighting for each expert.
+     * @param newExpertsWeightings The map from expert to the new weighting value.
+     */
     @Override
     public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);

@@ -8,13 +8,27 @@ require(["require.conf"], function () {
 
     require(["ko",
         "app/DiseaseGroupsListViewModel",
+        "app/DiseaseGroupSetupViewModel",
         "navbar",
         "domReady!"
-    ], function (ko, DiseaseGroupsListViewModel, setupNavbar, doc) {
+    ], function (ko, DiseaseGroupsListViewModel, DiseaseGroupSetupViewModel, setupNavbar, doc) {
         setupNavbar();
 
+        var diseaseGroupSelectedEventName = "disease-group-selected";
+
+        // Bind to view-models
+        var diseaseGroupsListViewModel =
+            new DiseaseGroupsListViewModel(baseUrl, initialData, diseaseGroupSelectedEventName);
+
         ko.applyBindings(
-            ko.validatedObservable(new DiseaseGroupsListViewModel(baseUrl, initialData)),
-            doc.getElementById("disease-group-list"));
+            diseaseGroupsListViewModel,
+            doc.getElementById("disease-groups-list"));
+
+        ko.applyBindings(
+            ko.validatedObservable(new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName)),
+            doc.getElementById("setup-body"));
+
+        // Publish the initial state of the disease group drop-down list
+        ko.postbox.publish(diseaseGroupSelectedEventName, diseaseGroupsListViewModel.selectedDiseaseGroup());
     });
 });

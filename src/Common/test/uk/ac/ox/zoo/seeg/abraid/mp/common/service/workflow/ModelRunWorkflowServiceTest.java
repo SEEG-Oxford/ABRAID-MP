@@ -11,6 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,15 +39,6 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void calculateExpertsWeightings() {
-        // Act
-        modelRunWorkflowService.calculateExpertsWeightings();
-
-        // Assert
-        verify(weightingsCalculator, times(1)).calculateNewExpertsWeightings();
-    }
-
-    @Test
     public void prepareForAndRequestModelRun() {
         // Arrange
         int diseaseGroupId = 87;
@@ -54,8 +46,10 @@ public class ModelRunWorkflowServiceTest {
         DateTime lastModelRunPrepDate = DateTime.now().minusWeeks(1);
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        Map<Integer, Double> newWeightings = new HashMap<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
         modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
@@ -69,6 +63,45 @@ public class ModelRunWorkflowServiceTest {
                 eq(diseaseGroupId), any(DiseaseExtentParameters.class));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
+        verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(newWeightings));
+    }
+
+    @Test
+    public void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
+        DateTime lastModelRunPrepDate = DateTime.now().minusWeeks(1);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        // Act
+        modelRunWorkflowService.prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(diseaseGroupId);
+
+        // Assert
+        verify(weightingsCalculator, times(1)).updateDiseaseOccurrenceExpertWeightings(
+                eq(lastModelRunPrepDate), eq(diseaseGroupId));
+        verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
+                eq(diseaseGroupId), eq(DateTime.now()));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
+                eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
+        verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
+    }
+
+    @Test
+    public void calculateExpertsWeightings() {
+        // Arrange
+        Map<Integer, Double> expectedNewWeightings = new HashMap<>();
+        when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(expectedNewWeightings);
+
+        // Act
+        Map<Integer, Double> actualNewWeightings = modelRunWorkflowService.calculateExpertsWeightings();
+
+        // Assert
+        assertThat(actualNewWeightings).isEqualTo(expectedNewWeightings);
     }
 
     @Test

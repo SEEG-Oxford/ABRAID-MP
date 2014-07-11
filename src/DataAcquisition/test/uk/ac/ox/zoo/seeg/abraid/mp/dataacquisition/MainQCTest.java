@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.startsWith;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +28,6 @@ import static org.mockito.Mockito.when;
  */
 public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
-    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/modelwrapper";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -51,7 +49,6 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
                 "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json_qc.txt"
         };
         mockGeoNamesRequests();
-        mockModelWrapperRequest();
 
         // Act
         Main.runMain(applicationContext, fileNames);
@@ -116,10 +113,5 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
                 "\"fcode\": \"" + featureCode + "\",\n" +
                 "\"geonameId\": " + geoNameId.toString() + "\n" +
                 "}\n";
-    }
-
-    private void mockModelWrapperRequest() {
-        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
-                .thenReturn("{\"modelRunName\":\"testname\"}");
     }
 }

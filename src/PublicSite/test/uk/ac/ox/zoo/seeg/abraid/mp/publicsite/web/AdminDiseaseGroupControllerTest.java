@@ -1,13 +1,17 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,16 +20,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the AdminDiseaseGroupController.
+ * Tests the AdminDiseaseGroupController class.
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminDiseaseGroupControllerTest {
+    private DiseaseService diseaseService;
+    private GeoJsonObjectMapper geoJsonObjectMapper;
+    private ModelRunWorkflowService modelRunWorkflowService;
+    private ModelRunService modelRunService;
+    private AdminDiseaseGroupController controller;
+
+    @Before
+    public void setUp() {
+        diseaseService = mock(DiseaseService.class);
+        geoJsonObjectMapper = new GeoJsonObjectMapper();
+        modelRunWorkflowService = mock(ModelRunWorkflowService.class);
+        modelRunService = mock(ModelRunService.class);
+        controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper, modelRunWorkflowService,
+                modelRunService);
+    }
+
     @Test
     public void showPageAddsAllDiseaseGroupsToInitialData() throws JsonProcessingException {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        GeoJsonObjectMapper geoJsonObjectMapper = new GeoJsonObjectMapper();
-        AdminDiseaseGroupController controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper);
         Model model = mock(Model.class);
 
         DiseaseGroup diseaseGroup1 = createDiseaseGroup(188, 5, "Leishmaniases", DiseaseGroupType.MICROCLUSTER,
@@ -45,6 +62,44 @@ public class AdminDiseaseGroupControllerTest {
         // Assert
         assertThat(result).isEqualTo("admindiseasegroup");
         verify(model, times(1)).addAttribute("initialData", expectedJson);
+    }
+
+    @Test
+    public void getModelRunInformation() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", 87, new DateTime("2014-07-02T14:15:16"));
+        ModelRun lastCompletedModelRun = new ModelRun();
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, null, null);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(87);
+
+        when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
+        when(modelRunService.getLastCompletedModelRun(diseaseGroupId)).thenReturn(lastCompletedModelRun);
+        when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        // Act
+        ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
+
+        // Assert
+        assertThat(entity.getStatusCode().value()).isEqualTo(200);
+        assertThat(entity.getBody().getLastModelRunText()).isEqualTo("requested on 2 Jul 2014 14:15:16");
+        assertThat(entity.getBody().getDiseaseOccurrencesText()).isEqualTo("none");
+        assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
+        assertThat(entity.getBody().isCanRunModel()).isFalse();
+        assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+    }
+
+    @Test
+    public void requestModelRun() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        controller.requestModelRun(diseaseGroupId);
+
+        // Assert
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestModelRun(eq(diseaseGroupId));
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

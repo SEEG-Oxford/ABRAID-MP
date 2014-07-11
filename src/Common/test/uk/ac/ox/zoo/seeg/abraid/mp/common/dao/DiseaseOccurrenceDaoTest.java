@@ -379,6 +379,34 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(count).isEqualTo(45);
     }
 
+    @Test
+    public void getDiseaseOccurrenceStatisticsWithSomeOccurrences() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        DiseaseOccurrenceStatistics statistics = diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
+
+        // Assert
+        assertThat(statistics.getOccurrenceCount()).isEqualTo(45);
+        assertThat(statistics.getMinimumOccurrenceDate()).isEqualTo(new DateTime("2014-02-24T17:35:29"));
+        assertThat(statistics.getMaximumOccurrenceDate()).isEqualTo(new DateTime("2014-02-27T08:06:46"));
+    }
+
+    @Test
+    public void getDiseaseOccurrenceStatisticsWithNoOccurrences() {
+        // Arrange
+        int diseaseGroupId = 1;
+
+        // Act
+        DiseaseOccurrenceStatistics statistics = diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
+
+        // Assert
+        assertThat(statistics.getOccurrenceCount()).isEqualTo(0);
+        assertThat(statistics.getMinimumOccurrenceDate()).isNull();
+        assertThat(statistics.getMaximumOccurrenceDate()).isNull();
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
                                                        boolean isGlobal) {
         // Arrange

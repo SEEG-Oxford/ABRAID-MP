@@ -126,4 +126,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
                 "diseaseGroupId", diseaseGroupId);
         return (long) query.uniqueResult();
     }
+
+    /**
+     * Gets statistics about the occurrences of the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The statistics.
+     */
+    public DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId) {
+        Query query = getParameterisedNamedQuery("getDiseaseOccurrenceStatistics", "diseaseGroupId", diseaseGroupId);
+        return (DiseaseOccurrenceStatistics) query.uniqueResult();
+    }
 }

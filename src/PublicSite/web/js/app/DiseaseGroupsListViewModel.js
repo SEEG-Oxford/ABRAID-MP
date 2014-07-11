@@ -4,10 +4,11 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (baseUrl, initialData) {
+    return function (baseUrl, initialData, diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.diseases = ko.observableArray(initialData);
-        self.selectedDisease = ko.observable(self.diseases()[0]);
+        self.diseaseGroups = ko.observableArray(initialData);
+        var initialDiseaseGroup = self.diseaseGroups()[0];
+        self.selectedDiseaseGroup = ko.observable(initialDiseaseGroup).publishOn(diseaseGroupSelectedEventName);
     };
 });
