@@ -23,4 +23,11 @@ public interface CountryDao {
      * occur as names are unique)
      */
     Country getByName(String name);
+
+    /**
+     * Gets the list of African countries that should be considered when calculating
+     * the minimum data spread required for a model run.
+     * @return The list of GAUL codes for the African countries used in minimum data spread calculation.
+     */
+    List<Integer> getCountriesForMinDataSpreadCalculation();
 }

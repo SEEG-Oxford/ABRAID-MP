@@ -71,13 +71,34 @@ public class DiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime validationProcessStartDate;
 
-    // The minimum number of new occurrences required to trigger a model run.
-    @Column(name = "model_run_min_new_occurrences")
-    private Integer modelRunMinNewOccurrences;
-
     // Whether or not the system has been approved by an administrator to run the weekly model automatically
     @Column(name = "automatic_model_runs")
     private boolean automaticModelRuns;
+
+    // The minimum number of new occurrences required to trigger a model run.
+    @Column(name = "min_new_occurrences_trigger")
+    private Integer minNewOccurrencesTrigger;
+
+    // The minimum number of occurrences required for a model run to go ahead.
+    @Column(name = "min_data_volume")
+    private Integer minDataVolume;
+
+    // The following parameters define the Minimum Data Spread conditions, which must be satisfied for a model run to
+    // go ahead: There must be at least one occurrence in [minDistinctCountries] and more than [highFrequencyThreshold]
+    // occurrences in [minHighFrequencyCountries].
+    @Column(name = "min_distinct_countries")
+    private Integer minDistinctCountries;
+
+    @Column(name = "high_frequency_threshold")
+    private Integer highFrequencyThreshold;
+
+    @Column(name = "min_high_frequency_countries")
+    private Integer minHighFrequencyCountries;
+
+    // If true, only the subset of countries (determined by forMinDataSpread flag on a Country) should be considered.
+    // Otherwise, all countries are considered.
+    @Column(name = "occurs_in_africa")
+    private Boolean occursInAfrica;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -142,7 +163,9 @@ public class DiseaseGroup {
         this.groupType = groupType;
     }
 
-    public String getPublicName() { return publicName; }
+    public String getPublicName() {
+        return publicName;
+    }
 
     public void setPublicName(String publicName) {
         this.publicName = publicName;
@@ -188,6 +211,7 @@ public class DiseaseGroup {
     public void setGlobal(Boolean isGlobal) {
         this.isGlobal = isGlobal;
     }
+
     public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
         return validatorDiseaseGroup;
     }
@@ -220,20 +244,64 @@ public class DiseaseGroup {
         this.validationProcessStartDate = validationProcessStartDate;
     }
 
-    public Integer getModelRunMinNewOccurrences() {
-        return modelRunMinNewOccurrences;
-    }
-
-    public void setModelRunMinNewOccurrences(Integer modelRunMinNewOccurrences) {
-        this.modelRunMinNewOccurrences = modelRunMinNewOccurrences;
-    }
-
     public boolean isAutomaticModelRunsEnabled() {
         return automaticModelRuns;
     }
 
     public void setAutomaticModelRuns(boolean automaticModelRuns) {
         this.automaticModelRuns = automaticModelRuns;
+    }
+
+    public Integer getMinNewOccurrencesTrigger() {
+        return minNewOccurrencesTrigger;
+    }
+
+    public void setMinNewOccurrencesTrigger(Integer modelRunMinNewOccurrences) {
+        this.minNewOccurrencesTrigger = modelRunMinNewOccurrences;
+    }
+
+    public Integer getMinDataVolume() {
+        return minDataVolume;
+    }
+
+    public void setMinDataVolume(Integer minDataVolume) {
+        this.minDataVolume = minDataVolume;
+    }
+
+    public Integer getMinDistinctCountries() {
+        return minDistinctCountries;
+    }
+
+    public void setMinDistinctCountries(Integer minDistinctCountries) {
+        this.minDistinctCountries = minDistinctCountries;
+    }
+
+    public Integer getHighFrequencyThreshold() {
+        return highFrequencyThreshold;
+    }
+
+    public void setHighFrequencyThreshold(Integer highFrequencyThreshold) {
+        this.highFrequencyThreshold = highFrequencyThreshold;
+    }
+
+    public Integer getMinHighFrequencyCountries() {
+        return minHighFrequencyCountries;
+    }
+
+    public void setMinHighFrequencyCountries(Integer minHighFrequencyCountries) {
+        this.minHighFrequencyCountries = minHighFrequencyCountries;
+    }
+
+    /**
+     * Whether the disease group is known to occur in Africa.
+     * @return True if the disease group occurs in Africa.
+     */
+    public Boolean occursInAfrica() {
+        return occursInAfrica;
+    }
+
+    public void setOccursInAfrica(Boolean occursInAfrica) {
+        this.occursInAfrica = occursInAfrica;
     }
 
     public DateTime getCreatedDate() {
@@ -250,14 +318,23 @@ public class DiseaseGroup {
         DiseaseGroup that = (DiseaseGroup) o;
 
         if (automaticModelRuns != that.automaticModelRuns) return false;
+        if (occursInAfrica != that.occursInAfrica) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (groupType != that.groupType) return false;
+        if (highFrequencyThreshold != null ? !highFrequencyThreshold.equals(that.highFrequencyThreshold) : that.highFrequencyThreshold != null)
+            return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
         if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
             return false;
-        if (modelRunMinNewOccurrences != null ? !modelRunMinNewOccurrences.equals(that.modelRunMinNewOccurrences) : that.modelRunMinNewOccurrences != null)
+        if (minDataVolume != null ? !minDataVolume.equals(that.minDataVolume) : that.minDataVolume != null)
+            return false;
+        if (minDistinctCountries != null ? !minDistinctCountries.equals(that.minDistinctCountries) : that.minDistinctCountries != null)
+            return false;
+        if (minHighFrequencyCountries != null ? !minHighFrequencyCountries.equals(that.minHighFrequencyCountries) : that.minHighFrequencyCountries != null)
+            return false;
+        if (minNewOccurrencesTrigger != null ? !minNewOccurrencesTrigger.equals(that.minNewOccurrencesTrigger) : that.minNewOccurrencesTrigger != null)
             return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
@@ -286,8 +363,13 @@ public class DiseaseGroup {
         result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (validationProcessStartDate != null ? validationProcessStartDate.hashCode() : 0);
-        result = 31 * result + (modelRunMinNewOccurrences != null ? modelRunMinNewOccurrences.hashCode() : 0);
         result = 31 * result + (automaticModelRuns ? 1 : 0);
+        result = 31 * result + (minNewOccurrencesTrigger != null ? minNewOccurrencesTrigger.hashCode() : 0);
+        result = 31 * result + (minDataVolume != null ? minDataVolume.hashCode() : 0);
+        result = 31 * result + (minDistinctCountries != null ? minDistinctCountries.hashCode() : 0);
+        result = 31 * result + (highFrequencyThreshold != null ? highFrequencyThreshold.hashCode() : 0);
+        result = 31 * result + (minHighFrequencyCountries != null ? minHighFrequencyCountries.hashCode() : 0);
+        result = 31 * result + (occursInAfrica ? 1 : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

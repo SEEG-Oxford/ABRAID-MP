@@ -104,6 +104,7 @@ CREATE TABLE alert (
 CREATE TABLE country (
     gaul_code integer NOT NULL,
     name varchar(100) NOT NULL,
+    for_min_data_spread boolean,
     geom geometry(MULTIPOLYGON, 4326)
 );
 
@@ -141,8 +142,13 @@ CREATE TABLE disease_group (
     weighting double precision,
     last_model_run_prep_date timestamp,
     validation_process_start_date timestamp,
-    model_run_min_new_occurrences integer,
     automatic_model_runs boolean NOT NULL,
+    min_new_occurrences_trigger integer,
+    min_data_volume integer,
+    min_distinct_countries integer,
+    high_frequency_threshold integer,
+    min_high_frequency_countries integer,
+    occurs_in_africa boolean,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
@@ -242,6 +248,7 @@ CREATE TABLE location (
     admin_unit_qc_gaul_code integer,
     admin_unit_global_gaul_code integer,
     admin_unit_tropical_gaul_code integer,
+    country_gaul_code integer,
     has_passed_qc boolean NOT NULL,
     qc_message varchar(1000)
 );

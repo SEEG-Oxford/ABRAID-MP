@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
@@ -26,6 +27,7 @@ public class ModelRunRequester {
     private ModelWrapperWebService modelWrapperWebService;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
+    private LocationService locationService;
 
     private static final Logger LOGGER = Logger.getLogger(ModelRunRequester.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
@@ -33,10 +35,11 @@ public class ModelRunRequester {
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
-                             ModelRunService modelRunService) {
+                             ModelRunService modelRunService, LocationService locationService) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
+        this.locationService = locationService;
     }
 
     /**
@@ -44,9 +47,9 @@ public class ModelRunRequester {
      * @param diseaseGroupId The id of the disease group.
      */
     public void requestModelRun(Integer diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-
-        if (occurrences.size() > 0) {
+        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        if (occurrences != null) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
             DateTime requestDate = DateTime.now();

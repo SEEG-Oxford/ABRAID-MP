@@ -58,6 +58,16 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     * Gets the list of African countries that should be considered when calculating
+     * the minimum data spread required for a model run.
+     * @return The list of GAUL codes for the African countries used in minimum data spread calculation.
+     */
+    @Override
+    public List<Integer> getCountriesForMinDataSpreadCalculation() {
+        return countryDao.getCountriesForMinDataSpreadCalculation();
+    }
+
+    /**
      * Gets all administrative units.
      * @return All administrative units.
      */
@@ -86,6 +96,15 @@ public class LocationServiceImpl implements LocationService {
      */
     public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
         return nativeSQL.findAdminUnitThatContainsPoint(point, false, adminLevel);
+    }
+
+    /**
+     * Finds the country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the country that contains the specified point.
+     */
+    public Integer findCountryThatContainsPoint(Point point) {
+        return nativeSQL.findCountryThatContainsPoint(point);
     }
 
     /**

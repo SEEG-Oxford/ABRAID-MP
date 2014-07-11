@@ -44,6 +44,16 @@ public class NativeSQLImpl implements NativeSQL {
     }
 
     /**
+     * Finds the country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the country that contains the specified point.
+     */
+    @Override
+    public Integer findCountryThatContainsPoint(Point point) {
+        return (Integer) uniqueResult(COUNTRY_CONTAINS_POINT_QUERY, "point", point);
+    }
+
+    /**
      * Loads the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
      * @param rasterColumnName The column name of the raster in the model_run table.

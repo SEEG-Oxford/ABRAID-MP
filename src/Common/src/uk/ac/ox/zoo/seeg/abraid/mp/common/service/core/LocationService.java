@@ -41,6 +41,13 @@ public interface LocationService {
     List<HealthMapCountry> getAllHealthMapCountries();
 
     /**
+     * Gets the list of African countries that should be considered when calculating
+     * the minimum data spread required for a model run.
+     * @return The list of GAUL codes for the African countries used in minimum data spread calculation.
+     */
+    List<Integer> getCountriesForMinDataSpreadCalculation();
+
+    /**
      * Gets all administrative units for QC.
      * @return All administrative units for QC.
      */
@@ -63,6 +70,13 @@ public interface LocationService {
      * admin units found.
      */
     Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
+
+    /**
+     * Finds the country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the country that contains the specified point.
+     */
+    Integer findCountryThatContainsPoint(Point point);
 
     /**
      * Gets all land-sea borders.

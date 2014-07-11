@@ -17,7 +17,7 @@ public class JsonDiseaseGroup {
     private Boolean isGlobal;
     private Integer validatorDiseaseGroupId;
     private Double weighting;
-    private Integer modelRunMinNewOccurrences;
+    private Integer minNewOccurrencesTrigger;
     private boolean automaticModelRuns;
 
     public JsonDiseaseGroup() {
@@ -38,7 +38,7 @@ public class JsonDiseaseGroup {
             this.validatorDiseaseGroupId = diseaseGroup.getValidatorDiseaseGroup().getId();
         }
         this.weighting = diseaseGroup.getWeighting();
-        this.modelRunMinNewOccurrences = diseaseGroup.getModelRunMinNewOccurrences();
+        this.minNewOccurrencesTrigger = diseaseGroup.getMinNewOccurrencesTrigger();
         this.automaticModelRuns = diseaseGroup.isAutomaticModelRunsEnabled();
     }
 
@@ -122,12 +122,12 @@ public class JsonDiseaseGroup {
         this.weighting = weighting;
     }
 
-    public Integer getModelRunMinNewOccurrences() {
-        return modelRunMinNewOccurrences;
+    public Integer getMinNewOccurrencesTrigger() {
+        return minNewOccurrencesTrigger;
     }
 
-    public void setModelRunMinNewOccurrences(Integer modelRunMinNewOccurrences) {
-        this.modelRunMinNewOccurrences = modelRunMinNewOccurrences;
+    public void setMinNewOccurrencesTrigger(Integer minNewOccurrencesTrigger) {
+        this.minNewOccurrencesTrigger = minNewOccurrencesTrigger;
     }
 
     public boolean isAutomaticModelRuns() {
