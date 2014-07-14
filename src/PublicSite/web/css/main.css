@@ -110,3 +110,6 @@ label.side-by-side {
     padding-right: 12px;
     margin-bottom: 0;
 }
+.form-group-radio-inline {
+    padding-bottom: 7px;
+}

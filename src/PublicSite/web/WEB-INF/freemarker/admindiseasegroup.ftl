@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-sm-6">
                     <form class="form-horizontal" role="form">
-                        <div class="form-group">
+                        <div class="form-group form-group-radio-inline">
                             <label for="disease-group-type" class="col-sm-5 control-label">Group Type</label>
                             <div class="col-sm-7" id="disease-group-type" data-bind="foreach: groupTypes">
                                 <label class="radio-inline">
@@ -74,7 +74,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group form-group-radio-inline">
                             <label for="global-or-tropical" class="col-sm-5 control-label">Global or Tropical</label>
                             <div class="col-sm-7" id="global-or-tropical">
                                 <label class="radio-inline">
