@@ -436,17 +436,18 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         double minimumValidationWeighting = 0.7;
         DateTime minimumOccurrenceDate = DateTime.now();
         List<Integer> feedIds = new ArrayList<>();
+        boolean mustHaveFinalWeighting = true;
         List<DiseaseOccurrenceForDiseaseExtent> expectedOccurrences = new ArrayList<>();
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setGlobal(isGlobal);
 
         when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
-                minimumOccurrenceDate, feedIds, isGlobal)).thenReturn(expectedOccurrences);
+                minimumOccurrenceDate, feedIds, isGlobal, mustHaveFinalWeighting)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrenceForDiseaseExtent> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
-                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds);
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds, mustHaveFinalWeighting);
 
         // Assert
         assertThat(expectedOccurrences).isSameAs(actualOccurrences);

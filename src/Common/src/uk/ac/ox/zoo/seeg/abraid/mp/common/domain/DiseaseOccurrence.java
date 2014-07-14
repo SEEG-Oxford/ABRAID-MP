@@ -30,14 +30,6 @@ import javax.persistence.Table;
                         "(select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesForDiseaseExtent",
-                query = DiseaseOccurrence.DISEASE_EXTENT_QUERY
-        ),
-        @NamedQuery(
-                name = "getDiseaseOccurrencesForDiseaseExtentByFeedIds",
-                query = DiseaseOccurrence.DISEASE_EXTENT_QUERY + " and d.alert.feed.id in :feedIds"
-        ),
-        @NamedQuery(
                 name = "getDiseaseOccurrencesInValidation",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = false"
@@ -73,21 +65,6 @@ public class DiseaseOccurrence {
             "inner join fetch d.alert.feed " +
             "inner join fetch d.alert.feed.provenance " +
             "inner join fetch d.diseaseGroup ";
-
-    /**
-     * An HQL fragment used to get disease occurrences for a disease extent.
-     */
-    public static final String DISEASE_EXTENT_QUERY =
-            "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, case when :isGlobal = true then " +
-            "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
-            "from DiseaseOccurrence d " +
-            "where d.diseaseGroup.id = :diseaseGroupId " +
-            "and d.validationWeighting >= :minimumValidationWeighting " +
-            "and d.occurrenceDate >= :minimumOccurrenceDate " +
-            "and d.location.hasPassedQc = true " +
-            "and ((:isGlobal = true and d.location.adminUnitGlobalGaulCode is not null) or " +
-            "     (:isGlobal = false and d.location.adminUnitTropicalGaulCode is not null))";
 
     // The primary key.
     @Id

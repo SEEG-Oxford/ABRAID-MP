@@ -267,15 +267,19 @@ public class DiseaseExtentGeneratorHelperTest {
     }
 
     private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper() {
-        return new DiseaseExtentGeneratorHelper(
-                defaultDiseaseGroup, defaultParameters, emptyDiseaseExtent, defaultAdminUnits, emptyOccurrences,
+        DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
+                defaultDiseaseGroup, defaultParameters, emptyDiseaseExtent, defaultAdminUnits,
                 defaultDiseaseExtentClasses);
+        helper.setOccurrences(emptyOccurrences);
+        return helper;
     }
 
     private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper(DiseaseExtentParameters parameters) {
-        return new DiseaseExtentGeneratorHelper(
-                defaultDiseaseGroup, parameters, emptyDiseaseExtent, defaultAdminUnits, emptyOccurrences,
+        DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
+                defaultDiseaseGroup, parameters, emptyDiseaseExtent, defaultAdminUnits,
                 defaultDiseaseExtentClasses);
+        helper.setOccurrences(emptyOccurrences);
+        return helper;
     }
 
     private List<? extends AdminUnitGlobalOrTropical> createDefaultAdminUnits() {

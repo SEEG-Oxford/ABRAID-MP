@@ -25,8 +25,8 @@ public class DiseaseExtentGeneratorHelper {
     private DiseaseExtentParameters parameters;
     private List<AdminUnitDiseaseExtentClass> currentDiseaseExtent;
     private List<? extends AdminUnitGlobalOrTropical> adminUnits;
-    private List<DiseaseOccurrenceForDiseaseExtent> occurrences;
     private List<DiseaseExtentClass> diseaseExtentClasses;
+    private List<DiseaseOccurrenceForDiseaseExtent> occurrences;
     private List<AdminUnitReview> reviews;
 
     // Working fields
@@ -38,18 +38,20 @@ public class DiseaseExtentGeneratorHelper {
     public DiseaseExtentGeneratorHelper(DiseaseGroup diseaseGroup, DiseaseExtentParameters parameters,
                                         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent,
                                         List<? extends AdminUnitGlobalOrTropical> adminUnits,
-                                        List<DiseaseOccurrenceForDiseaseExtent> occurrences,
                                         List<DiseaseExtentClass> diseaseExtentClasses) {
         this.diseaseGroup = diseaseGroup;
         this.parameters = parameters;
         this.currentDiseaseExtent = currentDiseaseExtent;
         this.adminUnits = adminUnits;
-        this.occurrences = occurrences;
         this.diseaseExtentClasses = diseaseExtentClasses;
     }
 
     public DiseaseGroup getDiseaseGroup() {
         return diseaseGroup;
+    }
+
+    public DiseaseExtentParameters getParameters() {
+        return parameters;
     }
 
     public List<AdminUnitDiseaseExtentClass> getCurrentDiseaseExtent() {
@@ -70,6 +72,10 @@ public class DiseaseExtentGeneratorHelper {
 
     public Map<Integer, List<AdminUnitReview>> getReviewsByAdminUnit() {
         return reviewsByAdminUnit;
+    }
+
+    public void setOccurrences(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+        this.occurrences = occurrences;
     }
 
     public void setReviews(List<AdminUnitReview> reviews) {

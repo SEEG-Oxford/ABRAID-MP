@@ -245,23 +245,28 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesForDiseaseExtentWithNullFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(null, 22, false);
+    public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, null, false, false, 42);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithZeroFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 22, false);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, new ArrayList<Integer>(), false, false, 42);
     }
 
     @Test
-    public void getDiseaseOccurrencesForDiseaseExtentWithSomeFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(Arrays.asList(1, 4, 8), 17, false);
+    public void getDiseaseOccurrencesForDiseaseExtentWithAllParameters() {
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), Arrays.asList(1, 4, 8), false, true, 17);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
-        getDiseaseOccurrencesForDiseaseExtent(new ArrayList<Integer>(), 23, true);
+        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), null, true, true, 4);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentWithSomeWeightingsNull() {
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), Arrays.asList(1, 4, 8), false, true, 17);
     }
 
     @Test
@@ -306,15 +311,15 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned() {
-        // Arrange - There are 45 disease occurrences for dengue, none of which have a final weighting.
+        // Arrange
         int diseaseGroupId = 87;
-        setWeightingOfAllOccurrencesToNull();
+        setFinalWeightingOfAllOccurrencesToNull();
 
         // Act
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
 
         // Assert
-        assertThat(occurrences).hasSize(45);
+        assertThat(occurrences).hasSize(42);
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
             assertThat(occurrence.isValidated()).isTrue();
@@ -358,7 +363,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return !(o1.getOccurrenceDate().isBefore(o2.getOccurrenceDate()));
     }
 
-    private void setWeightingOfAllOccurrencesToNull() {
+    private void setFinalWeightingOfAllOccurrencesToNull() {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getAll()) {
             occurrence.setFinalWeighting(null);
             diseaseOccurrenceDao.save(occurrence);
@@ -379,17 +384,16 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(count).isEqualTo(45);
     }
 
-    private void getDiseaseOccurrencesForDiseaseExtent(List<Integer> feedIds, int expectedOccurrenceCount,
-                                                       boolean isGlobal) {
+    private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
+                                                       DateTime minimumOccurrenceDate, List<Integer> feedIds,
+                                                       boolean isGlobal, boolean mustHaveFinalWeighting,
+                                                       int expectedOccurrenceCount) {
         // Arrange
-        int diseaseGroupId = 87; // Dengue
-        double minimumValidationWeight = 0.6;
-        DateTime minimumOccurrenceDate = new DateTime("2014-02-25");
 
         // Act
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
-                        minimumOccurrenceDate, feedIds, isGlobal);
+                        minimumOccurrenceDate, feedIds, isGlobal, mustHaveFinalWeighting);
 
         // Assert
         assertThat(occurrences).hasSize(expectedOccurrenceCount);
