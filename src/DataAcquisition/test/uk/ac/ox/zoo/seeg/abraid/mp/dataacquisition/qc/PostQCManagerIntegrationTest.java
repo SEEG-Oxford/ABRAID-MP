@@ -82,8 +82,10 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     @Test
     public void doesNotFindAdminUnitsIfOutsideGeometry() {
         Location location = new Location(-40, 50, LocationPrecision.PRECISE);
+        location.setHasPassedQc(true);
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isNull();
         assertThat(location.getAdminUnitTropicalGaulCode()).isNull();
+        assertThat(location.hasPassedQc()).isFalse();
     }
 }
