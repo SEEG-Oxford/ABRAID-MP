@@ -25,6 +25,7 @@ public class PostQCManager {
     public void runPostQCProcesses(Location location) {
         assignDiseaseExtentAdminUnits(location);
         assignCountry(location);
+        failQCIfAnyGaulCodesAreMissing(location);
         setResolutionWeighting(location);
     }
 
@@ -58,6 +59,14 @@ public class PostQCManager {
     private void assignCountry(Location location) {
         Integer countryGaulCode = locationService.findCountryThatContainsPoint(location.getGeom());
         location.setCountryGaulCode(countryGaulCode);
+    }
+
+    private void failQCIfAnyGaulCodesAreMissing(Location location) {
+        // A sanity check - this should only happen if the shapefiles are inconsistent or the snapping routines fail
+        if (location.getAdminUnitGlobalGaulCode() == null || location.getAdminUnitTropicalGaulCode() == null ||
+                location.getCountryGaulCode() == null) {
+            location.setHasPassedQc(false);
+        }
     }
 
     private void setResolutionWeighting(Location location) {
