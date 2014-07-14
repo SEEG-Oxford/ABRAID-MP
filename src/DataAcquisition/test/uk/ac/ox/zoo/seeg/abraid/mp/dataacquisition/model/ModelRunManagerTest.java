@@ -131,7 +131,7 @@ public class ModelRunManagerTest {
             int thresholdAdjustment = newOccurrenceCountOverThreshold ? -1 : +1;
             minNewOccurrences = newOccurrencesCount + thresholdAdjustment;
         }
-        diseaseGroup.setModelRunMinNewOccurrences(minNewOccurrences);
+        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
     }
 
     private void mockGetDiseaseGroupById() {

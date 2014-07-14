@@ -35,7 +35,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
         DateTime validationProcessStartDate = DateTime.now().minusHours(1);
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
-        int modelRunMinNewOccurrences = 100;
+        int minNewOccurrences = 100;
         double weighting = 0.5;
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -47,7 +47,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         diseaseGroup.setValidationProcessStartDate(validationProcessStartDate);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
-        diseaseGroup.setModelRunMinNewOccurrences(modelRunMinNewOccurrences);
+        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
         diseaseGroup.setWeighting(weighting);
         diseaseGroup.setGlobal(true);
 
@@ -69,7 +69,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getValidatorDiseaseGroup().getId()).isEqualTo(validatorDiseaseGroupId);
         assertThat(diseaseGroup.getValidationProcessStartDate()).isEqualTo(validationProcessStartDate);
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
-        assertThat(diseaseGroup.getModelRunMinNewOccurrences()).isEqualTo(modelRunMinNewOccurrences);
+        assertThat(diseaseGroup.getMinNewOccurrencesTrigger()).isEqualTo(minNewOccurrences);
         assertThat(diseaseGroup.getWeighting()).isEqualTo(weighting);
         assertThat(diseaseGroup.isGlobal()).isTrue();
         assertThat(diseaseGroup.getParentGroup()).isNull();

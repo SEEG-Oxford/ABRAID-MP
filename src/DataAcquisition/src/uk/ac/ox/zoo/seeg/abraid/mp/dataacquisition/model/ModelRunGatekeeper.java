@@ -56,7 +56,7 @@ public class ModelRunGatekeeper {
     }
 
     private boolean dueToRun(DiseaseGroup diseaseGroup) {
-        if (diseaseGroup.getModelRunMinNewOccurrences() == null) {
+        if (diseaseGroup.getMinNewOccurrencesTrigger() == null) {
             LOGGER.info(NO_MODEL_RUN_MIN_NEW_OCCURRENCES);
             return false;
         } else {
@@ -80,7 +80,7 @@ public class ModelRunGatekeeper {
 
     private boolean enoughNewOccurrences(DiseaseGroup diseaseGroup) {
         long count = diseaseService.getNewOccurrencesCountByDiseaseGroup(diseaseGroup.getId());
-        int min = diseaseGroup.getModelRunMinNewOccurrences();
+        int min = diseaseGroup.getMinNewOccurrencesTrigger();
         final boolean hasEnoughNewOccurrences = count > min;
         LOGGER.info(hasEnoughNewOccurrences ? ENOUGH_NEW_OCCURRENCES : NOT_ENOUGH_NEW_OCCURRENCES);
         return hasEnoughNewOccurrences;

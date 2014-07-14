@@ -19,6 +19,13 @@ public interface NativeSQL {
     Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal, Character adminLevel);
 
     /**
+     * Finds the country that contains the specified point.
+     * @param point The point.
+     * @return The GAUL code of the country that contains the specified point.
+     */
+    Integer findCountryThatContainsPoint(Point point);
+
+    /**
      * Loads the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
      * @param rasterColumnName The column name of the raster in the model_run table.

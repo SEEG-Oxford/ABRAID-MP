@@ -40,4 +40,11 @@ ALTER TABLE country ALTER geom SET NOT NULL;
 DROP TABLE admin_unit_simplified_global;
 DROP TABLE admin_unit_simplified_tropical;
 
+-- Amend country table to indicate the 58 African countries that should be considered when calculating the minimum data spread
+UPDATE country SET for_min_data_spread = true WHERE gaul_code in
+(4, 6, 8, 29, 35, 42, 43, 45, 47, 49, 50, 58, 59, 66, 68, 70, 74, 76, 77, 79, 89, 90, 94, 102, 105, 106, 133, 142, 144, 145, 150, 152, 155,
+159, 161, 169, 170, 172, 181, 182, 205, 214, 217, 221, 226, 235, 243, 248, 253, 257, 268, 270, 271, 40760, 40762, 40765, 61013, 1013965); 
+UPDATE country SET for_min_data_spread = false WHERE for_min_data_spread is null;
+ALTER TABLE country ALTER for_min_data_spread SET NOT NULL;
+
 VACUUM ANALYZE;

@@ -340,6 +340,24 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         }
     }
 
+    @Test
+    public void getDiseaseOccurrencesForModelRunRequestOrdersByOccurrenceDateDescending() {
+        // Arrange
+        int diseaseGroupId = 87; // Dengue
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+
+        // Assert
+        for (int i = 0; i < occurrences.size() - 1; i++) {
+            assertThat(isDescendingChronologically(occurrences.get(i), occurrences.get(i + 1))).isTrue();
+        }
+    }
+
+    private boolean isDescendingChronologically(DiseaseOccurrence o1, DiseaseOccurrence o2) {
+        return !(o1.getOccurrenceDate().isBefore(o2.getOccurrenceDate()));
+    }
+
     private void setWeightingOfAllOccurrencesToNull() {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getAll()) {
             occurrence.setFinalWeighting(null);

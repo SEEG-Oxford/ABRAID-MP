@@ -1,250 +1,250 @@
-2	Aksai Chin	
-3	Albania	
-4	Algeria	
-5	American Samoa	
-6	Sudan	
-7	Andorra	
-8	Angola	
-9	Anguilla	
-11	Antigua and Barbuda	
-12	Argentina	
-13	Armenia	
-14	Aruba	
-15	Arunachal Pradesh	
-17	Australia	
-18	Austria	
-19	Azerbaijan	
-20	Bahamas	
-21	Bahrain	
-23	Bangladesh	
-24	Barbados	
-26	Belarus	
-27	Belgium	
-28	Belize	
-29	Benin	
-30	Bermuda	
-31	Bhutan	
-33	Bolivia	
-34	Bosnia and Herzegovina	
-35	Botswana	
-36	Bouvet Island	
-37	Brazil	
-38	British Indian Ocean Territory	
-39	British Virgin Islands	
-40	Brunei Darussalam	
-41	Bulgaria	
-42	Burkina Faso	
-43	Burundi	
-44	Cambodia	
-45	Cameroon	
-46	Canada	
-47	Cape Verde	
-48	Cayman Islands	
-49	Central African Republic	
-50	Chad	
-51	Chile	
-52	China/India	
-53	China	
-54	Christmas Island	
-57	Colombia	
-58	Comoros	
-59	Congo	
-60	Cook Islands	
-61	Costa Rica	
-62	Croatia	
-63	Cuba	
-64	Cyprus	
-65	Czech Republic	
-66	Côte d'Ivoire	
-67	Dem People's Rep of Korea	
-68	Democratic Republic of the Congo	
-69	Denmark	
-70	Djibouti	
-71	Dominica	
-72	Dominican Republic	
-73	Ecuador	
-74	South Sudan	
-75	El Salvador	
-76	Equatorial Guinea	
-77	Eritrea	
-78	Estonia	
-79	Ethiopia	
-81	Falkland Islands (Malvinas)	
-82	Faroe Islands	
-83	Fiji	
-84	Finland	
-85	France	
-86	French Guiana	
-87	French Polynesia	
-89	Gabon	
-90	Gambia	
-91	Gaza Strip	
-92	Georgia	
-93	Germany	0106000020E6100000010000000103000000010000000500000000000000000020400000000000804A4000000000000022400000000000804A4000000000000022400000000000004B4000000000000020400000000000004B4000000000000020400000000000804A40
-94	Ghana	
-95	Gibraltar	
-97	Greece	
-98	Greenland	
-99	Grenada	
-100	Guadeloupe	
-101	Guam	
-102	Abyei	
-103	Guatemala	
-104	Guernsey	
-105	Guinea-Bissau	
-106	Guinea	
-107	Guyana	
-108	Haiti	
-109	Heard Island and McDonald Islands	
-110	Holy See	
-111	Honduras	
-113	Hungary	
-114	Iceland	
-115	India	
-117	Iran  (Islamic Republic of)	
-118	Iraq	
-119	Ireland	
-120	Isle of Man	
-121	Israel	
-122	Italy	
-123	Jamaica	
-126	Japan	0106000020E610000001000000010300000001000000050000000000000000406140000000000000424000000000004061400000000000804240000000000060614000000000008042400000000000606140000000000000424000000000004061400000000000004240
-128	Jersey	
-130	Jordan	
-132	Kazakhstan	
-133	Kenya	
-134	Kingman Reef	
-135	Kiribati	
-136	Kuril islands	
-137	Kuwait	
-138	Kyrgyzstan	
-139	Lao People's Democratic Republic	
-140	Latvia	
-141	Lebanon	
-142	Lesotho	
-144	Liberia	
-145	Libya	
-146	Liechtenstein	
-147	Lithuania	
-148	Luxembourg	
-150	Madagascar	
-151	Madeira Islands	
-152	Malawi	
-153	Malaysia	0106000020E610000001000000010300000001000000050000000000000000405940000000000000084000000000004059400000000000001040000000000080594000000000000010400000000000805940000000000000084000000000004059400000000000000840
-155	Mali	
-156	Malta	
-158	Martinique	
-159	Mauritania	
-160	Mauritius	
-161	Mayotte	
-163	Micronesia (Federated States of)	
-165	Moldova, Republic of	
-166	Monaco	
-167	Mongolia	
-168	Montserrat	
-169	Morocco	
-170	Mozambique	
-172	Namibia	
-175	Nepal	
-176	Netherlands Antilles	
-177	Netherlands	
-178	New Caledonia	
-179	New Zealand	0106000020E61000000100000001030000000100000005000000000000000080654000000000008045C0000000000080654000000000000045C00000000000A0654000000000000045C00000000000A0654000000000008045C0000000000080654000000000008045C0
-180	Nicaragua	
-181	Niger	
-182	Nigeria	
-183	Niue	
-184	Norfolk Island	
-185	Northern Mariana Islands	
-186	Norway	
-187	Oman	
-188	Pakistan	
-189	Palau	
-191	Panama	
-194	Paraguay	
-196	Philippines	
-197	Pitcairn	
-198	Poland	
-199	Portugal	
-200	Puerto Rico	
-201	Qatar	
-203	Romania	
-204	Russian Federation	
-205	Rwanda	
-206	Réunion	
-207	Saint Helena	
-208	Saint Kitts and Nevis	
-209	Saint Lucia	
-210	Saint Pierre et Miquelon	
-211	Saint Vincent and the Grenadines	
-212	Samoa	
-213	San Marino	
-214	Sao Tome and Principe	
-215	Saudi Arabia	
-217	Senegal	
-220	Seychelles	
-221	Sierra Leone	
-222	Singapore	
-223	Slovakia	
-224	Slovenia	
-226	Somalia	
-228	South Georgia and the South Sandwich Islands	
-229	Spain	
-231	Sri Lanka	
-233	Suriname	
-234	Svalbard and Jan Mayen Islands	
-235	Swaziland	
-236	Sweden	
-237	Switzerland	
-238	Syrian Arab Republic	
-239	Tajikistan	
-240	Thailand	
-241	The former Yugoslav Republic of Macedonia	
-242	Timor-Leste	
-243	Togo	
-245	Tonga	
-246	Trinidad and Tobago	
-248	Tunisia	
-249	Turkey	
-250	Turkmenistan	
-251	Turks and Caicos islands	
-253	Uganda	
-254	Ukraine	
-255	United Arab Emirates	
-256	U.K. of Great Britain and Northern Ireland	
-257	United Republic of Tanzania	
-258	United States Virgin Islands	
-260	Uruguay	
-261	Uzbekistan	
-262	Vanuatu	
-263	Venezuela	
-266	Wallis and Futuna	
-267	West Bank	
-268	Western Sahara	
-269	Yemen	
-270	Zambia	
-271	Zimbabwe	
-894	Easter Island	
-2647	Montenegro	
-2648	Serbia	
-33364	Hong Kong	
-40760	Hala'ib triangle	
-40762	Ma'tan al-Sarra	
-40763	Dhekelia and Akrotiri SBA	
-40765	Egypt	
-61013	Ilemi triangle	
-74578	Azores Islands	
-229010	Canary Islands	
-259002	United States of America	0106000020E610000001000000010300000001000000040000006D58535914D655C052B7B3AF3C6846406D58535914D655C0000000000000464000000000000056C000000000000046406D58535914D655C052B7B3AF3C684640
-1006344	Mexico	0106000020E6100000010000000103000000010000000500000000000000000059C0000000000000334000000000000059C000000000000034400000000000C058C000000000000034400000000000C058C0000000000000334000000000000059C00000000000003340
-1011440	Myanmar	
-1011441	Papua New Guinea	
-1011442	Peru	
-1011443	Korea, Republic of	
-1011444	Solomon Islands	
-1011446	Afghanistan	
-1011447	Viet Nam	
-1012935	Jammu Kashmir	
-1012936	Kashmir	
-1013696	Indonesia	
-1013965	South Africa	
+2	Aksai Chin	f	
+3	Albania	f	
+4	Algeria	t	
+5	American Samoa	f	
+6	Sudan	t	
+7	Andorra	f	
+8	Angola	t	
+9	Anguilla	f	
+11	Antigua and Barbuda	f	
+12	Argentina	f	
+13	Armenia	f	
+14	Aruba	f	
+15	Arunachal Pradesh	f	
+17	Australia	f	
+18	Austria	f	
+19	Azerbaijan	f	
+20	Bahamas	f	
+21	Bahrain	f	
+23	Bangladesh	f	
+24	Barbados	f	
+26	Belarus	f	
+27	Belgium	f	
+28	Belize	f	
+29	Benin	t	
+30	Bermuda	f	
+31	Bhutan	f	
+33	Bolivia	f	
+34	Bosnia and Herzegovina	f	
+35	Botswana	t	
+36	Bouvet Island	f	
+37	Brazil	f	
+38	British Indian Ocean Territory	f	
+39	British Virgin Islands	f	
+40	Brunei Darussalam	f	
+41	Bulgaria	f	
+42	Burkina Faso	t	
+43	Burundi	t	
+44	Cambodia	f	
+45	Cameroon	t	
+46	Canada	f	
+47	Cape Verde	t	
+48	Cayman Islands	f	
+49	Central African Republic	t	
+50	Chad	t	
+51	Chile	f	
+52	China/India	f	
+53	China	f	
+54	Christmas Island	f	
+57	Colombia	f	
+58	Comoros	t	
+59	Congo	t	
+60	Cook Islands	f	
+61	Costa Rica	f	
+62	Croatia	f	
+63	Cuba	f	
+64	Cyprus	f	
+65	Czech Republic	f	
+66	Côte d'Ivoire	t	
+67	Dem People's Rep of Korea	f	
+68	Democratic Republic of the Congo	t	
+69	Denmark	f	
+70	Djibouti	t	
+71	Dominica	f	
+72	Dominican Republic	f	
+73	Ecuador	f	
+74	South Sudan	t	
+75	El Salvador	f	
+76	Equatorial Guinea	t	
+77	Eritrea	t	
+78	Estonia	f	
+79	Ethiopia	t	
+81	Falkland Islands (Malvinas)	f	
+82	Faroe Islands	f	
+83	Fiji	f	
+84	Finland	f	
+85	France	f	
+86	French Guiana	f	
+87	French Polynesia	f	
+89	Gabon	t	
+90	Gambia	t	
+91	Gaza Strip	f	
+92	Georgia	f	
+93	Germany	f	0106000020E6100000010000000103000000010000000500000000000000000020400000000000804A4000000000000022400000000000804A4000000000000022400000000000004B4000000000000020400000000000004B4000000000000020400000000000804A40
+94	Ghana	t	
+95	Gibraltar	f	
+97	Greece	f	
+98	Greenland	f	
+99	Grenada	f	
+100	Guadeloupe	f	
+101	Guam	f	
+102	Abyei	t	
+103	Guatemala	f	
+104	Guernsey	f	
+105	Guinea-Bissau	t	
+106	Guinea	t	
+107	Guyana	f	
+108	Haiti	f	
+109	Heard Island and McDonald Islands	f	
+110	Holy See	f	
+111	Honduras	f	
+113	Hungary	f	
+114	Iceland	f	
+115	India	f	
+117	Iran  (Islamic Republic of)	f	
+118	Iraq	f	
+119	Ireland	f	
+120	Isle of Man	f	
+121	Israel	f	
+122	Italy	f	
+123	Jamaica	f	
+126	Japan	f	0106000020E610000001000000010300000001000000050000000000000000406140000000000000424000000000004061400000000000804240000000000060614000000000008042400000000000606140000000000000424000000000004061400000000000004240
+128	Jersey	f	
+130	Jordan	f	
+132	Kazakhstan	f	
+133	Kenya	t	
+134	Kingman Reef	f	
+135	Kiribati	f	
+136	Kuril islands	f	
+137	Kuwait	f	
+138	Kyrgyzstan	f	
+139	Lao People's Democratic Republic	f	
+140	Latvia	f	
+141	Lebanon	f	
+142	Lesotho	t	
+144	Liberia	t	
+145	Libya	t	
+146	Liechtenstein	f	
+147	Lithuania	f	
+148	Luxembourg	f	
+150	Madagascar	t	
+151	Madeira Islands	f	
+152	Malawi	t	
+153	Malaysia	f	0106000020E610000001000000010300000001000000050000000000000000405940000000000000084000000000004059400000000000001040000000000080594000000000000010400000000000805940000000000000084000000000004059400000000000000840
+155	Mali	t	
+156	Malta	f	
+158	Martinique	f	
+159	Mauritania	t	
+160	Mauritius	f	
+161	Mayotte	t	
+163	Micronesia (Federated States of)	f	
+165	Moldova, Republic of	f	
+166	Monaco	f	
+167	Mongolia	f	
+168	Montserrat	f	
+169	Morocco	t	
+170	Mozambique	t	
+172	Namibia	t	
+175	Nepal	f	
+176	Netherlands Antilles	f	
+177	Netherlands	f	
+178	New Caledonia	f	
+179	New Zealand	f	0106000020E61000000100000001030000000100000005000000000000000080654000000000008045C0000000000080654000000000000045C00000000000A0654000000000000045C00000000000A0654000000000008045C0000000000080654000000000008045C0
+180	Nicaragua	f	
+181	Niger	t	
+182	Nigeria	t	
+183	Niue	f	
+184	Norfolk Island	f	
+185	Northern Mariana Islands	f	
+186	Norway	f	
+187	Oman	f	
+188	Pakistan	f	
+189	Palau	f	
+191	Panama	f	
+194	Paraguay	f	
+196	Philippines	f	
+197	Pitcairn	f	
+198	Poland	f	
+199	Portugal	f	
+200	Puerto Rico	f	
+201	Qatar	f	
+203	Romania	f	
+204	Russian Federation	f	
+205	Rwanda	t	
+206	Réunion	f	
+207	Saint Helena	f	
+208	Saint Kitts and Nevis	f	
+209	Saint Lucia	f	
+210	Saint Pierre et Miquelon	f	
+211	Saint Vincent and the Grenadines	f	
+212	Samoa	f	
+213	San Marino	f	
+214	Sao Tome and Principe	t	
+215	Saudi Arabia	f	
+217	Senegal	t	
+220	Seychelles	f	
+221	Sierra Leone	t	
+222	Singapore	f	
+223	Slovakia	f	
+224	Slovenia	f	
+226	Somalia	t	
+228	South Georgia and the South Sandwich Islands	f	
+229	Spain	f	
+231	Sri Lanka	f	
+233	Suriname	f	
+234	Svalbard and Jan Mayen Islands	f	
+235	Swaziland	t	
+236	Sweden	f	
+237	Switzerland	f	
+238	Syrian Arab Republic	f	
+239	Tajikistan	f	
+240	Thailand	f	
+241	The former Yugoslav Republic of Macedonia	f	
+242	Timor-Leste	f	
+243	Togo	t	
+245	Tonga	f	
+246	Trinidad and Tobago	f	
+248	Tunisia	t	
+249	Turkey	f	
+250	Turkmenistan	f	
+251	Turks and Caicos islands	f	
+253	Uganda	t	
+254	Ukraine	f	
+255	United Arab Emirates	f	
+256	U.K. of Great Britain and Northern Ireland	f	
+257	United Republic of Tanzania	t	
+258	United States Virgin Islands	f	
+260	Uruguay	f	
+261	Uzbekistan	f	
+262	Vanuatu	f	
+263	Venezuela	f	
+266	Wallis and Futuna	f	
+267	West Bank	f	
+268	Western Sahara	t	
+269	Yemen	f	
+270	Zambia	t	
+271	Zimbabwe	t	
+894	Easter Island	f	
+2647	Montenegro	f	
+2648	Serbia	f	
+33364	Hong Kong	f	
+40760	Hala'ib triangle	t	
+40762	Ma'tan al-Sarra	t	
+40763	Dhekelia and Akrotiri SBA	f	
+40765	Egypt	t	
+61013	Ilemi triangle	t	
+74578	Azores Islands	f	
+229010	Canary Islands	f	
+259002	United States of America	f	0106000020E610000001000000010300000001000000040000006D58535914D655C052B7B3AF3C6846406D58535914D655C0000000000000464000000000000056C000000000000046406D58535914D655C052B7B3AF3C684640
+1006344	Mexico	f	0106000020E6100000010000000103000000010000000500000000000000000059C0000000000000334000000000000059C000000000000034400000000000C058C000000000000034400000000000C058C0000000000000334000000000000059C00000000000003340
+1011440	Myanmar	f	
+1011441	Papua New Guinea	f	
+1011442	Peru	f	
+1011443	Korea, Republic of	f	
+1011444	Solomon Islands	f	
+1011446	Afghanistan	f	
+1011447	Viet Nam	f	
+1012935	Jammu Kashmir	f	
+1012936	Kashmir	f	
+1013696	Indonesia	f	
+1013965	South Africa	t	

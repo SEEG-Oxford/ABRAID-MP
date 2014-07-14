@@ -9,6 +9,7 @@ import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -44,6 +45,9 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
+    @Autowired
     private GeoNameDao geoNameDao;
 
     @Autowired
@@ -61,6 +65,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockModelWrapperRequest();
         createAndSaveTestModelRun(diseaseGroupId);
         insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
+        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
 
         // Act
         runMain(new String[]{});
@@ -73,6 +78,13 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThatRollbackDidNotOccur();
     }
 
+    private void setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        diseaseGroup.setMinDataVolume(28);
+        diseaseGroup.setOccursInAfrica(false);
+        diseaseGroup.setMinDistinctCountries(null);
+    }
+
     @Test
     public void mainMethodAcquiresDataFromFiles() {
         // Arrange
@@ -82,6 +94,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         };
         mockGeoNamesRequests();
         mockModelWrapperRequest();
+        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
 
         // Act
         runMain(fileNames);
@@ -98,6 +111,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         // Arrange
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
                 .thenThrow(new ModelRunRequesterException("Test message"));
 

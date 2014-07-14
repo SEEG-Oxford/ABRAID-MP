@@ -15,6 +15,10 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "getCountryByName",
                 query = "from Country where name=:name"
+        ),
+        @NamedQuery(
+                name = "getCountriesForMinDataSpreadCalculation",
+                query = "select gaulCode from Country where forMinDataSpread = true"
         )
 })
 @Entity
@@ -28,6 +32,11 @@ public class Country {
     // The country's name.
     @Column(nullable = false)
     private String name;
+
+    // A field indicating whether the country is in Africa and should be considered
+    // when calculating the minimum data spread required to run a model.
+    @Column(name = "for_min_data_spread")
+    private boolean forMinDataSpread;
 
     @Column
     @Type(type = "org.hibernate.spatial.GeometryType")
@@ -56,6 +65,14 @@ public class Country {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isForMinDataSpread() {
+        return forMinDataSpread;
+    }
+
+    public void setForMinDataSpread(boolean forMinDataSpread) {
+        this.forMinDataSpread = forMinDataSpread;
     }
 
     public MultiPolygon getGeom() {
