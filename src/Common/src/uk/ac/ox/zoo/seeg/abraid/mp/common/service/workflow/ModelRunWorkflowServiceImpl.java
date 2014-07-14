@@ -34,29 +34,34 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
+     * This method is designed for use when manually triggering a model run.
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestModelRun(int diseaseGroupId) throws ModelRunRequesterException {
+    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId) throws ModelRunRequesterException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
-        prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(diseaseGroupId);
+        prepareForAndRequestModelRun(diseaseGroupId, true);
         saveExpertsWeightings(newExpertWeightings);
     }
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
-     * Does not recalculate expert weightings (i.e. it is assumed that calculateExpertsWeightings and
-     * saveExpertsWeightings are being call separately).
+     * This method is designed for use when automatically triggering one or more model runs.
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(int diseaseGroupId)
+    public void prepareForAndRequestAutomaticallyTriggeredModelRun(int diseaseGroupId)
+            throws ModelRunRequesterException {
+        prepareForAndRequestModelRun(diseaseGroupId, false);
+    }
+
+    private void prepareForAndRequestModelRun(int diseaseGroupId, boolean alwaysRemoveFromValidator)
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
-        updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
+        updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
         generateDiseaseExtent(diseaseGroupId);
         modelRunRequester.requestModelRun(diseaseGroupId);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
@@ -80,11 +85,13 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
 
-    private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
+    private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
+                                                boolean alwaysRemoveFromValidator) {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         int diseaseGroupId = diseaseGroup.getId();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
-        reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
+        reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate,
+                alwaysRemoveFromValidator);
         weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 

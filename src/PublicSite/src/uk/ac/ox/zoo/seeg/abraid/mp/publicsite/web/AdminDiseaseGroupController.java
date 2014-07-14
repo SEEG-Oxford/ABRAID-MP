@@ -120,7 +120,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     @ResponseBody
     public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId) {
         try {
-            modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

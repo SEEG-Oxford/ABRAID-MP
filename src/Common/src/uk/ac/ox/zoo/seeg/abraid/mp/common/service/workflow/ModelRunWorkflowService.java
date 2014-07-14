@@ -11,19 +11,19 @@ import java.util.Map;
 public interface ModelRunWorkflowService {
     /**
      * Prepares for and requests a model run, for the specified disease group.
+     * This method is designed for use when manually triggering a model run.
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    void prepareForAndRequestModelRun(int diseaseGroupId) throws ModelRunRequesterException;
+    void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId) throws ModelRunRequesterException;
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
-     * Does not recalculate expert weightings (i.e. it is assumed that calculateExpertsWeightings and
-     * saveExpertsWeightings are being call separately).
+     * This method is designed for use when automatically triggering one or more model runs.
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(int diseaseGroupId)
+    void prepareForAndRequestAutomaticallyTriggeredModelRun(int diseaseGroupId)
             throws ModelRunRequesterException;
 
     /**

@@ -30,13 +30,16 @@ public class DiseaseOccurrenceReviewManager {
      * review by the experts.
      * @param diseaseGroupId The id of the disease group this model run preparation is for.
      * @param modelRunPrepDate The official start time of the model run preparation tasks.
+     * @param alwaysRemoveFromValidator True if occurrences in validation should always be removed from the
+     * DataValidator (instead of ensuring they have been on for a certain period of time), otherwise false.
      */
-    public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate) {
+    public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate,
+                                                         boolean alwaysRemoveFromValidator) {
         int numRemovedFromValidator = 0;
 
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
         for (DiseaseOccurrence occurrence : occurrences) {
-            if (occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
+            if (alwaysRemoveFromValidator || occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
                 occurrence.setValidated(true);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 numRemovedFromValidator++;

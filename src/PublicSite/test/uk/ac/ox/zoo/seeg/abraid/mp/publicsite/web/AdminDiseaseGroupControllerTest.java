@@ -99,7 +99,7 @@ public class AdminDiseaseGroupControllerTest {
         controller.requestModelRun(diseaseGroupId);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestModelRun(eq(diseaseGroupId));
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManuallyTriggeredModelRun(eq(diseaseGroupId));
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

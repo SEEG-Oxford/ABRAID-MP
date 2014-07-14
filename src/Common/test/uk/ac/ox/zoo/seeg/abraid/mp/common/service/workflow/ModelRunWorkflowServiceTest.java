@@ -39,7 +39,7 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void prepareForAndRequestModelRun() {
+    public void prepareForAndRequestManuallyTriggeredModelRun() {
         // Arrange
         int diseaseGroupId = 87;
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
@@ -52,13 +52,13 @@ public class ModelRunWorkflowServiceTest {
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
-        modelRunWorkflowService.prepareForAndRequestModelRun(diseaseGroupId);
+        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId);
 
         // Assert
         verify(weightingsCalculator, times(1)).updateDiseaseOccurrenceExpertWeightings(
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
-                eq(diseaseGroupId), eq(DateTime.now()));
+                eq(diseaseGroupId), eq(DateTime.now()), eq(true));
         verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
                 eq(diseaseGroupId), any(DiseaseExtentParameters.class));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
@@ -67,7 +67,7 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void prepareForAndRequestModelRunWithoutCalculatingExpertWeightings() {
+    public void prepareForAndRequestAutomaticallyTriggeredModelRun() {
         // Arrange
         int diseaseGroupId = 87;
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
@@ -78,13 +78,13 @@ public class ModelRunWorkflowServiceTest {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        modelRunWorkflowService.prepareForAndRequestModelRunWithoutCalculatingExpertWeightings(diseaseGroupId);
+        modelRunWorkflowService.prepareForAndRequestAutomaticallyTriggeredModelRun(diseaseGroupId);
 
         // Assert
         verify(weightingsCalculator, times(1)).updateDiseaseOccurrenceExpertWeightings(
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
-                eq(diseaseGroupId), eq(DateTime.now()));
+                eq(diseaseGroupId), eq(DateTime.now()), eq(false));
         verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
                 eq(diseaseGroupId), any(DiseaseExtentParameters.class));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
