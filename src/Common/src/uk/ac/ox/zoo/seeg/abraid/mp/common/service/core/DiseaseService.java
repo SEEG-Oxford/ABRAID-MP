@@ -38,6 +38,13 @@ public interface DiseaseService {
     DiseaseGroup getDiseaseGroupById(Integer diseaseGroupId);
 
     /**
+     * Gets the validator disease group by its id.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return The validator disease group.
+     */
+    ValidatorDiseaseGroup getValidatorDiseaseGroupById(Integer validatorDiseaseGroupId);
+
+    /**
      * For each validator disease group, get a list of its disease groups.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */

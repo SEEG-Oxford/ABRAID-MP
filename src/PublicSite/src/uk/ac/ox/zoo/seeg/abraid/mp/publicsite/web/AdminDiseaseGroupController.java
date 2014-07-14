@@ -54,8 +54,14 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = "/admindiseasegroup", method = RequestMethod.GET)
     public String showPage(Model model) throws JsonProcessingException {
         try {
-            model.addAttribute("diseaseGroups", getSortedDiseaseGroupsJson());
-            model.addAttribute("validatorDiseaseGroups", getSortedValidatorDiseaseGroups());
+            List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
+            String diseaseGroupsJson = convertDiseaseGroupsToJson(diseaseGroups);
+            model.addAttribute("diseaseGroups", diseaseGroupsJson);
+
+            List<ValidatorDiseaseGroup> validatorDiseaseGroups = getSortedValidatorDiseaseGroups();
+            String validatorDiseaseGroupsJson = convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
+            model.addAttribute("validatorDiseaseGroups", validatorDiseaseGroupsJson);
+
             return "admindiseasegroup";
         } catch (JsonProcessingException e) {
             LOGGER.error(DISEASE_GROUP_JSON_CONVERSION_ERROR, e);
@@ -63,16 +69,10 @@ public class AdminDiseaseGroupController extends AbstractController {
         }
     }
 
-    private String getSortedDiseaseGroupsJson() throws JsonProcessingException {
+    private List<DiseaseGroup> getSortedDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
         sort(diseaseGroups, on(DiseaseGroup.class).getName());
-        return convertDiseaseGroupsToJson(diseaseGroups);
-    }
-
-    private String getSortedValidatorDiseaseGroups() throws JsonProcessingException {
-        List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
-        sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
-        return convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
+        return diseaseGroups;
     }
 
     private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
@@ -83,7 +83,14 @@ public class AdminDiseaseGroupController extends AbstractController {
         return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
     }
 
-    private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups) throws JsonProcessingException {
+    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups(){
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
+        sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
+        return validatorDiseaseGroups;
+    }
+
+    private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups)
+            throws JsonProcessingException {
         List<JsonValidatorDiseaseGroup> jsonValidatorDiseaseGroups = new ArrayList<>();
         for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
             jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
@@ -91,21 +98,71 @@ public class AdminDiseaseGroupController extends AbstractController {
         return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
     }
 
+    /**
+     * Save the updated values of the disease group's parameters.
+     * @param diseaseGroupId The id of the disease group.
+     * @param name The name.
+     * @param publicName The name used for public display.
+     * @param shortName A shorter version of the name.
+     * @param abbreviation The shortest version of the name.
+     * @param groupType The DiseaseGroupType: Single, Cluster or Microcluster.
+     * @param isGlobal Whether the disease group is global or tropical.
+     * @param parentDiseaseGroupId The id of the disease group's parent disease group.
+     * @param validatorDiseaseGroupId The id of the disease group's validator disease group.
+     * @return A HTTP status code response entity: 200 for success, 400 for failure.
+     * @throws Exception
+     */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/save",
                     method = RequestMethod.POST)
     public ResponseEntity saveChanges(@PathVariable Integer diseaseGroupId, String name, String publicName,
-                                      String shortName, String abbreviation, String groupType, boolean isGlobal,
-                                      JsonDiseaseGroup parentDiseaseGroup, JsonValidatorDiseaseGroup validatorDiseaseGroup) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+                                      String shortName, String abbreviation, String groupType, Boolean isGlobal,
+                                      Integer parentDiseaseGroupId, Integer validatorDiseaseGroupId) throws Exception {
+        try {
+            if (validInputs(name, groupType)) {
+                DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+                saveProperties(diseaseGroup, name, publicName, shortName, abbreviation, groupType, isGlobal,
+                    parentDiseaseGroupId, validatorDiseaseGroupId);
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error", e);
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private boolean validInputs(String name, String groupType) {
+        return (name != null) && (groupType != null);
+    }
+
+    private void saveProperties(DiseaseGroup diseaseGroup, String name, String publicName, String shortName,
+                                String abbreviation, String groupType, Boolean isGlobal, Integer parentId,
+                                Integer validatorId){
         diseaseGroup.setName(name);
         diseaseGroup.setPublicName(publicName);
         diseaseGroup.setShortName(shortName);
         diseaseGroup.setAbbreviation(abbreviation);
-        diseaseGroup.setGroupType(DiseaseGroupType.valueOf(groupType));
+        DiseaseGroupType type = DiseaseGroupType.valueOf(groupType);
+        diseaseGroup.setGroupType(type);
         diseaseGroup.setGlobal(isGlobal);
-        diseaseGroup.setParentGroup(parentDiseaseGroup);
+        setParentDiseaseGroup(diseaseGroup, parentId);
+        setValidatorDiseaseGroup(diseaseGroup, validatorId);
         diseaseService.saveDiseaseGroup(diseaseGroup);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    private void setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) {
+        if ((diseaseGroup.getGroupType() != DiseaseGroupType.CLUSTER) && (parentId != null)) {
+            DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
+            diseaseGroup.setParentGroup(parentDiseaseGroup);
+        }
+    }
+
+    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId) {
+        if (validatorId != null) {
+            ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
+            diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        }
     }
 }

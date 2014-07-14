@@ -17,39 +17,36 @@ define([
         {value: CLUSTER,      label: "Cluster"}
     ];
 
-    function filterOnType(diseaseGroups, groupType) {
-        return _.filter(diseaseGroups, function (diseaseGroup) { return diseaseGroup.groupType === groupType; });
+    function DiseaseGroup(name, publicName, shortName, abbreviation, groupType, isGlobal, parentId, validatorId) {
+        return {
+            name: name,
+            publicName: publicName,
+            shortName: shortName,
+            abbreviation: abbreviation,
+            groupType: groupType,
+            isGlobal: isGlobal,
+            parentDiseaseGroupId: parentId,
+            validatorDiseaseGroupId: validatorId
+        };
+    }
+
+    function getId(diseaseGroup) {
+        return (diseaseGroup) ? diseaseGroup.id.toString() : null;
+    }
+
+    function createDiseaseGroup(d) {
+        return new DiseaseGroup(d.name, d.publicName, d.shortName, d.abbreviation, d.groupType, d.isGlobal,
+            getId(d.parentDiseaseGroup), getId(d.validatorDiseaseGroup));
     }
 
     function findInList(diseaseGroup, diseaseGroupsList) {
         if (diseaseGroup) {
-            var id = diseaseGroup.id;
-            return _.find(diseaseGroupsList, function (dg) { return dg.id === id; });
+            return _(diseaseGroupsList).find(function (dg) { return dg.id === diseaseGroup.id; });
         }
     }
 
-    function diseaseGroupsDiffer(vdg1, vdg2) {
-        if (vdg1 && vdg2) {
-            return (vdg1.id !== vdg2.id);
-        } else {
-            return (vdg1 || vdg2);
-        }
-    }
-
-    function anyFieldsDiffer(dg1, dg2) {
-        var result = false;
-        if (dg1 && dg2) {
-            result = result ||
-                (dg1.name !== dg2.name) ||
-                (dg1.publicName !== dg2.publicName) ||
-                (dg1.shortName !== dg2.shortName) ||
-                (dg1.abbreviation !== dg2.abbreviation) ||
-                (dg1.groupType !== dg2.groupType) ||
-                (dg1.isGlobal !== dg2.isGlobal) ||
-                diseaseGroupsDiffer(dg1.parentDiseaseGroup, dg2.parentDiseaseGroup) ||
-                diseaseGroupsDiffer(dg1.validatorDiseaseGroup, dg2.validatorDiseaseGroup);
-        }
-        return result;
+    function filterOnType(diseaseGroups, groupType) {
+        return _(diseaseGroups).filter(function (diseaseGroup) { return diseaseGroup.groupType === groupType; });
     }
 
     return function (baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName) {
@@ -68,21 +65,7 @@ define([
             }
         }
 
-        ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            originalDiseaseGroup = diseaseGroup;
-            self.name(diseaseGroup.name);
-            self.publicName(diseaseGroup.publicName);
-            self.shortName(diseaseGroup.shortName);
-            self.abbreviation(diseaseGroup.abbreviation);
-            self.selectedType(diseaseGroup.groupType);
-            self.isGlobal(diseaseGroup.isGlobal);
-            var parentDiseaseGroup = findInList(diseaseGroup.parentDiseaseGroup, self.parentDiseaseGroups());
-            var validatorDiseaseGroup = findInList(diseaseGroup.validatorDiseaseGroup, self.validatorDiseaseGroups);
-            self.selectedParentDiseaseGroup(parentDiseaseGroup);
-            self.selectedValidatorDiseaseGroup(validatorDiseaseGroup);
-        });
-
-        self.name = ko.observable();
+        self.name = ko.observable().extend({ required: true });
         self.publicName = ko.observable();
         self.shortName = ko.observable();
         self.abbreviation = ko.observable();
@@ -95,32 +78,37 @@ define([
         self.validatorDiseaseGroups = validatorDiseaseGroups;
         self.selectedValidatorDiseaseGroup = ko.observable();
 
+        var diseaseGroupId;
         var originalDiseaseGroup;
         var data = ko.computed(function () {
-            return {
-                name: self.name(),
-                publicName: self.publicName(),
-                shortName: self.shortName(),
-                abbreviation: self.abbreviation(),
-                groupType: self.selectedType(),
-                isGlobal: self.isGlobal(),
-                parentDiseaseGroup: self.selectedParentDiseaseGroup(),
-                validatorDiseaseGroup: self.selectedValidatorDiseaseGroup()
-            };
+            return new DiseaseGroup(
+                self.name(), self.publicName(), self.shortName(), self.abbreviation(), self.selectedType(),
+                self.isGlobal(), getId(self.selectedParentDiseaseGroup()), getId(self.selectedValidatorDiseaseGroup()));
         });
 
-        self.enableButton = ko.computed(function () { return anyFieldsDiffer(originalDiseaseGroup, data()); });
+        self.enableSaveButton = ko.computed(function () { return !(_.isEqual(originalDiseaseGroup, data())); });
+        self.notice = ko.observable();
         self.saveChanges = function () {
-            var url = baseUrl + "admindiseasegroup/" + originalDiseaseGroup.id + "/save";
+            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/save";
             $.post(url, data())
-                .done(function () {
-                    alert("Done");
-                    self.notices.push({message: "Changes successfully saved."});
-                })
-                .fail(function (xhr) {
-                    alert("Error: " + xhr.responseText);
-                    self.notices.push({message: "Error"});
-                });
+                .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
+                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });
         };
+
+        ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
+            diseaseGroupId = diseaseGroup.id;
+            originalDiseaseGroup = createDiseaseGroup(diseaseGroup);
+
+            self.name(diseaseGroup.name);
+            self.publicName(diseaseGroup.publicName);
+            self.shortName(diseaseGroup.shortName);
+            self.abbreviation(diseaseGroup.abbreviation);
+            self.selectedType(diseaseGroup.groupType);
+            self.isGlobal(diseaseGroup.isGlobal);
+            var parentDiseaseGroup = findInList(diseaseGroup.parentDiseaseGroup, self.parentDiseaseGroups());
+            self.selectedParentDiseaseGroup(parentDiseaseGroup);
+            var validatorDiseaseGroup = findInList(diseaseGroup.validatorDiseaseGroup, self.validatorDiseaseGroups);
+            self.selectedValidatorDiseaseGroup(validatorDiseaseGroup);
+        });
     };
 });

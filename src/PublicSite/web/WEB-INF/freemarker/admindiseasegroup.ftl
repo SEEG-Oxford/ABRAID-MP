@@ -39,7 +39,7 @@
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
                             <label for="disease-group-name" class="col-sm-3 control-label">Name</label>
-                            <div class="col-sm-8">
+                            <div id="disease-group-name-input-group" class="input-group col-sm-8">
                                 <input class="form-control" id="disease-group-name" data-bind="value: name">
                             </div>
                         </div>
@@ -100,7 +100,10 @@
                     </form>
                 </div>
                 <div class="col-sm-12">
-                    <button style="float:right" type="button" class="btn btn-primary" data-bind="enable: enableButton(), click: saveChanges">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-bind="enable: enableSaveButton, click: saveChanges">Save</button>
+                </div>
+                <div class="form-group col-sm-12" data-bind="if: notice">
+                    <div data-bind="alert: notice"></div>
                 </div>
             </div>
         </div>

@@ -113,3 +113,7 @@ label.side-by-side {
 .form-group-radio-inline {
     padding-bottom: 7px;
 }
+#disease-group-name-input-group {
+    padding-left: 15px;
+    padding-right: 15px;
+}

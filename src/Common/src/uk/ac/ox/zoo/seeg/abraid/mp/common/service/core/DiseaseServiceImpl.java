@@ -85,6 +85,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the validator disease group by its id.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return The validator disease group.
+     */
+    @Override
+    public ValidatorDiseaseGroup getValidatorDiseaseGroupById(Integer validatorDiseaseGroupId) {
+        return validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
+    }
+
+    /**
      * Gets the list of disease groups, for each validator disease group.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
