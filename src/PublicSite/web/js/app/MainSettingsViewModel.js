@@ -89,7 +89,7 @@ define([
         self.enableSaveButton = ko.computed(function () { return !(_.isEqual(originalDiseaseGroup, data())); });
         self.notice = ko.observable();
         self.saveChanges = function () {
-            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/save";
+            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/savemainsettings";
             $.post(url, data())
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
                 .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });

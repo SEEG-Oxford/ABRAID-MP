@@ -113,7 +113,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @throws Exception
      */
     @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/save",
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/savemainsettings",
                     method = RequestMethod.POST)
     public ResponseEntity saveChanges(@PathVariable Integer diseaseGroupId, String name, String publicName,
                                       String shortName, String abbreviation, String groupType, Boolean isGlobal,
