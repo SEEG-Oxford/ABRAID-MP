@@ -113,6 +113,9 @@ label.side-by-side {
 #model-run-parameters label {
     text-align: left;
 }
+#model-run-parameters input {
+    text-align: center;
+}
 .form-group-radio-inline {
     padding-bottom: 7px;
 }

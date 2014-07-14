@@ -122,37 +122,37 @@
                     <div class="form-group">
                         <label for="min-new-occurrences" class="col-sm-4 control-label">Minimum Number of New Occurrences</label>
                         <div class="col-sm-1">
-                            <input class="form-control" id="min-new-occurrences" data-bind="minNewOccurrences">
+                            <input class="form-control" id="min-new-occurrences" data-bind="value: minNewOccurrences">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="min-data-volume" class="col-sm-4 control-label">Minimum Data Volume</label>
                         <div class="col-sm-1">
-                            <input class="form-control" id="min-data-volume" data-bind="minDataVolume">
+                            <input class="form-control" id="min-data-volume" data-bind="value: minDataVolume">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="min-distinct-countries" class="col-sm-4 control-label">Minimum Number of Distinct Countries</label>
                         <div class="col-sm-1">
-                            <input class="form-control" id="min-distinct-countries" data-bind="minDistinctCountries">
+                            <input class="form-control" id="min-distinct-countries" data-bind="value: minDistinctCountries">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="min-high-frequency-countries" class="col-sm-4 control-label">Minimum Number of High Frequency Countries</label>
                         <div class="col-sm-1">
-                            <input class="form-control" id="min-high-frequency-countries" data-bind="minHighFrequencyCountries">
+                            <input class="form-control" id="min-high-frequency-countries" data-bind="value: minHighFrequencyCountries">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="high-frequency-threshold" class="col-sm-4 control-label">Minumum Number of Occurrences to be deemed a High Frequency Country</label>
                         <div class="col-sm-1">
-                            <input class="form-control" id="high-frequency-threshold" data-bind="highFrequencyThreshold">
+                            <input class="form-control" id="high-frequency-threshold" data-bind="value: highFrequencyThreshold">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="occurs-in-africa" class="col-sm-4 control-label">Occurs in Africa</label>
                         <div class="col-sm-1">
-                            <input type="checkbox" id="occurs-in-africa" data-bind="occursInAfrica">
+                            <input type="checkbox" id="occurs-in-africa" data-bind="checked: occursInAfrica">
                         </div>
                     </div>
                     <div class="col-sm-12">

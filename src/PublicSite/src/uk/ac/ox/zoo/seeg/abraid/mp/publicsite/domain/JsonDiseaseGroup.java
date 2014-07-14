@@ -17,29 +17,39 @@ public class JsonDiseaseGroup {
     private JsonDiseaseGroup parentDiseaseGroup;
     private JsonValidatorDiseaseGroup validatorDiseaseGroup;
     private Double weighting;
-    private Integer minNewOccurrencesTrigger;
     private boolean automaticModelRuns;
+    private Integer minNewOccurrencesTrigger;
+    private Integer minDataVolume;
+    private Integer minDistinctCountries;
+    private Integer highFrequencyThreshold;
+    private Integer minHighFrequencyCountries;
+    private Boolean occursInAfrica;
 
     public JsonDiseaseGroup() {
     }
 
     public JsonDiseaseGroup(DiseaseGroup diseaseGroup) {
-        this.id = diseaseGroup.getId();
-        this.name = diseaseGroup.getName();
-        this.publicName = diseaseGroup.getPublicName();
-        this.shortName = diseaseGroup.getShortName();
-        this.abbreviation = diseaseGroup.getAbbreviation();
-        this.groupType = diseaseGroup.getGroupType().name();
-        this.isGlobal = diseaseGroup.isGlobal();
+        setId(diseaseGroup.getId());
+        setName(diseaseGroup.getName());
+        setPublicName(diseaseGroup.getPublicName());
+        setShortName(diseaseGroup.getShortName());
+        setAbbreviation(diseaseGroup.getAbbreviation());
+        setGroupType(diseaseGroup.getGroupType().name());
+        setIsGlobal(diseaseGroup.isGlobal());
         if (diseaseGroup.getParentGroup() != null) {
-            this.parentDiseaseGroup = new JsonDiseaseGroup(diseaseGroup.getParentGroup());
+            setParentDiseaseGroup(new JsonDiseaseGroup(diseaseGroup.getParentGroup()));
         }
         if (diseaseGroup.getValidatorDiseaseGroup() != null) {
-            this.validatorDiseaseGroup = new JsonValidatorDiseaseGroup(diseaseGroup.getValidatorDiseaseGroup());
+            setValidatorDiseaseGroup(new JsonValidatorDiseaseGroup(diseaseGroup.getValidatorDiseaseGroup()));
         }
-        this.weighting = diseaseGroup.getWeighting();
-        this.minNewOccurrencesTrigger = diseaseGroup.getMinNewOccurrencesTrigger();
-        this.automaticModelRuns = diseaseGroup.isAutomaticModelRunsEnabled();
+        setWeighting(diseaseGroup.getWeighting());
+        setAutomaticModelRuns(diseaseGroup.isAutomaticModelRunsEnabled());
+        setMinNewOccurrencesTrigger(diseaseGroup.getMinNewOccurrencesTrigger());
+        setMinDataVolume(diseaseGroup.getMinDataVolume());
+        setMinDistinctCountries(diseaseGroup.getMinDistinctCountries());
+        setHighFrequencyThreshold(diseaseGroup.getHighFrequencyThreshold());
+        setMinHighFrequencyCountries(diseaseGroup.getMinHighFrequencyCountries());
+        setOccursInAfrica(diseaseGroup.occursInAfrica());
     }
 
     public Integer getId() {
@@ -136,5 +146,45 @@ public class JsonDiseaseGroup {
 
     public void setAutomaticModelRuns(boolean automaticModelRuns) {
         this.automaticModelRuns = automaticModelRuns;
+    }
+
+    public Integer getMinDataVolume() {
+        return minDataVolume;
+    }
+
+    public void setMinDataVolume(Integer minDataVolume) {
+        this.minDataVolume = minDataVolume;
+    }
+
+    public Integer getMinDistinctCountries() {
+        return minDistinctCountries;
+    }
+
+    public void setMinDistinctCountries(Integer minDistinctCountries) {
+        this.minDistinctCountries = minDistinctCountries;
+    }
+
+    public Integer getHighFrequencyThreshold() {
+        return highFrequencyThreshold;
+    }
+
+    public void setHighFrequencyThreshold(Integer highFrequencyThreshold) {
+        this.highFrequencyThreshold = highFrequencyThreshold;
+    }
+
+    public Integer getMinHighFrequencyCountries() {
+        return minHighFrequencyCountries;
+    }
+
+    public void setMinHighFrequencyCountries(Integer minHighFrequencyCountries) {
+        this.minHighFrequencyCountries = minHighFrequencyCountries;
+    }
+
+    public Boolean getOccursInAfrica() {
+        return occursInAfrica;
+    }
+
+    public void setOccursInAfrica(Boolean occursInAfrica) {
+        this.occursInAfrica = occursInAfrica;
     }
 }

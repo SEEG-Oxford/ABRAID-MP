@@ -23,6 +23,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 
@@ -164,5 +165,34 @@ public class AdminDiseaseGroupController extends AbstractController {
             ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
             diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         }
+    }
+
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/savemodelrunparameters",
+            method = RequestMethod.POST)
+    public ResponseEntity saveChanges(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
+                                      Integer minDataVolume, Integer minDistinctCountries,
+                                      Integer minHighFrequencyCountries, Integer highFrequencyThreshold,
+                                      Boolean occursInAfrica) throws Exception {
+        try {
+            DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+            saveProperties(diseaseGroup, minNewOccurrences, minDataVolume, minDistinctCountries,
+                minHighFrequencyCountries, highFrequencyThreshold, occursInAfrica);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void saveProperties(DiseaseGroup diseaseGroup, Integer minNewOccurrences, Integer minDataVolume,
+                                Integer minDistinctCountries, Integer minHighFrequencyCountries,
+                                Integer highFrequencyThreshold, Boolean occursInAfrica) {
+        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
+        diseaseGroup.setMinDataVolume(minDataVolume);
+        diseaseGroup.setMinDistinctCountries(minDistinctCountries);
+        diseaseGroup.setMinHighFrequencyCountries(minHighFrequencyCountries);
+        diseaseGroup.setHighFrequencyThreshold(highFrequencyThreshold);
+        diseaseGroup.setOccursInAfrica(occursInAfrica);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 }
