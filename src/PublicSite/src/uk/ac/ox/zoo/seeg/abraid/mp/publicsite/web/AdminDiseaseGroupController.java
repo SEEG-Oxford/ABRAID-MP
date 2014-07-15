@@ -3,22 +3,30 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Controller for the disease group page of system administration.
@@ -46,12 +54,17 @@ public class AdminDiseaseGroupController extends AbstractController {
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup", method = RequestMethod.GET)
+    @Transactional
     public String showPage(Model model) throws JsonProcessingException {
         try {
-            // Include information about all disease groups in the "initialData" attribute
             List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
-            String diseaseGroupJson = convertDiseaseGroupsToJson(diseaseGroups);
-            model.addAttribute("initialData", diseaseGroupJson);
+            String diseaseGroupsJson = convertDiseaseGroupsToJson(diseaseGroups);
+            model.addAttribute("diseaseGroups", diseaseGroupsJson);
+
+            List<ValidatorDiseaseGroup> validatorDiseaseGroups = getSortedValidatorDiseaseGroups();
+            String validatorDiseaseGroupsJson = convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
+            model.addAttribute("validatorDiseaseGroups", validatorDiseaseGroupsJson);
+
             return "admindiseasegroup";
         } catch (JsonProcessingException e) {
             LOGGER.error(DISEASE_GROUP_JSON_CONVERSION_ERROR, e);
@@ -70,5 +83,134 @@ public class AdminDiseaseGroupController extends AbstractController {
             jsonDiseaseGroups.add(new JsonDiseaseGroup(diseaseGroup));
         }
         return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
+    }
+
+    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
+        return sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
+    }
+
+    private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups)
+            throws JsonProcessingException {
+        List<JsonValidatorDiseaseGroup> jsonValidatorDiseaseGroups = new ArrayList<>();
+        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
+            jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
+        }
+        return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
+    }
+
+    /**
+     * Save the updated values of the disease group's parameters.
+     * @param diseaseGroupId The id of the disease group.
+     * @param name The name.
+     * @param publicName The name used for public display.
+     * @param shortName A shorter version of the name.
+     * @param abbreviation The shortest version of the name.
+     * @param groupType The DiseaseGroupType: Single, Cluster or Microcluster.
+     * @param isGlobal Whether the disease group is global or tropical.
+     * @param parentDiseaseGroupId The id of the disease group's parent disease group.
+     * @param validatorDiseaseGroupId The id of the disease group's validator disease group.
+     * @return A HTTP status code response entity: 200 for success, 400 for failure.
+     * @throws Exception if cannot fetch disease group from database.
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/mainsettings",
+                    method = RequestMethod.POST)
+    @Transactional
+    ///CHECKSTYLE:OFF ParameterNumber
+    public ResponseEntity saveMainSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
+        String shortName, String abbreviation, String groupType, Boolean isGlobal, Integer parentDiseaseGroupId,
+        Integer validatorDiseaseGroupId) throws Exception {
+    ///CHECKSTYLE:ON
+
+        try {
+            if (validInputs(name, groupType)) {
+                DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+                saveProperties(diseaseGroup, name, publicName, shortName, abbreviation, groupType, isGlobal,
+                    parentDiseaseGroupId, validatorDiseaseGroupId);
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error", e);
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private boolean validInputs(String name, String groupType) {
+        return hasText(name) && hasText(groupType);
+    }
+
+    private void saveProperties(DiseaseGroup diseaseGroup, String name, String publicName, String shortName,
+                                String abbreviation, String groupType, Boolean isGlobal, Integer parentId,
+                                Integer validatorId) throws IllegalArgumentException {
+        diseaseGroup.setName(name);
+        diseaseGroup.setPublicName(publicName);
+        diseaseGroup.setShortName(shortName);
+        diseaseGroup.setAbbreviation(abbreviation);
+        DiseaseGroupType type = DiseaseGroupType.valueOf(groupType);
+        diseaseGroup.setGroupType(type);
+        diseaseGroup.setGlobal(isGlobal);
+        setParentDiseaseGroup(diseaseGroup, parentId);
+        setValidatorDiseaseGroup(diseaseGroup, validatorId);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
+    }
+
+    private void setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) throws IllegalArgumentException {
+        if ((diseaseGroup.getGroupType() != DiseaseGroupType.CLUSTER) && (parentId != null)) {
+            DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
+            diseaseGroup.setParentGroup(parentDiseaseGroup);
+        }
+    }
+
+    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId)
+            throws IllegalArgumentException {
+        if (validatorId != null) {
+            ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
+            diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        }
+    }
+
+    /**
+     * Save the updated values of the disease group's model run parameters.
+     * @param diseaseGroupId The id of the disease group.
+     * @param minNewOccurrences The minimum number of new occurrences needed to trigger a model run.
+     * @param minDataVolume The minimum number of occurrences required for the model to run.
+     * @param minDistinctCountries The minimum number of countries to have at least one occurrence.
+     * @param minHighFrequencyCountries The minimum number of countries to have > highFrequencyThreshold occurrences.
+     * @param highFrequencyThreshold The value above which a country is considered to be high frequency.
+     * @param occursInAfrica Whether or not the disease group is known to occur in Africa.
+     * @return A HTTP status code response entity: 200 for success, 400 for failure.
+     * @throws Exception if cannot fetch disease group from database.
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/modelrunparameters",
+            method = RequestMethod.POST)
+    @Transactional
+    public ResponseEntity saveModelRunParameters(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
+                                                 Integer minDataVolume, Integer minDistinctCountries,
+                                                 Integer minHighFrequencyCountries, Integer highFrequencyThreshold,
+                                                 Boolean occursInAfrica) throws Exception {
+        try {
+            DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+            saveProperties(diseaseGroup, minNewOccurrences, minDataVolume, minDistinctCountries,
+                    minHighFrequencyCountries, highFrequencyThreshold, occursInAfrica);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void saveProperties(DiseaseGroup diseaseGroup, Integer minNewOccurrences, Integer minDataVolume,
+                                Integer minDistinctCountries, Integer minHighFrequencyCountries,
+                                Integer highFrequencyThreshold, Boolean occursInAfrica) {
+        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
+        diseaseGroup.setMinDataVolume(minDataVolume);
+        diseaseGroup.setMinDistinctCountries(minDistinctCountries);
+        diseaseGroup.setMinHighFrequencyCountries(minHighFrequencyCountries);
+        diseaseGroup.setHighFrequencyThreshold(highFrequencyThreshold);
+        diseaseGroup.setOccursInAfrica(occursInAfrica);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 }

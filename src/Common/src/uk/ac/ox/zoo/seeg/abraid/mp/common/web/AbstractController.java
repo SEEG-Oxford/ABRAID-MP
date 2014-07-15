@@ -15,6 +15,6 @@ public abstract class AbstractController {
      */
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(" \t\r\n\f", true));
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor("\t\r\n\f", true));
     }
 }

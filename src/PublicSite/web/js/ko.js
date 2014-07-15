@@ -5,6 +5,7 @@
 /*global define:false*/
 define([
     "knockout",
+    "knockout.bootstrap",
     "knockout-postbox",
     "knockout.validation",
     "app/KoCustomBindings"
@@ -29,6 +30,8 @@ define([
         messagesOnModified: true,
         registerExtenders: true
     });
+
+    ko.validation.rules.digit.message = "Please enter a whole number";
 
     return ko;
 });
