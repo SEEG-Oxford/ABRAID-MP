@@ -8,7 +8,7 @@
     </div>
     <div class="panel-collapse collapse in" id="main-settings">
         <div class="panel-body">
-            <div class="col-sm-6">
+            <div class="col-sm-5">
                 <form class="form-horizontal" role="form">
                     <div class="form-group">
                         <label for="disease-group-name" class="col-sm-3 control-label">Name</label>
@@ -36,10 +36,10 @@
                     </div>
                 </form>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-7">
                 <form class="form-horizontal" role="form">
                     <div class="form-group form-group-radio-inline">
-                        <label for="disease-group-type" class="col-sm-5 control-label">Group Type</label>
+                        <label for="disease-group-type" class="col-sm-4 control-label">Group Type</label>
                         <div class="col-sm-7" id="disease-group-type" data-bind="foreach: groupTypes">
                             <label class="radio-inline">
                                 <input type="radio" data-bind="value: value, checked: $parent.selectedType">
@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div class="form-group form-group-radio-inline">
-                        <label for="global-or-tropical" class="col-sm-5 control-label">Global or Tropical</label>
+                        <label for="global-or-tropical" class="col-sm-4 control-label">Global or Tropical</label>
                         <div class="col-sm-7" id="global-or-tropical">
                             <label class="radio-inline">
                                 <input type="radio" name="globalOrTropical" value="true" data-bind="checked: isGlobal">Global
@@ -59,13 +59,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="parent-disease-group" class="col-sm-5 control-label">Parent Disease Group</label>
+                        <label for="parent-disease-group" class="col-sm-4 control-label">Parent Disease Group</label>
                         <div class="col-sm-7">
                             <select class="form-control" id="parent-disease-group" data-bind="options: parentDiseaseGroups, value: selectedParentDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...', enable: enableParentDiseaseGroups()"></select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="validator-disease-group" class="col-sm-5 control-label">Validator Disease Group</label>
+                        <label for="validator-disease-group" class="col-sm-4 control-label">Validator Disease Group</label>
                         <div class="col-sm-7">
                             <select class="form-control" id="validator-disease-group" data-bind="options: validatorDiseaseGroups, value: selectedValidatorDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...'"></select>
                         </div>

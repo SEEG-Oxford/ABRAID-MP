@@ -1,5 +1,5 @@
 /* An AMD defining the view-model for the model run parameters of the selected disease group.
- * Copyright (coffee) 2014 University of Oxford
+ * Copyright (c) 2014 University of Oxford
  */
 define([
     "ko",
@@ -12,11 +12,11 @@ define([
     return function (baseUrl, diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.minNewOccurrences = ko.validatedObservable().extend({ number: true, min: 0 });
-        self.minDataVolume = ko.validatedObservable().extend({ number: true, min: 0 });
-        self.minDistinctCountries = ko.validatedObservable().extend({ number: true, min: 0 });
-        self.minHighFrequencyCountries = ko.validatedObservable().extend({ number: true, min: 0 });
-        self.highFrequencyThreshold = ko.validatedObservable().extend({ number: true, min: 0 });
+        self.minNewOccurrences = ko.validatedObservable().extend({ digit: true, min: 0 });
+        self.minDataVolume = ko.validatedObservable().extend({ digit: true, min: 0 });
+        self.minDistinctCountries = ko.validatedObservable().extend({ digit: true, min: 0 });
+        self.minHighFrequencyCountries = ko.validatedObservable().extend({ digit: true, min: 0 });
+        self.highFrequencyThreshold = ko.validatedObservable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
 
         var diseaseGroupId;

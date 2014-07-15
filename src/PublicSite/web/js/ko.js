@@ -31,5 +31,7 @@ define([
         registerExtenders: true
     });
 
+    ko.validation.rules.digit.message = "Please enter a whole number";
+
     return ko;
 });

@@ -1,5 +1,5 @@
 /* An AMD defining the view-model for the list of disease groups.
- * Copyright (coffee) 2014 University of Oxford
+ * Copyright (c) 2014 University of Oxford
  */
 define(["ko"], function (ko) {
     "use strict";
