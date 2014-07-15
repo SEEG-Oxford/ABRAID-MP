@@ -113,7 +113,7 @@ define([
             });
         });
 
-        describe("holds the save changes function which", function () {
+        describe("holds the 'save changes' function which", function () {
             it("POSTs to the specified URL, with the correct parameters", function () {
                 // Arrange
                 var baseUrl = "base/";
@@ -137,14 +137,14 @@ define([
                 };
 
                 var vm = new MainSettingsViewModel(baseUrl, diseaseGroups, validatorDiseaseGroups, eventName);
-                var expectedUrl = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/save";
+                var expectedUrl = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/mainsettings";
 
                 var expectedParams = "name=" + name + "&groupType=" + groupType +
                     "&parentDiseaseGroupId=" + parentId + "&validatorDiseaseGroupId=" + validatorId;
 
                 // Act
                 ko.postbox.publish(eventName, diseaseGroup);
-                vm.saveChanges();
+                vm.save();
 
                 // Assert
                 expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
@@ -157,7 +157,7 @@ define([
                 var vm = new MainSettingsViewModel("", [], [], "");
                 var expectedNotice = { message: "Error saving", priority: "warning" };
                 // Act
-                vm.saveChanges();
+                vm.save();
                 jasmine.Ajax.requests.mostRecent().response({ status: 500 });
                 // Assert
                 expect(_.isEqual(vm.notice(), expectedNotice)).toBeTruthy();
@@ -168,7 +168,7 @@ define([
                 var vm = new MainSettingsViewModel("", [], [], "");
                 var expectedNotice = { message: "Saved successfully", priority: "success" };
                 // Act
-                vm.saveChanges();
+                vm.save();
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
                 // Assert
                 expect(_.isEqual(vm.notice(), expectedNotice)).toBeTruthy();
