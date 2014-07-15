@@ -14,7 +14,7 @@ public class JsonDiseaseGroup {
     private String abbreviation;
     private String groupType;
     private Boolean isGlobal;
-    private JsonDiseaseGroup parentDiseaseGroup;
+    private JsonParentDiseaseGroup parentDiseaseGroup;
     private JsonValidatorDiseaseGroup validatorDiseaseGroup;
     private Double weighting;
     private boolean automaticModelRuns;
@@ -37,7 +37,7 @@ public class JsonDiseaseGroup {
         setGroupType(diseaseGroup.getGroupType().name());
         setIsGlobal(diseaseGroup.isGlobal());
         if (diseaseGroup.getParentGroup() != null) {
-            setParentDiseaseGroup(new JsonDiseaseGroup(diseaseGroup.getParentGroup()));
+            setParentDiseaseGroup(new JsonParentDiseaseGroup(diseaseGroup.getParentGroup()));
         }
         if (diseaseGroup.getValidatorDiseaseGroup() != null) {
             setValidatorDiseaseGroup(new JsonValidatorDiseaseGroup(diseaseGroup.getValidatorDiseaseGroup()));
@@ -116,11 +116,11 @@ public class JsonDiseaseGroup {
         this.validatorDiseaseGroup = validatorDiseaseGroup;
     }
 
-    public JsonDiseaseGroup getParentDiseaseGroup() {
+    public JsonParentDiseaseGroup getParentDiseaseGroup() {
         return parentDiseaseGroup;
     }
 
-    public void setParentDiseaseGroup(JsonDiseaseGroup parentDiseaseGroup) {
+    public void setParentDiseaseGroup(JsonParentDiseaseGroup parentDiseaseGroup) {
         this.parentDiseaseGroup = parentDiseaseGroup;
     }
 

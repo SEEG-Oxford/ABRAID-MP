@@ -23,7 +23,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 
@@ -84,7 +83,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
     }
 
-    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups(){
+    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
         List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
         sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
         return validatorDiseaseGroups;
@@ -116,9 +115,10 @@ public class AdminDiseaseGroupController extends AbstractController {
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/savemainsettings",
                     method = RequestMethod.POST)
-    public ResponseEntity saveChanges(@PathVariable Integer diseaseGroupId, String name, String publicName,
-                                      String shortName, String abbreviation, String groupType, Boolean isGlobal,
-                                      Integer parentDiseaseGroupId, Integer validatorDiseaseGroupId) throws Exception {
+    public ResponseEntity saveMainSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
+        String shortName, String abbreviation, String groupType, Boolean isGlobal, Integer parentDiseaseGroupId,
+        Integer validatorDiseaseGroupId) throws Exception {
+
         try {
             if (validInputs(name, groupType)) {
                 DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -140,7 +140,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private void saveProperties(DiseaseGroup diseaseGroup, String name, String publicName, String shortName,
                                 String abbreviation, String groupType, Boolean isGlobal, Integer parentId,
-                                Integer validatorId){
+                                Integer validatorId) throws IllegalArgumentException {
         diseaseGroup.setName(name);
         diseaseGroup.setPublicName(publicName);
         diseaseGroup.setShortName(shortName);
@@ -153,31 +153,43 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
-    private void setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) {
+    private void setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) throws IllegalArgumentException {
         if ((diseaseGroup.getGroupType() != DiseaseGroupType.CLUSTER) && (parentId != null)) {
             DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
             diseaseGroup.setParentGroup(parentDiseaseGroup);
         }
     }
 
-    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId) {
+    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId) throws IllegalArgumentException {
         if (validatorId != null) {
             ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
             diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         }
     }
 
+    /**
+     * Save the updated values of the disease group's model run parameters.
+     * @param diseaseGroupId The id of the disease group.
+     * @param minNewOccurrences The minimum number of new occurrences needed to trigger a model run.
+     * @param minDataVolume The minimum number of occurrences required for the model to run.
+     * @param minDistinctCountries The minimum number of countries to have at least one occurrence.
+     * @param minHighFrequencyCountries The minimum number of countries to have > highFrequencyThreshold occurrences.
+     * @param highFrequencyThreshold The value above which a country is considered to be high frequency.
+     * @param occursInAfrica Whether or not the disease group is known to occur in Africa.
+     * @return A HTTP status code response entity: 200 for success, 400 for failure.
+     * @throws Exception
+     */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/savemodelrunparameters",
             method = RequestMethod.POST)
-    public ResponseEntity saveChanges(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
-                                      Integer minDataVolume, Integer minDistinctCountries,
-                                      Integer minHighFrequencyCountries, Integer highFrequencyThreshold,
-                                      Boolean occursInAfrica) throws Exception {
+    public ResponseEntity saveModelRunParameters(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
+                                                 Integer minDataVolume, Integer minDistinctCountries,
+                                                 Integer minHighFrequencyCountries, Integer highFrequencyThreshold,
+                                                 Boolean occursInAfrica) throws Exception {
         try {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             saveProperties(diseaseGroup, minNewOccurrences, minDataVolume, minDistinctCountries,
-                minHighFrequencyCountries, highFrequencyThreshold, occursInAfrica);
+                    minHighFrequencyCountries, highFrequencyThreshold, occursInAfrica);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
