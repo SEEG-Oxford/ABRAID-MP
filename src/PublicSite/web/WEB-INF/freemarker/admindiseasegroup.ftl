@@ -11,7 +11,17 @@
 </script>
 </#assign>
 
-<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/admindiseasegroup" bootstrapData=bootstrapData>
+<#assign templates>
+<script type="text/html" id="modelwrapper-alert-template">
+    <p>Please configure ModelWrapper for this disease group if necessary.</p>
+    <br /><br />
+    <p style="text-align:center;">
+        <span class="btn btn-default" data-bind="click: runModel" data-dismiss="popover">Proceed with Model Run</span>
+    </p>
+</script>
+</#assign>
+
+<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/admindiseasegroup" bootstrapData=bootstrapData templates=templates>
 <div class="container">
     <div id="disease-groups-list">
         <label for="disease-group-picker" class="side-by-side">Selected Disease Group:</label>
@@ -58,7 +68,12 @@
 
                 <br />
                 <p class="form-group">
-                    <a class="btn btn-primary" data-bind="click: runModel, css: { 'disabled': !canRunModel() || runningModel }">Run Model</a>
+                    <span data-bind="if: hasModelBeenSuccessfullyRun">
+                        <button class="btn btn-primary" data-bind="click: runModel, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
+                    </span>
+                    <span data-bind="if: !hasModelBeenSuccessfullyRun">
+                        <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'bottom', template: 'modelwrapper-alert-template'}, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
+                    </span>
                 </p>
                 <div class="form-group" data-bind="foreach: notices">
                     <div data-bind="alert: $data"></div>
