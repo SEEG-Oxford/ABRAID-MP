@@ -246,27 +246,27 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, null, false, false, 42);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, null, false, 42);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithZeroFeedIds() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, new ArrayList<Integer>(), false, false, 42);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, new ArrayList<Integer>(), false, 42);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithAllParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), Arrays.asList(1, 4, 8), false, true, 17);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), Arrays.asList(1, 4, 8), false, 17);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
-        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), null, true, true, 4);
+        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), null, true, 4);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeWeightingsNull() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), Arrays.asList(1, 4, 8), false, true, 17);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), Arrays.asList(1, 4, 8), false, 17);
     }
 
     @Test
@@ -386,14 +386,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
                                                        DateTime minimumOccurrenceDate, List<Integer> feedIds,
-                                                       boolean isGlobal, boolean mustHaveFinalWeighting,
-                                                       int expectedOccurrenceCount) {
+                                                       boolean isGlobal, int expectedOccurrenceCount) {
         // Arrange
 
         // Act
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
-                        minimumOccurrenceDate, feedIds, isGlobal, mustHaveFinalWeighting);
+                        minimumOccurrenceDate, feedIds, isGlobal);
 
         // Assert
         assertThat(occurrences).hasSize(expectedOccurrenceCount);

@@ -22,7 +22,8 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
             "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
-            "and d.isValidated = true ";
+            "and d.isValidated = true " +
+            "and d.finalWeighting is not null ";
 
     private static final String DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE =
             "and (d.validationWeighting is null or d.validationWeighting >= :minimumValidationWeighting) ";
@@ -32,9 +33,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     private static final String DISEASE_EXTENT_FEEDS_CLAUSE =
             "and d.alert.feed.id in :feedIds ";
-
-    private static final String DISEASE_EXTENT_FINAL_WEIGHTING_CLAUSE =
-            "and d.finalWeighting is not null ";
 
     public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
@@ -81,15 +79,13 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
      * accepts all feeds.
      * @param isGlobal True if the disease group is global, otherwise false.
-     * @param mustHaveFinalWeighting True if the disease occurrence must have a non-null final weighting, otherwise
-     * false.
      * @return A list of disease occurrences.
      */
     @Override
     @SuppressWarnings("unchecked")
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds, boolean isGlobal, boolean mustHaveFinalWeighting) {
+            List<Integer> feedIds, boolean isGlobal) {
         String queryString = DISEASE_EXTENT_QUERY;
         boolean includeFeeds = (feedIds != null && feedIds.size() > 0);
 
@@ -101,9 +97,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         }
         if (includeFeeds) {
             queryString += DISEASE_EXTENT_FEEDS_CLAUSE;
-        }
-        if (mustHaveFinalWeighting) {
-            queryString += DISEASE_EXTENT_FINAL_WEIGHTING_CLAUSE;
         }
 
         Query query = currentSession().createQuery(queryString);

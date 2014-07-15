@@ -206,7 +206,7 @@ public class DiseaseExtentGeneratorTest {
 
     private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(DiseaseExtentParameters parameters,
                                                                   List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
-        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, null, false))
+        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, null))
                 .thenReturn(occurrences);
     }
 
@@ -217,7 +217,7 @@ public class DiseaseExtentGeneratorTest {
         List<Integer> feedIds = parameters.getFeedIds();
 
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId), eq(minimumValidationWeighting),
-                eq(minimumOccurrenceDate), same(feedIds), eq(true))).thenReturn(occurrences);
+                eq(minimumOccurrenceDate), same(feedIds))).thenReturn(occurrences);
     }
 
     private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId() {
@@ -239,7 +239,7 @@ public class DiseaseExtentGeneratorTest {
 
     private void expectGetDiseaseOccurrencesForDiseaseExtent(int times) {
         verify(diseaseService, times(times)).getDiseaseOccurrencesForDiseaseExtent(anyInt(), anyDouble(),
-                any(DateTime.class), anyListOf(Integer.class), anyBoolean());
+                any(DateTime.class), anyListOf(Integer.class));
     }
 
     private void expectGetRelevantReviews(int times) {

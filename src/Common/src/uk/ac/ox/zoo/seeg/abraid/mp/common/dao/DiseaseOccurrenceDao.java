@@ -63,13 +63,11 @@ public interface DiseaseOccurrenceDao {
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
      * accepts all feeds.
      * @param isGlobal True if the disease group is global, otherwise false.
-     * @param mustHaveFinalWeighting True if the disease occurrence must have a non-null final weighting, otherwise
-     * false.
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds, boolean isGlobal, boolean mustHaveFinalWeighting);
+            List<Integer> feedIds, boolean isGlobal);
 
     /**
      * Gets disease occurrences for the specified disease group whose isValidated flag is false.

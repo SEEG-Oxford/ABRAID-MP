@@ -130,17 +130,15 @@ public class DiseaseServiceImpl implements DiseaseService {
      * the occurrence date is ignored.
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
      * accepts all feeds.
-     * @param mustHaveFinalWeighting True if the disease occurrence must have a non-null final weighting, otherwise
-     * false.
      * @return A list of disease occurrences.
      */
     @Override
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds, boolean mustHaveFinalWeighting) {
+            List<Integer> feedIds) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
                 diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds,
-                isDiseaseGroupGlobal(diseaseGroupId), mustHaveFinalWeighting);
+                isDiseaseGroupGlobal(diseaseGroupId));
     }
 
     /**

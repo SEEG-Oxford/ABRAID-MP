@@ -61,13 +61,11 @@ public interface DiseaseService {
      * the occurrence date is ignored.
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
      * accepts all feeds.
-     * @param mustHaveFinalWeighting True if the disease occurrence must have a non-null final weighting, otherwise
-     * false.
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds, boolean mustHaveFinalWeighting);
+            List<Integer> feedIds);
 
     /**
      * Gets disease occurrences for the specified disease group whose isValidated flag is false.

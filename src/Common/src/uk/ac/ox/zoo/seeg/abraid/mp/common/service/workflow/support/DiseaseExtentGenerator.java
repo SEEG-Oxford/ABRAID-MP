@@ -91,8 +91,7 @@ public class DiseaseExtentGenerator {
     }
 
     private List<DiseaseOccurrenceForDiseaseExtent> getInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
-        return diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(), null, null, null,
-                false);
+        return diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(), null, null, null);
     }
 
     private List<DiseaseOccurrenceForDiseaseExtent> getUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
@@ -101,8 +100,8 @@ public class DiseaseExtentGenerator {
         return diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(),
                 parameters.getMinimumValidationWeighting(),
                 DateTime.now().minusYears(parameters.getMaximumYearsAgo()),
-                parameters.getFeedIds(),
-                true);
+                parameters.getFeedIds()
+        );
     }
 
     private void writeDiseaseExtent(List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClassesToSave) {
