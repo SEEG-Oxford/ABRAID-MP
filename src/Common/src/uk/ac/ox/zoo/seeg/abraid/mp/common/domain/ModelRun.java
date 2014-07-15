@@ -13,12 +13,30 @@ import java.util.List;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getModelRunByName",
                 query = "from ModelRun where name=:name"
-        )
-)
+        ),
+        @NamedQuery(
+                name = "getLastRequestedModelRun",
+                query = "from ModelRun " +
+                        "where diseaseGroupId=:diseaseGroupId " +
+                        "and requestDate = " +
+                        "   (select max(requestDate) from ModelRun" +
+                        "    where diseaseGroupId = :diseaseGroupId)"
+        ),
+        @NamedQuery(
+                name = "getLastCompletedModelRun",
+                query = "from ModelRun " +
+                        "where diseaseGroupId=:diseaseGroupId " +
+                        "and status = 'COMPLETED' " +
+                        "and responseDate =" +
+                        "   (select max(responseDate) from ModelRun" +
+                        "    where diseaseGroupId = :diseaseGroupId" +
+                        "    and status = 'COMPLETED')"
+        ),
+})
 @Entity
 @Table(name = "model_run")
 public class ModelRun {

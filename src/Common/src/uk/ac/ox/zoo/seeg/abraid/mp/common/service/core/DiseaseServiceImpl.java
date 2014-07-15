@@ -340,6 +340,16 @@ public class DiseaseServiceImpl implements DiseaseService {
         nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
     }
 
+    /**
+     * Gets statistics about the occurrences of the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The statistics.
+     */
+    @Override
+    public DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
+    }
+
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
         return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());

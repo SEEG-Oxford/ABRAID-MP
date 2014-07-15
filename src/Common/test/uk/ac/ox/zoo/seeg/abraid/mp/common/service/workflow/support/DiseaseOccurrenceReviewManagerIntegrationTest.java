@@ -24,20 +24,25 @@ public class DiseaseOccurrenceReviewManagerIntegrationTest extends AbstractCommo
 
     @Test
     public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenAWeekHasNotElapsed() {
-        executeTest(0, false);
+        executeTest(false, 0, false);
     }
 
     @Test
     public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenAWeekHasElapsed() {
-        executeTest(7, true);
+        executeTest(false, 7, true);
     }
 
     @Test
     public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanAWeekHasElapsed() {
-        executeTest(8, true);
+        executeTest(false, 8, true);
     }
 
-    public void executeTest(int daysElapsed, boolean expectedValue) {
+    @Test
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenAWeekHasNotElapsedButShouldAlwaysRemoveFromValidator() {
+        executeTest(true, 0, true);
+    }
+
+    private void executeTest(boolean alwaysRemoveFromValidator, int daysElapsed, boolean expectedValue) {
         // Arrange
         int diseaseGroupId = 1;
         DiseaseOccurrence occurrence = createDiseaseOccurrence();
@@ -47,7 +52,7 @@ public class DiseaseOccurrenceReviewManagerIntegrationTest extends AbstractCommo
         DateTime modelRunPrepDate = occurrence.getCreatedDate().plusDays(daysElapsed);
 
         // Act
-        target.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
+        target.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate, alwaysRemoveFromValidator);
 
         // Assert
         assertThat(occurrence.isValidated()).isEqualTo(expectedValue);

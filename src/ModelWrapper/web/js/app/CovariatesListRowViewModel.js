@@ -1,4 +1,4 @@
-/* foo.
+/* An AMD defining the Covariates List Row, a vm to back one row in the covariates table.
  * Copyright (c) 2014 University of Oxford
  */
 define(["ko", "underscore"], function (ko, _) {
@@ -27,7 +27,7 @@ define(["ko", "underscore"], function (ko, _) {
                 parentFile.enabled.push(activeDiseaseId);
                 self.usageCount(self.usageCount() + 1);
             } else {
-                // Note: using underscore"s indexOf instead of native indexOf because native
+                // Note: using underscore's indexOf instead of native indexOf because native
                 //       indexOf is flakey in old IEs.
                 parentFile.enabled.splice(_(parentFile.enabled).indexOf(activeDiseaseId), 1);
                 self.usageCount(self.usageCount() - 1);

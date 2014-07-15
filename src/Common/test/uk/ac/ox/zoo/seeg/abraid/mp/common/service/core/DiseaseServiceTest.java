@@ -430,6 +430,21 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         verify(nativeSQL, times(1)).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
     }
 
+    @Test
+    public void getDiseaseOccurrenceStatistics() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseOccurrenceStatistics expectedStatistics =
+                new DiseaseOccurrenceStatistics(1, DateTime.now(), DateTime.now());
+        when(diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(expectedStatistics);
+
+        // Act
+        DiseaseOccurrenceStatistics actualStatistics = diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId);
+
+        // Assert
+        assertThat(actualStatistics).isSameAs(expectedStatistics);
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
         // Arrange
         int diseaseGroupId = 10;

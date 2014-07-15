@@ -49,6 +49,14 @@ import javax.persistence.Table;
                 name = "getNewOccurrencesCountByDiseaseGroup",
                 query = "select count(*) from DiseaseOccurrence where isValidated is not null and " +
                         "diseaseGroup.id=:diseaseGroupId and createdDate > diseaseGroup.lastModelRunPrepDate"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrenceStatistics",
+                query = "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatistics" +
+                        "       (count(*), min(occurrenceDate), max(occurrenceDate)) " +
+                        "from DiseaseOccurrence " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
+                        "and isValidated is not null"
         )
 })
 @Entity

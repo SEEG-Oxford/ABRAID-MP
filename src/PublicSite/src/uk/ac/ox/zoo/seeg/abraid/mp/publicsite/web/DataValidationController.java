@@ -63,7 +63,7 @@ public class DataValidationController extends AbstractController {
      * @return The ftl page name.
      */
     @RequestMapping(value = GEOWIKI_BASE_URL + "/content", method = RequestMethod.GET)
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);
@@ -107,7 +107,7 @@ public class DataValidationController extends AbstractController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
     @ResponseBody
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
@@ -134,7 +134,7 @@ public class DataValidationController extends AbstractController {
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity submitDiseaseOccurrenceReview(@PathVariable Integer validatorDiseaseGroupId,
                                                         @PathVariable Integer occurrenceId,
                                                         String review) {
@@ -176,7 +176,7 @@ public class DataValidationController extends AbstractController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
     @ResponseBody
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
@@ -206,7 +206,7 @@ public class DataValidationController extends AbstractController {
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
             method = RequestMethod.POST)
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
                                                 String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();

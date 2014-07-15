@@ -9,13 +9,23 @@ public enum ModelRunStatus {
     /**
      * The model run is in progress.
      */
-    IN_PROGRESS,
+    IN_PROGRESS("requested"),
     /**
      * The model run has completed.
      */
-    COMPLETED,
+    COMPLETED("completed"),
     /**
      * The model run has failed.
      */
-    FAILED
+    FAILED("failed");
+
+    private String displayText;
+
+    ModelRunStatus(String displayText) {
+        this.displayText = displayText;
+    }
+
+    public String getDisplayText() {
+        return displayText;
+    }
 }

@@ -93,7 +93,7 @@ public class ModelRunManagerTest {
         arrangeAndAct(weekHasElapsed, newOccurrenceCountOverThreshold);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestModelRun(eq(DISEASE_GROUP_ID));
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestAutomaticallyTriggeredModelRun(eq(DISEASE_GROUP_ID));
     }
 
     private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
@@ -102,7 +102,7 @@ public class ModelRunManagerTest {
         arrangeAndAct(weekHasElapsed, newOccurrenceCountOverThreshold);
 
         // Assert
-        verify(modelRunWorkflowService, never()).prepareForAndRequestModelRun(eq(DISEASE_GROUP_ID));
+        verify(modelRunWorkflowService, never()).prepareForAndRequestAutomaticallyTriggeredModelRun(eq(DISEASE_GROUP_ID));
     }
 
     private void arrangeAndAct(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {

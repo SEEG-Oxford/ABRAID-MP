@@ -191,4 +191,11 @@ public interface DiseaseService {
      * @param isGlobal True if the disease is global, false if tropical.
      */
     void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
+
+    /**
+     * Gets statistics about the occurrences of the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The statistics.
+     */
+    DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId);
 }

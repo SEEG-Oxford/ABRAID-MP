@@ -98,4 +98,11 @@ public interface DiseaseOccurrenceDao {
      * @return The count.
      */
     long getNewOccurrencesCountByDiseaseGroup(Integer diseaseGroupId);
+
+    /**
+     * Gets statistics about the occurrences of the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The statistics.
+     */
+    DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId);
 }

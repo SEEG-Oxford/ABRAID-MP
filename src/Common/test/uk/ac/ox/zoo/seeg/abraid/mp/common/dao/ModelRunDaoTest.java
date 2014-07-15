@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -21,6 +22,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private ModelRunDao modelRunDao;
+
+    private ModelRun modelRunDengue1;
+    private ModelRun modelRunDengue2;
+    private ModelRun modelRunDengue3;
+    private ModelRun modelRunDengue4;
+    private ModelRun modelRunDengue5;
+    private ModelRun modelRunMalarias1;
+
+    @Before
+    public void setUp() {
+        modelRunDengue1 = createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "2014-07-01", null);
+        modelRunDengue2 = createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "2014-07-01", "2014-07-04");
+        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "2014-07-02", "2014-07-03");
+        modelRunDengue4 = createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "2014-07-05", null);
+        modelRunDengue5 = createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "2014-07-06", "2014-07-05");
+        modelRunMalarias1 = createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "2014-07-07", "2014-07-08");
+    }
 
     @Test
     public void saveAndReloadModelRunByName() {
@@ -98,6 +116,99 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(run.getCovariateInfluences()).hasSize(3);
     }
 
+    @Test
+    public void getLastRequestedModelRunReturnsNullIfNoModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastRequestedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
+    public void getLastRequestedModelRunIgnoresIDsAndDoesNotRequireResponseDateToBeSet() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastRequestedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isEqualTo(modelRunDengue4);
+    }
+
+    @Test
+    public void getLastRequestedModelRunDoesNotRequireResponseDateToBeNull() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue1);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastRequestedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isEqualTo(modelRunDengue5);
+    }
+
+    @Test
+    public void getLastCompletedModelRunReturnsNullIfNoModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
+    public void getLastCompletedModelRunReturnsNullIfNoCompletedModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunDengue1);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
+    public void getLastCompletedModelRunReturnsNonNullIfCompletedModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isEqualTo(modelRunDengue2);
+    }
+
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {
         SubmodelStatistic submodelStatistic = new SubmodelStatistic();
         submodelStatistic.setModelRun(modelRun);
@@ -113,5 +224,24 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     private ModelRun createModelRun(String name) {
         return new ModelRun(name, 87, DateTime.now());
+    }
+
+    private List<ModelRun> createTestModelRuns() {
+        List<ModelRun> modelRuns = new ArrayList<>();
+        modelRuns.add(createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "2014/07/01", null));
+        modelRuns.add(createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "2014/07/01", "2014/07/04"));
+        modelRuns.add(createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "2014/07/02", "2014/07/03"));
+        modelRuns.add(createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "2014/07/05", null));
+        modelRuns.add(createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "2014/07/06", "2014/07/05"));
+        modelRuns.add(createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "2014/07/07", "2014/07/08"));
+        return modelRuns;
+    }
+
+    private static ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestDate,
+                                    String responseDate) {
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, new DateTime(requestDate));
+        modelRun.setStatus(status);
+        modelRun.setResponseDate(new DateTime(responseDate));
+        return modelRun;
     }
 }

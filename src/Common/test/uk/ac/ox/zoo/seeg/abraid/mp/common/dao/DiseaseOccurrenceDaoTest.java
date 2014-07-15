@@ -270,6 +270,11 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getDiseaseOccurrencesForDiseaseExtentWeirdoBehaviour() {
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, DateTime.now().minusYears(5), null, false, 26);
+    }
+
+    @Test
     public void getDiseaseOccurrencesInValidationReturnsOnlyIsValidatedFalse() {
         // Arrange
         int diseaseGroupId = 87;
@@ -384,11 +389,37 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(count).isEqualTo(45);
     }
 
+    @Test
+    public void getDiseaseOccurrenceStatisticsWithSomeOccurrences() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        DiseaseOccurrenceStatistics statistics = diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
+
+        // Assert
+        assertThat(statistics.getOccurrenceCount()).isEqualTo(45);
+        assertThat(statistics.getMinimumOccurrenceDate()).isEqualTo(new DateTime("2014-02-24T17:35:29"));
+        assertThat(statistics.getMaximumOccurrenceDate()).isEqualTo(new DateTime("2014-02-27T08:06:46"));
+    }
+
+    @Test
+    public void getDiseaseOccurrenceStatisticsWithNoOccurrences() {
+        // Arrange
+        int diseaseGroupId = 1;
+
+        // Act
+        DiseaseOccurrenceStatistics statistics = diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
+
+        // Assert
+        assertThat(statistics.getOccurrenceCount()).isEqualTo(0);
+        assertThat(statistics.getMinimumOccurrenceDate()).isNull();
+        assertThat(statistics.getMaximumOccurrenceDate()).isNull();
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
                                                        DateTime minimumOccurrenceDate, List<Integer> feedIds,
                                                        boolean isGlobal, int expectedOccurrenceCount) {
-        // Arrange
-
         // Act
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,

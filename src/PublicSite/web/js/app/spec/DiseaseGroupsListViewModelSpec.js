@@ -10,26 +10,26 @@ define(["app/DiseaseGroupsListViewModel"], function (DiseaseGroupsListViewModel)
         var initialData = [ dengue, malarias ];
         var vm = {};
         beforeEach(function () {
-            vm = new DiseaseGroupsListViewModel("", initialData);
+            vm = new DiseaseGroupsListViewModel("", initialData, "disease-group-selected");
         });
 
-        describe("holds the selected disease which", function () {
+        describe("holds the selected disease group which", function () {
             it("is an observable", function () {
-                expect(vm.selectedDisease).toBeObservable();
+                expect(vm.selectedDiseaseGroup).toBeObservable();
             });
 
             it("is initially the first item in the disease groups list", function () {
-                expect(vm.selectedDisease()).toBe(dengue);
+                expect(vm.selectedDiseaseGroup()).toBe(dengue);
             });
         });
 
         describe("holds the list of disease groups which", function () {
             it("is an observable", function () {
-                expect(vm.diseases).toBeObservable();
+                expect(vm.diseaseGroups).toBeObservable();
             });
 
             it("start with the same disease groups as passed to the constructor", function () {
-                expect(vm.diseases().length).toBe(2);
+                expect(vm.diseaseGroups().length).toBe(2);
             });
         });
     });

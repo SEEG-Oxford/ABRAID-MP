@@ -70,9 +70,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         int diseaseGroupId = 87;
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
 
         // Assert
+        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
         assertThat(modelRunDao.getAll()).isEmpty();
     }
 
@@ -143,9 +144,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         clearFinalWeightingsFromDatabase(diseaseGroupId);
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
 
         // Assert
+        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
         List<ModelRun> modelRuns = modelRunDao.getAll();
         assertThat(modelRuns).hasSize(0);
     }

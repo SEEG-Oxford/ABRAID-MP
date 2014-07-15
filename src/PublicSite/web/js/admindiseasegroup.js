@@ -10,9 +10,11 @@ require(["require.conf"], function () {
         "app/DiseaseGroupsListViewModel",
         "app/MainSettingsViewModel",
         "app/ModelRunParametersViewModel",
+        "app/DiseaseGroupSetupViewModel",
         "navbar",
         "domReady!"
-    ], function (ko, DiseaseGroupsListViewModel, MainSettingsViewModel, ModelRunParametersViewModel, setupNavbar, doc) {
+    ], function (ko, DiseaseGroupsListViewModel, MainSettingsViewModel, ModelRunParametersViewModel,
+                 DiseaseGroupSetupViewModel, setupNavbar, doc) {
         setupNavbar();
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
@@ -35,6 +37,10 @@ require(["require.conf"], function () {
             new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName),
             doc.getElementById("model-run-parameters")
         );
+
+        ko.applyBindings(
+            ko.validatedObservable(new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName)),
+            doc.getElementById("setup-body"));
 
         // Publish the initial state of the disease group drop-down list
         ko.postbox.publish(diseaseGroupSelectedEventName, diseaseGroupsListViewModel.selectedDiseaseGroup());

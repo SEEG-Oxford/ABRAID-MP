@@ -12,7 +12,17 @@
 </script>
 </#assign>
 
-<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/adminDiseaseGroup" bootstrapData=bootstrapData>
+<#assign templates>
+<script type="text/html" id="modelwrapper-alert-template">
+    <p>Please configure ModelWrapper for this disease group if necessary.</p>
+    <br /><br />
+    <p style="text-align:center;">
+        <span class="btn btn-default" data-bind="click: runModel" data-dismiss="popover">Proceed with Model Run</span>
+    </p>
+</script>
+</#assign>
+
+<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/adminDiseaseGroup" bootstrapData=bootstrapData templates=templates>
 <div class="container">
     <div id="disease-groups-list">
         <label for="disease-group-picker" class="side-by-side">Selected Disease Group:</label>

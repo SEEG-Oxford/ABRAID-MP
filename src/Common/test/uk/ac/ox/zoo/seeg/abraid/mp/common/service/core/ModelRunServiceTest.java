@@ -91,4 +91,32 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
         // Assert
         verify(modelRunDao).save(eq(run));
     }
+
+    @Test
+    public void getLastRequestedModelRun() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun expectedModelRun = new ModelRun();
+        when(modelRunDao.getLastRequestedModelRun(diseaseGroupId)).thenReturn(expectedModelRun);
+
+        // Act
+        ModelRun actualModelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(actualModelRun).isEqualTo(expectedModelRun);
+    }
+
+    @Test
+    public void getLastCompletedModelRun() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun expectedModelRun = new ModelRun();
+        when(modelRunDao.getLastCompletedModelRun(diseaseGroupId)).thenReturn(expectedModelRun);
+
+        // Act
+        ModelRun actualModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(actualModelRun).isEqualTo(expectedModelRun);
+    }
 }

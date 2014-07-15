@@ -1,15 +1,18 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,16 +21,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the AdminDiseaseGroupController.
+ * Tests the AdminDiseaseGroupController class.
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminDiseaseGroupControllerTest {
+    private DiseaseService diseaseService;
+    private GeoJsonObjectMapper geoJsonObjectMapper;
+    private ModelRunWorkflowService modelRunWorkflowService;
+    private ModelRunService modelRunService;
+    private AdminDiseaseGroupController controller;
+
+    @Before
+    public void setUp() {
+        diseaseService = mock(DiseaseService.class);
+        geoJsonObjectMapper = new GeoJsonObjectMapper();
+        modelRunWorkflowService = mock(ModelRunWorkflowService.class);
+        modelRunService = mock(ModelRunService.class);
+        controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper, modelRunWorkflowService,
+                modelRunService);
+    }
+
     @Test
     public void showPageAddsDiseaseGroupsAndValidatorDiseaseGroupsToModel() throws JsonProcessingException {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        GeoJsonObjectMapper geoJsonObjectMapper = new GeoJsonObjectMapper();
-        AdminDiseaseGroupController controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper);
         Model model = mock(Model.class);
 
         DiseaseGroup diseaseGroup1 = createDiseaseGroup(188, 5, "Leishmaniases", "leishmaniases", DiseaseGroupType.MICROCLUSTER,
@@ -52,6 +68,44 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(result).isEqualTo("admindiseasegroup");
         verify(model, times(1)).addAttribute("diseaseGroups", expectedJson);
         verify(model, times(1)).addAttribute("validatorDiseaseGroups", expectedValidatorJson);
+    }
+
+    @Test
+    public void getModelRunInformation() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", 87, new DateTime("2014-07-02T14:15:16"));
+        ModelRun lastCompletedModelRun = new ModelRun();
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, null, null);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(87);
+
+        when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
+        when(modelRunService.getLastCompletedModelRun(diseaseGroupId)).thenReturn(lastCompletedModelRun);
+        when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        // Act
+        ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
+
+        // Assert
+        assertThat(entity.getStatusCode().value()).isEqualTo(200);
+        assertThat(entity.getBody().getLastModelRunText()).isEqualTo("requested on 2 Jul 2014 14:15:16");
+        assertThat(entity.getBody().getDiseaseOccurrencesText()).isEqualTo("none");
+        assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
+        assertThat(entity.getBody().isCanRunModel()).isFalse();
+        assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+    }
+
+    @Test
+    public void requestModelRun() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        controller.requestModelRun(diseaseGroupId);
+
+        // Assert
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManuallyTriggeredModelRun(eq(diseaseGroupId));
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests
@@ -88,9 +142,6 @@ public class AdminDiseaseGroupControllerTest {
     @Test
     public void saveMainSettingsCallsSaveForDiseaseGroup() throws Exception {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        GeoJsonObjectMapper geoJsonObjectMapper = new GeoJsonObjectMapper();
-        AdminDiseaseGroupController controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper);
         DiseaseGroup diseaseGroup = createDiseaseGroup(1, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
 
@@ -105,9 +156,6 @@ public class AdminDiseaseGroupControllerTest {
     @Test
     public void saveMainSettingsReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        GeoJsonObjectMapper geoJsonObjectMapper = new GeoJsonObjectMapper();
-        AdminDiseaseGroupController controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper);
         when(diseaseService.getDiseaseGroupById(anyInt())).thenThrow(new IllegalArgumentException());
 
         // Act
@@ -120,10 +168,6 @@ public class AdminDiseaseGroupControllerTest {
     @Test
     public void saveMainSettingsReturnsBadRequestForInvalidParentDiseaseGroup() throws Exception {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        GeoJsonObjectMapper geoJsonObjectMapper = new GeoJsonObjectMapper();
-        AdminDiseaseGroupController controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper);
-
         int diseaseGroupId = 1;
         int parentId = 87;
         DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, parentId, "Name", "Parent name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
@@ -140,9 +184,6 @@ public class AdminDiseaseGroupControllerTest {
     @Test
     public void saveMainSettingsReturnsBadRequestForInvalidValidatorDiseaseGroup() throws Exception {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        GeoJsonObjectMapper geoJsonObjectMapper = new GeoJsonObjectMapper();
-        AdminDiseaseGroupController controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper);
         int validatorId = 4;
         when(diseaseService.getDiseaseGroupById(validatorId)).thenThrow(new IllegalArgumentException());
 

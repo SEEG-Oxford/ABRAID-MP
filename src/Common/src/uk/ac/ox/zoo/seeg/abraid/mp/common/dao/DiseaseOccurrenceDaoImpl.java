@@ -18,12 +18,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     // HQL fragments used to build a query to obtain disease occurrences for disease extent generation
     private static final String DISEASE_EXTENT_QUERY =
             "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, case when :isGlobal = true then " +
+            "       (d.occurrenceDate, case when :isGlobal = true then" +
             "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.isValidated = true " +
-            "and d.finalWeighting is not null ";
+            "and d.finalWeighting is not null " +
+            "and d.location.adminUnitGlobalGaulCode is not null " +
+            "and d.location.adminUnitTropicalGaulCode is not null ";
 
     private static final String DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE =
             "and (d.validationWeighting is null or d.validationWeighting >= :minimumValidationWeighting) ";
@@ -157,5 +159,15 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         Query query = getParameterisedNamedQuery("getNewOccurrencesCountByDiseaseGroup",
                 "diseaseGroupId", diseaseGroupId);
         return (long) query.uniqueResult();
+    }
+
+    /**
+     * Gets statistics about the occurrences of the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The statistics.
+     */
+    public DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId) {
+        Query query = getParameterisedNamedQuery("getDiseaseOccurrenceStatistics", "diseaseGroupId", diseaseGroupId);
+        return (DiseaseOccurrenceStatistics) query.uniqueResult();
     }
 }
