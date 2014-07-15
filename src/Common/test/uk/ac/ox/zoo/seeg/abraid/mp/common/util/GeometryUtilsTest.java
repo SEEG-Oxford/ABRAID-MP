@@ -302,6 +302,39 @@ public class GeometryUtilsTest {
         assertThat(closestPoint.equalsExact(expectedClosestPoint)).isTrue();
     }
 
+    @Test
+    public void findClosestPointOnGeometrySnapsOutsidePointWithCorrectRounding() {
+        // Arrange
+        Geometry geometry = GeometryUtils.createPolygon(false, 10.000003, 10.000002, 10, 20, 20, 20, 20, 10,
+                10.000003, 10.000002);
+        Point point = GeometryUtils.createPoint(9, 9);
+        Point expectedCorrectClosestPoint = GeometryUtils.createPoint(10.00001, 10.00001);
+        Point expectedIncorrectClosestPoint = GeometryUtils.createPoint(10, 10);
+        assertThat(geometry.intersects(expectedCorrectClosestPoint)).isTrue();
+        assertThat(geometry.intersects(expectedIncorrectClosestPoint)).isFalse();
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint.equalsExact(expectedCorrectClosestPoint)).isTrue();
+        assertThat(closestPoint.equalsExact(expectedIncorrectClosestPoint)).isFalse();
+    }
+
+    @Test
+    public void findClosestPointOnGeometryReturnsNullIfClosestPointCannotBeFound() {
+        // Arrange
+        Geometry geometry = GeometryUtils.createPolygon(false, 10.000003, 10.000003, 10.000003, 10.000006,
+                10.000006, 10.000006, 10.000006, 10.000003, 10.000003, 10.000003);
+        Point point = GeometryUtils.createPoint(9, 9);
+
+        // Act
+        Point closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, point);
+
+        // Assert
+        assertThat(closestPoint).isNull();
+    }
+
     // Asserted exception is in the @Test annotation - cannot use catchException() for static methods
     @Test(expected = IllegalArgumentException.class)
     public void createPolygonThrowsExceptionIfNumberParametersIsOdd() {
