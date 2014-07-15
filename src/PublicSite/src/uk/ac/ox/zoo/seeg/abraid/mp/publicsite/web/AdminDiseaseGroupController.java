@@ -26,6 +26,7 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Controller for the disease group page of system administration.
@@ -120,7 +121,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     public ResponseEntity saveMainSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
         String shortName, String abbreviation, String groupType, Boolean isGlobal, Integer parentDiseaseGroupId,
         Integer validatorDiseaseGroupId) throws Exception {
-    ////CHECKSTYLE:ON
+    ///CHECKSTYLE:ON
 
         try {
             if (validInputs(name, groupType)) {
@@ -138,7 +139,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     }
 
     private boolean validInputs(String name, String groupType) {
-        return (name != null) && (groupType != null);
+        return hasText(name) && hasText(groupType);
     }
 
     private void saveProperties(DiseaseGroup diseaseGroup, String name, String publicName, String shortName,
