@@ -67,7 +67,7 @@ public class DiseaseExtentGenerator {
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
-        helper.setOccurrences(getInitialExtentOccurrences(helper));
+        setInitialExtentOccurrences(helper);
         LOGGER.info(String.format(INITIAL_MESSAGE, getDiseaseGroupAndOccurrencesLogMessage(helper)));
 
         helper.groupOccurrencesByAdminUnit();
@@ -79,7 +79,7 @@ public class DiseaseExtentGenerator {
 
     private void updateExistingExtent(DiseaseExtentGeneratorHelper helper) {
         List<AdminUnitReview> reviews = getRelevantReviews(helper);
-        helper.setOccurrences(getUpdatedExtentOccurrences(helper));
+        setUpdatedExtentOccurrences(helper);
         LOGGER.info(String.format(UPDATING_MESSAGE, getDiseaseGroupAndOccurrencesLogMessage(helper), reviews.size()));
 
         helper.groupOccurrencesByAdminUnit();
@@ -90,18 +90,23 @@ public class DiseaseExtentGenerator {
         updateAggregatedDiseaseExtent(helper.getDiseaseGroup());
     }
 
-    private List<DiseaseOccurrenceForDiseaseExtent> getInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
-        return diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(), null, null, null);
+    private void setInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
+        List<DiseaseOccurrenceForDiseaseExtent> occurrences =
+                diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+                        helper.getDiseaseGroup().getId(), null, null, null);
+        helper.setOccurrences(occurrences);
     }
 
-    private List<DiseaseOccurrenceForDiseaseExtent> getUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
+    private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
         DiseaseExtentParameters parameters = helper.getParameters();
 
-        return diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(),
+        List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+                helper.getDiseaseGroup().getId(),
                 parameters.getMinimumValidationWeighting(),
                 DateTime.now().minusYears(parameters.getMaximumYearsAgo()),
                 parameters.getFeedIds()
         );
+        helper.setOccurrences(occurrences);
     }
 
     private void writeDiseaseExtent(List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClassesToSave) {
