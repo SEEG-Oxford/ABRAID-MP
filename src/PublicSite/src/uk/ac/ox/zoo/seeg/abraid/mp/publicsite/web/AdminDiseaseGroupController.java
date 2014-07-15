@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +53,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup", method = RequestMethod.GET)
+    @Transactional
     public String showPage(Model model) throws JsonProcessingException {
         try {
             List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
@@ -110,14 +112,17 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @param parentDiseaseGroupId The id of the disease group's parent disease group.
      * @param validatorDiseaseGroupId The id of the disease group's validator disease group.
      * @return A HTTP status code response entity: 200 for success, 400 for failure.
-     * @throws Exception
+     * @throws Exception if cannot fetch disease group from database.
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/mainsettings",
                     method = RequestMethod.POST)
+    @Transactional
+    ///CHECKSTYLE:OFF ParameterNumber
     public ResponseEntity saveMainSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
         String shortName, String abbreviation, String groupType, Boolean isGlobal, Integer parentDiseaseGroupId,
         Integer validatorDiseaseGroupId) throws Exception {
+    ////CHECKSTYLE:ON
 
         try {
             if (validInputs(name, groupType)) {
@@ -160,7 +165,8 @@ public class AdminDiseaseGroupController extends AbstractController {
         }
     }
 
-    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId) throws IllegalArgumentException {
+    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId)
+            throws IllegalArgumentException {
         if (validatorId != null) {
             ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
             diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
@@ -177,11 +183,12 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @param highFrequencyThreshold The value above which a country is considered to be high frequency.
      * @param occursInAfrica Whether or not the disease group is known to occur in Africa.
      * @return A HTTP status code response entity: 200 for success, 400 for failure.
-     * @throws Exception
+     * @throws Exception if cannot fetch disease group from database.
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/modelrunparameters",
             method = RequestMethod.POST)
+    @Transactional
     public ResponseEntity saveModelRunParameters(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
                                                  Integer minDataVolume, Integer minDistinctCountries,
                                                  Integer minHighFrequencyCountries, Integer highFrequencyThreshold,
