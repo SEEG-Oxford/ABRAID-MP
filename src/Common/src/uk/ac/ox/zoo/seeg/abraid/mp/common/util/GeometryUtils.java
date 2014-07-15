@@ -20,7 +20,7 @@ public final class GeometryUtils {
     private static final double PRECISION_DECIMAL_PLACES = 5;
     private static final PrecisionModel PRECISION_MODEL = new PrecisionModel(Math.pow(10, PRECISION_DECIMAL_PLACES));
     private static final double[] PRECISION_ADJUSTMENTS =
-            { 0, -Math.pow(10, -PRECISION_DECIMAL_PLACES), Math.pow(10, -PRECISION_DECIMAL_PLACES) };
+            {0, -Math.pow(10, -PRECISION_DECIMAL_PLACES), Math.pow(10, -PRECISION_DECIMAL_PLACES)};
 
     // Constructs a geometry using the above precision and the preferred SRID.
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(PRECISION_MODEL, SRID_FOR_WGS_84);
