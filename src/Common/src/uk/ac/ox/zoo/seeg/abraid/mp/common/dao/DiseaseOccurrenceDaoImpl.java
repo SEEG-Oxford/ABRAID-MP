@@ -15,6 +15,25 @@ import java.util.List;
  */
 @Repository
 public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOccurrenceDao {
+    // HQL fragments used to build a query to obtain disease occurrences for disease extent generation
+    private static final String DISEASE_EXTENT_QUERY =
+            "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
+            "       (d.occurrenceDate, case when :isGlobal = true then " +
+            "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
+            "from DiseaseOccurrence d " +
+            "where d.diseaseGroup.id = :diseaseGroupId " +
+            "and d.isValidated = true " +
+            "and d.finalWeighting is not null ";
+
+    private static final String DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE =
+            "and (d.validationWeighting is null or d.validationWeighting >= :minimumValidationWeighting) ";
+
+    private static final String DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE =
+            "and d.occurrenceDate >= :minimumOccurrenceDate ";
+
+    private static final String DISEASE_EXTENT_FEEDS_CLAUSE =
+            "and d.alert.feed.id in :feedIds ";
+
     public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -54,10 +73,11 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
-     *                                   value.
-     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
+     * value. If null, the validation weighting is ignored.
+     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
+     * the occurrence date is ignored.
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
-     *                accepts all feeds.
+     * accepts all feeds.
      * @param isGlobal True if the disease group is global, otherwise false.
      * @return A list of disease occurrences.
      */
@@ -66,17 +86,29 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             List<Integer> feedIds, boolean isGlobal) {
-        // Restrict to the given list of feed IDs (if any)
-        boolean includeFeedIds = (feedIds != null && feedIds.size() > 0);
+        String queryString = DISEASE_EXTENT_QUERY;
+        boolean includeFeeds = (feedIds != null && feedIds.size() > 0);
 
-        Query query = namedQuery(includeFeedIds ? "getDiseaseOccurrencesForDiseaseExtentByFeedIds" :
-                                                  "getDiseaseOccurrencesForDiseaseExtent");
+        if (minimumValidationWeighting != null) {
+            queryString += DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE;
+        }
+        if (minimumOccurrenceDate != null) {
+            queryString += DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE;
+        }
+        if (includeFeeds) {
+            queryString += DISEASE_EXTENT_FEEDS_CLAUSE;
+        }
 
+        Query query = currentSession().createQuery(queryString);
         query.setParameter("diseaseGroupId", diseaseGroupId);
-        query.setParameter("minimumValidationWeighting", minimumValidationWeighting);
-        query.setParameter("minimumOccurrenceDate", minimumOccurrenceDate);
         query.setParameter("isGlobal", isGlobal);
-        if (includeFeedIds) {
+        if (minimumValidationWeighting != null) {
+            query.setParameter("minimumValidationWeighting", minimumValidationWeighting);
+        }
+        if (minimumOccurrenceDate != null) {
+            query.setParameter("minimumOccurrenceDate", minimumOccurrenceDate);
+        }
+        if (includeFeeds) {
             query.setParameterList("feedIds", feedIds);
         }
 
