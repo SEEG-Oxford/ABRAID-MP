@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,6 +68,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/", method = RequestMethod.GET)
+    @Transactional
     public String showPage(Model model) throws JsonProcessingException {
         try {
             // Include information about all disease groups in the "initialData" attribute
@@ -91,6 +93,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @Transactional
     public ResponseEntity<JsonModelRunInformation> getModelRunInformation(@PathVariable Integer diseaseGroupId) {
         ModelRun lastRequestedModelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
         ModelRun lastCompletedModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
@@ -118,6 +121,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @Transactional
     public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId) {
         try {
             modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId);
