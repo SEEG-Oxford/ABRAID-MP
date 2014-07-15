@@ -4,8 +4,9 @@
 define([
     "jquery",
     "ko",
-    "underscore"
-], function ($, ko, _) {
+    "underscore",
+    "app/MainSettingsPayload"
+], function ($, ko, _, MainSettingsPayload) {
     "use strict";
 
     var SINGLE = "SINGLE";
@@ -17,44 +18,23 @@ define([
         {value: CLUSTER,      label: "Cluster"}
     ];
 
-    function DiseaseGroup(name, publicName, shortName, abbreviation, groupType, isGlobal, parentId, validatorId) {
-        return {
-            name: name,
-            publicName: publicName,
-            shortName: shortName,
-            abbreviation: abbreviation,
-            groupType: groupType,
-            isGlobal: isGlobal,
-            parentDiseaseGroupId: parentId,
-            validatorDiseaseGroupId: validatorId
-        };
-    }
-
-    function getId(diseaseGroup) {
-        return (diseaseGroup) ? diseaseGroup.id.toString() : null;
-    }
-
-    function createDiseaseGroup(d) {
-        return new DiseaseGroup(d.name, d.publicName, d.shortName, d.abbreviation, d.groupType, d.isGlobal,
-            getId(d.parentDiseaseGroup), getId(d.validatorDiseaseGroup));
-    }
-
-    function findInList(diseaseGroup, diseaseGroupsList) {
-        if (diseaseGroup) {
-            return _(diseaseGroupsList).find(function (dg) { return dg.id === diseaseGroup.id; });
-        }
-    }
-
-    function filterOnType(diseaseGroups, groupType) {
-        return _(diseaseGroups).filter(function (diseaseGroup) { return diseaseGroup.groupType === groupType; });
-    }
-
     return function (baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName) {
         var self = this;
+
+        var findInList = function (diseaseGroup, diseaseGroupsList) {
+            if (diseaseGroup) {
+                return _(diseaseGroupsList).findWhere({ id: diseaseGroup.id });
+            }
+        };
+
+        var filterOnType = function (diseaseGroups, groupType) {
+            return _(diseaseGroups).filter(function (diseaseGroup) { return diseaseGroup.groupType === groupType; });
+        };
+
         var microclusterDiseaseGroups = filterOnType(diseaseGroups, MICROCLUSTER);
         var clusterDiseaseGroups = filterOnType(diseaseGroups, CLUSTER);
 
-        function getParentDiseaseGroups(type) {
+        var getParentDiseaseGroups = function (type) {
             switch (type) {
                 case SINGLE:
                     return microclusterDiseaseGroups;
@@ -63,9 +43,9 @@ define([
                 case CLUSTER:
                     return null;
             }
-        }
+        };
 
-        self.name = ko.observable().extend({ required: true });
+        self.name = ko.validatedObservable().extend({ required: true });
         self.publicName = ko.observable();
         self.shortName = ko.observable();
         self.abbreviation = ko.observable();
@@ -79,17 +59,15 @@ define([
         self.selectedValidatorDiseaseGroup = ko.observable();
 
         var diseaseGroupId;
-        var originalDiseaseGroup;
-        var data = ko.computed(function () {
-            return new DiseaseGroup(
-                self.name(), self.publicName(), self.shortName(), self.abbreviation(), self.selectedType(),
-                self.isGlobal(), getId(self.selectedParentDiseaseGroup()), getId(self.selectedValidatorDiseaseGroup()));
-        });
+        var originalPayload;
+        var data = ko.computed(function () { return MainSettingsPayload.fromViewModel(self); });
 
-        self.enableSaveButton = ko.computed(function () { return !(_.isEqual(originalDiseaseGroup, data())); });
+        self.enableSaveButton = ko.computed(function () {
+            return !(_.isEqual(originalPayload, data())) && self.name.isValid();
+        });
         self.notice = ko.observable();
-        self.saveChanges = function () {
-            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/savemainsettings";
+        self.save = function () {
+            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/mainsettings";
             $.post(url, data())
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
                 .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });
@@ -97,8 +75,7 @@ define([
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             diseaseGroupId = diseaseGroup.id;
-            originalDiseaseGroup = createDiseaseGroup(diseaseGroup);
-
+            originalPayload = MainSettingsPayload.fromJson(diseaseGroup);
             self.name(diseaseGroup.name);
             self.publicName(diseaseGroup.publicName);
             self.shortName(diseaseGroup.shortName);

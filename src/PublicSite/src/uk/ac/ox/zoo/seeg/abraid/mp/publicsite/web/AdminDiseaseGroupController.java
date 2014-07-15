@@ -113,7 +113,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @throws Exception
      */
     @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/savemainsettings",
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/mainsettings",
                     method = RequestMethod.POST)
     public ResponseEntity saveMainSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
         String shortName, String abbreviation, String groupType, Boolean isGlobal, Integer parentDiseaseGroupId,
@@ -180,7 +180,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @throws Exception
      */
     @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/savemodelrunparameters",
+    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/modelrunparameters",
             method = RequestMethod.POST)
     public ResponseEntity saveModelRunParameters(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
                                                  Integer minDataVolume, Integer minDistinctCountries,
