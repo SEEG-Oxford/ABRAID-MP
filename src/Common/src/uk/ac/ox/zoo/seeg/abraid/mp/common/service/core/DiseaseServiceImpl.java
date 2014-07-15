@@ -85,6 +85,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the validator disease group by its id.
+     * @param validatorDiseaseGroupId The id of the validator disease group.
+     * @return The validator disease group.
+     */
+    @Override
+    public ValidatorDiseaseGroup getValidatorDiseaseGroupById(Integer validatorDiseaseGroupId) {
+        return validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
+    }
+
+    /**
      * Gets the list of disease groups, for each validator disease group.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
@@ -125,10 +135,11 @@ public class DiseaseServiceImpl implements DiseaseService {
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
-     *                                   value.
-     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value.
+     * value. If null, the validation weighting is ignored.
+     * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
+     * the occurrence date is ignored.
      * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
-     *                accepts all feeds.
+     * accepts all feeds.
      * @return A list of disease occurrences.
      */
     @Override

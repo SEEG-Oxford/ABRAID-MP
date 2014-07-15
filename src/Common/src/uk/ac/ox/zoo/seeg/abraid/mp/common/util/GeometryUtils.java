@@ -17,7 +17,10 @@ public final class GeometryUtils {
     public static final int SRID_FOR_WGS_84 = 4326;
 
     // Enforces co-ordinate precision to 5 decimal places
-    private static final PrecisionModel PRECISION_MODEL = new PrecisionModel(100000);
+    private static final double PRECISION_DECIMAL_PLACES = 5;
+    private static final PrecisionModel PRECISION_MODEL = new PrecisionModel(Math.pow(10, PRECISION_DECIMAL_PLACES));
+    private static final double[] PRECISION_ADJUSTMENTS =
+            {0, -Math.pow(10, -PRECISION_DECIMAL_PLACES), Math.pow(10, -PRECISION_DECIMAL_PLACES)};
 
     // Constructs a geometry using the above precision and the preferred SRID.
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(PRECISION_MODEL, SRID_FOR_WGS_84);
@@ -35,15 +38,28 @@ public final class GeometryUtils {
      * @return A point.
      */
     public static Point createPoint(double x, double y) {
-        return createPoint(new Coordinate(x, y));
+        Coordinate coordinate = new Coordinate(x, y);
+        PRECISION_MODEL.makePrecise(coordinate);
+        return GEOMETRY_FACTORY.createPoint(coordinate);
     }
 
     /**
-     * Creates a polygon from a list of co-ordinates.
+     * Creates a polygon from a list of co-ordinates. The co-ordinates are made precise.
      * @param xOrY The co-ordinates in the form x1, y1, x2, y2, ...
      * @return A polygon.
      */
     public static Polygon createPolygon(double... xOrY) {
+        return createPolygon(true, xOrY);
+    }
+
+    /**
+     * Creates a polygon from a list of co-ordinates.
+     * @param makePrecise True if the co-ordinates should be made precise according to the system default precision
+     * model, otherwise false.
+     * @param xOrY The co-ordinates in the form x1, y1, x2, y2, ...
+     * @return A polygon.
+     */
+    public static Polygon createPolygon(boolean makePrecise, double... xOrY) {
         if (xOrY.length % 2 > 0) {
             throw new IllegalArgumentException("Number of parameters must be even");
         }
@@ -51,7 +67,9 @@ public final class GeometryUtils {
         Coordinate[] coordinates = new Coordinate[xOrY.length / 2];
         for (int i = 0; i < xOrY.length; i += 2) {
             Coordinate coordinate = new Coordinate(xOrY[i], xOrY[i + 1]);
-            PRECISION_MODEL.makePrecise(coordinate);
+            if (makePrecise) {
+                PRECISION_MODEL.makePrecise(coordinate);
+            }
             coordinates[i / 2] = coordinate;
         }
 
@@ -122,18 +140,34 @@ public final class GeometryUtils {
 
     /**
      * Finds the closest point on the geometry to the specified point. If the specified point is within the geometry,
-     * it returns a point that is equal to the specified point.
+     * it returns a point that is equal to the specified point. If a closest point cannot be found, it returns null.
      * @param geometry The geometry.
      * @param point The specified point.
-     * @return The closest point, or the specified point if it is within the geometry.
+     * @return The closest point, or the specified point if it is within the geometry, or null if a closest point
+     * cannot be found.
      */
     public static Point findClosestPointOnGeometry(Geometry geometry, Point point) {
-        Coordinate[] coordinates = DistanceOp.closestPoints(geometry, point);
-        return createPoint(coordinates[0]);
+        Coordinate[] coordinates = DistanceOp.nearestPoints(geometry, point);
+
+        // After the closest point is rounded, it may no longer lie in the geometry. So make tiny adjustments to the
+        // coordinates until it does. By default the original point is returned (this is because the first adjustment
+        // involves adding 0 to both x and y).
+        for (double xAdjustment : PRECISION_ADJUSTMENTS) {
+            for (double yAdjustment : PRECISION_ADJUSTMENTS) {
+                Point closestPoint = createPoint(coordinates[0].x + xAdjustment, coordinates[0].y + yAdjustment);
+                if (contains(geometry, closestPoint)) {
+                    return closestPoint;
+                }
+            }
+        }
+
+        // We cannot find a closest point that conforms to our precision model, so return null
+        return null;
     }
 
-    private static Point createPoint(Coordinate coordinate) {
-        PRECISION_MODEL.makePrecise(coordinate);
-        return GEOMETRY_FACTORY.createPoint(coordinate);
+    private static boolean contains(Geometry geometry, Point point) {
+        // Ideally we would use Geometry.intersects() instead, but it sometimes reports "side location conflict" errors
+        Coordinate[] coordinate = DistanceOp.nearestPoints(geometry, point);
+        return point.getCoordinate().equals(coordinate[0]);
     }
 }

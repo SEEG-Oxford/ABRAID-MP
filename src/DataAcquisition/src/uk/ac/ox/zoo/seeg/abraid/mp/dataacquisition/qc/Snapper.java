@@ -16,6 +16,7 @@ public class Snapper {
             "%.3fkm).";
     private static final String DISCARDED_MESSAGE = "QC stage %d failed: location too distant from %s (closest " +
             "point is (%f,%f) at distance %.3fkm).";
+    private static final String CANNOT_BE_SNAPPED_MESSAGE = "QC stage %d failed: location cannot be snapped.";
 
     private Point closestPoint;
     private String message;
@@ -34,7 +35,7 @@ public class Snapper {
      * Ensures that the location is within the geometry. Calling getClosestPoint() after this method will return:
      * - the location's existing point, if already within the geometry
      * - the closest point on the geometry's borders to the location, if within the maximum distance
-     * - null, if outside the maximum distance
+     * - null, if outside the maximum distance or there was a problem while snapping to borders
      * @param location The location.
      * @param geometry The geometry.
      */
@@ -43,7 +44,9 @@ public class Snapper {
 
         Point locationPoint = location.getGeom();
         closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, locationPoint);
-        if (closestPoint.equalsExact(locationPoint)) {
+        if (closestPoint == null) {
+            message = String.format(CANNOT_BE_SNAPPED_MESSAGE, qcStage);
+        } else if (closestPoint.equalsExact(locationPoint)) {
             message = String.format(WITHIN_MESSAGE, qcStage, geometryDescription);
         } else {
             double distance = GeometryUtils.findOrthodromicDistance(closestPoint, locationPoint);

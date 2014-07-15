@@ -106,6 +106,24 @@ public class SnapperTest {
         assertThat(snapper.getClosestPoint()).isNull();
     }
 
+    @Test
+    public void locationCannotBeSnapped() {
+        // Arrange
+        Location location = new Location(9, 9);
+        Snapper snapper = new Snapper(2, "land", 5);
+
+        Polygon polygon = GeometryUtils.createPolygon(false, 10.000003, 10.000003, 10.000003, 10.000006, 10.000006,
+                10.000006, 10.000006, 10.000003, 10.000003, 10.000003);
+        MultiPolygon multiPolygon = GeometryUtils.createMultiPolygon(polygon);
+
+        // Act
+        snapper.ensureWithinGeometry(location, multiPolygon);
+
+        // Assert
+        assertThat(snapper.getMessage()).isEqualTo("QC stage 2 failed: location cannot be snapped.");
+        assertThat(snapper.getClosestPoint()).isNull();
+    }
+
     private MultiPolygon getGeometry() {
         Polygon bigSquare = GeometryUtils.createPolygon(5, 5, 100, 5, 100, 100, 5, 100, 5, 5);
         Polygon smallTriangle = GeometryUtils.createPolygon(110, 110, 120, 120, 120, 105, 110, 110);

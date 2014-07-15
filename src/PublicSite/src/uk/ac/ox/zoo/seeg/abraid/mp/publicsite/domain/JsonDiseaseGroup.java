@@ -8,38 +8,48 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
  */
 public class JsonDiseaseGroup {
     private Integer id;
-    private Integer parentId;
     private String name;
-    private String groupType;
     private String publicName;
     private String shortName;
     private String abbreviation;
+    private String groupType;
     private Boolean isGlobal;
-    private Integer validatorDiseaseGroupId;
+    private JsonParentDiseaseGroup parentDiseaseGroup;
+    private JsonValidatorDiseaseGroup validatorDiseaseGroup;
     private Double weighting;
-    private Integer minNewOccurrencesTrigger;
     private boolean automaticModelRuns;
+    private Integer minNewOccurrencesTrigger;
+    private Integer minDataVolume;
+    private Integer minDistinctCountries;
+    private Integer highFrequencyThreshold;
+    private Integer minHighFrequencyCountries;
+    private Boolean occursInAfrica;
 
     public JsonDiseaseGroup() {
     }
 
     public JsonDiseaseGroup(DiseaseGroup diseaseGroup) {
-        this.id = diseaseGroup.getId();
+        setId(diseaseGroup.getId());
+        setName(diseaseGroup.getName());
+        setPublicName(diseaseGroup.getPublicName());
+        setShortName(diseaseGroup.getShortName());
+        setAbbreviation(diseaseGroup.getAbbreviation());
+        setGroupType(diseaseGroup.getGroupType().name());
+        setIsGlobal(diseaseGroup.isGlobal());
         if (diseaseGroup.getParentGroup() != null) {
-            this.parentId = diseaseGroup.getParentGroup().getId();
+            setParentDiseaseGroup(new JsonParentDiseaseGroup(diseaseGroup.getParentGroup()));
         }
-        this.name = diseaseGroup.getName();
-        this.groupType = diseaseGroup.getGroupType().name();
-        this.publicName = diseaseGroup.getPublicName();
-        this.shortName = diseaseGroup.getShortName();
-        this.abbreviation = diseaseGroup.getAbbreviation();
-        this.isGlobal = diseaseGroup.isGlobal();
         if (diseaseGroup.getValidatorDiseaseGroup() != null) {
-            this.validatorDiseaseGroupId = diseaseGroup.getValidatorDiseaseGroup().getId();
+            setValidatorDiseaseGroup(new JsonValidatorDiseaseGroup(diseaseGroup.getValidatorDiseaseGroup()));
         }
-        this.weighting = diseaseGroup.getWeighting();
-        this.minNewOccurrencesTrigger = diseaseGroup.getMinNewOccurrencesTrigger();
-        this.automaticModelRuns = diseaseGroup.isAutomaticModelRunsEnabled();
+        setWeighting(diseaseGroup.getWeighting());
+        setAutomaticModelRuns(diseaseGroup.isAutomaticModelRunsEnabled());
+        setMinNewOccurrencesTrigger(diseaseGroup.getMinNewOccurrencesTrigger());
+        setMinDataVolume(diseaseGroup.getMinDataVolume());
+        setMinDistinctCountries(diseaseGroup.getMinDistinctCountries());
+        setHighFrequencyThreshold(diseaseGroup.getHighFrequencyThreshold());
+        setMinHighFrequencyCountries(diseaseGroup.getMinHighFrequencyCountries());
+        setOccursInAfrica(diseaseGroup.occursInAfrica());
     }
 
     public Integer getId() {
@@ -48,14 +58,6 @@ public class JsonDiseaseGroup {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
     }
 
     public String getName() {
@@ -106,12 +108,20 @@ public class JsonDiseaseGroup {
         this.isGlobal = isGlobal;
     }
 
-    public Integer getValidatorDiseaseGroupId() {
-        return validatorDiseaseGroupId;
+    public JsonValidatorDiseaseGroup getValidatorDiseaseGroup() {
+        return validatorDiseaseGroup;
     }
 
-    public void setValidatorDiseaseGroupId(Integer validatorDiseaseGroupId) {
-        this.validatorDiseaseGroupId = validatorDiseaseGroupId;
+    public void setValidatorDiseaseGroup(JsonValidatorDiseaseGroup validatorDiseaseGroup) {
+        this.validatorDiseaseGroup = validatorDiseaseGroup;
+    }
+
+    public JsonParentDiseaseGroup getParentDiseaseGroup() {
+        return parentDiseaseGroup;
+    }
+
+    public void setParentDiseaseGroup(JsonParentDiseaseGroup parentDiseaseGroup) {
+        this.parentDiseaseGroup = parentDiseaseGroup;
     }
 
     public Double getWeighting() {
@@ -136,5 +146,45 @@ public class JsonDiseaseGroup {
 
     public void setAutomaticModelRuns(boolean automaticModelRuns) {
         this.automaticModelRuns = automaticModelRuns;
+    }
+
+    public Integer getMinDataVolume() {
+        return minDataVolume;
+    }
+
+    public void setMinDataVolume(Integer minDataVolume) {
+        this.minDataVolume = minDataVolume;
+    }
+
+    public Integer getMinDistinctCountries() {
+        return minDistinctCountries;
+    }
+
+    public void setMinDistinctCountries(Integer minDistinctCountries) {
+        this.minDistinctCountries = minDistinctCountries;
+    }
+
+    public Integer getHighFrequencyThreshold() {
+        return highFrequencyThreshold;
+    }
+
+    public void setHighFrequencyThreshold(Integer highFrequencyThreshold) {
+        this.highFrequencyThreshold = highFrequencyThreshold;
+    }
+
+    public Integer getMinHighFrequencyCountries() {
+        return minHighFrequencyCountries;
+    }
+
+    public void setMinHighFrequencyCountries(Integer minHighFrequencyCountries) {
+        this.minHighFrequencyCountries = minHighFrequencyCountries;
+    }
+
+    public Boolean getOccursInAfrica() {
+        return occursInAfrica;
+    }
+
+    public void setOccursInAfrica(Boolean occursInAfrica) {
+        this.occursInAfrica = occursInAfrica;
     }
 }

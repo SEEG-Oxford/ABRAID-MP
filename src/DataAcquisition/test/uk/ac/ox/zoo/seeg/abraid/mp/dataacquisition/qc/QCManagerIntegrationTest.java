@@ -46,7 +46,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(hasPassedQc).isFalse();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC stage " +
-                "2 failed: location too distant from land (closest point is (4.916590,53.291620) at distance " +
+                "2 failed: location too distant from land (closest point is (4.916600,53.291620) at distance " +
                 "320.061km).");
     }
 
@@ -99,7 +99,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(1013690);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 9.01% of the square " +
                 "root of the area. QC stage 2 failed: location too distant from land (closest point is " +
-                "(121.208210,-1.166690) at distance 29.610km).");
+                "(121.208220,-1.166700) at distance 29.611km).");
     }
 
     @Test

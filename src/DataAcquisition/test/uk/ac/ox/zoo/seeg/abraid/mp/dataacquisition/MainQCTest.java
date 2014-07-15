@@ -68,7 +68,6 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
         Location occurrence1Location = occurrence.getLocation();
         assertThat(occurrence1Location.getName()).isEqualTo("Bremen, Germany");
         assertThat(occurrence1Location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
-        assertThat(occurrence1Location.hasPassedQc()).isTrue();
         assertThat(occurrence1Location.getAdminUnitQCGaulCode()).isEqualTo(1312);
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 16.09% of " +
                 "the square root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: " +
@@ -79,7 +78,6 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
         Location occurrence2Location = occurrence.getLocation();
         assertThat(occurrence2Location.getName()).isEqualTo("Isles of Scilly, England, United Kingdom");
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.ADMIN2);
-        assertThat(occurrence2Location.hasPassedQc()).isFalse();
         assertThat(occurrence2Location.getAdminUnitQCGaulCode()).isNull();
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 failed: closest distance is 196.04% of " +
                 "the square root of the area (GAUL code 40101: \"Cornwall\").");

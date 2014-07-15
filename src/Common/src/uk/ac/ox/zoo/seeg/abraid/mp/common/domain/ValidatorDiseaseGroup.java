@@ -43,6 +43,11 @@ public class ValidatorDiseaseGroup {
         this.name = name;
     }
 
+    public ValidatorDiseaseGroup(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
