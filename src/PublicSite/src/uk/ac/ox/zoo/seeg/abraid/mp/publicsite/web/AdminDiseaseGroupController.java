@@ -73,8 +73,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private List<DiseaseGroup> getSortedDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
-        sort(diseaseGroups, on(DiseaseGroup.class).getName());
-        return diseaseGroups;
+        return sort(diseaseGroups, on(DiseaseGroup.class).getName());
     }
 
     private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
@@ -87,8 +86,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
         List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
-        sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
-        return validatorDiseaseGroups;
+        return sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
     }
 
     private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups)
