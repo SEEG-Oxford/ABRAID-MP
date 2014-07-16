@@ -42,7 +42,7 @@
                         <label for="disease-group-type" class="col-sm-4 control-label">Group Type</label>
                         <div class="col-sm-6 btn-group" id="disease-group-type" data-bind="foreach: groupTypes">
                             <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value}">
-                                <input type="radio" data-bind="checkedValue: value, checked: $parent.selectedType">
+                                <input type="radio" name="disease-group-type" data-bind="checkedValue: value, checked: $parent.selectedType">
                                 <span data-bind="text: label"></span>
                             </label>
                         </div>
@@ -51,7 +51,7 @@
                         <label for="global-or-tropical" class="col-sm-4 control-label">Global or Tropical</label>
                         <div class="col-sm-6 btn-group" id="global-or-tropical"  data-bind="foreach: [ {value: true, label: 'Global'}, {value: false, label: 'Tropical'} ]">
                             <label class="btn btn-default" data-bind="css: {active : $parent.isGlobal() === value}">
-                                <input type="radio" data-bind="checkedValue: value, checked: $parent.isGlobal">
+                                <input type="radio" name="global-or-tropical" data-bind="checkedValue: value, checked: $parent.isGlobal">
                                 <span data-bind="text: label"></span>
                             </label>
                         </div>
