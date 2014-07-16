@@ -22,8 +22,8 @@
                     <span data-bind="if: hasModelBeenSuccessfullyRun">
                         <button class="btn btn-primary" data-bind="click: runModel, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
                     </span>
-                    <span data-bind="if: !hasModelBeenSuccessfullyRun">
-                        <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'bottom', template: 'modelwrapper-alert-template'}, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
+                    <span data-bind="ifnot: hasModelBeenSuccessfullyRun">
+                        <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'}, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
                     </span>
             </p>
             <div class="form-group" data-bind="foreach: notices">

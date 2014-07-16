@@ -144,6 +144,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         DiseaseGroup diseaseGroup = createDiseaseGroup(1, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
 
         // Act
         ResponseEntity result = controller.saveSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
@@ -156,7 +157,7 @@ public class AdminDiseaseGroupControllerTest {
     @Test
     public void saveSettingsReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
         // Arrange
-        when(diseaseService.getDiseaseGroupById(anyInt())).thenThrow(new IllegalArgumentException());
+        when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(null);
 
         // Act
         ResponseEntity result = controller.saveSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
@@ -172,7 +173,7 @@ public class AdminDiseaseGroupControllerTest {
         int parentId = 87;
         DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, parentId, "Name", "Parent name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
-        when(diseaseService.getDiseaseGroupById(parentId)).thenThrow(new IllegalArgumentException());
+        when(diseaseService.getDiseaseGroupById(parentId)).thenReturn(null);
 
         // Act
         ResponseEntity result = controller.saveSettings(diseaseGroupId, "New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4);
@@ -185,7 +186,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveSettingsReturnsBadRequestForInvalidValidatorDiseaseGroup() throws Exception {
         // Arrange
         int validatorId = 4;
-        when(diseaseService.getDiseaseGroupById(validatorId)).thenThrow(new IllegalArgumentException());
+        when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
 
         // Act
         ResponseEntity result = controller.saveSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId);

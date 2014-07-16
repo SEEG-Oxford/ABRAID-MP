@@ -11,7 +11,7 @@ define([
         var self = this;
 
         self.selectedDiseaseGroupId = 0;
-        self.hasModelBeenSuccessfullyRun = false;
+        self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
         self.canRunModel = ko.observable(false);
@@ -31,7 +31,7 @@ define([
                 .done(function (data) {
                     self.lastModelRunText(data.lastModelRunText);
                     self.diseaseOccurrencesText(data.diseaseOccurrencesText);
-                    self.hasModelBeenSuccessfullyRun = data.hasModelBeenSuccessfullyRun;
+                    self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                     self.canRunModel(data.canRunModel);
                     if (!self.canRunModel()) {
                         var errorMessage = "Cannot run model because " + data.cannotRunModelReason;

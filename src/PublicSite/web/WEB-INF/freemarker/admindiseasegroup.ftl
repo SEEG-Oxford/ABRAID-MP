@@ -16,7 +16,7 @@
 <script type="text/html" id="modelwrapper-alert-template">
     <p>Please configure ModelWrapper for this disease group if necessary.</p>
     <br /><br />
-    <p style="text-align:center;">
+    <p>
         <span class="btn btn-default" data-bind="click: runModel" data-dismiss="popover">Proceed with Model Run</span>
     </p>
 </script>

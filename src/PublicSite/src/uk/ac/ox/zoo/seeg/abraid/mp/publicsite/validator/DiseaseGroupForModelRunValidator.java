@@ -8,10 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseGroupForModelRunValidator {
-    private static final int DENGUE_DISEASE_GROUP_ID = 87;
-
     private static final String MISSING_MESSAGE = "%s is missing";
-    private static final String DENGUE_ONLY_MESSAGE = "the model can currently only be run for dengue";
 
     private static final String PUBLIC_NAME = "the public name";
     private static final String SHORT_NAME = "the short name";
@@ -30,8 +27,7 @@ public class DiseaseGroupForModelRunValidator {
      * @return An error message if invalid, or null if valid.
      */
     public String validate() {
-        String errorMessage = validateIsDengue();
-        errorMessage = (errorMessage != null) ? errorMessage : validatePublicNameMissing();
+        String errorMessage = validatePublicNameMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateShortNameMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateAbbreviationMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateIsGlobalMissing();
@@ -70,13 +66,6 @@ public class DiseaseGroupForModelRunValidator {
     private String validateValidatorDiseaseGroupMissing() {
         if (diseaseGroup.getValidatorDiseaseGroup() == null) {
             return String.format(MISSING_MESSAGE, VALIDATOR_DISEASE_GROUP_NAME);
-        }
-        return null;
-    }
-
-    private String validateIsDengue() {
-        if (diseaseGroup.getId() == null || diseaseGroup.getId() != DENGUE_DISEASE_GROUP_ID) {
-            return DENGUE_ONLY_MESSAGE;
         }
         return null;
     }

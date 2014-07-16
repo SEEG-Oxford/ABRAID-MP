@@ -25,7 +25,7 @@ define([
 
         self.notice = ko.observable();
         self.enableSaveButton = ko.computed(function () {
-            return !(_.isEqual(originalPayload, data())) && self.isValid();
+            return !(_.isEqual(originalPayload, data()));
         });
         self.save = function () {
             var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/modelrunparameters";

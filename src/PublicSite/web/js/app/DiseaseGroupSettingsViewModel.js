@@ -63,7 +63,7 @@ define([
         var data = ko.computed(function () { return DiseaseGroupSettingsPayload.fromViewModel(self); });
 
         self.enableSaveButton = ko.computed(function () {
-            return !(_.isEqual(originalPayload, data())) && self.isValid();
+            return !(_.isEqual(originalPayload, data()));
         });
         self.notice = ko.observable();
         self.save = function () {
