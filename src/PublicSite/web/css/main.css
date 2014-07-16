@@ -110,13 +110,18 @@ label.side-by-side {
     padding-right: 12px;
     margin-bottom: 0;
 }
-#model-run-parameters label {
+.btn-group input {
+     display: none;
+ }
+#disease-group-name-input-group {
+     padding-left: 15px;
+     padding-right: 15px;
+}
+#setup-body, #model-run-parameters > div {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+#main-settings, #model-run-parameters label {
     text-align: left;
 }
-.form-group-radio-inline {
-    padding-bottom: 7px;
-}
-#disease-group-name-input-group {
-    padding-left: 15px;
-    padding-right: 15px;
-}
+

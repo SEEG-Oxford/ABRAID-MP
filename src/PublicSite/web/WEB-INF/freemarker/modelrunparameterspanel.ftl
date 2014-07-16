@@ -45,13 +45,11 @@
                         <input type="checkbox" id="occurs-in-africa" data-bind="checked: occursInAfrica">
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <button type="button" class="btn btn-primary" data-bind="click: save">Save</button>
-                </div>
-                <div class="form-group col-sm-12" data-bind="if: notice">
-                    <div data-bind="alert: notice"></div>
-                </div>
             </form>
+            <button type="button" class="btn btn-primary" data-bind="click: save">Save</button>
+            <div data-bind="if: notice">
+                <div data-bind="alert: notice"></div>
+            </div>
         </div>
     </div>
 </div>
