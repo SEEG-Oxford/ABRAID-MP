@@ -16,7 +16,7 @@ public final class GeometryUtils {
     /** The SRID number for the co-ordinate reference system WGS 84. */
     public static final int SRID_FOR_WGS_84 = 4326;
 
-    // Enforces co-ordinate precision to 5 decimal places (the standard in the Malaria Atlas Project)
+    // Enforces co-ordinate precision to 5 decimal places (the standard for the Malaria Atlas Project)
     private static final double PRECISION_DECIMAL_PLACES = 5;
     private static final PrecisionModel PRECISION_MODEL = new PrecisionModel(Math.pow(10, PRECISION_DECIMAL_PLACES));
     private static final double[] PRECISION_ADJUSTMENTS =
