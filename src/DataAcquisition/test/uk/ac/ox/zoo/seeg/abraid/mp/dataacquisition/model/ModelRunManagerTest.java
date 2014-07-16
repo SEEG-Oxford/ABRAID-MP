@@ -8,6 +8,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,23 +27,31 @@ public class ModelRunManagerTest {
     private static final int DISEASE_GROUP_ID = 87;
 
     @Before
-    public void setFixedTime() {
+    public void setUp() {
         diseaseService = mock(DiseaseService.class);
         ModelRunGatekeeper modelRunGatekeeper = new ModelRunGatekeeper(diseaseService);
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
-        modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService);
+        modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService, diseaseService);
 
         // The default disease group for dengue has automatic model runs set to true
         diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
+        diseaseGroup.setName("Dengue");
         diseaseGroup.setAutomaticModelRuns(true);
 
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAutomaticModelRunsNotEnabled() throws Exception {
-        diseaseGroup.setAutomaticModelRuns(false);
-        expectModelPrepNotToRun(null, true);
+    public void getDiseaseGroupIdsForAutomaticModelRunsReturnsCorrectIds() {
+        // Arrange
+        List<Integer> expectedIDs = new ArrayList<>();
+        when(diseaseService.getDiseaseGroupIdsForAutomaticModelRuns()).thenReturn(expectedIDs);
+
+        // Act
+        List<Integer> actualIDs = modelRunManager.getDiseaseGroupIdsForAutomaticModelRuns();
+
+        // Assert
+        assertThat(actualIDs).isSameAs(expectedIDs);
     }
 
     @Test

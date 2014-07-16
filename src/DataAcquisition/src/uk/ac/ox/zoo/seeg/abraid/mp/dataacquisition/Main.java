@@ -64,7 +64,7 @@ public class Main {
     }
 
     /**
-     * Acquires data from all sources, then generate an initial disease extent.
+     * Acquires data from all sources.
      * @param fileNames A list of file names containing HealthMap JSON data to acquire. If no file names are specified
      * (or if null), the HealthMap web service will be called instead.
      */
@@ -80,11 +80,12 @@ public class Main {
     }
 
     /**
-     * Requests a model run (after preparation and if relevant), for each disease group that has occurrences.
+     * Requests a model run (after preparation and if relevant), for each disease group that has automatic model
+     * runs enabled.
      */
     public void prepareForAndRequestModelRuns() {
         Map<Integer, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
-        for (int diseaseGroupId : modelRunManager.getDiseaseGroupsWithOccurrences()) {
+        for (int diseaseGroupId : modelRunManager.getDiseaseGroupIdsForAutomaticModelRuns()) {
             prepareForAndRequestModelRun(diseaseGroupId);
         }
         modelRunManager.saveExpertsWeightings(newExpertWeightings);
@@ -93,10 +94,9 @@ public class Main {
     private void prepareForAndRequestModelRun(int diseaseGroupId) {
         try {
             modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-        } catch (ModelRunRequesterException e) {
-            // Ignore the exception, because it is thrown to roll back the transaction per disease group if
-            // the model run request fails.
-            LOGGER.fatal(e.getMessage(), e);
+        } catch (ModelRunRequesterException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+            // Ignore the exception, because it is thrown to roll back the transaction per disease group if the model
+            // run request fails. Logging has already been done by this point.
         }
     }
 }

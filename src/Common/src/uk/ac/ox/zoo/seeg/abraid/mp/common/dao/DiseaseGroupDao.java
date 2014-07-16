@@ -28,4 +28,10 @@ public interface DiseaseGroupDao {
      * @param diseaseGroup The diseaseGroup to save.
      */
     void save(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the IDs of disease groups that have automatic model runs enabled.
+     * @return The IDs of relevant disease groups.
+     */
+    List<Integer> getIdsForAutomaticModelRuns();
 }

@@ -62,6 +62,7 @@ public class ModelRunRequester {
                 handleModelRunResponse(response, diseaseGroupId, requestDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
+                LOGGER.error(message);
                 throw new ModelRunRequesterException(message, e);
             }
         }
@@ -75,6 +76,7 @@ public class ModelRunRequester {
     private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
+            LOGGER.error(message);
             throw new ModelRunRequesterException(message);
         } else {
             ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
