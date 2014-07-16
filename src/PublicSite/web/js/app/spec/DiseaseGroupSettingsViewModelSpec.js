@@ -1,16 +1,16 @@
-/* A suite of tests for the MainSettingsViewModel AMD.
+/* A suite of tests for the DiseaseGroupSettingsViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/MainSettingsViewModel",
+    "app/DiseaseGroupSettingsViewModel",
     "ko",
     "underscore"
-], function (MainSettingsViewModel, ko, _) {
+], function (DiseaseGroupSettingsViewModel, ko, _) {
     "use strict";
 
     describe("The 'main settings' view model", function () {
         it("holds the expected properties of a disease group as observables", function () {
-            var vm = new MainSettingsViewModel("", [], [], "");
+            var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
             expect(vm.name).toBeObservable();
             expect(vm.publicName).toBeObservable();
             expect(vm.shortName).toBeObservable();
@@ -26,7 +26,7 @@ define([
                 //Arrange
                 var validatorDiseaseGroups = [{ id: 1 }, { id: 2 }];
                 //Act
-                var vm = new MainSettingsViewModel("", [], validatorDiseaseGroups, "");
+                var vm = new DiseaseGroupSettingsViewModel("", [], validatorDiseaseGroups, "");
                 //Assert
                 expect(vm.validatorDiseaseGroups).toBe(validatorDiseaseGroups);
             });
@@ -38,7 +38,7 @@ define([
                 var microclusterDiseaseGroup1 = { groupType: "MICROCLUSTER" };
                 var microclusterDiseaseGroup2 = { groupType: "MICROCLUSTER" };
                 var diseaseGroups = [microclusterDiseaseGroup1, microclusterDiseaseGroup2];
-                var vm = new MainSettingsViewModel("", diseaseGroups, [], "");
+                var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, [], "");
                 // Act
                 vm.selectedType("SINGLE");
                 // Assert
@@ -52,7 +52,7 @@ define([
                 var clusterDiseaseGroup2 = { groupType: "CLUSTER" };
                 var diseaseGroups = [clusterDiseaseGroup1, clusterDiseaseGroup2];
                 // Act
-                var vm = new MainSettingsViewModel("", diseaseGroups, [], "");
+                var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, [], "");
                 vm.selectedType("MICROCLUSTER");
                 // Assert
                 expect(vm.parentDiseaseGroups()).toContain(clusterDiseaseGroup1);
@@ -65,7 +65,7 @@ define([
                 var clusterDiseaseGroup = { groupType: "CLUSTER" };
                 var diseaseGroups = [microclusterDiseaseGroup, clusterDiseaseGroup];
                 // Act
-                var vm = new MainSettingsViewModel("", diseaseGroups, [], "");
+                var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, [], "");
                 vm.selectedType("CLUSTER");
                 // Assert
                 expect(vm.parentDiseaseGroups()).toBeNull();
@@ -89,7 +89,7 @@ define([
                 validatorDiseaseGroup: validatorDiseaseGroup
             };
             var eventName = "disease-group-selected";
-            var vm = new MainSettingsViewModel("", diseaseGroups, validatorDiseaseGroups, eventName);
+            var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, validatorDiseaseGroups, eventName);
 
             // Act
             ko.postbox.publish(eventName, diseaseGroup);
@@ -136,8 +136,8 @@ define([
                     validatorDiseaseGroup: validatorDiseaseGroup
                 };
 
-                var vm = new MainSettingsViewModel(baseUrl, diseaseGroups, validatorDiseaseGroups, eventName);
-                var expectedUrl = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/mainsettings";
+                var vm = new DiseaseGroupSettingsViewModel(baseUrl, diseaseGroups, validatorDiseaseGroups, eventName);
+                var expectedUrl = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/settings";
 
                 var expectedParams = "name=" + name + "&groupType=" + groupType +
                     "&parentDiseaseGroupId=" + parentId + "&validatorDiseaseGroupId=" + validatorId;
@@ -154,7 +154,7 @@ define([
 
             it("when unsuccessful, updates the 'notice' with an error", function () {
                 // Arrange
-                var vm = new MainSettingsViewModel("", [], [], "");
+                var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
                 var expectedNotice = { message: "Error saving", priority: "warning" };
                 // Act
                 vm.save();
@@ -165,7 +165,7 @@ define([
 
             it("when successful, updates the 'notice' with a success", function () {
                 // Arrange
-                var vm = new MainSettingsViewModel("", [], [], "");
+                var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
                 var expectedNotice = { message: "Saved successfully", priority: "success" };
                 // Act
                 vm.save();

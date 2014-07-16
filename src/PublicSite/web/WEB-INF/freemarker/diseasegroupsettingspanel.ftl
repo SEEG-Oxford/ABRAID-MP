@@ -1,12 +1,12 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2 class="panel-title">
-            <a data-toggle="collapse" href="#main-settings">
+            <a data-toggle="collapse" href="#disease-group-settings">
                 Main Settings
             </a>
         </h2>
     </div>
-    <div class="panel-collapse collapse in" id="main-settings">
+    <div class="panel-collapse collapse in" id="disease-group-settings">
         <div class="panel-body">
             <div class="col-sm-5">
                 <form class="form-horizontal" role="form">

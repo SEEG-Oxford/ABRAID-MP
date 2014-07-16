@@ -12,11 +12,11 @@ define([
     return function (baseUrl, diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.minNewOccurrences = ko.validatedObservable().extend({ digit: true, min: 0 });
-        self.minDataVolume = ko.validatedObservable().extend({ digit: true, min: 0 });
-        self.minDistinctCountries = ko.validatedObservable().extend({ digit: true, min: 0 });
-        self.minHighFrequencyCountries = ko.validatedObservable().extend({ digit: true, min: 0 });
-        self.highFrequencyThreshold = ko.validatedObservable().extend({ digit: true, min: 0 });
+        self.minNewOccurrences = ko.observable().extend({ digit: true, min: 0 });
+        self.minDataVolume = ko.observable().extend({ digit: true, min: 0 });
+        self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
+        self.minHighFrequencyCountries = ko.observable().extend({ digit: true, min: 0 });
+        self.highFrequencyThreshold = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
 
         var diseaseGroupId;
@@ -25,10 +25,10 @@ define([
 
         self.notice = ko.observable();
         self.enableSaveButton = ko.computed(function () {
-            return !(_.isEqual(originalPayload, data()));
+            return !(_.isEqual(originalPayload, data())) && self.isValid();
         });
         self.save = function () {
-            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/modelrunparameters";
+            var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/modelrunparameters";
             $.post(url, data())
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
                 .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });

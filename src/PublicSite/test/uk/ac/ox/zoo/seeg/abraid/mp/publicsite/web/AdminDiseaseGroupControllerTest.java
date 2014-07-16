@@ -140,13 +140,13 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
-    public void saveMainSettingsCallsSaveForDiseaseGroup() throws Exception {
+    public void saveSettingsCallsSaveForDiseaseGroup() throws Exception {
         // Arrange
         DiseaseGroup diseaseGroup = createDiseaseGroup(1, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
 
         // Act
-        ResponseEntity result = controller.saveMainSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
+        ResponseEntity result = controller.saveSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -154,19 +154,19 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
-    public void saveMainSettingsReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
+    public void saveSettingsReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenThrow(new IllegalArgumentException());
 
         // Act
-        ResponseEntity result = controller.saveMainSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
+        ResponseEntity result = controller.saveSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void saveMainSettingsReturnsBadRequestForInvalidParentDiseaseGroup() throws Exception {
+    public void saveSettingsReturnsBadRequestForInvalidParentDiseaseGroup() throws Exception {
         // Arrange
         int diseaseGroupId = 1;
         int parentId = 87;
@@ -175,20 +175,20 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseGroupById(parentId)).thenThrow(new IllegalArgumentException());
 
         // Act
-        ResponseEntity result = controller.saveMainSettings(diseaseGroupId, "New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4);
+        ResponseEntity result = controller.saveSettings(diseaseGroupId, "New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void saveMainSettingsReturnsBadRequestForInvalidValidatorDiseaseGroup() throws Exception {
+    public void saveSettingsReturnsBadRequestForInvalidValidatorDiseaseGroup() throws Exception {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getDiseaseGroupById(validatorId)).thenThrow(new IllegalArgumentException());
 
         // Act
-        ResponseEntity result = controller.saveMainSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId);
+        ResponseEntity result = controller.saveSettings(1, "New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

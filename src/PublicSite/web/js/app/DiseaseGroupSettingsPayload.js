@@ -1,7 +1,10 @@
+/* Payload for data fired by selectedDiseaseGroupEventName
+ * Copyright (c) 2014 University of Oxford
+ */
 define([], function () {
     "use strict";
 
-    var MainSettingsPayload =
+    var DiseaseGroupSettingsPayload =
         function (name, publicName, shortName, abbreviation, groupType, isGlobal, parentId, validatorId) {
             return {
                 name: name,
@@ -21,7 +24,7 @@ define([], function () {
 
     return {
         fromJson: function (disease) {
-            return new MainSettingsPayload(
+            return new DiseaseGroupSettingsPayload(
                 disease.name,
                 disease.publicName,
                 disease.shortName,
@@ -33,7 +36,7 @@ define([], function () {
             );
         },
         fromViewModel: function (disease) {
-            return new MainSettingsPayload(
+            return new DiseaseGroupSettingsPayload(
                 disease.name(),
                 disease.publicName(),
                 disease.shortName(),

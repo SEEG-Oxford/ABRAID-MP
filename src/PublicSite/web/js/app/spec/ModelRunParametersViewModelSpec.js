@@ -33,7 +33,7 @@ define([
                 };
 
                 var vm = new ModelRunParametersViewModel(baseUrl, eventName);
-                var expectedUrl = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/modelrunparameters";
+                var expectedUrl = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/modelrunparameters";
 
                 var expectedParams = "minNewOccurrences=" + minNewOccurences;
 

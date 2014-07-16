@@ -176,11 +176,11 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @throws Exception if cannot fetch disease group from database.
      */
     @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/mainsettings",
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/settings",
                     method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     ///CHECKSTYLE:OFF ParameterNumber
-    public ResponseEntity saveMainSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
+    public ResponseEntity saveSettings(@PathVariable Integer diseaseGroupId, String name, String publicName,
         String shortName, String abbreviation, String groupType, Boolean isGlobal, Integer parentDiseaseGroupId,
         Integer validatorDiseaseGroupId) throws Exception {
     ///CHECKSTYLE:ON
@@ -247,7 +247,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @throws Exception if cannot fetch disease group from database.
      */
     @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(value = "/admindiseasegroup/{diseaseGroupId}/modelrunparameters",
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/modelrunparameters",
             method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity saveModelRunParameters(@PathVariable Integer diseaseGroupId, Integer minNewOccurrences,
