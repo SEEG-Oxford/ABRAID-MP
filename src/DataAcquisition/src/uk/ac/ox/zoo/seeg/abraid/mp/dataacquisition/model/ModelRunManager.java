@@ -22,7 +22,7 @@ public class ModelRunManager {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<Integer> getDiseaseGroupsWithOccurrences() {
+    public List<Integer> getDiseaseGroupsForAutomaticModelRuns() {
         return Arrays.asList(87); ///CHECKSTYLE:SUPPRESS MagicNumberCheck - only Dengue hard-coded for now
     }
 
@@ -33,7 +33,7 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         if (modelRunGatekeeper.modelShouldRun(diseaseGroupId)) {
-            modelRunWorkflowService.prepareForAndRequestAutomaticallyTriggeredModelRun(diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
         }
     }
 

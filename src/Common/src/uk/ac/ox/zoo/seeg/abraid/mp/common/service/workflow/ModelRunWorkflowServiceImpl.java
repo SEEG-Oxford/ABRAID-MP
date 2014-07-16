@@ -39,7 +39,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId) throws ModelRunRequesterException {
+    public void prepareForAndRequestManualModelRun(int diseaseGroupId) throws ModelRunRequesterException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         prepareForAndRequestModelRun(diseaseGroupId, true);
         saveExpertsWeightings(newExpertWeightings);
@@ -52,7 +52,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestAutomaticallyTriggeredModelRun(int diseaseGroupId)
+    public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunRequesterException {
         prepareForAndRequestModelRun(diseaseGroupId, false);
     }
