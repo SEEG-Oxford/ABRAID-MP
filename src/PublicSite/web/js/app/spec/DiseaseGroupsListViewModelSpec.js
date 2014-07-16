@@ -8,10 +8,7 @@ define(["app/DiseaseGroupsListViewModel"], function (DiseaseGroupsListViewModel)
         var dengue = { id: 87, name: "dengue" };
         var malarias = { id: 202, name: "malarias" };
         var initialData = [ dengue, malarias ];
-        var vm = {};
-        beforeEach(function () {
-            vm = new DiseaseGroupsListViewModel("", initialData, "disease-group-selected");
-        });
+        var vm = new DiseaseGroupsListViewModel("", initialData, "disease-group-selected");
 
         describe("holds the selected disease group which", function () {
             it("is an observable", function () {
