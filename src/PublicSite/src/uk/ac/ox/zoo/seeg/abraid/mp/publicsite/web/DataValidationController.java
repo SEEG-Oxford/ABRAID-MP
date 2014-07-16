@@ -107,7 +107,6 @@ public class DataValidationController extends AbstractController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
     @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
@@ -176,7 +175,6 @@ public class DataValidationController extends AbstractController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
     @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
@@ -214,11 +212,9 @@ public class DataValidationController extends AbstractController {
         String expertEmail = user.getUsername();
 
         // Convert the submitted string to its matching DiseaseExtentClass row. Return a Bad Request ResponseEntity if
-        // value is anything other than: PRESENCE, POSSIBLE_PRESENCE, UNCERTAIN, POSSIBLE_ABSENCE, or ABSENCE.
-        DiseaseExtentClass adminUnitReviewResponse;
-        try {
-            adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
-        } catch (IllegalArgumentException e) {
+        // the review value is not found in the database.
+        DiseaseExtentClass adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
+        if (adminUnitReviewResponse == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 

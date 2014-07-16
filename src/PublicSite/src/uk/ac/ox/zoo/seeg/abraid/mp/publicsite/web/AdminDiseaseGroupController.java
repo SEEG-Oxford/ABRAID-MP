@@ -68,7 +68,6 @@ public class AdminDiseaseGroupController extends AbstractController {
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/", method = RequestMethod.GET)
-    @Transactional(rollbackFor = Exception.class)
     public String showPage(Model model) throws JsonProcessingException {
         try {
             List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
@@ -97,7 +96,6 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<JsonModelRunInformation> getModelRunInformation(@PathVariable Integer diseaseGroupId) {
         ModelRun lastRequestedModelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
         ModelRun lastCompletedModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
@@ -185,28 +183,24 @@ public class AdminDiseaseGroupController extends AbstractController {
         Integer validatorDiseaseGroupId) throws Exception {
     ///CHECKSTYLE:ON
 
-        try {
-            if (validInputs(name, groupType)) {
-                DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-                saveProperties(diseaseGroup, name, publicName, shortName, abbreviation, groupType, isGlobal,
-                    parentDiseaseGroupId, validatorDiseaseGroupId);
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (validInputs(diseaseGroup, name, groupType)) {
+            if (saveProperties(diseaseGroup, name, publicName, shortName, abbreviation, groupType, isGlobal,
+                               parentDiseaseGroupId, validatorDiseaseGroupId)) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
-            } else {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception e) {
-            LOGGER.error("Error", e);
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
+
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
-    private boolean validInputs(String name, String groupType) {
-        return hasText(name) && hasText(groupType);
+    private boolean validInputs(DiseaseGroup diseaseGroup, String name, String groupType) {
+        return (diseaseGroup != null) && hasText(name) && hasText(groupType);
     }
 
-    private void saveProperties(DiseaseGroup diseaseGroup, String name, String publicName, String shortName,
-                                String abbreviation, String groupType, Boolean isGlobal, Integer parentId,
-                                Integer validatorId) throws IllegalArgumentException {
+    private boolean saveProperties(DiseaseGroup diseaseGroup, String name, String publicName, String shortName,
+                                   String abbreviation, String groupType, Boolean isGlobal, Integer parentId,
+                                   Integer validatorId) {
         diseaseGroup.setName(name);
         diseaseGroup.setPublicName(publicName);
         diseaseGroup.setShortName(shortName);
@@ -214,24 +208,28 @@ public class AdminDiseaseGroupController extends AbstractController {
         DiseaseGroupType type = DiseaseGroupType.valueOf(groupType);
         diseaseGroup.setGroupType(type);
         diseaseGroup.setGlobal(isGlobal);
-        setParentDiseaseGroup(diseaseGroup, parentId);
-        setValidatorDiseaseGroup(diseaseGroup, validatorId);
-        diseaseService.saveDiseaseGroup(diseaseGroup);
-    }
-
-    private void setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) throws IllegalArgumentException {
-        if ((diseaseGroup.getGroupType() != DiseaseGroupType.CLUSTER) && (parentId != null)) {
-            DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
-            diseaseGroup.setParentGroup(parentDiseaseGroup);
+        if (setParentDiseaseGroup(diseaseGroup, parentId) && setValidatorDiseaseGroup(diseaseGroup, validatorId)) {
+            diseaseService.saveDiseaseGroup(diseaseGroup);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    private void setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId)
-            throws IllegalArgumentException {
-        if (validatorId != null) {
-            ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
-            diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+    private boolean setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) {
+        if (diseaseGroup.getGroupType() == DiseaseGroupType.CLUSTER) {
+            return true;
         }
+
+        DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
+        diseaseGroup.setParentGroup(parentDiseaseGroup);
+        return (parentDiseaseGroup != null);
+    }
+
+    private boolean setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId) {
+        ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
+        diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        return (validatorDiseaseGroup != null);
     }
 
     /**
@@ -254,12 +252,12 @@ public class AdminDiseaseGroupController extends AbstractController {
                                                  Integer minDataVolume, Integer minDistinctCountries,
                                                  Integer minHighFrequencyCountries, Integer highFrequencyThreshold,
                                                  Boolean occursInAfrica) throws Exception {
-        try {
-            DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup != null) {
             saveProperties(diseaseGroup, minNewOccurrences, minDataVolume, minDistinctCountries,
                     minHighFrequencyCountries, highFrequencyThreshold, occursInAfrica);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
+        } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
