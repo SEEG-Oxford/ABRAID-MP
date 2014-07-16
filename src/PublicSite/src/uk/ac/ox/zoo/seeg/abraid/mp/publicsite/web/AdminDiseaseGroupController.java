@@ -70,15 +70,15 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/", method = RequestMethod.GET)
     public String showPage(Model model) throws JsonProcessingException {
         try {
-        List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
-        String diseaseGroupsJson = convertDiseaseGroupsToJson(diseaseGroups);
-        model.addAttribute("diseaseGroups", diseaseGroupsJson);
+            List<DiseaseGroup> diseaseGroups = getSortedDiseaseGroups();
+            String diseaseGroupsJson = convertDiseaseGroupsToJson(diseaseGroups);
+            model.addAttribute("diseaseGroups", diseaseGroupsJson);
 
-        List<ValidatorDiseaseGroup> validatorDiseaseGroups = getSortedValidatorDiseaseGroups();
-        String validatorDiseaseGroupsJson = convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
-        model.addAttribute("validatorDiseaseGroups", validatorDiseaseGroupsJson);
+            List<ValidatorDiseaseGroup> validatorDiseaseGroups = getSortedValidatorDiseaseGroups();
+            String validatorDiseaseGroupsJson = convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
+            model.addAttribute("validatorDiseaseGroups", validatorDiseaseGroupsJson);
 
-        return "admindiseasegroup";
+            return "admindiseasegroup";
         } catch (JsonProcessingException e) {
             LOGGER.error(DISEASE_GROUP_JSON_CONVERSION_ERROR, e);
             throw e;
