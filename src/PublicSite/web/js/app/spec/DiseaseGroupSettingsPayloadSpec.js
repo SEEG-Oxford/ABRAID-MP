@@ -1,15 +1,15 @@
-/* A suite of tests for the MainSettingsPayload AMD.
+/* A suite of tests for the DiseaseGroupSettingsPayload AMD.
  * Copyright (c) 2014 University of Oxford
  */
 define([
     "ko",
     "underscore",
-    "app/MainSettingsPayload",
-    "app/MainSettingsViewModel"
-], function (ko, _, MainSettingsPayload, MainSettingsViewModel) {
+    "app/DiseaseGroupSettingsPayload",
+    "app/DiseaseGroupSettingsViewModel"
+], function (ko, _, DiseaseGroupSettingsPayload, DiseaseGroupSettingsViewModel) {
     "use strict";
 
-    describe("The 'main settings payload'", function () {
+    describe("The 'disease group settings payload'", function () {
         var parentDiseaseGroup = {id: 1, groupType: "MICROCLUSTER"};
         var validatorDiseaseGroup = {id: 2};
         var diseaseGroup = {
@@ -35,7 +35,7 @@ define([
 
         it("holds the 'fromJson' method which returns the expected payload", function () {
             // Act
-            var result = MainSettingsPayload.fromJson(diseaseGroup);
+            var result = DiseaseGroupSettingsPayload.fromJson(diseaseGroup);
             // Assert
             expect(_.isEqual(result, expectedResult)).toBe(true);
         });
@@ -43,10 +43,10 @@ define([
         it("holds the 'fromViewModel' method which returns the expected payload", function () {
             // Arrange
             var eventName = "event";
-            var vm = new MainSettingsViewModel("", [parentDiseaseGroup], [validatorDiseaseGroup], eventName);
+            var vm = new DiseaseGroupSettingsViewModel("", [parentDiseaseGroup], [validatorDiseaseGroup], eventName);
             ko.postbox.publish(eventName, diseaseGroup);
             // Act
-            var result = MainSettingsPayload.fromViewModel(vm);
+            var result = DiseaseGroupSettingsPayload.fromViewModel(vm);
             // Assert
             expect(_.isEqual(result, expectedResult)).toBe(true);
         });

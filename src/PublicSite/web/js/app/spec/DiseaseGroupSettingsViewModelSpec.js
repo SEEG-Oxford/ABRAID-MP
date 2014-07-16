@@ -8,7 +8,7 @@ define([
 ], function (DiseaseGroupSettingsViewModel, ko, _) {
     "use strict";
 
-    describe("The 'main settings' view model", function () {
+    describe("The 'disease group settings' view model", function () {
         it("holds the expected properties of a disease group as observables", function () {
             var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
             expect(vm.name).toBeObservable();

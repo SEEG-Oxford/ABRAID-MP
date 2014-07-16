@@ -121,7 +121,7 @@ label.side-by-side {
     margin-left: 15px;
     margin-right: 15px;
 }
-#main-settings, #model-run-parameters label {
+#disease-group-settings, #model-run-parameters label {
     text-align: left;
 }
 
