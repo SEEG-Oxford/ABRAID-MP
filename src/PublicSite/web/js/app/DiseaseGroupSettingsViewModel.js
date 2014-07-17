@@ -62,15 +62,18 @@ define([
         var originalPayload;
         var data = ko.computed(function () { return DiseaseGroupSettingsPayload.fromViewModel(self); });
 
-        self.enableSaveButton = ko.computed(function () {
-            return !(_.isEqual(originalPayload, data()));
-        });
         self.notice = ko.observable();
+        self.isSubmitting = ko.observable(false);
+        self.disableSaveButton = ko.computed(function () {
+            return ((_.isEqual(originalPayload, data())) || self.isSubmitting());
+        });
         self.save = function () {
+            self.isSubmitting(true);
             var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/settings";
             $.post(url, data())
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });
+                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
+                .always(function () { self.isSubmitting(false); });
         };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {

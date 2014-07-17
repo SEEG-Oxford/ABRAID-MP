@@ -41,7 +41,7 @@
                     <div class="form-group">
                         <label for="disease-group-type" class="col-sm-4 control-label">Group Type</label>
                         <div class="col-sm-6 btn-group" id="disease-group-type" data-bind="foreach: groupTypes">
-                            <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value}">
+                            <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value, disabled: $parent.isSubmitting() }">
                                 <input type="radio" name="disease-group-type" data-bind="checkedValue: value, checked: $parent.selectedType">
                                 <span data-bind="text: label"></span>
                             </label>
@@ -50,7 +50,7 @@
                     <div class="form-group">
                         <label for="global-or-tropical" class="col-sm-4 control-label">Global or Tropical</label>
                         <div class="col-sm-6 btn-group" id="global-or-tropical"  data-bind="foreach: [ {value: true, label: 'Global'}, {value: false, label: 'Tropical'} ]">
-                            <label class="btn btn-default" data-bind="css: {active : $parent.isGlobal() === value}">
+                            <label class="btn btn-default" data-bind="css: {active : $parent.isGlobal() === value, disabled: $parent.isSubmitting() }">
                                 <input type="radio" name="global-or-tropical" data-bind="checkedValue: value, checked: $parent.isGlobal">
                                 <span data-bind="text: label"></span>
                             </label>
@@ -71,7 +71,7 @@
                 </form>
             </div>
             <div class="col-sm-12">
-                <button type="button" class="btn btn-primary" data-bind="enable: enableSaveButton, click: save">Save</button>
+                <button type="button" class="btn btn-primary" data-bind="text: isSubmitting() ? 'Saving...' : 'Save', disable: disableSaveButton, click: save"></button>
             </div>
             <div class="form-group col-sm-12" data-bind="if: notice">
                 <div data-bind="alert: notice"></div>

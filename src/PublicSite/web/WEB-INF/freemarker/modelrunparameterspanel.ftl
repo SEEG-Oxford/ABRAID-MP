@@ -46,7 +46,7 @@
                     </div>
                 </div>
             </form>
-            <button type="button" class="btn btn-primary" data-bind="click: save">Save</button>
+            <button type="button" class="btn btn-primary" data-bind="text: isSubmitting() ? 'Saving...' : 'Save', disable: disableSaveButton, click: save"></button>
             <div data-bind="if: notice">
                 <div data-bind="alert: notice"></div>
             </div>

@@ -24,14 +24,17 @@ define([
         var data = ko.computed(function () { return ModelRunParametersPayload.fromViewModel(self); });
 
         self.notice = ko.observable();
-        self.enableSaveButton = ko.computed(function () {
-            return !(_.isEqual(originalPayload, data()));
+        self.isSubmitting = ko.observable(false);
+        self.disableSaveButton = ko.computed(function () {
+            return ((_.isEqual(originalPayload, data())) || self.isSubmitting());
         });
         self.save = function () {
+            self.isSubmitting(true);
             var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/modelrunparameters";
             $.post(url, data())
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });
+                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
+                .always(function () { self.isSubmitting(false); });
         };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
