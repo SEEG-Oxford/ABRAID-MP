@@ -2,11 +2,10 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "jquery",
     "ko",
     "underscore",
     "app/DiseaseGroupSettingsPayload"
-], function ($, ko, _, DiseaseGroupSettingsPayload) {
+], function (ko, _, DiseaseGroupSettingsPayload) {
     "use strict";
 
     var SINGLE = "SINGLE";
@@ -18,7 +17,7 @@ define([
         {value: CLUSTER,      label: "Cluster"}
     ];
 
-    return function (baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName) {
+    return function (diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName) {
         var self = this;
 
         var findInList = function (diseaseGroup, diseaseGroupsList) {
@@ -58,27 +57,11 @@ define([
         self.validatorDiseaseGroups = validatorDiseaseGroups;
         self.selectedValidatorDiseaseGroup = ko.observable();
 
-        var diseaseGroupId;
-        var originalPayload;
-        var data = ko.computed(function () { return DiseaseGroupSettingsPayload.fromViewModel(self); });
-
-        self.notice = ko.observable();
-        self.isSubmitting = ko.observable(false);
-        self.disableSaveButton = ko.computed(function () {
-            return ((_.isEqual(originalPayload, data())) || self.isSubmitting());
-        });
-        self.save = function () {
-            self.isSubmitting(true);
-            var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/settings";
-            $.post(url, data())
-                .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
-                .always(function () { self.isSubmitting(false); });
+        self.data = function () {
+            return new DiseaseGroupSettingsPayload(self);
         };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            diseaseGroupId = diseaseGroup.id;
-            originalPayload = DiseaseGroupSettingsPayload.fromJson(diseaseGroup);
             self.name(diseaseGroup.name);
             self.publicName(diseaseGroup.publicName);
             self.shortName(diseaseGroup.shortName);

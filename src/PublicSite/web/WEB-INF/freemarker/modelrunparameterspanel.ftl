@@ -8,7 +8,7 @@
     </div>
     <div class="panel-collapse collapse in" id="model-run-parameters">
         <div class="panel-body">
-            <form class="form-horizontal" role="form">
+            <div class="form-horizontal">
                 <div class="form-group">
                     <label for="min-new-occurrences" class="col-sm-4 control-label">Minimum Number of New Occurrences</label>
                     <div class="input-group col-sm-2">
@@ -45,10 +45,6 @@
                         <input type="checkbox" id="occurs-in-africa" data-bind="checked: occursInAfrica">
                     </div>
                 </div>
-            </form>
-            <button type="button" class="btn btn-primary" data-bind="text: isSubmitting() ? 'Saving...' : 'Save', disable: disableSaveButton, click: save"></button>
-            <div data-bind="if: notice">
-                <div data-bind="alert: notice"></div>
             </div>
         </div>
     </div>

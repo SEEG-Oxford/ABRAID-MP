@@ -3,13 +3,11 @@
  */
 define([
     "ko",
-    "jquery",
-    "underscore",
     "app/ModelRunParametersPayload"
-], function (ko, $, _, ModelRunParametersPayload) {
+], function (ko, ModelRunParametersPayload) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSelectedEventName) {
+    return function (diseaseGroupSelectedEventName) {
         var self = this;
 
         self.minNewOccurrences = ko.observable().extend({ digit: true, min: 0 });
@@ -19,27 +17,11 @@ define([
         self.highFrequencyThreshold = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
 
-        var diseaseGroupId;
-        var originalPayload;
-        var data = ko.computed(function () { return ModelRunParametersPayload.fromViewModel(self); });
-
-        self.notice = ko.observable();
-        self.isSubmitting = ko.observable(false);
-        self.disableSaveButton = ko.computed(function () {
-            return ((_.isEqual(originalPayload, data())) || self.isSubmitting());
-        });
-        self.save = function () {
-            self.isSubmitting(true);
-            var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/modelrunparameters";
-            $.post(url, data())
-                .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
-                .always(function () { self.isSubmitting(false); });
+        self.data = function () {
+            return new ModelRunParametersPayload(self);
         };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            diseaseGroupId = diseaseGroup.id;
-            originalPayload = ModelRunParametersPayload.fromJson(diseaseGroup);
             self.minNewOccurrences(diseaseGroup.minNewOccurrences);
             self.minDataVolume(diseaseGroup.minDataVolume);
             self.minDistinctCountries(diseaseGroup.minDistinctCountries);

@@ -25,18 +25,32 @@
 <@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/adminDiseaseGroup" bootstrapData=bootstrapData templates=templates>
 <div class="container">
     <div id="disease-groups-list">
-        <label for="disease-group-picker" class="side-by-side">Selected Disease Group:</label>
-        <span class="input-group">
-            <span class="input-group-addon">
-                <i class="fa fa-medkit"></i>
+        <div class="col-sm-8">
+            <label for="disease-group-picker" class="side-by-side">Selected Disease Group</label>
+            <span class="input-group">
+                <span class="input-group-addon">
+                    <i class="fa fa-medkit"></i>
+                </span>
+                <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name'" ></select>
             </span>
-            <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name'" ></select>
-        </span>
+        </div>
     </div>
     <br />
     <br />
-    <#include "diseasegroupsettingspanel.ftl"/>
-    <#include "modelrunparameterspanel.ftl"/>
+    <form id="disease-group-administration" data-bind="submit: submit">
+        <div data-bind="with: diseaseGroupSettingsViewModel">
+            <#include "diseasegroupsettingspanel.ftl"/>
+        </div>
+        <div data-bind="with: modelRunParametersViewModel">
+            <#include "modelrunparameterspanel.ftl"/>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        <div class="form-group col-sm-12" data-bind="if: notice">
+            <div data-bind="alert: notice"></div>
+        </div>
+    </form>
     <#include "setuppanel.ftl"/>
 </div>
 </@c.page>

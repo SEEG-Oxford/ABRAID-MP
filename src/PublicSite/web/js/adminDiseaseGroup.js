@@ -10,37 +10,38 @@ require(["require.conf"], function () {
         "app/DiseaseGroupsListViewModel",
         "app/DiseaseGroupSettingsViewModel",
         "app/ModelRunParametersViewModel",
+        "app/DiseaseGroupAdministrationViewModel",
         "app/DiseaseGroupSetupViewModel",
         "navbar",
         "domReady!"
     ], function (ko, DiseaseGroupsListViewModel, DiseaseGroupSettingsViewModel, ModelRunParametersViewModel,
-                 DiseaseGroupSetupViewModel, setupNavbar, doc) {
+                 DiseaseGroupAdministrationViewModel, DiseaseGroupSetupViewModel, setupNavbar, doc) {
         setupNavbar();
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
 
-        // Bind to view-models
         var diseaseGroupsListViewModel =
-            new DiseaseGroupsListViewModel(baseUrl, diseaseGroups, diseaseGroupSelectedEventName);
-
+            new DiseaseGroupsListViewModel(diseaseGroups, diseaseGroupSelectedEventName);
         ko.applyBindings(
             diseaseGroupsListViewModel,
             doc.getElementById("disease-groups-list")
         );
 
+        var diseaseGroupSettingsViewModel =
+            new DiseaseGroupSettingsViewModel(diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName);
+        var modelRunParametersViewModel =
+            new ModelRunParametersViewModel(diseaseGroupSelectedEventName);
+        var diseaseGroupAdministrationViewModel =
+            new DiseaseGroupAdministrationViewModel(
+                baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseGroupSelectedEventName);
         ko.applyBindings(
-            ko.validatedObservable(new DiseaseGroupSettingsViewModel(
-                baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName)),
-            doc.getElementById("disease-group-settings")
+            ko.validatedObservable(diseaseGroupAdministrationViewModel),
+            doc.getElementById("disease-group-administration")
         );
 
+        var diseaseGroupSetupViewModel = new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName);
         ko.applyBindings(
-            ko.validatedObservable(new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName)),
-            doc.getElementById("model-run-parameters")
-        );
-
-        ko.applyBindings(
-            ko.validatedObservable(new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName)),
+            ko.validatedObservable(diseaseGroupSetupViewModel),
             doc.getElementById("setup-body"));
 
         // Publish the initial state of the disease group drop-down list

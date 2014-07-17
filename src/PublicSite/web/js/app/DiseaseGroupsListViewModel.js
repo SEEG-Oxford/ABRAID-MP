@@ -4,7 +4,7 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (baseUrl, initialData, diseaseGroupSelectedEventName) {
+    return function (initialData, diseaseGroupSelectedEventName) {
         var self = this;
 
         self.diseaseGroups = ko.observableArray(initialData);
