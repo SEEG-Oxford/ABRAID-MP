@@ -20,6 +20,22 @@ define([
         return ko.utils.recursiveUnwrap(func());
     };
 
+    // Extend binding contexts to add a helper method "find" for reading the value of a field/observable from the
+    // local binding context's data, or work up though the parent contexts if not present on the local context.
+    ko.bindingContext.prototype.find = function (field) {
+        var context = this;
+
+        while (context !== "undefined" && context.$data !== "undefined") {
+            if (typeof context.$data[field] !== "undefined") {
+                return ko.utils.recursiveUnwrap(context.$data[field]);
+            } else {
+                context = context.$parentContext;
+            }
+        }
+
+        throw new Error(field + " field not found on context or any parent context");
+    };
+
     ko.validation.configure({
         insertMessages: true,
         messageTemplate: "validation-template",
