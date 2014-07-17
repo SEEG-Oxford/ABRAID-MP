@@ -31,7 +31,7 @@
                 </p>
             </form>
             <hr/>
-            <form action="#">
+            <form action="#" data-bind="formSubmit: submit">
                 <p>Or create a new ABRAID-MP account:</p>
                 <p class="form-group">
                     <label for="auth-username">Email address: </label>
@@ -39,7 +39,7 @@
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-user"></i>
                         </span>
-                        <input id="auth-username" type="text" class="form-control" placeholder="Email address" autocomplete="off" data-bind="value: email, valueUpdate:'afterkeydown', disable: saving" >
+                        <input id="auth-username" type="text" class="form-control" placeholder="Email address" data-bind="formValue: email" >
                     </span>
                 </p>
                 <p class="form-group">
@@ -48,7 +48,7 @@
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input id="auth-password" type="password" class="form-control" placeholder="Password" autocomplete="off" data-bind="value: password, valueUpdate:'afterkeydown', disable: saving" >
+                        <input id="auth-password" type="password" class="form-control" placeholder="Password" data-bind="formValue: password" >
                     </span>
                 </p>
                 <p class="form-group">
@@ -57,7 +57,7 @@
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-lock"></i>
                         </span>
-                        <input id="auth-password-confirm" type="password" class="form-control" placeholder="Password (confirm)" autocomplete="off" data-bind="value: passwordConfirmation, valueUpdate:'afterkeydown', disable: saving" >
+                        <input id="auth-password-confirm" type="password" class="form-control" placeholder="Password (confirm)" data-bind="formValue: passwordConfirmation" >
                     </span>
                 </p>
                 <p class="form-group">
@@ -65,7 +65,7 @@
                 </p>
                 <br/>
                 <p class="form-group">
-                    <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Creating ...' : 'Create a new ABRAID-MP account'"></a>
+                    <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Creating ...', standard: 'Create a new ABRAID-MP account'}"></button>
                 </p>
                 <div class="form-group" data-bind="foreach: notices">
                     <div data-bind="alert: $data"></div>

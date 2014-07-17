@@ -27,7 +27,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
 
         // Meta state
         self.notices = ko.observableArray(buildNotices(initialAlerts, "warning"));
-        self.saving = ko.observable(false);
+        self.isSubmitting = ko.observable(false);
 
         var buildSubmissionData = function () {
             return {
@@ -48,7 +48,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
             } else if (!self.isValid()) {
                 self.notices.push({ message: "Fields must be valid before saving.", priority: "warning"});
             } else {
-                self.saving(true);
+                self.isSubmitting(true);
                 $.post(baseUrl + "register/account", buildSubmissionData())
                     .done(function () {
                         self.notices.push({ "message": "Account created successfully.", "priority": "success"});
@@ -59,7 +59,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                         _(alerts).each(function (alert) { self.notices.push(alert); });
                         captcha.reload();
                     })
-                    .always(function () { self.saving(false); });
+                    .always(function () { self.isSubmitting(false); });
             }
         };
     };
