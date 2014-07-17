@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
+import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.tanesha.recaptcha.ReCaptcha;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonExpertDetails;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
@@ -29,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  * foo
@@ -43,18 +49,24 @@ public class RegistrationController {
 
     // Regex from knockout.validation codebase https://github.com/Knockout-Contrib/Knockout-Validation/blob/4a0f89e6abf468e9ee9dc0d31d7303a40480a807/Src/rules.js#L183
     private static final Pattern EMAIL_REGEX = Pattern.compile("^((([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))$", Pattern.CASE_INSENSITIVE); ///CHECKSTYLE:SUPPRESS LineLengthCheck
+    // Regex from http://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=^[^\\s]{6,128}$)((?=.*?\\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[^\\w\\d\\s])(?=.*?[a-z])|(?=.*?[^\\w\\d\\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\\d)(?=.*?[A-Z])(?=.*?[^\\w\\d\\s]))^.*$"); ///CHECKSTYLE:SUPPRESS LineLengthCheck
 
     private final CurrentUserService currentUserService;
     private final ExpertService expertService;
+    private final DiseaseService diseaseService;
     private final PasswordEncoder passwordEncoder;
     private final ReCaptcha reCaptchaService;
+    private final ObjectMapper jsonObjectMapper;
 
     @Autowired
-    public RegistrationController(CurrentUserService currentUserService, ExpertService expertService, PasswordEncoder passwordEncoder, ReCaptcha reCaptchaService) {
+    public RegistrationController(CurrentUserService currentUserService, ExpertService expertService, DiseaseService diseaseService, PasswordEncoder passwordEncoder, ReCaptcha reCaptchaService, ObjectMapper geoJsonObjectMapper) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
+        this.diseaseService = diseaseService;
         this.passwordEncoder = passwordEncoder;
         this.reCaptchaService = reCaptchaService;
+        this.jsonObjectMapper = geoJsonObjectMapper;
     }
 
     @RequestMapping(value = "/register/account", method = RequestMethod.GET)
@@ -68,7 +80,13 @@ public class RegistrationController {
         List<String> validationFailures = new ArrayList<>();
         if (!modelMap.containsAttribute(EXPERT_SESSION_STATE_KEY)) {
             // Create an empty expert in the session state
-            modelMap.addAttribute(EXPERT_SESSION_STATE_KEY, new Expert());
+            Expert expert = new Expert();
+
+            // SET EXPERT VISIBILITY FIELD
+            // This is a temp workaround for a more generic overhaul of this system in an upcoming sprint.
+            expert.setPubliclyVisible(false);
+
+            modelMap.addAttribute(EXPERT_SESSION_STATE_KEY, expert);
             modelMap.addAttribute("initialAlerts", "[]");
         } else {
             Expert expert = (Expert) modelMap.get(EXPERT_SESSION_STATE_KEY);
@@ -136,9 +154,26 @@ public class RegistrationController {
             return "redirect:/register/account";
         }
 
-        // Note: will also need to deliver a bootstrapped list of known validator diseases groups
+        List<ValidatorDiseaseGroup> allValidatorDiseaseGroups = loadValidatorDiseaseGroups();
+        modelMap.addAttribute("diseases", jsonObjectMapper.writeValueAsString(allValidatorDiseaseGroups));
+
+        // This is a new user, so they have no interests, but by providing this value the template/vm
+        // can be reused for an edit page
+
+        modelMap.addAttribute("jsonExpert", jsonObjectMapper.writeValueAsString(new JsonExpertDetails(expert)));
 
         return "register/details";
+    }
+
+    private List<ValidatorDiseaseGroup> loadValidatorDiseaseGroups() {
+        List<ValidatorDiseaseGroup> allValidatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
+        convert(allValidatorDiseaseGroups, new Converter<ValidatorDiseaseGroup, JsonValidatorDiseaseGroup>() {
+            @Override
+            public JsonValidatorDiseaseGroup convert(ValidatorDiseaseGroup validatorDiseaseGroup) {
+                return new JsonValidatorDiseaseGroup(validatorDiseaseGroup);
+            }
+        });
+        return allValidatorDiseaseGroups;
     }
 
     @RequestMapping(value = "/register/details", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -181,7 +216,6 @@ public class RegistrationController {
         // Return successfully
         status.setComplete();
         return new ResponseEntity<>(HttpStatus.CREATED); // Could add success page
-
     }
 
     @RequestMapping(value = "/register/cancel")
@@ -215,10 +249,14 @@ public class RegistrationController {
         // Check email
         if (StringUtils.isEmpty(expert.getEmail()) || !EMAIL_REGEX.matcher(expert.getEmail()).matches()) {
             validationFailures.add("Email address not valid.");
+        } else if (expertService.getExpertByEmail(expert.getEmail()) != null) {
+            validationFailures.add("An account already exists for this email address.");
         }
 
-        // check password (complexity?) (note, when TGHN will have to check vs key)
-
+        // Check password
+        if (StringUtils.isEmpty(expert.getPassword()) || !PASSWORD_REGEX.matcher(expert.getPassword()).matches()) {
+            validationFailures.add("Password not sufficiently complex.");
+        }
 
         return validationFailures;
     }
