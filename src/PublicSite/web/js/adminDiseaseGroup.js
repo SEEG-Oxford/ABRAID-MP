@@ -29,7 +29,8 @@ require(["require.conf"], function () {
         );
 
         ko.applyBindings(
-            ko.validatedObservable(new DiseaseGroupSettingsViewModel(baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName)),
+            ko.validatedObservable(new DiseaseGroupSettingsViewModel(
+                baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName)),
             doc.getElementById("disease-group-settings")
         );
 
