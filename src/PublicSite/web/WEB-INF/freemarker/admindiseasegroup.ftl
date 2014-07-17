@@ -35,7 +35,7 @@
     </div>
     <br />
     <br />
-    <#include "mainsettingspanel.ftl"/>
+    <#include "diseasegroupsettingspanel.ftl"/>
     <#include "modelrunparameterspanel.ftl"/>
     <#include "setuppanel.ftl"/>
 </div>

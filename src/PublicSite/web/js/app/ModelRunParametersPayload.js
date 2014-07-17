@@ -1,3 +1,6 @@
+/* Payload for data fired by selectedDiseaseGroupEventName
+ * Copyright (c) 2014 University of Oxford
+ */
 define([], function () {
     "use strict";
 

@@ -42,9 +42,11 @@
         <!-- Templates -->
         ${templates}
         <script type="text/html" id="validation-template">
+            <!-- ko if: field.rules().length != 0 -->
             <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
                 <i class="fa fa-lg" data-bind="css: field.isValid() ? 'text-success fa-check-circle' : 'text-danger fa-exclamation-circle'"></i>
             </span>
+            <!-- /ko -->
         </script>
 
         <!-- Require -->

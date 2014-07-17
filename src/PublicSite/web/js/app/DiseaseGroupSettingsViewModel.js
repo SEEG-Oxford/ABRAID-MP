@@ -5,8 +5,8 @@ define([
     "jquery",
     "ko",
     "underscore",
-    "app/MainSettingsPayload"
-], function ($, ko, _, MainSettingsPayload) {
+    "app/DiseaseGroupSettingsPayload"
+], function ($, ko, _, DiseaseGroupSettingsPayload) {
     "use strict";
 
     var SINGLE = "SINGLE";
@@ -45,7 +45,7 @@ define([
             }
         };
 
-        self.name = ko.validatedObservable().extend({ required: true });
+        self.name = ko.observable().extend({ required: true });
         self.publicName = ko.observable();
         self.shortName = ko.observable();
         self.abbreviation = ko.observable();
@@ -60,22 +60,25 @@ define([
 
         var diseaseGroupId;
         var originalPayload;
-        var data = ko.computed(function () { return MainSettingsPayload.fromViewModel(self); });
+        var data = ko.computed(function () { return DiseaseGroupSettingsPayload.fromViewModel(self); });
 
-        self.enableSaveButton = ko.computed(function () {
-            return !(_.isEqual(originalPayload, data())) && self.name.isValid();
-        });
         self.notice = ko.observable();
+        self.isSubmitting = ko.observable(false);
+        self.disableSaveButton = ko.computed(function () {
+            return ((_.isEqual(originalPayload, data())) || self.isSubmitting());
+        });
         self.save = function () {
-            var url = baseUrl + "admindiseasegroup/" + diseaseGroupId + "/mainsettings";
+            self.isSubmitting(true);
+            var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/settings";
             $.post(url, data())
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });
+                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
+                .always(function () { self.isSubmitting(false); });
         };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             diseaseGroupId = diseaseGroup.id;
-            originalPayload = MainSettingsPayload.fromJson(diseaseGroup);
+            originalPayload = DiseaseGroupSettingsPayload.fromJson(diseaseGroup);
             self.name(diseaseGroup.name);
             self.publicName(diseaseGroup.publicName);
             self.shortName(diseaseGroup.shortName);

@@ -8,12 +8,12 @@ require(["require.conf"], function () {
 
     require(["ko",
         "app/DiseaseGroupsListViewModel",
-        "app/MainSettingsViewModel",
+        "app/DiseaseGroupSettingsViewModel",
         "app/ModelRunParametersViewModel",
         "app/DiseaseGroupSetupViewModel",
         "navbar",
         "domReady!"
-    ], function (ko, DiseaseGroupsListViewModel, MainSettingsViewModel, ModelRunParametersViewModel,
+    ], function (ko, DiseaseGroupsListViewModel, DiseaseGroupSettingsViewModel, ModelRunParametersViewModel,
                  DiseaseGroupSetupViewModel, setupNavbar, doc) {
         setupNavbar();
 
@@ -29,12 +29,13 @@ require(["require.conf"], function () {
         );
 
         ko.applyBindings(
-            new MainSettingsViewModel(baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName),
-            doc.getElementById("main-settings")
+            ko.validatedObservable(new DiseaseGroupSettingsViewModel(
+                baseUrl, diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName)),
+            doc.getElementById("disease-group-settings")
         );
 
         ko.applyBindings(
-            new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName),
+            ko.validatedObservable(new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName)),
             doc.getElementById("model-run-parameters")
         );
 
