@@ -70,17 +70,17 @@ define([
             });
         });
 
-        it("holds the 'enable save button' parameter which detects when any values have changed", function () {
+        it("holds the 'disable save button' parameter which detects when any values have changed", function () {
             // Arrange
             var eventName = "foo";
             var diseaseGroup = { minNewOccurrences: 1 };
             var vm = new ModelRunParametersViewModel("", eventName);
             ko.postbox.publish(eventName, diseaseGroup);
-            expect(vm.enableSaveButton()).toBe(false);
+            expect(vm.disableSaveButton()).toBe(true);
             // Act
             vm.minNewOccurrences(2);
             // Assert
-            expect(vm.enableSaveButton()).toBe(true);
+            expect(vm.disableSaveButton()).toBe(false);
         });
     });
 });
