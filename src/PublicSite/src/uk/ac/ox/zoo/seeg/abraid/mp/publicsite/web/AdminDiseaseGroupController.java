@@ -217,7 +217,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     }
 
     private boolean setParentDiseaseGroup(DiseaseGroup diseaseGroup, Integer parentId) {
-        if (diseaseGroup.getGroupType() == DiseaseGroupType.CLUSTER) {
+        if (diseaseGroup.getGroupType() == DiseaseGroupType.CLUSTER || parentId == null) {
             return true;
         }
 
@@ -227,6 +227,9 @@ public class AdminDiseaseGroupController extends AbstractController {
     }
 
     private boolean setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, Integer validatorId) {
+        if (validatorId == null) {
+            return true;
+        }
         ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
         diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         return (validatorDiseaseGroup != null);
