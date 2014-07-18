@@ -59,7 +59,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                             "message": "Account creation step 1/2 successfully completed.",
                             "priority": "success"
                         });
-                        redirectPage(baseUrl + "/register/details");
+                        redirectPage(baseUrl + "register/details");
                     })
                     .fail(function (xhr) {
                         var alerts = buildNotices(JSON.parse(xhr.responseText), "warning");
