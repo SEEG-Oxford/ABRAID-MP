@@ -135,7 +135,8 @@ define([
     ko.bindingHandlers.formChecked = {
         init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
             ko.applyBindingAccessorsToNode(element, {
-                checked: valueAccessor,
+                checked: function () { return valueAccessor().checked; },
+                checkedValue: function () { return valueAccessor().value; },
                 bootstrapDisable: function () {
                     return bindingContext.find("isSubmitting");
                 }

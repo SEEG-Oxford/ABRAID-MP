@@ -73,9 +73,9 @@
                 </p>
                 <p class="form-group">
                     <label for="user-show">Show on site?</label>
-                    <span id="user-show" class="input-group btn-group" data-bind="foreach: [ {value: true, label: 'Show me'}, {value: false, label: 'Don\'t show me'} ]">
-                        <label class="btn btn-default" data-bind="css: {active: $parent.publiclyVisible() === value, disabled: $parent.isSubmitting() }">
-                            <input type="radio" name="user-show" data-bind="checkedValue: value, formChecked: $parent.publiclyVisible">
+                    <span id="user-show" class="input-group btn-group" data-bind="foreach: [ { value: true, label: 'Show me' }, { value: false, label: 'Don\'t show me' } ]">
+                        <label class="btn btn-default" data-bind="css: { active: $parent.publiclyVisible() === value, disabled: $parent.isSubmitting() }">
+                            <input type="radio" name="user-show" data-bind="formChecked: { checked: $parent.publiclyVisible, value: value }">
                             <span data-bind="text: label"></span>
                         </label>
                     </span>
