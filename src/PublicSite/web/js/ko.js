@@ -1,5 +1,4 @@
-/**
- * Bundle up all the knockout stuff
+/* Bundle up all the knockout stuff
  * Copyright (c) 2014 University of Oxford
  */
 /*global define:false*/
@@ -13,6 +12,7 @@ define([
 ], function (ko) {
     "use strict";
 
+    // A utility function to assist in extracting values from knockout value accessors.
     ko.utils.recursiveUnwrap = function (func) {
         if (typeof func !== "function") {
             return func;
@@ -36,6 +36,7 @@ define([
         throw new Error(field + " field not found on context or any parent context");
     };
 
+    // Configure Knockout validation to use our standard validation template
     ko.validation.configure({
         insertMessages: true,
         messageTemplate: "validation-template",
@@ -43,12 +44,10 @@ define([
         registerExtenders: true
     });
 
-    /**
-     * Force postbox to publish every event, instead of checking whether value has changed against cache, when enforced
-     * by skipSerialize boolean. Useful for large arrays (as with admin-units-to-be-reviewed event), but beware coupled
-     * referencing loop when used with knockout's syncWith.
-     * https://github.com/rniemeyer/knockout-postbox/issues/10
-     */
+    // Force postbox to publish every event, instead of checking whether value has changed against cache, when enforced
+    // by skipSerialize boolean. Useful for large arrays (as with admin-units-to-be-reviewed event), but beware can
+    // cause coupled referencing loop when used with knockout's syncWith.
+    // https://github.com/rniemeyer/knockout-postbox/issues/10
     ko.postbox.serializer = function (object) {
         if (object && object.skipSerialize) { return {}; }
         return ko.toJSON(object);

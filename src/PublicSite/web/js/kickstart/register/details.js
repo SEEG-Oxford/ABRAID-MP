@@ -9,13 +9,11 @@ require([baseUrl + "js/require.conf.js"], function () {
         "ko",
         "jquery",
         "underscore",
-        "navbar",
         "app/register/AccountDetailsFormViewModel",
         "app/register/DiseaseInterestListViewModel",
-        "domReady!"
+        "domReady!",
+        "navbar"
     ], function (ko, $, _, setupNavbar, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
-            setupNavbar();
-
             var redirectPage = function (newURL) {
                 doc.location = newURL;
             };

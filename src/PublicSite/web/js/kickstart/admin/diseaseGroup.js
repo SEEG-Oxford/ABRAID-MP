@@ -3,19 +3,19 @@
  */
 /*global require:false, baseUrl:false, diseaseGroups:false, validatorDiseaseGroups:false*/
 //Load base configuration, then load the app logic for this page.
-require(["require.conf"], function () {
+require([baseUrl + "js/require.conf.js"], function () {
     "use strict";
 
-    require(["ko",
+    require([
+        "ko",
         "app/DiseaseGroupsListViewModel",
         "app/DiseaseGroupSettingsViewModel",
         "app/ModelRunParametersViewModel",
         "app/DiseaseGroupSetupViewModel",
-        "navbar",
-        "domReady!"
+        "domReady!",
+        "navbar"
     ], function (ko, DiseaseGroupsListViewModel, DiseaseGroupSettingsViewModel, ModelRunParametersViewModel,
-                 DiseaseGroupSetupViewModel, setupNavbar, doc) {
-        setupNavbar();
+                 DiseaseGroupSetupViewModel, doc) {
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
 

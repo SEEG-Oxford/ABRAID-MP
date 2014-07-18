@@ -1,6 +1,7 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class JsonExpertDetails {
         this.setPubliclyVisible(expert.isPubliclyVisible());
         this.setJobTitle(expert.getJobTitle());
         this.setInstitution(expert.getInstitution());
-        this.setDiseaseInterests(extract(expert.getValidatorDiseaseGroups(), on(Expert.class).getId()));
+        this.setDiseaseInterests(extract(expert.getValidatorDiseaseGroups(), on(ValidatorDiseaseGroup.class).getId()));
     }
 
     public String getName() {
