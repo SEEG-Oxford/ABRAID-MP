@@ -1,5 +1,4 @@
-/*
- * AMD to represent
+/* AMD to represent the data in the account details page.
  * Copyright (c) 2014 University of Oxford
  */
 define(["ko", "underscore", "jquery"], function (ko, _, $) {
@@ -11,21 +10,21 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
         // Function to convert the alerts into knockout.bootstrap notices.
         var buildNotices = function (alerts, priority) {
             return _(alerts).map(function (alert) {
-                return { "message": alert, "priority": priority};
+                return { "message": alert, "priority": priority };
             });
         };
 
         // Field state
-        self.name = ko.observable(initialExpert.name)
+        self.name = ko.observable(initialExpert.name || "")
             .extend({ required: true });
 
-        self.job = ko.observable(initialExpert.job)
+        self.jobTitle = ko.observable(initialExpert.jobTitle || "")
             .extend({ required: true });
 
-        self.institution = ko.observable(initialExpert.institution)
+        self.institution = ko.observable(initialExpert.institution || "")
             .extend({ required: true });
 
-        self.publiclyVisible = ko.observable(initialExpert.publiclyVisible);
+        self.publiclyVisible = ko.observable(initialExpert.publiclyVisible || false);
 
         self.diseaseInterestListViewModel = diseaseInterestListViewModel;
 
@@ -36,10 +35,15 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
         var buildSubmissionData = function () {
             return {
                 name: self.name(),
-                job: self.job(),
+                jobTitle: self.jobTitle(),
                 institution: self.institution(),
                 publiclyVisible: self.publiclyVisible(),
-                validatorDiseaseGroups: _(self.diseaseInterestListViewModel.diseases()).chain().filter(function (disease) { return disease.interested(); }).pluck("id").value()
+                validatorDiseaseGroups:
+                    _(self.diseaseInterestListViewModel.diseases())
+                        .chain()
+                        .filter(function (disease) { return disease.interested(); })
+                        .pluck("id")
+                        .value()
             };
         };
 
@@ -57,7 +61,10 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                     contentType : "application/json"
                 })
                     .done(function () {
-                        self.notices.push({ "message": "Account created successfully.", "priority": "success"});
+                        self.notices.push({
+                            "message": "Account creation step 2/2 successfully completed.",
+                            "priority": "success"
+                        });
                         redirectPage(baseUrl);
                     })
                     .fail(function (xhr) {

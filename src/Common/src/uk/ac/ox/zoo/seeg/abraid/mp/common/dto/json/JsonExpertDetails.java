@@ -8,14 +8,14 @@ import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
 
 /**
- * foo
+ * A DTO for the parts of uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert provided on the account details page.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonExpertDetails {
     private String name;
     private boolean isPubliclyVisible;
-    private List<Integer> validatorDiseaseGroups;
-    private String job;
+    private List<Integer> diseaseInterests;
+    private String jobTitle;
     private String institution;
 
     public JsonExpertDetails() {
@@ -24,7 +24,9 @@ public class JsonExpertDetails {
     public JsonExpertDetails(Expert expert) {
         this.setName(expert.getName());
         this.setPubliclyVisible(expert.isPubliclyVisible());
-        this.setValidatorDiseaseGroups(extract(expert.getValidatorDiseaseGroups(), on(Expert.class).getId()));
+        this.setJobTitle(expert.getJobTitle());
+        this.setInstitution(expert.getInstitution());
+        this.setDiseaseInterests(extract(expert.getValidatorDiseaseGroups(), on(Expert.class).getId()));
     }
 
     public String getName() {
@@ -43,12 +45,12 @@ public class JsonExpertDetails {
         this.isPubliclyVisible = isPubliclyVisible;
     }
 
-    public List<Integer> getValidatorDiseaseGroups() {
-        return validatorDiseaseGroups;
+    public List<Integer> getDiseaseInterests() {
+        return diseaseInterests;
     }
 
-    public void setValidatorDiseaseGroups(List<Integer> validatorDiseaseGroups) {
-        this.validatorDiseaseGroups = validatorDiseaseGroups;
+    public void setDiseaseInterests(List<Integer> diseaseInterests) {
+        this.diseaseInterests = diseaseInterests;
     }
 
     public String getInstitution() {
@@ -59,11 +61,11 @@ public class JsonExpertDetails {
         this.institution = institution;
     }
 
-    public String getJob() {
-        return job;
+    public String getJobTitle() {
+        return jobTitle;
     }
 
-    public void setJob(String job) {
-        this.job = job;
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 }

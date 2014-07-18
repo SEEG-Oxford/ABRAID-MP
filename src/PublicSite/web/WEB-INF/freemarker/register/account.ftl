@@ -6,11 +6,8 @@
 <#assign bootstrapData>
 <script type="text/javascript">
     // bootstrapped data for js viewmodels
-    var initialAlerts = ${initialAlerts};
-    var initialExpert = {
-        email: "${expert.getEmail()!""?js_string}",
-        password: "${expert.getPassword()!""?js_string}"
-    };
+    var initialAlerts = ${alerts};
+    var initialExpert = ${jsonExpert};
 </script>
 </#assign>
 <@c.page title="ABRAID MP - Register" mainjs="/js/kickstart/register/account" bootstrapData=bootstrapData templates="">

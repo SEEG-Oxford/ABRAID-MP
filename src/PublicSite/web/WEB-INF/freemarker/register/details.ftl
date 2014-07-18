@@ -59,7 +59,7 @@
                         <span class="input-group-addon">
                             <i class="glyphicon glyphicon-briefcase"></i>
                         </span>
-                        <input id="user-job" type="text" class="form-control" placeholder="Job" data-bind="formValue: job" >
+                        <input id="user-job" type="text" class="form-control" placeholder="Job" data-bind="formValue: jobTitle" >
                     </span>
                 </p>
                 <p class="form-group">

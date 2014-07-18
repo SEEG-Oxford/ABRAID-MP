@@ -1,5 +1,4 @@
-/*
- * AMD to represent
+/* AMD to represent the data in the disease interests table.
  * Copyright (c) 2014 University of Oxford
  */
 define(["ko", "underscore"], function (ko, _) {
@@ -8,13 +7,13 @@ define(["ko", "underscore"], function (ko, _) {
     return function (initialExpert, diseases) {
         var self = this;
 
-        _(diseases).each(function (disease) {
-                disease.interested = ko.observable(_(initialExpert.validatorDiseaseGroups).contains(disease.id));
-        });
-
         // Field state
+        _(diseases || []).each(function (disease) {
+            disease.interested = ko.observable(_(initialExpert.diseaseInterests || []).contains(disease.id));
+        });
         self.diseases = ko.observableArray(diseases);
 
+        // Meta state
         self.filter = ko.observable("");
         self.sortField = ko.observable("name");
         self.reverseSort = ko.observable(false);
@@ -43,8 +42,8 @@ define(["ko", "underscore"], function (ko, _) {
 
             // Sort
             var sortField = self.sortField();
-            iterable = iterable.sortBy(function (rowViewModel) {
-                var sortable = ko.utils.recursiveUnwrap(rowViewModel[sortField]);
+            iterable = iterable.sortBy(function (disease) {
+                var sortable = ko.utils.recursiveUnwrap(disease[sortField]);
                 if (typeof sortable === "string" || sortable instanceof String) {
                     sortable = sortable.toLowerCase();
                 }

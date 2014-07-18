@@ -7,7 +7,6 @@ require([baseUrl + "js/require.conf.js"], function () {
         "bootstrap",
         "domReady!"
     ], function (setupNavbar) {
-            setupNavbar();
-        }
-    );
+        setupNavbar();
+    });
 });

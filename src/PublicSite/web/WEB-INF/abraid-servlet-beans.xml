@@ -49,6 +49,8 @@
 
     <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 
+    <bean id="expertForRegistrationValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator" />
+
     <mvc:default-servlet-handler/>
 
     <tx:annotation-driven/>

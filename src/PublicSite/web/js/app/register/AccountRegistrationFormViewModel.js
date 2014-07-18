@@ -1,5 +1,4 @@
-/*
- * AMD to represent
+/* AMD to represent the data in the account registration page.
  * Copyright (c) 2014 University of Oxford
  */
 define(["ko", "underscore", "jquery"], function (ko, _, $) {
@@ -16,17 +15,17 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
         };
 
         // Field state
-        self.email = ko.observable(initialExpert.email)
+        self.email = ko.observable(initialExpert.email || "")
             .extend({ required: true, email: true });
 
-        self.password = ko.observable(initialExpert.password)
+        self.password = ko.observable(initialExpert.password || "")
             .extend({ required: true, passwordComplexity: true });
 
-        self.passwordConfirmation = ko.observable(initialExpert.password)
+        self.passwordConfirmation = ko.observable(initialExpert.password || "")
             .extend({ required: true, passwordComplexity: true, areSame: self.password });
 
         // Meta state
-        self.notices = ko.observableArray(buildNotices(initialAlerts, "warning"));
+        self.notices = ko.observableArray(buildNotices(initialAlerts || [], "warning"));
         self.isSubmitting = ko.observable(false);
 
         var buildSubmissionData = function () {
@@ -49,9 +48,17 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                 self.notices.push({ message: "Fields must be valid before saving.", priority: "warning"});
             } else {
                 self.isSubmitting(true);
-                $.post(baseUrl + "register/account", buildSubmissionData())
+                $.ajax({
+                    method: "POST",
+                    url: baseUrl + "register/account",
+                    data: JSON.stringify(buildSubmissionData()),
+                    contentType : "application/json"
+                })
                     .done(function () {
-                        self.notices.push({ "message": "Account created successfully.", "priority": "success"});
+                        self.notices.push({
+                            "message": "Account creation step 1/2 successfully completed.",
+                            "priority": "success"
+                        });
                         redirectPage(baseUrl + "/register/details");
                     })
                     .fail(function (xhr) {
