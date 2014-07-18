@@ -36,7 +36,7 @@
 
     <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <beans:property name="userDetailsService" ref="userDetailsService"/>
-        <beans:property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in abraid-servlet-beans -->
+        <beans:property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in applicationContext -->
     </beans:bean>
 
     <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
