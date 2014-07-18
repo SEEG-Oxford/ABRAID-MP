@@ -33,15 +33,15 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                 email: self.email(),
                 password: self.password(),
                 passwordConfirmation: self.passwordConfirmation(),
-                captchaChallenge: captcha.get_challenge(),
-                captchaResponse: captcha.get_response()
+                captchaChallenge: captcha.get_challenge(), // jshint ignore:line
+                captchaResponse: captcha.get_response() // jshint ignore:line
             };
         };
 
         // Actions
         self.submit = function () {
             self.notices.removeAll();
-            var captchaResponse = captcha.get_response();
+            var captchaResponse = captcha.get_response(); // jshint ignore:line
             if (captchaResponse === undefined || captchaResponse === null || captchaResponse === "") {
                 self.notices.push({ message: "Captcha is required.", priority: "warning"});
             } else if (!self.isValid()) {

@@ -36,13 +36,11 @@
 
     <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <beans:property name="userDetailsService" ref="userDetailsService"/>
-        <beans:property name="passwordEncoder" ref="passwordEncoder" />
+        <beans:property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in abraid-servlet-beans -->
     </beans:bean>
 
     <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
                 autowire="constructor"/>
-
-    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <!-- The Authentication Filter bean from http custom-filter tag -->
     <beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">

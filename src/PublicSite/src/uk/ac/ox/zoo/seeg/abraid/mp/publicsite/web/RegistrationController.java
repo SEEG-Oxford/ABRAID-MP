@@ -26,8 +26,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,16 +40,18 @@ import static org.hamcrest.collection.IsIn.isIn;
 @Controller
 @SessionAttributes(RegistrationController.EXPERT_SESSION_STATE_KEY)
 public class RegistrationController {
-    /** Session key for Expert object */
-    public final static String EXPERT_SESSION_STATE_KEY = "expert";
+    /** Session key for Expert object. */
+    public static final String EXPERT_SESSION_STATE_KEY = "expert";
 
     private static final String ALERTS_ATTRIBUTE_KEY = "alerts";
     private static final String CAPTCHA_ATTRIBUTE_KEY = "captcha";
     private static final String DISEASES_ATTRIBUTE_KEY = "diseases";
     private static final String JSON_EXPERT_ATTRIBUTE_KEY = "jsonExpert";
 
-    private static final String ERROR_LOGGED_IN_USERS_CANNOT_CREATE_NEW_ACCOUNTS = "Logged in users cannot create new accounts";
-    private static final String ERROR_INVALID_REGISTRATION_SESSION = "Invalid registration session";
+    private static final String ERROR_LOGGED_IN_USERS_CANNOT_CREATE_NEW_ACCOUNTS =
+            "Logged in users cannot create new accounts";
+    private static final String ERROR_INVALID_REGISTRATION_SESSION =
+            "Invalid registration session";
 
     private final CurrentUserService currentUserService;
     private final ExpertService expertService;
@@ -73,6 +73,13 @@ public class RegistrationController {
         this.validator = expertRegistrationValidator;
     }
 
+    /**
+     * Starts a registration session and loads the first account registration page.
+     * @param modelMap The templating/session model.
+     * @param status The session status holder.
+     * @return The template to render.
+     * @throws JsonProcessingException Thrown if issue generating json for bootstrapped variables.
+     */
     @RequestMapping(value = "/register/account", method = RequestMethod.GET)
     public String getAccountPage(ModelMap modelMap, SessionStatus status) throws JsonProcessingException {
         if (checkIfUserLoggedIn()) {
@@ -108,11 +115,18 @@ public class RegistrationController {
     }
 
 
+    /**
+     * Receives the user input from the first account registration page and responds accordingly.
+     * @param modelMap The templating/session model.
+     * @param status The session status holder.
+     * @param expertBasic The user input from the first account registration page.
+     * @param request The http request object, used for captcha validation.
+     * @return A failure status with an array of response messages or a success status.
+     */
     @RequestMapping(value = "/register/account", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> submitAccountPage(
-            ModelMap modelMap, SessionStatus status, @RequestBody JsonExpertBasic expertBasic, ServletRequest request)
-            throws JsonProcessingException {
+            ModelMap modelMap, SessionStatus status, @RequestBody JsonExpertBasic expertBasic, ServletRequest request) {
         if (checkIfUserLoggedIn()) {
             status.setComplete();
             return new ResponseEntity<>(
@@ -144,8 +158,15 @@ public class RegistrationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Loads the second account registration page, after checking for a valid registration session.
+     * @param modelMap The templating/session model.
+     * @param status The session status holder.
+     * @return The template to render.
+     * @throws JsonProcessingException Thrown if issue generating json for bootstrapped variables.
+     */
     @RequestMapping(value = "/register/details", method = RequestMethod.GET)
-    public String getDetailsPage(final ModelMap modelMap, final SessionStatus status) throws JsonProcessingException {
+    public String getDetailsPage(ModelMap modelMap, SessionStatus status) throws JsonProcessingException {
         if (checkIfUserLoggedIn()) {
             // Logged in user, stop registration session, redirect to home page
             status.setComplete();
@@ -172,11 +193,17 @@ public class RegistrationController {
         return "register/details";
     }
 
+    /**
+     * Receives the user input from the second account registration page and responds accordingly.
+     * @param modelMap The templating/session model.
+     * @param status The session status holder.
+     * @param expertDetails The user input from the second account registration page.
+     * @return A failure status with an array of response messages or a success status.
+     */
     @RequestMapping(value = "/register/details", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> submitDetailsPage(
-            final ModelMap modelMap, final SessionStatus status, final @RequestBody JsonExpertDetails expertDetails)
-            throws JsonProcessingException {
+            ModelMap modelMap, SessionStatus status, @RequestBody JsonExpertDetails expertDetails) {
         if (checkIfUserLoggedIn()) {
             status.setComplete();
             return new ResponseEntity<>(
@@ -215,14 +242,6 @@ public class RegistrationController {
         // Return successfully
         status.setComplete();
         return new ResponseEntity<>(HttpStatus.CREATED); // Could add success page
-    }
-
-    @RequestMapping(value = "/register/cancel")
-    public String processCancel(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final SessionStatus status) {
-        status.setComplete();
-        return "redirect:/";
     }
 
     private List<ValidatorDiseaseGroup> loadValidatorDiseaseGroups() {

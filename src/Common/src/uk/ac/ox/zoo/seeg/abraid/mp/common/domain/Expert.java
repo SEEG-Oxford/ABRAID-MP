@@ -171,33 +171,35 @@ public class Expert {
         Expert expert = (Expert) o;
 
         if (isAdministrator != expert.isAdministrator) return false;
-        if (!createdDate.equals(expert.createdDate)) return false;
-        if (!email.equals(expert.email)) return false;
-        if (!id.equals(expert.id)) return false;
-        if (!institution.equals(expert.institution)) return false;
-        if (!isPubliclyVisible.equals(expert.isPubliclyVisible)) return false;
-        if (!jobTitle.equals(expert.jobTitle)) return false;
-        if (!name.equals(expert.name)) return false;
-        if (!password.equals(expert.password)) return false;
-        if (!validatorDiseaseGroups.equals(expert.validatorDiseaseGroups)) return false;
-        if (!weighting.equals(expert.weighting)) return false;
+        if (createdDate != null ? !createdDate.equals(expert.createdDate) : expert.createdDate != null) return false;
+        if (email != null ? !email.equals(expert.email) : expert.email != null) return false;
+        if (id != null ? !id.equals(expert.id) : expert.id != null) return false;
+        if (institution != null ? !institution.equals(expert.institution) : expert.institution != null) return false;
+        if (isPubliclyVisible != null ? !isPubliclyVisible.equals(expert.isPubliclyVisible) : expert.isPubliclyVisible != null)
+            return false;
+        if (jobTitle != null ? !jobTitle.equals(expert.jobTitle) : expert.jobTitle != null) return false;
+        if (name != null ? !name.equals(expert.name) : expert.name != null) return false;
+        if (password != null ? !password.equals(expert.password) : expert.password != null) return false;
+        if (validatorDiseaseGroups != null ? !validatorDiseaseGroups.equals(expert.validatorDiseaseGroups) : expert.validatorDiseaseGroups != null)
+            return false;
+        if (weighting != null ? !weighting.equals(expert.weighting) : expert.weighting != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + email.hashCode();
-        result = 31 * result + password.hashCode();
-        result = 31 * result + jobTitle.hashCode();
-        result = 31 * result + institution.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (jobTitle != null ? jobTitle.hashCode() : 0);
+        result = 31 * result + (institution != null ? institution.hashCode() : 0);
         result = 31 * result + (isAdministrator ? 1 : 0);
-        result = 31 * result + isPubliclyVisible.hashCode();
-        result = 31 * result + weighting.hashCode();
-        result = 31 * result + createdDate.hashCode();
-        result = 31 * result + validatorDiseaseGroups.hashCode();
+        result = 31 * result + (isPubliclyVisible != null ? isPubliclyVisible.hashCode() : 0);
+        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        result = 31 * result + (validatorDiseaseGroups != null ? validatorDiseaseGroups.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

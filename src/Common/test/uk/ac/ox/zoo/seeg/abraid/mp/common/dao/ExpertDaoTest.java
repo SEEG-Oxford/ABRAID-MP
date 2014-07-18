@@ -25,11 +25,16 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         String expertName = "Test Expert";
         String expertEmail = "hello@world.com";
         String expertPassword = "password";
+        String expertJob = "job";
+        String expertInstitution = "institution";
+
 
         Expert expert = new Expert();
         expert.setName(expertName);
         expert.setEmail(expertEmail);
         expert.setPassword(expertPassword);
+        expert.setJobTitle(expertJob);
+        expert.setInstitution(expertInstitution);
 
         // Act
         expertDao.save(expert);
@@ -44,6 +49,8 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(expert.getId()).isNotNull();
         assertThat(expert.getId()).isEqualTo(id);
         assertThat(expert.getName()).isEqualTo(expertName);
+        assertThat(expert.getJobTitle()).isEqualTo(expertJob);
+        assertThat(expert.getInstitution()).isEqualTo(expertInstitution);
         assertThat(expert.getCreatedDate()).isNotNull();
     }
 
@@ -53,11 +60,16 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         String expertName = "Test Expert";
         String expertEmail = "hello@world.com";
         String expertPassword = "password";
+        String expertJob = "job";
+        String expertInstitution = "institution";
+
 
         Expert expert = new Expert();
         expert.setName(expertName);
         expert.setEmail(expertEmail);
         expert.setPassword(expertPassword);
+        expert.setJobTitle(expertJob);
+        expert.setInstitution(expertInstitution);
 
         // Act
         expertDao.save(expert);
@@ -73,6 +85,8 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(expert.getId()).isNotNull();
         assertThat(expert.getEmail()).isEqualTo(expertEmail);
         assertThat(expert.getName()).isEqualTo(expertName);
+        assertThat(expert.getJobTitle()).isEqualTo(expertJob);
+        assertThat(expert.getInstitution()).isEqualTo(expertInstitution);
         assertThat(expert.getCreatedDate()).isNotNull();
     }
 
