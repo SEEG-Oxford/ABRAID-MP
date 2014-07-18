@@ -11,7 +11,7 @@ define([
     var MICROCLUSTER = "MICROCLUSTER";
     var CLUSTER = "CLUSTER";
     var groupTypes = [
-        {value: SINGLE,       label: "Single Disease"},
+        {value: SINGLE,       label: "Single"},
         {value: MICROCLUSTER, label: "Microcluster"},
         {value: CLUSTER,      label: "Cluster"}
     ];

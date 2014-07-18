@@ -171,6 +171,26 @@ public class AdminDiseaseGroupController extends AbstractController {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (validInputs(diseaseGroup, settings)) {
             if (saveProperties(diseaseGroup, settings)) {
+                return new ResponseEntity(diseaseGroup.getId(), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Add a new disease group, with the provided parameters.
+     * @throws Exception if cannot fetch disease group from database.
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/add",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity add(@RequestBody JsonDiseaseGroup settings) throws Exception {
+
+        if (validInputs(settings)) {
+            DiseaseGroup diseaseGroup = new DiseaseGroup();
+            if (saveProperties(diseaseGroup, settings)) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
@@ -179,6 +199,10 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private boolean validInputs(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {
         return (diseaseGroup != null) && hasText(settings.getName()) && hasText(settings.getGroupType());
+    }
+
+    private boolean validInputs(JsonDiseaseGroup settings) {
+        return hasText(settings.getName()) && hasText(settings.getGroupType());
     }
 
     private boolean saveProperties(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {

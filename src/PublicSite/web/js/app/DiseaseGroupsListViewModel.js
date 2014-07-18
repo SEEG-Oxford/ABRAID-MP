@@ -10,5 +10,9 @@ define(["ko"], function (ko) {
         self.diseaseGroups = ko.observableArray(initialData);
         var initialDiseaseGroup = self.diseaseGroups()[0];
         self.selectedDiseaseGroup = ko.observable(initialDiseaseGroup).publishOn(diseaseGroupSelectedEventName);
+        self.add = function () {
+            var newDiseaseGroup = { name: "", groupType: "SINGLE" };
+            self.selectedDiseaseGroup(newDiseaseGroup);
+        };
     };
 });

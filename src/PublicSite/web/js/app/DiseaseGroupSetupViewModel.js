@@ -10,7 +10,7 @@ define([
     return function (baseUrl, diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.selectedDiseaseGroupId = 0;
+        self.selectedDiseaseGroupId = ko.observable();
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
@@ -21,12 +21,12 @@ define([
 
         // When a disease group is selected from the drop-down list...
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
-            self.selectedDiseaseGroupId = selectedDiseaseGroup.id;
+            self.selectedDiseaseGroupId(selectedDiseaseGroup.id);
             self.working(true);
             self.notices.removeAll();
 
             // Get information regarding model runs for this disease group
-            var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId + "/modelruninformation";
+            var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/modelruninformation";
             $.getJSON(url)
                 .done(function (data) {
                     self.lastModelRunText(data.lastModelRunText);
@@ -48,8 +48,8 @@ define([
             self.notices.removeAll();
             if (self.canRunModel()) {
                 self.working(true);
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId + "/requestmodelrun";
-                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId })
+                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
                     .done(function () {
                         self.notices.push({ message: "Model run requested.", priority: "success"});
                     })

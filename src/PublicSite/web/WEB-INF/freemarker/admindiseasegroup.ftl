@@ -31,8 +31,11 @@
                 <span class="input-group-addon">
                     <i class="fa fa-medkit"></i>
                 </span>
-                <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name'" ></select>
+                <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name', valueAllowUnset: true" ></select>
             </span>
+        </div>
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease group</button>
         </div>
     </div>
     <br />
