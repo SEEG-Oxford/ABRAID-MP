@@ -3,9 +3,8 @@
  */
 define([
     "ko",
-    "underscore",
-    "app/DiseaseGroupSettingsPayload"
-], function (ko, _, DiseaseGroupSettingsPayload) {
+    "underscore"
+], function (ko, _) {
     "use strict";
 
     var SINGLE = "SINGLE";
@@ -56,10 +55,6 @@ define([
         self.enableParentDiseaseGroups = ko.computed(function () { return self.selectedType() !== CLUSTER; });
         self.validatorDiseaseGroups = validatorDiseaseGroups;
         self.selectedValidatorDiseaseGroup = ko.observable();
-
-        self.data = function () {
-            return new DiseaseGroupSettingsPayload(self);
-        };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             self.name(diseaseGroup.name);

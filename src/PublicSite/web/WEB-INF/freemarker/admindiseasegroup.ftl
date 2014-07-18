@@ -37,20 +37,24 @@
     </div>
     <br />
     <br />
-    <form id="disease-group-administration" data-bind="submit: submit">
-        <div data-bind="with: diseaseGroupSettingsViewModel">
-            <#include "diseasegroupsettingspanel.ftl"/>
+    <div class="panel panel-default">
+        <div class="panel-body" id="disease-group-administration-panel">
+            <form id="disease-group-administration" data-bind="submit: submit">
+                <div data-bind="with: diseaseGroupSettingsViewModel">
+                    <#include "diseasegroupsettingspanel.ftl"/>
+                </div>
+                <div data-bind="with: modelRunParametersViewModel">
+                    <#include "modelrunparameterspanel.ftl"/>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary" data-bind="text: isSubmitting() ? 'Saving...' : 'Save', disable: isSubmitting()"></button>
+                </div>
+                <div class="form-group" data-bind="if: notice">
+                    <div data-bind="alert: notice"></div>
+                </div>
+            </form>
         </div>
-        <div data-bind="with: modelRunParametersViewModel">
-            <#include "modelrunparameterspanel.ftl"/>
-        </div>
-        <div>
-            <button type="submit" class="btn btn-primary">Save changes</button>
-        </div>
-        <div class="form-group col-sm-12" data-bind="if: notice">
-            <div data-bind="alert: notice"></div>
-        </div>
-    </form>
+    </div>
     <#include "setuppanel.ftl"/>
 </div>
 </@c.page>

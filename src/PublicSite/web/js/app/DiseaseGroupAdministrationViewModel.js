@@ -3,30 +3,32 @@
  */
 define([
     "ko",
-    "jquery"
-], function (ko, $) {
+    "jquery",
+    "app/DiseaseGroupPayload"
+], function (ko, $, DiseaseGroupPayload) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseGroupSelectedEventName) {
+    return function (
+        baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseGroupSelectedEventName) {
+
         var self = this;
         self.diseaseGroupSettingsViewModel = diseaseGroupSettingsViewModel;
         self.modelRunParametersViewModel = modelRunParametersViewModel;
 
         var diseaseGroupId;
+        self.isSubmitting = ko.observable(false);
         self.submit = function () {
-            var data = {
-                settings: diseaseGroupSettingsViewModel.data(),
-                runParameters: modelRunParametersViewModel.data()
-            };
-
+            self.isSubmitting(true);
+            var data = new DiseaseGroupPayload(self.diseaseGroupSettingsViewModel, self.modelRunParametersViewModel);
             $.ajax({
                 method: "POST",
-                url: baseUrl + "admin/diseasegroup/" + diseaseGroupId,
+                url: baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/save",
                 data: JSON.stringify(data),
                 contentType : "application/json"
             })
                 .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); });
+                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
+                .always(function () { self.isSubmitting(false); });
         };
 
         self.notice = ko.observable();

@@ -2,9 +2,8 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "ko",
-    "app/ModelRunParametersPayload"
-], function (ko, ModelRunParametersPayload) {
+    "ko"
+], function (ko) {
     "use strict";
 
     return function (diseaseGroupSelectedEventName) {
@@ -16,10 +15,6 @@ define([
         self.minHighFrequencyCountries = ko.observable().extend({ digit: true, min: 0 });
         self.highFrequencyThreshold = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
-
-        self.data = function () {
-            return new ModelRunParametersPayload(self);
-        };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             self.minNewOccurrences(diseaseGroup.minNewOccurrences);
