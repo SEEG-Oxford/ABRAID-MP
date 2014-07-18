@@ -55,3 +55,9 @@ scp -C $HEALTHMAP_SOURCE/disease_extent/import_into_abraid.sql disease_extent/
 mkdir geonames
 scp -C $GEONAMES_SOURCE/import_geoname.sh geonames/
 scp -C $GEONAMES_SOURCE/geoname.txt geonames/
+
+# Expert
+mkdir experts
+scp -C $EXPERT_SOURCE/import_into_abraid.sql experts/
+scp -C $EXPERT_SOURCE/expert.txt experts/
+

@@ -10,7 +10,11 @@ echo "application.password=$PG_ABRAID_PASS" >> database.properties
 echo "database.name=$DB_NAME" >> database.properties
 ant create.database
 
-# Create an application user
+# Create application users
+cd $BASE/external/experts
+echo "Importing experts"
+psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f import_into_abraid.sql
+cd $BASE
 psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "INSERT INTO expert (name, email, hashed_password, is_administrator) VALUES ( 'Dr Test', '$ABRAID_USER_EMAIL', '$ABRAID_USER_PASS', true )"
 
 # Load historic healthmap data
