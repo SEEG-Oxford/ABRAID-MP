@@ -38,7 +38,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                 jobTitle: self.jobTitle(),
                 institution: self.institution(),
                 publiclyVisible: self.publiclyVisible(),
-                validatorDiseaseGroups:
+                diseaseInterests:
                     _(self.diseaseInterestListViewModel.diseases())
                         .chain()
                         .filter(function (disease) { return disease.interested(); })

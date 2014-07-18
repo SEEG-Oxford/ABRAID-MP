@@ -21,7 +21,7 @@
         <!-- ko foreach: diseaseInterestListViewModel.visibleDiseases -->
         <tr>
             <td><span data-bind="text: name"></td>
-            <td><input type="checkbox" data-bind="formChecked: interested"></td>
+            <td><input type="checkbox" data-bind="formChecked: { checked: interested, value: true }"></td>
         </tr>
         <!-- /ko -->
     </script>

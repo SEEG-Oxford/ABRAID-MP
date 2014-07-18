@@ -13,7 +13,7 @@ require([baseUrl + "js/require.conf.js"], function () {
         "app/register/DiseaseInterestListViewModel",
         "domReady!",
         "navbar"
-    ], function (ko, $, _, setupNavbar, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
+    ], function (ko, $, _, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
             var redirectPage = function (newURL) {
                 doc.location = newURL;
             };
