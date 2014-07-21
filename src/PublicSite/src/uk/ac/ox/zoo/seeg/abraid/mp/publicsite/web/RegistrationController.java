@@ -184,12 +184,12 @@ public class RegistrationController {
 
         Expert expert = (Expert) modelMap.get(EXPERT_SESSION_STATE_KEY);
 
-        if (validator.validateBasicFields(expert).size() > 0) {
+        if (!validator.validateBasicFields(expert).isEmpty()) {
             // Make sure that the data on the first first page was valid
             return "redirect:/register/account";
         }
 
-        List<ValidatorDiseaseGroup> allValidatorDiseaseGroups = loadValidatorDiseaseGroups();
+        List<JsonValidatorDiseaseGroup> allValidatorDiseaseGroups = loadValidatorDiseaseGroups();
         modelMap.addAttribute(DISEASES_ATTRIBUTE_KEY, json.writeValueAsString(allValidatorDiseaseGroups));
 
         modelMap.addAttribute(JSON_EXPERT_ATTRIBUTE_KEY, json.writeValueAsString(new JsonExpertDetails(expert)));
@@ -227,12 +227,12 @@ public class RegistrationController {
 
         // Validate
         List<String> validationFailures = validator.validateDetailsFields(expert);
-        if (validationFailures.size() > 0) {
+        if (!validationFailures.isEmpty()) {
             return new ResponseEntity<>(validationFailures, HttpStatus.BAD_REQUEST);
         }
 
         validationFailures = validator.validateBasicFields(expert);
-        if (validationFailures.size() > 0) {
+        if (!validationFailures.isEmpty()) {
             // Email must have been snipped, so send back to page 1
             return new ResponseEntity<>(validationFailures, HttpStatus.CONFLICT);
         }
@@ -249,15 +249,14 @@ public class RegistrationController {
         return new ResponseEntity<>(HttpStatus.CREATED); // Could add success page
     }
 
-    private List<ValidatorDiseaseGroup> loadValidatorDiseaseGroups() {
+    private List<JsonValidatorDiseaseGroup> loadValidatorDiseaseGroups() {
         List<ValidatorDiseaseGroup> allValidatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
-        convert(allValidatorDiseaseGroups, new Converter<ValidatorDiseaseGroup, JsonValidatorDiseaseGroup>() {
+        return convert(allValidatorDiseaseGroups, new Converter<ValidatorDiseaseGroup, JsonValidatorDiseaseGroup>() {
             @Override
             public JsonValidatorDiseaseGroup convert(ValidatorDiseaseGroup validatorDiseaseGroup) {
                 return new JsonValidatorDiseaseGroup(validatorDiseaseGroup);
             }
         });
-        return allValidatorDiseaseGroups;
     }
 
     private boolean checkIfUserLoggedIn() {
