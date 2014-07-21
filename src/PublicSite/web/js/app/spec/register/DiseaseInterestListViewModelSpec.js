@@ -23,7 +23,7 @@ define(["app/register/DiseaseInterestListViewModel", "underscore"], function (Di
 
             it("adds an 'interested' observable to its initial entries", function () {
                 var vm = new DiseaseInterestListViewModel({diseaseInterests: [1]}, [ {id: 1}, {id: 2} ]);
-+                expect(_(vm.diseases()).findWhere({id: 1}).interested).toBeObservable();
+                expect(_(vm.diseases()).findWhere({id: 1}).interested).toBeObservable();
                 expect(_(vm.diseases()).findWhere({id: 1}).interested()).toBe(true);
                 expect(_(vm.diseases()).findWhere({id: 2}).interested).toBeObservable();
                 expect(_(vm.diseases()).findWhere({id: 2}).interested()).toBe(false);
