@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * foo
+ * Tests for JsonExpertDetails.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonExpertDetailsTest {
