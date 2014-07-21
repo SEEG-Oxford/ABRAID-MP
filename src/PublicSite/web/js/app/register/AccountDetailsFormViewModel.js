@@ -63,6 +63,9 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                         redirectPage(baseUrl);
                     })
                     .fail(function (xhr) {
+                        if (xhr.status === 409) { // email address conflict
+                            redirectPage(baseUrl + "register/account");
+                        }
                         var alerts = buildNotices(JSON.parse(xhr.responseText), "warning");
                         _(alerts).each(function (alert) { self.notices.push(alert); });
                     })

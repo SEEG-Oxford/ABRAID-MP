@@ -327,7 +327,7 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
                     expect(vm.notices().length).toEqual(2);
                 });
 
-                it("not redirecting to the details page", function () {
+                it("not redirecting to the home page", function () {
                     // Arrange
                     var redirect = jasmine.createSpy();
                     var vm = new AccountDetailsFormViewModel("", {}, redirect, diseasesVM);
@@ -340,6 +340,21 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
 
                     // Assert
                     expect(redirect).not.toHaveBeenCalled();
+                });
+
+                it("redirecting to the account page if email address clashed", function () {
+                    // Arrange
+                    var redirect = jasmine.createSpy();
+                    var vm = new AccountDetailsFormViewModel("baseUrl/", {}, redirect, diseasesVM);
+                    vm.isValid = wrap(true);
+
+                    // Act
+                    vm.submit();
+                    expect(redirect).not.toHaveBeenCalled();
+                    jasmine.Ajax.requests.mostRecent().response({ "status": 409, "responseText": "[]" });
+
+                    // Assert
+                    expect(redirect).toHaveBeenCalledWith("baseUrl/" + "register/account");
                 });
             });
         });

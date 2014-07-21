@@ -81,7 +81,7 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void getAccountPageValidatesExpertInModelIfPresent() throws Exception {
+    public void getAccountPageValidatesExpertInModelIfPresentAndHasEmail() throws Exception {
         // Arrange
         ModelMap modelMap = new ModelMap();
         Expert expert = new Expert();
@@ -93,6 +93,54 @@ public class RegistrationControllerTest {
 
         // Assert
         verify(validator, times(1)).validateBasicFields(expert);
+        assertThat(result).isEqualTo("register/account");
+    }
+
+    @Test
+    public void getAccountPageValidatesExpertInModelIfPresentAndHasPassword() throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        expert.setPassword("qwe123Q");
+        modelMap.addAttribute("expert", expert);
+
+        // Act
+        String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
+
+        // Assert
+        verify(validator, times(1)).validateBasicFields(expert);
+        assertThat(result).isEqualTo("register/account");
+    }
+
+    @Test
+    public void getAccountPageValidatesExpertInModelIfPresentAndHasEmailAndPassword() throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        expert.setEmail("a@b.com");
+        expert.setPassword("qwe123Q");
+        modelMap.addAttribute("expert", expert);
+
+        // Act
+        String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
+
+        // Assert
+        verify(validator, times(1)).validateBasicFields(expert);
+        assertThat(result).isEqualTo("register/account");
+    }
+
+    @Test
+    public void getAccountPageValidatesExpertInModelIfPresentUnlessEmailAndPasswordAreStillNull() throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        modelMap.addAttribute("expert", expert);
+
+        // Act
+        String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
+
+        // Assert
+        verify(validator, never()).validateBasicFields(expert);
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -352,6 +400,48 @@ public class RegistrationControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(result.getBody()).containsOnly("1", "2");
+    }
+
+    @Test
+    public void submitDetailsPageExtractsUpdatesSavesExpertAndReturnsCreatedStatusForSuccess()
+            throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        expert.setEmail("a@b.com");
+        expert.setPassword("qwe123Q");
+
+        modelMap.addAttribute("expert", expert);
+
+        when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
+        when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
+                .thenReturn(new ArrayList<String>());
+        when(passwordEncoder.encode("qwe123Q")).thenReturn("hash");
+
+        JsonExpertDetails jsonExpert = new JsonExpertDetails();
+        jsonExpert.setJobTitle("job");
+        jsonExpert.setInstitution("institution");
+        jsonExpert.setPubliclyVisible(true);
+        jsonExpert.setName("name");
+
+        // Act
+        ResponseEntity<List<String>> result = target.submitDetailsPage(
+                modelMap, mock(SessionStatus.class), jsonExpert);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        // Updates expert before save
+        assertThat(expert.getJobTitle()).isEqualTo(jsonExpert.getJobTitle());
+        assertThat(expert.getInstitution()).isEqualTo(jsonExpert.getInstitution());
+        assertThat(expert.isPubliclyVisible()).isEqualTo(jsonExpert.isPubliclyVisible());
+        assertThat(expert.getName()).isEqualTo(jsonExpert.getName());
+
+        // Hashes password before save
+        InOrder inOrder = inOrder(passwordEncoder, expertService);
+        inOrder.verify(passwordEncoder, times(1)).encode("qwe123Q");
+        inOrder.verify(expertService, times(1)).saveExpert(expert);
+        assertThat(expert.getPassword()).isEqualTo("hash");
     }
 
     @Test
