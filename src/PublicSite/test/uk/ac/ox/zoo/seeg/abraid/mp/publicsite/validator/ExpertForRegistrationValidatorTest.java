@@ -96,6 +96,19 @@ public class ExpertForRegistrationValidatorTest {
     }
 
     @Test
+    public void validateBasicFieldsAcceptsValidEmails() throws Exception {
+        // Arrange
+        Expert expert = mockExpertBasic();
+        when(expert.getEmail()).thenReturn("a@b.com");
+
+        // Act
+        List<String> result = target.validateBasicFields(expert);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     public void validateBasicFieldsRejectsPreexistingEmails() throws Exception {
         // Arrange
         ExpertService mockExpertService = mock(ExpertService.class);
@@ -149,6 +162,19 @@ public class ExpertForRegistrationValidatorTest {
 
         // Assert
         assertThat(result).contains("Password not sufficiently complex.");
+    }
+
+    @Test
+    public void validateBasicFieldsAcceptsValidPasswords() throws Exception {
+        // Arrange
+        Expert expert = mockExpertBasic();
+        when(expert.getPassword()).thenReturn("qwe123Q");
+
+        // Act
+        List<String> result = target.validateBasicFields(expert);
+
+        // Assert
+        assertThat(result).isEmpty();
     }
 
     @Test
