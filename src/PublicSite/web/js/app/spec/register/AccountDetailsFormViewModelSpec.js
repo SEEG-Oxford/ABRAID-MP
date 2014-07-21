@@ -11,7 +11,7 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
         };
     };
     var diseasesVM = {
-        diseases: wrap([ { id:1, interested:wrap(true) } ])
+        buildSubmissionData: wrap([1])
     };
 
     describe("The account details form view model", function () {
@@ -261,11 +261,7 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
                     vm.jobTitle("expected_job");
                     vm.institution("expected_institute");
                     vm.publiclyVisible(true);
-                    vm.diseaseInterestListViewModel.diseases = wrap([
-                        { id: 9, interested: wrap(true) },
-                        { id: 8, interested: wrap(false) },
-                        { id: 7, interested: wrap(true) }
-                    ]);
+                    vm.diseaseInterestListViewModel.buildSubmissionData = wrap([ 9, 7 ]);
 
                     // Act
                     vm.submit();

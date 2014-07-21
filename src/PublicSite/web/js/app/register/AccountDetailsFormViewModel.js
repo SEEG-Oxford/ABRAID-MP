@@ -38,12 +38,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                 jobTitle: self.jobTitle(),
                 institution: self.institution(),
                 publiclyVisible: self.publiclyVisible(),
-                diseaseInterests:
-                    _(self.diseaseInterestListViewModel.diseases())
-                        .chain()
-                        .filter(function (disease) { return disease.interested(); })
-                        .pluck("id")
-                        .value()
+                diseaseInterests: self.diseaseInterestListViewModel.buildSubmissionData()
             };
         };
 

@@ -60,5 +60,13 @@ define(["ko", "underscore"], function (ko, _) {
 
             return iterable;
         });
+
+        self.buildSubmissionData = function () {
+            return _(self.diseases())
+                .chain()
+                .filter(function (disease) { return disease.interested(); })
+                .pluck("id")
+                .value();
+        };
     };
 });
