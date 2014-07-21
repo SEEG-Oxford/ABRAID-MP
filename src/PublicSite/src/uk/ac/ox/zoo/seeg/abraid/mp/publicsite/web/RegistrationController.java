@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,6 +43,9 @@ import static org.hamcrest.collection.IsIn.isIn;
 public class RegistrationController {
     /** Session key for Expert object. */
     public static final String EXPERT_SESSION_STATE_KEY = "expert";
+
+    private static final Logger LOGGER = Logger.getLogger(RegistrationController.class);
+    private static final String LOG_NEW_USER_CREATED = "New user created: %s";
 
     private static final String ALERTS_ATTRIBUTE_KEY = "alerts";
     private static final String CAPTCHA_ATTRIBUTE_KEY = "captcha";
@@ -238,6 +242,7 @@ public class RegistrationController {
 
         // Save to db
         expertService.saveExpert(expert);
+        LOGGER.info(String.format(LOG_NEW_USER_CREATED, expert.getEmail()));
 
         // Return successfully
         status.setComplete();
