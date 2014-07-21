@@ -16,13 +16,13 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
 
         // Field state
         self.name = ko.observable(initialExpert.name || "")
-            .extend({ required: true });
+            .extend({ required: true, maxLength: 1000 });
 
         self.jobTitle = ko.observable(initialExpert.jobTitle || "")
-            .extend({ required: true });
+            .extend({ required: true, maxLength: 100 });
 
         self.institution = ko.observable(initialExpert.institution || "")
-            .extend({ required: true });
+            .extend({ required: true,  maxLength: 100 });
 
         self.publiclyVisible = ko.observable(initialExpert.publiclyVisible || false);
 
