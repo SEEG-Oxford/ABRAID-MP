@@ -111,10 +111,10 @@ public class RegistrationControllerTest {
         String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        assertThat((String)modelMap.get("alerts")).isEqualTo("[\"m1\",\"m2\"]");
-        assertThat((String)modelMap.get("captcha")).isEqualTo("captcha");
-        assertThat((String)modelMap.get("jsonExpert")).isEqualTo("{\"email\":\"a@b.com\",\"password\":null,\"password" +
-                "Confirmation\":null,\"captchaChallenge\":\"\",\"captchaResponse\":\"\"}");
+        assertThat((String) (modelMap.get("alerts"))).isEqualTo("[\"m1\",\"m2\"]");
+        assertThat((String) (modelMap.get("captcha"))).isEqualTo("captcha");
+        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"email\":\"a@b.com\",\"password\":null," +
+                "\"passwordConfirmation\":null,\"captchaChallenge\":\"\",\"captchaResponse\":\"\"}");
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -180,9 +180,9 @@ public class RegistrationControllerTest {
         String result = target.getDetailsPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        assertThat((String)modelMap.get("diseases"))
+        assertThat((String) (modelMap.get("diseases")))
                 .isEqualTo("[{\"id\":1,\"name\":\"a\"},{\"id\":2,\"name\":\"b\"},{\"id\":3,\"name\":\"c\"}]");
-        assertThat((String)modelMap.get("jsonExpert")).isEqualTo("{\"name\":null,\"diseaseInterests\":[]," +
+        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"name\":null,\"diseaseInterests\":[]," +
                 "\"jobTitle\":null,\"institution\":null,\"publiclyVisible\":false}");
 
         assertThat(result).isEqualTo("register/details");

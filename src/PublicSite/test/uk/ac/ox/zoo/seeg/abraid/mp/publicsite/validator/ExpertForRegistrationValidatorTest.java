@@ -30,11 +30,11 @@ public class ExpertForRegistrationValidatorTest {
         // Arrange
         ReCaptcha mockCaptcha = mock(ReCaptcha.class);
         when(mockCaptcha.createRecaptchaHtml(anyString(), anyString(), anyInt())).thenReturn("expected");
-        ExpertForRegistrationValidator target =
+        ExpertForRegistrationValidator localTarget =
                 new ExpertForRegistrationValidator(mockCaptcha, null);
 
         // Act
-        String result = target.createValidationCaptcha();
+        String result = localTarget.createValidationCaptcha();
 
         // Assert
         assertThat(result).isEqualTo("expected");
@@ -99,14 +99,14 @@ public class ExpertForRegistrationValidatorTest {
     public void validateBasicFieldsRejectsPreexistingEmails() throws Exception {
         // Arrange
         ExpertService mockExpertService = mock(ExpertService.class);
-        ExpertForRegistrationValidator target =
+        ExpertForRegistrationValidator localTarget =
                 new ExpertForRegistrationValidator(mock(ReCaptcha.class), mockExpertService);
         Expert expert = mockExpertBasic();
         when(expert.getEmail()).thenReturn("already@exists.com");
         when(mockExpertService.getExpertByEmail("already@exists.com")).thenReturn(mock(Expert.class));
 
         // Act
-        List<String> result = target.validateBasicFields(expert);
+        List<String> result = localTarget.validateBasicFields(expert);
 
         // Assert
         assertThat(result).contains("Email address already has an associated account.");
@@ -278,17 +278,17 @@ public class ExpertForRegistrationValidatorTest {
         ReCaptcha mockCaptcha = mock(ReCaptcha.class);
         ServletRequest mockRequest = mock(ServletRequest.class);
         ReCaptchaResponse mockResponse = mock(ReCaptchaResponse.class);
-        when(mockCaptcha.checkAnswer(anyString(),anyString(), anyString())).thenReturn(mockResponse);
+        when(mockCaptcha.checkAnswer(anyString(), anyString(), anyString())).thenReturn(mockResponse);
         when(mockResponse.isValid()).thenReturn(true);
         when(mockRequest.getRemoteAddr()).thenReturn("");
 
-        ExpertForRegistrationValidator target =
+        ExpertForRegistrationValidator localTarget =
                 new ExpertForRegistrationValidator(mockCaptcha, mock(ExpertService.class));
         JsonExpertBasic expert = mockJsonExpertBasic();
         when(expert.getPasswordConfirmation()).thenReturn("abc123Q");
 
         // Act
-        List<String> result = target.validateTransientFields(expert, mockRequest);
+        List<String> result = localTarget.validateTransientFields(expert, mockRequest);
 
         // Assert
         assertThat(result).contains("Password pair must match.");
@@ -300,16 +300,16 @@ public class ExpertForRegistrationValidatorTest {
         ReCaptcha mockCaptcha = mock(ReCaptcha.class);
         ServletRequest mockRequest = mock(ServletRequest.class);
         ReCaptchaResponse mockResponse = mock(ReCaptchaResponse.class);
-        when(mockCaptcha.checkAnswer(anyString(),anyString(), anyString())).thenReturn(mockResponse);
+        when(mockCaptcha.checkAnswer(anyString(), anyString(), anyString())).thenReturn(mockResponse);
         when(mockResponse.isValid()).thenReturn(false);
         when(mockRequest.getRemoteAddr()).thenReturn("expected address");
 
-        ExpertForRegistrationValidator target =
+        ExpertForRegistrationValidator localTarget =
                 new ExpertForRegistrationValidator(mockCaptcha, mock(ExpertService.class));
         JsonExpertBasic expert = mockJsonExpertBasic();
 
         // Act
-        List<String> result = target.validateTransientFields(expert, mockRequest);
+        List<String> result = localTarget.validateTransientFields(expert, mockRequest);
 
         // Assert
         assertThat(result).contains("Captcha incorrect.");

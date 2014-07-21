@@ -20,7 +20,7 @@ public class JsonExpertBasic {
     public JsonExpertBasic(Expert expert) {
         setEmail(expert.getEmail());
         setPassword(expert.getPassword());
-        setPassword(expert.getPassword());
+        setPasswordConfirmation(expert.getPassword());
         setCaptchaChallenge("");
         setCaptchaResponse("");
     }
