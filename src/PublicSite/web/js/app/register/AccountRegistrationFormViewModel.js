@@ -16,7 +16,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
 
         // Field state
         self.email = ko.observable(initialExpert.email || "")
-            .extend({ required: true, email: true });
+            .extend({ required: true, email: true, maxLength: 320 });
 
         self.password = ko.observable(initialExpert.password || "")
             .extend({ required: true, passwordComplexity: true });
@@ -64,9 +64,11 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                     .fail(function (xhr) {
                         var alerts = buildNotices(JSON.parse(xhr.responseText), "warning");
                         _(alerts).each(function (alert) { self.notices.push(alert); });
-                        captcha.reload();
                     })
-                    .always(function () { self.isSubmitting(false); });
+                    .always(function () {
+                        self.isSubmitting(false);
+                        captcha.reload();
+                    });
             }
         };
     };
