@@ -26,8 +26,8 @@
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/LogInViewModelSpec.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/SelectedLayerViewModelSpec.js" libraries="{jasmine, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/SelectedPointViewModelSpec.js" libraries="{jasmine}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/dataValidationContent.js" libraries="{jquery, knockout-debug, moment}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/default.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/datavalidation/content.js" libraries="{jquery, knockout-debug, moment}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/default.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/navbar.js" libraries="{jquery, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/require.conf.js" libraries="{require}" />
   </component>

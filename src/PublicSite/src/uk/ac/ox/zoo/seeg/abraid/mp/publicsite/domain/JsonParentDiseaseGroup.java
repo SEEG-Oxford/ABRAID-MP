@@ -14,8 +14,8 @@ public class JsonParentDiseaseGroup {
     }
 
     public JsonParentDiseaseGroup(DiseaseGroup diseaseGroup) {
-        this.id = diseaseGroup.getId();
-        this.name = diseaseGroup.getName();
+        setId(diseaseGroup.getId());
+        setName(diseaseGroup.getName());
     }
 
     public Integer getId() {

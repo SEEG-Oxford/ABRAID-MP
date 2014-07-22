@@ -4,13 +4,11 @@
  */
 /*global window:false*/
 // Although bootstrap.js is not used within the function below, it is needed to generate drop-down menus in the navbar
-define(["jquery", "bootstrap"], function ($) {
+define(["jquery", "bootstrap", "domReady!"], function ($) {
     "use strict";
 
-    return function () {
-        // Highlight the link for the current page
-        $("ul.nav a").filter(function () {
-            return this.href.toLowerCase() === window.location.href.toLowerCase();
-        }).parent().addClass("active");
-    };
+    // Highlight the link for the current page
+    $("ul.nav a").filter(function () {
+        return this.href.toLowerCase() === window.location.href.toLowerCase();
+    }).parent().addClass("active");
 });

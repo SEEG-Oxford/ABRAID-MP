@@ -39,6 +39,14 @@ public class Expert {
     @Column(name = "hashed_password", nullable = false)
     private String password;
 
+    // The expert's job title.
+    @Column(name = "job_title")
+    private String jobTitle;
+
+    // The institution the expert works for.
+    @Column
+    private String institution;
+
     // Whether the expert has administrative control.
     @Column(name = "is_administrator", nullable = false)
     private boolean isAdministrator;
@@ -101,6 +109,22 @@ public class Expert {
         this.password = password;
     }
 
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
     public boolean isAdministrator() {
         return isAdministrator;
     }
@@ -148,14 +172,17 @@ public class Expert {
 
         if (isAdministrator != expert.isAdministrator) return false;
         if (createdDate != null ? !createdDate.equals(expert.createdDate) : expert.createdDate != null) return false;
-        if (validatorDiseaseGroups != null ? !validatorDiseaseGroups.equals(expert.validatorDiseaseGroups) : expert.validatorDiseaseGroups != null)
-            return false;
         if (email != null ? !email.equals(expert.email) : expert.email != null) return false;
         if (id != null ? !id.equals(expert.id) : expert.id != null) return false;
+        if (institution != null ? !institution.equals(expert.institution) : expert.institution != null) return false;
         if (isPubliclyVisible != null ? !isPubliclyVisible.equals(expert.isPubliclyVisible) : expert.isPubliclyVisible != null)
             return false;
+        if (jobTitle != null ? !jobTitle.equals(expert.jobTitle) : expert.jobTitle != null) return false;
         if (name != null ? !name.equals(expert.name) : expert.name != null) return false;
         if (password != null ? !password.equals(expert.password) : expert.password != null) return false;
+        if (validatorDiseaseGroups != null ? !validatorDiseaseGroups.equals(expert.validatorDiseaseGroups) : expert.validatorDiseaseGroups != null)
+            return false;
+        if (weighting != null ? !weighting.equals(expert.weighting) : expert.weighting != null) return false;
 
         return true;
     }
@@ -166,8 +193,11 @@ public class Expert {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (jobTitle != null ? jobTitle.hashCode() : 0);
+        result = 31 * result + (institution != null ? institution.hashCode() : 0);
         result = 31 * result + (isAdministrator ? 1 : 0);
         result = 31 * result + (isPubliclyVisible != null ? isPubliclyVisible.hashCode() : 0);
+        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (validatorDiseaseGroups != null ? validatorDiseaseGroups.hashCode() : 0);
         return result;

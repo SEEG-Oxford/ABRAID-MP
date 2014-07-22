@@ -2,7 +2,7 @@
     The page template, including header and footer.
     Copyright (c) 2014 University of Oxford
 -->
-<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="/js/default">
+<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="/js/kickstart/default">
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html class="no-js">
@@ -43,9 +43,9 @@
         ${templates}
         <script type="text/html" id="validation-template">
             <!-- ko if: field.rules().length != 0 -->
-            <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
-                <i class="fa fa-lg" data-bind="css: field.isValid() ? 'text-success fa-check-circle' : 'text-danger fa-exclamation-circle'"></i>
-            </span>
+                <span class="input-group-addon" data-container="body" data-bind="css: field.isValid() ? 'bg-success-important' : 'bg-danger-important', tooltip: { title: field.error, placement: 'right' } ">
+                    <i class="fa fa-lg" data-bind="css: field.isValid() ? 'text-success fa-check-circle' : 'text-danger fa-exclamation-circle'"></i>
+                </span>
             <!-- /ko -->
         </script>
 

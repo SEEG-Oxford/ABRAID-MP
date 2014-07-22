@@ -14,8 +14,8 @@ public class JsonValidatorDiseaseGroup {
     }
 
     public JsonValidatorDiseaseGroup(ValidatorDiseaseGroup validatorDiseaseGroup) {
-        this.id = validatorDiseaseGroup.getId();
-        this.name = validatorDiseaseGroup.getName();
+        setId(validatorDiseaseGroup.getId());
+        setName(validatorDiseaseGroup.getName());
     }
 
     public Integer getId() {

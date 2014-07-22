@@ -114,17 +114,14 @@ html, body, #dataValidation {
     width: 99%;
     height: 50px;
 }
-#logIn {
+#sidePanelLogin {
     position: relative;
-    bottom: 160px;
+    width: 100%;
+    top: -34px;
+    margin-bottom: -34px;
 }
-#logIn p {
-    text-align: center;
-    padding: 5px 10px;
-    margin: 0 auto;
-}
-#formAlert {
-    height: 24px;
+#sidePanelLogin > button {
+    width: 100%;
 }
 #counterDiv {
     text-align: center;

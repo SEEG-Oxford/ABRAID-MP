@@ -91,12 +91,16 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         String name = "Test Expert";
         String email = "expert@test.com";
         String password = "pa55word";
+        String jobTitle = "job";
+        String institution = "institution";
         boolean isAdministrator = true;
 
         Expert expert = new Expert();
         expert.setName(name);
         expert.setEmail(email);
         expert.setPassword(password);
+        expert.setJobTitle(jobTitle);
+        expert.setInstitution(institution);
         //noinspection ConstantConditions
         expert.setAdministrator(isAdministrator);
         expertDao.save(expert);
