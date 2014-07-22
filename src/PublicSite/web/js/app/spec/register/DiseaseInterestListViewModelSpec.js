@@ -30,7 +30,7 @@ define(["app/register/DiseaseInterestListViewModel", "underscore"], function (Di
             });
         });
 
-        describe("holds a filter string", function () {
+        describe("holds a filter string, which", function () {
             it("is observable", function () {
                 expect(vm.filter).toBeObservable();
             });

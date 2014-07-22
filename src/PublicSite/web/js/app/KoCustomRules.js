@@ -25,4 +25,6 @@ define([
         },
         message: "Password must be between 6 and 128 characters long and contain three of the following 4 items: upper case letter, lower case letter, a symbol, a number" /* jshint ignore:line */ // Line length
     };
+
+    ko.validation.rules.digit.message = "Please enter a whole number";
 });

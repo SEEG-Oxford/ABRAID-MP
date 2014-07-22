@@ -54,6 +54,10 @@ define([
                     .toContain("Password must be between 6 and 128 characters long and contain three of the following");
             });
         });
+
+        it("an alternative failure message for the 'digit' rule", function () {
+            expect(ko.validation.rules.digit.message).toBe("Please enter a whole number");
+        });
     });
 });
 
