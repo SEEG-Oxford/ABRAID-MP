@@ -1,8 +1,7 @@
 define([
     "ko",
-    "domReady!",
     "app/spec/lib/squire"
-], function (ko, doc, Squire) {
+], function (ko) {
     "use strict";
 
     describe("KoCustomRules defines", function () {

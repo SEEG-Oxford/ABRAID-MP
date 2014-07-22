@@ -1,8 +1,7 @@
 define([
     "ko",
-    "domReady!",
     "app/spec/lib/squire"
-], function (ko, doc, Squire) {
+], function (ko, Squire) {
     "use strict";
 
     describe("KoCustomBindings defines", function () {
@@ -409,8 +408,8 @@ define([
                     expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
                 });
 
-                it("disables autocomplete fon the element", function (done) {
-                    // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                it("disables autocomplete on the element", function (done) {
+                    // Squire.require is going to load js files via ajax so get rid of the jasmine mock ajax stuff first
                     jasmine.Ajax.uninstall();
                     var injector = new Squire();
 
