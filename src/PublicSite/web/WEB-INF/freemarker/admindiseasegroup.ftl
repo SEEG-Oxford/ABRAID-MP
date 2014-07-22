@@ -22,7 +22,7 @@
 </script>
 </#assign>
 
-<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/admin/diseaseGroup" bootstrapData=bootstrapData templates=templates>
+<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData templates=templates>
 <div class="container">
     <div id="disease-groups-list">
         <label for="disease-group-picker" class="side-by-side">Selected Disease Group:</label>
