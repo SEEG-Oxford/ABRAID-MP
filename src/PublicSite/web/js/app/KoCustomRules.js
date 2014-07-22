@@ -10,11 +10,8 @@ define([
     // Adapted from:
     // https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#are-same
     ko.validation.rules.areSame = {
-        getValue: function (o) {
-            return (typeof o === "function" ? o() : o);
-        },
         validator: function (val, otherField) {
-            return val === this.getValue(otherField);
+            return ko.utils.recursiveUnwrap(val) === ko.utils.recursiveUnwrap(otherField);
         },
         message: "Password fields must match"
     };
