@@ -142,13 +142,10 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroups).hasSize(396);
     }
 
-    private boolean assertThatContainsId(List<ValidatorDiseaseGroup> validatorDiseaseGroups, int id) {
-        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
-            if (validatorDiseaseGroup.getId() == id) {
-                return true;
-            }
-        }
-
-        return false;
+    @Test
+    public void getIdsForAutomaticModelRuns() {
+        List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
+        assertThat(ids).hasSize(1);
+        assertThat(ids.get(0)).isEqualTo(87);
     }
 }

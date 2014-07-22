@@ -445,6 +445,19 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         assertThat(actualStatistics).isSameAs(expectedStatistics);
     }
 
+    @Test
+    public void getDiseaseGroupIdsForAutomaticModelRuns() {
+        // Arrange
+        List<Integer> expectedIDs = new ArrayList<>();
+        when(diseaseGroupDao.getIdsForAutomaticModelRuns()).thenReturn(expectedIDs);
+
+        // Act
+        List<Integer> actualIDs = diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
+
+        // Assert
+        assertThat(actualIDs).isSameAs(expectedIDs);
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(boolean isGlobal) {
         // Arrange
         int diseaseGroupId = 10;

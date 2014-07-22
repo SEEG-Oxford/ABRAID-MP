@@ -1,9 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
 
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,15 +15,18 @@ import java.util.Map;
 public class ModelRunManager {
     private ModelRunGatekeeper modelRunGatekeeper;
     private ModelRunWorkflowService modelRunWorkflowService;
+    private DiseaseService diseaseService;
 
-    public ModelRunManager(ModelRunGatekeeper modelRunGatekeeper, ModelRunWorkflowService modelRunWorkflowService) {
+    public ModelRunManager(ModelRunGatekeeper modelRunGatekeeper, ModelRunWorkflowService modelRunWorkflowService,
+                           DiseaseService diseaseService) {
         this.modelRunGatekeeper = modelRunGatekeeper;
         this.modelRunWorkflowService = modelRunWorkflowService;
+        this.diseaseService = diseaseService;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<Integer> getDiseaseGroupsWithOccurrences() {
-        return Arrays.asList(87); ///CHECKSTYLE:SUPPRESS MagicNumberCheck - only Dengue hard-coded for now
+    public List<Integer> getDiseaseGroupIdsForAutomaticModelRuns() {
+        return diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
     }
 
     /**
@@ -33,7 +36,7 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         if (modelRunGatekeeper.modelShouldRun(diseaseGroupId)) {
-            modelRunWorkflowService.prepareForAndRequestAutomaticallyTriggeredModelRun(diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
         }
     }
 

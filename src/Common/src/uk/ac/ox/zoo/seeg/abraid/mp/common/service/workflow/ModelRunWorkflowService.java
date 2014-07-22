@@ -15,7 +15,7 @@ public interface ModelRunWorkflowService {
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId) throws ModelRunRequesterException;
+    void prepareForAndRequestManualModelRun(int diseaseGroupId) throws ModelRunRequesterException;
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
@@ -23,8 +23,7 @@ public interface ModelRunWorkflowService {
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    void prepareForAndRequestAutomaticallyTriggeredModelRun(int diseaseGroupId)
-            throws ModelRunRequesterException;
+    void prepareForAndRequestAutomaticModelRun(int diseaseGroupId) throws ModelRunRequesterException;
 
     /**
      * Gets the new weighting for each active expert.

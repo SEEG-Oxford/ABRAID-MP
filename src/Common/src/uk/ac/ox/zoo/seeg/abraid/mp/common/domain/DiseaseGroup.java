@@ -14,6 +14,12 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries(
+        @NamedQuery(
+                name = "getDiseaseGroupIdsForAutomaticModelRuns",
+                query = "select id from DiseaseGroup where automaticModelRuns = true"
+        )
+)
 @Entity
 @Table(name = "disease_group")
 public class DiseaseGroup {
