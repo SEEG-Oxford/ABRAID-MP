@@ -4,7 +4,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 
 /**
  * A DTO for the parts of uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert provided on the account registration page,
- * along with addition transited validation fields.
+ * along with additional transient validation fields.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonExpertBasic {
