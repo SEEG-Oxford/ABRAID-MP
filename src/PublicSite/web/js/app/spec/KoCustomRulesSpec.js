@@ -42,10 +42,12 @@ define([
                 expect(ko.validation.rules.passwordComplexity.validator("abc123q")).toBe(false);
                 expect(ko.validation.rules.passwordComplexity.validator("abc*&^q")).toBe(false);
                 expect(ko.validation.rules.passwordComplexity.validator("ABC*&^Q")).toBe(false);
+                expect(ko.validation.rules.passwordComplexity.validator("AAAAaa")).toBe(false);
             });
 
             it("accepts complex passwords", function () {
                 expect(ko.validation.rules.passwordComplexity.validator("qwe123Q")).toBe(true);
+                expect(ko.validation.rules.passwordComplexity.validator("Password1")).toBe(true);
             });
 
             it("has a suitable failure message", function () {
