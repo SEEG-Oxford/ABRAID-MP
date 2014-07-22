@@ -35,5 +35,5 @@ cd $BASE/external/geonames
 ./import_geoname.sh "$PG_ADMIN_USER" "$DB_NAME"
 cd $BASE
 
-# Temp make a random 2000 points show in the validator
-psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "update disease_occurrence occ set is_validated=false from (select id from disease_occurrence where is_validated=true order by random() limit 2000) rand where rand.id=occ.id"
+# Make a 500 most recent dengue points show in the validator
+psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "update disease_occurrence set is_validated=false where id in (select id from disease_occurrence where disease_group_id=87 order by occurrence_date desc limit 500)"
