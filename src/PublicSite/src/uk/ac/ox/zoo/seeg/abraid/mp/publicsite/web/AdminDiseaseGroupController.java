@@ -78,7 +78,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             String validatorDiseaseGroupsJson = convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
             model.addAttribute("validatorDiseaseGroups", validatorDiseaseGroupsJson);
 
-            return "admindiseasegroup";
+            return "admin/diseasegroup/ROOT";
         } catch (JsonProcessingException e) {
             LOGGER.error(DISEASE_GROUP_JSON_CONVERSION_ERROR, e);
             throw e;

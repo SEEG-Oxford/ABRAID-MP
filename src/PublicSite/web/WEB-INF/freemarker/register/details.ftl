@@ -2,7 +2,7 @@
     User registration page
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../common.ftl" as c/>
+<#import "../layout/common.ftl" as c/>
 <#assign bootstrapData>
 <script type="text/javascript">
     // bootstrapped data for js viewmodels

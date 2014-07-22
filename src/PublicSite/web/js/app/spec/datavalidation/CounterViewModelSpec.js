@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/CounterViewModel",
+    "app/datavalidation/CounterViewModel",
     "ko"
 ], function (CounterViewModel, ko) {
     "use strict";
@@ -27,9 +27,9 @@ define([
             it("increments its value when the specified event is fired", function () {
                 // Arrange
                 var initialCount = 0;
-                var vm = new CounterViewModel(initialCount, "foo");
+                var vm = new CounterViewModel(initialCount, "foo123");
                 // Act
-                ko.postbox.publish("foo");
+                ko.postbox.publish("foo123");
                 // Assert
                 var expectedCount = initialCount + 1;
                 expect(vm.count()).toBe(expectedCount);

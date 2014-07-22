@@ -1,7 +1,7 @@
 /* A suite of tests for the LogInViewModel.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/LogInViewModel"], function (LogInViewModel) {
+define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
     "use strict";
 
     describe("The log in view model", function () {

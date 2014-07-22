@@ -8,10 +8,10 @@ require([baseUrl + "js/require.conf.js"], function () {
 
     require([
         "ko",
-        "app/DiseaseGroupsListViewModel",
-        "app/DiseaseGroupSettingsViewModel",
-        "app/ModelRunParametersViewModel",
-        "app/DiseaseGroupSetupViewModel",
+        "app/admin/diseasegroup/DiseaseGroupsListViewModel",
+        "app/admin/diseasegroup/DiseaseGroupSettingsViewModel",
+        "app/admin/diseasegroup/ModelRunParametersViewModel",
+        "app/admin/diseasegroup/DiseaseGroupSetupViewModel",
         "domReady!",
         "navbar"
     ], function (ko, DiseaseGroupsListViewModel, DiseaseGroupSettingsViewModel, ModelRunParametersViewModel,
