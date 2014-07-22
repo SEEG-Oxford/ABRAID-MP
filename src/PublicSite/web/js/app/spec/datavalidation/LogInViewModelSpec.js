@@ -17,30 +17,35 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
 
         describe("holds a username which", function () {
             it("is an observable", function () {
-                expect(vm.formUsername).toBeObservable();
+                expect(vm.username).toBeObservable();
             });
 
             it("starts as empty string", function () {
-                expect(vm.formUsername()).toBe("");
+                expect(vm.username()).toBe("");
             });
         });
 
         describe("holds a password which", function () {
             it("is an observable", function () {
-                expect(vm.formUsername).toBeObservable();
+                expect(vm.password).toBeObservable();
             });
 
             it("starts as empty string", function () {
-                expect(vm.formUsername()).toBe("");
+                expect(vm.password()).toBe("");
             });
+        });
+
+        it("has an 'isValid' method which returns true", function () {
+            // Always returns true. just for compatibility.
+            expect(vm.isValid()).toBe(true);
         });
 
         describe("has a submit method which", function () {
             it("POSTs to the spring security url, with the correct parameters", function () {
                 // Arrange
                 var expectedUrl = baseUrl + "j_spring_security_check";
-                vm.formUsername("username");
-                vm.formPassword("password");
+                vm.username("username");
+                vm.password("password");
                 var expectedParams = "j_username=username&j_password=password";
 
                 // Act
@@ -54,8 +59,8 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
 
             it("does not POST if username and password are not provided", function () {
                 // Arrange
-                vm.formUsername("");
-                vm.formPassword("");
+                vm.username("");
+                vm.password("");
 
                 // Act
                 vm.submit();
@@ -66,8 +71,8 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
 
             it("forces a rebind of observables before POST is sent (firefox autofill workaround)", function () {
                 // Arrange
-                vm.formUsername("username");
-                vm.formPassword("password");
+                vm.username("username");
+                vm.password("password");
 
                 // Act
                 vm.submit();
@@ -78,8 +83,8 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
 
             it("refreshes the page on login success", function () {
                 // Arrange
-                vm.formUsername("a");
-                vm.formPassword("b");
+                vm.username("a");
+                vm.password("b");
 
                 // Act
                 vm.submit();
@@ -91,78 +96,104 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
             });
         });
 
-        describe("holds a 'submitting' field", function () {
+        describe("holds a 'isSubmitting' field", function () {
+            it("is an observable", function () {
+                expect(vm.isSubmitting).toBeObservable();
+            });
+
             it("starts false", function () {
-                expect(vm.formAlert()).toBe("Log in via ABRAID account");
-            });
-
-            it("is set to ", function () {
-                expect(vm.formAlert()).toBe("Log in via ABRAID account");
-            });
-        });
-
-        describe("holds an alert text which", function () {
-            it("starts with a welcome message", function () {
-                expect(vm.formAlert()).toBe("Log in via ABRAID account");
+                expect(vm.isSubmitting()).toBe(false);
             });
 
             it("is updated during submit", function () {
                 // Arrange
-                vm.formUsername("b");
-                vm.formPassword("a");
+                vm.username("b");
+                vm.password("a");
 
                 // Act
                 vm.submit();
 
                 // Assert
-                expect(vm.formAlert()).toContain("Attempting  login");
+                expect(vm.isSubmitting()).toBe(true);
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+            });
+
+            it("is updated after submit", function () {
+                // Arrange
+                vm.username("b");
+                vm.password("a");
+
+                // Act
+                vm.submit();
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+
+                // Assert
+                expect(vm.isSubmitting()).toBe(false);
+            });
+        });
+
+        describe("holds a notice field which", function () {
+            it("starts with a welcome message", function () {
+                expect(vm.notice()).toBe("Log in via ABRAID account");
+            });
+
+            it("is updated during submit", function () {
+                // Arrange
+                vm.username("b");
+                vm.password("a");
+
+                // Act
+                vm.submit();
+
+                // Assert
+                expect(vm.notice()).toContain("Attempting  login");
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
             });
 
             it("is updated after a successful submit", function () {
                 // Arrange
-                vm.formPassword("a");
-                vm.formUsername("b");
+                vm.username("a");
+                vm.password("b");
 
                 // Act
                 vm.submit();
 
                 // Assert
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                expect(vm.formAlert()).toContain("Success");
+                expect(vm.notice()).toContain("Success");
             });
 
             describe("is updated on an unsuccessful submit", function () {
                 it("due to a missing username", function () {
                     // Arrange
-                    vm.formUsername("");
+                    vm.username("");
                     // Act
                     vm.submit();
                     // Assert
-                    expect(vm.formAlert()).toContain("Username &amp; password required");
+                    expect(vm.notice()).toContain("Username &amp; password required");
                 });
 
                 it("due to a missing password", function () {
                     // Arrange
-                    vm.formPassword("");
+                    vm.password("");
                     // Act
                     vm.submit();
                     // Assert
-                    expect(vm.formAlert()).toContain("Username &amp; password required");
+                    expect(vm.notice()).toContain("Username &amp; password required");
                 });
 
                 it("due to an unauthorised login attempt", function () {
                     // Arrange
                     var xhrResponseText = "foo";
-                    vm.formPassword("a");
-                    vm.formUsername("b");
+                    vm.username("a");
+                    vm.password("b");
 
                     // Act
                     vm.submit();
                     jasmine.Ajax.requests.mostRecent().response({ status: 401, responseText: xhrResponseText});
 
                     // Assert
-                    expect(vm.formAlert()).toContain(xhrResponseText);
+                    expect(vm.notice()).toContain(xhrResponseText);
                 });
             });
         });
