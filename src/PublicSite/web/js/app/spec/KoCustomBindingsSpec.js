@@ -1,8 +1,7 @@
 define([
     "ko",
-    "domReady!",
     "app/spec/lib/squire"
-], function (ko, doc, Squire) {
+], function (ko, Squire) {
     "use strict";
 
     describe("KoCustomBindings defines", function () {
@@ -211,6 +210,249 @@ define([
                     expect(removeSpy).toHaveBeenCalledWith("highlight");
                     expect(addSpy).not.toHaveBeenCalled();
                     done();
+                });
+            });
+        });
+
+        describe("multiple composite bindings, including", function () {
+            var findBuilder = function (valueForValid, valueForSubmitting) {
+                return function (arg) {
+                    if ("isSubmitting" === arg) {
+                        return valueForSubmitting;
+                    }
+
+                    if ("isValid" === arg) {
+                        return valueForValid;
+                    }
+
+                    return false;
+                };
+            };
+
+            describe("the 'bootstrapDisable' binding, which", function () {
+                ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                var element = "1234";
+                var accessor = function () { return true; };
+                ko.bindingHandlers.bootstrapDisable.init(element, accessor);
+                var subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+
+                it("adds composite bindings to the same element", function () {
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+                it("applies an 'enable' binding with a negated version of the value accessor", function () {
+                    expect(subBindings.enable).toBeDefined();
+                    expect(typeof subBindings.enable).toBe("function");
+                    expect(subBindings.enable()).toBe(!accessor());
+                });
+
+                it("applies a 'css' binding with a value accessor enabling the disabled class by the parent accessor",
+                    function () {
+                        expect(subBindings.css).toBeDefined();
+                        expect(typeof subBindings.css).toBe("function");
+                        expect(subBindings.css().disabled).toBeDefined();
+                        expect(subBindings.css().disabled).toBe(accessor());
+                    }
+                );
+            });
+
+            describe("the 'formSubmit' binding, which", function () {
+                var context, subBindings, submitFunction;
+                var element = "1234";
+                var accessor = function () { return submitFunction; };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    submitFunction = jasmine.createSpy("submitFunction");
+                    context = { find: function () { return false; } };
+                    ko.bindingHandlers.formSubmit.init(element, accessor, {}, {}, context);
+                    subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                });
+
+
+                it("adds composite bindings to the same element", function () {
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+
+                describe("applies a 'submit' binding with a wrapped version of the value accessor, which", function () {
+                    it("is fired for valid and non-submitting forms", function () {
+                        expect(subBindings.submit).toBeDefined();
+                        expect(typeof subBindings.submit).toBe("function");
+                        expect(typeof subBindings.submit()).toBe("function");
+
+                        context.find = findBuilder(true, false);
+                        subBindings.submit()();
+                        expect(submitFunction).toHaveBeenCalledWith(element);
+                    });
+
+                    it("applies a 'submit' binding which only fires for valid forms", function () {
+                        context.find = findBuilder(false, false);
+                        subBindings.submit()();
+                        expect(submitFunction).not.toHaveBeenCalled();
+                    });
+
+                    it("applies a 'submit' binding which only fires for non-submitting forms", function () {
+                        context.find = findBuilder(true, true);
+                        subBindings.submit()();
+                        expect(submitFunction).not.toHaveBeenCalled();
+                    });
+                });
+            });
+
+            describe("the 'formButton' binding, which", function () {
+                var context, subBindings;
+                var element = "1234";
+                var accessor = function () { return { submitting: "submitting", standard: "standard" }; };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    context = { find: function () { return false; } };
+                    ko.bindingHandlers.formButton.init(element, accessor, {}, {}, context);
+                    subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                });
+
+                it("adds composite bindings to the same element", function () {
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+                it("applies a 'bootstrapDisable' binding with a validity/submitting based accessor", function () {
+                    expect(subBindings.bootstrapDisable).toBeDefined();
+                    expect(typeof subBindings.bootstrapDisable).toBe("function");
+
+                    context.find = findBuilder(true, false); // valid & not submitting
+                    expect(subBindings.bootstrapDisable()).toBe(false);     // enabled
+
+                    context.find = findBuilder(true, true);  // valid & submitting
+                    expect(subBindings.bootstrapDisable()).toBe(true);      // disabled
+
+                    context.find = findBuilder(false, false); // invalid & not submitting
+                    expect(subBindings.bootstrapDisable()).toBe(true);       // disabled
+
+                    context.find = findBuilder(false, true);  // invalid & submitting
+                    expect(subBindings.bootstrapDisable()).toBe(true);       // disabled
+                });
+
+                it("applies a 'text' binding with a submitting based accessor, using the values from parent accessor",
+                    function () {
+                        expect(subBindings.text).toBeDefined();
+                        expect(typeof subBindings.text).toBe("function");
+
+                        context.find = findBuilder(true, false); // not submitting
+                        expect(subBindings.text()).toBe(accessor().standard);
+
+                        context.find = findBuilder(true, true);  // submitting
+                        expect(subBindings.text()).toBe(accessor().submitting);
+                    }
+                );
+            });
+
+            describe("the 'formChecked' binding, which", function () {
+                var context, subBindings;
+                var element = "1234";
+                var accessor = function () { return { checked: "1234", value: "4321" }; };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    context = { find: function () { return false; } };
+                    ko.bindingHandlers.formChecked.init(element, accessor, {}, {}, context);
+                    subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                });
+
+                it("adds composite bindings to the same element", function () {
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+                it("applies a 'checked' binding with the checked sub-accessor", function () {
+                    expect(subBindings.checked).toBeDefined();
+                    expect(typeof subBindings.checked).toBe("function");
+                    expect(subBindings.checked()).toBe(accessor().checked);
+                });
+
+                it("applies a 'checkedValue' binding with the value sub-accessor", function () {
+                    expect(subBindings.checkedValue).toBeDefined();
+                    expect(typeof subBindings.checkedValue).toBe("function");
+                    expect(subBindings.checkedValue()).toBe(accessor().value);
+                });
+
+                it("applies a 'bootstrapDisable' binding with a submitting based accessor", function () {
+                    expect(subBindings.bootstrapDisable).toBeDefined();
+                    expect(typeof subBindings.bootstrapDisable).toBe("function");
+
+                    context.find = findBuilder(true, false); // not submitting
+                    expect(subBindings.bootstrapDisable()).toBe(false);
+
+                    context.find = findBuilder(true, true);  // submitting
+                    expect(subBindings.bootstrapDisable()).toBe(true);
+                });
+            });
+
+            describe("the 'formValue' binding, which", function () {
+                var context, subBindings;
+                var element = "1234";
+                var accessor = function () { return { checked: "1234", value: "4321" }; };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    context = { find: function () { return false; } };
+                    ko.bindingHandlers.formValue.init(element, accessor, {}, {}, context);
+                    subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                });
+
+                it("adds composite bindings to the same element", function () {
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+                it("disables autocomplete on the element", function (done) {
+                    // Squire.require is going to load js files via ajax so get rid of the jasmine mock ajax stuff first
+                    jasmine.Ajax.uninstall();
+                    var injector = new Squire();
+
+                    var attrSpy = jasmine.createSpy("attr");
+                    var jqSpy = jasmine.createSpy("$").and.callFake(function () {
+                        return { attr: attrSpy };
+                    });
+                    injector.mock("jquery", jqSpy);
+
+                    injector.require(["ko"], function (ko) {
+                        ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                        ko.bindingHandlers.formValue.init(element, accessor, {}, {}, context);
+
+                        expect(jqSpy.calls.count()).toBe(1);
+                        expect(jqSpy).toHaveBeenCalledWith(element);
+                        expect(attrSpy.calls.count()).toBe(1);
+                        expect(attrSpy).toHaveBeenCalledWith("autocomplete", "off");
+
+                        done();
+                    });
+                });
+
+                it("applies a 'value' binding with the parent accessor", function () {
+                    expect(subBindings.value).toBeDefined();
+                    expect(typeof subBindings.value).toBe("function");
+                    expect(subBindings.value).toBe(accessor);
+                });
+
+                it("applies a 'valueUpdate' binding with the value accessor that returns 'input'", function () {
+                    expect(subBindings.valueUpdate).toBeDefined();
+                    expect(typeof subBindings.valueUpdate).toBe("function");
+                    expect(subBindings.valueUpdate()).toBe("input");
+                });
+
+                it("applies a 'bootstrapDisable' binding with a submitting based accessor", function () {
+                    expect(subBindings.bootstrapDisable).toBeDefined();
+                    expect(typeof subBindings.bootstrapDisable).toBe("function");
+
+                    context.find = findBuilder(true, false); // not submitting
+                    expect(subBindings.bootstrapDisable()).toBe(false);
+
+                    context.find = findBuilder(true, true);  // submitting
+                    expect(subBindings.bootstrapDisable()).toBe(true);
                 });
             });
         });

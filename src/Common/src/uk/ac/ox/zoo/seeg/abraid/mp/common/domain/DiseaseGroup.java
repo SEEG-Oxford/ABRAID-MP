@@ -14,6 +14,12 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
+@NamedQueries(
+        @NamedQuery(
+                name = "getDiseaseGroupIdsForAutomaticModelRuns",
+                query = "select id from DiseaseGroup where automaticModelRuns = true"
+        )
+)
 @Entity
 @Table(name = "disease_group")
 public class DiseaseGroup {
@@ -313,12 +319,11 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseGroup)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
         if (automaticModelRuns != that.automaticModelRuns) return false;
-        if (occursInAfrica != that.occursInAfrica) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (groupType != that.groupType) return false;
@@ -337,6 +342,8 @@ public class DiseaseGroup {
         if (minNewOccurrencesTrigger != null ? !minNewOccurrencesTrigger.equals(that.minNewOccurrencesTrigger) : that.minNewOccurrencesTrigger != null)
             return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (occursInAfrica != null ? !occursInAfrica.equals(that.occursInAfrica) : that.occursInAfrica != null)
+            return false;
         if (parentGroup != null ? !parentGroup.equals(that.parentGroup) : that.parentGroup != null) return false;
         if (publicName != null ? !publicName.equals(that.publicName) : that.publicName != null) return false;
         if (shortName != null ? !shortName.equals(that.shortName) : that.shortName != null) return false;
@@ -369,7 +376,7 @@ public class DiseaseGroup {
         result = 31 * result + (minDistinctCountries != null ? minDistinctCountries.hashCode() : 0);
         result = 31 * result + (highFrequencyThreshold != null ? highFrequencyThreshold.hashCode() : 0);
         result = 31 * result + (minHighFrequencyCountries != null ? minHighFrequencyCountries.hashCode() : 0);
-        result = 31 * result + (occursInAfrica ? 1 : 0);
+        result = 31 * result + (occursInAfrica != null ? occursInAfrica.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

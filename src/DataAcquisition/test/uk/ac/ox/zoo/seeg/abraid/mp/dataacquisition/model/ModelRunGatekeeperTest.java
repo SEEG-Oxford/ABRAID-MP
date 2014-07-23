@@ -39,20 +39,6 @@ public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegra
         notEnoughOccurrences = Integer.MAX_VALUE;
     }
 
-    @Test
-    public void automaticModelRunsEnabledReturnsFalseWhenExpected() {
-        // Arrange
-        boolean expectedResult = false;
-        diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID).setAutomaticModelRuns(expectedResult);
-        ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
-
-        // Act
-        boolean result = target.modelShouldRun(DISEASE_GROUP_ID);
-
-        // Assert
-        assertThat(result).isEqualTo(expectedResult);
-    }
-
     // NB. Boolean value automatic_model_runs is a non-null field, set to true for Dengue (DISEASE_GROUP_ID = 87)
     // in test data, so the following tests are working under that assumption
     @Test

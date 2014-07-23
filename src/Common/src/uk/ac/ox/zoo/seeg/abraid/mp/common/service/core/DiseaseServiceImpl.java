@@ -350,6 +350,15 @@ public class DiseaseServiceImpl implements DiseaseService {
         return diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
     }
 
+    /**
+     * Gets the IDs of disease groups that have automatic model runs enabled.
+     * @return The IDs of relevant disease groups.
+     */
+    @Override
+    public List<Integer> getDiseaseGroupIdsForAutomaticModelRuns() {
+        return diseaseGroupDao.getIdsForAutomaticModelRuns();
+    }
+
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
         return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());

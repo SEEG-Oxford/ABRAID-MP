@@ -68,7 +68,7 @@ public class AdminDiseaseGroupControllerTest {
         String result = controller.showPage(model);
 
         // Assert
-        assertThat(result).isEqualTo("admindiseasegroup");
+        assertThat(result).isEqualTo("admin/diseasegroup/index");
         verify(model, times(1)).addAttribute("diseaseGroups", expectedJson);
         verify(model, times(1)).addAttribute("validatorDiseaseGroups", expectedValidatorJson);
     }
@@ -108,7 +108,7 @@ public class AdminDiseaseGroupControllerTest {
         controller.requestModelRun(diseaseGroupId);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManuallyTriggeredModelRun(eq(diseaseGroupId));
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManualModelRun(eq(diseaseGroupId));
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

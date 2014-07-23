@@ -23,8 +23,8 @@ define([
     // https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
     ko.validation.rules.passwordComplexity = {
         validator: function (val) {
-            var pattern = "(?=^[^\s]{6,128}$)((?=.*?\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\d)(?=.*?[^\w\d\s])(?=.*?[a-z])|(?=.*?[^\w\d\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\d)(?=.*?[A-Z])(?=.*?[^\w\d\s]))^.*"; /* jshint ignore:line */ // Line length
-            return (new RegExp(pattern)).test("" + val + "");
+            var pattern = /(?=^[^\s]{6,128}$)((?=.*?\d)(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\d)(?=.*?[^\w\d\s])(?=.*?[a-z])|(?=.*?[^\w\d\s])(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?\d)(?=.*?[A-Z])(?=.*?[^\w\d\s]))^.*/; /* jshint ignore:line */ // Line length
+            return pattern.test("" + val + "");
         },
         message: "Password must be between 6 and 128 characters long and contain three of the following 4 items: upper case letter, lower case letter, a symbol, a number" /* jshint ignore:line */ // Line length
     };
@@ -37,11 +37,4 @@ define([
         },
         message: "Username must be between 3 and 15 characters long and consist of only letters, numbers, '_' or '-'"
     };
-
-    ko.validation.configure({
-        insertMessages: true,
-        messageTemplate: "validation-template",
-        messagesOnModified: true,
-        registerExtenders: true
-    });
 });

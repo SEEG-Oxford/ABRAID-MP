@@ -10,8 +10,12 @@ echo "application.password=$PG_ABRAID_PASS" >> database.properties
 echo "database.name=$DB_NAME" >> database.properties
 ant create.database
 
-# Create an application user
-psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "INSERT INTO expert (name, email, hashed_password, is_administrator) VALUES ( 'Dr Test', '$ABRAID_USER_EMAIL', '$ABRAID_USER_PASS', true )"
+# Create application users
+cd $BASE/external/experts
+echo "Importing experts"
+psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f import_into_abraid.sql
+cd $BASE
+psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "INSERT INTO expert (name, email, hashed_password, is_administrator, job_title, institution) VALUES ( 'Dr Test', '$ABRAID_USER_EMAIL', '$ABRAID_USER_PASS', true, 'Tester', 'Testland' )"
 
 # Load historic healthmap data
 cd $BASE/external/healthmap
@@ -31,5 +35,5 @@ cd $BASE/external/geonames
 ./import_geoname.sh "$PG_ADMIN_USER" "$DB_NAME"
 cd $BASE
 
-# Temp make a random 2000 points show in the validator
-psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "update disease_occurrence occ set is_validated=false from (select id from disease_occurrence where is_validated=true order by random() limit 2000) rand where rand.id=occ.id"
+# Make a 500 most recent dengue points show in the validator
+psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "update disease_occurrence set is_validated=false where id in (select id from disease_occurrence where disease_group_id=87 order by occurrence_date desc limit 500)"

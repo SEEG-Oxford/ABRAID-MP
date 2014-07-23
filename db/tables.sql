@@ -182,6 +182,8 @@ CREATE TABLE expert (
     name varchar(1000) NOT NULL,
     email varchar(320) NOT NULL,
     hashed_password varchar(60) NOT NULL,
+    job_title varchar(100) NOT NULL,
+    institution varchar(100) NOT NULL,
     is_administrator boolean NOT NULL,
     weighting double precision,
     is_publicly_visible boolean,

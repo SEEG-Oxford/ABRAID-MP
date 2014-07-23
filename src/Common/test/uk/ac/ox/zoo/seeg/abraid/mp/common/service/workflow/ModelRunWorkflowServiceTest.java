@@ -39,7 +39,7 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void prepareForAndRequestManuallyTriggeredModelRun() {
+    public void prepareForAndRequestManualModelRun() {
         // Arrange
         int diseaseGroupId = 87;
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
@@ -52,7 +52,7 @@ public class ModelRunWorkflowServiceTest {
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
-        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId);
+        modelRunWorkflowService.prepareForAndRequestManualModelRun(diseaseGroupId);
 
         // Assert
         verify(weightingsCalculator, times(1)).updateDiseaseOccurrenceExpertWeightings(
@@ -67,7 +67,7 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void prepareForAndRequestAutomaticallyTriggeredModelRun() {
+    public void prepareForAndRequestAutomaticModelRun() {
         // Arrange
         int diseaseGroupId = 87;
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
@@ -78,7 +78,7 @@ public class ModelRunWorkflowServiceTest {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        modelRunWorkflowService.prepareForAndRequestAutomaticallyTriggeredModelRun(diseaseGroupId);
+        modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
 
         // Assert
         verify(weightingsCalculator, times(1)).updateDiseaseOccurrenceExpertWeightings(

@@ -10,13 +10,6 @@ define([
 ], function (ko, $, moment) {
     "use strict";
 
-    ko.utils.recursiveUnwrap = function (func) {
-        if (typeof func !== "function") {
-            return func;
-        }
-        return ko.utils.recursiveUnwrap(func());
-    };
-
     // Set the width of the element to fit the number of digits (2, 3 or 4)
     function adjustElementWidthForCounterValue(element, value) {
         if ((value > 999) && ($(element).width() !== 280)) {
@@ -83,4 +76,73 @@ define([
             }
         }
     };
+
+    // Custom binding to apply the bootstrap "disabled" class, while also adding a "disabled" attribute (form elements)
+    ko.bindingHandlers.bootstrapDisable = {
+        init: function (element, valueAccessor) {
+            ko.applyBindingAccessorsToNode(element, {
+                enable: function () { return !valueAccessor(); },
+                css: function () {
+                    return { disabled: valueAccessor() };
+                }
+            });
+        }
+    };
+
+    ko.bindingHandlers.formSubmit = {
+        init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            var wrappedValueAccessor = function () {
+                return function () {
+                    if (bindingContext.find("isValid") && !bindingContext.find("isSubmitting")) {
+                        return valueAccessor()(element); // return true to not preventDefault
+                    }
+                    return false;
+                };
+            };
+
+            ko.applyBindingAccessorsToNode(element, { submit: wrappedValueAccessor });
+        }
+    };
+
+    ko.bindingHandlers.formButton = {
+        init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            ko.applyBindingAccessorsToNode(element, {
+                text: function () {
+                    return bindingContext.find("isSubmitting") ?
+                        valueAccessor().submitting :
+                        valueAccessor().standard;
+                },
+                bootstrapDisable: function () {
+                    return !bindingContext.find("isValid") || bindingContext.find("isSubmitting");
+                }
+            });
+        }
+    };
+
+    ko.bindingHandlers.formValue = {
+        init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            $(element).attr("autocomplete", "off");
+            ko.applyBindingAccessorsToNode(element, {
+                value: valueAccessor,
+                valueUpdate: function () { return "input"; },
+                bootstrapDisable: function () {
+                    return bindingContext.find("isSubmitting");
+                }
+            });
+        }
+    };
+
+    ko.bindingHandlers.formChecked = {
+        init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            ko.applyBindingAccessorsToNode(element, {
+                checked: function () { return valueAccessor().checked; },
+                checkedValue: function () { return valueAccessor().value; },
+                bootstrapDisable: function () {
+                    return bindingContext.find("isSubmitting");
+                }
+            });
+        }
+    };
+
+
 });

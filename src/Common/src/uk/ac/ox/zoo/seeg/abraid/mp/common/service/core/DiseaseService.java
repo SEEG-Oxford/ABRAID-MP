@@ -198,4 +198,10 @@ public interface DiseaseService {
      * @return The statistics.
      */
     DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId);
+
+    /**
+     * Gets the IDs of disease groups that have automatic model runs enabled.
+     * @return The IDs of relevant disease groups.
+     */
+    List<Integer> getDiseaseGroupIdsForAutomaticModelRuns();
 }
