@@ -159,14 +159,15 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Save the updated values of the disease group's parameters.
      * @param diseaseGroupId The id of the disease group.
-     * @throws Exception if cannot fetch disease group from database.
+     * @param settings The JSON containing the new values to save.
+     * @return HTTP Status code: 204 for success, 400 if any inputs are invalid.
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/save",
                     method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity save(@PathVariable Integer diseaseGroupId, @RequestBody JsonDiseaseGroup settings) throws Exception {
+    public ResponseEntity save(@PathVariable Integer diseaseGroupId, @RequestBody JsonDiseaseGroup settings) {
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if ((diseaseGroup != null) && validInputs(settings)) {
