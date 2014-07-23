@@ -17,11 +17,11 @@ define([
         self.occursInAfrica = ko.observable();
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            self.minNewOccurrences(diseaseGroup.minNewOccurrences);
-            self.minDataVolume(diseaseGroup.minDataVolume);
-            self.minDistinctCountries(diseaseGroup.minDistinctCountries);
-            self.minHighFrequencyCountries(diseaseGroup.minHighFrequencyCountries);
-            self.highFrequencyThreshold(diseaseGroup.highFrequencyThreshold);
+            self.minNewOccurrences((diseaseGroup.minNewOccurrences || "").toString());
+            self.minDataVolume((diseaseGroup.minDataVolume || "").toString());
+            self.minDistinctCountries((diseaseGroup.minDistinctCountries || "").toString());
+            self.minHighFrequencyCountries((diseaseGroup.minHighFrequencyCountries || "").toString());
+            self.highFrequencyThreshold((diseaseGroup.highFrequencyThreshold || "").toString());
             self.occursInAfrica(diseaseGroup.occursInAfrica);
         });
     };

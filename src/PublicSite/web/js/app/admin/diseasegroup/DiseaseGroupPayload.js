@@ -4,26 +4,31 @@
 define([], function () {
     "use strict";
 
-    var getId = function (diseaseGroup) {
-        return (diseaseGroup) ? diseaseGroup.id.toString() : null;
-    };
+    return function (diseaseGroupSettingsViewModel, modelRunParametersViewModel) {
+        var getId = function (diseaseGroup) {
+            return (diseaseGroup) ? diseaseGroup.id : null;
+        };
 
-    return function (diseaseGroupSettings, modelRunParameters) {
+        var parse = function (arg) {
+            var val = parseInt(arg, 10);
+            return isNaN(val) ? undefined : val;
+        };
+
         return {
-            name: diseaseGroupSettings.name(),
-            publicName: diseaseGroupSettings.publicName(),
-            shortName: diseaseGroupSettings.shortName(),
-            abbreviation: diseaseGroupSettings.abbreviation(),
-            groupType: diseaseGroupSettings.selectedType(),
-            isGlobal: diseaseGroupSettings.isGlobal(),
-            parentDiseaseGroup: {id: getId(diseaseGroupSettings.selectedParentDiseaseGroup())},
-            validatorDiseaseGroup: {id: getId(diseaseGroupSettings.selectedValidatorDiseaseGroup())},
-            minNewOccurrences: modelRunParameters.minNewOccurrences(),
-            minDataVolume: modelRunParameters.minDataVolume(),
-            minDistinctCountries: modelRunParameters.minDistinctCountries(),
-            minHighFrequencyCountries: modelRunParameters.minHighFrequencyCountries(),
-            highFrequencyThreshold: modelRunParameters.highFrequencyThreshold(),
-            occursInAfrica: modelRunParameters.occursInAfrica()
+            name: diseaseGroupSettingsViewModel.name(),
+            publicName: diseaseGroupSettingsViewModel.publicName(),
+            shortName: diseaseGroupSettingsViewModel.shortName(),
+            abbreviation: diseaseGroupSettingsViewModel.abbreviation(),
+            groupType: diseaseGroupSettingsViewModel.selectedType(),
+            isGlobal: diseaseGroupSettingsViewModel.isGlobal(),
+            parentDiseaseGroup: {id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup())},
+            validatorDiseaseGroup: {id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup())},
+            minNewOccurrences: parse(modelRunParametersViewModel.minNewOccurrences()),
+            minDataVolume: parse(modelRunParametersViewModel.minDataVolume()),
+            minDistinctCountries: parse(modelRunParametersViewModel.minDistinctCountries()),
+            minHighFrequencyCountries: parse(modelRunParametersViewModel.minHighFrequencyCountries()),
+            highFrequencyThreshold: parse(modelRunParametersViewModel.highFrequencyThreshold()),
+            occursInAfrica: modelRunParametersViewModel.occursInAfrica()
         };
     };
 });
