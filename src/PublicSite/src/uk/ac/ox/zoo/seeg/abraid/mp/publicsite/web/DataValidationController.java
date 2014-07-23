@@ -54,7 +54,7 @@ public class DataValidationController extends AbstractController {
      */
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showTab() {
-        return "datavalidation/ROOT";
+        return "datavalidation/index";
     }
 
     /**
