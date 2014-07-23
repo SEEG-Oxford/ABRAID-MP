@@ -30,7 +30,7 @@ echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > $MAIN_TC_PATH/
 echo "jdbc.username=$PG_ABRAID_USER" >> $MAIN_TC_PATH/ROOT/WEB-INF/common-override.properties
 echo "jdbc.password=$PG_ABRAID_PASS" >> $MAIN_TC_PATH/ROOT/WEB-INF/common-override.properties
 # Configure wms path
-sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" $MAIN_TC_PATH/ROOT/WEB-INF/freemarker/datavalidationcontent.ftl
+sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" $MAIN_TC_PATH/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
 
 # Setup DataAcquisition (incomplete)
 cp -r ../../DataAcquisition $ABRAID_SUPPORT_PATH/dataacquisition
