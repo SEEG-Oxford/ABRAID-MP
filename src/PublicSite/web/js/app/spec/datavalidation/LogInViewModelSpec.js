@@ -96,7 +96,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
             });
         });
 
-        describe("holds a 'isSubmitting' field", function () {
+        describe("holds an 'isSubmitting' field", function () {
             it("is an observable", function () {
                 expect(vm.isSubmitting).toBeObservable();
             });
