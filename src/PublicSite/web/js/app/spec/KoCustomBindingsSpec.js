@@ -120,13 +120,14 @@ define([
         });
 
         describe("the 'date' binding, which", function () {
-            var textSpy, jqSpy, injectorWithJQuerySpy, momentSpy;
+            var textSpy, jqSpy, injectorWithJQuerySpy, momentSpy, formatSpy;
             var expectedElement = "expectedElement";
             var expectedText = "expectedText";
             beforeEach(function () {
-                textSpy = jasmine.createSpy();
+                textSpy = jasmine.createSpy("textSpy");
+                formatSpy = jasmine.createSpy("formatSpy").and.returnValue(expectedText);
                 momentSpy =  jasmine.createSpy().and.returnValue({ lang: function () {
-                    return { format: function () { return expectedText; }};
+                    return { format: formatSpy };
                 } });
                 jqSpy = jasmine.createSpy().and.returnValue({ text: textSpy });
 
@@ -148,6 +149,21 @@ define([
                     expect(jqSpy).toHaveBeenCalledWith(expectedElement);
                     expect(momentSpy).toHaveBeenCalledWith(expectedDate);
                     expect(textSpy).toHaveBeenCalledWith(expectedText);
+                    done();
+                });
+            });
+
+            it("allows the date format to be specified", function (done) {
+                // Arrange
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Act
+                    var expectedDate = "expectedDate";
+                    var expectedFormat = "expectedFormat";
+                    var accessor = { date: expectedDate, format: expectedFormat };
+                    ko.bindingHandlers.date.update(expectedElement, accessor);
+                    // Assert
+                    expect(momentSpy).toHaveBeenCalledWith(expectedDate);
+                    expect(formatSpy).toHaveBeenCalledWith(expectedFormat);
                     done();
                 });
             });

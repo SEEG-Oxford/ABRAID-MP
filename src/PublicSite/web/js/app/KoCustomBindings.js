@@ -36,8 +36,12 @@ define([
     // Custom binding to format the datetime display with moment.js library
     ko.bindingHandlers.date = {
         update: function (element, valueAccessor) {
-            var date = ko.utils.recursiveUnwrap(valueAccessor);
-            $(element).text(moment(date).lang("en-gb").format("LL"));
+            var arg = ko.utils.recursiveUnwrap(valueAccessor);
+
+            var date = ko.utils.recursiveUnwrap(arg.date) || arg;
+            var format = ko.utils.recursiveUnwrap(arg.format) || "LL";
+
+            $(element).text(moment(date).lang("en-gb").format(format));
         }
     };
 
