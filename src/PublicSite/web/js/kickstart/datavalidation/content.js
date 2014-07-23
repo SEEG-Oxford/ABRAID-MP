@@ -8,14 +8,14 @@ require([baseUrl + "js/require.conf.js"], function () {
     require([
         "ko",
         "jquery",
-        "app/CounterViewModel",
-        "app/LogInViewModel",
-        "app/MapView",
-        "app/SelectedPointViewModel",
-        "app/SelectedLayerViewModel",
-        "app/SelectedAdminUnitViewModel",
-        "app/SidePanelViewModel",
-        "app/SpinnerViewModel",
+        "app/datavalidation/CounterViewModel",
+        "app/datavalidation/LogInViewModel",
+        "app/datavalidation/MapView",
+        "app/datavalidation/SelectedPointViewModel",
+        "app/datavalidation/SelectedLayerViewModel",
+        "app/datavalidation/SelectedAdminUnitViewModel",
+        "app/datavalidation/SidePanelViewModel",
+        "app/datavalidation/SpinnerViewModel",
         "domReady!"
     ], function (ko, $, CounterViewModel, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
                  SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {

@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/SelectedLayerViewModel",
+    "app/datavalidation/SelectedLayerViewModel",
     "ko",
     "underscore"
 ], function (SelectedLayerViewModel, ko, _) {

@@ -3,7 +3,7 @@
     (including header and footer) and all content is displayed in an IFrame for compatibility with TGHN.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "common.ftl" as c/>
+<#import "../layout/common.ftl" as c/>
 <#import "/spring.ftl" as spring />
 <#assign endOfHeadContent>
     <style>

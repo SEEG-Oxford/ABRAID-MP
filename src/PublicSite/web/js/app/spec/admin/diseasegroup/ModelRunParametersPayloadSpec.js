@@ -4,8 +4,8 @@
 define([
     "ko",
     "underscore",
-    "app/ModelRunParametersPayload",
-    "app/ModelRunParametersViewModel"
+    "app/admin/diseasegroup/ModelRunParametersPayload",
+    "app/admin/diseasegroup/ModelRunParametersViewModel"
 ], function (ko, _, ModelRunParametersPayload, ModelRunParametersViewModel) {
     "use strict";
 

@@ -5,7 +5,7 @@ define([
     "ko",
     "jquery",
     "underscore",
-    "app/ModelRunParametersPayload"
+    "app/admin/diseasegroup/ModelRunParametersPayload"
 ], function (ko, $, _, ModelRunParametersPayload) {
     "use strict";
 

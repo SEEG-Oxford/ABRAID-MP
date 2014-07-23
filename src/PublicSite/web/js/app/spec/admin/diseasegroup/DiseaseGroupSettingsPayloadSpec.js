@@ -4,8 +4,8 @@
 define([
     "ko",
     "underscore",
-    "app/DiseaseGroupSettingsPayload",
-    "app/DiseaseGroupSettingsViewModel"
+    "app/admin/diseasegroup/DiseaseGroupSettingsPayload",
+    "app/admin/diseasegroup/DiseaseGroupSettingsViewModel"
 ], function (ko, _, DiseaseGroupSettingsPayload, DiseaseGroupSettingsViewModel) {
     "use strict";
 

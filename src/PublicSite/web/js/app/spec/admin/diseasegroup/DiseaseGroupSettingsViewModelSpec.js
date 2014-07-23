@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/DiseaseGroupSettingsViewModel",
+    "app/admin/diseasegroup/DiseaseGroupSettingsViewModel",
     "ko",
     "underscore"
 ], function (DiseaseGroupSettingsViewModel, ko, _) {

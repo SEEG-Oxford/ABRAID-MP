@@ -2,8 +2,8 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/SelectedPointViewModel",
-    "app/CounterViewModel",
+    "app/datavalidation/SelectedPointViewModel",
+    "app/datavalidation/CounterViewModel",
     "ko"
 ], function (SelectedPointViewModel, CounterViewModel, ko) {
     "use strict";

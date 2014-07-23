@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/SpinnerViewModel",
+    "app/datavalidation/SpinnerViewModel",
     "ko"
 ], function (SpinnerViewModel, ko) {
     "use strict";

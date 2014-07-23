@@ -2,7 +2,7 @@
     The system administration page for disease groups.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "common.ftl" as c/>
+<#import "../../layout/common.ftl" as c/>
 
 <#assign bootstrapData>
 <script type="text/javascript">
@@ -35,7 +35,7 @@
     </div>
     <br />
     <br />
-    <#include "diseasegroupsettingspanel.ftl"/>
+    <#include "settingspanel.ftl"/>
     <#include "modelrunparameterspanel.ftl"/>
     <#include "setuppanel.ftl"/>
 </div>

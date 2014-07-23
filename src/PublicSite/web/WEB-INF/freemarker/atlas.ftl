@@ -3,7 +3,7 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
-<#import "common.ftl" as c/>
+<#import "layout/common.ftl" as c/>
 <@c.page title="ABRAID MP">
 
 <div class="container">

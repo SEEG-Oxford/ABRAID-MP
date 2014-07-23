@@ -54,7 +54,7 @@ public class DataValidationController extends AbstractController {
      */
     @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
     public String showTab() {
-        return "datavalidation";
+        return "datavalidation/index";
     }
 
     /**
@@ -85,7 +85,7 @@ public class DataValidationController extends AbstractController {
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
-        return "datavalidationcontent";
+        return "datavalidation/content";
     }
 
     private List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroupsExcludingDiseaseInterests(

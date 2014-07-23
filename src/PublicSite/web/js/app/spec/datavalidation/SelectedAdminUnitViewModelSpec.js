@@ -2,8 +2,8 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/SelectedAdminUnitViewModel",
-    "app/CounterViewModel",
+    "app/datavalidation/SelectedAdminUnitViewModel",
+    "app/datavalidation/CounterViewModel",
     "ko"
 ], function (SelectedAdminUnitViewModel, CounterViewModel, ko) {
     "use strict";

@@ -5,7 +5,7 @@ define([
     "jquery",
     "ko",
     "underscore",
-    "app/DiseaseGroupSettingsPayload"
+    "app/admin/diseasegroup/DiseaseGroupSettingsPayload"
 ], function ($, ko, _, DiseaseGroupSettingsPayload) {
     "use strict";
 

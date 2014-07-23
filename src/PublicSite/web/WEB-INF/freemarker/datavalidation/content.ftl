@@ -28,7 +28,7 @@
 </head>
 <body>
     <div id="dataValidation">
-        <#include "datavalidationsidepanel.ftl"/>
+        <#include "sidepanel.ftl"/>
         <#include "layerselector.ftl"/>
 
         <div id="map">

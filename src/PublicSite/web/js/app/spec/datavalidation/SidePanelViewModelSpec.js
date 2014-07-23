@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/SidePanelViewModel",
+    "app/datavalidation/SidePanelViewModel",
     "ko"
 ], function (SidePanelViewModel, ko) {
     "use strict";

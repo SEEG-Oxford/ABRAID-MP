@@ -15,17 +15,17 @@
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SpecRunner.html" libraries="{boot, console, jasmine, jasmine-html, mock-ajax, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/index.js" libraries="{knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/CounterViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/KoCustomBindings.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/LogInViewModel.js" libraries="{jquery, knockout-debug, require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/MapView.js" libraries="{jquery, leaflet, leaflet.markercluster-src, require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/SelectedAdminUnitViewModel.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/SelectedLayerViewModel.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/SelectedPointViewModel.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/SidePanelViewModel.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/LogInViewModelSpec.js" libraries="{jasmine}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/SelectedLayerViewModelSpec.js" libraries="{jasmine, require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/SelectedPointViewModelSpec.js" libraries="{jasmine}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/CounterViewModel.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/LogInViewModel.js" libraries="{jquery, knockout-debug, require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/MapView.js" libraries="{jquery, leaflet, leaflet.markercluster-src, require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedAdminUnitViewModel.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedLayerViewModel.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedPointViewModel.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SidePanelViewModel.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/LogInViewModelSpec.js" libraries="{jasmine}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/SelectedLayerViewModelSpec.js" libraries="{jasmine, require}" />
+    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/SelectedPointViewModelSpec.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/datavalidation/content.js" libraries="{jquery, knockout-debug, moment}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/default.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/navbar.js" libraries="{jquery, require}" />
