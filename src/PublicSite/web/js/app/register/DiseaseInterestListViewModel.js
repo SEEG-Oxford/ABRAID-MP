@@ -47,6 +47,9 @@ define(["ko", "underscore"], function (ko, _) {
                 if (typeof sortable === "string" || sortable instanceof String) {
                     sortable = sortable.toLowerCase();
                 }
+                if (typeof sortable === "boolean" || sortable instanceof Boolean) {
+                    sortable = sortable ? "a" : "b";
+                }
                 return sortable;
             });
 
