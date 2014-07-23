@@ -46,11 +46,6 @@ scp -C $HEALTHMAP_SOURCE/location.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/import_into_abraid.sh healthmap/
 scp -C $HEALTHMAP_SOURCE/import_into_abraid.sql healthmap/
 
-# Disease extent
-mkdir disease_extent
-scp -C $HEALTHMAP_SOURCE/disease_extent/admin_unit_disease_extent_class.txt disease_extent/
-scp -C $HEALTHMAP_SOURCE/disease_extent/import_into_abraid.sql disease_extent/
-
 # Geonames
 mkdir geonames
 scp -C $GEONAMES_SOURCE/import_geoname.sh geonames/

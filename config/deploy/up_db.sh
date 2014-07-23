@@ -23,12 +23,6 @@ echo "Importing historic healthmap data"
 ./import_into_abraid.sh "$PG_ADMIN_USER" "$DB_NAME"
 cd $BASE
 
-# Load disease extent
-cd $BASE/external/disease_extent
-echo "Importing disease extent"
-psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f import_into_abraid.sql
-cd $BASE
-
 # Load geonames data
 echo "Importing geonames data"
 cd $BASE/external/geonames
