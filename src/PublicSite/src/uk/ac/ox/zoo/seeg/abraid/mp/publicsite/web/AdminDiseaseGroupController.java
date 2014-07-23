@@ -169,9 +169,9 @@ public class AdminDiseaseGroupController extends AbstractController {
     public ResponseEntity save(@PathVariable Integer diseaseGroupId, @RequestBody JsonDiseaseGroup settings) throws Exception {
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        if (validInputs(diseaseGroup, settings)) {
+        if ((diseaseGroup != null) && validInputs(settings)) {
             if (saveProperties(diseaseGroup, settings)) {
-                return new ResponseEntity(diseaseGroup.getId(), HttpStatus.OK);
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -197,12 +197,18 @@ public class AdminDiseaseGroupController extends AbstractController {
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
-    private boolean validInputs(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {
-        return (diseaseGroup != null) && hasText(settings.getName()) && hasText(settings.getGroupType());
+    private boolean validInputs(JsonDiseaseGroup settings) {
+        String groupType = settings.getGroupType();
+        return hasText(settings.getName()) && hasText(groupType) && isValidGroupType(groupType);
     }
 
-    private boolean validInputs(JsonDiseaseGroup settings) {
-        return hasText(settings.getName()) && hasText(settings.getGroupType());
+    private boolean isValidGroupType(String groupType) {
+        try {
+            DiseaseGroupType.valueOf(groupType);
+            return true;
+        } catch(IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private boolean saveProperties(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {
@@ -210,8 +216,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setPublicName(settings.getPublicName());
         diseaseGroup.setShortName(settings.getShortName());
         diseaseGroup.setAbbreviation(settings.getAbbreviation());
-        DiseaseGroupType type = DiseaseGroupType.valueOf(settings.getGroupType());
-        diseaseGroup.setGroupType(type);
+        diseaseGroup.setGroupType(DiseaseGroupType.valueOf(settings.getGroupType()));
         diseaseGroup.setGlobal(settings.getIsGlobal());
         diseaseGroup.setMinNewOccurrencesTrigger(settings.getMinNewOccurrencesTrigger());
         diseaseGroup.setMinDataVolume(settings.getMinDataVolume());
@@ -228,23 +233,31 @@ public class AdminDiseaseGroupController extends AbstractController {
     }
 
     private boolean setParentDiseaseGroup(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {
-        Integer parentId = settings.getParentDiseaseGroup().getId();
-        if (diseaseGroup.getGroupType() == DiseaseGroupType.CLUSTER || parentId == null) {
+        if (!hasParentDiseaseGroupSpecified(settings) || diseaseGroup.getGroupType() == DiseaseGroupType.CLUSTER) {
             return true;
         }
 
+        Integer parentId = settings.getParentDiseaseGroup().getId();
         DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
         diseaseGroup.setParentGroup(parentDiseaseGroup);
         return (parentDiseaseGroup != null);
     }
 
+    private boolean hasParentDiseaseGroupSpecified(JsonDiseaseGroup settings) {
+        return ((settings.getParentDiseaseGroup() != null) && (settings.getParentDiseaseGroup().getId() != null));
+    }
+
     private boolean setValidatorDiseaseGroup(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {
-        Integer validatorId = settings.getValidatorDiseaseGroup().getId();
-        if (validatorId == null) {
+        if (!hasValidatorDiseaseGroupSpecified(settings)) {
             return true;
         }
+        Integer validatorId = settings.getValidatorDiseaseGroup().getId();
         ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
         diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         return (validatorDiseaseGroup != null);
+    }
+
+    private boolean hasValidatorDiseaseGroupSpecified(JsonDiseaseGroup settings) {
+        return ((settings.getValidatorDiseaseGroup() != null) && (settings.getValidatorDiseaseGroup().getId() != null));
     }
 }
