@@ -51,7 +51,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         String result = target.showTab();
 
         // Assert
-        assertThat(result).isEqualTo("datavalidation");
+        assertThat(result).isEqualTo("datavalidation/ROOT");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class DataValidationControllerTest extends AbstractAuthenticatingTests {
         String result = target.showPage(model);
 
         // Assert
-        assertThat(result).isEqualTo("datavalidationcontent");
+        assertThat(result).isEqualTo("datavalidation/content");
     }
 
     @Test
