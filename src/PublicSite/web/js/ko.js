@@ -20,6 +20,19 @@ define([
         return ko.utils.recursiveUnwrap(func());
     };
 
+    // Same as recursiveUnwrap but accesses observables and computed observables without creating a ko dependency.
+    ko.utils.recursivePeek = function (func) {
+        if (typeof func !== "function") {
+            return func;
+        }
+
+        if (ko.isObservable(func)) {
+            return ko.utils.recursivePeek(func.peek());
+        }
+
+        return ko.utils.recursivePeek(func());
+    };
+
     // Extend binding contexts to add a helper method "find" for reading the value of a field/observable from the
     // local binding context's data, or work up though the parent contexts if not present on the local context.
     ko.bindingContext.prototype.find = function (field) {

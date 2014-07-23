@@ -43,7 +43,7 @@ define(["ko", "underscore"], function (ko, _) {
             // Sort
             var sortField = self.sortField();
             iterable = iterable.sortBy(function (disease) {
-                var sortable = ko.utils.recursiveUnwrap(disease[sortField]);
+                var sortable = ko.utils.recursivePeek(disease[sortField]);
                 if (typeof sortable === "string" || sortable instanceof String) {
                     sortable = sortable.toLowerCase();
                 }

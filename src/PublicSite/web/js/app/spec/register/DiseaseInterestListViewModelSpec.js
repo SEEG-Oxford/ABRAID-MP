@@ -98,7 +98,7 @@ define(["app/register/DiseaseInterestListViewModel", "underscore"], function (Di
                 it("is sorted using the 'sort field'", function () {
                     expect(_(vm.visibleDiseases()).pluck("name")).toEqual([ "boo", "boofoo", "foo" ]);
                     vm.sortField("interested");
-                    expect(_(vm.visibleDiseases()).pluck("name")).toEqual([ "boo", "foo", "boofoo" ]);
+                    expect(_(vm.visibleDiseases()).pluck("name")).toEqual([ "foo", "boofoo", "boo" ]);
                 });
 
                 it("is sorted using the 'sort order'", function () {
