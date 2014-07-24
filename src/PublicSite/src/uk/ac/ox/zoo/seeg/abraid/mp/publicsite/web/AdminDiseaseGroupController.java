@@ -180,14 +180,15 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     /**
      * Add a new disease group, with the provided parameters.
-     * @throws Exception if cannot fetch disease group from database.
+     * @param settings The new values to be saved.
+     * @return HTTP Status code: 204 for success, 400 if any inputs are invalid.
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/add",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity add(@RequestBody JsonDiseaseGroup settings) throws Exception {
+    public ResponseEntity add(@RequestBody JsonDiseaseGroup settings) {
 
         if (validInputs(settings)) {
             DiseaseGroup diseaseGroup = new DiseaseGroup();
