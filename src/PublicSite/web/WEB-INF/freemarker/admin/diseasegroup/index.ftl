@@ -42,7 +42,7 @@
     <br />
     <div class="panel panel-default">
         <div class="panel-body" id="disease-group-administration-panel">
-            <form id="disease-group-administration" data-bind="submit: submit">
+            <form id="disease-group-administration" data-bind="formSubmit: submit">
                 <div data-bind="with: diseaseGroupSettingsViewModel">
                     <#include "settingspanel.ftl"/>
                 </div>
@@ -50,7 +50,7 @@
                     <#include "modelrunparameterspanel.ftl"/>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-primary" data-bind="text: isSubmitting() ? 'Saving...' : 'Save', disable: isSubmitting()"></button>
+                    <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Saving...', standard: 'Save' }"></button>
                 </div>
                 <div class="form-group" data-bind="if: notice">
                     <div data-bind="alert: notice"></div>

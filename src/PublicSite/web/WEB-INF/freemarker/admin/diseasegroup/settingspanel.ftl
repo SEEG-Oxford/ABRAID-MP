@@ -13,25 +13,25 @@
                     <div class="form-group">
                         <label for="disease-group-name" class="col-sm-4 control-label">Name</label>
                         <div id="disease-group-name-input-group" class="input-group col-sm-8">
-                            <input class="form-control" id="disease-group-name" data-bind="value: name, valueUpdate: 'input'" placeholder="Enter disease group name">
+                            <input class="form-control" id="disease-group-name" data-bind="formValue: name" placeholder="Enter disease group name">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="public-name" class="col-sm-4 control-label">Public Name</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="public-name" data-bind="value: publicName, valueUpdate: 'input'">
+                            <input class="form-control" id="public-name" data-bind="formValue: publicName">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="short-name" class="col-sm-4 control-label">Short Name</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="short-name" data-bind="value: shortName, valueUpdate: 'input'">
+                            <input class="form-control" id="short-name" data-bind="formValue: shortName">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="abbreviation" class="col-sm-4 control-label">Abbreviation</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="abbreviation" data-bind="value: abbreviation, valueUpdate: 'input'">
+                            <input class="form-control" id="abbreviation" data-bind="formValue: abbreviation">
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                         <label for="disease-group-type" class="col-sm-5 control-label">Group Type</label>
                         <div class="col-sm-7 btn-group" id="disease-group-type" data-bind="foreach: groupTypes">
                             <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value}">
-                                <input type="radio" name="disease-group-type" data-bind="checkedValue: value, checked: $parent.selectedType">
+                                <input type="radio" name="disease-group-type" data-bind="formChecked: { value: value, checked: $parent.selectedType }">
                                 <span data-bind="text: label"></span>
                             </label>
                         </div>
@@ -51,7 +51,7 @@
                         <label for="global-or-tropical" class="col-sm-5 control-label">Global or Tropical</label>
                         <div class="col-sm-7 btn-group" id="global-or-tropical"  data-bind="foreach: [ {value: true, label: 'Global'}, {value: false, label: 'Tropical'} ]">
                             <label class="btn btn-default" data-bind="css: {active : $parent.isGlobal() === value}">
-                                <input type="radio" name="global-or-tropical" data-bind="checkedValue: value, checked: $parent.isGlobal">
+                                <input type="radio" name="global-or-tropical" data-bind="formChecked: { value: value, checked: $parent.isGlobal }">
                                 <span data-bind="text: label"></span>
                             </label>
                         </div>
