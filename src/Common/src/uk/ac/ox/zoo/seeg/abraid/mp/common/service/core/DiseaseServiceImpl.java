@@ -144,7 +144,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId));
+            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId));
     }
 
     /**

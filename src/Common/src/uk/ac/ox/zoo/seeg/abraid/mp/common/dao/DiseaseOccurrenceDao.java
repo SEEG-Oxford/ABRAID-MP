@@ -64,7 +64,7 @@ public interface DiseaseOccurrenceDao {
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
-            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate, boolean isGlobal);
+           Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate, boolean isGlobal);
 
     /**
      * Gets disease occurrences for the specified disease group whose isValidated flag is false.

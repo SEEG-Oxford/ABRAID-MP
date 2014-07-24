@@ -61,8 +61,13 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
-        updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
-        generateDiseaseExtent(diseaseGroupId);
+        if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            generateDiseaseExtent(diseaseGroupId);
+            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
+        } else {
+            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
+            generateDiseaseExtent(diseaseGroupId);
+        }
         modelRunRequester.requestModelRun(diseaseGroupId);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
