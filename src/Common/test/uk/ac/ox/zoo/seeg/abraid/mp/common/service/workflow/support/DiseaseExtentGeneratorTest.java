@@ -180,9 +180,8 @@ public class DiseaseExtentGeneratorTest {
         int minimumYearsAgoForHigherOccurrenceScore = 2;
         int lowerOccurrenceScore = 1;
         int higherOccurrenceScore = 2;
-        List<Integer> feedIds = new ArrayList<>();
 
-        return new DiseaseExtentParameters(feedIds, maximumYearsAgo,
+        return new DiseaseExtentParameters(maximumYearsAgo,
                 minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence,
                 minimumYearsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
     }
@@ -206,7 +205,7 @@ public class DiseaseExtentGeneratorTest {
 
     private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(DiseaseExtentParameters parameters,
                                                                   List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
-        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, null))
+        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null))
                 .thenReturn(occurrences);
     }
 
@@ -214,10 +213,9 @@ public class DiseaseExtentGeneratorTest {
                                                                   List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
         double minimumValidationWeighting = parameters.getMinimumValidationWeighting();
         DateTime minimumOccurrenceDate = getFixedYearsAgo(parameters.getMaximumYearsAgo());
-        List<Integer> feedIds = parameters.getFeedIds();
 
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId), eq(minimumValidationWeighting),
-                eq(minimumOccurrenceDate), same(feedIds))).thenReturn(occurrences);
+                eq(minimumOccurrenceDate))).thenReturn(occurrences);
     }
 
     private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId() {
@@ -239,7 +237,7 @@ public class DiseaseExtentGeneratorTest {
 
     private void expectGetDiseaseOccurrencesForDiseaseExtent(int times) {
         verify(diseaseService, times(times)).getDiseaseOccurrencesForDiseaseExtent(anyInt(), anyDouble(),
-                any(DateTime.class), anyListOf(Integer.class));
+                any(DateTime.class));
     }
 
     private void expectGetRelevantReviews(int times) {

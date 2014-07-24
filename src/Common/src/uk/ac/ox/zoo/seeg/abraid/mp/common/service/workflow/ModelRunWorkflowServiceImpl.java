@@ -98,7 +98,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private void generateDiseaseExtent(int diseaseGroupId) {
         ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
-                new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
+                new DiseaseExtentParameters(5, 0.6, 5, 1, 2, 1, 2));
         ///CHECKSTYLE:ON
     }
 

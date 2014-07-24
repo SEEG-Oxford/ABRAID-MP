@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.offset;
  */
 public class DiseaseExtentGeneratorHelperTest {
     private DiseaseGroup defaultDiseaseGroup = new DiseaseGroup(87, null, "Dengue", DiseaseGroupType.SINGLE);
-    private DiseaseExtentParameters defaultParameters = new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2);
+    private DiseaseExtentParameters defaultParameters = new DiseaseExtentParameters(5, 0.6, 5, 1, 2, 1, 2);
     private List<? extends AdminUnitGlobalOrTropical> defaultAdminUnits = createDefaultAdminUnits();
 
     private List<AdminUnitDiseaseExtentClass> emptyDiseaseExtent = new ArrayList<>();
@@ -109,7 +109,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeDiseaseExtentClassUsingOccurrenceCountWithNonDefaultParameters() {
         // Arrange
         // Minimum occurrences for presence = 8, for possible presence = 4
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 5, 0.6, 8, 4, 2, 1, 2);
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(5, 0.6, 8, 4, 2, 1, 2);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         // Act and assert
@@ -149,7 +149,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForOccurrencesOnlyAndNonDefaultParameters() {
         // Arrange
         // Maximum years = 7, maximum years for higher score = 3, lower score = 10, higher score = 20
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 7, 0.6, 5, 1, 3, 10, 20);
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(7, 0.6, 5, 1, 3, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
@@ -169,7 +169,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForReviewsOnlyAndNonDefaultParameters() {
         // Arrange
         // Maximum years = 7, maximum years for higher score = 3, lower score = 10, higher score = 20
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 7, 0.6, 5, 1, 3, 10, 20);
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(7, 0.6, 5, 1, 3, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<AdminUnitReview> reviews = createList(
@@ -194,7 +194,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForOccurrencesAndReviewsAndNonDefaultParameters() {
         // Arrange
         // Maximum years = 7, maximum years for higher score = 3, lower score = 2, higher score = 3
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 7, 0.6, 5, 1, 3, 2, 3);
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(7, 0.6, 5, 1, 3, 2, 3);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(

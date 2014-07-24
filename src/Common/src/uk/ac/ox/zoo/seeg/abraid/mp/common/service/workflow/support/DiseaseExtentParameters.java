@@ -8,7 +8,6 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseExtentParameters {
-    private List<Integer> feedIds;
     private int maximumYearsAgo;
     private double minimumValidationWeighting;
     private int minimumOccurrencesForPresence;
@@ -17,11 +16,10 @@ public class DiseaseExtentParameters {
     private int lowerOccurrenceScore;
     private int higherOccurrenceScore;
 
-    public DiseaseExtentParameters(List<Integer> feedIds, int maximumYearsAgo, double minimumValidationWeighting,
+    public DiseaseExtentParameters(int maximumYearsAgo, double minimumValidationWeighting,
                                    int minimumOccurrencesForPresence, int minimumOccurrencesForPossiblePresence,
                                    int maximumYearsAgoForHigherOccurrenceScore, int lowerOccurrenceScore,
                                    int higherOccurrenceScore) {
-        this.feedIds = feedIds;
         this.maximumYearsAgo = maximumYearsAgo;
         this.minimumValidationWeighting = minimumValidationWeighting;
         this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
@@ -29,10 +27,6 @@ public class DiseaseExtentParameters {
         this.maximumYearsAgoForHigherOccurrenceScore = maximumYearsAgoForHigherOccurrenceScore;
         this.lowerOccurrenceScore = lowerOccurrenceScore;
         this.higherOccurrenceScore = higherOccurrenceScore;
-    }
-
-    public List<Integer> getFeedIds() {
-        return feedIds;
     }
 
     public int getMaximumYearsAgo() {

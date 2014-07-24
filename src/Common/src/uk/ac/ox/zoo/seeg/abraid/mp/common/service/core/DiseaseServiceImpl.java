@@ -138,17 +138,13 @@ public class DiseaseServiceImpl implements DiseaseService {
      * value. If null, the validation weighting is ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
-     * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
-     * accepts all feeds.
      * @return A list of disease occurrences.
      */
     @Override
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
-            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds) {
+            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, feedIds,
-                isDiseaseGroupGlobal(diseaseGroupId));
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId));
     }
 
     /**
