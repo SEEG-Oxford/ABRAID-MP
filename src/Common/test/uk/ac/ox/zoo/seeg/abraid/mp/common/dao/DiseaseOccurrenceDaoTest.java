@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;

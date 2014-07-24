@@ -103,7 +103,7 @@ public class DiseaseExtentGenerator {
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 parameters.getMinimumValidationWeighting(),
-                DateTime.now().minusYears(parameters.getMaximumYearsAgo())
+                DateTime.now().minusMonths(parameters.getMaximumMonthsAgo())
         );
         helper.setOccurrences(occurrences);
     }

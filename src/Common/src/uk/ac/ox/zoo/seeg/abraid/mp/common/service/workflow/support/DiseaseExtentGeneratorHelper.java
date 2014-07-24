@@ -288,7 +288,7 @@ public class DiseaseExtentGeneratorHelper {
 
     private int computeOccurrencesScore(List<DiseaseOccurrenceForDiseaseExtent> occurrenceList) {
         DateTime oldestDateForHigherScore =
-                DateTime.now().minusYears(parameters.getMaximumYearsAgoForHigherOccurrenceScore());
+                DateTime.now().minusMonths(parameters.getMaximumMonthsAgoForHigherOccurrenceScore());
 
         // Unlike computeReviewsScore(), the total is an integer so that we can maintain full accuracy over multiple
         // additions
