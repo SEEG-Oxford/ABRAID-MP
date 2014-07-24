@@ -208,7 +208,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         try {
             DiseaseGroupType.valueOf(groupType);
             return true;
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }
