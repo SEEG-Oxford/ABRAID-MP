@@ -115,4 +115,16 @@ public class ModelRunWorkflowServiceTest {
         // Assert
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(map));
     }
+
+    @Test
+    public void generateDiseaseExtent() {
+        // Arrange
+        int diseaseGroupId = 1;
+
+        // Act
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId);
+
+        // Assert - Parameters are hardcoded for Dengue in Service method presently
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+    }
 }

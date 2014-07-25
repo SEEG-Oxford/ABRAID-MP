@@ -68,7 +68,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @Autowired
     private NativeSQL nativeSQL;
 
-
     @Before
     public void setup() {
         // Set up Spring test in standalone mode
