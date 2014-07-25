@@ -9,6 +9,8 @@ define([
     "use strict";
 
     describe("The 'model run parameters' view model", function () {
+        var eventName = "disease-group-selected";
+
         it("holds the expected properties of a disease group as observables", function () {
             var vm = new ModelRunParametersViewModel("");
             expect(vm.minNewOccurrences).toBeObservable();
@@ -29,7 +31,6 @@ define([
                 highFrequencyThreshold: "5",
                 occursInAfrica: true
             };
-            var eventName = "disease-group-selected";
             var vm = new ModelRunParametersViewModel(eventName);
 
             // Act
@@ -42,6 +43,54 @@ define([
             expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
             expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
             expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
+        });
+
+        describe("holds the computed 'high frequency threshold' which", function () {
+            it("returns the 'high frequency threshold' value when disease group occurs in Africa", function () {
+                // Arrange
+                var vm = new ModelRunParametersViewModel(eventName);
+                var value = 1;
+                vm.highFrequencyThresholdValue(value);
+                // Act
+                vm.occursInAfrica(true);
+                // Assert
+                expect(vm.highFrequencyThreshold()).toBe(value);
+            });
+
+            it("returns null when disease group does not occur in Africa", function () {
+                // Arrange
+                var vm = new ModelRunParametersViewModel(eventName);
+                var value = 1;
+                vm.highFrequencyThresholdValue(value);
+                // Act
+                vm.occursInAfrica(false);
+                // Assert
+                expect(vm.highFrequencyThreshold()).toBe(null);
+            });
+        });
+
+        describe("holds the computed 'min high frequency countries' which", function () {
+            it("returns the 'min high frequency countries' value when disease group occurs in Africa", function () {
+                // Arrange
+                var vm = new ModelRunParametersViewModel(eventName);
+                var value = 1;
+                vm.minHighFrequencyCountriesValue(value);
+                // Act
+                vm.occursInAfrica(true);
+                // Assert
+                expect(vm.minHighFrequencyCountries()).toBe(value);
+            });
+
+            it("returns null when disease group does not occur in Africa", function () {
+                // Arrange
+                var vm = new ModelRunParametersViewModel(eventName);
+                var value = 1;
+                vm.minHighFrequencyCountriesValue(value);
+                // Act
+                vm.occursInAfrica(false);
+                // Assert
+                expect(vm.minHighFrequencyCountries()).toBe(null);
+            });
         });
     });
 });
