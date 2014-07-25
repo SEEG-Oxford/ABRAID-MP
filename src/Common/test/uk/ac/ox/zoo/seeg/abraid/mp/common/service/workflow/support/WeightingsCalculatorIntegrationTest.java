@@ -385,9 +385,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         Map<Integer, Double> map = target.calculateNewExpertsWeightings();
 
         // Assert
-        // The expert's response is "wrong" by the amount of the value that they reviewed (in this case they were "off"
-        // by 1.0 from YES response). The expert's new weighting is then how "right" they were - which is 0.
-        assertThat(map.get(expertId)).isEqualTo(0.0);
+        assertThat(map.get(expertId)).isEqualTo(1.0);
     }
 
     @Test

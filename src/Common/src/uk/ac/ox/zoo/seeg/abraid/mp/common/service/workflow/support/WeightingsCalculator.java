@@ -255,8 +255,15 @@ public class WeightingsCalculator {
         reviewsOfOccurrence.remove(expertsReview);
 
         double expertsResponse = expertsReview.getResponse().getValue();
-        double averageResponse = average(extractReviewResponseValues(reviewsOfOccurrence));
-        return Math.abs(expertsResponse - averageResponse);
+        if (reviewsOfOccurrence.size() > 0) {
+            // For this occurrence, find the difference between this expert's review response and the average of
+            // all other experts' review responses
+            double averageResponse = average(extractReviewResponseValues(reviewsOfOccurrence));
+            return Math.abs(expertsResponse - averageResponse);
+        } else {
+            // There are no other experts' review responses, so the difference is zero
+            return 0.0;
+        }
     }
 
     private List<Double> extractReviewResponseValues(List<DiseaseOccurrenceReview> reviewsOfOccurrence) {
