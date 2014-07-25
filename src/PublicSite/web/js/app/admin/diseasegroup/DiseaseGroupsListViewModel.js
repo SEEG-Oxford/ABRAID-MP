@@ -11,7 +11,7 @@ define(["ko"], function (ko) {
         var initialDiseaseGroup = self.diseaseGroups()[0];
         self.selectedDiseaseGroup = ko.observable(initialDiseaseGroup).publishOn(diseaseGroupSelectedEventName);
         self.add = function () {
-            var newDiseaseGroup = { name: "", groupType: "SINGLE" };
+            var newDiseaseGroup = { name: "", groupType: "SINGLE", isGlobal: true };
             self.selectedDiseaseGroup(newDiseaseGroup);
         };
     };

@@ -39,7 +39,7 @@ define(["" +
         it("holds the 'add' method which sets the selected disease group to an empty disease group", function () {
             // Arrange
             var vm = new DiseaseGroupsListViewModel([], "");
-            var expectedDiseaseGroup = { name: "", groupType: "SINGLE" };
+            var expectedDiseaseGroup = { name: "", groupType: "SINGLE", isGlobal: true };
             // Act
             vm.add();
             // Assert
