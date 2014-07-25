@@ -184,7 +184,7 @@ public class DiseaseExtentGeneratorTest {
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesOnly(createdDate, updatedDate);
         standardMocks();
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId),
-                eq(parameters.getMinimumValidationWeighting()), eq((DateTime)null),
+                eq(parameters.getMinimumValidationWeighting()), eq((DateTime) null),
                 same(parameters.getFeedIds()))).thenReturn(getOccurrences());
 
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(parameters, getOccurrences());
