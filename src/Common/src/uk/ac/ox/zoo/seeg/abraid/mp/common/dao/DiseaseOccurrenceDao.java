@@ -80,9 +80,12 @@ public interface DiseaseOccurrenceDao {
      * Gets disease occurrences for the specified disease group whose isValidated flag is true
      * and finalWeighting is currently null.
      * @param diseaseGroupId The ID of the disease group.
+     * @param mustHaveEnvironmentalSuitability True if the occurrence's environmental suitability must be non-null.
+     *                                         False if it doesn't matter either way.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
+            Integer diseaseGroupId, boolean mustHaveEnvironmentalSuitability);
 
     /**
      * Gets disease occurrences for a request to run the model.

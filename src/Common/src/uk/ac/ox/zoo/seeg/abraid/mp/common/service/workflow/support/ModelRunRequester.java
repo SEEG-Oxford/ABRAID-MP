@@ -50,7 +50,7 @@ public class ModelRunRequester {
     public void requestModelRun(Integer diseaseGroupId) throws ModelRunRequesterException {
         ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
         List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
-        if (occurrences != null) {
+        if (occurrences != null && occurrences.size() > 0) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
             DateTime requestDate = DateTime.now();
