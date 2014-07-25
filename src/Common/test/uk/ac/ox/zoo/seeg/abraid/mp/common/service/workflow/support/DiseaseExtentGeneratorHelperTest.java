@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.offset;
  */
 public class DiseaseExtentGeneratorHelperTest {
     private DiseaseGroup defaultDiseaseGroup = new DiseaseGroup(87, null, "Dengue", DiseaseGroupType.SINGLE);
-    private DiseaseExtentParameters defaultParameters = new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2);
+    private DiseaseExtentParameters defaultParameters = new DiseaseExtentParameters(60, 0.6, 5, 1, 24, 1, 2);
     private List<? extends AdminUnitGlobalOrTropical> defaultAdminUnits = createDefaultAdminUnits();
 
     private List<AdminUnitDiseaseExtentClass> emptyDiseaseExtent = new ArrayList<>();
@@ -109,7 +109,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeDiseaseExtentClassUsingOccurrenceCountWithNonDefaultParameters() {
         // Arrange
         // Minimum occurrences for presence = 8, for possible presence = 4
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 5, 0.6, 8, 4, 2, 1, 2);
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(60, 0.6, 8, 4, 24, 1, 2);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         // Act and assert
@@ -148,13 +148,13 @@ public class DiseaseExtentGeneratorHelperTest {
     @Test
     public void computeScoreForOccurrencesOnlyAndNonDefaultParameters() {
         // Arrange
-        // Maximum years = 7, maximum years for higher score = 3, lower score = 10, higher score = 20
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 7, 0.6, 5, 1, 3, 10, 20);
+        // Maximum months = 84, maximum months for higher score = 36, lower score = 10, higher score = 20
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(84, 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
-                createOccurrence(0), createOccurrence(1), createOccurrence(2), createOccurrence(3),
-                createOccurrence(4), createOccurrence(5), createOccurrence(6));
+                createOccurrence(0), createOccurrence(12), createOccurrence(24), createOccurrence(36),
+                createOccurrence(48), createOccurrence(60), createOccurrence(72));
         // Expected score is (20 * 4 + 10 * 3) / 7  (which we calculate ourselves in case of int-to-double issues)
         double expectedScore = 15.71429;
 
@@ -168,8 +168,8 @@ public class DiseaseExtentGeneratorHelperTest {
     @Test
     public void computeScoreForReviewsOnlyAndNonDefaultParameters() {
         // Arrange
-        // Maximum years = 7, maximum years for higher score = 3, lower score = 10, higher score = 20
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 7, 0.6, 5, 1, 3, 10, 20);
+        // Maximum months = 84, maximum months for higher score = 36, lower score = 10, higher score = 20
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(84, 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<AdminUnitReview> reviews = createList(
@@ -193,13 +193,13 @@ public class DiseaseExtentGeneratorHelperTest {
     @Test
     public void computeScoreForOccurrencesAndReviewsAndNonDefaultParameters() {
         // Arrange
-        // Maximum years = 7, maximum years for higher score = 3, lower score = 2, higher score = 3
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(null, 7, 0.6, 5, 1, 3, 2, 3);
+        // Maximum months = 7 x 12 = 84, maximum months for higher score = 3 x 12 = 36, lower score = 2, higher score = 3
+        DiseaseExtentParameters parameters = new DiseaseExtentParameters(84, 0.6, 5, 1, 36, 2, 3);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
-                createOccurrence(0), createOccurrence(1), createOccurrence(2), createOccurrence(3),
-                createOccurrence(4), createOccurrence(5), createOccurrence(6));
+                createOccurrence(0), createOccurrence(12), createOccurrence(24), createOccurrence(36),
+                createOccurrence(48), createOccurrence(60), createOccurrence(72));
 
         List<AdminUnitReview> reviews = createList(
                 createReview(absenceDiseaseExtentClass, 0),
@@ -294,8 +294,8 @@ public class DiseaseExtentGeneratorHelperTest {
         );
     }
 
-    private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfYearsAgo) {
-        DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
+    private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfMonthssAgo) {
+        DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthssAgo);
         return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, 0);
     }
 

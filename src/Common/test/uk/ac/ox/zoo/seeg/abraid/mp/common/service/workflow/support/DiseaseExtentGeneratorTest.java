@@ -15,7 +15,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -79,7 +82,7 @@ public class DiseaseExtentGeneratorTest {
         DiseaseExtentParameters parameters = createParameters();
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent(DateTime.now());
         standardMocks();
-        mockGetDiseaseOccurrencesForInitialDiseaseExtent(parameters, getOccurrences());
+        mockGetDiseaseOccurrencesForInitialDiseaseExtent(getOccurrences());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
 
         // Act
@@ -173,18 +176,17 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private DiseaseExtentParameters createParameters() {
-        int maximumYearsAgo = 1;
+        int maximumMonthsAgo = 24;
         double minimumValidationWeighting = 0.2;
         int minimumOccurrencesForPresence = 5;
         int minimumOccurrencesForPossiblePresence = 1;
-        int minimumYearsAgoForHigherOccurrenceScore = 2;
+        int minimumMonthsAgoForHigherOccurrenceScore = 12;
         int lowerOccurrenceScore = 1;
         int higherOccurrenceScore = 2;
-        List<Integer> feedIds = new ArrayList<>();
 
-        return new DiseaseExtentParameters(feedIds, maximumYearsAgo,
+        return new DiseaseExtentParameters(maximumMonthsAgo,
                 minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence,
-                minimumYearsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
+                minimumMonthsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
     }
 
     private void standardMocks() {
@@ -204,20 +206,18 @@ public class DiseaseExtentGeneratorTest {
         ));
     }
 
-    private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(DiseaseExtentParameters parameters,
-                                                                  List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
-        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, null))
+    private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null))
                 .thenReturn(occurrences);
     }
 
     private void mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(DiseaseExtentParameters parameters,
                                                                   List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
         double minimumValidationWeighting = parameters.getMinimumValidationWeighting();
-        DateTime minimumOccurrenceDate = getFixedYearsAgo(parameters.getMaximumYearsAgo());
-        List<Integer> feedIds = parameters.getFeedIds();
+        DateTime minimumOccurrenceDate = getFixedMonthsAgo(parameters.getMaximumMonthsAgo());
 
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId), eq(minimumValidationWeighting),
-                eq(minimumOccurrenceDate), same(feedIds))).thenReturn(occurrences);
+                eq(minimumOccurrenceDate))).thenReturn(occurrences);
     }
 
     private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId() {
@@ -239,7 +239,7 @@ public class DiseaseExtentGeneratorTest {
 
     private void expectGetDiseaseOccurrencesForDiseaseExtent(int times) {
         verify(diseaseService, times(times)).getDiseaseOccurrencesForDiseaseExtent(anyInt(), anyDouble(),
-                any(DateTime.class), anyListOf(Integer.class));
+                any(DateTime.class));
     }
 
     private void expectGetRelevantReviews(int times) {
@@ -265,16 +265,16 @@ public class DiseaseExtentGeneratorTest {
         // 0 occurrences of tropical GAUL code 125, and 4 occurrences (possibly present) in its parent country (GAUL code 20)
         // 0 occurrences of tropical GAUL code 130, but 10 occurrences (present) in its parent country (GAUL code 30)
         // 1 occurrence of global GAUL code 150 (all over 2 years old)
-        // 4 occurrences of tropical GAUL code 200 (one of which is exactly 2 years old)
+        // 4 occurrences of tropical GAUL code 200 (one of which is exactly 1 year old)
         // 5 occurrences of tropical GAUL code 250 (all over 2 years old)
         // 10 occurrences of global GAUL code 300 (all under 2 years old)
         return randomise(concatenate(
-                createOccurrences(150, 4, 1),
-                createOccurrences(200, 3, 3),
-                createOccurrences(200, 2, 1),
-                createOccurrences(250, 5, 5),
-                createOccurrences(300, 1, 5),
-                createOccurrences(300, 3, 5)
+                createOccurrences(150, 48, 1),
+                createOccurrences(200, 36, 3),
+                createOccurrences(200, 12, 1),
+                createOccurrences(250, 60, 5),
+                createOccurrences(300, 12, 5),
+                createOccurrences(300, 36, 5)
         ));
     }
 
@@ -388,14 +388,14 @@ public class DiseaseExtentGeneratorTest {
     }
 
 
-    private DateTime getFixedYearsAgo(int yearsAgo) {
-        return DateTime.now().minusYears(yearsAgo);
+    private DateTime getFixedMonthsAgo(int monthsAgo) {
+        return DateTime.now().minusMonths(monthsAgo);
     }
 
     private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(int adminUnitGaulCode,
-                                                                      int numberOfYearsAgo,
+                                                                      int numberOfMonthsAgo,
                                                                       int numberOfTimes) {
-        DateTime occurrenceDate = DateTime.now().minusYears(numberOfYearsAgo);
+        DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthsAgo);
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
             occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGaulCode));
