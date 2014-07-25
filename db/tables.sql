@@ -120,7 +120,14 @@ CREATE TABLE covariate_influence (
 
 CREATE TABLE disease_extent (
     disease_group_id integer NOT NULL,
-    geom geometry(MULTIPOLYGON, 4326)
+    geom geometry(MULTIPOLYGON, 4326),
+    max_months_ago integer,
+    min_validation_weighting double precision,
+    min_occurrences_for_presence integer,
+    min_occurrences_for_possible_presence integer,
+    max_months_ago_for_higher_occurrence_score integer,
+    lower_occurrence_score integer,
+    higher_occurrence_score integer
 );
 
 CREATE TABLE disease_extent_class (

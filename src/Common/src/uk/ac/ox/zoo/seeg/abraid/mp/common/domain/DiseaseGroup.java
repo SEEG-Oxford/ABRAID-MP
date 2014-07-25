@@ -106,6 +106,10 @@ public class DiseaseGroup {
     @Column(name = "occurs_in_africa")
     private Boolean occursInAfrica;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private DiseaseExtent diseaseExtent;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -296,6 +300,10 @@ public class DiseaseGroup {
 
     public void setMinHighFrequencyCountries(Integer minHighFrequencyCountries) {
         this.minHighFrequencyCountries = minHighFrequencyCountries;
+    }
+
+    public DiseaseExtent getDiseaseExtent() {
+        return diseaseExtent;
     }
 
     /**

@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
@@ -147,5 +148,23 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
         assertThat(ids).hasSize(1);
         assertThat(ids.get(0)).isEqualTo(87);
+    }
+
+    @Test
+    public void getExistingDiseaseExtent() {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtent();
+        assertThat(diseaseExtent.getMaximumMonthsAgo()).isEqualTo(1);
+        assertThat(diseaseExtent.getMinimumValidationWeighting()).isEqualTo(0.6);
+    }
+
+    @Test
+    public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
+
+    }
+
+    @Test
+    public void addDiseaseExtentToDiseaseGroupSavesWithSameDiseaseGroupId() {
+        
     }
 }
