@@ -6,8 +6,10 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.*;
 
@@ -40,10 +42,13 @@ public class WeightingsCalculator {
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
+    private ModelRunService modelRunService;
 
-    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService) {
+    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService,
+                                ModelRunService modelRunService) {
         this.diseaseService = diseaseService;
         this.expertService = expertService;
+        this.modelRunService = modelRunService;
     }
 
     /**
@@ -101,7 +106,8 @@ public class WeightingsCalculator {
     private List<Double> calculateWeightingForEachReview(List<DiseaseOccurrenceReview> reviews) {
         return convert(reviews, new Converter<DiseaseOccurrenceReview, Double>() {
             public Double convert(DiseaseOccurrenceReview review) {
-                return review.getResponse().getValue() * review.getExpert().getWeighting();
+                Double expertWeighting = review.getExpert().getWeighting();
+                return (expertWeighting == null) ? null : (review.getResponse().getValue() * expertWeighting);
             }
         });
     }
@@ -117,14 +123,20 @@ public class WeightingsCalculator {
      * @param diseaseGroupId The id of the disease group.
      */
     public void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences =
-            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = getOccurrencesForValidationWeightingsAndFinalWeightings(diseaseGroupId);
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
             logger.info(String.format(UPDATING_WEIGHTINGS, occurrences.size()));
             setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
         }
+    }
+
+    private List<DiseaseOccurrence> getOccurrencesForValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
+        ModelRun lastCompletedModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+        boolean mustHaveEnvironmentalSuitability = (lastCompletedModelRun != null);
+        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId,
+                mustHaveEnvironmentalSuitability);
     }
 
     private void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
@@ -152,14 +164,14 @@ public class WeightingsCalculator {
     }
 
     /**
-     * If the validation weighting is null and environmental suitability is not null, set the final weighting to the
-     * location resolution weighting. Otherwise, recalculate the final weighting as the average across each of the 4
-     * properties. However, if the value of any of the 4 weightings is 0, then the occurrence should be discounted by
-     * the model by setting the final weighting to 0.
+     * If the validation weighting is null, there are no reviews on the disease occurrence and no machine weighting
+     * either. So set the final weighting, nominally, to the location resolution weighting. Otherwise, recalculate the
+     * final weighting as the average across each of the 4 properties. However, if the value of any of the 4 weightings
+     * is 0, then the occurrence should not be sent to the model by setting the final weighting to 0.
      */
     private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, Double validationWeighting) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
-        if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
+        if (validationWeighting == null) {
             return locationResolutionWeighting;
         }
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
@@ -243,8 +255,15 @@ public class WeightingsCalculator {
         reviewsOfOccurrence.remove(expertsReview);
 
         double expertsResponse = expertsReview.getResponse().getValue();
-        double averageResponse = average(extractReviewResponseValues(reviewsOfOccurrence));
-        return Math.abs(expertsResponse - averageResponse);
+        if (reviewsOfOccurrence.size() > 0) {
+            // For this occurrence, find the difference between this expert's review response and the average of
+            // all other experts' review responses
+            double averageResponse = average(extractReviewResponseValues(reviewsOfOccurrence));
+            return Math.abs(expertsResponse - averageResponse);
+        } else {
+            // There are no other experts' review responses, so the difference is zero
+            return 0.0;
+        }
     }
 
     private List<Double> extractReviewResponseValues(List<DiseaseOccurrenceReview> reviewsOfOccurrence) {

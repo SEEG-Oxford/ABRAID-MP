@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,6 +53,7 @@ public class DiseaseExtentGeneratorTest {
 
         diseaseGroup = new DiseaseGroup(diseaseGroupId, null, "Dengue", DiseaseGroupType.SINGLE);
         diseaseGroup.setGlobal(false);
+        diseaseGroup.setAutomaticModelRuns(true);
     }
 
     @Test
@@ -79,7 +81,7 @@ public class DiseaseExtentGeneratorTest {
         DiseaseExtentParameters parameters = createParameters();
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtent(DateTime.now());
         standardMocks();
-        mockGetDiseaseOccurrencesForInitialDiseaseExtent(parameters, getOccurrences());
+        mockGetDiseaseOccurrencesForInitialDiseaseExtent(getOccurrences());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
 
         // Act
@@ -172,6 +174,33 @@ public class DiseaseExtentGeneratorTest {
         expectUpdateAggregatedDiseaseExtent(1);
     }
 
+    @Test
+    public void generateUpdatedDiseaseExtentOccurrencesOnlyWithAutomaticModelRunsDisabled() {
+        // Arrange
+        DiseaseExtentParameters parameters = createParameters();
+        DateTime createdDate = DateTime.now().minusDays(1);
+        DateTime updatedDate = DateTime.now();
+        List<AdminUnitDiseaseExtentClass> existingDiseaseExtent = getInitialDiseaseExtent(createdDate);
+        List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesOnly(createdDate, updatedDate);
+        standardMocks();
+        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId),
+                eq(parameters.getMinimumValidationWeighting()), eq((DateTime) null),
+                same(parameters.getFeedIds()))).thenReturn(getOccurrences());
+
+        mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(parameters, getOccurrences());
+        mockGetExistingDiseaseExtent(existingDiseaseExtent);
+        mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
+
+        // Act
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId, parameters);
+
+        // Assert
+        expectGetDiseaseOccurrencesForDiseaseExtent(1);
+        expectGetRelevantReviews(1);
+        expectSaveAdminUnitDiseaseExtentClass(expectedDiseaseExtent);
+        expectUpdateAggregatedDiseaseExtent(1);
+    }
+
     private DiseaseExtentParameters createParameters() {
         int maximumYearsAgo = 1;
         double minimumValidationWeighting = 0.2;
@@ -204,8 +233,7 @@ public class DiseaseExtentGeneratorTest {
         ));
     }
 
-    private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(DiseaseExtentParameters parameters,
-                                                                  List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+    private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, null))
                 .thenReturn(occurrences);
     }
