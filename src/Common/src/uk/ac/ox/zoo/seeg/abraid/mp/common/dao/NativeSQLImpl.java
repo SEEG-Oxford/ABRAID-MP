@@ -86,9 +86,8 @@ public class NativeSQLImpl implements NativeSQL {
      */
     @Override
     public void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal) {
-        executeUpdate(DELETE_DISEASE_EXTENT_QUERY, "diseaseGroupId", diseaseGroupId);
-        String insertQuery = String.format(INSERT_DISEASE_EXTENT_QUERY, getGlobalOrTropical(isGlobal));
-        executeUpdate(insertQuery, "diseaseGroupId", diseaseGroupId);
+        String updateQuery = String.format(UPDATE_DISEASE_EXTENT_QUERY, getGlobalOrTropical(isGlobal));
+        executeUpdate(updateQuery, "diseaseGroupId", diseaseGroupId);
     }
 
     /**

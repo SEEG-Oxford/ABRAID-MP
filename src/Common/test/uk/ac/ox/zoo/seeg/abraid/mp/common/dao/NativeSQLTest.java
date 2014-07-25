@@ -5,14 +5,12 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
+import org.hibernate.SQLQuery;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
@@ -391,6 +389,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         insertAdminUnitDiseaseExtentClass(179, diseaseGroupId, DiseaseExtentClass.POSSIBLE_PRESENCE);
         insertAdminUnitDiseaseExtentClass(826, diseaseGroupId, DiseaseExtentClass.PRESENCE);
         flushAndClear();
+        insertDiseaseExtentRow(diseaseGroupId);
     }
 
     private void updateExtentForTropicalDisease(int diseaseGroupId) {
@@ -449,8 +448,13 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         return GeometryUtils.createPolygon(3, 4, 5, 11, 12, 8, 9, 5, 5, 6, 3, 4);
     }
 
+    private void insertDiseaseExtentRow(int diseaseGroupId) {
+        String queryString = "INSERT INTO disease_extent (disease_group_id) VALUES (" + diseaseGroupId + ")";
+        sessionFactory.getCurrentSession().createSQLQuery(queryString).executeUpdate();
+    }
+
     private void insertDiseaseExtent(int diseaseGroupId, Geometry geom) {
-        executeSQLUpdate("INSERT INTO disease_extent VALUES(:diseaseGroupId, :geom)", "diseaseGroupId", diseaseGroupId,
-                "geom", geom);
+        executeSQLUpdate("UPDATE disease_extent set geom=:geom where disease_group_id=:diseaseGroupId",
+                "diseaseGroupId", diseaseGroupId, "geom", geom);
     }
 }

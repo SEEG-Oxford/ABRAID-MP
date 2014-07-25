@@ -32,10 +32,6 @@ public final class NativeSQLConstants {
     public static final String UPDATE_RASTER_QUERY =
             "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
 
-    /** Query: Deletes a disease extent. */
-    public static final String DELETE_DISEASE_EXTENT_QUERY =
-            "DELETE FROM disease_extent WHERE disease_group_id = :diseaseGroupId";
-
     /** Clause for selecting relevant disease extent rows in the queries below. */
     private static final String DISEASE_EXTENT_CLAUSE =
             "FROM admin_unit_disease_extent_class c " +
@@ -44,14 +40,15 @@ public final class NativeSQLConstants {
             "AND c.disease_extent_class IN ('" + DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
                                                  DiseaseExtentClass.PRESENCE + "')";
 
-    /** Query: Inserts a disease extent by aggregating the geometries in admin_unit_global/tropical, based on
+    /** Query: Updates a disease extent by aggregating the geometries in admin_unit_global/tropical, based on
      relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_DUMP (split
      multipolygons into polygons) then ST_COLLECT (concatenate polygons into a multipolygon); this is much quicker
      than ST_UNION which dissolves boundaries between polygons. */
-    public static final String INSERT_DISEASE_EXTENT_QUERY =
-            "INSERT INTO disease_extent (disease_group_id, geom) " +
-            "SELECT :diseaseGroupId, ST_COLLECT(x.geom) " +
-            "FROM (SELECT (ST_DUMP(a.geom)).geom " + DISEASE_EXTENT_CLAUSE + ") x";
+    public static final String UPDATE_DISEASE_EXTENT_QUERY =
+            "UPDATE disease_extent " +
+            "SET geom = (SELECT ST_COLLECT(geom) FROM " +
+                    "(SELECT (ST_DUMP(a.geom)).geom " + DISEASE_EXTENT_CLAUSE + ") x) " +
+            "WHERE disease_group_id = :diseaseGroupId";
 
     /** Query: Finds the environmental suitability for a disease group to exist at a point. This is taken from the
         mean prediction raster of the latest successful model run for the disease group. */
