@@ -13,25 +13,25 @@
                     <div class="form-group">
                         <label for="disease-group-name" class="col-sm-4 control-label">Name</label>
                         <div id="disease-group-name-input-group" class="input-group col-sm-8">
-                            <input class="form-control" id="disease-group-name" data-bind="formValue: name" placeholder="Enter disease group name">
+                            <input type="text" class="form-control" id="disease-group-name" data-bind="formValue: name" placeholder="Enter disease group name">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="public-name" class="col-sm-4 control-label">Public Name</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="public-name" data-bind="formValue: publicName">
+                            <input type="text" class="form-control" id="public-name" data-bind="formValue: publicName">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="short-name" class="col-sm-4 control-label">Short Name</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="short-name" data-bind="formValue: shortName">
+                            <input type="text" class="form-control" id="short-name" data-bind="formValue: shortName">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="abbreviation" class="col-sm-4 control-label">Abbreviation</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="abbreviation" data-bind="formValue: abbreviation">
+                            <input type="text" class="form-control" id="abbreviation" data-bind="formValue: abbreviation">
                         </div>
                     </div>
                 </div>
