@@ -14,8 +14,8 @@ public class DiseaseExtent {
     @Id
     @Column(name = "disease_group_id")
     @GeneratedValue(generator = "generator")
-    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "disease_group"))
-    private int diseaseGroupId;
+    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "diseaseGroup"))
+    private Integer diseaseGroupId;
 
     @Column(name = "max_months_ago")
     private Integer maximumMonthsAgo;
@@ -38,8 +38,16 @@ public class DiseaseExtent {
     @Column(name = "higher_occurrence_score")
     private Integer higherOccurrenceScore;
 
-    public int getDiseaseGroupId() {
+    @OneToOne
+    @JoinColumn(name = "disease_group_id")
+    private DiseaseGroup diseaseGroup;
+
+    public Integer getDiseaseGroupId() {
         return diseaseGroupId;
+    }
+
+    public void setDiseaseGroup(DiseaseGroup diseaseGroup) {
+        this.diseaseGroup = diseaseGroup;
     }
 
     public Integer getMaximumMonthsAgo() {

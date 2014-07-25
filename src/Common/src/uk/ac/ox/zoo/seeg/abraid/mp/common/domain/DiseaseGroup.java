@@ -106,8 +106,7 @@ public class DiseaseGroup {
     @Column(name = "occurs_in_africa")
     private Boolean occursInAfrica;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "diseaseGroup", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DiseaseExtent diseaseExtent;
 
     // The database row creation date.
@@ -304,6 +303,10 @@ public class DiseaseGroup {
 
     public DiseaseExtent getDiseaseExtent() {
         return diseaseExtent;
+    }
+
+    public void setDiseaseExtent(DiseaseExtent diseaseExtent) {
+        this.diseaseExtent = diseaseExtent;
     }
 
     /**

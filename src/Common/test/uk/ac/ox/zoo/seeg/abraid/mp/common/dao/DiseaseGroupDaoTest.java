@@ -154,17 +154,54 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getExistingDiseaseExtent() {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
         DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtent();
-        assertThat(diseaseExtent.getMaximumMonthsAgo()).isEqualTo(1);
+        assertThat(diseaseExtent.getMaximumMonthsAgo()).isEqualTo(60);
         assertThat(diseaseExtent.getMinimumValidationWeighting()).isEqualTo(0.6);
     }
 
     @Test
-    public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
+    public void addDiseaseExtentToDiseaseGroupSavesWithSameDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = 22;
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        DiseaseExtent diseaseExtent = new DiseaseExtent();
 
+        diseaseGroup.setDiseaseExtent(diseaseExtent);
+        diseaseExtent.setDiseaseGroup(diseaseGroup);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        assertThat(diseaseGroup.getDiseaseExtent()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtent().getDiseaseGroupId()).isEqualTo(diseaseGroupId);
     }
 
     @Test
-    public void addDiseaseExtentToDiseaseGroupSavesWithSameDiseaseGroupId() {
-        
+    public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
+        // Arrange
+        DiseaseGroup diseaseGroup = initialiseDiseaseGroup("Name", DiseaseGroupType.SINGLE, false);
+        DiseaseExtent parameters = new DiseaseExtent();
+
+        diseaseGroup.setDiseaseExtent(parameters);
+        parameters.setDiseaseGroup(diseaseGroup);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        assertThat(diseaseGroup.getId()).isNotNull();
+        assertThat(parameters.getDiseaseGroupId()).isEqualTo(diseaseGroup.getId());
     }
+
+    private DiseaseGroup initialiseDiseaseGroup(String name, DiseaseGroupType type, boolean automaticModelRuns) {
+        DiseaseGroup diseaseGroup = new DiseaseGroup("Name");
+        diseaseGroup.setGroupType(DiseaseGroupType.SINGLE);
+        diseaseGroup.setAutomaticModelRuns(false);
+        return diseaseGroup;
+    }
+
+
 }
