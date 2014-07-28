@@ -6,6 +6,7 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 
 /**
+ * Represents the parameters required to calculate the disease group's current extent.
  * Copyright (c) 2014 University of Oxford
  */
 @Entity
@@ -14,7 +15,8 @@ public class DiseaseExtent {
     @Id
     @Column(name = "disease_group_id")
     @GeneratedValue(generator = "generator")
-    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "diseaseGroup"))
+    @GenericGenerator(name = "generator", strategy = "foreign",
+                      parameters = @Parameter(name = "property", value = "diseaseGroup"))
     private Integer diseaseGroupId;
 
     @Column(name = "max_months_ago")
@@ -41,6 +43,21 @@ public class DiseaseExtent {
     @OneToOne
     @JoinColumn(name = "disease_group_id")
     private DiseaseGroup diseaseGroup;
+
+    public DiseaseExtent() {
+    }
+
+    public DiseaseExtent(int maximumMonthsAgo, double minimumValidationWeighting, int minimumOccurrencesForPresence,
+                         int minimumOccurrencesForPossiblePresence, int maximumMonthsAgoForHigherOccurrenceScore,
+                         int lowerOccurrenceScore, int higherOccurrenceScore) {
+        this.maximumMonthsAgo = maximumMonthsAgo;
+        this.minimumValidationWeighting = minimumValidationWeighting;
+        this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
+        this.minimumOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
+        this.maximumMonthsAgoForHigherOccurrenceScore = maximumMonthsAgoForHigherOccurrenceScore;
+        this.lowerOccurrenceScore = lowerOccurrenceScore;
+        this.higherOccurrenceScore = higherOccurrenceScore;
+    }
 
     public Integer getDiseaseGroupId() {
         return diseaseGroupId;

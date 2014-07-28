@@ -20,8 +20,9 @@ import static org.assertj.core.api.Assertions.offset;
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseExtentGeneratorHelperTest {
-    private DiseaseGroup defaultDiseaseGroup = new DiseaseGroup(87, null, "Dengue", DiseaseGroupType.SINGLE);
-    private DiseaseExtentParameters defaultParameters = new DiseaseExtentParameters(60, 0.6, 5, 1, 24, 1, 2);
+    private DiseaseGroup defaultDiseaseGroup = createDiseaseGroup(87, null, "Dengue", DiseaseGroupType.SINGLE,
+            60, 0.6, 5, 1, 24, 1, 2);
+
     private List<? extends AdminUnitGlobalOrTropical> defaultAdminUnits = createDefaultAdminUnits();
 
     private List<AdminUnitDiseaseExtentClass> emptyDiseaseExtent = new ArrayList<>();
@@ -109,7 +110,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeDiseaseExtentClassUsingOccurrenceCountWithNonDefaultParameters() {
         // Arrange
         // Minimum occurrences for presence = 8, for possible presence = 4
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(60, 0.6, 8, 4, 24, 1, 2);
+        DiseaseExtent parameters = new DiseaseExtent(60, 0.6, 8, 4, 24, 1, 2);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         // Act and assert
@@ -149,7 +150,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForOccurrencesOnlyAndNonDefaultParameters() {
         // Arrange
         // Maximum months = 84, maximum months for higher score = 36, lower score = 10, higher score = 20
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(84, 0.6, 5, 1, 36, 10, 20);
+        DiseaseExtent parameters = new DiseaseExtent(84, 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
@@ -169,7 +170,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForReviewsOnlyAndNonDefaultParameters() {
         // Arrange
         // Maximum months = 84, maximum months for higher score = 36, lower score = 10, higher score = 20
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(84, 0.6, 5, 1, 36, 10, 20);
+        DiseaseExtent parameters = new DiseaseExtent(84, 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<AdminUnitReview> reviews = createList(
@@ -194,7 +195,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForOccurrencesAndReviewsAndNonDefaultParameters() {
         // Arrange
         // Maximum months = 7 x 12 = 84, maximum months for higher score = 3 x 12 = 36, lower score = 2, higher score = 3
-        DiseaseExtentParameters parameters = new DiseaseExtentParameters(84, 0.6, 5, 1, 36, 2, 3);
+        DiseaseExtent parameters = new DiseaseExtent(84, 0.6, 5, 1, 36, 2, 3);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
@@ -266,18 +267,34 @@ public class DiseaseExtentGeneratorHelperTest {
         return helper.computeDiseaseExtentClassForCountry(gaulCode);
     }
 
+    ///CHECKSTYLE:OFF ParameterNumber
+    private DiseaseGroup createDiseaseGroup(int id, DiseaseGroup parentGroup, String name, DiseaseGroupType groupType,
+                                            int maxMonthsAgo, double minValidationWeighting, int minOccurrencesForPresence,
+                                            int minOccurrenceForPossiblePresence, int maxMonthsAgoForHigherOccurrenceScore,
+                                            int lowerOccurrenceScore, int higherOccurrenceScore) {
+    ///CHECKSTYLE:ON
+        DiseaseGroup diseaseGroup = new DiseaseGroup(id, parentGroup, name, groupType);
+        DiseaseExtent parameters = new DiseaseExtent(maxMonthsAgo, minValidationWeighting, minOccurrencesForPresence,
+                minOccurrenceForPossiblePresence, maxMonthsAgoForHigherOccurrenceScore,
+                lowerOccurrenceScore, higherOccurrenceScore);
+
+        diseaseGroup.setDiseaseExtentParameters(parameters);
+        parameters.setDiseaseGroup(diseaseGroup);
+
+        return diseaseGroup;
+    }
+
     private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper() {
         DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
-                defaultDiseaseGroup, defaultParameters, emptyDiseaseExtent, defaultAdminUnits,
-                defaultDiseaseExtentClasses);
+                defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses);
         helper.setOccurrences(emptyOccurrences);
         return helper;
     }
 
-    private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper(DiseaseExtentParameters parameters) {
+    private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper(DiseaseExtent parameters) {
+        defaultDiseaseGroup.setDiseaseExtentParameters(parameters);
         DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
-                defaultDiseaseGroup, parameters, emptyDiseaseExtent, defaultAdminUnits,
-                defaultDiseaseExtentClasses);
+                defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses);
         helper.setOccurrences(emptyOccurrences);
         return helper;
     }

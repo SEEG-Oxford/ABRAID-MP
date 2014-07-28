@@ -107,7 +107,7 @@ public class DiseaseGroup {
     private Boolean occursInAfrica;
 
     @OneToOne(mappedBy = "diseaseGroup", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private DiseaseExtent diseaseExtent;
+    private DiseaseExtent diseaseExtentParameters;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -301,12 +301,12 @@ public class DiseaseGroup {
         this.minHighFrequencyCountries = minHighFrequencyCountries;
     }
 
-    public DiseaseExtent getDiseaseExtent() {
-        return diseaseExtent;
+    public DiseaseExtent getDiseaseExtentParameters() {
+        return diseaseExtentParameters;
     }
 
-    public void setDiseaseExtent(DiseaseExtent diseaseExtent) {
-        this.diseaseExtent = diseaseExtent;
+    public void setDiseaseExtentParameters(DiseaseExtent diseaseExtentParameters) {
+        this.diseaseExtentParameters = diseaseExtentParameters;
     }
 
     /**

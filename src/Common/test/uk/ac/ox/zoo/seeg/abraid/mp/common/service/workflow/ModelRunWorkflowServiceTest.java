@@ -59,8 +59,7 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(true));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
-                eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroupId));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(newWeightings));
@@ -85,8 +84,7 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(false));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
-                eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroupId));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
     }
@@ -125,6 +123,6 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId);
 
         // Assert - Parameters are hardcoded for Dengue in Service method presently
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroupId));
     }
 }

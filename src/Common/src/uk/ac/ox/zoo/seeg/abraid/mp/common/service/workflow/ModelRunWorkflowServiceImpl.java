@@ -81,10 +81,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      */
     @Override
     public void generateDiseaseExtent(int diseaseGroupId) {
-        ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
-                new DiseaseExtentParameters(60, 0.6, 5, 1, 24, 1, 2));
-        ///CHECKSTYLE:ON
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
     }
 
     private void prepareForAndRequestModelRun(int diseaseGroupId, boolean alwaysRemoveFromValidator)

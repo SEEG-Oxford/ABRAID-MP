@@ -33,10 +33,9 @@ public class DiseaseExtentGenerator {
     /**
      * Generates a disease extent for a single disease group.
      * @param diseaseGroupId The disease group.
-     * @param parameters Parameters used in generating the disease extent.
      */
-    public void generateDiseaseExtent(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
-        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroupId, parameters);
+    public void generateDiseaseExtent(Integer diseaseGroupId) {
+        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroupId);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
         // update existing extent
@@ -47,7 +46,7 @@ public class DiseaseExtentGenerator {
         }
     }
 
-    private DiseaseExtentGeneratorHelper createHelper(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
+    private DiseaseExtentGeneratorHelper createHelper(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
 
         // Find current disease extent
@@ -62,7 +61,7 @@ public class DiseaseExtentGenerator {
         // Retrieve a lookup table of disease extent classes
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
 
-        return new DiseaseExtentGeneratorHelper(diseaseGroup, parameters, currentDiseaseExtent, adminUnits,
+        return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits,
                 diseaseExtentClasses);
     }
 
@@ -92,13 +91,12 @@ public class DiseaseExtentGenerator {
 
     private void setInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
-                diseaseService.getDiseaseOccurrencesForDiseaseExtent(
-                        helper.getDiseaseGroup().getId(), null, null);
+                diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(), null, null);
         helper.setOccurrences(occurrences);
     }
 
     private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
-        DiseaseExtentParameters parameters = helper.getParameters();
+        DiseaseExtent parameters = helper.getParameters();
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),

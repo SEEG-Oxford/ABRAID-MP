@@ -385,8 +385,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {
-        executeSQLUpdate("INSERT INTO disease_extent VALUES(:diseaseGroupId, :geom)", "diseaseGroupId", diseaseGroupId,
-                "geom", geom);
+        executeSQLUpdate("UPDATE disease_extent SET geom=:geom WHERE disease_group_id=:diseaseGroupId",
+                "diseaseGroupId", diseaseGroupId, "geom", geom);
     }
 
     private Polygon getFivePointedPolygon() {

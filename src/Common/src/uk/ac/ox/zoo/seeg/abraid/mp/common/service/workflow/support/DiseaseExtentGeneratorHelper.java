@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import ch.lambdaj.group.Group;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class DiseaseExtentGeneratorHelper {
 
     // Input fields
     private DiseaseGroup diseaseGroup;
-    private DiseaseExtentParameters parameters;
+    private DiseaseExtent parameters;
     private List<AdminUnitDiseaseExtentClass> currentDiseaseExtent;
     private List<? extends AdminUnitGlobalOrTropical> adminUnits;
     private List<DiseaseExtentClass> diseaseExtentClasses;
@@ -35,12 +36,12 @@ public class DiseaseExtentGeneratorHelper {
     private Map<Integer, Integer> numberOfOccurrencesByCountry;
     private Map<Integer, List<AdminUnitReview>> reviewsByAdminUnit;
 
-    public DiseaseExtentGeneratorHelper(DiseaseGroup diseaseGroup, DiseaseExtentParameters parameters,
+    public DiseaseExtentGeneratorHelper(DiseaseGroup diseaseGroup,
                                         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent,
                                         List<? extends AdminUnitGlobalOrTropical> adminUnits,
                                         List<DiseaseExtentClass> diseaseExtentClasses) {
         this.diseaseGroup = diseaseGroup;
-        this.parameters = parameters;
+        this.parameters = diseaseGroup.getDiseaseExtentParameters();
         this.currentDiseaseExtent = currentDiseaseExtent;
         this.adminUnits = adminUnits;
         this.diseaseExtentClasses = diseaseExtentClasses;
@@ -50,7 +51,7 @@ public class DiseaseExtentGeneratorHelper {
         return diseaseGroup;
     }
 
-    public DiseaseExtentParameters getParameters() {
+    public DiseaseExtent getParameters() {
         return parameters;
     }
 
