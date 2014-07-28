@@ -35,6 +35,8 @@ define([
             } else {
                 args.data = self.buildSubmissionData();
             }
+
+            return args;
         };
 
         var processResponse = function (xhr, priority) {
