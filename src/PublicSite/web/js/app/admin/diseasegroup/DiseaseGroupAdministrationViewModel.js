@@ -1,4 +1,4 @@
-/*
+/* AMD combines and POSTs all data across multiple panels on administration page.
  * Copyright (c) 2014 University of Oxford
  */
 define([
