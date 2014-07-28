@@ -39,15 +39,15 @@
 <#assign templates>
 <script type="text/html" id="no-entries-template">
     <tr class="warning">
-        <td colspan="4" class="text-muted">No matching experts.</td>
+        <td colspan="8" class="text-muted">No matching experts.</td>
     </tr>
 </script>
 <script type="text/html" id="list-template">
     <!-- ko foreach: visibleEntries -->
     <tr data-bind="popover: { placement: 'bottom', trigger: 'hover', title: name, template: 'details-template' }">
         <td><span data-bind="text: name"></td>
-        <td><input type="checkbox" data-bind="formChecked: { checked: isSEEGMember, value: true }"></td>
-        <td><input type="checkbox" data-bind="formChecked: { checked: isAdministrator, value: true }"></td>
+        <td><input type="checkbox" data-bind="formChecked: { checked: seegmember, value: true }"></td>
+        <td><input type="checkbox" data-bind="formChecked: { checked: administrator, value: true }"></td>
         <td><input type="checkbox" data-bind="checked: visibilityRequested, bootstrapDisable: true"></td>
         <td data-bind="if: visibilityRequested"><input type="checkbox" data-bind="formChecked: { checked: visibilityApproved, value: true }"></td>
         <td><span class="input-group"><input type="text" class="form-control" data-bind="formValue: weighting"></span></td>
@@ -98,8 +98,8 @@
                             <thead>
                             <tr data-bind="template: { name: 'list-header-template', foreach: [
                                         { name: 'name', display: 'Name' },
-                                        { name: 'isSEEGMember', display: 'SEEG' },
-                                        { name: 'isAdministrator', display: 'Administrator' },
+                                        { name: 'seegmember', display: 'SEEG' },
+                                        { name: 'administrator', display: 'Administrator' },
                                         { name: 'visibilityRequested', display: 'Requested<br>Visibility' },
                                         { name: 'visibilityApproved', display: 'Approved<br>Visibility' },
                                         { name: 'weighting', display: 'Weighting' },

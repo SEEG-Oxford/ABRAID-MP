@@ -9,8 +9,8 @@ define(["ko", "underscore"], function (ko, _) {
 
         // Field state
         _(experts || []).each(function (expert) {
-            expert.isSEEGMember = ko.observable(expert.isSEEGMember);
-            expert.isAdministrator = ko.observable(expert.isAdministrator);
+            expert.seegmember = ko.observable(expert.seegmember);
+            expert.administrator = ko.observable(expert.administrator);
             expert.visibilityApproved = ko.observable(expert.visibilityApproved);
             expert.weighting = ko.observable(expert.weighting.toString())
                 .extend({ number: true, required: true, min: 0, max: 1 });
@@ -22,8 +22,8 @@ define(["ko", "underscore"], function (ko, _) {
 
         // Meta state
         self.filter = ko.observable("");
-        self.sortField = ko.observable("name");
-        self.reverseSort = ko.observable(false);
+        self.sortField = ko.observable("updatedDate");
+        self.reverseSort = ko.observable(true);
         self.updateSort = function (field) {
             if (self.sortField() === field) {
                 self.reverseSort(!self.reverseSort());
@@ -77,10 +77,10 @@ define(["ko", "underscore"], function (ko, _) {
             return _(self.entries()).map(function (expert) {
                 return {
                     id: expert.id,
-                    isSEEG: expert.isSEEG(),
-                    isAdministrator: expert.isAdministrator(),
+                    seegmember: expert.seegmember(),
+                    administrator: expert.administrator(),
                     visibilityApproved: expert.visibilityApproved(),
-                    weighting: parseFloat(experts.weighting())
+                    weighting: parseFloat(expert.weighting())
                 };
             });
         };
