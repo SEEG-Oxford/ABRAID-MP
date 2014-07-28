@@ -25,12 +25,12 @@ public class JsonExpertFull extends JsonExpertDetails {
         super(expert);
         setId(expert.getId());
         setEmail(expert.getEmail());
-        setWeighting(expert.getWeighting() == null ? 0.5 : expert.getWeighting()); // TMP
-        setVisibilityApproved(false); //TMP
+        setWeighting(expert.getWeighting());
+        setVisibilityApproved(expert.getVisibilityApproved());
         setCreateDate(expert.getCreatedDate());
-        setUpdatedDate(expert.getCreatedDate()); //TMP
+        setUpdatedDate(expert.getUpdatedDate());
         setAdministrator(expert.isAdministrator());
-        setSEEGMember(false); // TMP
+        setSEEGMember(expert.isSeegMember());
 
         setDiseaseInterests(null); // Don't serialize
     }

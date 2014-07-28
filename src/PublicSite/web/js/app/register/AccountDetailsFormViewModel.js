@@ -24,7 +24,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
         self.institution = ko.observable(initialExpert.institution || "")
             .extend({ required: true,  maxLength: 100 });
 
-        self.publiclyVisible = ko.observable(initialExpert.publiclyVisible || false);
+        self.visibilityRequested = ko.observable(initialExpert.visibilityRequested || false);
 
         self.diseaseInterestListViewModel = diseaseInterestListViewModel;
 
@@ -37,7 +37,7 @@ define(["ko", "underscore", "jquery"], function (ko, _, $) {
                 name: self.name(),
                 jobTitle: self.jobTitle(),
                 institution: self.institution(),
-                publiclyVisible: self.publiclyVisible(),
+                visibilityRequested: self.visibilityRequested(),
                 diseaseInterests: self.diseaseInterestListViewModel.buildSubmissionData()
             };
         };
