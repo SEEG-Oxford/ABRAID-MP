@@ -186,8 +186,10 @@ CREATE TABLE expert (
     institution varchar(100) NOT NULL,
     is_administrator boolean NOT NULL,
     weighting double precision,
-    is_publicly_visible boolean,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    visibility_requested boolean,
+    visibility_approved boolean,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    updated_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE expert_validator_disease_group (

@@ -51,10 +51,14 @@ public class Expert {
     @Column(name = "is_administrator", nullable = false)
     private boolean isAdministrator;
 
-    // Whether the expert should be displayed in list on public site.
+    // Whether the expert wants to be displayed in list on public site.
     // For now this is Boolean to allow null values in test data, but should really be boolean with NOT NULL in DB
-    @Column(name = "is_publicly_visible")
+    @Column(name = "visibility_requested")
     private Boolean isPubliclyVisible;
+
+    // Whether the expert's request to be displayed is allowed.
+    @Column(name = "visibility_approved")
+    private Boolean visibilityApproved;
 
     // The expert's "score" determines the weighting of his response.
     @Column
@@ -65,6 +69,12 @@ public class Expert {
     @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
+
+    // The date on which the expert was last updated.
+    @Column(name = "updated_date", insertable = false, updatable = false)
+    @Generated(value = GenerationTime.INSERT)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedDate;
 
     // List of disease groups an expert has interest in and can validate.
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -141,6 +151,14 @@ public class Expert {
         this.isPubliclyVisible = isPubliclyVisible;
     }
 
+    public Boolean getVisibilityApproved() {
+        return visibilityApproved;
+    }
+
+    public void setVisibilityApproved(Boolean visibilityApproved) {
+        this.visibilityApproved = visibilityApproved;
+    }
+
     public List<ValidatorDiseaseGroup> getValidatorDiseaseGroups() {
         return validatorDiseaseGroups;
     }
@@ -159,6 +177,14 @@ public class Expert {
 
     public DateTime getCreatedDate() {
         return createdDate;
+    }
+
+    public DateTime getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(DateTime updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     ///COVERAGE:OFF - generated code
