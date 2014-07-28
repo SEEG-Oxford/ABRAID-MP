@@ -330,13 +330,15 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseGroup)) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
         if (automaticModelRuns != that.automaticModelRuns) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        if (diseaseExtentParameters != null ? !diseaseExtentParameters.equals(that.diseaseExtentParameters) : that.diseaseExtentParameters != null)
+            return false;
         if (groupType != that.groupType) return false;
         if (highFrequencyThreshold != null ? !highFrequencyThreshold.equals(that.highFrequencyThreshold) : that.highFrequencyThreshold != null)
             return false;
@@ -388,6 +390,7 @@ public class DiseaseGroup {
         result = 31 * result + (highFrequencyThreshold != null ? highFrequencyThreshold.hashCode() : 0);
         result = 31 * result + (minHighFrequencyCountries != null ? minHighFrequencyCountries.hashCode() : 0);
         result = 31 * result + (occursInAfrica != null ? occursInAfrica.hashCode() : 0);
+        result = 31 * result + (diseaseExtentParameters != null ? diseaseExtentParameters.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

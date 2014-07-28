@@ -123,4 +123,46 @@ public class DiseaseExtent {
     public void setHigherOccurrenceScore(Integer higherOccurrenceScore) {
         this.higherOccurrenceScore = higherOccurrenceScore;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DiseaseExtent)) return false;
+
+        DiseaseExtent that = (DiseaseExtent) o;
+
+        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
+        if (diseaseGroupId != null ? !diseaseGroupId.equals(that.diseaseGroupId) : that.diseaseGroupId != null)
+            return false;
+        if (higherOccurrenceScore != null ? !higherOccurrenceScore.equals(that.higherOccurrenceScore) : that.higherOccurrenceScore != null)
+            return false;
+        if (lowerOccurrenceScore != null ? !lowerOccurrenceScore.equals(that.lowerOccurrenceScore) : that.lowerOccurrenceScore != null)
+            return false;
+        if (maximumMonthsAgo != null ? !maximumMonthsAgo.equals(that.maximumMonthsAgo) : that.maximumMonthsAgo != null)
+            return false;
+        if (maximumMonthsAgoForHigherOccurrenceScore != null ? !maximumMonthsAgoForHigherOccurrenceScore.equals(that.maximumMonthsAgoForHigherOccurrenceScore) : that.maximumMonthsAgoForHigherOccurrenceScore != null)
+            return false;
+        if (minimumOccurrencesForPossiblePresence != null ? !minimumOccurrencesForPossiblePresence.equals(that.minimumOccurrencesForPossiblePresence) : that.minimumOccurrencesForPossiblePresence != null)
+            return false;
+        if (minimumOccurrencesForPresence != null ? !minimumOccurrencesForPresence.equals(that.minimumOccurrencesForPresence) : that.minimumOccurrencesForPresence != null)
+            return false;
+        if (minimumValidationWeighting != null ? !minimumValidationWeighting.equals(that.minimumValidationWeighting) : that.minimumValidationWeighting != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = diseaseGroupId != null ? diseaseGroupId.hashCode() : 0;
+        result = 31 * result + (maximumMonthsAgo != null ? maximumMonthsAgo.hashCode() : 0);
+        result = 31 * result + (minimumValidationWeighting != null ? minimumValidationWeighting.hashCode() : 0);
+        result = 31 * result + (minimumOccurrencesForPresence != null ? minimumOccurrencesForPresence.hashCode() : 0);
+        result = 31 * result + (minimumOccurrencesForPossiblePresence != null ? minimumOccurrencesForPossiblePresence.hashCode() : 0);
+        result = 31 * result + (maximumMonthsAgoForHigherOccurrenceScore != null ? maximumMonthsAgoForHigherOccurrenceScore.hashCode() : 0);
+        result = 31 * result + (lowerOccurrenceScore != null ? lowerOccurrenceScore.hashCode() : 0);
+        result = 31 * result + (higherOccurrenceScore != null ? higherOccurrenceScore.hashCode() : 0);
+        result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
+        return result;
+    }
 }

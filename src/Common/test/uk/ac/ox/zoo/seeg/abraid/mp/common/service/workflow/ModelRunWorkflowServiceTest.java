@@ -122,7 +122,7 @@ public class ModelRunWorkflowServiceTest {
         // Act
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId);
 
-        // Assert - Parameters are hardcoded for Dengue in Service method presently
+        // Assert
         verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroupId));
     }
 }

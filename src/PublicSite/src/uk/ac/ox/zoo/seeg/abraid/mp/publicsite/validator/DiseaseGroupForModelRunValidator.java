@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
  */
 public class DiseaseGroupForModelRunValidator {
     private static final String MISSING_MESSAGE = "%s is missing";
-    private static final String PARAMETER_MISSING_MESSAGE = "the disease extent parameter %s is missing";
+    private static final String PARAMETER_MISSING_MESSAGE = "a disease extent parameter (%s) is missing";
     private static final String DISEASE_EXTENT_PARAMETERS_MISSING_MESSAGE = "the disease extent parameters are missing";
 
     private static final String PUBLIC_NAME = "the public name";
@@ -18,13 +18,13 @@ public class DiseaseGroupForModelRunValidator {
     private static final String ABBREVIATION = "the abbreviation";
     private static final String GLOBAL_TROPICAL = "global/tropical";
     private static final String VALIDATOR_DISEASE_GROUP = "the Data Validator disease group";
-    private static final String MAX_MONTHS_AGO = "'maximum months ago'";
-    private static final String MIN_VALIDATION_WEIGHTING = "'minimum validation weighting'";
-    private static final String MIN_OCCURRENCES_FOR_PRESENCE = "'minimum occurrences for presence'";
-    private static final String MIN_OCCURRENCES_FOR_POSSIBLE_PRESENCE = "'minimum occurrences for possible presence'";
-    private static final String MAX_MONTHS_AGO_FOR_HIGHER_SCORE = "'maximum months ago for higher occurrence score'";
-    private static final String LOWER_SCORE = "'lower occurrence score'";
-    private static final String HIGHER_SCORE = "'higher occurrence score'";
+    private static final String MAX_MONTHS_AGO = "maximum months ago";
+    private static final String MIN_VALIDATION_WEIGHTING = "minimum validation weighting";
+    private static final String MIN_OCCURRENCES_FOR_PRESENCE = "minimum occurrences for presence";
+    private static final String MIN_OCCURRENCES_FOR_POSSIBLE_PRESENCE = "minimum occurrences for possible presence";
+    private static final String MAX_MONTHS_AGO_FOR_HIGHER_SCORE = "maximum months ago for higher occurrence score";
+    private static final String LOWER_SCORE = "lower occurrence score";
+    private static final String HIGHER_SCORE = "higher occurrence score";
 
     private DiseaseGroup diseaseGroup;
 

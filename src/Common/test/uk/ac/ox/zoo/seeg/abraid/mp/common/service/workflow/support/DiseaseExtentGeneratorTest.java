@@ -249,8 +249,8 @@ public class DiseaseExtentGeneratorTest {
         double minimumValidationWeighting = parameters.getMinimumValidationWeighting();
         DateTime minimumOccurrenceDate = getFixedMonthsAgo(parameters.getMaximumMonthsAgo());
 
-        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId), eq(minimumValidationWeighting),
-                eq(minimumOccurrenceDate))).thenReturn(occurrences);
+        when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+                eq(diseaseGroupId), eq(minimumValidationWeighting), eq(minimumOccurrenceDate))).thenReturn(occurrences);
     }
 
     private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId() {
