@@ -1,42 +1,34 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
-import java.util.List;
-
 /**
  * Represents a set of parameters for generating the disease extent for a single disease.
  *
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseExtentParameters {
-    private List<Integer> feedIds;
-    private int maximumYearsAgo;
+    private int maximumMonthsAgo;
     private double minimumValidationWeighting;
     private int minimumOccurrencesForPresence;
     private int minimumOccurrencesForPossiblePresence;
-    private int maximumYearsAgoForHigherOccurrenceScore;
+    private int maximumMonthsAgoForHigherOccurrenceScore;
     private int lowerOccurrenceScore;
     private int higherOccurrenceScore;
 
-    public DiseaseExtentParameters(List<Integer> feedIds, int maximumYearsAgo, double minimumValidationWeighting,
+    public DiseaseExtentParameters(int maximumMonthsAgo, double minimumValidationWeighting,
                                    int minimumOccurrencesForPresence, int minimumOccurrencesForPossiblePresence,
-                                   int maximumYearsAgoForHigherOccurrenceScore, int lowerOccurrenceScore,
+                                   int maximumMonthsAgoForHigherOccurrenceScore, int lowerOccurrenceScore,
                                    int higherOccurrenceScore) {
-        this.feedIds = feedIds;
-        this.maximumYearsAgo = maximumYearsAgo;
+        this.maximumMonthsAgo = maximumMonthsAgo;
         this.minimumValidationWeighting = minimumValidationWeighting;
         this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
         this.minimumOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
-        this.maximumYearsAgoForHigherOccurrenceScore = maximumYearsAgoForHigherOccurrenceScore;
+        this.maximumMonthsAgoForHigherOccurrenceScore = maximumMonthsAgoForHigherOccurrenceScore;
         this.lowerOccurrenceScore = lowerOccurrenceScore;
         this.higherOccurrenceScore = higherOccurrenceScore;
     }
 
-    public List<Integer> getFeedIds() {
-        return feedIds;
-    }
-
-    public int getMaximumYearsAgo() {
-        return maximumYearsAgo;
+    public int getMaximumMonthsAgo() {
+        return maximumMonthsAgo;
     }
 
     public double getMinimumValidationWeighting() {
@@ -51,8 +43,8 @@ public class DiseaseExtentParameters {
         return minimumOccurrencesForPossiblePresence;
     }
 
-    public int getMaximumYearsAgoForHigherOccurrenceScore() {
-        return maximumYearsAgoForHigherOccurrenceScore;
+    public int getMaximumMonthsAgoForHigherOccurrenceScore() {
+        return maximumMonthsAgoForHigherOccurrenceScore;
     }
 
     public int getLowerOccurrenceScore() {

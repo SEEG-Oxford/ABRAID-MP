@@ -93,7 +93,7 @@ public class DiseaseExtentGenerator {
     private void setInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseService.getDiseaseOccurrencesForDiseaseExtent(
-                        helper.getDiseaseGroup().getId(), null, null, null);
+                        helper.getDiseaseGroup().getId(), null, null);
         helper.setOccurrences(occurrences);
     }
 
@@ -103,14 +103,13 @@ public class DiseaseExtentGenerator {
         // The minimum occurrence date is only relevant if automatic model runs are enabled for the disease
         DateTime minimumOccurrenceDate = null;
         if (helper.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
-            minimumOccurrenceDate = DateTime.now().minusYears(parameters.getMaximumYearsAgo());
+            minimumOccurrenceDate = DateTime.now().minusMonths(parameters.getMaximumMonthsAgo());
         }
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 parameters.getMinimumValidationWeighting(),
-                minimumOccurrenceDate,
-                parameters.getFeedIds()
+                minimumOccurrenceDate
         );
         helper.setOccurrences(occurrences);
     }

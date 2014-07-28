@@ -36,4 +36,10 @@ public interface ModelRunWorkflowService {
      * @param newExpertsWeightings The map from expert to the new weighting value.
      */
     void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings);
+
+    /**
+     * Generates the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     */
+    void generateDiseaseExtent(int diseaseGroupId);
 }

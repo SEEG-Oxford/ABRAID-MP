@@ -57,16 +57,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         prepareForAndRequestModelRun(diseaseGroupId, false);
     }
 
-    private void prepareForAndRequestModelRun(int diseaseGroupId, boolean alwaysRemoveFromValidator)
-            throws ModelRunRequesterException {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        DateTime modelRunPrepDate = DateTime.now();
-        updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
-        generateDiseaseExtent(diseaseGroupId);
-        modelRunRequester.requestModelRun(diseaseGroupId);
-        saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
-    }
-
     /**
      * Gets the new weighting for each active expert.
      * @return A map from expert ID to the new weighting value.
@@ -85,6 +75,33 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
     }
 
+    /**
+     * Generate the disease extent for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     */
+    @Override
+    public void generateDiseaseExtent(int diseaseGroupId) {
+        ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
+                new DiseaseExtentParameters(60, 0.6, 5, 1, 24, 1, 2));
+        ///CHECKSTYLE:ON
+    }
+
+    private void prepareForAndRequestModelRun(int diseaseGroupId, boolean alwaysRemoveFromValidator)
+            throws ModelRunRequesterException {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DateTime modelRunPrepDate = DateTime.now();
+        if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            generateDiseaseExtent(diseaseGroupId);
+            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
+        } else {
+            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
+            generateDiseaseExtent(diseaseGroupId);
+        }
+        modelRunRequester.requestModelRun(diseaseGroupId);
+        saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
+    }
+
     private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
                                                 boolean alwaysRemoveFromValidator) {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
@@ -93,13 +110,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate,
                 alwaysRemoveFromValidator);
         weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
-    }
-
-    private void generateDiseaseExtent(int diseaseGroupId) {
-        ///CHECKSTYLE:OFF MagicNumberCheck - Values for Dengue hard-coded for now
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId,
-                new DiseaseExtentParameters(null, 5, 0.6, 5, 1, 2, 1, 2));
-        ///CHECKSTYLE:ON
     }
 
     private void saveModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
