@@ -8,7 +8,7 @@ define([
 ], function (ko, $, _) {
     "use strict";
 
-    return function (entries, initialSortField, filterableFields, mapFunction) {
+    return function (entries, initialSortField, initialSortDescending, filterableFields, mapFunction) {
         var self = this;
 
         self.entries = ko.observableArray(entries);
@@ -16,7 +16,7 @@ define([
         // Meta state
         self.filter = ko.observable("");
         self.sortField = ko.observable(initialSortField);
-        self.reverseSort = ko.observable(false);
+        self.reverseSort = ko.observable(initialSortDescending);
         self.updateSort = function (field) {
             if (self.sortField() === field) {
                 self.reverseSort(!self.reverseSort());
