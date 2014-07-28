@@ -100,10 +100,16 @@ public class DiseaseExtentGenerator {
     private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
         DiseaseExtentParameters parameters = helper.getParameters();
 
+        // The minimum occurrence date is only relevant if automatic model runs are enabled for the disease
+        DateTime minimumOccurrenceDate = null;
+        if (helper.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
+            minimumOccurrenceDate = DateTime.now().minusMonths(parameters.getMaximumMonthsAgo());
+        }
+
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 parameters.getMinimumValidationWeighting(),
-                DateTime.now().minusMonths(parameters.getMaximumMonthsAgo())
+                minimumOccurrenceDate
         );
         helper.setOccurrences(occurrences);
     }

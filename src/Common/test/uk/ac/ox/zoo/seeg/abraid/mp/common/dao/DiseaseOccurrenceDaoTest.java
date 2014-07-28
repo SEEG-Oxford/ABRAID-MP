@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
@@ -283,7 +284,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesInValidationReturnsNoIsValidated() {
         // Arrange
         int diseaseGroupId = 87;
-        int n = setValidatedFlagForAllOccurrencesOfDiseaseGroup(diseaseGroupId, true);
+        setValidatedFlagForAllOccurrencesOfDiseaseGroup(diseaseGroupId, true);
 
         // Act
         List<DiseaseOccurrence> result = diseaseOccurrenceDao.getDiseaseOccurrencesInValidation(diseaseGroupId);
@@ -303,21 +304,50 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned() {
+    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssignedWithAnyEnvironmentalSuitability() {
+        getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(false, 25);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssignedWithNonNullEnvironmentalSuitability() {
+        getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(true, 10);
+    }
+
+    private void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(boolean mustHaveEnvironmentalSuitability,
+                                                                      int expectedSize) {
         // Arrange
         int diseaseGroupId = 87;
-        setFinalWeightingOfAllOccurrencesToNull();
+        int numberOfOccurrencesWithFinalWeightingNull = 25;
+        int numberOfOccurrencesWithEnvironmentalSuitabilityNotNull = 10;
+
+        // Arrange - get a random list of all dengue occurrences with isValidated = true
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getAll();
+        occurrences = select(occurrences, having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(),
+                equalTo(diseaseGroupId)));
+        occurrences = select(occurrences, having(on(DiseaseOccurrence.class).isValidated(), equalTo(true)));
+        Collections.shuffle(occurrences);
+
+        // Arrange - set the final weightings to null
+        occurrences = occurrences.subList(0, numberOfOccurrencesWithFinalWeightingNull);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setFinalWeighting(null);
+            diseaseOccurrenceDao.save(occurrence);
+        }
+
+        // Arrange - of these, set the environmental suitability weightings to non-null
+        occurrences = occurrences.subList(0, numberOfOccurrencesWithEnvironmentalSuitabilityNotNull);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setEnvironmentalSuitability(Math.random());
+            diseaseOccurrenceDao.save(occurrence);
+        }
 
         // Act
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        List<DiseaseOccurrence> actualOccurrences =
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId,
+                        mustHaveEnvironmentalSuitability);
 
         // Assert
-        assertThat(occurrences).hasSize(42);
-        for (DiseaseOccurrence occurrence : occurrences) {
-            assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
-            assertThat(occurrence.isValidated()).isTrue();
-            assertThat(occurrence.getFinalWeighting()).isNull();
-        }
+        assertThat(actualOccurrences).hasSize(expectedSize);
     }
 
     @Test
@@ -354,13 +384,6 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private boolean isDescendingChronologically(DiseaseOccurrence o1, DiseaseOccurrence o2) {
         return !(o1.getOccurrenceDate().isBefore(o2.getOccurrenceDate()));
-    }
-
-    private void setFinalWeightingOfAllOccurrencesToNull() {
-        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getAll()) {
-            occurrence.setFinalWeighting(null);
-            diseaseOccurrenceDao.save(occurrence);
-        }
     }
 
     @Test

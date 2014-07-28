@@ -37,7 +37,10 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToHaveFinalWeightingAssigned",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting is null"
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.isValidated = true " +
+                        "and d.finalWeighting is null " +
+                        "and (:mustHaveEnvironmentalSuitability = false or d.environmentalSuitability is not null)"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForModelRunRequest",
