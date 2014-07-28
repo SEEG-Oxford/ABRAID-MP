@@ -38,6 +38,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
         int minNewOccurrences = 100;
         double weighting = 0.5;
+        DiseaseExtent parameters = new DiseaseExtent();
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
@@ -51,6 +52,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
         diseaseGroup.setWeighting(weighting);
         diseaseGroup.setGlobal(true);
+        diseaseGroup.setDiseaseExtentParameters(parameters);
+        parameters.setDiseaseGroup(diseaseGroup);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -75,6 +78,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.isGlobal()).isTrue();
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 
     @Test
@@ -82,11 +86,14 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         String diseaseClusterName = "Test disease microcluster";
         DiseaseGroup diseaseCluster = diseaseGroupDao.getById(1);
+        DiseaseExtent parameters = new DiseaseExtent();
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.MICROCLUSTER);
         diseaseGroup.setParentGroup(diseaseCluster);
+        diseaseGroup.setDiseaseExtentParameters(parameters);
+        parameters.setDiseaseGroup(diseaseGroup);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -101,6 +108,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getParentGroup()).isNotNull();
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 
     @Test
@@ -112,6 +120,10 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         DiseaseGroup diseaseMicroCluster = new DiseaseGroup(diseaseCluster, diseaseMicroClusterName,
                 DiseaseGroupType.MICROCLUSTER);
         DiseaseGroup disease = new DiseaseGroup(diseaseMicroCluster, diseaseName, DiseaseGroupType.SINGLE);
+
+        DiseaseExtent parameters = new DiseaseExtent();
+        disease.setDiseaseExtentParameters(parameters);
+        parameters.setDiseaseGroup(disease);
 
         // Act
         diseaseGroupDao.save(diseaseMicroCluster);
@@ -129,6 +141,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(disease.getParentGroup().getParentGroup()).isNotNull();
         assertThat(disease.getParentGroup().getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(disease.getCreatedDate()).isNotNull();
+        assertThat(disease.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 
     @Test
@@ -181,7 +194,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
         // Arrange
-        DiseaseGroup diseaseGroup = initialiseDiseaseGroup("Name", DiseaseGroupType.SINGLE, false);
+        DiseaseGroup diseaseGroup = initialiseDiseaseGroup();
         DiseaseExtent parameters = new DiseaseExtent();
 
         diseaseGroup.setDiseaseExtentParameters(parameters);
@@ -196,12 +209,10 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(parameters.getDiseaseGroupId()).isEqualTo(diseaseGroup.getId());
     }
 
-    private DiseaseGroup initialiseDiseaseGroup(String name, DiseaseGroupType type, boolean automaticModelRuns) {
+    private DiseaseGroup initialiseDiseaseGroup() {
         DiseaseGroup diseaseGroup = new DiseaseGroup("Name");
         diseaseGroup.setGroupType(DiseaseGroupType.SINGLE);
         diseaseGroup.setAutomaticModelRuns(false);
         return diseaseGroup;
     }
-
-
 }
