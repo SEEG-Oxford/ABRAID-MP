@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
 
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
@@ -94,6 +95,69 @@ public class DiseaseGroupForModelRunValidatorTest {
         assertThat(errorMessage).isEqualTo("the Data Validator disease group is missing");
     }
 
+    @Test
+    public void diseaseExtentParametersAreMissing() {
+        // Arrange
+        DiseaseGroup diseaseGroup = createDiseaseGroup();
+        diseaseGroup.setDiseaseExtentParameters(null);
+        DiseaseGroupForModelRunValidator validator = new DiseaseGroupForModelRunValidator(diseaseGroup);
+
+        // Act
+        String errorMessage = validator.validate();
+
+        // Assert
+        assertThat(errorMessage).isEqualTo("the disease extent parameters are missing");
+    }
+
+    @Test
+    public void parameterMaxMonthsAgoIsMissing() {
+        parameterIsMissing(new DiseaseExtent(null, 0.6, 3, 1, 36, 1, 2), "'maximum months ago'");
+    }
+
+    @Test
+    public void parameterMinValidationWeightingIsMissing() {
+        parameterIsMissing(new DiseaseExtent(60, null, 3, 1, 36, 1, 2), "'minimum validation weighting'");
+    }
+
+    @Test
+    public void parameterMinOccurrencesForPresenceIsMissing() {
+        parameterIsMissing(new DiseaseExtent(60, 0.6, null, 1, 36, 1, 2), "'minimum occurrences for presence'");
+    }
+
+    @Test
+    public void parameterMinOccurrencesForPossiblePresenceIsMissing() {
+        parameterIsMissing(new DiseaseExtent(60, 0.6, 3, null, 36, 1, 2), "'minimum occurrences for possible presence'");
+    }
+
+    @Test
+    public void parameterMaximumMonthsAgoForHigherOccurrenceScoreIsMissing() {
+        parameterIsMissing(new DiseaseExtent(60, 0.6, 3, 1, null, 1, 2), "'maximum months ago for higher occurrence score'");
+    }
+
+    @Test
+    public void parameterLowerOccurrenceScoreIsMissing() {
+        parameterIsMissing(new DiseaseExtent(60, 0.6, 3, 1, 36, null, 2), "'lower occurrence score'");
+    }
+
+    @Test
+    public void parameterHigherOccurrenceScoreIsMissing() {
+        parameterIsMissing(new DiseaseExtent(60, 0.6, 3, 1, 36, 1, null), "'higher occurrence score'");
+    }
+
+    private void parameterIsMissing(DiseaseExtent parameters, String missingParameterName) {
+        // Arrange
+        DiseaseGroup diseaseGroup = createDiseaseGroup();
+        diseaseGroup.setDiseaseExtentParameters(parameters);
+        DiseaseGroupForModelRunValidator validator = new DiseaseGroupForModelRunValidator(diseaseGroup);
+
+        // Act
+        String errorMessage = validator.validate();
+
+        // Assert
+        assertThat(errorMessage).isEqualTo("the disease extent parameter " + missingParameterName + " is missing");
+    }
+
+
     private DiseaseGroup createDiseaseGroup() {
         DiseaseGroup diseaseGroup = new DiseaseGroup(87);
         diseaseGroup.setName("Test name");
@@ -102,6 +166,7 @@ public class DiseaseGroupForModelRunValidatorTest {
         diseaseGroup.setAbbreviation("Test abbreviation");
         diseaseGroup.setGlobal(false);
         diseaseGroup.setValidatorDiseaseGroup(new ValidatorDiseaseGroup());
+        diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(60, 0.6, 3, 1, 36, 1, 2));
         return diseaseGroup;
     }
 }

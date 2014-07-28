@@ -47,9 +47,10 @@ public class DiseaseExtent {
     public DiseaseExtent() {
     }
 
-    public DiseaseExtent(int maximumMonthsAgo, double minimumValidationWeighting, int minimumOccurrencesForPresence,
-                         int minimumOccurrencesForPossiblePresence, int maximumMonthsAgoForHigherOccurrenceScore,
-                         int lowerOccurrenceScore, int higherOccurrenceScore) {
+    public DiseaseExtent(Integer maximumMonthsAgo, Double minimumValidationWeighting,
+                         Integer minimumOccurrencesForPresence, Integer minimumOccurrencesForPossiblePresence,
+                         Integer maximumMonthsAgoForHigherOccurrenceScore,
+                         Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
         this.maximumMonthsAgo = maximumMonthsAgo;
         this.minimumValidationWeighting = minimumValidationWeighting;
         this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
