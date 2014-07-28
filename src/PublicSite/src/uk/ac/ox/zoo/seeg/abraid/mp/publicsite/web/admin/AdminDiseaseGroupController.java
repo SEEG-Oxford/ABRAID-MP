@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
