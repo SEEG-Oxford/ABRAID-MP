@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
+import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertFull;
+
+import java.util.List;
+
+import static ch.lambdaj.Lambda.convert;
 
 /**
  * Controller for the experts page of system administration.
@@ -38,7 +45,15 @@ public class AdminExpertsController extends AbstractController {
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admin/experts", method = RequestMethod.GET)
     public String showPage(Model model) throws JsonProcessingException {
-            model.addAttribute("experts", json.writeValueAsString(expertService.getAllExperts()));
-            return "admin/experts";
+        List<Expert> allExperts = expertService.getAllExperts();
+        List<JsonExpertFull> allExpertsDto = convert(allExperts, new Converter<Expert, JsonExpertFull>() {
+            @Override
+            public JsonExpertFull convert(Expert expert) {
+                return new JsonExpertFull(expert);
+            }
+        });
+
+        model.addAttribute("experts", json.writeValueAsString(allExpertsDto));
+        return "admin/experts";
     }
 }

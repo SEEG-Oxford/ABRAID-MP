@@ -46,10 +46,10 @@
     <!-- ko foreach: visibleEntries -->
     <tr data-bind="popover: { placement: 'bottom', trigger: 'hover', title: name, template: 'details-template' }">
         <td><span data-bind="text: name"></td>
-        <td><input type="checkbox" data-bind="formChecked: { checked: isSEEG, value: true }"></td>
+        <td><input type="checkbox" data-bind="formChecked: { checked: isSEEGMember, value: true }"></td>
         <td><input type="checkbox" data-bind="formChecked: { checked: isAdministrator, value: true }"></td>
         <td><input type="checkbox" data-bind="checked: publiclyVisible, bootstrapDisable: true"></td>
-        <td data-bind="if: publiclyVisible"><input type="checkbox" data-bind="formChecked: { checked: approvedVisible, value: true }"></td>
+        <td data-bind="if: publiclyVisible"><input type="checkbox" data-bind="formChecked: { checked: visibilityApproved, value: true }"></td>
         <td><span class="input-group"><input type="text" class="form-control" data-bind="formValue: weighting"></span></td>
         <td data-bind="date: { date: createdDate, format: 'LLL' }"></td>
         <td data-bind="date: { date: updatedDate, format: 'LLL' }"></td>
@@ -98,10 +98,10 @@
                             <thead>
                             <tr data-bind="template: { name: 'list-header-template', foreach: [
                                         { name: 'name', display: 'Name' },
-                                        { name: 'isSEEG', display: 'SEEG' },
+                                        { name: 'isSEEGMember', display: 'SEEG' },
                                         { name: 'isAdministrator', display: 'Administrator' },
                                         { name: 'publiclyVisible', display: 'Requested<br>Visibility' },
-                                        { name: 'approvedVisible', display: 'Approved<br>Visibility' },
+                                        { name: 'visibilityApproved', display: 'Approved<br>Visibility' },
                                         { name: 'weighting', display: 'Weighting' },
                                         { name: 'createdDate', display: 'Created' },
                                         { name: 'updatedDate', display: 'Updated' }

@@ -9,12 +9,13 @@ define(["ko", "underscore"], function (ko, _) {
 
         // Field state
         _(experts || []).each(function (expert) {
-            expert.isSEEG = ko.observable(false);
+            expert.isSEEGMember = ko.observable(expert.isSEEGMember);
             expert.isAdministrator = ko.observable(expert.isAdministrator);
-            expert.approvedVisible = ko.observable(false);
-            expert.weighting = ko.observable((expert.weighting|| 0).toString()).extend({ number: true, required: true, min: 0, max: 1});
+            expert.visibilityApproved = ko.observable(expert.visibilityApproved);
+            expert.weighting = ko.observable(expert.weighting.toString())
+                .extend({ number: true, required: true, min: 0, max: 1 });
             expert.createdDate = new Date(expert.createdDate);
-            expert.updatedDate = new Date(expert.createdDate);
+            expert.updatedDate = new Date(expert.updatedDate);
         });
 
         self.entries = ko.observableArray(experts);
@@ -73,13 +74,13 @@ define(["ko", "underscore"], function (ko, _) {
         });
 
         self.buildSubmissionData = function () {
-            return _(self.entries).map(function (expert) {
+            return _(self.entries()).map(function (expert) {
                 return {
                     id: expert.id,
                     isSEEG: expert.isSEEG(),
                     isAdministrator: expert.isAdministrator(),
-                    approvedVisible: expert.approvedVisible(),
-                    weighting: experts.weighting()
+                    visibilityApproved: expert.visibilityApproved(),
+                    weighting: parseFloat(experts.weighting())
                 };
             });
         };
