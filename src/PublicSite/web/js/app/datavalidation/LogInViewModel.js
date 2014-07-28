@@ -43,8 +43,12 @@ define([
                         refresh();
                     })
                     .fail(function (xhr) {
-                        // Status Unauthorized 401 - Display authentication error message to user: eg Bad Credentials
-                        self.notice("<span class='text-danger'>" + xhr.responseText + "</span>");
+                        if (xhr.status === 500) {
+                            self.notice("<span class='text-danger'>Server Error!</span>");
+                        } else {
+                            // Status Unauthorized 401 - Display authentication error message to user: eg Bad Credentials
+                            self.notice("<span class='text-danger'>" + xhr.responseText + "</span>");
+                        }
                     })
                     .always(function () {
                         self.isSubmitting(false);
