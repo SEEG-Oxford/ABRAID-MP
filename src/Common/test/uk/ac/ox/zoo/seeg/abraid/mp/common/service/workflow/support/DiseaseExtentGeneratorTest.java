@@ -61,7 +61,7 @@ public class DiseaseExtentGeneratorTest {
         group.setGlobal(false);
         group.setAutomaticModelRuns(true);
 
-        DiseaseExtent parameters = createParameters(group);
+        DiseaseExtent parameters = createParameters();
         group.setDiseaseExtentParameters(parameters);
 
         return group;
@@ -208,7 +208,7 @@ public class DiseaseExtentGeneratorTest {
         expectUpdateAggregatedDiseaseExtent(1);
     }
 
-    private DiseaseExtent createParameters(DiseaseGroup diseaseGroup) {
+    private DiseaseExtent createParameters() {
         int maximumMonthsAgo = 24;
         double minimumValidationWeighting = 0.2;
         int minimumOccurrencesForPresence = 5;
