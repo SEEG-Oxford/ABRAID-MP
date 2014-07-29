@@ -2,49 +2,38 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "ko",
-    "jquery",
-    "underscore",
-    "app/admin/diseasegroup/ModelRunParametersPayload"
-], function (ko, $, _, ModelRunParametersPayload) {
+    "ko"
+], function (ko) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSelectedEventName) {
+    return function (diseaseGroupSelectedEventName) {
         var self = this;
 
         self.minNewOccurrences = ko.observable().extend({ digit: true, min: 0 });
         self.minDataVolume = ko.observable().extend({ digit: true, min: 0 });
         self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
-        self.minHighFrequencyCountries = ko.observable().extend({ digit: true, min: 0 });
-        self.highFrequencyThreshold = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
 
-        var diseaseGroupId;
-        var originalPayload;
-        var data = ko.computed(function () { return ModelRunParametersPayload.fromViewModel(self); });
+        self.minHighFrequencyCountriesValue = ko.observable();
+        self.minHighFrequencyCountries = ko.computed({
+            read:  function () { return self.occursInAfrica() ? self.minHighFrequencyCountriesValue() : null; },
+            write: function (value) { self.minHighFrequencyCountriesValue(value); },
+            owner: self
+        }).extend({ digit: true, min: 0 });
 
-        self.notice = ko.observable();
-        self.isSubmitting = ko.observable(false);
-        self.disableSaveButton = ko.computed(function () {
-            return ((_.isEqual(originalPayload, data())) || self.isSubmitting());
-        });
-        self.save = function () {
-            self.isSubmitting(true);
-            var url = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/modelrunparameters";
-            $.post(url, data())
-                .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
-                .fail(function () { self.notice({ message: "Error saving", priority: "warning"}); })
-                .always(function () { self.isSubmitting(false); });
-        };
+        self.highFrequencyThresholdValue = ko.observable();
+        self.highFrequencyThreshold = ko.computed({
+            read:  function () { return self.occursInAfrica() ? self.highFrequencyThresholdValue() : null; },
+            write: function (value) { self.highFrequencyThresholdValue(value); },
+            owner: self
+        }).extend({ digit: true, min: 0 });
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            diseaseGroupId = diseaseGroup.id;
-            originalPayload = ModelRunParametersPayload.fromJson(diseaseGroup);
-            self.minNewOccurrences(diseaseGroup.minNewOccurrences);
-            self.minDataVolume(diseaseGroup.minDataVolume);
-            self.minDistinctCountries(diseaseGroup.minDistinctCountries);
-            self.minHighFrequencyCountries(diseaseGroup.minHighFrequencyCountries);
-            self.highFrequencyThreshold(diseaseGroup.highFrequencyThreshold);
+            self.minNewOccurrences((diseaseGroup.minNewOccurrences || "").toString());
+            self.minDataVolume((diseaseGroup.minDataVolume || "").toString());
+            self.minDistinctCountries((diseaseGroup.minDistinctCountries || "").toString());
+            self.minHighFrequencyCountries((diseaseGroup.minHighFrequencyCountries || "").toString());
+            self.highFrequencyThreshold((diseaseGroup.highFrequencyThreshold || "").toString());
             self.occursInAfrica(diseaseGroup.occursInAfrica);
         });
     };
