@@ -1,5 +1,4 @@
-/**
- * The AJAX call to Spring Security when login button is clicked.
+/* View model for the login form.
  * Copyright (c) 2014 University of Oxford
  */
 define([
@@ -17,7 +16,7 @@ define([
         self.username = ko.observable("");
         self.password = ko.observable("");
 
-        self.message = ko.computed(function() {
+        self.message = ko.computed(function () {
             if (self.isSubmitting()) {
                 return "<i class='fa fa-spinner'></i>&nbsp;Attempting  login ...";
             }
@@ -37,13 +36,13 @@ define([
             };
         };
 
-        self.successHandler = function (xhr) {
+        self.successHandler = function () {
             self.pushNotice("Success.", "success");
             refresh();
         };
 
         self.failureHandler = function (xhr) {
-           self.pushNotice(xhr.responseText, "danger");
+            self.pushNotice(xhr.responseText, "danger");
         };
 
         var baseSubmit = self.submit;
@@ -58,7 +57,7 @@ define([
                 baseSubmit();
             } else {
                 self.notices.removeAll();
-                self.pushNotice("Username &amp; password required!", "warning")
+                self.pushNotice("Username &amp; password required!", "warning");
             }
         };
     };

@@ -1,4 +1,4 @@
-/* foo.
+/* View model for the expert administration page.
  * Copyright (c) 2014 University of Oxford
  */
 define([

@@ -11,11 +11,11 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * foo
+ * Helper for the AdminExpertsController, separated out into a class to isolate the transaction/exception rollback.
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminExpertsHelper {
-    public static final String FAIL_NO_ID_MATCH = "At least one expert was specified with an invalid ID (%s).";
+    private static final String FAIL_NO_ID_MATCH = "At least one expert was specified with an invalid ID (%s).";
     private ExpertService expertService;
 
     @Autowired
@@ -23,10 +23,15 @@ public class AdminExpertsHelper {
         this.expertService = expertService;
     }
 
+    /**
+     * Updates the database entries for a set of experts.
+     * @param experts The experts to update.
+     * @throws ValidationException Thrown if an id matching expert can not be found for one of the argument experts.
+     */
     @Transactional(rollbackFor = Exception.class)
-    public void processExpertsAsTransaction(Collection<JsonExpertFull> expertsDto) throws ValidationException {
+    public void processExpertsAsTransaction(Collection<JsonExpertFull> experts) throws ValidationException {
         // Start of transaction
-        for(JsonExpertFull expertDto : expertsDto) {
+        for (JsonExpertFull expertDto : experts) {
             Expert expert = expertService.getExpertById(expertDto.getId());
             if (expert == null) {
                 // Roll back

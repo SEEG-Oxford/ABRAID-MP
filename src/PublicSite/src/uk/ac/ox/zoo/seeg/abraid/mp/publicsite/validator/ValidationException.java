@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 import java.util.Collection;
 
 /**
- * foo
+ * A custom exception to use for validation failures. Carries a list of failure messages as a payload.
  * Copyright (c) 2014 University of Oxford
  */
 public class ValidationException extends Exception {

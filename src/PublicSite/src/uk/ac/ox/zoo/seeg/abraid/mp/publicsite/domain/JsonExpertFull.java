@@ -17,17 +17,17 @@ public class JsonExpertFull extends JsonExpertDetails {
     private Boolean isAdministrator;
     private Boolean isSEEGMember;
 
-    public JsonExpertFull(){
+    public JsonExpertFull() {
         super();
     }
-    
+
     public JsonExpertFull(Expert expert) {
         super(expert);
         setId(expert.getId());
         setEmail(expert.getEmail());
         setWeighting(expert.getWeighting());
         setVisibilityApproved(expert.getVisibilityApproved());
-        setCreateDate(expert.getCreatedDate());
+        setCreatedDate(expert.getCreatedDate());
         setUpdatedDate(expert.getUpdatedDate());
         setAdministrator(expert.isAdministrator());
         setSEEGMember(expert.isSeegMember());
@@ -87,7 +87,7 @@ public class JsonExpertFull extends JsonExpertDetails {
         return createdDate;
     }
 
-    public void setCreateDate(DateTime createdDate) {
+    public void setCreatedDate(DateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -95,7 +95,7 @@ public class JsonExpertFull extends JsonExpertDetails {
         return updatedDate;
     }
 
-    public void setUpdatedDate(DateTime createdDate) {
-        this.updatedDate = createdDate;
+    public void setUpdatedDate(DateTime updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }

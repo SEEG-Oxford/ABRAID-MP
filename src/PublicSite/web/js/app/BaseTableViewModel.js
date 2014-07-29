@@ -1,4 +1,5 @@
-/*
+/* A base view model to provide a common implementation of knockout client-side table behavior.
+ * Use "call" to apply. E.g. BaseTableViewModel.call(self, args..)
  * Copyright (c) 2014 University of Oxford.
  */
 define([
@@ -37,7 +38,7 @@ define([
                 iterable = iterable.filter(function (disease) {
                     _(filterableFields).some(function (field) {
                         return (ko.utils.recursivePeek(disease[field]) || "").toLowerCase().indexOf(filter) !== -1;
-                    })
+                    });
                 });
             }
 

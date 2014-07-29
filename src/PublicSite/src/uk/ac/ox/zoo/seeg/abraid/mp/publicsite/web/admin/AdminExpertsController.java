@@ -45,6 +45,8 @@ public class AdminExpertsController extends AbstractController {
             "One or more experts contain no 'visibilityApproved' field.";
     private static final String FAIL_NO_WEIGHTING_FIELD =
             "One or more experts contain no 'weighting' field.";
+    private static final String FAIL_INVALID_WEIGHTING_FIELD =
+            "One or more experts contain an invalid (NaN or Inf) 'weighting' field.";
     private static final String FAIL_NO_ADMINISTRATOR_FIELD =
             "One or more experts contain no 'administrator' field.";
     private static final String FAIL_NO_SEEG_FIELD =
@@ -83,12 +85,16 @@ public class AdminExpertsController extends AbstractController {
         return "admin/experts";
     }
 
+    /**
+     * Receives the user input from the expert administration page and responds accordingly.
+     * @param experts The user input from the expert administration page.
+     * @return A failure status with an array of response messages or a success status.
+     */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admin/experts", method = RequestMethod.POST,
          consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Collection<String>> submitPage(@RequestBody Collection<JsonExpertFull> experts)
-            throws JsonProcessingException {
+    public ResponseEntity<Collection<String>> submitPage(@RequestBody Collection<JsonExpertFull> experts) {
         Collection<String> allMessages = flatten(convert(experts,
             new Converter<JsonExpertFull, Collection<String>>() {
                 @Override
@@ -126,6 +132,8 @@ public class AdminExpertsController extends AbstractController {
 
         if (expert.getWeighting() == null) {
             expertMessages.add(FAIL_NO_WEIGHTING_FIELD);
+        } else if (Double.isNaN(expert.getWeighting()) || Double.isInfinite(expert.getWeighting())) {
+            expertMessages.add(FAIL_INVALID_WEIGHTING_FIELD);
         }
 
         if (expert.isAdministrator() == null) {
