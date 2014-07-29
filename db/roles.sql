@@ -18,7 +18,7 @@ GRANT SELECT                        ON admin_unit_tropical TO :application_usern
 GRANT SELECT, INSERT                ON alert TO :application_username;
 GRANT SELECT                        ON country TO :application_username;
 GRANT SELECT, INSERT                ON covariate_influence TO :application_username;
-GRANT SELECT, INSERT,        DELETE ON disease_extent TO :application_username;
+GRANT SELECT, INSERT, UPDATE        ON disease_extent TO :application_username;
 GRANT SELECT                        ON disease_extent_class TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_occurrence TO :application_username;

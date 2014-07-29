@@ -89,9 +89,8 @@ public class NativeSQLImpl implements NativeSQL {
         // Flush the session to ensure that the latest admin_unit_disease_extent_class entries are available
         sessionFactory.getCurrentSession().flush();
 
-        executeUpdate(DELETE_DISEASE_EXTENT_QUERY, "diseaseGroupId", diseaseGroupId);
-        String insertQuery = String.format(INSERT_DISEASE_EXTENT_QUERY, getGlobalOrTropical(isGlobal));
-        executeUpdate(insertQuery, "diseaseGroupId", diseaseGroupId);
+        String updateQuery = String.format(UPDATE_DISEASE_EXTENT_QUERY, getGlobalOrTropical(isGlobal));
+        executeUpdate(updateQuery, "diseaseGroupId", diseaseGroupId);
     }
 
     /**

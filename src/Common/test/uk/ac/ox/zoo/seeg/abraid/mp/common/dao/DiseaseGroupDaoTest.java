@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
@@ -39,6 +40,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         double weighting = 0.5;
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup);
+
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
         diseaseGroup.setPublicName(diseaseClusterPublicName);
@@ -50,6 +53,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
         diseaseGroup.setWeighting(weighting);
         diseaseGroup.setGlobal(true);
+        diseaseGroup.setDiseaseExtentParameters(parameters);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -74,6 +78,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.isGlobal()).isTrue();
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 
     @Test
@@ -83,9 +88,12 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         DiseaseGroup diseaseCluster = diseaseGroupDao.getById(1);
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup);
+
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.MICROCLUSTER);
         diseaseGroup.setParentGroup(diseaseCluster);
+        diseaseGroup.setDiseaseExtentParameters(parameters);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -100,6 +108,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getParentGroup()).isNotNull();
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 
     @Test
@@ -111,6 +120,9 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         DiseaseGroup diseaseMicroCluster = new DiseaseGroup(diseaseCluster, diseaseMicroClusterName,
                 DiseaseGroupType.MICROCLUSTER);
         DiseaseGroup disease = new DiseaseGroup(diseaseMicroCluster, diseaseName, DiseaseGroupType.SINGLE);
+
+        DiseaseExtent parameters = new DiseaseExtent(disease);
+        disease.setDiseaseExtentParameters(parameters);
 
         // Act
         diseaseGroupDao.save(diseaseMicroCluster);
@@ -128,6 +140,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(disease.getParentGroup().getParentGroup()).isNotNull();
         assertThat(disease.getParentGroup().getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(disease.getCreatedDate()).isNotNull();
+        assertThat(disease.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 
     @Test
@@ -147,5 +160,54 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
         assertThat(ids).hasSize(1);
         assertThat(ids.get(0)).isEqualTo(87);
+    }
+
+    @Test
+    public void getExistingDiseaseExtent() {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
+        assertThat(diseaseExtent.getMaximumMonthsAgo()).isEqualTo(60);
+        assertThat(diseaseExtent.getMinimumValidationWeighting()).isEqualTo(0.6);
+    }
+
+    @Test
+    public void addDiseaseExtentToDiseaseGroupSavesWithSameDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = 22;
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        DiseaseExtent diseaseExtent = new DiseaseExtent(diseaseGroup);
+        diseaseGroup.setDiseaseExtentParameters(diseaseExtent);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+    }
+
+    @Test
+    public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
+        // Arrange
+        DiseaseGroup diseaseGroup = initialiseDiseaseGroup();
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup);
+        diseaseGroup.setDiseaseExtentParameters(parameters);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        assertThat(diseaseGroup.getId()).isNotNull();
+        assertThat(parameters.getDiseaseGroupId()).isEqualTo(diseaseGroup.getId());
+    }
+
+    private DiseaseGroup initialiseDiseaseGroup() {
+        DiseaseGroup diseaseGroup = new DiseaseGroup("Name");
+        diseaseGroup.setGroupType(DiseaseGroupType.SINGLE);
+        diseaseGroup.setAutomaticModelRuns(false);
+        return diseaseGroup;
     }
 }

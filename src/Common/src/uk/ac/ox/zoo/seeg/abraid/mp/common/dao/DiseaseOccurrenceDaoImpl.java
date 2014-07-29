@@ -33,9 +33,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     private static final String DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE =
             "and d.occurrenceDate >= :minimumOccurrenceDate ";
 
-    private static final String DISEASE_EXTENT_FEEDS_CLAUSE =
-            "and d.alert.feed.id in :feedIds ";
-
     public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -78,8 +75,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * value. If null, the validation weighting is ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
-     * @param feedIds All disease occurrences must result from one of these feeds. If feed IDs is null or zero,
-     * accepts all feeds.
      * @param isGlobal True if the disease group is global, otherwise false.
      * @return A list of disease occurrences.
      */
@@ -87,18 +82,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     @SuppressWarnings("unchecked")
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            List<Integer> feedIds, boolean isGlobal) {
+            boolean isGlobal) {
         String queryString = DISEASE_EXTENT_QUERY;
-        boolean includeFeeds = (feedIds != null && feedIds.size() > 0);
 
         if (minimumValidationWeighting != null) {
             queryString += DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE;
         }
         if (minimumOccurrenceDate != null) {
             queryString += DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE;
-        }
-        if (includeFeeds) {
-            queryString += DISEASE_EXTENT_FEEDS_CLAUSE;
         }
 
         Query query = currentSession().createQuery(queryString);
@@ -109,9 +100,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         }
         if (minimumOccurrenceDate != null) {
             query.setParameter("minimumOccurrenceDate", minimumOccurrenceDate);
-        }
-        if (includeFeeds) {
-            query.setParameterList("feedIds", feedIds);
         }
 
         return query.list();

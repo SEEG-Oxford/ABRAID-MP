@@ -15,6 +15,7 @@
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence"/>
+        <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup"/>
         <mapping class="uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence"/>
