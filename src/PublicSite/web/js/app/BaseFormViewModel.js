@@ -61,29 +61,35 @@ define([
             _(messages).each(function (message) {self.pushNotice(message, priority); });
         };
 
-        self.successHandler = function (xhr) {
+        self.successHandler = function (data, textStatus, xhr) {
             self.pushNotice(messages.success || "Form saved successfully.", "success");
             processResponse(xhr, "success");
         };
 
         self.failureHandler = function (xhr) {
             self.pushNotice(messages.fail || "Failed to save form.", "warning");
-            processResponse(xhr, "warning");
+            if (xhr.status === 500) {
+                self.pushNotice(messages.success || "Server error.", "warning");
+            } else if (xhr.status === 401) {
+                self.pushNotice(messages.success || "Authentication error.", "warning");
+            } else {
+                processResponse(xhr, "warning");
+            }
         };
 
-        self.alwaysHandler = function (xhr) {};
+        self.alwaysHandler = function () {};
 
         self.submit = function () {
-             self.notices.removeAll();
-             self.isSubmitting(true);
+            self.notices.removeAll();
+            self.isSubmitting(true);
 
-             $.ajax(buildAjaxArgs())
-                 .done(self.successHandler)
-                 .fail(self.failureHandler)
-                 .always(function (xhr) {
+            $.ajax(buildAjaxArgs())
+                .done(self.successHandler)
+                .fail(self.failureHandler)
+                .always(function (xhr) {
                     self.alwaysHandler(xhr);
                     self.isSubmitting(false);
-                 });
+                });
         };
     };
 });

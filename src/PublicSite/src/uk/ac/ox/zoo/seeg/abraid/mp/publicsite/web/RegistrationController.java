@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
@@ -40,7 +41,7 @@ import static org.hamcrest.collection.IsIn.isIn;
  */
 @Controller
 @SessionAttributes(RegistrationController.EXPERT_SESSION_STATE_KEY)
-public class RegistrationController {
+public class RegistrationController extends AbstractController {
     /** Session key for Expert object. */
     public static final String EXPERT_SESSION_STATE_KEY = "expert";
 

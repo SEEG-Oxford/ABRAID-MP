@@ -51,6 +51,8 @@
 
     <bean id="expertForRegistrationValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator" />
 
+    <bean id="adminExpertsHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminExpertsHelper" />
+
     <mvc:default-servlet-handler/>
 
     <tx:annotation-driven/>
