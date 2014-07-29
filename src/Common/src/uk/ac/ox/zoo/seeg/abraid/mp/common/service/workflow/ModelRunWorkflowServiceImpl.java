@@ -77,11 +77,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     /**
      * Generate the disease extent for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group.
+     * @param diseaseGroup The disease group.
      */
     @Override
-    public void generateDiseaseExtent(int diseaseGroupId) {
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+    public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
     }
 
     private void prepareForAndRequestModelRun(int diseaseGroupId, boolean alwaysRemoveFromValidator)
@@ -89,11 +89,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
-            generateDiseaseExtent(diseaseGroupId);
+            generateDiseaseExtent(diseaseGroup);
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
         } else {
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
-            generateDiseaseExtent(diseaseGroupId);
+            generateDiseaseExtent(diseaseGroup);
         }
         modelRunRequester.requestModelRun(diseaseGroupId);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);

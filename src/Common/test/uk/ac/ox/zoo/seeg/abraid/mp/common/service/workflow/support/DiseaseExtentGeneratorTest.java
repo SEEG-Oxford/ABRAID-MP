@@ -78,7 +78,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -96,7 +96,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -130,7 +130,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -152,7 +152,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -174,7 +174,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(getReviews());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -200,7 +200,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroupId);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);

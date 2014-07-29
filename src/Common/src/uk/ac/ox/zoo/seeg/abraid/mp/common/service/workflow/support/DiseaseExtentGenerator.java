@@ -32,10 +32,10 @@ public class DiseaseExtentGenerator {
 
     /**
      * Generates a disease extent for a single disease group.
-     * @param diseaseGroupId The disease group.
+     * @param diseaseGroup The disease group.
      */
-    public void generateDiseaseExtent(Integer diseaseGroupId) {
-        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroupId);
+    public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
+        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
         // update existing extent
@@ -46,8 +46,8 @@ public class DiseaseExtentGenerator {
         }
     }
 
-    private DiseaseExtentGeneratorHelper createHelper(Integer diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+    private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup) {
+        int diseaseGroupId = diseaseGroup.getId();
 
         // Find current disease extent
         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent =
@@ -61,8 +61,7 @@ public class DiseaseExtentGenerator {
         // Retrieve a lookup table of disease extent classes
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
 
-        return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits,
-                diseaseExtentClasses);
+        return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses);
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
