@@ -59,8 +59,7 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(true));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
-                eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(newWeightings));
@@ -85,8 +84,7 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(false));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(
-                eq(diseaseGroupId), any(DiseaseExtentParameters.class));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
     }
@@ -114,5 +112,18 @@ public class ModelRunWorkflowServiceTest {
 
         // Assert
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(map));
+    }
+
+    @Test
+    public void generateDiseaseExtent() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+
+        // Act
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+
+        // Assert
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
     }
 }

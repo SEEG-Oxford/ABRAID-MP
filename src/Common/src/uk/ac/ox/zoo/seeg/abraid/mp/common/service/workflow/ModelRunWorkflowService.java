@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 
 import java.util.Map;
@@ -36,4 +37,10 @@ public interface ModelRunWorkflowService {
      * @param newExpertsWeightings The map from expert to the new weighting value.
      */
     void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings);
+
+    /**
+     * Generates the disease extent for the specified disease group.
+     * @param diseaseGroup The disease group.
+     */
+    void generateDiseaseExtent(DiseaseGroup diseaseGroup);
 }

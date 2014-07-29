@@ -32,11 +32,10 @@ public class DiseaseExtentGenerator {
 
     /**
      * Generates a disease extent for a single disease group.
-     * @param diseaseGroupId The disease group.
-     * @param parameters Parameters used in generating the disease extent.
+     * @param diseaseGroup The disease group.
      */
-    public void generateDiseaseExtent(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
-        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroupId, parameters);
+    public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
+        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
         // update existing extent
@@ -47,8 +46,8 @@ public class DiseaseExtentGenerator {
         }
     }
 
-    private DiseaseExtentGeneratorHelper createHelper(Integer diseaseGroupId, DiseaseExtentParameters parameters) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+    private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup) {
+        int diseaseGroupId = diseaseGroup.getId();
 
         // Find current disease extent
         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent =
@@ -62,8 +61,7 @@ public class DiseaseExtentGenerator {
         // Retrieve a lookup table of disease extent classes
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
 
-        return new DiseaseExtentGeneratorHelper(diseaseGroup, parameters, currentDiseaseExtent, adminUnits,
-                diseaseExtentClasses);
+        return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses);
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
@@ -92,25 +90,23 @@ public class DiseaseExtentGenerator {
 
     private void setInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
-                diseaseService.getDiseaseOccurrencesForDiseaseExtent(
-                        helper.getDiseaseGroup().getId(), null, null, null);
+                diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(), null, null);
         helper.setOccurrences(occurrences);
     }
 
     private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
-        DiseaseExtentParameters parameters = helper.getParameters();
+        DiseaseExtent parameters = helper.getParameters();
 
         // The minimum occurrence date is only relevant if automatic model runs are enabled for the disease
         DateTime minimumOccurrenceDate = null;
         if (helper.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
-            minimumOccurrenceDate = DateTime.now().minusYears(parameters.getMaximumYearsAgo());
+            minimumOccurrenceDate = DateTime.now().minusMonths(parameters.getMaximumMonthsAgo());
         }
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 parameters.getMinimumValidationWeighting(),
-                minimumOccurrenceDate,
-                parameters.getFeedIds()
+                minimumOccurrenceDate
         );
         helper.setOccurrences(occurrences);
     }

@@ -4,11 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
@@ -139,5 +142,159 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     private void mockModelWrapperWebServiceCall() {
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
                 .thenReturn("{\"modelRunName\":\"testname\"}");
+    }
+
+    @Test
+    public void saveDiseaseGroupSetsParameters() throws Exception {
+        // Arrange
+        int diseaseGroupId = 87;
+        int parentId = 1;
+        int validatorId = 1;
+        String groupType = "MICROCLUSTER";
+        String settings = "{ \"name\": \"Name\", " +
+                "\"publicName\": \"Public name\", " +
+                "\"shortName\": \"Short name\", " +
+                "\"abbreviation\": \"ABBREV\", " +
+                "\"groupType\": \"MICROCLUSTER\", " +
+                "\"parentDiseaseGroup\": { \"id\": \"" + parentId + "\"}, " +
+                "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
+                "\"isGlobal\": false }";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isNoContent());
+
+        // Assert
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
+        ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
+        assertThat(diseaseGroup.getName()).isEqualTo("Name");
+        assertThat(diseaseGroup.getPublicName()).isEqualTo("Public name");
+        assertThat(diseaseGroup.getShortName()).isEqualTo("Short name");
+        assertThat(diseaseGroup.getAbbreviation()).isEqualTo("ABBREV");
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.valueOf(groupType));
+        assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
+        assertThat(diseaseGroup.getParentGroup()).isEqualTo(parentDiseaseGroup);
+        assertThat(diseaseGroup.getValidatorDiseaseGroup()).isEqualTo(validatorDiseaseGroup);
+    }
+
+    @Test
+    public void saveDiseaseGroupSetsParametersWithoutParentDiseaseGroup() throws Exception {
+        // Arrange
+        int diseaseGroupId = 87;
+        String groupType = "MICROCLUSTER";
+        String settings = "{ \"name\": \"Name\", " +
+                "\"publicName\": \"Public name\", " +
+                "\"shortName\": \"Short name\", " +
+                "\"abbreviation\": \"ABBREV\", " +
+                "\"groupType\": \"MICROCLUSTER\", " +
+                "\"isGlobal\": false }";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isNoContent());
+
+        // Assert
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        assertThat(diseaseGroup.getName()).isEqualTo("Name");
+        assertThat(diseaseGroup.getPublicName()).isEqualTo("Public name");
+        assertThat(diseaseGroup.getShortName()).isEqualTo("Short name");
+        assertThat(diseaseGroup.getAbbreviation()).isEqualTo("ABBREV");
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.valueOf(groupType));
+        assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
+        assertThat(diseaseGroup.getParentGroup()).isEqualTo(null);
+    }
+
+    @Test
+     public void saveDiseaseGroupReturnsBadRequestForMissingName() throws Exception {
+        // Arrange
+        int diseaseGroupId = 87;
+        String settings = "{ \"publicName\": \"Public name\", \"groupType\": \"MICROCLUSTER\"}";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void saveDiseaseGroupReturnsBadRequestForMissingGroupType() throws Exception {
+        // Arrange
+        int diseaseGroupId = 87;
+        String settings = "{ \"name\": \"Name\", \"publicName\": \"Public name\"}";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void saveRejectsNonPOSTRequests() throws Exception {
+        this.mockMvc.perform(
+                get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/save"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/save"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/save"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/save"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void addRejectsNonPOSTRequests() throws Exception {
+        this.mockMvc.perform(
+                get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void addDiseaseGroupAddsNewDiseaseGroupToDatabase() throws Exception {
+        // Arrange
+        int parentId = 1;
+        int validatorId = 1;
+        String settings = "{ \"name\": \"Name\", " +
+                "\"publicName\": \"Public name\", " +
+                "\"shortName\": \"Short name\", " +
+                "\"abbreviation\": \"ABBREV\", " +
+                "\"groupType\": \"MICROCLUSTER\", " +
+                "\"parentDiseaseGroup\": { \"id\": \"" + parentId + "\"}, " +
+                "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
+                "\"isGlobal\": false }";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add";
+        int expectedSize = (diseaseService.getAllDiseaseGroups()).size() + 1;
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isNoContent());
+
+        // Assert
+        assertThat(diseaseService.getAllDiseaseGroups()).hasSize(expectedSize);
     }
 }

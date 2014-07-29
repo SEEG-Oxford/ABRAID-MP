@@ -3,14 +3,13 @@
  */
 define([
     "app/admin/diseasegroup/DiseaseGroupSettingsViewModel",
-    "ko",
-    "underscore"
-], function (DiseaseGroupSettingsViewModel, ko, _) {
+    "ko"
+], function (DiseaseGroupSettingsViewModel, ko) {
     "use strict";
 
     describe("The 'disease group settings' view model", function () {
         it("holds the expected properties of a disease group as observables", function () {
-            var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
+            var vm = new DiseaseGroupSettingsViewModel([], [], "");
             expect(vm.name).toBeObservable();
             expect(vm.publicName).toBeObservable();
             expect(vm.shortName).toBeObservable();
@@ -26,7 +25,7 @@ define([
                 //Arrange
                 var validatorDiseaseGroups = [{ id: 1 }, { id: 2 }];
                 //Act
-                var vm = new DiseaseGroupSettingsViewModel("", [], validatorDiseaseGroups, "");
+                var vm = new DiseaseGroupSettingsViewModel([], validatorDiseaseGroups, "");
                 //Assert
                 expect(vm.validatorDiseaseGroups).toBe(validatorDiseaseGroups);
             });
@@ -38,7 +37,7 @@ define([
                 var microclusterDiseaseGroup1 = { groupType: "MICROCLUSTER" };
                 var microclusterDiseaseGroup2 = { groupType: "MICROCLUSTER" };
                 var diseaseGroups = [microclusterDiseaseGroup1, microclusterDiseaseGroup2];
-                var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, [], "");
+                var vm = new DiseaseGroupSettingsViewModel(diseaseGroups, [], "");
                 // Act
                 vm.selectedType("SINGLE");
                 // Assert
@@ -52,7 +51,7 @@ define([
                 var clusterDiseaseGroup2 = { groupType: "CLUSTER" };
                 var diseaseGroups = [clusterDiseaseGroup1, clusterDiseaseGroup2];
                 // Act
-                var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, [], "");
+                var vm = new DiseaseGroupSettingsViewModel(diseaseGroups, [], "");
                 vm.selectedType("MICROCLUSTER");
                 // Assert
                 expect(vm.parentDiseaseGroups()).toContain(clusterDiseaseGroup1);
@@ -65,7 +64,7 @@ define([
                 var clusterDiseaseGroup = { groupType: "CLUSTER" };
                 var diseaseGroups = [microclusterDiseaseGroup, clusterDiseaseGroup];
                 // Act
-                var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, [], "");
+                var vm = new DiseaseGroupSettingsViewModel(diseaseGroups, [], "");
                 vm.selectedType("CLUSTER");
                 // Assert
                 expect(vm.parentDiseaseGroups()).toBeNull();
@@ -88,8 +87,8 @@ define([
                 parentDiseaseGroup: parentDiseaseGroup,
                 validatorDiseaseGroup: validatorDiseaseGroup
             };
-            var eventName = "disease-group-selected";
-            var vm = new DiseaseGroupSettingsViewModel("", diseaseGroups, validatorDiseaseGroups, eventName);
+            var eventName = "event";
+            var vm = new DiseaseGroupSettingsViewModel(diseaseGroups, validatorDiseaseGroups, eventName);
 
             // Act
             ko.postbox.publish(eventName, diseaseGroup);
@@ -105,73 +104,11 @@ define([
             });
 
             it("finds the correct parent disease group in the list of options", function () {
-                expect(_.isEqual(vm.selectedParentDiseaseGroup(), diseaseGroup.parentDiseaseGroup)).toBe(true);
+                expect(vm.selectedParentDiseaseGroup()).toEqual(diseaseGroup.parentDiseaseGroup);
             });
 
             it("finds the correct validator disease group in the list of options", function () {
-                expect(_.isEqual(vm.selectedValidatorDiseaseGroup(), diseaseGroup.validatorDiseaseGroup)).toBe(true);
-            });
-        });
-
-        describe("holds the 'save changes' function which", function () {
-            it("POSTs to the specified URL, with the correct parameters", function () {
-                // Arrange
-                var baseUrl = "base/";
-                var eventName = "foo";
-
-                var diseaseGroupId = 1;
-                var name = "name";
-                var groupType = "SINGLE";
-                var parentId = 2;
-                var parentDiseaseGroup = { id: parentId, groupType: "MICROCLUSTER" };
-                var diseaseGroups = [parentDiseaseGroup];
-                var validatorId = 3;
-                var validatorDiseaseGroup = { id: validatorId };
-                var validatorDiseaseGroups = [validatorDiseaseGroup];
-                var diseaseGroup = {
-                    id: 1,
-                    name: name,
-                    groupType: "SINGLE",
-                    parentDiseaseGroup: parentDiseaseGroup,
-                    validatorDiseaseGroup: validatorDiseaseGroup
-                };
-
-                var vm = new DiseaseGroupSettingsViewModel(baseUrl, diseaseGroups, validatorDiseaseGroups, eventName);
-                var expectedUrl = baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/settings";
-
-                var expectedParams = "name=" + name + "&groupType=" + groupType +
-                    "&parentDiseaseGroupId=" + parentId + "&validatorDiseaseGroupId=" + validatorId;
-
-                // Act
-                ko.postbox.publish(eventName, diseaseGroup);
-                vm.save();
-
-                // Assert
-                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
-                expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
-                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
-            });
-
-            it("when unsuccessful, updates the 'notice' with an error", function () {
-                // Arrange
-                var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
-                var expectedNotice = { message: "Error saving", priority: "warning" };
-                // Act
-                vm.save();
-                jasmine.Ajax.requests.mostRecent().response({ status: 500 });
-                // Assert
-                expect(_.isEqual(vm.notice(), expectedNotice)).toBeTruthy();
-            });
-
-            it("when successful, updates the 'notice' with a success", function () {
-                // Arrange
-                var vm = new DiseaseGroupSettingsViewModel("", [], [], "");
-                var expectedNotice = { message: "Saved successfully", priority: "success" };
-                // Act
-                vm.save();
-                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                // Assert
-                expect(_.isEqual(vm.notice(), expectedNotice)).toBeTruthy();
+                expect(vm.selectedValidatorDiseaseGroup()).toEqual(diseaseGroup.validatorDiseaseGroup);
             });
         });
     });
