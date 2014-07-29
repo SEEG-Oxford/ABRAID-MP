@@ -70,7 +70,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         int diseaseGroupId = 87;
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -78,7 +78,16 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunSucceeds() {
+    public void requestModelRunSucceedsWithBatching() {
+        requestModelRunSucceeds(DateTime.now().plusDays(2));
+    }
+
+    @Test
+    public void requestModelRunSucceedsWithoutBatching() {
+        requestModelRunSucceeds(null);
+    }
+
+    private void requestModelRunSucceeds(DateTime batchEndDate) {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
@@ -89,7 +98,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        modelRunRequester.requestModelRun(diseaseGroupId, batchEndDate);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -98,6 +107,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         assertThat(modelRun.getName()).isEqualTo(modelName);
         assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
         assertThat(modelRun.getRequestDate()).isEqualTo(now);
+        assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
     }
 
     private void setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(int diseaseGroupId) {
@@ -115,7 +125,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -131,7 +141,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -144,7 +154,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         clearFinalWeightingsFromDatabase(diseaseGroupId);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);

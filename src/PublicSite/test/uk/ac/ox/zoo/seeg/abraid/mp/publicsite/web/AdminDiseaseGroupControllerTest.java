@@ -103,12 +103,14 @@ public class AdminDiseaseGroupControllerTest {
     public void requestModelRun() {
         // Arrange
         int diseaseGroupId = 87;
+        DateTime batchEndDate = DateTime.now().plusDays(1);
 
         // Act
-        controller.requestModelRun(diseaseGroupId);
+        controller.requestModelRun(diseaseGroupId, batchEndDate);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManualModelRun(eq(diseaseGroupId));
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManuallyTriggeredModelRun(
+                eq(diseaseGroupId), eq(batchEndDate));
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

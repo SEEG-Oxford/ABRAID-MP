@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -120,9 +121,10 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId) {
+    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId,
+                                                  DateTime batchEndDate) {
         try {
-            modelRunWorkflowService.prepareForAndRequestManualModelRun(diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchEndDate);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
