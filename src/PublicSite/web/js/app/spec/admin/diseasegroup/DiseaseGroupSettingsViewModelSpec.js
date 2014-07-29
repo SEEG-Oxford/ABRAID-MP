@@ -3,9 +3,8 @@
  */
 define([
     "app/admin/diseasegroup/DiseaseGroupSettingsViewModel",
-    "ko",
-    "underscore"
-], function (DiseaseGroupSettingsViewModel, ko, _) {
+    "ko"
+], function (DiseaseGroupSettingsViewModel, ko) {
     "use strict";
 
     describe("The 'disease group settings' view model", function () {
@@ -105,11 +104,11 @@ define([
             });
 
             it("finds the correct parent disease group in the list of options", function () {
-                expect(_.isEqual(vm.selectedParentDiseaseGroup(), diseaseGroup.parentDiseaseGroup)).toBe(true);
+                expect(vm.selectedParentDiseaseGroup()).toEqual(diseaseGroup.parentDiseaseGroup);
             });
 
             it("finds the correct validator disease group in the list of options", function () {
-                expect(_.isEqual(vm.selectedValidatorDiseaseGroup(), diseaseGroup.validatorDiseaseGroup)).toBe(true);
+                expect(vm.selectedValidatorDiseaseGroup()).toEqual(diseaseGroup.validatorDiseaseGroup);
             });
         });
     });

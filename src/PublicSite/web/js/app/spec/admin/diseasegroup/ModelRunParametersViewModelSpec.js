@@ -3,9 +3,8 @@
  */
 define([
     "ko",
-    "underscore",
     "app/admin/diseasegroup/ModelRunParametersViewModel"
-], function (ko, _, ModelRunParametersViewModel) {
+], function (ko, ModelRunParametersViewModel) {
     "use strict";
 
     describe("The 'model run parameters' view model", function () {

@@ -7,23 +7,27 @@ define([
 ], function (DiseaseGroupPayload, _) {
     "use strict";
 
+    var wrap = function (arg) {
+        return function () { return arg; };
+    };
+
     describe("The payload returns the expected structure", function () {
         it("when given two view models", function () {
             // Arrange
-            var diseaseGroupSettingsViewModel = { name: function () { return "Name"; },
-                publicName: function () { return "Public name"; },
-                shortName: function () { return "Short name"; },
-                abbreviation: function () { return "ABBREV"; },
-                selectedType: function () { return "MICROCLUSTER"; },
-                isGlobal: function () { return true; },
-                selectedParentDiseaseGroup: function () { return { id: 2 }; },
-                selectedValidatorDiseaseGroup: function () { return { id: 3 }; }};
-            var modelRunParametersViewModel = { minNewOccurrences: function () { return 1; },
-                minDataVolume: function () { return 2; },
-                minDistinctCountries: function () { return 3; },
-                minHighFrequencyCountries: function () { return 4; },
-                highFrequencyThreshold: function () { return 5; },
-                occursInAfrica: function () { return true; } };
+            var diseaseGroupSettingsViewModel = { name: wrap("Name"),
+                publicName: wrap("Public name"),
+                shortName: wrap("Short name"),
+                abbreviation: wrap("ABBREV"),
+                selectedType: wrap("MICROCLUSTER"),
+                isGlobal: wrap(true),
+                selectedParentDiseaseGroup: wrap({ id: 2 }),
+                selectedValidatorDiseaseGroup: wrap({ id: 3 }) };
+            var modelRunParametersViewModel = { minNewOccurrences: wrap(1),
+                minDataVolume: wrap(2),
+                minDistinctCountries: wrap(3),
+                minHighFrequencyCountries: wrap(4),
+                highFrequencyThreshold: wrap(5),
+                occursInAfrica: wrap(true) };
             var expectedPayload = {
                 name : "Name",
                 publicName: "Public name",
@@ -48,20 +52,20 @@ define([
 
         it("when not all parameters are defined", function () {
             // Arrange
-            var diseaseGroupSettingsViewModel = { name: function () { return "Name"; },
-                publicName: function () { return undefined; },
-                shortName: function () { return undefined; },
-                abbreviation: function () { return undefined; },
-                selectedType: function () { return "MICROCLUSTER"; },
-                isGlobal: function () { return undefined; },
-                selectedParentDiseaseGroup: function () { return undefined; },
-                selectedValidatorDiseaseGroup: function () { return undefined; }};
-            var modelRunParametersViewModel = { minNewOccurrences: function () { return ""; },
-                minDataVolume: function () { return ""; },
-                minDistinctCountries: function () { return ""; },
-                minHighFrequencyCountries: function () { return ""; },
-                highFrequencyThreshold: function () { return ""; },
-                occursInAfrica: function () { return undefined; } };
+            var diseaseGroupSettingsViewModel = { name: wrap("Name"),
+                publicName: wrap(undefined),
+                shortName: wrap(undefined),
+                abbreviation: wrap(undefined),
+                selectedType: wrap("MICROCLUSTER"),
+                isGlobal: wrap(undefined),
+                selectedParentDiseaseGroup: wrap(undefined),
+                selectedValidatorDiseaseGroup: wrap(undefined) };
+            var modelRunParametersViewModel = { minNewOccurrences: wrap(""),
+                minDataVolume: wrap(""),
+                minDistinctCountries: wrap(""),
+                minHighFrequencyCountries: wrap(""),
+                highFrequencyThreshold: wrap(""),
+                occursInAfrica: wrap(undefined) };
             var expectedPayload = {
                 name : "Name",
                 publicName: undefined,
@@ -81,7 +85,7 @@ define([
             // Act
             var payload = new DiseaseGroupPayload(diseaseGroupSettingsViewModel, modelRunParametersViewModel);
             // Assert
-            expect(_.isEqual(payload, expectedPayload)).toBe(true);
+            expect(payload).toEqual(expectedPayload);
         });
     });
 });
