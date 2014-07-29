@@ -25,18 +25,39 @@
 <@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData templates=templates>
 <div class="container">
     <div id="disease-groups-list">
-        <label for="disease-group-picker" class="side-by-side">Selected Disease Group:</label>
-        <span class="input-group">
-            <span class="input-group-addon">
-                <i class="fa fa-medkit"></i>
+        <div class="col-sm-8">
+            <label for="disease-group-picker" class="side-by-side">Selected Disease Group</label>
+            <span class="input-group">
+                <span class="input-group-addon">
+                    <i class="fa fa-medkit"></i>
+                </span>
+                <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name', valueAllowUnset: true" ></select>
             </span>
-            <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name'" ></select>
-        </span>
+        </div>
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease group</button>
+        </div>
     </div>
     <br />
     <br />
-    <#include "settingspanel.ftl"/>
-    <#include "modelrunparameterspanel.ftl"/>
+    <div class="panel panel-default">
+        <div class="panel-body" id="disease-group-administration-panel">
+            <form id="disease-group-administration" data-bind="formSubmit: submit">
+                <div data-bind="with: diseaseGroupSettingsViewModel">
+                    <#include "settingspanel.ftl"/>
+                </div>
+                <div data-bind="with: modelRunParametersViewModel">
+                    <#include "modelrunparameterspanel.ftl"/>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Saving...', standard: 'Save' }"></button>
+                </div>
+                <div class="form-group" data-bind="if: notice">
+                    <div data-bind="alert: notice"></div>
+                </div>
+            </form>
+        </div>
+    </div>
     <#include "setuppanel.ftl"/>
 </div>
 </@c.page>

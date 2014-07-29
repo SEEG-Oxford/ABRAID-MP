@@ -113,15 +113,11 @@ label.side-by-side {
 .btn-group input {
      display: none;
  }
-#disease-group-name-input-group {
+#disease-group-name-input-group, #model-run-parameters .input-group {
      padding-left: 15px;
      padding-right: 15px;
 }
-#setup-body, #model-run-parameters > div {
-    margin-left: 15px;
-    margin-right: 15px;
-}
-#disease-group-settings, #model-run-parameters label {
+#disease-group-settings label, #model-run-parameters label {
     text-align: left;
 }
 
