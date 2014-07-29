@@ -170,6 +170,7 @@ public class JsonModelRunInformationBuilderTest {
         diseaseGroup.setAbbreviation("Test abbreviation");
         diseaseGroup.setGlobal(false);
         diseaseGroup.setValidatorDiseaseGroup(new ValidatorDiseaseGroup());
+        diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(60, 0.6, 3, 1, 36, 1, 2));
         return diseaseGroup;
     }
 }
