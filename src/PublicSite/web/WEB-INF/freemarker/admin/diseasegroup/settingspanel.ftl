@@ -19,19 +19,19 @@
                     <div class="form-group">
                         <label for="public-name" class="col-sm-4 control-label">Public Name</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="public-name" data-bind="formValue: publicName">
+                            <input type="text" class="form-control" id="public-name" data-bind="formValue: publicName" placeholder="Enter a name for display on Data Validator">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="short-name" class="col-sm-4 control-label">Short Name</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="short-name" data-bind="formValue: shortName">
+                            <input type="text" class="form-control" id="short-name" data-bind="formValue: shortName" placeholder="Enter a shorter version of the name">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="abbreviation" class="col-sm-4 control-label">Abbreviation</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="abbreviation" data-bind="formValue: abbreviation">
+                            <input type="text" class="form-control" id="abbreviation" data-bind="formValue: abbreviation" placeholder="Enter an abbreviation">
                         </div>
                     </div>
                 </div>

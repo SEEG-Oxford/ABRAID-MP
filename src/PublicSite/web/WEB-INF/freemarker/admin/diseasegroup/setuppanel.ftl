@@ -20,12 +20,12 @@
             <br />
             <div data-bind="if: selectedDiseaseGroupId">
                 <p class="form-group">
-                        <span data-bind="if: hasModelBeenSuccessfullyRun">
-                            <button class="btn btn-primary" data-bind="click: runModel, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
-                        </span>
-                        <span data-bind="ifnot: hasModelBeenSuccessfullyRun">
-                            <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'}, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
-                        </span>
+                    <span data-bind="if: hasModelBeenSuccessfullyRun">
+                        <button class="btn btn-primary" data-bind="click: runModel, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
+                    </span>
+                    <span data-bind="ifnot: hasModelBeenSuccessfullyRun">
+                        <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'}, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
+                    </span>
                 </p>
                 <div class="form-group" data-bind="foreach: notices">
                     <div data-bind="alert: $data"></div>

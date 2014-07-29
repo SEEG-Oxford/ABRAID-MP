@@ -22,7 +22,19 @@
 </script>
 </#assign>
 
-<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData templates=templates>
+<#assign css>
+<style>
+    #disease-group-name-input-group, #model-run-parameters .input-group {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    #disease-group-settings label, #model-run-parameters label {
+        text-align: left;
+    }
+</style>
+</#assign>
+
+<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData templates=templates endOfHead=css>
 <div class="container">
     <div id="disease-groups-list">
         <div class="col-sm-8">
