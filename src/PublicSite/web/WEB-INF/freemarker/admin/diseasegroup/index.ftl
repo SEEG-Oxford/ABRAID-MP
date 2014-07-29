@@ -49,6 +49,9 @@
                 <div data-bind="with: modelRunParametersViewModel">
                     <#include "modelrunparameterspanel.ftl"/>
                 </div>
+                <div data-bind="with: diseaseExtentParametersViewModel">
+                    <#include "diseaseextentparameterspanel.ftl"/>
+                </div>
                 <div>
                     <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Saving...', standard: 'Save' }"></button>
                 </div>

@@ -4,7 +4,7 @@
 define([], function () {
     "use strict";
 
-    return function (diseaseGroupSettingsViewModel, modelRunParametersViewModel) {
+    return function (diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseExtentParametersViewModel) {
         var getId = function (diseaseGroup) {
             return (diseaseGroup) ? diseaseGroup.id : null;
         };
@@ -28,7 +28,18 @@ define([], function () {
             minDistinctCountries: parse(modelRunParametersViewModel.minDistinctCountries()),
             minHighFrequencyCountries: parse(modelRunParametersViewModel.minHighFrequencyCountries()),
             highFrequencyThreshold: parse(modelRunParametersViewModel.highFrequencyThreshold()),
-            occursInAfrica: modelRunParametersViewModel.occursInAfrica()
+            occursInAfrica: modelRunParametersViewModel.occursInAfrica(),
+            diseaseExtentParameters: {
+                maxMonthsAgo: parse(diseaseExtentParametersViewModel.maxMonthsAgo()),
+                maxMonthsAgoForHigherOccurrenceScore:
+                    parse(diseaseExtentParametersViewModel.maxMonthsAgoForHigherOccurrenceScore()),
+                lowerOccurrenceScore: parse(diseaseExtentParametersViewModel.lowerOccurrenceScore()),
+                higherOccurrenceScore: parse(diseaseExtentParametersViewModel.higherOccurrenceScore()),
+                minValidationWeighting: diseaseExtentParametersViewModel.minValidationWeighting(),
+                minOccurrencesForPresence: parse(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
+                minOccurrencesForPossiblePresence:
+                    parse(diseaseExtentParametersViewModel.minOccurrencesForPossiblePresence())
+            }
         };
     };
 });

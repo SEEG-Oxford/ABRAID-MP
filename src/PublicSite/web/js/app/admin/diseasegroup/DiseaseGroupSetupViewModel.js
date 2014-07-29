@@ -25,23 +25,25 @@ define([
             self.working(true);
             self.notices.removeAll();
 
-            // Get information regarding model runs for this disease group
-            var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/modelruninformation";
-            $.getJSON(url)
-                .done(function (data) {
-                    self.lastModelRunText(data.lastModelRunText);
-                    self.diseaseOccurrencesText(data.diseaseOccurrencesText);
-                    self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
-                    self.canRunModel(data.canRunModel);
-                    if (!self.canRunModel()) {
-                        var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
-                        self.notices.push({ message: errorMessage, priority: "warning"});
-                    }
-                })
-                .fail(function () {
-                    self.notices.push({ message: "Could not retrieve model run details.", priority: "warning"});
-                })
-                .always(function () { self.working(false); });
+            if (self.selectedDiseaseGroupId() !== undefined) {
+                // Get information regarding model runs for this disease group
+                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/modelruninformation";
+                $.getJSON(url)
+                    .done(function (data) {
+                        self.lastModelRunText(data.lastModelRunText);
+                        self.diseaseOccurrencesText(data.diseaseOccurrencesText);
+                        self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
+                        self.canRunModel(data.canRunModel);
+                        if (!self.canRunModel()) {
+                            var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
+                            self.notices.push({ message: errorMessage, priority: "warning"});
+                        }
+                    })
+                    .fail(function () {
+                        self.notices.push({ message: "Could not retrieve model run details.", priority: "warning"});
+                    })
+                    .always(function () { self.working(false); });
+            }
         });
 
         self.runModel = function () {

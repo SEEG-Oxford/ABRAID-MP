@@ -18,10 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformationBuilder;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -226,9 +223,10 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setMinHighFrequencyCountries(settings.getMinHighFrequencyCountries());
         diseaseGroup.setHighFrequencyThreshold(settings.getHighFrequencyThreshold());
         diseaseGroup.setOccursInAfrica(settings.getOccursInAfrica());
+        setDiseaseExtentParameters(diseaseGroup, settings.getDiseaseExtentParameters());
         if (setParentDiseaseGroup(diseaseGroup, settings) && setValidatorDiseaseGroup(diseaseGroup, settings)) {
-            diseaseService.saveDiseaseGroup(diseaseGroup);
-            return true;
+                diseaseService.saveDiseaseGroup(diseaseGroup);
+                return true;
         } else {
             return false;
         }
@@ -261,5 +259,40 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private boolean hasValidatorDiseaseGroupSpecified(JsonDiseaseGroup settings) {
         return ((settings.getValidatorDiseaseGroup() != null) && (settings.getValidatorDiseaseGroup().getId() != null));
+    }
+
+    private void setDiseaseExtentParameters(DiseaseGroup diseaseGroup, JsonDiseaseExtent newValues) {
+        if (newValues != null) {
+            if (diseaseGroup.getDiseaseExtentParameters() == null) {
+                addDiseaseExtent(diseaseGroup, newValues);
+            } else {
+                updateDiseaseExtent(diseaseGroup, newValues);
+            }
+        }
+    }
+
+    private void addDiseaseExtent(DiseaseGroup diseaseGroup, JsonDiseaseExtent newValues) {
+        DiseaseExtent parameters = new DiseaseExtent(
+                newValues.getMaxMonthsAgo(),
+                newValues.getMinValidationWeighting(),
+                newValues.getMinOccurrencesForPresence(),
+                newValues.getMinOccurrencesForPossiblePresence(),
+                newValues.getMaxMonthsAgoForHigherOccurrenceScore(),
+                newValues.getLowerOccurrenceScore(),
+                newValues.getHigherOccurrenceScore()
+        );
+        diseaseGroup.setDiseaseExtentParameters(parameters);
+        parameters.setDiseaseGroup(diseaseGroup);
+    }
+
+    private void updateDiseaseExtent(DiseaseGroup diseaseGroup, JsonDiseaseExtent newValues) {
+        DiseaseExtent parameters = diseaseGroup.getDiseaseExtentParameters();
+        parameters.setMaxMonthsAgo(newValues.getMaxMonthsAgo());
+        parameters.setMinValidationWeighting(newValues.getMinValidationWeighting());
+        parameters.setMinOccurrencesForPresence(newValues.getMinOccurrencesForPresence());
+        parameters.setMinOccurrencesForPossiblePresence(newValues.getMinOccurrencesForPossiblePresence());
+        parameters.setMaxMonthsAgoForHigherOccurrenceScore(newValues.getMaxMonthsAgoForHigherOccurrenceScore());
+        parameters.setLowerOccurrenceScore(newValues.getLowerOccurrenceScore());
+        parameters.setHigherOccurrenceScore(newValues.getHigherOccurrenceScore());
     }
 }
