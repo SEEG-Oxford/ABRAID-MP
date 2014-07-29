@@ -16,7 +16,8 @@ public class DiseaseExtentGenerationHandler {
     private ModelRunWorkflowService modelRunWorkflowService;
     private DiseaseService diseaseService;
 
-    public DiseaseExtentGenerationHandler(ModelRunWorkflowService modelRunWorkflowService, DiseaseService diseaseService) {
+    public DiseaseExtentGenerationHandler(ModelRunWorkflowService modelRunWorkflowService,
+                                          DiseaseService diseaseService) {
         this.modelRunWorkflowService = modelRunWorkflowService;
         this.diseaseService = diseaseService;
     }
