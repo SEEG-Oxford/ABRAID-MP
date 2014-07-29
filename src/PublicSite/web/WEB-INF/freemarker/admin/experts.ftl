@@ -3,6 +3,7 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#import "../layout/common.ftl" as c/>
+<#import "../layout/table.ftl" as t/>
 
 <#assign bootstrapData>
 <script type="text/javascript">
@@ -37,13 +38,7 @@
 </#assign>
 
 <#assign templates>
-<script type="text/html" id="no-entries-template">
-    <tr class="warning">
-        <td colspan="8" class="text-muted">No matching experts.</td>
-    </tr>
-</script>
-<script type="text/html" id="list-template">
-    <!-- ko foreach: visibleEntries -->
+<@t.tableTemplates numberOfColumns=8 plural="experts">
     <tr data-bind="popover: { placement: 'bottom', trigger: 'hover', title: name, template: 'details-template' }">
         <td><span data-bind="text: name"></td>
         <td><input type="checkbox" data-bind="formChecked: { checked: seegmember, value: true }"></td>
@@ -54,14 +49,7 @@
         <td data-bind="date: { date: createdDate, format: 'LLL' }"></td>
         <td data-bind="date: { date: updatedDate, format: 'LLL' }"></td>
     </tr>
-    <!-- /ko -->
-</script>
-<script type="text/html" id="list-header-template">
-    <th data-bind="click: function () { $parent.updateSort(field.name) }">
-        <span data-bind="html: display"></span>
-        <span data-bind="text: ($parent.sortField() === field.name) ? ($parent.reverseSort() ? '&#9650;' : '&#9660;') : '&nbsp;'" class="up-down"></span>
-    </th>
-</script>
+</@t.tableTemplates>
 <script type="text/html" id="details-template">
     <p><strong>Email:</strong>&nbsp;<span data-bind="text: email"></span></p><br>
     <p><strong>Job&nbsp;title:</strong>&nbsp;<span data-bind="text: jobTitle"></span></p><br>
@@ -81,36 +69,18 @@
         </div>
         <div class="panel-body" id="experts-body">
             <form id="experts-form" action="" data-bind="formSubmit: submit">
-                <p class="form-group">
-                    <label for="expert-filter">Filter: </label>
-                    <span class="input-group">
-                        <span class="input-group-addon">
-                            <i class="glyphicon glyphicon-filter"></i>
-                        </span>
-                        <span id="filter-clear" class="clear glyphicon glyphicon-remove-circle" data-bind='click: function() { filter(""); }'></span>
-                        <input id="expert-filter" type="text" class="form-control" placeholder="Filter" data-bind="formValue: filter">
-                    </span>
-                </p>
-                <div>
-                    <label for="expert-list">Experts: </label>
-                    <div class="table-responsive">
-                        <table id="expert-list" class="table table-condensed table-hover">
-                            <thead>
-                            <tr data-bind="template: { name: 'list-header-template', foreach: [
-                                        { name: 'name', display: 'Name' },
-                                        { name: 'seegmember', display: 'SEEG' },
-                                        { name: 'administrator', display: 'Administrator' },
-                                        { name: 'visibilityRequested', display: 'Requested<br>Visibility' },
-                                        { name: 'visibilityApproved', display: 'Approved<br>Visibility' },
-                                        { name: 'weighting', display: 'Weighting' },
-                                        { name: 'createdDate', display: 'Created' },
-                                        { name: 'updatedDate', display: 'Updated' }
-                                    ], as: 'field' }"></tr>
-                            </thead>
-                            <tbody data-bind="template: { name: visibleEntries().length == 0 ? 'no-entries-template' : 'list-template' }"></tbody>
-                        </table>
-                    </div>
-                </div>
+                <@t.tableBody singular="expert" title="Experts">
+                [
+                    { name: 'name', display: 'Name' },
+                    { name: 'seegmember', display: 'SEEG' },
+                    { name: 'administrator', display: 'Administrator' },
+                    { name: 'visibilityRequested', display: 'Requested<br>Visibility' },
+                    { name: 'visibilityApproved', display: 'Approved<br>Visibility' },
+                    { name: 'weighting', display: 'Weighting' },
+                    { name: 'createdDate', display: 'Created' },
+                    { name: 'updatedDate', display: 'Updated' }
+                ]
+                </@t.tableBody>
                 <p class="form-group">
                     <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Saving ...', standard: 'Save'}">Loading ...</button>
                 </p>
