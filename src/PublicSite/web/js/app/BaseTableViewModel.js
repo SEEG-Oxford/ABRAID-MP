@@ -47,7 +47,7 @@ define([
             }
 
             // Hide
-            iterable = iterable.filter(function (entry) { return !(ko.recursiveUnwrap(entry.hide) || false); });
+            iterable = iterable.filter(function (entry) { return !(ko.utils.recursiveUnwrap(entry.hide) || false); });
 
             // Sort
             var sortField = self.sortField();

@@ -17,13 +17,11 @@
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/KoCustomBindings.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/CounterViewModel.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/LogInViewModel.js" libraries="{jquery, knockout-debug, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/MapView.js" libraries="{jquery, leaflet, leaflet.markercluster-src, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedAdminUnitViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedLayerViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedPointViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SidePanelViewModel.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/LogInViewModelSpec.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/SelectedLayerViewModelSpec.js" libraries="{jasmine, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/SelectedPointViewModelSpec.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/datavalidation/content.js" libraries="{jquery, knockout-debug, moment}" />
