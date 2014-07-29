@@ -124,6 +124,8 @@ public class DiseaseExtent {
         this.higherOccurrenceScore = higherOccurrenceScore;
     }
 
+    ///COVERAGE:OFF - generated code
+    ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -131,7 +133,6 @@ public class DiseaseExtent {
 
         DiseaseExtent that = (DiseaseExtent) o;
 
-        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (diseaseGroupId != null ? !diseaseGroupId.equals(that.diseaseGroupId) : that.diseaseGroupId != null)
             return false;
         if (higherOccurrenceScore != null ? !higherOccurrenceScore.equals(that.higherOccurrenceScore) : that.higherOccurrenceScore != null)
@@ -162,7 +163,8 @@ public class DiseaseExtent {
         result = 31 * result + (maximumMonthsAgoForHigherOccurrenceScore != null ? maximumMonthsAgoForHigherOccurrenceScore.hashCode() : 0);
         result = 31 * result + (lowerOccurrenceScore != null ? lowerOccurrenceScore.hashCode() : 0);
         result = 31 * result + (higherOccurrenceScore != null ? higherOccurrenceScore.hashCode() : 0);
-        result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         return result;
     }
+    ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 }
