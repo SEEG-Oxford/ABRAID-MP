@@ -45,6 +45,31 @@ define([
         }
     };
 
+    // Custom binding to format the datetime display with moment.js library
+    ko.bindingHandlers.formDate = {
+        init: function (element, valueAccessor) {
+            var arg = ko.utils.recursiveUnwrap(valueAccessor);
+
+            var date = arg.date || arg;
+            var format = ko.utils.recursiveUnwrap(arg.format) || "dd M yyyy";
+            var startDate = ko.utils.recursiveUnwrap(arg.startDate) || undefined;
+            var endDate = ko.utils.recursiveUnwrap(arg.endDate) || undefined;
+
+            $(element).parent().datepicker({
+                format: format,
+                startDate: startDate,
+                endDate: endDate,
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            ko.applyBindingAccessorsToNode(element, {
+                value: date,
+                valueUpdate: function () { return "input"; },
+            });
+        }
+    };
+
     // Custom binding used to bind each child member of a group to an option
     ko.bindingHandlers.option = {
         update: function (element, valueAccessor) {

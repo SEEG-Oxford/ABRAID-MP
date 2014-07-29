@@ -16,6 +16,10 @@ define([
         self.diseaseOccurrencesText = ko.observable("");
         self.canRunModel = ko.observable(false);
 
+        self.batchEndDate = ko.observable("").extend({required: true});
+        self.batchEndDateMinimum = ko.observable("");
+        self.batchEndDateMaximum = ko.observable("");
+
         self.working = ko.observable(false);
         self.notices = ko.observableArray();
 
@@ -31,6 +35,9 @@ define([
                 .done(function (data) {
                     self.lastModelRunText(data.lastModelRunText);
                     self.diseaseOccurrencesText(data.diseaseOccurrencesText);
+                    self.batchEndDate(data.batchEndDateDefault);
+                    self.batchEndDateMinimum(data.batchEndDateMinimum);
+                    self.batchEndDateMaximum(data.batchEndDateMaximum);
                     self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                     self.canRunModel(data.canRunModel);
                     if (!self.canRunModel()) {
@@ -49,7 +56,8 @@ define([
             if (self.canRunModel()) {
                 self.working(true);
                 var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
-                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
+                var batchEndDateText = moment(self.batchEndDate()).format();
+                $.post(url, { batchEndDate: batchEndDateText })
                     .done(function () {
                         self.notices.push({ message: "Model run requested.", priority: "success"});
                     })

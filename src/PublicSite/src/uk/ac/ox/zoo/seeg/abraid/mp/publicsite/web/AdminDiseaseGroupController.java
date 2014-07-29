@@ -105,6 +105,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 .populateHasModelBeenSuccessfullyRun(lastCompletedModelRun)
                 .populateDiseaseOccurrencesText(statistics)
                 .populateCanRunModelWithReason(diseaseGroup)
+                .populateBatchEndDateParameters(lastCompletedModelRun, statistics)
                 .get();
 
         return new ResponseEntity<>(info, HttpStatus.OK);
@@ -113,6 +114,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to request the model run.
+     * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
      * @return An error message string (empty if no error).
      */
     @Secured({ "ROLE_ADMIN" })
@@ -122,9 +124,10 @@ public class AdminDiseaseGroupController extends AbstractController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId,
-                                                  DateTime batchEndDate) {
+                                                  String batchEndDate) {
         try {
-            modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchEndDate);
+            DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
+            modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

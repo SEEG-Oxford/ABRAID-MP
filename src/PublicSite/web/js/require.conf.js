@@ -12,6 +12,8 @@
             /* Load external libs from cdn. */
             "jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery",
             "bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap",
+            "bootstrap-datepicker":
+                "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker",
             "bootstrap.extensions": "https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.2/js/jasny-bootstrap",
             "knockout": "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-debug",
             // Move to cdn path when next version is published (error template refreshing bug)
@@ -30,9 +32,10 @@
         shim: {
             /* Set bootstrap dependencies (just jQuery) */
             "bootstrap" : ["jquery"],
-            "knockout.bootstrap" : [ "knockout", "bootstrap.extensions" ],
+            "knockout.bootstrap" : [ "knockout", "bootstrap-datepicker", "bootstrap.extensions" ],
             "knockout.validation" : [ "knockout" ],
-            "bootstrap.extensions" :  ["bootstrap" ],
+            "bootstrap-datepicker" :  [ "bootstrap" ],
+            "bootstrap.extensions" :  [ "bootstrap" ],
             "leaflet-markercluster": [ "leaflet" ],
             "flipclock": ["jquery"]
         }

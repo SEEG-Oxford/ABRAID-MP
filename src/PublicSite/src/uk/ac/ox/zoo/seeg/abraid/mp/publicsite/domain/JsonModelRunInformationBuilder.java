@@ -85,6 +85,45 @@ public class JsonModelRunInformationBuilder {
     }
 
     /**
+     * Populates the parameters relating to "batch end date".
+     * @param lastCompletedModelRun The last completed model run (or null if never completed).
+     * @param statistics Statistics that describe the disease occurrences.
+     * @return This builder.
+     */
+    public JsonModelRunInformationBuilder populateBatchEndDateParameters(ModelRun lastCompletedModelRun,
+                                                                         DiseaseOccurrenceStatistics statistics) {
+        // The minimum value of "batch end date" is the minimum occurrence date if this is the first batch, otherwise
+        // it is the day after the latest batch end date.
+        DateTime minimumDate = statistics.getMinimumOccurrenceDate();
+        if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
+                lastCompletedModelRun.getBatchEndDate() != null) {
+            minimumDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
+        }
+
+        // The maximum value of "batch end date" is simply the maximum occurrence date
+        DateTime maximumDate = statistics.getMaximumOccurrenceDate();
+
+        // The default value of "batch end date" is the last day of the minimum date's year, limited to:
+        // (a) the maximum occurrence date; (b) 1 week before now (because that is when batching normally ends)
+        DateTime defaultDate = null;
+        if (minimumDate != null && maximumDate != null) {
+            DateTime defaultFinalBatchEndDate = DateTime.now().minusWeeks(1);
+            defaultDate = minimumDate.plusYears(1).withDayOfYear(1).minusDays(1);
+            if (defaultDate.isAfter(defaultFinalBatchEndDate)) {
+                defaultDate = defaultFinalBatchEndDate;
+            }
+            if (defaultDate.isAfter(maximumDate)) {
+                defaultDate = maximumDate;
+            }
+        }
+
+        information.setBatchEndDateMinimum(getDateText(minimumDate));
+        information.setBatchEndDateDefault(getDateText(defaultDate));
+        information.setBatchEndDateMaximum(getDateText(maximumDate));
+        return this;
+    }
+
+    /**
      * Returns the built JsonModelRunInformation object.
      * @return The built JsonModelRunInformation object.
      */
@@ -110,7 +149,7 @@ public class JsonModelRunInformationBuilder {
             String batchEndDateText = getDateText(lastRequestedModelRun.getBatchEndDate());
             int batchedOccurrenceCount = lastRequestedModelRun.getBatchedOccurrenceCount();
             String pluralEnding = (batchedOccurrenceCount == 1) ? "" : "s";
-            text = String.format(" (including release of %d occurrence%s for validation until %s",
+            text = String.format(" (including batching of %d occurrence%s for validation, end date %s)",
                     batchedOccurrenceCount, pluralEnding, batchEndDateText);
         }
 
