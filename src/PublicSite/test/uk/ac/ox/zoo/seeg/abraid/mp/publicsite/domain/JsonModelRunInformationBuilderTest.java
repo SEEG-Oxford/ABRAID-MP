@@ -37,7 +37,7 @@ public class JsonModelRunInformationBuilderTest {
     }
 
     @Test
-    public void populateLastModelRunTextWhenCompleted() {
+    public void populateLastModelRunTextWhenCompletedWithNoBatching() {
         // Arrange
         ModelRun modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
@@ -49,6 +49,25 @@ public class JsonModelRunInformationBuilderTest {
 
         // Assert
         assertThat(information.getLastModelRunText()).isEqualTo("completed on 2 Jul 2014 09:08:07");
+    }
+
+    @Test
+    public void populateLastModelRunTextWhenCompletedWithBatching() {
+        // Arrange
+        ModelRun modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
+        modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
+        modelRun.setBatchEndDate(new DateTime("2006-12-31T04:05:06"));
+        modelRun.setBatchingCompletedDate(new DateTime("2014-07-02T19:18:17"));
+        modelRun.setBatchedOccurrenceCount(1500);
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+
+        // Act
+        JsonModelRunInformation information = builder.populateLastModelRunText(modelRun).get();
+
+        // Assert
+        assertThat(information.getLastModelRunText()).isEqualTo(
+                "completed on 2 Jul 2014 19:18:17 (including release of 1500 occurrences for validation until 31 Dec 2006");
     }
 
     @Test

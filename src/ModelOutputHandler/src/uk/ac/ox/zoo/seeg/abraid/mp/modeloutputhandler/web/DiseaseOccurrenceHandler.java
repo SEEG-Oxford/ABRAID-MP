@@ -63,7 +63,7 @@ public class DiseaseOccurrenceHandler {
             LOGGER.info(String.format(VALIDATION_LOG_MESSAGE, modelRun.getId(), occurrenceIDs.size(),
                     diseaseGroup.getId(), diseaseGroup.getName(), batchEndDateWithMaximumTime));
             setValidationParametersForOccurrencesBatch(occurrenceIDs);
-            diseaseOccurrenceHandlerHelper.setBatchCompletedDate(modelRun);
+            diseaseOccurrenceHandlerHelper.setBatchingParameters(modelRun, occurrenceIDs.size());
             LOGGER.info(String.format(VALIDATION_COMPLETED_LOG_MESSAGE, modelRun.getId()));
         }
     }

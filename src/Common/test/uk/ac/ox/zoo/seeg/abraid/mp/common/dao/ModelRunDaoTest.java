@@ -51,6 +51,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         String errorText = "error text";
         DateTime batchEndDate = DateTime.now().minusHours(6);
         DateTime batchingCompletionDate = DateTime.now().plusHours(2);
+        int batchedOccurrenceCount = 1000;
 
         ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestDate);
         modelRun.setResponseDate(responseDate);
@@ -58,6 +59,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         modelRun.setErrorText(errorText);
         modelRun.setBatchEndDate(batchEndDate);
         modelRun.setBatchingCompletedDate(batchingCompletionDate);
+        modelRun.setBatchedOccurrenceCount(batchedOccurrenceCount);
         modelRunDao.save(modelRun);
 
         // Act
@@ -74,6 +76,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getErrorText()).isEqualTo(errorText);
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
         assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(batchingCompletionDate);
+        assertThat(modelRun.getBatchedOccurrenceCount()).isEqualTo(batchedOccurrenceCount);
     }
 
     @Test

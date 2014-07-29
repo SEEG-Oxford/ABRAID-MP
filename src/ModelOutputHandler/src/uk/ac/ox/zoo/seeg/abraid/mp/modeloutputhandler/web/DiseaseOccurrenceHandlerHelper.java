@@ -70,12 +70,13 @@ public class DiseaseOccurrenceHandlerHelper {
     }
 
     /**
-     * Sets the batch completed date for the specified model run.
+     * Sets the batching parameters for the specified model run.
      * @param modelRun The model run.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void setBatchCompletedDate(ModelRun modelRun) {
+    public void setBatchingParameters(ModelRun modelRun, int batchedOccurrenceCount) {
         modelRun.setBatchingCompletedDate(DateTime.now());
+        modelRun.setBatchedOccurrenceCount(batchedOccurrenceCount);
         modelRunService.saveModelRun(modelRun);
     }
 }

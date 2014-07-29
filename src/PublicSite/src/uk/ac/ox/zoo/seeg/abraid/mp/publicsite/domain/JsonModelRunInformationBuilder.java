@@ -23,9 +23,10 @@ public class JsonModelRunInformationBuilder {
     /**
      * Populates text that describes the last model run. Examples:
      *     never
-     *     completed on 10 Jul 2014 03:14:32 [uses the response date]
-     *     failed on 10 Jul 2014 03:14:32 [uses the response date]
-     *     requested on 10 Jul 2014 03:14:32 [uses the request date]
+     *     completed on 10 Jul 2014 08:00:00 (including release of 500 occurrences for validation until 31/12/2006)
+     *     completed on 10 Jul 2014 06:00:00
+     *     failed on 10 Jul 2014 06:00:00
+     *     requested on 09 Jul 2014 21:00:00
      * @param lastRequestedModelRun The most recently-requested model run.
      * @return This builder.
      */
@@ -33,11 +34,9 @@ public class JsonModelRunInformationBuilder {
         String text = "never";
         if (lastRequestedModelRun != null) {
             String statusText = lastRequestedModelRun.getStatus().getDisplayText();
-            DateTime date = lastRequestedModelRun.getResponseDate();
-            if (date == null) {
-                date = lastRequestedModelRun.getRequestDate();
-            }
-            text = String.format("%s on %s", statusText, date.toString(DATE_TIME_FORMAT));
+            String dateText = getLastModelRunDateText(lastRequestedModelRun);
+            String batchingText = getLastModelRunBatchingText(lastRequestedModelRun);
+            text = String.format("%s on %s%s", statusText, dateText, batchingText);
         }
         information.setLastModelRunText(text);
         return this;
@@ -54,7 +53,8 @@ public class JsonModelRunInformationBuilder {
     public JsonModelRunInformationBuilder populateDiseaseOccurrencesText(DiseaseOccurrenceStatistics statistics) {
         String text = "none";
         if (statistics.getOccurrenceCount() > 0) {
-            String dateText = getDateText(statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
+            String dateText = getDiseaseOccurrencesDateText(
+                    statistics.getMinimumOccurrenceDate(),statistics.getMaximumOccurrenceDate());
             text = String.format("total %d, occurring %s", statistics.getOccurrenceCount(), dateText);
         }
         information.setDiseaseOccurrencesText(text);
@@ -92,13 +92,46 @@ public class JsonModelRunInformationBuilder {
         return information;
     }
 
-    private String getDateText(DateTime startDate, DateTime endDate) {
-        String startDateText = startDate.toString(DATE_FORMAT);
-        String endDateText = endDate.toString(DATE_FORMAT);
+    private String getLastModelRunDateText(ModelRun lastRequestedModelRun) {
+        DateTime date = lastRequestedModelRun.getBatchingCompletedDate();
+        if (date == null) {
+            date = lastRequestedModelRun.getResponseDate();
+            if (date == null) {
+                date = lastRequestedModelRun.getRequestDate();
+            }
+        }
+        return getDateTimeText(date);
+    }
+
+    private String getLastModelRunBatchingText(ModelRun lastRequestedModelRun) {
+        String text = "";
+
+        if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
+            String batchEndDateText = getDateText(lastRequestedModelRun.getBatchEndDate());
+            int batchedOccurrenceCount = lastRequestedModelRun.getBatchedOccurrenceCount();
+            String pluralEnding = (batchedOccurrenceCount == 1) ? "" : "s";
+            text = String.format(" (including release of %d occurrence%s for validation until %s",
+                    batchedOccurrenceCount, pluralEnding, batchEndDateText);
+        }
+
+        return text;
+    }
+
+    private String getDiseaseOccurrencesDateText(DateTime startDate, DateTime endDate) {
+        String startDateText = getDateText(startDate);
+        String endDateText = getDateText(endDate);
         if (startDateText.equals(endDateText)) {
             return String.format("on %s", startDateText);
         } else {
             return String.format("between %s and %s", startDateText, endDateText);
         }
+    }
+
+    private String getDateText(DateTime date) {
+        return (date == null) ? "" : date.toString(DATE_FORMAT);
+    }
+
+    private String getDateTimeText(DateTime dateTime) {
+        return (dateTime == null) ? "" : dateTime.toString(DATE_TIME_FORMAT);
     }
 }
