@@ -55,7 +55,6 @@ public class DiseaseExtent {
                          Integer minimumOccurrencesForPresence, Integer minimumOccurrencesForPossiblePresence,
                          Integer maximumMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
-        this.diseaseGroupId = diseaseGroup.getId();
         this.diseaseGroup = diseaseGroup;
         this.maximumMonthsAgo = maximumMonthsAgo;
         this.minimumValidationWeighting = minimumValidationWeighting;
