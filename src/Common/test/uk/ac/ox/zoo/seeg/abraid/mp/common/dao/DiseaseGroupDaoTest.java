@@ -38,9 +38,10 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
         int minNewOccurrences = 100;
         double weighting = 0.5;
-        DiseaseExtent parameters = new DiseaseExtent();
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup);
+
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
         diseaseGroup.setPublicName(diseaseClusterPublicName);
@@ -53,7 +54,6 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setWeighting(weighting);
         diseaseGroup.setGlobal(true);
         diseaseGroup.setDiseaseExtentParameters(parameters);
-        parameters.setDiseaseGroup(diseaseGroup);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -86,14 +86,14 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         String diseaseClusterName = "Test disease microcluster";
         DiseaseGroup diseaseCluster = diseaseGroupDao.getById(1);
-        DiseaseExtent parameters = new DiseaseExtent();
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup);
+
         diseaseGroup.setName(diseaseClusterName);
         diseaseGroup.setGroupType(DiseaseGroupType.MICROCLUSTER);
         diseaseGroup.setParentGroup(diseaseCluster);
         diseaseGroup.setDiseaseExtentParameters(parameters);
-        parameters.setDiseaseGroup(diseaseGroup);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -121,9 +121,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
                 DiseaseGroupType.MICROCLUSTER);
         DiseaseGroup disease = new DiseaseGroup(diseaseMicroCluster, diseaseName, DiseaseGroupType.SINGLE);
 
-        DiseaseExtent parameters = new DiseaseExtent();
+        DiseaseExtent parameters = new DiseaseExtent(disease);
         disease.setDiseaseExtentParameters(parameters);
-        parameters.setDiseaseGroup(disease);
 
         // Act
         diseaseGroupDao.save(diseaseMicroCluster);
@@ -176,10 +175,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         int diseaseGroupId = 22;
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        DiseaseExtent diseaseExtent = new DiseaseExtent();
-
+        DiseaseExtent diseaseExtent = new DiseaseExtent(diseaseGroup);
         diseaseGroup.setDiseaseExtentParameters(diseaseExtent);
-        diseaseExtent.setDiseaseGroup(diseaseGroup);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -195,10 +192,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
         // Arrange
         DiseaseGroup diseaseGroup = initialiseDiseaseGroup();
-        DiseaseExtent parameters = new DiseaseExtent();
-
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup);
         diseaseGroup.setDiseaseExtentParameters(parameters);
-        parameters.setDiseaseGroup(diseaseGroup);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);

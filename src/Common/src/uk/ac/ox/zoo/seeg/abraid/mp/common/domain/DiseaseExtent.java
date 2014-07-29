@@ -47,10 +47,16 @@ public class DiseaseExtent {
     public DiseaseExtent() {
     }
 
-    public DiseaseExtent(Integer maximumMonthsAgo, Double minimumValidationWeighting,
+    public DiseaseExtent(DiseaseGroup diseaseGroup) {
+        this.diseaseGroup = diseaseGroup;
+    }
+
+    public DiseaseExtent(DiseaseGroup diseaseGroup, Integer maximumMonthsAgo, Double minimumValidationWeighting,
                          Integer minimumOccurrencesForPresence, Integer minimumOccurrencesForPossiblePresence,
                          Integer maximumMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
+        this.diseaseGroupId = diseaseGroup.getId();
+        this.diseaseGroup = diseaseGroup;
         this.maximumMonthsAgo = maximumMonthsAgo;
         this.minimumValidationWeighting = minimumValidationWeighting;
         this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
@@ -62,10 +68,6 @@ public class DiseaseExtent {
 
     public Integer getDiseaseGroupId() {
         return diseaseGroupId;
-    }
-
-    public void setDiseaseGroup(DiseaseGroup diseaseGroup) {
-        this.diseaseGroup = diseaseGroup;
     }
 
     public Integer getMaximumMonthsAgo() {

@@ -61,9 +61,8 @@ public class DiseaseExtentGeneratorTest {
         group.setGlobal(false);
         group.setAutomaticModelRuns(true);
 
-        DiseaseExtent parameters = createParameters();
+        DiseaseExtent parameters = createParameters(group);
         group.setDiseaseExtentParameters(parameters);
-        parameters.setDiseaseGroup(group);
 
         return group;
     }
@@ -209,7 +208,7 @@ public class DiseaseExtentGeneratorTest {
         expectUpdateAggregatedDiseaseExtent(1);
     }
 
-    private DiseaseExtent createParameters() {
+    private DiseaseExtent createParameters(DiseaseGroup diseaseGroup) {
         int maximumMonthsAgo = 24;
         double minimumValidationWeighting = 0.2;
         int minimumOccurrencesForPresence = 5;
@@ -218,7 +217,7 @@ public class DiseaseExtentGeneratorTest {
         int lowerOccurrenceScore = 1;
         int higherOccurrenceScore = 2;
 
-        return new DiseaseExtent(maximumMonthsAgo,
+        return new DiseaseExtent(diseaseGroup, maximumMonthsAgo,
                 minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence,
                 minimumMonthsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
     }
