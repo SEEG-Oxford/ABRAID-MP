@@ -33,10 +33,13 @@ public class MainController extends AbstractController {
 
     private MainHandler mainHandler;
     private DiseaseExtentGenerationHandler diseaseExtentGenerationHandler;
+    private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
 
     @Autowired
-    public MainController(MainHandler mainHandler, DiseaseExtentGenerationHandler diseaseExtentGenerationHandler) {
+    public MainController(MainHandler mainHandler, DiseaseExtentGenerationHandler diseaseExtentGenerationHandler,
+                          DiseaseOccurrenceHandler diseaseOccurrenceHandler) {
         this.mainHandler = mainHandler;
+        this.diseaseOccurrenceHandler = diseaseOccurrenceHandler;
         this.diseaseExtentGenerationHandler = diseaseExtentGenerationHandler;
     }
 
@@ -60,6 +63,7 @@ public class MainController extends AbstractController {
             modelRunZip = null;
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
+            diseaseOccurrenceHandler.handle(modelRun);
             diseaseExtentGenerationHandler.handle(modelRun);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

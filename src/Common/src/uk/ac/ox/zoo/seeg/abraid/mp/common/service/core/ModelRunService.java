@@ -58,4 +58,11 @@ public interface ModelRunService {
      * @return The latest completed model run, or null if there are no completed model runs.
      */
     ModelRun getLastCompletedModelRun(int diseaseGroupId);
+
+    /**
+     * Returns whether or not disease occurrence batching has ever completed for the specified disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return True if batching has completed at least once for this disease group, otherwise false.
+     */
+    boolean hasBatchingEverCompleted(int diseaseGroupId);
 }

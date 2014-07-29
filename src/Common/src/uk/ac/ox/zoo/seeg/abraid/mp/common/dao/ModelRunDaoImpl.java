@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
@@ -38,6 +39,18 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
     @Override
     public ModelRun getLastCompletedModelRun(int diseaseGroupId) {
         return firstOrNull(listNamedQuery("getLastCompletedModelRun", "diseaseGroupId", diseaseGroupId));
+    }
+
+    /**
+     * Returns whether or not disease occurrence batching has ever completed for the specified disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return True if batching has completed at least once for this disease group, otherwise false.
+     */
+    @Override
+    public boolean hasBatchingEverCompleted(int diseaseGroupId) {
+        Query query = getParameterisedNamedQuery("hasBatchingEverCompleted", "diseaseGroupId", diseaseGroupId);
+        long count = (long) query.uniqueResult();
+        return (count > 0);
     }
 
     private ModelRun firstOrNull(List<ModelRun> modelRuns) {
