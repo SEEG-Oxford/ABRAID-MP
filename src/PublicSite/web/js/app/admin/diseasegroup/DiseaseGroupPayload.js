@@ -9,9 +9,13 @@ define([], function () {
             return (diseaseGroup) ? diseaseGroup.id : null;
         };
 
-        var parse = function (arg) {
+        var parseInteger = function (arg) {
             var val = parseInt(arg, 10);
             return isNaN(val) ? undefined : val;
+        };
+
+        var parseDouble = function (arg) {
+            return arg ? arg : undefined;
         };
 
         return {
@@ -21,24 +25,29 @@ define([], function () {
             abbreviation: diseaseGroupSettingsViewModel.abbreviation(),
             groupType: diseaseGroupSettingsViewModel.selectedType(),
             isGlobal: diseaseGroupSettingsViewModel.isGlobal(),
-            parentDiseaseGroup: {id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup())},
-            validatorDiseaseGroup: {id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup())},
-            minNewOccurrences: parse(modelRunParametersViewModel.minNewOccurrences()),
-            minDataVolume: parse(modelRunParametersViewModel.minDataVolume()),
-            minDistinctCountries: parse(modelRunParametersViewModel.minDistinctCountries()),
-            minHighFrequencyCountries: parse(modelRunParametersViewModel.minHighFrequencyCountries()),
-            highFrequencyThreshold: parse(modelRunParametersViewModel.highFrequencyThreshold()),
+            parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
+            validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
+            minNewOccurrences: parseInteger(modelRunParametersViewModel.minNewOccurrences()),
+            minDataVolume: parseInteger(modelRunParametersViewModel.minDataVolume()),
+            minDistinctCountries: parseInteger(modelRunParametersViewModel.minDistinctCountries()),
+            minHighFrequencyCountries: parseInteger(modelRunParametersViewModel.minHighFrequencyCountries()),
+            highFrequencyThreshold: parseInteger(modelRunParametersViewModel.highFrequencyThreshold()),
             occursInAfrica: modelRunParametersViewModel.occursInAfrica(),
             diseaseExtentParameters: {
-                maxMonthsAgo: parse(diseaseExtentParametersViewModel.maxMonthsAgo()),
+                maxMonthsAgo:
+                    parseInteger(diseaseExtentParametersViewModel.maxMonthsAgo()),
                 maxMonthsAgoForHigherOccurrenceScore:
-                    parse(diseaseExtentParametersViewModel.maxMonthsAgoForHigherOccurrenceScore()),
-                lowerOccurrenceScore: parse(diseaseExtentParametersViewModel.lowerOccurrenceScore()),
-                higherOccurrenceScore: parse(diseaseExtentParametersViewModel.higherOccurrenceScore()),
-                minValidationWeighting: diseaseExtentParametersViewModel.minValidationWeighting(),
-                minOccurrencesForPresence: parse(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
+                    parseInteger(diseaseExtentParametersViewModel.maxMonthsAgoForHigherOccurrenceScore()),
+                lowerOccurrenceScore:
+                    parseInteger(diseaseExtentParametersViewModel.lowerOccurrenceScore()),
+                higherOccurrenceScore:
+                    parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
+                minValidationWeighting:
+                    parseDouble(diseaseExtentParametersViewModel.minValidationWeighting()),
+                minOccurrencesForPresence:
+                    parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
                 minOccurrencesForPossiblePresence:
-                    parse(diseaseExtentParametersViewModel.minOccurrencesForPossiblePresence())
+                    parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPossiblePresence())
             }
         };
     };
