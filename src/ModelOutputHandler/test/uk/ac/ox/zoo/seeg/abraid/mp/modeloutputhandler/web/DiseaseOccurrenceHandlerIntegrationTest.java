@@ -1,18 +1,18 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import org.apache.commons.io.FileUtils;
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsNull;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
@@ -22,6 +22,8 @@ import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
  * Integration tests for the DiseaseOccurrenceHandler class.
@@ -44,56 +46,118 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
 
     @Autowired
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private DiseaseService diseaseService;
 
     @Test
-    public void handleValidationParametersWithCompletedModelRun() throws Exception {
+    public void handleFirstBatch() throws Exception {
         // Arrange
+        DateTime now = DateTime.now();
+        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
+
         int diseaseGroupId = 87;
-        ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId);
+        setAutomaticModelRunsToFalse(diseaseGroupId);
+        DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
+        ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
 
         // Act
-        //diseaseOccurrenceHandler.handleValidationParameters(modelRun);
+        diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        List<DiseaseOccurrence> occurrences = getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
 
-        List<DiseaseOccurrence> occurrencesWithIsValidatedTrue = findOccurrencesWithIsValidatedFlag(occurrences, true);
-        assertThat(occurrencesWithIsValidatedTrue).hasSize(45);
-        assertThat(getOccurrencesWithNullEnvironmentalSuitability(occurrencesWithIsValidatedTrue)).hasSize(0);
+        // As this is the first batch, all of them should have final weighting (and final weighting excluding spatial)
+        // set to null
+        for (DiseaseOccurrence occurrence : occurrences) {
+            assertThat(occurrence.getFinalWeighting()).isNull();
+            assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        }
 
-        List<DiseaseOccurrence> occurrencesWithIsValidatedFalse = findOccurrencesWithIsValidatedFlag(occurrences, false);
-        assertThat(occurrencesWithIsValidatedFalse).hasSize(0);
+        // All occurrences with is validated = true before the batch end date should have an environmental suitability,
+        // and the others should not. Note that the batch end date's time is always 23:59:59.999 i.e. end of day.
+        assertOccurrences(occurrences, true, 42, 27);
+        assertOccurrences(occurrences, false, 3, 0);
+        assertOccurrences(occurrences, null, 3, 0);
 
-        List<DiseaseOccurrence> occurrencesWithIsValidatedNull = findOccurrencesWithIsValidatedFlag(occurrences, null);
-        assertThat(occurrencesWithIsValidatedNull).hasSize(3);
-        assertThat(getOccurrencesWithNullEnvironmentalSuitability(occurrencesWithIsValidatedNull)).hasSize(3);
+        // And the model run should have been updated correctly
+        modelRun = modelRunService.getModelRunByName(modelRun.getName());
+        assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(now);
+        assertThat(modelRun.getBatchedOccurrenceCount()).isEqualTo(27);
     }
 
-    private ModelRun createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now());
+    @Test
+    public void handleSecondBatch() throws Exception {
+        // Arrange
+        DateTime now = DateTime.now();
+        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
+
+        int diseaseGroupId = 87;
+        setAutomaticModelRunsToFalse(diseaseGroupId);
+        DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
+        createAndSaveTestModelRun(diseaseGroupId, batchEndDate, DateTime.now().minusWeeks(1));
+        ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
+
+        // Act
+        diseaseOccurrenceHandler.handle(modelRun2);
+
+        // Assert
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
+
+        // As this is the second batch, the final weighting (and final weighting excluding spatial) will not have
+        // been nulled
+        for (DiseaseOccurrence occurrence : occurrences) {
+            assertThat(occurrence.getFinalWeighting()).isNotNull();
+            assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNotNull();
+        }
+
+        // Because the final weightings are all not null, none of them will have been assigned an environmental
+        // suitability
+        assertOccurrences(occurrences, true, 42, 0);
+        assertOccurrences(occurrences, false, 3, 0);
+        assertOccurrences(occurrences, null, 3, 0);
+
+        // And the model run should have been updated correctly
+        modelRun2 = modelRunService.getModelRunByName(modelRun2.getName());
+        assertThat(modelRun2.getBatchingCompletedDate()).isEqualTo(now);
+        assertThat(modelRun2.getBatchedOccurrenceCount()).isEqualTo(0);
+    }
+
+    private void setAutomaticModelRunsToFalse(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRuns(false);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
+    }
+
+    private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchEndDate,
+                                               DateTime batchingCompletionDate) throws Exception {
+        String name = Double.toString(Math.random());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setBatchEndDate(batchEndDate);
+        modelRun.setBatchingCompletedDate(batchingCompletionDate);
         modelRunService.saveModelRun(modelRun);
+        flushAndClear();
 
         byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
         modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
         return modelRun;
     }
 
-    private List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(int diseaseGroupId) {
-        List<DiseaseOccurrence> allOccurrences = diseaseOccurrenceDao.getAll();
-        return select(allOccurrences,
-                having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), IsEqual.equalTo(diseaseGroupId)));
+    private void assertOccurrences(List<DiseaseOccurrence> occurrences, Boolean isValidated, int expectedSize,
+                                   int expectedSizeWithEnvironmentalSuitability) {
+        List<DiseaseOccurrence> filteredOccurrences = findOccurrencesWithIsValidatedFlag(occurrences, isValidated);
+        assertThat(filteredOccurrences).hasSize(expectedSize);
+        assertThat(getOccurrencesWithEnvironmentalSuitability(filteredOccurrences))
+                .hasSize(expectedSizeWithEnvironmentalSuitability);
     }
 
     private List<DiseaseOccurrence> findOccurrencesWithIsValidatedFlag(List<DiseaseOccurrence> occurrences,
                                                                        Boolean isValidated) {
         return select(occurrences,
-                having(on(DiseaseOccurrence.class).isValidated(), IsEqual.equalTo(isValidated)));
+                having(on(DiseaseOccurrence.class).isValidated(), equalTo(isValidated)));
     }
 
-    private List<DiseaseOccurrence> getOccurrencesWithNullEnvironmentalSuitability(List<DiseaseOccurrence> occurrences) {
+    private List<DiseaseOccurrence> getOccurrencesWithEnvironmentalSuitability(List<DiseaseOccurrence> occurrences) {
         return select(occurrences,
-                having(on(DiseaseOccurrence.class).getEnvironmentalSuitability(), IsNull.nullValue()));
+                having(on(DiseaseOccurrence.class).getEnvironmentalSuitability(), notNullValue()));
     }
 }

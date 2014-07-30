@@ -5,16 +5,14 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,54 +36,133 @@ public class DiseaseOccurrenceHandlerTest {
     @Test
     public void handleValidationParametersHasNoEffectIfModelIncomplete() {
         // Arrange
-        ModelRun modelRun = createModelRun(87, ModelRunStatus.FAILED);
+        int diseaseGroupId = 87;
+        ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.FAILED);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        //diseaseOccurrenceHandler.handleValidationParameters(modelRun);
+        diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(diseaseService, never()).getDiseaseGroupById(anyInt());
-        verify(diseaseService, never()).getDiseaseOccurrencesForModelRunRequest(anyInt());
-        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
-        verify(diseaseService, never()).saveDiseaseGroup(any(DiseaseGroup.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).initialiseBatchingIfNecessary(any(ModelRun.class), any(DiseaseGroup.class));
+        verify(diseaseService, never()).getDiseaseOccurrenceIDsForBatching(anyInt(), any(DateTime.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).setValidationParametersForOccurrencesBatch(anyListOf(Integer.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).setBatchingParameters(any(ModelRun.class), anyInt());
     }
 
     @Test
-    public void handleValidationParametersHasNoEffectIfValidationProcessAlreadyStarted() {
+    public void handleValidationParametersHasNoEffectIfDiseaseGroupIsNotBeingSetUp() {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
-        DiseaseGroup diseaseGroup = createDiseaseGroupAndMockLoad(diseaseGroupId);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRuns(true);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        //diseaseOccurrenceHandler.handleValidationParameters(modelRun);
+        diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(diseaseService, times(1)).getDiseaseGroupById(eq(diseaseGroupId));
-        verify(diseaseService, never()).getDiseaseOccurrencesForModelRunRequest(anyInt());
-        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
-        verify(diseaseService, never()).saveDiseaseGroup(any(DiseaseGroup.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).initialiseBatchingIfNecessary(any(ModelRun.class), any(DiseaseGroup.class));
+        verify(diseaseService, never()).getDiseaseOccurrenceIDsForBatching(anyInt(), any(DateTime.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).setValidationParametersForOccurrencesBatch(anyListOf(Integer.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).setBatchingParameters(any(ModelRun.class), anyInt());
     }
 
     @Test
-    public void handleValidationParametersAddsAndSavesDiseaseOccurrences() {
+    public void handleValidationParametersDoesNotBatchIfThereIsNoBatchEndDate() {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
-        DiseaseGroup diseaseGroup = createDiseaseGroupAndMockLoad(diseaseGroupId);
-        List<DiseaseOccurrence> occurrences = createDiseaseOccurrences(5);
-
-        when(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(occurrences);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        //diseaseOccurrenceHandler.handleValidationParameters(modelRun);
+        diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(diseaseService, times(3)).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrences.get(0)));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrences.get(3)));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrences.get(4)));
-        verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).initialiseBatchingIfNecessary(any(ModelRun.class), any(DiseaseGroup.class));
+        verify(diseaseService, never()).getDiseaseOccurrenceIDsForBatching(anyInt(), any(DateTime.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).setValidationParametersForOccurrencesBatch(anyListOf(Integer.class));
+        verify(diseaseOccurrenceHandlerHelper, never()).setBatchingParameters(any(ModelRun.class), anyInt());
+    }
+
+    @Test
+    public void handlingSucceedsIfThereAreNoOccurrencesToBatch() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTime batchEndDate = DateTime.now().minusYears(1);
+        ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
+        modelRun.setBatchEndDate(batchEndDate);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setName("Dengue");
+
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(diseaseService.getDiseaseOccurrenceIDsForBatching(diseaseGroupId, batchEndDate)).thenReturn(new ArrayList<Integer>());
+
+        // Act
+        diseaseOccurrenceHandler.handle(modelRun);
+
+        // Assert
+        verify(diseaseOccurrenceHandlerHelper, times(1)).initialiseBatchingIfNecessary(same(modelRun), same(diseaseGroup));
+        verify(diseaseOccurrenceHandlerHelper, never()).setValidationParametersForOccurrencesBatch(anyListOf(Integer.class));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).setBatchingParameters(same(modelRun), eq(0));
+    }
+
+    @Test
+    public void handlingSucceedsIfThereAre100OccurrencesToBatch() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTime batchEndDate = new DateTime("2013-07-30T14:15:16");
+        DateTime batchEndDateWithMaximumTime = new DateTime("2013-07-30T23:59:59.999");
+        ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
+        modelRun.setBatchEndDate(batchEndDate);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setName("Dengue");
+        int batchSize = 100;
+        List<Integer> occurrenceIDs = createRandomList(batchSize);
+
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(diseaseService.getDiseaseOccurrenceIDsForBatching(diseaseGroupId, batchEndDateWithMaximumTime))
+                .thenReturn(occurrenceIDs);
+
+        // Act
+        diseaseOccurrenceHandler.handle(modelRun);
+
+        // Assert
+        verify(diseaseOccurrenceHandlerHelper, times(1)).initialiseBatchingIfNecessary(same(modelRun), same(diseaseGroup));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).setValidationParametersForOccurrencesBatch(eq(occurrenceIDs));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).setBatchingParameters(same(modelRun), eq(batchSize));
+    }
+
+    @Test
+    public void handlingSucceedsIfThereAre101OccurrencesToBatch() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTime batchEndDate = new DateTime("2013-07-30T14:15:16");
+        DateTime batchEndDateWithMaximumTime = new DateTime("2013-07-30T23:59:59.999");
+        ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
+        modelRun.setBatchEndDate(batchEndDate);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setName("Dengue");
+        int batchSize = 101;
+        List<Integer> occurrenceIDs = createRandomList(batchSize);
+        List<Integer> occurrenceIDsTransaction1 = occurrenceIDs.subList(0, 100);
+        List<Integer> occurrenceIDsTransaction2 = Arrays.asList(occurrenceIDs.get(100));
+
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(diseaseService.getDiseaseOccurrenceIDsForBatching(diseaseGroupId, batchEndDateWithMaximumTime))
+                .thenReturn(occurrenceIDs);
+
+        // Act
+        diseaseOccurrenceHandler.handle(modelRun);
+
+        // Assert
+        verify(diseaseOccurrenceHandlerHelper, times(1)).initialiseBatchingIfNecessary(same(modelRun), same(diseaseGroup));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).setValidationParametersForOccurrencesBatch(eq(occurrenceIDsTransaction1));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).setValidationParametersForOccurrencesBatch(eq(occurrenceIDsTransaction2));
+        verify(diseaseOccurrenceHandlerHelper, times(1)).setBatchingParameters(same(modelRun), eq(batchSize));
     }
 
     private ModelRun createModelRun(int diseaseGroupId, ModelRunStatus status) {
@@ -97,17 +174,12 @@ public class DiseaseOccurrenceHandlerTest {
         return modelRun;
     }
 
-    private DiseaseGroup createDiseaseGroupAndMockLoad(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        return diseaseGroup;
-    }
-
-    private List<DiseaseOccurrence> createDiseaseOccurrences(int occurrenceCount) {
-        List<DiseaseOccurrence> occurrences = new ArrayList<>();
-        for (int i = 0; i < occurrenceCount; i++) {
-            occurrences.add(new DiseaseOccurrence());
+    private List<Integer> createRandomList(int size) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            double randomNumber = Math.random() * 1000.0;
+            list.add((int) randomNumber);
         }
-        return occurrences;
+        return list;
     }
 }

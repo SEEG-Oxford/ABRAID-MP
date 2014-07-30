@@ -61,7 +61,7 @@ public class DiseaseOccurrenceHandler {
             List<Integer> occurrenceIDs = diseaseService.getDiseaseOccurrenceIDsForBatching(diseaseGroup.getId(),
                     batchEndDateWithMaximumTime);
             LOGGER.info(String.format(VALIDATION_LOG_MESSAGE, modelRun.getId(), occurrenceIDs.size(),
-                    diseaseGroup.getId(), diseaseGroup.getName(), batchEndDateWithMaximumTime));
+                    diseaseGroup.getId(), diseaseGroup.getName(), batchEndDateWithMaximumTime.toString("dd MMM yyyy")));
             setValidationParametersForOccurrencesBatch(occurrenceIDs);
             diseaseOccurrenceHandlerHelper.setBatchingParameters(modelRun, occurrenceIDs.size());
             LOGGER.info(String.format(VALIDATION_COMPLETED_LOG_MESSAGE, modelRun.getId()));
@@ -84,7 +84,7 @@ public class DiseaseOccurrenceHandler {
         // Set the validation parameters a group at a time, where each group is one transaction. This is because
         // there may be 1000s of occurrences to handle, and setting validation parameters takes some time.
         int numOccurrences = occurrenceIDs.size();
-        for (int startIndex = 0; startIndex >= numOccurrences; startIndex += TRANSACTION_SIZE) {
+        for (int startIndex = 0; startIndex < numOccurrences; startIndex += TRANSACTION_SIZE) {
             int endIndex = getEndIndexForOccurrenceBatch(numOccurrences, startIndex);
             List<Integer> subListOccurrenceIDs = occurrenceIDs.subList(startIndex, endIndex);
             diseaseOccurrenceHandlerHelper.setValidationParametersForOccurrencesBatch(subListOccurrenceIDs);
