@@ -20,25 +20,33 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a disease occurrence - only during the automated process.
-     * If automatic model runs is not enabled, and the occurrence's location has passed QC then only set is_validated to
-     * true, to ensure the occurrence is used in the manually requested model run.
+     * Adds validation parameters to a disease occurrence, if the occurrence is eligible for validation.
+     * If automatic model runs are enabled, all validation parameters are set. If they are disabled, then only
+     * isValidated is set to true which marks it as ready for an initial model run (when requested).
      * @param occurrence The disease occurrence.
      * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
-    public boolean addValidationParameters(DiseaseOccurrence occurrence) {
+    public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
         if (isEligibleForValidation(occurrence)) {
             if (automaticModelRunsEnabled(occurrence)) {
-                occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
-                occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
-                occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-                occurrence.setValidated(findIsValidated(occurrence));
+                addValidationParameters(occurrence);
             } else {
                 occurrence.setValidated(true);
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Adds validation parameters to a disease occurrence (without checks).
+     * @param occurrence The disease occurrence.
+     */
+    public void addValidationParameters(DiseaseOccurrence occurrence) {
+        occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
+        occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
+        occurrence.setMachineWeighting(findMachineWeighting(occurrence));
+        occurrence.setValidated(findIsValidated(occurrence));
     }
 
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {

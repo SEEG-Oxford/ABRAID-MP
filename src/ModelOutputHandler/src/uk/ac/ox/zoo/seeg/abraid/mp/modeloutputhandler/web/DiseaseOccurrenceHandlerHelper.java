@@ -63,9 +63,8 @@ public class DiseaseOccurrenceHandlerHelper {
     public void setValidationParametersForOccurrencesBatch(List<Integer> diseaseOccurrenceIds) {
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesById(diseaseOccurrenceIds);
         for (DiseaseOccurrence occurrence : occurrences) {
-            if (diseaseOccurrenceValidationService.addValidationParameters(occurrence)) {
-                diseaseService.saveDiseaseOccurrence(occurrence);
-            }
+            diseaseOccurrenceValidationService.addValidationParameters(occurrence);
+            diseaseService.saveDiseaseOccurrence(occurrence);
         }
     }
 
