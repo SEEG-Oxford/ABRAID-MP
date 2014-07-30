@@ -273,6 +273,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private void addDiseaseExtent(DiseaseGroup diseaseGroup, JsonDiseaseExtent newValues) {
         DiseaseExtent parameters = new DiseaseExtent(
+                diseaseGroup,
                 newValues.getMaxMonthsAgo(),
                 newValues.getMinValidationWeighting(),
                 newValues.getMinOccurrencesForPresence(),
@@ -282,7 +283,6 @@ public class AdminDiseaseGroupController extends AbstractController {
                 newValues.getHigherOccurrenceScore()
         );
         diseaseGroup.setDiseaseExtentParameters(parameters);
-        parameters.setDiseaseGroup(diseaseGroup);
     }
 
     private void updateDiseaseExtent(DiseaseGroup diseaseGroup, JsonDiseaseExtent newValues) {

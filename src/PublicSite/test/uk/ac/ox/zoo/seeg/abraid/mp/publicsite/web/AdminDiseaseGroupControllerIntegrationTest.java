@@ -186,10 +186,8 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(parentDiseaseGroup);
         assertThat(diseaseGroup.getValidatorDiseaseGroup()).isEqualTo(validatorDiseaseGroup);
-        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgo()).isEqualTo(12);
-        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgoForHigherOccurrenceScore()).isEqualTo(6);
-        assertThat(diseaseGroup.getDiseaseExtentParameters().getLowerOccurrenceScore()).isEqualTo(3);
-        assertThat(diseaseGroup.getDiseaseExtentParameters().getHigherOccurrenceScore()).isEqualTo(4);
+        // Disease group already had a disease extent (parameters) object - assert that values are updated as expected
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 12, 6, 3, 4);
     }
 
     @Test
@@ -204,10 +202,10 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"groupType\": \"MICROCLUSTER\", " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                "\"maxMonthsAgo\": 12, " +
-                "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
-                "\"lowerOccurrenceScore\": 3, " +
-                "\"higherOccurrenceScore\": 4 } }";
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
 
         // Act
@@ -244,10 +242,10 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                "\"maxMonthsAgo\": 12, " +
-                "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
-                "\"lowerOccurrenceScore\": 3, " +
-                "\"higherOccurrenceScore\": 4 } }";
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
 
         // Act
@@ -376,10 +374,10 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                "\"maxMonthsAgo\": 12, " +
-                "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
-                "\"lowerOccurrenceScore\": 3, " +
-                "\"higherOccurrenceScore\": 4 } }";
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add";
 
         // Act

@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 
 /**
+ * Represents the disease extent parameters of a JsonDiseaseGroup.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonDiseaseExtent {

@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 
 import java.util.Map;
@@ -39,7 +40,7 @@ public interface ModelRunWorkflowService {
 
     /**
      * Generates the disease extent for the specified disease group.
-     * @param diseaseGroupId The ID of the disease group.
+     * @param diseaseGroup The disease group.
      */
-    void generateDiseaseExtent(int diseaseGroupId);
+    void generateDiseaseExtent(DiseaseGroup diseaseGroup);
 }
