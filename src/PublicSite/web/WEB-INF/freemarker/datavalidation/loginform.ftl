@@ -6,7 +6,7 @@
         </p>
     </form>
     <hr />
-    <form id="login-form" action="" data-bind="submit: submit">
+    <form id="login-form" action="" data-bind="formSubmit: submit">
         <p id="login-header" data-bind="html: message"></p>
         <p class="form-group">
             <span class="input-group">
