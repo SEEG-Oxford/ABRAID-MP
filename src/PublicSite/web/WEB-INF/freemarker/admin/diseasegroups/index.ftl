@@ -24,11 +24,11 @@
 
 <#assign css>
 <style>
-    #disease-group-name-input-group, #model-run-parameters .input-group {
+    #disease-group-name-input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
         padding-left: 15px;
         padding-right: 15px;
     }
-    #disease-group-settings label, #model-run-parameters label {
+    #disease-group-settings label, #model-run-parameters label, #disease-extent-parameters label {
         text-align: left;
     }
 </style>
@@ -60,6 +60,9 @@
                 </div>
                 <div data-bind="with: modelRunParametersViewModel">
                     <#include "modelrunparameterspanel.ftl"/>
+                </div>
+                <div data-bind="with: diseaseExtentParametersViewModel">
+                    <#include "diseaseextentparameterspanel.ftl"/>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Saving...', standard: 'Save' }"></button>

@@ -220,9 +220,9 @@ public class DiseaseExtentGeneratorHelper {
      */
     public DiseaseExtentClass computeDiseaseExtentClassUsingOccurrenceCount(int occurrenceCount, int factor) {
         // Convert an occurrence count into a disease extent class, using the disease extent parameters
-        if (occurrenceCount >= parameters.getMinimumOccurrencesForPresence() * factor) {
+        if (occurrenceCount >= parameters.getMinOccurrencesForPresence() * factor) {
             return findDiseaseExtentClass(DiseaseExtentClass.PRESENCE);
-        } else if (occurrenceCount >= parameters.getMinimumOccurrencesForPossiblePresence() * factor) {
+        } else if (occurrenceCount >= parameters.getMinOccurrencesForPossiblePresence() * factor) {
             return findDiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE);
         } else {
             return findDiseaseExtentClass(DiseaseExtentClass.UNCERTAIN);
@@ -289,7 +289,7 @@ public class DiseaseExtentGeneratorHelper {
 
     private int computeOccurrencesScore(List<DiseaseOccurrenceForDiseaseExtent> occurrenceList) {
         DateTime oldestDateForHigherScore =
-                DateTime.now().minusMonths(parameters.getMaximumMonthsAgoForHigherOccurrenceScore());
+                DateTime.now().minusMonths(parameters.getMaxMonthsAgoForHigherOccurrenceScore());
 
         // Unlike computeReviewsScore(), the total is an integer so that we can maintain full accuracy over multiple
         // additions

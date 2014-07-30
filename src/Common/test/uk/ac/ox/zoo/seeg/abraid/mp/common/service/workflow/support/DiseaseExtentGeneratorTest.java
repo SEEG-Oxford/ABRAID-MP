@@ -192,7 +192,7 @@ public class DiseaseExtentGeneratorTest {
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getUpdatedDiseaseExtentOccurrencesOnly(createdDate, updatedDate);
         standardMocks();
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(eq(diseaseGroupId),
-                eq(parameters.getMinimumValidationWeighting()), eq((DateTime) null))).thenReturn(getOccurrences());
+                eq(parameters.getMinValidationWeighting()), eq((DateTime) null))).thenReturn(getOccurrences());
 
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(parameters, getOccurrences());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
@@ -245,8 +245,8 @@ public class DiseaseExtentGeneratorTest {
 
     private void mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(DiseaseExtent parameters,
                                                                   List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
-        double minimumValidationWeighting = parameters.getMinimumValidationWeighting();
-        DateTime minimumOccurrenceDate = getFixedMonthsAgo(parameters.getMaximumMonthsAgo());
+        double minimumValidationWeighting = parameters.getMinValidationWeighting();
+        DateTime minimumOccurrenceDate = getFixedMonthsAgo(parameters.getMaxMonthsAgo());
 
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 eq(diseaseGroupId), eq(minimumValidationWeighting), eq(minimumOccurrenceDate))).thenReturn(occurrences);

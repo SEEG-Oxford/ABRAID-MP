@@ -86,19 +86,19 @@ public class DiseaseGroupForModelRunValidator {
         if (parameters == null) {
             return DISEASE_EXTENT_PARAMETERS_MISSING_MESSAGE;
         } else {
-            if (parameters.getMaximumMonthsAgo() == null) {
+            if (parameters.getMaxMonthsAgo() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MAX_MONTHS_AGO);
             }
-            if (parameters.getMinimumValidationWeighting() == null) {
+            if (parameters.getMinValidationWeighting() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MIN_VALIDATION_WEIGHTING);
             }
-            if (parameters.getMinimumOccurrencesForPresence() == null) {
+            if (parameters.getMinOccurrencesForPresence() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MIN_OCCURRENCES_FOR_PRESENCE);
             }
-            if (parameters.getMinimumOccurrencesForPossiblePresence() == null) {
+            if (parameters.getMinOccurrencesForPossiblePresence() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MIN_OCCURRENCES_FOR_POSSIBLE_PRESENCE);
             }
-            if (parameters.getMaximumMonthsAgoForHigherOccurrenceScore() == null) {
+            if (parameters.getMaxMonthsAgoForHigherOccurrenceScore() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MAX_MONTHS_AGO_FOR_HIGHER_SCORE);
             }
             if (parameters.getLowerOccurrenceScore() == null) {
