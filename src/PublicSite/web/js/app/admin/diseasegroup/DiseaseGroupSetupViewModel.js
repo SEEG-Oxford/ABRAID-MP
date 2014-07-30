@@ -7,7 +7,7 @@ define([
 ], function (ko, $) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSelectedEventName) {
+    return function (baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
         var self = this;
 
         self.selectedDiseaseGroupId = ko.observable();
@@ -19,9 +19,28 @@ define([
         self.working = ko.observable(false);
         self.notices = ko.observableArray();
 
-        // When a disease group is selected from the drop-down list...
-        ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
-            self.selectedDiseaseGroupId(selectedDiseaseGroup.id);
+        self.runModel = function () {
+            self.notices.removeAll();
+            if (self.canRunModel()) {
+                self.working(true);
+                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
+                    .done(function () {
+                        self.notices.push({ message: "Model run requested.", priority: "success"});
+                    })
+                    .fail(function (data) {
+                        var errorMessage = data.responseJSON;
+                        if (!errorMessage) {
+                            errorMessage = "Model run could not be requested.";
+                        }
+                        self.notices.push({ message: errorMessage, priority: "warning"});
+                    })
+                    .always(function () { self.working(false); });
+            }
+        };
+
+        var getModelRunInfo = function (diseaseGroupId) {
+            self.selectedDiseaseGroupId(diseaseGroupId);
             self.working(true);
             self.notices.removeAll();
 
@@ -44,26 +63,16 @@ define([
                     })
                     .always(function () { self.working(false); });
             }
+        };
+
+        // When a disease group is selected from the drop-down list...
+        ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
+            getModelRunInfo(selectedDiseaseGroup.id);
         });
 
-        self.runModel = function () {
-            self.notices.removeAll();
-            if (self.canRunModel()) {
-                self.working(true);
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
-                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
-                    .done(function () {
-                        self.notices.push({ message: "Model run requested.", priority: "success"});
-                    })
-                    .fail(function (data) {
-                        var errorMessage = data.responseJSON;
-                        if (!errorMessage) {
-                            errorMessage = "Model run could not be requested.";
-                        }
-                        self.notices.push({ message: errorMessage, priority: "warning"});
-                    })
-                    .always(function () { self.working(false); });
-            }
-        };
+        // When changes to a disease group are successfully saved...
+        ko.postbox.subscribe(diseaseGroupSavedEventName, function (diseaseGroupId) {
+            getModelRunInfo(diseaseGroupId);
+        });
     };
 });

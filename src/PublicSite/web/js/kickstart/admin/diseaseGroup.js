@@ -21,6 +21,7 @@ require([baseUrl + "js/require.conf.js"], function () {
                  DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel, doc) {
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
+        var diseaseGroupSavedEventName = "disease-group-saved";
 
         var diseaseGroupsListViewModel =
             new DiseaseGroupsListViewModel(diseaseGroups, diseaseGroupSelectedEventName);
@@ -35,14 +36,16 @@ require([baseUrl + "js/require.conf.js"], function () {
                 new DiseaseGroupSettingsViewModel(diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName),
                 new ModelRunParametersViewModel(diseaseGroupSelectedEventName),
                 new DiseaseExtentParametersViewModel(diseaseGroupSelectedEventName),
-                diseaseGroupSelectedEventName
+                diseaseGroupSelectedEventName,
+                diseaseGroupSavedEventName
             );
         ko.applyBindings(
             ko.validatedObservable(diseaseGroupAdministrationViewModel),
             doc.getElementById("disease-group-administration")
         );
 
-        var diseaseGroupSetupViewModel = new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName);
+        var diseaseGroupSetupViewModel =
+            new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName);
         ko.applyBindings(
             ko.validatedObservable(diseaseGroupSetupViewModel),
             doc.getElementById("setup-body"));

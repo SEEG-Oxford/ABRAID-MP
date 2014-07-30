@@ -24,11 +24,11 @@
 
 <#assign css>
 <style>
-    #disease-group-name-input-group, #model-run-parameters .input-group {
+    #disease-group-name-input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
         padding-left: 15px;
         padding-right: 15px;
     }
-    #disease-group-settings label, #model-run-parameters label {
+    #disease-group-settings label, #model-run-parameters label, #disease-extent-parameters label {
         text-align: left;
     }
 </style>

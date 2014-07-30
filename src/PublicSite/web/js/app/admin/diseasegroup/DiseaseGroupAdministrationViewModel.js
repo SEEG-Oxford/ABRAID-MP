@@ -9,7 +9,7 @@ define([
     "use strict";
 
     return function (baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel,
-                     diseaseExtentParametersViewModel, diseaseGroupSelectedEventName) {
+                     diseaseExtentParametersViewModel, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
 
         var self = this;
         self.diseaseGroupSettingsViewModel = diseaseGroupSettingsViewModel;
@@ -37,7 +37,10 @@ define([
                 data: JSON.stringify(data),
                 contentType : "application/json"
             })
-                .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
+                .done(function () {
+                    self.notice({ message: "Saved successfully", priority: "success" });
+                    ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
+                })
                 .fail(function () { self.notice({ message: "Error saving disease group", priority: "warning"}); })
                 .always(function () { self.isSubmitting(false); });
         };
