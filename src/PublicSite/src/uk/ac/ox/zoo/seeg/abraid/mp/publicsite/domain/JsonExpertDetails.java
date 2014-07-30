@@ -31,7 +31,7 @@ public class JsonExpertDetails {
     }
 
     private static Boolean extractVisibilityRequested(Expert expert) {
-        return (expert.getVisibilityRequested() == null) ? false : expert.getVisibilityRequested();
+        return (expert.getVisibilityRequested() == null) ? ((Boolean) false) : expert.getVisibilityRequested();
     }
 
     public String getName() {
