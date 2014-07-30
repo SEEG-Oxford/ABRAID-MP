@@ -21,7 +21,7 @@
         <!-- ko foreach: diseaseInterestListViewModel.visibleDiseases -->
         <tr>
             <td><span data-bind="text: name"></td>
-            <td><input type="checkbox" data-bind="formChecked: { checked: interested, value: true }"></td>
+            <td><input type="checkbox" data-bind="formChecked: interested"></td>
         </tr>
         <!-- /ko -->
     </script>
@@ -75,7 +75,7 @@
                     <label for="user-show">Show on site?</label>
                     <span id="user-show" class="input-group btn-group" data-bind="foreach: [ { value: true, label: 'Show me' }, { value: false, label: 'Don\'t show me' } ]">
                         <label class="btn btn-default" data-bind="css: { active: $parent.visibilityRequested() === value, disabled: $parent.isSubmitting() }">
-                            <input type="radio" name="user-show" data-bind="formChecked: { checked: $parent.visibilityRequested, value: value }">
+                            <input type="radio" name="user-show" data-bind="formRadio: { selected: $parent.visibilityRequested, value: value }">
                             <span data-bind="text: label"></span>
                         </label>
                     </span>

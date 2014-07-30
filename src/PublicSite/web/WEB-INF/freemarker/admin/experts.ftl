@@ -41,10 +41,10 @@
 <@t.tableTemplates numberOfColumns=8 plural="experts">
     <tr data-bind="popover: { placement: 'bottom', trigger: 'hover', title: name, template: 'details-template' }">
         <td><span data-bind="text: name"></td>
-        <td><input type="checkbox" data-bind="formChecked: { checked: seegmember, value: true }"></td>
-        <td><input type="checkbox" data-bind="formChecked: { checked: administrator, value: true }"></td>
+        <td><input type="checkbox" data-bind="formChecked: seegmember"></td>
+        <td><input type="checkbox" data-bind="formChecked: administrator"></td>
         <td><input type="checkbox" data-bind="checked: visibilityRequested, bootstrapDisable: true"></td>
-        <td data-bind="if: visibilityRequested"><input type="checkbox" data-bind="formChecked: { checked: visibilityApproved, value: true }"></td>
+        <td data-bind="if: visibilityRequested"><input type="checkbox" data-bind="checked: visibilityApproved"></td>
         <td><span class="input-group"><input type="text" class="form-control" data-bind="formValue: weighting"></span></td>
         <td data-bind="date: { date: createdDate, format: 'LLL' }"></td>
         <td data-bind="date: { date: updatedDate, format: 'LLL' }"></td>

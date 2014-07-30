@@ -35,7 +35,7 @@
                     <div class="form-group">
                         <label for="occurs-in-africa" class="col-sm-8 control-label">Occurs in Africa</label>
                         <div class="col-sm-4">
-                            <input type="checkbox" id="occurs-in-africa" data-bind="checked: occursInAfrica">
+                            <input type="checkbox" id="occurs-in-africa" data-bind="formChecked: occursInAfrica">
                         </div>
                     </div>
                     <div class="form-group">

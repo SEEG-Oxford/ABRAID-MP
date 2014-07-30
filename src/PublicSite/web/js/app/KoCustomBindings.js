@@ -139,8 +139,7 @@ define([
     ko.bindingHandlers.formChecked = {
         init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
             ko.applyBindingAccessorsToNode(element, {
-                checked: function () { return valueAccessor().checked; },
-                checkedValue: function () { return valueAccessor().value; },
+                checked: valueAccessor,
                 bootstrapDisable: function () {
                     return bindingContext.find("isSubmitting");
                 }
@@ -148,5 +147,15 @@ define([
         }
     };
 
-
+    ko.bindingHandlers.formRadio = {
+        init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            ko.applyBindingAccessorsToNode(element, {
+                checked: function () { return valueAccessor().selected; },
+                checkedValue: function () { return valueAccessor().value; },
+                bootstrapDisable: function () {
+                    return bindingContext.find("isSubmitting");
+                }
+            });
+        }
+    };
 });
