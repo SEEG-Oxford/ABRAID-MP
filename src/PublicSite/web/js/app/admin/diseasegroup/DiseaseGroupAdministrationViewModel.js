@@ -8,12 +8,13 @@ define([
 ], function (ko, $, DiseaseGroupPayload) {
     "use strict";
 
-    return function (
-        baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseGroupSelectedEventName) {
+    return function (baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel,
+                     diseaseExtentParametersViewModel, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
 
         var self = this;
         self.diseaseGroupSettingsViewModel = diseaseGroupSettingsViewModel;
         self.modelRunParametersViewModel = modelRunParametersViewModel;
+        self.diseaseExtentParametersViewModel = diseaseExtentParametersViewModel;
 
         var diseaseGroupId;
         var getUrl = function () {
@@ -27,14 +28,19 @@ define([
         self.isSubmitting = ko.observable(false);
         self.submit = function () {
             self.isSubmitting(true);
-            var data = new DiseaseGroupPayload(self.diseaseGroupSettingsViewModel, self.modelRunParametersViewModel);
+            var data = new DiseaseGroupPayload(self.diseaseGroupSettingsViewModel,
+                                               self.modelRunParametersViewModel,
+                                               self.diseaseExtentParametersViewModel);
             $.ajax({
                 method: "POST",
                 url: getUrl(),
                 data: JSON.stringify(data),
                 contentType : "application/json"
             })
-                .done(function () { self.notice({ message: "Saved successfully", priority: "success" }); })
+                .done(function () {
+                    self.notice({ message: "Saved successfully", priority: "success" });
+                    ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
+                })
                 .fail(function () { self.notice({ message: "Error saving disease group", priority: "warning"}); })
                 .always(function () { self.isSubmitting(false); });
         };

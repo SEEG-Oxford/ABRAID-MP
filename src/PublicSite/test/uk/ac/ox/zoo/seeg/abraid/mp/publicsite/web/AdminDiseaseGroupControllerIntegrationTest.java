@@ -20,6 +20,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
+import java.util.List;
+
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.startsWith;
@@ -157,7 +161,12 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"groupType\": \"MICROCLUSTER\", " +
                 "\"parentDiseaseGroup\": { \"id\": \"" + parentId + "\"}, " +
                 "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
-                "\"isGlobal\": false }";
+                "\"isGlobal\": false, " +
+                "\"diseaseExtentParameters\": {" +
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
 
         // Act
@@ -177,6 +186,8 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(parentDiseaseGroup);
         assertThat(diseaseGroup.getValidatorDiseaseGroup()).isEqualTo(validatorDiseaseGroup);
+        // Disease group already had a disease extent (parameters) object - assert that values are updated as expected
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 12, 6, 3, 4);
     }
 
     @Test
@@ -189,7 +200,12 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"shortName\": \"Short name\", " +
                 "\"abbreviation\": \"ABBREV\", " +
                 "\"groupType\": \"MICROCLUSTER\", " +
-                "\"isGlobal\": false }";
+                "\"isGlobal\": false, " +
+                "\"diseaseExtentParameters\": {" +
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
 
         // Act
@@ -206,6 +222,53 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.valueOf(groupType));
         assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(null);
+        // Disease group already had a disease extent (parameters) object - assert that values are updated as expected
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroupId, 12, 6, 3, 4);
+    }
+
+    @Test
+    public void saveDiseaseGroupSetsParametersWithNewDiseaseExtent() throws Exception {
+        // Arrange
+        int diseaseGroupId = 2;
+        int parentId = 1;
+        int validatorId = 1;
+        String groupType = "MICROCLUSTER";
+        String settings = "{ \"name\": \"Name\", " +
+                "\"publicName\": \"Public name\", " +
+                "\"shortName\": \"Short name\", " +
+                "\"abbreviation\": \"ABBREV\", " +
+                "\"groupType\": \"MICROCLUSTER\", " +
+                "\"parentDiseaseGroup\": { \"id\": \"" + parentId + "\"}, " +
+                "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
+                "\"isGlobal\": false, " +
+                "\"diseaseExtentParameters\": {" +
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/save";
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isNoContent());
+
+        // Assert
+        flushAndClear();
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DiseaseGroup parentDiseaseGroup = diseaseService.getDiseaseGroupById(parentId);
+        ValidatorDiseaseGroup validatorDiseaseGroup = diseaseService.getValidatorDiseaseGroupById(validatorId);
+        assertThat(diseaseGroup.getName()).isEqualTo("Name");
+        assertThat(diseaseGroup.getPublicName()).isEqualTo("Public name");
+        assertThat(diseaseGroup.getShortName()).isEqualTo("Short name");
+        assertThat(diseaseGroup.getAbbreviation()).isEqualTo("ABBREV");
+        assertThat(diseaseGroup.getGroupType()).isEqualTo(DiseaseGroupType.valueOf(groupType));
+        assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
+        assertThat(diseaseGroup.getParentGroup()).isEqualTo(parentDiseaseGroup);
+        assertThat(diseaseGroup.getValidatorDiseaseGroup()).isEqualTo(validatorDiseaseGroup);
+        // Disease group didn't previously have disease extent (parameters) defined - assert that extent has been added
+        // with the same disease group id and values set as expected
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroupId, 12, 6, 3, 4);
     }
 
     @Test
@@ -295,5 +358,52 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
 
         // Assert
         assertThat(diseaseService.getAllDiseaseGroups()).hasSize(expectedSize);
+    }
+
+    @Test
+    public void addDiseaseGroupAddsNewDiseaseExtentWithSameDiseaseGroupId() throws Exception {
+        // Arrange
+        int parentId = 1;
+        int validatorId = 1;
+        String settings = "{ \"name\": \"Name\", " +
+                "\"publicName\": \"Public name\", " +
+                "\"shortName\": \"Short name\", " +
+                "\"abbreviation\": \"ABBREV\", " +
+                "\"groupType\": \"MICROCLUSTER\", " +
+                "\"parentDiseaseGroup\": { \"id\": \"" + parentId + "\"}, " +
+                "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
+                "\"isGlobal\": false, " +
+                "\"diseaseExtentParameters\": {" +
+                    "\"maxMonthsAgo\": 12, " +
+                    "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
+                    "\"lowerOccurrenceScore\": 3, " +
+                    "\"higherOccurrenceScore\": 4 } }";
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/add";
+
+        // Act
+        this.mockMvc.perform(
+                post(url).contentType(MediaType.APPLICATION_JSON).content(settings))
+                .andExpect(status().isNoContent());
+
+        // Assert
+        DiseaseGroup diseaseGroup = getMostRecentlyAddedDiseaseGroup();
+        assertThat(diseaseGroup.getId()).isNotNull();
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 12, 6, 3, 4);
+    }
+
+    private void assertDiseaseExtentParameters(DiseaseGroup diseaseGroup, int diseaseGroupId,
+                                               int maxMonthsAgo, int maxMonthsAgoForHigherOccurrenceScore,
+                                               int lowerOccurrenceScore, int higherOccurrenceScore) {
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isNotNull();
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgo()).isEqualTo(maxMonthsAgo);
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgoForHigherOccurrenceScore()).isEqualTo(maxMonthsAgoForHigherOccurrenceScore);
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getLowerOccurrenceScore()).isEqualTo(lowerOccurrenceScore);
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getHigherOccurrenceScore()).isEqualTo(higherOccurrenceScore);
+    }
+
+    private DiseaseGroup getMostRecentlyAddedDiseaseGroup() {
+        List<DiseaseGroup> sortedList = sort(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
+        return sortedList.get(sortedList.size() - 1);
     }
 }
