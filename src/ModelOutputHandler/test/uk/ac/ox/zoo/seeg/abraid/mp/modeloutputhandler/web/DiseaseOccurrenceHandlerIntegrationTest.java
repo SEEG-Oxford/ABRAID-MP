@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -48,6 +49,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     @Autowired
     private DiseaseService diseaseService;
 
+    @Ignore
     @Test
     public void handleFirstBatch() throws Exception {
         // Arrange
@@ -84,6 +86,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(27);
     }
 
+    @Ignore
     @Test
     public void handleSecondBatch() throws Exception {
         // Arrange

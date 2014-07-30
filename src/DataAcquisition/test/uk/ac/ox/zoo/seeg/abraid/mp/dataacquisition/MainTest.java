@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     @Autowired
     private ModelRunService modelRunService;
 
+    @Ignore
     @Test
     public void mainMethodAcquiresDataFromWebService() throws Exception {
         // Arrange
