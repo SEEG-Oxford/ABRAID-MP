@@ -35,6 +35,10 @@ import static org.springframework.util.StringUtils.hasText;
 public class AdminDiseaseGroupController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(AdminDiseaseGroupController.class);
     private static final String DISEASE_GROUP_JSON_CONVERSION_ERROR = "Cannot convert disease groups to JSON";
+    private static final String SAVE_DISEASE_GROUP_SUCCESS = "Successfully saved changes to disease group %d (%s)";
+    private static final String SAVE_DISEASE_GROUP_ERROR = "Error saving changes to disease group %d";
+    private static final String ADD_DISEASE_GROUP_SUCCESS = "Successfully added new disease group %d (%s)";
+    private static final String ADD_DISEASE_GROUP_ERROR = "Error adding new disease group (%s)";
 
     /** The base URL for the system administration disease group controller methods. */
     public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseasegroup";
@@ -169,9 +173,11 @@ public class AdminDiseaseGroupController extends AbstractController {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if ((diseaseGroup != null) && validInputs(settings)) {
             if (saveProperties(diseaseGroup, settings)) {
+                LOGGER.info(String.format(SAVE_DISEASE_GROUP_SUCCESS, diseaseGroupId, settings.getName()));
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
+        LOGGER.info(String.format(SAVE_DISEASE_GROUP_ERROR, diseaseGroupId));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
@@ -190,9 +196,11 @@ public class AdminDiseaseGroupController extends AbstractController {
         if (validInputs(settings)) {
             DiseaseGroup diseaseGroup = new DiseaseGroup();
             if (saveProperties(diseaseGroup, settings)) {
+                LOGGER.info(String.format(ADD_DISEASE_GROUP_SUCCESS, diseaseGroup.getId(), settings.getName()));
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
+        LOGGER.info(String.format(ADD_DISEASE_GROUP_ERROR, settings.getName()));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
