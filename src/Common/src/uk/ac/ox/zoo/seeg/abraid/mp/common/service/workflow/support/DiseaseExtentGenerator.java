@@ -6,7 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -120,20 +119,8 @@ public class DiseaseExtentGenerator {
     private List<AdminUnitReview> getRelevantReviews(DiseaseExtentGeneratorHelper helper) {
         Integer diseaseGroupId = helper.getDiseaseGroup().getId();
         List<AdminUnitReview> reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
-        removeReviewsWithNullExpertWeightings(reviews);
         helper.setReviews(reviews);
         return reviews;
-    }
-
-    private void removeReviewsWithNullExpertWeightings(List<AdminUnitReview> reviews) {
-        // Reviews with null expert weightings are not used when scoring the reviews for disease extent generation
-        Iterator<AdminUnitReview> iterator = reviews.iterator();
-        while (iterator.hasNext()) {
-            AdminUnitReview review = iterator.next();
-            if (review.getExpert().getWeighting() == null) {
-                iterator.remove();
-            }
-        }
     }
 
     private String getDiseaseGroupAndOccurrencesLogMessage(DiseaseExtentGeneratorHelper helper) {

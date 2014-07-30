@@ -48,24 +48,23 @@ public class Expert {
     private String institution;
 
     // Whether the expert has administrative control.
-    @Column(name = "is_administrator", insertable = false, nullable = false)
-    private Boolean isAdministrator;
+    @Column(name = "is_administrator", nullable = false)
+    private boolean isAdministrator; //default false
 
-    @Column(name = "is_seeg_member", insertable = false, nullable = false)
-    private Boolean isSeegMember;
+    @Column(name = "is_seeg_member", nullable = false)
+    private boolean isSeegMember; //default false
 
     // Whether the expert wants to be displayed in list on public site.
-    // For now this is Boolean to allow null values in test data, but should really be boolean with NOT NULL in DB
     @Column(name = "visibility_requested", nullable = false)
-    private Boolean visibilityRequested;
+    private boolean visibilityRequested; //default false
 
     // Whether the expert's request to be displayed is allowed.
-    @Column(name = "visibility_approved", insertable = false, nullable = false)
-    private Boolean visibilityApproved;
+    @Column(name = "visibility_approved", nullable = false)
+    private boolean visibilityApproved; //default false
 
     // The expert's "score" determines the weighting of his response.
-    @Column(insertable = false, nullable = false)
-    private Double weighting;
+    @Column(nullable = false)
+    private double weighting; //default 0
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -138,35 +137,35 @@ public class Expert {
         this.institution = institution;
     }
 
-    public Boolean isAdministrator() {
+    public boolean isAdministrator() {
         return isAdministrator;
     }
 
-    public void setAdministrator(Boolean isAdministrator) {
+    public void setAdministrator(boolean isAdministrator) {
         this.isAdministrator = isAdministrator;
     }
 
-    public Boolean isSeegMember() {
+    public boolean isSeegMember() {
         return isSeegMember;
     }
 
-    public void setSeegMember(Boolean isSeegMember) {
+    public void setSeegMember(boolean isSeegMember) {
         this.isSeegMember = isSeegMember;
     }
 
-    public Boolean getVisibilityRequested() {
+    public boolean getVisibilityRequested() {
         return visibilityRequested;
     }
 
-    public void setVisibilityRequested(Boolean visibilityRequested) {
+    public void setVisibilityRequested(boolean visibilityRequested) {
         this.visibilityRequested = visibilityRequested;
     }
 
-    public Boolean getVisibilityApproved() {
+    public boolean getVisibilityApproved() {
         return visibilityApproved;
     }
 
-    public void setVisibilityApproved(Boolean visibilityApproved) {
+    public void setVisibilityApproved(boolean visibilityApproved) {
         this.visibilityApproved = visibilityApproved;
     }
 
@@ -178,11 +177,11 @@ public class Expert {
         this.validatorDiseaseGroups = validatorDiseaseGroups;
     }
 
-    public Double getWeighting() {
+    public double getWeighting() {
         return weighting;
     }
 
-    public void setWeighting(Double weighting) {
+    public void setWeighting(double weighting) {
         this.weighting = weighting;
     }
 
@@ -208,42 +207,41 @@ public class Expert {
 
         Expert expert = (Expert) o;
 
+        if (isAdministrator != expert.isAdministrator) return false;
+        if (isSeegMember != expert.isSeegMember) return false;
+        if (visibilityApproved != expert.visibilityApproved) return false;
+        if (visibilityRequested != expert.visibilityRequested) return false;
+        if (Double.compare(expert.weighting, weighting) != 0) return false;
         if (createdDate != null ? !createdDate.equals(expert.createdDate) : expert.createdDate != null) return false;
         if (email != null ? !email.equals(expert.email) : expert.email != null) return false;
         if (id != null ? !id.equals(expert.id) : expert.id != null) return false;
         if (institution != null ? !institution.equals(expert.institution) : expert.institution != null) return false;
-        if (isAdministrator != null ? !isAdministrator.equals(expert.isAdministrator) : expert.isAdministrator != null)
-            return false;
-        if (isSeegMember != null ? !isSeegMember.equals(expert.isSeegMember) : expert.isSeegMember != null)
-            return false;
         if (jobTitle != null ? !jobTitle.equals(expert.jobTitle) : expert.jobTitle != null) return false;
         if (name != null ? !name.equals(expert.name) : expert.name != null) return false;
         if (password != null ? !password.equals(expert.password) : expert.password != null) return false;
         if (updatedDate != null ? !updatedDate.equals(expert.updatedDate) : expert.updatedDate != null) return false;
         if (validatorDiseaseGroups != null ? !validatorDiseaseGroups.equals(expert.validatorDiseaseGroups) : expert.validatorDiseaseGroups != null)
             return false;
-        if (visibilityApproved != null ? !visibilityApproved.equals(expert.visibilityApproved) : expert.visibilityApproved != null)
-            return false;
-        if (visibilityRequested != null ? !visibilityRequested.equals(expert.visibilityRequested) : expert.visibilityRequested != null)
-            return false;
-        if (weighting != null ? !weighting.equals(expert.weighting) : expert.weighting != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result;
+        long temp;
+        result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (jobTitle != null ? jobTitle.hashCode() : 0);
         result = 31 * result + (institution != null ? institution.hashCode() : 0);
-        result = 31 * result + (isAdministrator != null ? isAdministrator.hashCode() : 0);
-        result = 31 * result + (isSeegMember != null ? isSeegMember.hashCode() : 0);
-        result = 31 * result + (visibilityRequested != null ? visibilityRequested.hashCode() : 0);
-        result = 31 * result + (visibilityApproved != null ? visibilityApproved.hashCode() : 0);
-        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
+        result = 31 * result + (isAdministrator ? 1 : 0);
+        result = 31 * result + (isSeegMember ? 1 : 0);
+        result = 31 * result + (visibilityRequested ? 1 : 0);
+        result = 31 * result + (visibilityApproved ? 1 : 0);
+        temp = Double.doubleToLongBits(weighting);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
         result = 31 * result + (validatorDiseaseGroups != null ? validatorDiseaseGroups.hashCode() : 0);

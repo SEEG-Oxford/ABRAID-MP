@@ -191,11 +191,11 @@ CREATE TABLE expert (
     hashed_password varchar(60) NOT NULL,
     job_title varchar(100) NOT NULL,
     institution varchar(100) NOT NULL,
-    is_administrator boolean NOT NULL DEFAULT FALSE,
-    is_seeg_member boolean NOT NULL DEFAULT FALSE,
-    weighting double precision NOT NULL DEFAULT 0.0,
+    is_administrator boolean NOT NULL,
+    is_seeg_member boolean NOT NULL,
+    weighting double precision NOT NULL,
     visibility_requested boolean NOT NULL,
-    visibility_approved boolean NOT NULL DEFAULT FALSE,
+    visibility_approved boolean NOT NULL,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
     updated_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );

@@ -1,2 +1,2 @@
-Helena Patching	zool1250@zoo.ox.ac.uk	$2a$10$JdJkIeiqwA8Kso3WfvYlT.//vz2M1Tu5iXSy3w0opBtf8cBQEik3y	Software	Seeg	false	true
-Ed Wiles	zool1251@zoo.ox.ac.uk	$2a$10$l1IKpFreVyTnZHF1anHGAudMF.QD1x0bzAUVb.1qeOUTANUpiLsNS	Software	Seeg	true	false
+Helena Patching	zool1250@zoo.ox.ac.uk	$2a$10$JdJkIeiqwA8Kso3WfvYlT.//vz2M1Tu5iXSy3w0opBtf8cBQEik3y	Software	Seeg	true	true	1	true	true
+Ed Wiles	zool1251@zoo.ox.ac.uk	$2a$10$l1IKpFreVyTnZHF1anHGAudMF.QD1x0bzAUVb.1qeOUTANUpiLsNS	Software	Seeg	false	false	0	false	false

@@ -24,14 +24,10 @@ public class JsonExpertDetails {
 
     public JsonExpertDetails(Expert expert) {
         this.setName(expert.getName());
-        this.setVisibilityRequested(extractVisibilityRequested(expert));
+        this.setVisibilityRequested(expert.getVisibilityRequested());
         this.setJobTitle(expert.getJobTitle());
         this.setInstitution(expert.getInstitution());
         this.setDiseaseInterests(extract(expert.getValidatorDiseaseGroups(), on(ValidatorDiseaseGroup.class).getId()));
-    }
-
-    private static Boolean extractVisibilityRequested(Expert expert) {
-        return (expert.getVisibilityRequested() == null) ? ((Boolean) false) : expert.getVisibilityRequested();
     }
 
     public String getName() {
