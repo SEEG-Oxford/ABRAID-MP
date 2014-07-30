@@ -1,5 +1,5 @@
 <#--
-    Macro for inlcuding consistant bootstrap forms. For use with BaseFormViewModel.
+    Macro for inlcuding consistent bootstrap forms. For use with BaseFormViewModel.
     Copyright (c) 2014 University of Oxford
 -->
 <#macro form formId buttonStandardText="Save" buttonSubmittingText="Saving ...">
