@@ -9,11 +9,11 @@ require([baseUrl + "js/require.conf.js"], function () {
 
     require([
         "ko",
-        "app/admin/diseasegroup/DiseaseGroupAdministrationViewModel",
-        "app/admin/diseasegroup/DiseaseGroupsListViewModel",
-        "app/admin/diseasegroup/DiseaseGroupSettingsViewModel",
-        "app/admin/diseasegroup/ModelRunParametersViewModel",
-        "app/admin/diseasegroup/DiseaseGroupSetupViewModel",
+        "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
+        "app/admin/diseasegroups/DiseaseGroupsListViewModel",
+        "app/admin/diseasegroups/DiseaseGroupSettingsViewModel",
+        "app/admin/diseasegroups/ModelRunParametersViewModel",
+        "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
         "domReady!",
         "navbar"
     ], function (ko, DiseaseGroupAdministrationViewModel, DiseaseGroupsListViewModel, DiseaseGroupSettingsViewModel,

@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/admin/diseasegroup/DiseaseGroupPayload",
+    "app/admin/diseasegroups/DiseaseGroupPayload",
     "underscore"
 ], function (DiseaseGroupPayload, _) {
     "use strict";

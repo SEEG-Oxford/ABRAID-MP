@@ -3,7 +3,7 @@
  */
 define([
     "ko",
-    "app/admin/diseasegroup/ModelRunParametersViewModel"
+    "app/admin/diseasegroups/ModelRunParametersViewModel"
 ], function (ko, ModelRunParametersViewModel) {
     "use strict";
 
