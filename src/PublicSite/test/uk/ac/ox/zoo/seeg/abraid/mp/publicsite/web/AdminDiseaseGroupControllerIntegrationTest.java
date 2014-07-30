@@ -403,8 +403,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     }
 
     private DiseaseGroup getMostRecentlyAddedDiseaseGroup() {
-        List<DiseaseGroup> sortedDiseaseGroups =
-                sort(diseaseService.getAllDiseaseGroups(),on(DiseaseGroup.class).getCreatedDate());
-        return sortedDiseaseGroups.get(sortedDiseaseGroups.size() - 1);
+        List<DiseaseGroup> sortedList = sort(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
+        return sortedList.get(sortedList.size() - 1);
     }
 }
