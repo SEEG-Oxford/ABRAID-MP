@@ -38,4 +38,28 @@ public class JsonExpertDetailsTest {
         assertThat(result.getVisibilityRequested()).isEqualTo(mockExpert.getVisibilityRequested());
         assertThat(result.getDiseaseInterests()).containsOnly(1, 2);
     }
+
+    @Test
+    public void constructorDefaultsVisibilityRequestedToFalse() {
+        // Arrange
+        Expert mockExpert = mock(Expert.class);
+        when(mockExpert.getName()).thenReturn("expected name");
+        when(mockExpert.getJobTitle()).thenReturn("expected job");
+        when(mockExpert.getInstitution()).thenReturn("expected institution");
+        when(mockExpert.getVisibilityRequested()).thenReturn(null);
+        when(mockExpert.getValidatorDiseaseGroups()).thenReturn(Arrays.asList(
+                new ValidatorDiseaseGroup(1, "foo"),
+                new ValidatorDiseaseGroup(2, "foo2")
+        ));
+
+        // Act
+        JsonExpertDetails result = new JsonExpertDetails(mockExpert);
+
+        // Assert
+        assertThat(result.getName()).isEqualTo(mockExpert.getName());
+        assertThat(result.getJobTitle()).isEqualTo(mockExpert.getJobTitle());
+        assertThat(result.getInstitution()).isEqualTo(mockExpert.getInstitution());
+        assertThat(result.getVisibilityRequested()).isEqualTo(false);
+        assertThat(result.getDiseaseInterests()).containsOnly(1, 2);
+    }
 }
