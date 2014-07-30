@@ -163,8 +163,24 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getExistingDiseaseExtent() {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
         DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
-        assertThat(diseaseExtent.getMaximumMonthsAgo()).isEqualTo(60);
-        assertThat(diseaseExtent.getMinimumValidationWeighting()).isEqualTo(0.6);
+        assertThat(diseaseExtent.getMaxMonthsAgo()).isEqualTo(60);
+        assertThat(diseaseExtent.getMinValidationWeighting()).isEqualTo(0.6);
+    }
+
+    @Test
+    public void updateExistingDiseaseExtent() {
+        // Arrange
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
+
+        // Act
+        diseaseExtent.setMaxMonthsAgo(120);
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(87);
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgo()).isEqualTo(120);
     }
 
     @Test

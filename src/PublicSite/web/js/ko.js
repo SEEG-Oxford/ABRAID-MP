@@ -50,11 +50,12 @@ define([
     };
 
     // Configure Knockout validation to use our standard validation template
-    ko.validation.configure({
+    ko.validation.init({
         insertMessages: true,
         messageTemplate: "validation-template",
         messagesOnModified: true,
-        registerExtenders: true
+        registerExtenders: true,
+        grouping: { deep: true, observable: true, live: true }
     });
 
     // Force postbox to publish every event, instead of checking whether value has changed against cache, when enforced

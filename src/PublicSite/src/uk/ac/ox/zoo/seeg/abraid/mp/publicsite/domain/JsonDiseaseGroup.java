@@ -24,6 +24,7 @@ public class JsonDiseaseGroup {
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
     private Boolean occursInAfrica;
+    private JsonDiseaseExtent diseaseExtentParameters;
 
     public JsonDiseaseGroup() {
     }
@@ -50,6 +51,9 @@ public class JsonDiseaseGroup {
         setHighFrequencyThreshold(diseaseGroup.getHighFrequencyThreshold());
         setMinHighFrequencyCountries(diseaseGroup.getMinHighFrequencyCountries());
         setOccursInAfrica(diseaseGroup.occursInAfrica());
+        if (diseaseGroup.getDiseaseExtentParameters() != null) {
+            setDiseaseExtentParameters(new JsonDiseaseExtent(diseaseGroup.getDiseaseExtentParameters()));
+        }
     }
 
     public Integer getId() {
@@ -186,5 +190,13 @@ public class JsonDiseaseGroup {
 
     public void setOccursInAfrica(Boolean occursInAfrica) {
         this.occursInAfrica = occursInAfrica;
+    }
+
+    public JsonDiseaseExtent getDiseaseExtentParameters() {
+        return diseaseExtentParameters;
+    }
+
+    public void setDiseaseExtentParameters(JsonDiseaseExtent diseaseExtentParameters) {
+        this.diseaseExtentParameters = diseaseExtentParameters;
     }
 }

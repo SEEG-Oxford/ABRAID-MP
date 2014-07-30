@@ -20,19 +20,19 @@ public class DiseaseExtent {
     private Integer diseaseGroupId;
 
     @Column(name = "max_months_ago")
-    private Integer maximumMonthsAgo;
+    private Integer maxMonthsAgo;
 
     @Column(name = "min_validation_weighting")
-    private Double minimumValidationWeighting;
+    private Double minValidationWeighting;
 
     @Column(name = "min_occurrences_for_presence")
-    private Integer minimumOccurrencesForPresence;
+    private Integer minOccurrencesForPresence;
 
     @Column(name = "min_occurrences_for_possible_presence")
-    private Integer minimumOccurrencesForPossiblePresence;
+    private Integer minOccurrencesForPossiblePresence;
 
     @Column(name = "max_months_ago_for_higher_occurrence_score")
-    private Integer maximumMonthsAgoForHigherOccurrenceScore;
+    private Integer maxMonthsAgoForHigherOccurrenceScore;
 
     @Column(name = "lower_occurrence_score")
     private Integer lowerOccurrenceScore;
@@ -51,16 +51,16 @@ public class DiseaseExtent {
         this.diseaseGroup = diseaseGroup;
     }
 
-    public DiseaseExtent(DiseaseGroup diseaseGroup, Integer maximumMonthsAgo, Double minimumValidationWeighting,
-                         Integer minimumOccurrencesForPresence, Integer minimumOccurrencesForPossiblePresence,
-                         Integer maximumMonthsAgoForHigherOccurrenceScore,
+    public DiseaseExtent(DiseaseGroup diseaseGroup, Integer maxMonthsAgo, Double minValidationWeighting,
+                         Integer minOccurrencesForPresence, Integer minOccurrencesForPossiblePresence,
+                         Integer maxMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
         this.diseaseGroup = diseaseGroup;
-        this.maximumMonthsAgo = maximumMonthsAgo;
-        this.minimumValidationWeighting = minimumValidationWeighting;
-        this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
-        this.minimumOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
-        this.maximumMonthsAgoForHigherOccurrenceScore = maximumMonthsAgoForHigherOccurrenceScore;
+        this.maxMonthsAgo = maxMonthsAgo;
+        this.minValidationWeighting = minValidationWeighting;
+        this.minOccurrencesForPresence = minOccurrencesForPresence;
+        this.minOccurrencesForPossiblePresence = minOccurrencesForPossiblePresence;
+        this.maxMonthsAgoForHigherOccurrenceScore = maxMonthsAgoForHigherOccurrenceScore;
         this.lowerOccurrenceScore = lowerOccurrenceScore;
         this.higherOccurrenceScore = higherOccurrenceScore;
     }
@@ -69,44 +69,44 @@ public class DiseaseExtent {
         return diseaseGroupId;
     }
 
-    public Integer getMaximumMonthsAgo() {
-        return maximumMonthsAgo;
+    public Integer getMaxMonthsAgo() {
+        return maxMonthsAgo;
     }
 
-    public void setMaximumMonthsAgo(Integer maximumMonthsAgo) {
-        this.maximumMonthsAgo = maximumMonthsAgo;
+    public void setMaxMonthsAgo(Integer maximumMonthsAgo) {
+        this.maxMonthsAgo = maximumMonthsAgo;
     }
 
-    public Double getMinimumValidationWeighting() {
-        return minimumValidationWeighting;
+    public Double getMinValidationWeighting() {
+        return minValidationWeighting;
     }
 
-    public void setMinimumValidationWeighting(Double minimumValidationWeighting) {
-        this.minimumValidationWeighting = minimumValidationWeighting;
+    public void setMinValidationWeighting(Double minimumValidationWeighting) {
+        this.minValidationWeighting = minimumValidationWeighting;
     }
 
-    public Integer getMinimumOccurrencesForPresence() {
-        return minimumOccurrencesForPresence;
+    public Integer getMinOccurrencesForPresence() {
+        return minOccurrencesForPresence;
     }
 
-    public void setMinimumOccurrencesForPresence(Integer minimumOccurrencesForPresence) {
-        this.minimumOccurrencesForPresence = minimumOccurrencesForPresence;
+    public void setMinOccurrencesForPresence(Integer minimumOccurrencesForPresence) {
+        this.minOccurrencesForPresence = minimumOccurrencesForPresence;
     }
 
-    public Integer getMinimumOccurrencesForPossiblePresence() {
-        return minimumOccurrencesForPossiblePresence;
+    public Integer getMinOccurrencesForPossiblePresence() {
+        return minOccurrencesForPossiblePresence;
     }
 
-    public void setMinimumOccurrencesForPossiblePresence(Integer minimumOccurrencesForPossiblePresence) {
-        this.minimumOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
+    public void setMinOccurrencesForPossiblePresence(Integer minimumOccurrencesForPossiblePresence) {
+        this.minOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
     }
 
-    public Integer getMaximumMonthsAgoForHigherOccurrenceScore() {
-        return maximumMonthsAgoForHigherOccurrenceScore;
+    public Integer getMaxMonthsAgoForHigherOccurrenceScore() {
+        return maxMonthsAgoForHigherOccurrenceScore;
     }
 
-    public void setMaximumMonthsAgoForHigherOccurrenceScore(Integer maximumMonthsAgoForHigherOccurrenceScore) {
-        this.maximumMonthsAgoForHigherOccurrenceScore = maximumMonthsAgoForHigherOccurrenceScore;
+    public void setMaxMonthsAgoForHigherOccurrenceScore(Integer maximumMonthsAgoForHigherOccurrenceScore) {
+        this.maxMonthsAgoForHigherOccurrenceScore = maximumMonthsAgoForHigherOccurrenceScore;
     }
 
     public Integer getLowerOccurrenceScore() {
@@ -140,15 +140,15 @@ public class DiseaseExtent {
             return false;
         if (lowerOccurrenceScore != null ? !lowerOccurrenceScore.equals(that.lowerOccurrenceScore) : that.lowerOccurrenceScore != null)
             return false;
-        if (maximumMonthsAgo != null ? !maximumMonthsAgo.equals(that.maximumMonthsAgo) : that.maximumMonthsAgo != null)
+        if (maxMonthsAgo != null ? !maxMonthsAgo.equals(that.maxMonthsAgo) : that.maxMonthsAgo != null)
             return false;
-        if (maximumMonthsAgoForHigherOccurrenceScore != null ? !maximumMonthsAgoForHigherOccurrenceScore.equals(that.maximumMonthsAgoForHigherOccurrenceScore) : that.maximumMonthsAgoForHigherOccurrenceScore != null)
+        if (maxMonthsAgoForHigherOccurrenceScore != null ? !maxMonthsAgoForHigherOccurrenceScore.equals(that.maxMonthsAgoForHigherOccurrenceScore) : that.maxMonthsAgoForHigherOccurrenceScore != null)
             return false;
-        if (minimumOccurrencesForPossiblePresence != null ? !minimumOccurrencesForPossiblePresence.equals(that.minimumOccurrencesForPossiblePresence) : that.minimumOccurrencesForPossiblePresence != null)
+        if (minOccurrencesForPossiblePresence != null ? !minOccurrencesForPossiblePresence.equals(that.minOccurrencesForPossiblePresence) : that.minOccurrencesForPossiblePresence != null)
             return false;
-        if (minimumOccurrencesForPresence != null ? !minimumOccurrencesForPresence.equals(that.minimumOccurrencesForPresence) : that.minimumOccurrencesForPresence != null)
+        if (minOccurrencesForPresence != null ? !minOccurrencesForPresence.equals(that.minOccurrencesForPresence) : that.minOccurrencesForPresence != null)
             return false;
-        if (minimumValidationWeighting != null ? !minimumValidationWeighting.equals(that.minimumValidationWeighting) : that.minimumValidationWeighting != null)
+        if (minValidationWeighting != null ? !minValidationWeighting.equals(that.minValidationWeighting) : that.minValidationWeighting != null)
             return false;
 
         return true;
@@ -157,11 +157,11 @@ public class DiseaseExtent {
     @Override
     public int hashCode() {
         int result = diseaseGroupId != null ? diseaseGroupId.hashCode() : 0;
-        result = 31 * result + (maximumMonthsAgo != null ? maximumMonthsAgo.hashCode() : 0);
-        result = 31 * result + (minimumValidationWeighting != null ? minimumValidationWeighting.hashCode() : 0);
-        result = 31 * result + (minimumOccurrencesForPresence != null ? minimumOccurrencesForPresence.hashCode() : 0);
-        result = 31 * result + (minimumOccurrencesForPossiblePresence != null ? minimumOccurrencesForPossiblePresence.hashCode() : 0);
-        result = 31 * result + (maximumMonthsAgoForHigherOccurrenceScore != null ? maximumMonthsAgoForHigherOccurrenceScore.hashCode() : 0);
+        result = 31 * result + (maxMonthsAgo != null ? maxMonthsAgo.hashCode() : 0);
+        result = 31 * result + (minValidationWeighting != null ? minValidationWeighting.hashCode() : 0);
+        result = 31 * result + (minOccurrencesForPresence != null ? minOccurrencesForPresence.hashCode() : 0);
+        result = 31 * result + (minOccurrencesForPossiblePresence != null ? minOccurrencesForPossiblePresence.hashCode() : 0);
+        result = 31 * result + (maxMonthsAgoForHigherOccurrenceScore != null ? maxMonthsAgoForHigherOccurrenceScore.hashCode() : 0);
         result = 31 * result + (lowerOccurrenceScore != null ? lowerOccurrenceScore.hashCode() : 0);
         result = 31 * result + (higherOccurrenceScore != null ? higherOccurrenceScore.hashCode() : 0);
         return result;

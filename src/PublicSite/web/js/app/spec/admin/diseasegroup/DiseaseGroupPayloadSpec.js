@@ -1,10 +1,7 @@
 /* A suite of tests for the DiseaseGroupPayload AMD.
  * Copyright (c) 2014 University of Oxford
  */
-define([
-    "app/admin/diseasegroup/DiseaseGroupPayload",
-    "underscore"
-], function (DiseaseGroupPayload, _) {
+define(["app/admin/diseasegroup/DiseaseGroupPayload"], function (DiseaseGroupPayload) {
     "use strict";
 
     var wrap = function (arg) {
@@ -12,22 +9,35 @@ define([
     };
 
     describe("The payload returns the expected structure", function () {
-        it("when given two view models", function () {
+        it("when given three view models", function () {
             // Arrange
-            var diseaseGroupSettingsViewModel = { name: wrap("Name"),
+            var diseaseGroupSettingsViewModel = {
+                name: wrap("Name"),
                 publicName: wrap("Public name"),
                 shortName: wrap("Short name"),
                 abbreviation: wrap("ABBREV"),
                 selectedType: wrap("MICROCLUSTER"),
                 isGlobal: wrap(true),
                 selectedParentDiseaseGroup: wrap({ id: 2 }),
-                selectedValidatorDiseaseGroup: wrap({ id: 3 }) };
-            var modelRunParametersViewModel = { minNewOccurrences: wrap(1),
+                selectedValidatorDiseaseGroup: wrap({ id: 3 })
+            };
+            var modelRunParametersViewModel = {
+                minNewOccurrences: wrap(1),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
                 highFrequencyThreshold: wrap(5),
-                occursInAfrica: wrap(true) };
+                occursInAfrica: wrap(true)
+            };
+            var diseaseExtentParametersViewModel = {
+                maxMonthsAgo: wrap(60),
+                maxMonthsAgoForHigherOccurrenceScore: wrap(24),
+                higherOccurrenceScore: wrap(2),
+                lowerOccurrenceScore: wrap(1),
+                minValidationWeighting: wrap(0.6),
+                minOccurrencesForPossiblePresence: wrap(2),
+                minOccurrencesForPresence: wrap(5)
+            };
             var expectedPayload = {
                 name : "Name",
                 publicName: "Public name",
@@ -42,30 +52,53 @@ define([
                 minDistinctCountries: 3,
                 minHighFrequencyCountries:  4,
                 highFrequencyThreshold: 5,
-                occursInAfrica: true
+                occursInAfrica: true,
+                diseaseExtentParameters: {
+                    maxMonthsAgo: 60,
+                    maxMonthsAgoForHigherOccurrenceScore: 24,
+                    higherOccurrenceScore: 2,
+                    lowerOccurrenceScore: 1,
+                    minValidationWeighting: 0.6,
+                    minOccurrencesForPossiblePresence: 2,
+                    minOccurrencesForPresence: 5
+                }
             };
             // Act
-            var payload = new DiseaseGroupPayload(diseaseGroupSettingsViewModel, modelRunParametersViewModel);
+            var payload = new DiseaseGroupPayload(
+                diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseExtentParametersViewModel);
             // Assert
-            expect(_.isEqual(payload, expectedPayload)).toBe(true);
+            expect(payload).toEqual(expectedPayload);
         });
 
         it("when not all parameters are defined", function () {
             // Arrange
-            var diseaseGroupSettingsViewModel = { name: wrap("Name"),
+            var diseaseGroupSettingsViewModel = {
+                name: wrap("Name"),
                 publicName: wrap(undefined),
                 shortName: wrap(undefined),
                 abbreviation: wrap(undefined),
                 selectedType: wrap("MICROCLUSTER"),
                 isGlobal: wrap(undefined),
                 selectedParentDiseaseGroup: wrap(undefined),
-                selectedValidatorDiseaseGroup: wrap(undefined) };
-            var modelRunParametersViewModel = { minNewOccurrences: wrap(""),
+                selectedValidatorDiseaseGroup: wrap(undefined)
+            };
+            var modelRunParametersViewModel = {
+                minNewOccurrences: wrap(""),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
                 highFrequencyThreshold: wrap(""),
-                occursInAfrica: wrap(undefined) };
+                occursInAfrica: wrap(undefined)
+            };
+            var diseaseExtentParametersViewModel = {
+                maxMonthsAgo: wrap(""),
+                maxMonthsAgoForHigherOccurrenceScore: wrap(""),
+                higherOccurrenceScore: wrap(""),
+                lowerOccurrenceScore: wrap(""),
+                minValidationWeighting: wrap(""),
+                minOccurrencesForPossiblePresence: wrap(""),
+                minOccurrencesForPresence: wrap("")
+            };
             var expectedPayload = {
                 name : "Name",
                 publicName: undefined,
@@ -80,10 +113,20 @@ define([
                 minDistinctCountries: undefined,
                 minHighFrequencyCountries:  undefined,
                 highFrequencyThreshold: undefined,
-                occursInAfrica: undefined
+                occursInAfrica: undefined,
+                diseaseExtentParameters: {
+                    maxMonthsAgo: undefined,
+                    maxMonthsAgoForHigherOccurrenceScore: undefined,
+                    higherOccurrenceScore: undefined,
+                    lowerOccurrenceScore: undefined,
+                    minValidationWeighting: undefined,
+                    minOccurrencesForPossiblePresence: undefined,
+                    minOccurrencesForPresence: undefined
+                }
             };
             // Act
-            var payload = new DiseaseGroupPayload(diseaseGroupSettingsViewModel, modelRunParametersViewModel);
+            var payload = new DiseaseGroupPayload(
+                diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseExtentParametersViewModel);
             // Assert
             expect(payload).toEqual(expectedPayload);
         });
