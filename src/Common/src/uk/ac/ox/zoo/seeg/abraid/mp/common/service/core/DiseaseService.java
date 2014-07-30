@@ -46,9 +46,10 @@ public interface DiseaseService {
 
     /**
      * For each validator disease group, get a list of its disease groups.
+     * @param includeNewDiseases Whether new (not setup fully) diseases should be included in the map.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
-    Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
+    Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap(boolean includeNewDiseases);
 
     /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group

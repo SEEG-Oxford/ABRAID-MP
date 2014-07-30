@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ResponseView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
@@ -67,6 +67,7 @@ public class DataValidationController extends AbstractController {
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);
+        boolean userIsSEEG = userLoggedIn && expertService.getExpertById(user.getId()).isSeegMember();
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
         if (userLoggedIn) {
@@ -77,7 +78,7 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
                     getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
-            model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
+            model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap(userIsSEEG));
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
@@ -208,8 +209,19 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
                                                 String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
+        boolean userIsSEEG = expertService.getExpertById(user.getId()).isSeegMember();
+
         Integer expertId = user.getId();
         String expertEmail = user.getUsername();
+
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup == null) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        if (!userIsSEEG && !diseaseGroup.isAutomaticModelRunsEnabled()) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
 
         // Convert the submitted string to its matching DiseaseExtentClass row. Return a Bad Request ResponseEntity if
         // the review value is not found in the database.
