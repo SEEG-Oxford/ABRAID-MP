@@ -1,7 +1,7 @@
 /* A suite of tests for the DiseaseGroupsListViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/admin/diseasegroup/DiseaseGroupSetupViewModel"], function (DiseaseGroupSetupViewModel) {
+define(["app/admin/diseasegroups/DiseaseGroupSetupViewModel"], function (DiseaseGroupSetupViewModel) {
     "use strict";
 
     describe("The 'disease group setup' view model", function () {

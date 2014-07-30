@@ -4,7 +4,7 @@
 define([
     "ko",
     "jquery",
-    "app/admin/diseasegroup/DiseaseGroupPayload"
+    "app/admin/diseasegroups/DiseaseGroupPayload"
 ], function (ko, $, DiseaseGroupPayload) {
     "use strict";
 
@@ -18,9 +18,9 @@ define([
         var diseaseGroupId;
         var getUrl = function () {
             if (diseaseGroupId) {
-                return baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/save";
+                return baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/save";
             } else {
-                return baseUrl + "admin/diseasegroup/add";
+                return baseUrl + "admin/diseasegroups/add";
             }
         };
 

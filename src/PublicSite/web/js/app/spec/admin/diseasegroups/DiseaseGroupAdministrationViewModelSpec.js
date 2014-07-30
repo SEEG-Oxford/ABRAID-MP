@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/admin/diseasegroup/DiseaseGroupAdministrationViewModel",
+    "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
     "ko",
     "underscore"
 ], function (DiseaseGroupAdministrationViewModel, ko, _) {
@@ -62,7 +62,7 @@ define([
                 var diseaseGroup = { id: id };
                 var vm = new DiseaseGroupAdministrationViewModel(
                     baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel, eventName);
-                var expectedUrl = baseUrl + "admin/diseasegroup/" + id + "/save";
+                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/save";
 
                 // Act
                 ko.postbox.publish(eventName, diseaseGroup);

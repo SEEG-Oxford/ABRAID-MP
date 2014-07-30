@@ -26,7 +26,7 @@ define([
             self.notices.removeAll();
 
             // Get information regarding model runs for this disease group
-            var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/modelruninformation";
+            var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
             $.getJSON(url)
                 .done(function (data) {
                     self.lastModelRunText(data.lastModelRunText);
@@ -48,7 +48,7 @@ define([
             self.notices.removeAll();
             if (self.canRunModel()) {
                 self.working(true);
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
                 $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
                     .done(function () {
                         self.notices.push({ message: "Model run requested.", priority: "success"});
