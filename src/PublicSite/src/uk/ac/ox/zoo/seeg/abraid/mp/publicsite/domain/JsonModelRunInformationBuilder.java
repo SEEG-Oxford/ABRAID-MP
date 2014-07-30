@@ -54,7 +54,7 @@ public class JsonModelRunInformationBuilder {
         String text = "none";
         if (statistics.getOccurrenceCount() > 0) {
             String dateText = getDiseaseOccurrencesDateText(
-                    statistics.getMinimumOccurrenceDate(),statistics.getMaximumOccurrenceDate());
+                    statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
             text = String.format("total %d, occurring %s", statistics.getOccurrenceCount(), dateText);
         }
         information.setDiseaseOccurrencesText(text);

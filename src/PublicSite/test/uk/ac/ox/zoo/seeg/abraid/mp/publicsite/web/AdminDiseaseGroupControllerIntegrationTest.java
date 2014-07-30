@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
@@ -9,9 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
@@ -72,7 +71,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(
                 get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/modelruninformation"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"lastModelRunText\":\"never\",\"diseaseOccurrencesText\":\"total 45, occurring between 24 Feb 2014 and 27 Feb 2014\",\"hasModelBeenSuccessfullyRun\":false,\"canRunModel\":true}"));
+                .andExpect(content().string("{\"lastModelRunText\":\"never\",\"diseaseOccurrencesText\":\"total 45, occurring between 24 Feb 2014 and 27 Feb 2014\",\"hasModelBeenSuccessfullyRun\":false,\"canRunModel\":true,\"batchEndDateMinimum\":\"24 Feb 2014\",\"batchEndDateMaximum\":\"27 Feb 2014\",\"batchEndDateDefault\":\"27 Feb 2014\"}"));
     }
 
     @Test
@@ -103,12 +102,18 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(modelRunService.getLastRequestedModelRun(diseaseGroupId)).isNull();
 
         // Act
-        this.mockMvc.perform(
-                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun"))
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
+        DateTime batchEndDate = DateTime.now();
+        this.mockMvc.perform(post(url).param("batchEndDate", batchEndDate.toString()))
                 .andExpect(status().isOk());
 
         // Assert
-        assertThat(modelRunService.getLastRequestedModelRun(diseaseGroupId)).isNotNull();
+        ModelRun modelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
+        assertThat(modelRun).isNotNull();
+        assertThat(modelRun.getName()).isEqualTo("testname");
+        assertThat(modelRun.getStatus()).isEqualTo(ModelRunStatus.IN_PROGRESS);
+        assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+        assertThat(modelRun.getBatchEndDate().getMillis()).isEqualTo(batchEndDate.getMillis());
     }
 
     @Test

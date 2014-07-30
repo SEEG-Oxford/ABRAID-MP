@@ -236,8 +236,6 @@ public class ModelRun {
             return false;
         if (batchingCompletedDate != null ? !batchingCompletedDate.equals(modelRun.batchingCompletedDate) : modelRun.batchingCompletedDate != null)
             return false;
-        if (covariateInfluences != null ? !covariateInfluences.equals(modelRun.covariateInfluences) : modelRun.covariateInfluences != null)
-            return false;
         if (errorText != null ? !errorText.equals(modelRun.errorText) : modelRun.errorText != null) return false;
         if (id != null ? !id.equals(modelRun.id) : modelRun.id != null) return false;
         if (name != null ? !name.equals(modelRun.name) : modelRun.name != null) return false;
@@ -247,8 +245,6 @@ public class ModelRun {
         if (responseDate != null ? !responseDate.equals(modelRun.responseDate) : modelRun.responseDate != null)
             return false;
         if (status != modelRun.status) return false;
-        if (submodelStatistics != null ? !submodelStatistics.equals(modelRun.submodelStatistics) : modelRun.submodelStatistics != null)
-            return false;
 
         return true;
     }
@@ -263,8 +259,6 @@ public class ModelRun {
         result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
         result = 31 * result + (outputText != null ? outputText.hashCode() : 0);
         result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
-        result = 31 * result + (submodelStatistics != null ? submodelStatistics.hashCode() : 0);
-        result = 31 * result + (covariateInfluences != null ? covariateInfluences.hashCode() : 0);
         result = 31 * result + (batchEndDate != null ? batchEndDate.hashCode() : 0);
         result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);
         result = 31 * result + (batchedOccurrenceCount != null ? batchedOccurrenceCount.hashCode() : 0);

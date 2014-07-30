@@ -65,7 +65,7 @@ define([
 
             ko.applyBindingAccessorsToNode(element, {
                 value: date,
-                valueUpdate: function () { return "input"; },
+                valueUpdate: function () { return "input"; }
             });
         }
     };

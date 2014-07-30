@@ -3,7 +3,8 @@
  */
 define([
     "ko",
-    "jquery"
+    "jquery",
+    "moment"
 ], function (ko, $) {
     "use strict";
 
