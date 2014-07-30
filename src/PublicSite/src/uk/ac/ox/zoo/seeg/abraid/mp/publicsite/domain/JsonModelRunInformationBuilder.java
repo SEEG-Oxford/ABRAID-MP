@@ -147,10 +147,10 @@ public class JsonModelRunInformationBuilder {
 
         if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
             String batchEndDateText = getDateText(lastRequestedModelRun.getBatchEndDate());
-            int batchedOccurrenceCount = lastRequestedModelRun.getBatchedOccurrenceCount();
-            String pluralEnding = (batchedOccurrenceCount == 1) ? "" : "s";
+            int batchOccurrenceCount = lastRequestedModelRun.getBatchOccurrenceCount();
+            String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
             text = String.format(" (including batching of %d occurrence%s for validation, end date %s)",
-                    batchedOccurrenceCount, pluralEnding, batchEndDateText);
+                    batchOccurrenceCount, pluralEnding, batchEndDateText);
         }
 
         return text;

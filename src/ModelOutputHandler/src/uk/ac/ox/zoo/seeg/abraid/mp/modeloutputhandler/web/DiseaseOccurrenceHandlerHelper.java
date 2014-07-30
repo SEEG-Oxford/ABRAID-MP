@@ -77,7 +77,7 @@ public class DiseaseOccurrenceHandlerHelper {
         // Reload the model run before setting parameters, because we are in a new transaction
         modelRun = modelRunService.getModelRunByName(modelRun.getName());
         modelRun.setBatchingCompletedDate(DateTime.now());
-        modelRun.setBatchedOccurrenceCount(batchedOccurrenceCount);
+        modelRun.setBatchOccurrenceCount(batchedOccurrenceCount);
         modelRunService.saveModelRun(modelRun);
     }
 }

@@ -97,14 +97,14 @@ public class ModelRun {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime batchEndDate;
 
+    // The number of disease occurrences in this batch (if relevant).
+    @Column(name = "batch_occurrence_count")
+    private Integer batchOccurrenceCount;
+
     // The date that batching for this model run completed (if relevant).
     @Column(name = "batching_completed_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime batchingCompletedDate;
-
-    // The number of disease occurrences in this batch (if relevant).
-    @Column(name = "batched_occurrence_count")
-    private Integer batchedOccurrenceCount;
 
     public ModelRun() {
     }
@@ -204,20 +204,20 @@ public class ModelRun {
         this.batchEndDate = batchEndDate;
     }
 
+    public Integer getBatchOccurrenceCount() {
+        return batchOccurrenceCount;
+    }
+
+    public void setBatchOccurrenceCount(Integer batchedOccurrenceCount) {
+        this.batchOccurrenceCount = batchedOccurrenceCount;
+    }
+
     public DateTime getBatchingCompletedDate() {
         return batchingCompletedDate;
     }
 
     public void setBatchingCompletedDate(DateTime batchingCompletedDate) {
         this.batchingCompletedDate = batchingCompletedDate;
-    }
-
-    public Integer getBatchedOccurrenceCount() {
-        return batchedOccurrenceCount;
-    }
-
-    public void setBatchedOccurrenceCount(Integer batchedOccurrenceCount) {
-        this.batchedOccurrenceCount = batchedOccurrenceCount;
     }
 
     ///COVERAGE:OFF - generated code
@@ -232,7 +232,7 @@ public class ModelRun {
         if (diseaseGroupId != modelRun.diseaseGroupId) return false;
         if (batchEndDate != null ? !batchEndDate.equals(modelRun.batchEndDate) : modelRun.batchEndDate != null)
             return false;
-        if (batchedOccurrenceCount != null ? !batchedOccurrenceCount.equals(modelRun.batchedOccurrenceCount) : modelRun.batchedOccurrenceCount != null)
+        if (batchOccurrenceCount != null ? !batchOccurrenceCount.equals(modelRun.batchOccurrenceCount) : modelRun.batchOccurrenceCount != null)
             return false;
         if (batchingCompletedDate != null ? !batchingCompletedDate.equals(modelRun.batchingCompletedDate) : modelRun.batchingCompletedDate != null)
             return false;
@@ -261,7 +261,7 @@ public class ModelRun {
         result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
         result = 31 * result + (batchEndDate != null ? batchEndDate.hashCode() : 0);
         result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);
-        result = 31 * result + (batchedOccurrenceCount != null ? batchedOccurrenceCount.hashCode() : 0);
+        result = 31 * result + (batchOccurrenceCount != null ? batchOccurrenceCount.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

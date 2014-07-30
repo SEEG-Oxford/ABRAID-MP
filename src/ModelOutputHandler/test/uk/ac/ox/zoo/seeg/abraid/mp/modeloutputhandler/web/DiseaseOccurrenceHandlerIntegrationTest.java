@@ -81,7 +81,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         // And the model run should have been updated correctly
         modelRun = modelRunService.getModelRunByName(modelRun.getName());
         assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(now);
-        assertThat(modelRun.getBatchedOccurrenceCount()).isEqualTo(27);
+        assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(27);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         // And the model run should have been updated correctly
         modelRun2 = modelRunService.getModelRunByName(modelRun2.getName());
         assertThat(modelRun2.getBatchingCompletedDate()).isEqualTo(now);
-        assertThat(modelRun2.getBatchedOccurrenceCount()).isEqualTo(0);
+        assertThat(modelRun2.getBatchOccurrenceCount()).isEqualTo(0);
     }
 
     private void setAutomaticModelRunsToFalse(int diseaseGroupId) {

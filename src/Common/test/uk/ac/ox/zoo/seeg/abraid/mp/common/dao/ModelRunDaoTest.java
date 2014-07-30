@@ -59,7 +59,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         modelRun.setErrorText(errorText);
         modelRun.setBatchEndDate(batchEndDate);
         modelRun.setBatchingCompletedDate(batchingCompletionDate);
-        modelRun.setBatchedOccurrenceCount(batchedOccurrenceCount);
+        modelRun.setBatchOccurrenceCount(batchedOccurrenceCount);
         modelRunDao.save(modelRun);
 
         // Act
@@ -76,7 +76,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getErrorText()).isEqualTo(errorText);
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
         assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(batchingCompletionDate);
-        assertThat(modelRun.getBatchedOccurrenceCount()).isEqualTo(batchedOccurrenceCount);
+        assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(batchedOccurrenceCount);
     }
 
     @Test

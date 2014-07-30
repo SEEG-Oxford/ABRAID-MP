@@ -60,7 +60,7 @@ public class JsonModelRunInformationBuilderTest {
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
         modelRun.setBatchEndDate(new DateTime("2006-12-31T04:05:06"));
         modelRun.setBatchingCompletedDate(new DateTime("2014-07-02T19:18:17"));
-        modelRun.setBatchedOccurrenceCount(1500);
+        modelRun.setBatchOccurrenceCount(1500);
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
