@@ -11,27 +11,33 @@ define(["app/admin/diseasegroup/DiseaseGroupPayload"], function (DiseaseGroupPay
     describe("The payload returns the expected structure", function () {
         it("when given three view models", function () {
             // Arrange
-            var diseaseGroupSettingsViewModel = { name: wrap("Name"),
+            var diseaseGroupSettingsViewModel = {
+                name: wrap("Name"),
                 publicName: wrap("Public name"),
                 shortName: wrap("Short name"),
                 abbreviation: wrap("ABBREV"),
                 selectedType: wrap("MICROCLUSTER"),
                 isGlobal: wrap(true),
                 selectedParentDiseaseGroup: wrap({ id: 2 }),
-                selectedValidatorDiseaseGroup: wrap({ id: 3 }) };
-            var modelRunParametersViewModel = { minNewOccurrences: wrap(1),
+                selectedValidatorDiseaseGroup: wrap({ id: 3 })
+            };
+            var modelRunParametersViewModel = {
+                minNewOccurrences: wrap(1),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
                 highFrequencyThreshold: wrap(5),
-                occursInAfrica: wrap(true) };
-            var diseaseExtentParametersViewModel = { maxMonthsAgo: wrap(60),
+                occursInAfrica: wrap(true)
+            };
+            var diseaseExtentParametersViewModel = {
+                maxMonthsAgo: wrap(60),
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
                 higherOccurrenceScore: wrap(2),
                 lowerOccurrenceScore: wrap(1),
                 minValidationWeighting: wrap(0.6),
                 minOccurrencesForPossiblePresence: wrap(2),
-                minOccurrencesForPresence: wrap(5) };
+                minOccurrencesForPresence: wrap(5)
+            };
             var expectedPayload = {
                 name : "Name",
                 publicName: "Public name",
@@ -66,27 +72,33 @@ define(["app/admin/diseasegroup/DiseaseGroupPayload"], function (DiseaseGroupPay
 
         it("when not all parameters are defined", function () {
             // Arrange
-            var diseaseGroupSettingsViewModel = { name: wrap("Name"),
+            var diseaseGroupSettingsViewModel = {
+                name: wrap("Name"),
                 publicName: wrap(undefined),
                 shortName: wrap(undefined),
                 abbreviation: wrap(undefined),
                 selectedType: wrap("MICROCLUSTER"),
                 isGlobal: wrap(undefined),
                 selectedParentDiseaseGroup: wrap(undefined),
-                selectedValidatorDiseaseGroup: wrap(undefined) };
-            var modelRunParametersViewModel = { minNewOccurrences: wrap(""),
+                selectedValidatorDiseaseGroup: wrap(undefined)
+            };
+            var modelRunParametersViewModel = {
+                minNewOccurrences: wrap(""),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
                 highFrequencyThreshold: wrap(""),
-                occursInAfrica: wrap(undefined) };
-            var diseaseExtentParametersViewModel = { maxMonthsAgo: wrap(""),
+                occursInAfrica: wrap(undefined)
+            };
+            var diseaseExtentParametersViewModel = {
+                maxMonthsAgo: wrap(""),
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
                 higherOccurrenceScore: wrap(""),
                 lowerOccurrenceScore: wrap(""),
                 minValidationWeighting: wrap(""),
                 minOccurrencesForPossiblePresence: wrap(""),
-                minOccurrencesForPresence: wrap("") };
+                minOccurrencesForPresence: wrap("")
+            };
             var expectedPayload = {
                 name : "Name",
                 publicName: undefined,

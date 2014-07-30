@@ -14,7 +14,8 @@ define([], function () {
             return isNaN(val) ? undefined : val;
         };
 
-        var parseDouble = function (arg) {
+        // Forces any falsy arguments to be 'undefined', rather than empty string in JSON
+        var parse = function (arg) {
             return arg ? arg : undefined;
         };
 
@@ -43,7 +44,7 @@ define([], function () {
                 higherOccurrenceScore:
                     parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
                 minValidationWeighting:
-                    parseDouble(diseaseExtentParametersViewModel.minValidationWeighting()),
+                    parse(diseaseExtentParametersViewModel.minValidationWeighting()),
                 minOccurrencesForPresence:
                     parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
                 minOccurrencesForPossiblePresence:

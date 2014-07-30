@@ -36,7 +36,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(AdminDiseaseGroupController.class);
     private static final String DISEASE_GROUP_JSON_CONVERSION_ERROR = "Cannot convert disease groups to JSON";
     private static final String SAVE_DISEASE_GROUP_SUCCESS = "Successfully saved changes to disease group %d (%s)";
-    private static final String SAVE_DISEASE_GROUP_ERROR = "Error saving changes to disease group %d";
+    private static final String SAVE_DISEASE_GROUP_ERROR = "Error saving changes to disease group %d (%s)";
     private static final String ADD_DISEASE_GROUP_SUCCESS = "Successfully added new disease group %d (%s)";
     private static final String ADD_DISEASE_GROUP_ERROR = "Error adding new disease group (%s)";
 
@@ -177,7 +177,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
-        LOGGER.info(String.format(SAVE_DISEASE_GROUP_ERROR, diseaseGroupId));
+        LOGGER.info(String.format(SAVE_DISEASE_GROUP_ERROR, diseaseGroupId, settings.getName()));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
@@ -233,8 +233,8 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setOccursInAfrica(settings.getOccursInAfrica());
         setDiseaseExtentParameters(diseaseGroup, settings.getDiseaseExtentParameters());
         if (setParentDiseaseGroup(diseaseGroup, settings) && setValidatorDiseaseGroup(diseaseGroup, settings)) {
-                diseaseService.saveDiseaseGroup(diseaseGroup);
-                return true;
+            diseaseService.saveDiseaseGroup(diseaseGroup);
+            return true;
         } else {
             return false;
         }

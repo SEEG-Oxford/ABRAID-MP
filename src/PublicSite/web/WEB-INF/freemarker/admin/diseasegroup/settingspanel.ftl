@@ -1,3 +1,12 @@
+<#macro formGroup id title bind placeholder>
+<div class="form-group">
+    <label for="${id}" class="col-sm-4 control-label">${title}</label>
+    <div class="col-sm-8">
+        <input type="text" class="form-control" id="${id}" data-bind="formValue: ${bind}" placeholder="${placeholder}">
+    </div>
+</div>
+</#macro>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2 class="panel-title">
@@ -16,24 +25,9 @@
                             <input type="text" class="form-control" id="disease-group-name" data-bind="formValue: name" placeholder="Enter disease group name">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="public-name" class="col-sm-4 control-label">Public Name</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="public-name" data-bind="formValue: publicName" placeholder="Enter a name for display on Data Validator">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="short-name" class="col-sm-4 control-label">Short Name</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="short-name" data-bind="formValue: shortName" placeholder="Enter a shorter version of the name">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="abbreviation" class="col-sm-4 control-label">Abbreviation</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="abbreviation" data-bind="formValue: abbreviation" placeholder="Enter an abbreviation">
-                        </div>
-                    </div>
+                    <@formGroup id="public-name" title="Public Name" bind="publicName" placeholder="Enter a name for display on Data Validator"></@formGroup>
+                    <@formGroup id="short-name" title="Short Name" bind="shortName" placeholder="Enter a shorter version of the name"></@formGroup>
+                    <@formGroup id="abbreviation" title="Abbreviation" bind="abbreviation" placeholder="Enter an abbreviation"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">

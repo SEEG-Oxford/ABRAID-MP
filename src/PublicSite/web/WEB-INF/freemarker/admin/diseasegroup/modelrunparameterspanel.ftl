@@ -1,3 +1,12 @@
+<#macro formGroup id title bind disable="false">
+<div class="form-group">
+    <label for="${id}" class="col-sm-8 control-label">${title}</label>
+    <div class="input-group col-sm-4">
+        <input type="text" class="form-control" id="${id}" data-bind="formValue: ${bind}, bootstrapDisable: ${disable}">
+    </div>
+</div>
+</#macro>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2 class="panel-title">
@@ -10,24 +19,9 @@
         <div class="panel-body">
             <div class="col-sm-6">
                 <div class="form-horizontal">
-                    <div class="form-group">
-                        <label for="min-new-occurrences" class="col-sm-8 control-label">Min. Number of New Occurrences</label>
-                        <div class="input-group col-sm-4">
-                            <input type="text" class="form-control" id="min-new-occurrences" data-bind="formValue: minNewOccurrences">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="min-data-volume" class="col-sm-8 control-label">Min. Data Volume</label>
-                        <div class="input-group col-sm-4">
-                            <input type="text" class="form-control" id="min-data-volume" data-bind="formValue: minDataVolume">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="min-distinct-countries" class="col-sm-8 control-label">Min. Number of Distinct Countries</label>
-                        <div class="input-group col-sm-4">
-                            <input type="text" class="form-control" id="min-distinct-countries" data-bind="formValue: minDistinctCountries">
-                        </div>
-                    </div>
+                    <@formGroup id="min-new-occurrences" title="Min. Number of New Occurrences" bind="minNewOccurrences"></@formGroup>
+                    <@formGroup id="min-data-volume" title="Min. Data Volume" bind="minDataVolume"></@formGroup>
+                    <@formGroup id="min-distinct-countries" title="Min. Number of Distinct Countries" bind="minDistinctCountries"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -38,18 +32,8 @@
                             <input type="checkbox" id="occurs-in-africa" data-bind="checked: occursInAfrica">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="min-high-frequency-countries" class="col-sm-8 control-label">Min. Number of High Frequency Countries</label>
-                        <div class="input-group col-sm-4">
-                            <input type="text" class="form-control" id="min-high-frequency-countries" data-bind="formValue: minHighFrequencyCountries, bootstrapDisable: !occursInAfrica()">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="high-frequency-threshold" class="col-sm-8 control-label">Min. Number of Occurrences to be deemed a High Frequency Country</label>
-                        <div class="input-group col-sm-4">
-                            <input type="text" class="form-control" id="high-frequency-threshold" data-bind="formValue: highFrequencyThreshold, bootstrapDisable: !occursInAfrica()">
-                        </div>
-                    </div>
+                    <@formGroup id="min-high-frequency-countries" title="Min. Number of High Frequency Countries" bind="minHighFrequencyCountries" disable="!occursInAfrica()"></@formGroup>
+                    <@formGroup id="high-frequency-threshold" title="Min. Number of Occurrences to be deemed a High Frequency Country" bind="highFrequencyThreshold" disable="!occursInAfrica()"></@formGroup>
                 </div>
             </div>
         </div>
