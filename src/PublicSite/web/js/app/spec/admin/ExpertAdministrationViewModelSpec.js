@@ -48,18 +48,20 @@ define([
             var baseSpy;
             beforeEach(function (done) {
                 if (vm === undefined) { // before first
-                    // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                    // Squire is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
                     jasmine.Ajax.uninstall();
                     var injector = new Squire();
 
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseTableViewModel);
                     injector.mock("app/BaseTableViewModel", baseSpy);
 
-                    injector.require(["app/admin/ExpertAdministrationViewModel"], function (ExpertAdministrationViewModel) {
-                        vm = new ExpertAdministrationViewModel(baseUrl, experts); // jshint ignore:line
-                        jasmine.Ajax.install();
-                        done();
-                    });
+                    injector.require(["app/admin/ExpertAdministrationViewModel"],
+                            function (ExpertAdministrationViewModel) {
+                            vm = new ExpertAdministrationViewModel(baseUrl, experts); // jshint ignore:line
+                            jasmine.Ajax.install();
+                            done();
+                        }
+                    );
                 } else {
                     done();
                 }
@@ -176,11 +178,13 @@ define([
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseFormViewModel);
                     injector.mock("app/BaseFormViewModel", baseSpy);
 
-                    injector.require(["app/admin/ExpertAdministrationViewModel"], function (ExpertAdministrationViewModel) {
-                        vm = new ExpertAdministrationViewModel(baseUrl, experts); // jshint ignore:line
-                        jasmine.Ajax.install();
-                        done();
-                    });
+                    injector.require(["app/admin/ExpertAdministrationViewModel"],
+                        function (ExpertAdministrationViewModel) {
+                            vm = new ExpertAdministrationViewModel(baseUrl, experts); // jshint ignore:line
+                            jasmine.Ajax.install();
+                            done();
+                        }
+                    );
                 } else {
                     _(vm.entries()).each(function (row) { row.changed = false; });
                     done();
