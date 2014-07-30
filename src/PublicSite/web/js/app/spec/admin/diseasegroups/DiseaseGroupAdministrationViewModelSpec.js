@@ -8,7 +8,7 @@ define([
 ], function (DiseaseGroupAdministrationViewModel, ko, _) {
     "use strict";
 
-    describe("The 'administration' view model", function () {
+    describe("The 'disease groups administration' view model", function () {
         var baseUrl = "";
         var eventName = "eventName";
 
