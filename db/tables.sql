@@ -274,7 +274,7 @@ CREATE TABLE model_run (
     prediction_uncertainty_raster raster,
     batch_end_date timestamp,
     batch_occurrence_count integer,
-    batching_completed_date timestamp,
+    batching_completed_date timestamp
 );
 
 CREATE TABLE provenance (

@@ -5,7 +5,7 @@ define([
     "ko",
     "jquery",
     "moment"
-], function (ko, $) {
+], function (ko, $, moment) {
     "use strict";
 
     return function (baseUrl, diseaseGroupSelectedEventName) {

@@ -71,6 +71,7 @@ public class DiseaseOccurrenceHandlerHelper {
     /**
      * Sets the batching parameters for the specified model run.
      * @param modelRun The model run.
+     * @param batchedOccurrenceCount The number of occurrences in this batch.
      */
     @Transactional(rollbackFor = Exception.class)
     public void setBatchingParameters(ModelRun modelRun, int batchedOccurrenceCount) {
