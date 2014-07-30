@@ -71,8 +71,8 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (noModelRunsYet(occurrence)) {
             return null;
         }
-        // For now, hardcode all machine weightings to 0.7
-        return 0.7; ///CHECKSTYLE:SUPPRESS MagicNumberCheck
+        // For now, all machine weightings are null
+        return null;
     }
 
     private boolean findIsValidated(DiseaseOccurrence occurrence) {

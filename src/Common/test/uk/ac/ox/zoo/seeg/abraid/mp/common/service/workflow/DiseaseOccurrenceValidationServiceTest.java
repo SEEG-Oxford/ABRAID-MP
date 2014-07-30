@@ -66,7 +66,6 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
-        double machineWeighting = 0.7;
         boolean automaticModelRuns = true;
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
@@ -83,7 +82,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
     }
 
@@ -142,7 +141,6 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
-        double machineWeighting = 0.7;
 
         boolean automaticModelRuns = true;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
@@ -159,7 +157,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
     }
 
@@ -170,7 +168,6 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
-        double machineWeighting = 0.7;
 
         boolean automaticModelRuns = false;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
@@ -186,7 +183,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
     }
 
