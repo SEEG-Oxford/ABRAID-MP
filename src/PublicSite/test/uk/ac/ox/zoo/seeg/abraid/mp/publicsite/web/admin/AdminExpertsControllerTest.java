@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -54,10 +55,29 @@ public class AdminExpertsControllerTest {
         String result = target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute(eq("experts"),
-                eq("[{\"visibilityRequested\":false,\"id\":0,\"weighting\":0.0,\"visibilityApproved\":false," +
-                "\"administrator\":false,\"seegmember\":false},{\"visibilityRequested\":false,\"id\":0,\"weighting\":" +
-                "0.0,\"visibilityApproved\":false,\"administrator\":false,\"seegmember\":false}]"));
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(model, times(1)).addAttribute(eq("experts"), captor.capture());
+        String json = captor.getValue();
+
+        assertThat(json).startsWith("[{");
+        assertThat(json).endsWith("}]");
+        String[] objects = json.split("\\},\\{");
+
+        assertThat(objects).hasSize(2);
+        
+        assertThat(objects[0]).contains("\"id\":0");
+        assertThat(objects[0]).contains("\"weighting\":0.0");
+        assertThat(objects[0]).contains("\"visibilityRequested\":false");
+        assertThat(objects[0]).contains("\"visibilityApproved\":false");
+        assertThat(objects[0]).contains("\"administrator\":false");
+        assertThat(objects[0]).contains("\"seegmember\":false");
+
+        assertThat(objects[1]).contains("\"id\":0");
+        assertThat(objects[1]).contains("\"weighting\":0.0");
+        assertThat(objects[1]).contains("\"visibilityRequested\":false");
+        assertThat(objects[1]).contains("\"visibilityApproved\":false");
+        assertThat(objects[1]).contains("\"administrator\":false");
+        assertThat(objects[1]).contains("\"seegmember\":false");
     }
 
     @Test
