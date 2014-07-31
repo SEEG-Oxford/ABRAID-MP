@@ -4,8 +4,9 @@
 define([
     "ko",
     "jquery",
-    "app/admin/diseasegroups/DiseaseGroupPayload"
-], function (ko, $, DiseaseGroupPayload) {
+    "app/admin/diseasegroups/DiseaseGroupPayload",
+    "app/BaseFormViewModel"
+], function (ko, $, DiseaseGroupPayload, BaseFormViewModel) {
     "use strict";
 
     return function (baseUrl, refresh,
@@ -13,43 +14,33 @@ define([
                      diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
 
         var self = this;
+        BaseFormViewModel.call(self, true, false);
+
         self.diseaseGroupSettingsViewModel = diseaseGroupSettingsViewModel;
         self.modelRunParametersViewModel = modelRunParametersViewModel;
         self.diseaseExtentParametersViewModel = diseaseExtentParametersViewModel;
 
         var diseaseGroupId;
-
-        self.isSubmitting = ko.observable(false);
-        self.submit = function () {
-            self.isSubmitting(true);
-            var data = new DiseaseGroupPayload(self.diseaseGroupSettingsViewModel,
-                                               self.modelRunParametersViewModel,
-                                               self.diseaseExtentParametersViewModel);
-            var url, doneCallback, alwaysCallback = {};
-            if (diseaseGroupId) {
-                // Disease group already has an ID, so changes should be saved to the existing row in database
-                url =  baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/save";
-                doneCallback = function () {
-                    self.notice({ message: "Saved successfully", priority: "success" });
-                    ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
-                };
-                alwaysCallback = function () { self.isSubmitting(false); };
-            } else {
-                // New disease group does not yet have an ID, so add new row to database and refresh page to reload list
-                url = baseUrl + "admin/diseasegroups/add";
-                doneCallback = refresh;
-            }
-            $.ajax({
-                method: "POST",
-                url: url,
-                data: JSON.stringify(data),
-                contentType : "application/json"
-            })
-                .done(doneCallback)
-                .fail(function () { self.notice({ message: "Error saving disease group", priority: "warning"}); })
-                .always(alwaysCallback);
+        self.buildSubmissionUrl = function () {
+            return baseUrl + "admin/diseasegroups/" + (diseaseGroupId ?  (diseaseGroupId + "/save") : "add");
         };
-        self.notice = ko.observable();
+
+        var baseSuccessHandler = self.successHandler;
+        self.successHandler = function (data, textStatus, xhr) {
+            baseSuccessHandler(data, textStatus, xhr);
+            if (diseaseGroupId) {
+                ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
+            } else {
+                refresh();
+            }
+        };
+
+        self.buildSubmissionData = function () {
+            return new DiseaseGroupPayload(
+                self.diseaseGroupSettingsViewModel,
+                self.modelRunParametersViewModel,
+                self.diseaseExtentParametersViewModel);
+        };
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             diseaseGroupId = diseaseGroup.id;

@@ -11,7 +11,7 @@ define([
         return function () { return arg; };
     };
 
-    describe("The 'administration' view model", function () {
+    describe("The 'disease group administration' view model", function () {
         var baseUrl = "";
         var selectedEvent = "selectedEvent";
         var savedEvent = "savedEvent";
@@ -111,26 +111,26 @@ define([
                         expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
                     });
 
-                    it("when unsuccessful, updates the 'notice' with an error", function () {
+                    it("when unsuccessful, updates the 'notices' with an error", function () {
                         // Arrange
-                        var expectedNotice = { message: "Error saving disease group", priority: "warning" };
+                        var expectedNotice = { message: "Server error.", priority: "warning" };
                         // Act
                         vm.submit();
                         jasmine.Ajax.requests.mostRecent().response({ status: 500 });
                         // Assert
-                        expect(vm.notice()).toEqual(expectedNotice);
+                        expect(vm.notices()).toContain(expectedNotice);
                     });
 
                     describe("when successful,", function () {
                         it("updates the 'notice' with a success alert", function () {
                             // Arrange
                             ko.postbox.publish(selectedEvent, { id: 1 });
-                            var expectedNotice = { message: "Saved successfully", priority: "success" };
+                            var expectedNotice = { message: "Form saved successfully.", priority: "success" };
                             // Act
                             vm.submit();
                             jasmine.Ajax.requests.mostRecent().response({ status: 204 });
                             // Assert
-                            expect(vm.notice()).toEqual(expectedNotice);
+                            expect(vm.notices()).toContain(expectedNotice);
                         });
 
                         it("fires the 'disease group saved' event with the expected id", function () {
@@ -170,12 +170,12 @@ define([
 
                 it("when unsuccessful, updates the 'notice' with an error", function () {
                     // Arrange
-                    var expectedNotice = { message: "Error saving disease group", priority: "warning" };
+                    var expectedNotice = { message: "Server error.", priority: "warning" };
                     // Act
                     vm.submit();
                     jasmine.Ajax.requests.mostRecent().response({ status: 500 });
                     // Assert
-                    expect(vm.notice()).toEqual(expectedNotice);
+                    expect(vm.notices()).toContain(expectedNotice);
                 });
 
                 it("when successful, refreshes the page", function () {

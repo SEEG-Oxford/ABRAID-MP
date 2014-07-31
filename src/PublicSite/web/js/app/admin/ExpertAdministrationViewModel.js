@@ -45,7 +45,7 @@ define([
 
         var rows = _(experts || []).map(converter.incomingJsonToRowViewModel);
 
-        BaseFormViewModel.call(self, baseUrl, "admin/experts", true, true, {});
+        BaseFormViewModel.call(self, true, true, baseUrl, "admin/experts");
         BaseTableViewModel.call(self, rows, "updatedDate", true, ["name", "email", "jobTitle", "institution"]);
 
         self.buildSubmissionData = function () {

@@ -9,8 +9,10 @@ define([
 ], function (ko, $, _) {
     "use strict";
 
-    return function (baseUrl, targetUrl, sendJson, receiveJson, messages) {
+    return function (sendJson, receiveJson, baseUrl, targetUrl, messages) {
         var self = this;
+
+        messages = messages || {};
 
         // It is assumed that self.isValid will be overridden by the ko.validation mixin, this is provided as a
         // fallback for the form* custom bindings when ko.validation isn't used.
@@ -24,11 +26,15 @@ define([
             return {};
         };
 
+        self.buildSubmissionUrl = function () {
+            return baseUrl + targetUrl;
+        };
+
         var buildAjaxArgs = function () {
             var args = {};
 
             args.method = "POST";
-            args.url = baseUrl + targetUrl;
+            args.url = self.buildSubmissionUrl();
 
             if (sendJson) {
                 args.data = JSON.stringify(self.buildSubmissionData());
@@ -68,12 +74,12 @@ define([
         };
 
         self.failureHandler = function (xhr) {
-            self.pushNotice(messages.fail || "Failed to save form.", "warning");
             if (xhr.status === 500) {
                 self.pushNotice(messages.success || "Server error.", "warning");
             } else if (xhr.status === 401) {
                 self.pushNotice(messages.success || "Authentication error.", "warning");
             } else {
+                self.pushNotice(messages.fail || "Failed to save form.", "warning");
                 processResponse(xhr, "warning");
             }
         };
