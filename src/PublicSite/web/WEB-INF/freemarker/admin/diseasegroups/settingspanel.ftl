@@ -53,13 +53,13 @@
                     <div class="form-group">
                         <label for="parent-disease-group" class="col-sm-5 control-label">Parent Disease Group</label>
                         <div class="col-sm-7">
-                            <select class="form-control" id="parent-disease-group" data-bind="options: parentDiseaseGroups, value: selectedParentDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...', enable: enableParentDiseaseGroups()"></select>
+                            <select class="form-control" id="parent-disease-group" data-bind="options: parentDiseaseGroups, value: selectedParentDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...', bootstrapDisable: find('isSubmitting') || !enableParentDiseaseGroups()"></select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="validator-disease-group" class="col-sm-5 control-label">Validator Disease Group</label>
                         <div class="col-sm-7">
-                            <select class="form-control" id="validator-disease-group" data-bind="options: validatorDiseaseGroups, value: selectedValidatorDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...'"></select>
+                            <select class="form-control" id="validator-disease-group" data-bind="options: validatorDiseaseGroups, value: selectedValidatorDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...', bootstrapDisable: find('isSubmitting')"></select>
                         </div>
                     </div>
                 </div>
