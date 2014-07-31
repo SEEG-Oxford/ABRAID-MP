@@ -3,9 +3,8 @@
  */
 define([
     "ko",
-    "app/admin/diseasegroups/DiseaseExtentParametersViewModel",
-    "underscore"
-], function (ko, DiseaseExtentParametersViewModel, _) {
+    "app/admin/diseasegroups/DiseaseExtentParametersViewModel"
+], function (ko, DiseaseExtentParametersViewModel) {
     "use strict";
 
     var constructDiseaseGroup = function (maxMonthsAgo, maxMonthsAgoForHigherOccurrenceScore, higherOccurrenceScore,
@@ -35,10 +34,6 @@ define([
         expect(arg).toHaveValidationRule({name: name, params: params});
     };
 
-    var expectMaxRule = function (arg) {
-        expect(_(arg.rules()).where({ rule: "max" })).toBeDefined();
-    };
-
     describe("The 'disease extent parameters' view model", function () {
         var eventName = "disease-group-selected";
 
@@ -60,14 +55,14 @@ define([
 
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "digit", true);
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "min", 0);
-                expectMaxRule(vm.maxMonthsAgoForHigherOccurrenceScore);
+                expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "max", vm.maxMonthsAgo);
 
                 expectRule(vm.higherOccurrenceScore, "digit", true);
                 expectRule(vm.higherOccurrenceScore, "min", 0);
 
                 expectRule(vm.lowerOccurrenceScore, "digit", true);
                 expectRule(vm.lowerOccurrenceScore, "min", 0);
-                expectMaxRule(vm.lowerOccurrenceScore);
+                expectRule(vm.lowerOccurrenceScore, "max", vm.higherOccurrenceScore);
 
                 expectRule(vm.minValidationWeighting, "digit", false);
                 expectRule(vm.minValidationWeighting, "min", 0);
@@ -78,7 +73,7 @@ define([
 
                 expectRule(vm.minOccurrencesForPossiblePresence, "digit", true);
                 expectRule(vm.minOccurrencesForPossiblePresence, "min", 0);
-                expectMaxRule(vm.minOccurrencesForPossiblePresence);
+                expectRule(vm.minOccurrencesForPossiblePresence, "max", vm.minOccurrencesForPresence);
             });
         });
 
