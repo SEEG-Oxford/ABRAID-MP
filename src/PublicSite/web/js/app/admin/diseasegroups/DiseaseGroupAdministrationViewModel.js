@@ -28,7 +28,7 @@ define([
             var url, doneCallback, alwaysCallback = {};
             if (diseaseGroupId) {
                 // Disease group already has an ID, so changes should be saved to the existing row in database
-                url =  baseUrl + "admin/diseasegroup/" + diseaseGroupId + "/save";
+                url =  baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/save";
                 doneCallback = function () {
                     self.notice({ message: "Saved successfully", priority: "success" });
                     ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
@@ -36,7 +36,7 @@ define([
                 alwaysCallback = function () { self.isSubmitting(false); };
             } else {
                 // New disease group does not yet have an ID, so add new row to database and refresh page to reload list
-                url = baseUrl + "admin/diseasegroup/add";
+                url = baseUrl + "admin/diseasegroups/add";
                 doneCallback = refresh;
             }
             $.ajax({

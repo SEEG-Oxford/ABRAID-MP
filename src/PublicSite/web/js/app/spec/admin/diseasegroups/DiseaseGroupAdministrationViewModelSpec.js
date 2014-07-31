@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/admin/diseasegroup/DiseaseGroupAdministrationViewModel",
+    "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
     "ko"
 ], function (DiseaseGroupAdministrationViewModel, ko) {
     "use strict";
@@ -99,7 +99,7 @@ define([
                         // Arrange
                         var id = 1;
                         var diseaseGroup = { id: id };
-                        var expectedUrl = baseUrl + "admin/diseasegroup/" + id + "/save";
+                        var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/save";
 
                         // Act
                         ko.postbox.publish(selectedEvent, diseaseGroup);
@@ -156,7 +156,7 @@ define([
                 it("posts to the expected URL with the expected payload", function () {
                     // Arrange
                     var diseaseGroup = { };
-                    var expectedUrl = baseUrl + "admin/diseasegroup/add";
+                    var expectedUrl = baseUrl + "admin/diseasegroups/add";
 
                     // Act
                     ko.postbox.publish(selectedEvent, diseaseGroup);
