@@ -65,8 +65,8 @@
     </div>
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div id="counterDiv" data-bind="with: counter">
-            <span>You have validated</span>
-            <div id="counter" data-bind="counter: count"></div>
+            <span data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></span><br/>
+            <div id="counter" data-bind="counter: count"></div><br/>
             <span data-bind="text: count() == 1 ? 'region' : 'regions'"></span>
         </div>
     </@security.authorize>
@@ -78,8 +78,8 @@
         <div data-bind="template: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template'"></div>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="counterDiv" data-bind="with: counter">
-                <span>You have validated</span>
-                <div id="counter" data-bind="counter: count"></div>
+                <span data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></span><br/>
+                <div id="counter" data-bind="counter: count"></div><br/>
                 <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
             </div>
         </@security.authorize>
