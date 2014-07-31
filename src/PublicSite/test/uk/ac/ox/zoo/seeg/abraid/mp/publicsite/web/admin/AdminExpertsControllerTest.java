@@ -64,7 +64,7 @@ public class AdminExpertsControllerTest {
         String[] objects = json.split("\\},\\{");
 
         assertThat(objects).hasSize(2);
-        
+
         assertThat(objects[0]).contains("\"id\":0");
         assertThat(objects[0]).contains("\"weighting\":0.0");
         assertThat(objects[0]).contains("\"visibilityRequested\":false");
