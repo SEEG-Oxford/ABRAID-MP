@@ -24,7 +24,7 @@ define([
             if (self.canRunModel()) {
                 self.working(true);
                 var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
-                $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
+                $.post(url)
                     .done(function () {
                         self.notices.push({ message: "Model run requested.", priority: "success"});
                     })
@@ -37,6 +37,10 @@ define([
                     })
                     .always(function () { self.working(false); });
             }
+        };
+
+        self.enableAutomaticModelRuns = function () {
+            $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns");
         };
 
         var getModelRunInfo = function (diseaseGroupId) {
