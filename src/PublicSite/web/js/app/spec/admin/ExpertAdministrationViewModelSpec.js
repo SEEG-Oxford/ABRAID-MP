@@ -171,7 +171,7 @@ define([
             var baseSpy;
             beforeEach(function (done) {
                 if (vm === undefined) { // before first
-                    // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                    // Squire is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
                     jasmine.Ajax.uninstall();
                     var injector = new Squire();
 
