@@ -9,7 +9,7 @@ define([
 
     describe("The 'disease group setup' view model", function () {
         var vm = {};
-        var baseUrl = "";
+        var baseUrl = "http://abraid.zoo.ox.ac.uk/publicsite/";
         var selectedEventName = "selected";
         var savedEventName = "saved";
         beforeEach(function () {
@@ -57,19 +57,35 @@ define([
             });
         });
 
-        describe("holds the minimum batch end date which", function () {
-            it("is an observable", function () {
-                expect(vm.batchEndDateMinimum).toBeObservable();
+        describe("builds a submission URL which", function () {
+            it("is correct", function () {
+                // Arrange
+                vm.selectedDiseaseGroupId(10);
+                var expectedUrl = "http://abraid.zoo.ox.ac.uk/publicsite/admin/diseasegroups/10/requestmodelrun";
+
+                // Act
+                var actualUrl = vm.buildSubmissionUrl();
+
+                // Assert
+                expect(actualUrl).toBe(expectedUrl);
             });
         });
 
-        describe("holds the maximum batch end date which", function () {
-            it("is an observable", function () {
-                expect(vm.batchEndDateMaximum).toBeObservable();
+        describe("builds submission data which", function () {
+            it("is correct", function () {
+                // Arrange
+                vm.batchEndDate("10 Jul 2014");
+                var expectedBatchEndDate = /2014-07-10T00:00:00/;
+
+                // Act
+                var actualData = vm.buildSubmissionData();
+
+                // Assert
+                expect(actualData.batchEndDate).toMatch(expectedBatchEndDate);
             });
         });
 
-        describe("responds to the 'disease group saved' event by", function () {
+        describe("responds to the 'disease group selected' event by", function () {
             it("updating the expected parameters", function () {
                 // Arrange
                 var diseaseGroupId = 1;
@@ -91,6 +107,34 @@ define([
 
                 // Act
                 ko.postbox.publish(selectedEventName, diseaseGroup);
+
+                // Arrange
+                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                expect(jasmine.Ajax.requests.mostRecent().method).toBe("GET");
+            });
+        });
+
+        describe("responds to the 'disease group saved' event by", function () {
+            it("updating the expected parameters", function () {
+                // Arrange
+                var diseaseGroupId = 1;
+
+                // Act
+                ko.postbox.publish(savedEventName, diseaseGroupId);
+
+                // Assert
+                expect(vm.selectedDiseaseGroupId()).toBe(diseaseGroupId);
+                expect(vm.isSubmitting()).toBe(true);
+                expect(vm.notices().length).toBe(0);
+            });
+
+            it("GETing from the expected URL", function () {
+                // Arrange
+                var diseaseGroupId = 1;
+                var expectedUrl = baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/modelruninformation";
+
+                // Act
+                ko.postbox.publish(savedEventName, diseaseGroupId);
 
                 // Arrange
                 expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
