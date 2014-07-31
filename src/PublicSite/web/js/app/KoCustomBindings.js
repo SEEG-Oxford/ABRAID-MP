@@ -128,6 +128,15 @@ define([
         }
     };
 
+    ko.bindingHandlers.syncValue = {
+        init: function (element, valueAccessor) {
+            ko.applyBindingAccessorsToNode(element, {
+                value: valueAccessor,
+                valueUpdate: function () { return "input"; }
+            });
+        }
+    };
+
     ko.bindingHandlers.formSubmit = {
         init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
             var wrappedValueAccessor = function () {
@@ -162,8 +171,7 @@ define([
         init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
             $(element).attr("autocomplete", "off");
             ko.applyBindingAccessorsToNode(element, {
-                value: valueAccessor,
-                valueUpdate: function () { return "input"; },
+                syncValue: valueAccessor,
                 bootstrapDisable: function () {
                     return bindingContext.find("isSubmitting");
                 }

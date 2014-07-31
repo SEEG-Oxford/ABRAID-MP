@@ -39,7 +39,7 @@ define([
         var context = this;
 
         while (context !== undefined && context.$data !== undefined) {
-            if (typeof context.$data[field] !== undefined) {
+            if (context.$data[field] !== undefined) {
                 return ko.utils.recursiveUnwrap(context.$data[field]);
             } else {
                 context = context.$parentContext;
