@@ -191,9 +191,12 @@ CREATE TABLE expert (
     job_title varchar(100) NOT NULL,
     institution varchar(100) NOT NULL,
     is_administrator boolean NOT NULL,
-    weighting double precision,
-    is_publicly_visible boolean,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    is_seeg_member boolean NOT NULL,
+    weighting double precision NOT NULL,
+    visibility_requested boolean NOT NULL,
+    visibility_approved boolean NOT NULL,
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    updated_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE expert_validator_disease_group (

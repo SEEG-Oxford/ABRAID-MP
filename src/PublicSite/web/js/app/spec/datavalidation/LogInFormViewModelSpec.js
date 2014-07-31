@@ -1,7 +1,7 @@
-/* A suite of tests for the LogInViewModel.
+/* A suite of tests for the LogInFormViewModel.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
+define(["app/datavalidation/LogInFormViewModel"], function (LogInFormViewModel) {
     "use strict";
 
     describe("The log in view model", function () {
@@ -12,7 +12,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
         beforeEach(function () {
             refreshSpy = jasmine.createSpy();
             rebindSpy = jasmine.createSpy();
-            vm = new LogInViewModel(baseUrl, refreshSpy, rebindSpy);
+            vm = new LogInFormViewModel(baseUrl, refreshSpy, rebindSpy);
         });
 
         describe("holds a username which", function () {
@@ -33,11 +33,6 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
             it("starts as empty string", function () {
                 expect(vm.password()).toBe("");
             });
-        });
-
-        it("has an 'isValid' method which returns true", function () {
-            // Always returns true. just for compatibility.
-            expect(vm.isValid()).toBe(true);
         });
 
         describe("has a submit method which", function () {
@@ -132,9 +127,9 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
             });
         });
 
-        describe("holds a notice field which", function () {
+        describe("holds a message field which", function () {
             it("starts with a welcome message", function () {
-                expect(vm.notice()).toBe("Log in via ABRAID account");
+                expect(vm.message()).toBe("Log in via ABRAID account");
             });
 
             it("is updated during submit", function () {
@@ -146,7 +141,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
                 vm.submit();
 
                 // Assert
-                expect(vm.notice()).toContain("Attempting  login");
+                expect(vm.message()).toContain("Attempting  login");
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
             });
 
@@ -160,7 +155,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
 
                 // Assert
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                expect(vm.notice()).toContain("Success");
+                expect(vm.message()).toContain("Success");
             });
 
             describe("is updated on an unsuccessful submit", function () {
@@ -170,7 +165,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
                     // Act
                     vm.submit();
                     // Assert
-                    expect(vm.notice()).toContain("Username &amp; password required");
+                    expect(vm.message()).toContain("Username &amp; password required");
                 });
 
                 it("due to a missing password", function () {
@@ -179,7 +174,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
                     // Act
                     vm.submit();
                     // Assert
-                    expect(vm.notice()).toContain("Username &amp; password required");
+                    expect(vm.message()).toContain("Username &amp; password required");
                 });
 
                 it("due to an unauthorised login attempt", function () {
@@ -193,7 +188,7 @@ define(["app/datavalidation/LogInViewModel"], function (LogInViewModel) {
                     jasmine.Ajax.requests.mostRecent().response({ status: 401, responseText: xhrResponseText});
 
                     // Assert
-                    expect(vm.notice()).toContain(xhrResponseText);
+                    expect(vm.message()).toContain(xhrResponseText);
                 });
             });
         });

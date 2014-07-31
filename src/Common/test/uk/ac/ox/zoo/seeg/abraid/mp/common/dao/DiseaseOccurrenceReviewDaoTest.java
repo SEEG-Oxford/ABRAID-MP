@@ -93,7 +93,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         String password = "pa55word";
         String jobTitle = "job";
         String institution = "institution";
-        boolean isAdministrator = true;
+        boolean visibilityRequested = true;
 
         Expert expert = new Expert();
         expert.setName(name);
@@ -102,7 +102,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         expert.setJobTitle(jobTitle);
         expert.setInstitution(institution);
         //noinspection ConstantConditions
-        expert.setAdministrator(isAdministrator);
+        expert.setVisibilityRequested(visibilityRequested);
         expertDao.save(expert);
 
         return expert;

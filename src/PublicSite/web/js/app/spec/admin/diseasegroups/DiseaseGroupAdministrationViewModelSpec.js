@@ -2,17 +2,18 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/admin/diseasegroup/DiseaseGroupAdministrationViewModel",
+    "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
     "ko",
     "underscore"
 ], function (DiseaseGroupAdministrationViewModel, ko, _) {
     "use strict";
 
-    var wrap = function (arg) {
-        return function () { return arg; };
-    };
+    describe("The 'disease groups administration' view model", function () {
 
-    describe("The 'administration' view model", function () {
+        var wrap = function (arg) {
+            return function () { return arg; };
+        };
+
         var baseUrl = "";
         var selectedEvent = "selectedEvent";
         var savedEvent = "savedEvent";
@@ -98,7 +99,7 @@ define([
                 // Arrange
                 var id = 1;
                 var diseaseGroup = { id: id };
-                var expectedUrl = baseUrl + "admin/diseasegroup/" + id + "/save";
+                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/save";
 
                 // Act
                 ko.postbox.publish(selectedEvent, diseaseGroup);

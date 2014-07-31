@@ -26,7 +26,8 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="<@spring.url "/admin/diseasegroup/"/>">Disease Groups</a></li>
+                            <li><a href="<@spring.url "/admin/diseasegroups/"/>">Disease Groups</a></li>
+                            <li><a href="<@spring.url "/admin/experts/"/>">Experts</a></li>
                         </ul>
                     </li>
                 </@security.authorize>

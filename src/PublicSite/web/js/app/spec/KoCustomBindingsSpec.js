@@ -366,6 +366,47 @@ define([
                 );
             });
 
+            describe("the 'formRadio' binding, which", function () {
+                var context, subBindings;
+                var element = "1234";
+                var accessor = function () { return { selected: "1234", value: "4321" }; };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    context = { find: function () { return false; } };
+                    ko.bindingHandlers.formRadio.init(element, accessor, {}, {}, context);
+                    subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                });
+
+                it("adds composite bindings to the same element", function () {
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+                it("applies a 'checked' binding with the selected sub-accessor", function () {
+                    expect(subBindings.checked).toBeDefined();
+                    expect(typeof subBindings.checked).toBe("function");
+                    expect(subBindings.checked()).toBe(accessor().selected);
+                });
+
+                it("applies a 'checkedValue' binding with the value sub-accessor", function () {
+                    expect(subBindings.checkedValue).toBeDefined();
+                    expect(typeof subBindings.checkedValue).toBe("function");
+                    expect(subBindings.checkedValue()).toBe(accessor().value);
+                });
+
+                it("applies a 'bootstrapDisable' binding with a submitting based accessor", function () {
+                    expect(subBindings.bootstrapDisable).toBeDefined();
+                    expect(typeof subBindings.bootstrapDisable).toBe("function");
+
+                    context.find = findBuilder(true, false); // not submitting
+                    expect(subBindings.bootstrapDisable()).toBe(false);
+
+                    context.find = findBuilder(true, true);  // submitting
+                    expect(subBindings.bootstrapDisable()).toBe(true);
+                });
+            });
+
             describe("the 'formChecked' binding, which", function () {
                 var context, subBindings;
                 var element = "1234";
@@ -383,16 +424,10 @@ define([
                     expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
                 });
 
-                it("applies a 'checked' binding with the checked sub-accessor", function () {
+                it("applies a 'checked' binding with the value accessor", function () {
                     expect(subBindings.checked).toBeDefined();
                     expect(typeof subBindings.checked).toBe("function");
-                    expect(subBindings.checked()).toBe(accessor().checked);
-                });
-
-                it("applies a 'checkedValue' binding with the value sub-accessor", function () {
-                    expect(subBindings.checkedValue).toBeDefined();
-                    expect(typeof subBindings.checkedValue).toBe("function");
-                    expect(subBindings.checkedValue()).toBe(accessor().value);
+                    expect(subBindings.checked).toBe(accessor);
                 });
 
                 it("applies a 'bootstrapDisable' binding with a submitting based accessor", function () {

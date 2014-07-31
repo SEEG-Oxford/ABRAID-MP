@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
@@ -40,7 +41,7 @@ import static org.hamcrest.collection.IsIn.isIn;
  */
 @Controller
 @SessionAttributes(RegistrationController.EXPERT_SESSION_STATE_KEY)
-public class RegistrationController {
+public class RegistrationController extends AbstractController {
     /** Session key for Expert object. */
     public static final String EXPERT_SESSION_STATE_KEY = "expert";
 
@@ -97,11 +98,6 @@ public class RegistrationController {
         if (!modelMap.containsAttribute(EXPERT_SESSION_STATE_KEY)) {
             // Create an empty expert in the session state
             expert = new Expert();
-
-            // SET EXPERT VISIBILITY FIELD
-            // This is a temp workaround for a more generic overhaul of this system in an upcoming sprint.
-            expert.setPubliclyVisible(false);
-
             modelMap.addAttribute(EXPERT_SESSION_STATE_KEY, expert);
         } else {
             expert = (Expert) modelMap.get(EXPERT_SESSION_STATE_KEY);
@@ -270,7 +266,7 @@ public class RegistrationController {
 
     private void updateExpert(Expert expert, JsonExpertDetails expertDetails) {
         expert.setName(expertDetails.getName());
-        expert.setPubliclyVisible(expertDetails.isPubliclyVisible());
+        expert.setVisibilityRequested(expertDetails.getVisibilityRequested());
         expert.setJobTitle(expertDetails.getJobTitle());
         expert.setInstitution(expertDetails.getInstitution());
 

@@ -28,7 +28,7 @@ define([
             self.notices.removeAll();
             if (self.canRunModel()) {
                 self.working(true);
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
                 var batchEndDateText = moment(self.batchEndDate()).format();
                 $.post(url, { batchEndDate: batchEndDateText })
                     .done(function () {

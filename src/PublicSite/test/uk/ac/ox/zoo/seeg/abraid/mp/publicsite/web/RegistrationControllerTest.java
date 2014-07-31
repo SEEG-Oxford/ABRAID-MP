@@ -213,7 +213,6 @@ public class RegistrationControllerTest {
         // Arrange
         ModelMap modelMap = new ModelMap();
         Expert expert = new Expert();
-        expert.setPubliclyVisible(false); // SET EXPERT VISIBILITY FIELD temp workaround
         modelMap.addAttribute("expert", expert);
 
         when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
@@ -230,8 +229,8 @@ public class RegistrationControllerTest {
         // Assert
         assertThat((String) (modelMap.get("diseases")))
                 .isEqualTo("[{\"id\":1,\"name\":\"a\"},{\"id\":2,\"name\":\"b\"},{\"id\":3,\"name\":\"c\"}]");
-        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"name\":null,\"diseaseInterests\":[]," +
-                "\"jobTitle\":null,\"institution\":null,\"publiclyVisible\":false}");
+        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"name\":null,\"visibilityRequested\":false," +
+                "\"diseaseInterests\":[],\"jobTitle\":null,\"institution\":null}");
 
         assertThat(result).isEqualTo("register/details");
     }
@@ -318,7 +317,6 @@ public class RegistrationControllerTest {
         // Arrange
         ModelMap modelMap = new ModelMap();
         Expert expert = new Expert();
-        expert.setPubliclyVisible(false); // SET EXPERT VISIBILITY FIELD temp workaround
         modelMap.addAttribute("expert", expert);
 
         when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
@@ -421,7 +419,7 @@ public class RegistrationControllerTest {
         JsonExpertDetails jsonExpert = new JsonExpertDetails();
         jsonExpert.setJobTitle("job");
         jsonExpert.setInstitution("institution");
-        jsonExpert.setPubliclyVisible(true);
+        jsonExpert.setVisibilityRequested(true);
         jsonExpert.setName("name");
 
         // Act
@@ -434,7 +432,7 @@ public class RegistrationControllerTest {
         // Updates expert before save
         assertThat(expert.getJobTitle()).isEqualTo(jsonExpert.getJobTitle());
         assertThat(expert.getInstitution()).isEqualTo(jsonExpert.getInstitution());
-        assertThat(expert.isPubliclyVisible()).isEqualTo(jsonExpert.isPubliclyVisible());
+        assertThat(expert.getVisibilityRequested()).isEqualTo(jsonExpert.getVisibilityRequested());
         assertThat(expert.getName()).isEqualTo(jsonExpert.getName());
 
         // Hashes password before save

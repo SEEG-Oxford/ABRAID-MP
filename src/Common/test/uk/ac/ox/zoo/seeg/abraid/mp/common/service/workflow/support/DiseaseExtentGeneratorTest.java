@@ -402,7 +402,7 @@ public class DiseaseExtentGeneratorTest {
         return createList(
                 new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(100), diseaseGroup, uncertainDiseaseExtentClass, 0, createdDate),
                 new AdminUnitDiseaseExtentClass(getAdminUnitTropical(125), diseaseGroup, possiblePresenceDiseaseExtentClass, 0, createdDate),
-                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, absenceDiseaseExtentClass, 0, updatedDate),
+                new AdminUnitDiseaseExtentClass(getAdminUnitTropical(130), diseaseGroup, possibleAbsenceDiseaseExtentClass, 0, updatedDate),
                 new AdminUnitDiseaseExtentClass(getAdminUnitGlobal(150), diseaseGroup, uncertainDiseaseExtentClass, 1, updatedDate),
                 new AdminUnitDiseaseExtentClass(getAdminUnitTropical(200), diseaseGroup, possiblePresenceDiseaseExtentClass, 4, createdDate),
                 new AdminUnitDiseaseExtentClass(getAdminUnitTropical(250), diseaseGroup, presenceDiseaseExtentClass, 5, createdDate),

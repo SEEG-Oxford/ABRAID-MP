@@ -108,21 +108,21 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
             });
         });
 
-        describe("has a publiclyVisible field which", function () {
+        describe("has a visibilityRequested field which", function () {
             it("is an observable", function () {
                 var vm = new AccountDetailsFormViewModel("", {}, noop, {});
-                expect(vm.publiclyVisible).toBeObservable();
+                expect(vm.visibilityRequested).toBeObservable();
             });
 
             describe("starts with", function () {
                 it("the value on the expert object passed to the constructor", function () {
-                    var vm = new AccountDetailsFormViewModel("", { publiclyVisible: true }, noop, {});
-                    expect(vm.publiclyVisible()).toBe(true);
+                    var vm = new AccountDetailsFormViewModel("", { visibilityRequested: true }, noop, {});
+                    expect(vm.visibilityRequested()).toBe(true);
                 });
 
                 it("false if no value is passed to the constructor", function () {
                     var vm = new AccountDetailsFormViewModel("", {}, noop, {});
-                    expect(vm.publiclyVisible()).toBe(false);
+                    expect(vm.visibilityRequested()).toBe(false);
                 });
             });
         });
@@ -260,7 +260,7 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
                     vm.name("expected_name");
                     vm.jobTitle("expected_job");
                     vm.institution("expected_institute");
-                    vm.publiclyVisible(true);
+                    vm.visibilityRequested(true);
                     vm.diseaseInterestListViewModel.buildSubmissionData = wrap([ 9, 7 ]);
 
                     // Act
@@ -271,7 +271,7 @@ define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFor
                     expect(body.name).toEqual("expected_name");
                     expect(body.jobTitle).toEqual("expected_job");
                     expect(body.institution).toEqual("expected_institute");
-                    expect(body.publiclyVisible).toEqual(true);
+                    expect(body.visibilityRequested).toEqual(true);
                     expect(body.diseaseInterests.length).toEqual(2);
                     expect(body.diseaseInterests).toContain(9);
                     expect(body.diseaseInterests).toContain(7);

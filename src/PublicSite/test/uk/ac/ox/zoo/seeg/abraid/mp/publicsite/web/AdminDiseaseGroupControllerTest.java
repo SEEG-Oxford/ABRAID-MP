@@ -15,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminDiseaseGroupController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonParentDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 
@@ -69,7 +70,7 @@ public class AdminDiseaseGroupControllerTest {
         String result = controller.showPage(model);
 
         // Assert
-        assertThat(result).isEqualTo("admin/diseasegroup/index");
+        assertThat(result).isEqualTo("admin/diseasegroups/index");
         verify(model, times(1)).addAttribute("diseaseGroups", expectedJson);
         verify(model, times(1)).addAttribute("validatorDiseaseGroups", expectedValidatorJson);
     }
