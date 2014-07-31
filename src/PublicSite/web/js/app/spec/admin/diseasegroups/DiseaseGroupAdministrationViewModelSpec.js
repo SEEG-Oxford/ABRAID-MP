@@ -2,40 +2,38 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
-    "ko",
-    "underscore"
-], function (DiseaseGroupAdministrationViewModel, ko, _) {
+    "app/admin/diseasegroup/DiseaseGroupAdministrationViewModel",
+    "ko"
+], function (DiseaseGroupAdministrationViewModel, ko) {
     "use strict";
 
-    describe("The 'disease groups administration' view model", function () {
+    var wrap = function (arg) {
+        return function () { return arg; };
+    };
 
-        var wrap = function (arg) {
-            return function () { return arg; };
-        };
-
+    describe("The 'administration' view model", function () {
         var baseUrl = "";
         var selectedEvent = "selectedEvent";
         var savedEvent = "savedEvent";
 
-        describe("holds the three view models for disease group settings and parameters which", function () {
-            it("take the expected initial value", function () {
-                // Arrange
-                var diseaseGroupSettingsViewModel = "settings";
-                var modelRunParametersViewModel = "model run parameters";
-                var diseaseExtentParametersViewModel = "extent parameters";
-                // Act
-                var vm = new DiseaseGroupAdministrationViewModel(baseUrl, diseaseGroupSettingsViewModel,
-                    modelRunParametersViewModel, diseaseExtentParametersViewModel, selectedEvent, savedEvent);
-                // Assert
-                expect(vm.diseaseGroupSettingsViewModel).toBe(diseaseGroupSettingsViewModel);
-                expect(vm.modelRunParametersViewModel).toBe(modelRunParametersViewModel);
-                expect(vm.diseaseExtentParametersViewModel).toBe(diseaseExtentParametersViewModel);
-            });
+        it("holds the 3 view models for disease group settings and parameters, which take the expected initial value",
+        function () {
+            // Arrange
+            var diseaseGroupSettingsViewModel = "settings";
+            var modelRunParametersViewModel = "model run parameters";
+            var diseaseExtentParametersViewModel = "extent parameters";
+            // Act
+            var vm = new DiseaseGroupAdministrationViewModel(baseUrl, {}, diseaseGroupSettingsViewModel,
+                modelRunParametersViewModel, diseaseExtentParametersViewModel, selectedEvent, savedEvent);
+            // Assert
+            expect(vm.diseaseGroupSettingsViewModel).toBe(diseaseGroupSettingsViewModel);
+            expect(vm.modelRunParametersViewModel).toBe(modelRunParametersViewModel);
+            expect(vm.diseaseExtentParametersViewModel).toBe(diseaseExtentParametersViewModel);
         });
 
-        describe("holds the submit button, which", function () {
+        describe("holds the submit button which,", function () {
             var vm = {};
+            var refreshSpy = jasmine.createSpy();
             var diseaseGroupSettingsViewModel = {
                 name: wrap("Name"),
                 publicName: wrap("Public name"),
@@ -91,61 +89,101 @@ define([
             "}";
 
             beforeEach(function () {
-                vm = new DiseaseGroupAdministrationViewModel(baseUrl, diseaseGroupSettingsViewModel,
+                vm = new DiseaseGroupAdministrationViewModel(baseUrl, refreshSpy, diseaseGroupSettingsViewModel,
                     modelRunParametersViewModel, diseaseExtentParametersViewModel, selectedEvent, savedEvent);
             });
 
-            it("posts to the expected URL (by reacting to the published event) with the expected payload", function () {
-                // Arrange
-                var id = 1;
-                var diseaseGroup = { id: id };
-                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/save";
+            describe("when an existing disease group is selected,", function () {
+                describe("posts to the expected URL (by reacting to the event),", function () {
+                    it("with the expected payload", function () {
+                        // Arrange
+                        var id = 1;
+                        var diseaseGroup = { id: id };
+                        var expectedUrl = baseUrl + "admin/diseasegroup/" + id + "/save";
 
-                // Act
-                ko.postbox.publish(selectedEvent, diseaseGroup);
-                vm.submit();
+                        // Act
+                        ko.postbox.publish(selectedEvent, diseaseGroup);
+                        vm.submit();
 
-                // Arrange
-                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
-                expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
-                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+                        // Arrange
+                        expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                        expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
+                        expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+                    });
+
+                    it("when unsuccessful, updates the 'notice' with an error", function () {
+                        // Arrange
+                        var expectedNotice = { message: "Error saving disease group", priority: "warning" };
+                        // Act
+                        vm.submit();
+                        jasmine.Ajax.requests.mostRecent().response({ status: 500 });
+                        // Assert
+                        expect(vm.notice()).toEqual(expectedNotice);
+                    });
+
+                    describe("when successful,", function () {
+                        it("updates the 'notice' with a success alert", function () {
+                            // Arrange
+                            ko.postbox.publish(selectedEvent, { id: 1 });
+                            var expectedNotice = { message: "Saved successfully", priority: "success" };
+                            // Act
+                            vm.submit();
+                            jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                            // Assert
+                            expect(vm.notice()).toEqual(expectedNotice);
+                        });
+
+                        it("fires the 'disease group saved' event with the expected id", function () {
+                            // Arrange
+                            var diseaseGroupId = 1;
+                            ko.postbox.publish(selectedEvent, { id: diseaseGroupId });
+
+                            var subscription = ko.postbox.subscribe(savedEvent, function (value) {
+                                // Assert
+                                expect(value).toBe(diseaseGroupId);
+                            });
+
+                            // Act
+                            vm.submit();
+                            jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                            subscription.dispose();
+                        });
+                    });
+                });
             });
 
-            it("when unsuccessful, updates the 'notice' with an error", function () {
-                // Arrange
-                var expectedNotice = { message: "Error saving disease group", priority: "warning" };
-                // Act
-                vm.submit();
-                jasmine.Ajax.requests.mostRecent().response({ status: 500 });
-                // Assert
-                expect(_.isEqual(vm.notice(), expectedNotice)).toBe(true);
-            });
-
-            describe("when successful,", function () {
-                it("updates the 'notice' with a success alert", function () {
+            describe("when a new empty disease group is added,", function () {
+                it("posts to the expected URL with the expected payload", function () {
                     // Arrange
-                    var expectedNotice = { message: "Saved successfully", priority: "success" };
+                    var diseaseGroup = { };
+                    var expectedUrl = baseUrl + "admin/diseasegroup/add";
+
+                    // Act
+                    ko.postbox.publish(selectedEvent, diseaseGroup);
+                    vm.submit();
+
+                    // Arrange
+                    expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                    expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
+                    expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+                });
+
+                it("when unsuccessful, updates the 'notice' with an error", function () {
+                    // Arrange
+                    var expectedNotice = { message: "Error saving disease group", priority: "warning" };
+                    // Act
+                    vm.submit();
+                    jasmine.Ajax.requests.mostRecent().response({ status: 500 });
+                    // Assert
+                    expect(vm.notice()).toEqual(expectedNotice);
+                });
+
+                it("when successful, refreshes the page", function () {
                     // Act
                     vm.submit();
                     jasmine.Ajax.requests.mostRecent().response({ status: 204 });
                     // Assert
-                    expect(_.isEqual(vm.notice(), expectedNotice)).toBe(true);
-                });
-
-                it("fires the 'disease group saved' event with the expected id", function () {
-                    // Arrange
-                    var diseaseGroupId = 1;
-                    ko.postbox.publish(selectedEvent, { id: diseaseGroupId });
-
-                    var subscription = ko.postbox.subscribe(savedEvent, function (value) {
-                        // Assert
-                        expect(value).toBe(diseaseGroupId);
-                    });
-
-                    // Act
-                    vm.submit();
-                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                    subscription.dispose();
+                    expect(refreshSpy).toHaveBeenCalled();
                 });
             });
         });
@@ -185,7 +223,7 @@ define([
                 "\"validatorDiseaseGroup\":{\"id\":null}," +
                 "\"diseaseExtentParameters\":{}}";
             var diseaseGroup = { id: 1 };
-            var vm = new DiseaseGroupAdministrationViewModel(baseUrl, diseaseGroupSettingsViewModel,
+            var vm = new DiseaseGroupAdministrationViewModel(baseUrl, {}, diseaseGroupSettingsViewModel,
                 modelRunParametersViewModel, diseaseExtentParametersViewModel, selectedEvent, savedEvent);
             // Act
             ko.postbox.publish(selectedEvent, diseaseGroup);
