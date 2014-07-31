@@ -30,18 +30,51 @@ define([
         expect(vm.minOccurrencesForPossiblePresence()).toBe(parameters.minOccurrencesForPossiblePresence);
     };
 
+    var expectRule = function (arg, name, params) {
+        expect(arg).toHaveValidationRule({name: name, params: params});
+    };
+
     describe("The 'disease extent parameters' view model", function () {
         var eventName = "disease-group-selected";
 
-        it("holds the expected parameters for disease extent calculation as observables", function () {
+        describe("holds the expected parameters for disease extent calculation", function () {
             var vm = new DiseaseExtentParametersViewModel("");
-            expect(vm.maxMonthsAgo).toBeObservable();
-            expect(vm.maxMonthsAgoForHigherOccurrenceScore).toBeObservable();
-            expect(vm.higherOccurrenceScore).toBeObservable();
-            expect(vm.lowerOccurrenceScore).toBeObservable();
-            expect(vm.minValidationWeighting).toBeObservable();
-            expect(vm.minOccurrencesForPresence).toBeObservable();
-            expect(vm.minOccurrencesForPossiblePresence).toBeObservable();
+            it("as observables", function () {
+                expect(vm.maxMonthsAgo).toBeObservable();
+                expect(vm.maxMonthsAgoForHigherOccurrenceScore).toBeObservable();
+                expect(vm.higherOccurrenceScore).toBeObservable();
+                expect(vm.lowerOccurrenceScore).toBeObservable();
+                expect(vm.minValidationWeighting).toBeObservable();
+                expect(vm.minOccurrencesForPresence).toBeObservable();
+                expect(vm.minOccurrencesForPossiblePresence).toBeObservable();
+            });
+
+            it("with the appropriate validation rules", function () {
+                expectRule(vm.maxMonthsAgo, "digit", true);
+                expectRule(vm.maxMonthsAgo, "min", 0);
+
+                expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "digit", true);
+                expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "min", 0);
+                expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "max", vm.maxMonthsAgo);
+
+                expectRule(vm.higherOccurrenceScore, "digit", true);
+                expectRule(vm.higherOccurrenceScore, "min", 0);
+
+                expectRule(vm.lowerOccurrenceScore, "digit", true);
+                expectRule(vm.lowerOccurrenceScore, "min", 0);
+                expectRule(vm.lowerOccurrenceScore, "max", vm.higherOccurrenceScore);
+
+                expectRule(vm.minValidationWeighting, "digit", false);
+                expectRule(vm.minValidationWeighting, "min", 0);
+                expectRule(vm.minValidationWeighting, "max", 1);
+
+                expectRule(vm.minOccurrencesForPresence, "digit", true);
+                expectRule(vm.minOccurrencesForPresence, "min", 0);
+
+                expectRule(vm.minOccurrencesForPossiblePresence, "digit", true);
+                expectRule(vm.minOccurrencesForPossiblePresence, "min", 0);
+                expectRule(vm.minOccurrencesForPossiblePresence, "max", vm.minOccurrencesForPresence);
+            });
         });
 
         describe("when the specified event is fired", function () {

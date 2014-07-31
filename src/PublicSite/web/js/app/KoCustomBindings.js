@@ -10,15 +10,6 @@ define([
 ], function (ko, $, moment) {
     "use strict";
 
-    // Set the width of the element to fit the number of digits (2, 3 or 4)
-    function adjustElementWidthForCounterValue(element, value) {
-        if ((value > 999) && ($(element).width() !== 280)) {
-            $(element).width(280);
-        } else if ((value > 99) && ($(element).width() !== 210)) {
-            $(element).width(210);
-        }
-    }
-
     // Custom binding to set the value on the flipclock.js counter
     ko.bindingHandlers.counter = {
         init: function (element, valueAccessor) {
@@ -28,8 +19,7 @@ define([
         update: function (element, valueAccessor) {
             var counter = ko.utils.domData.get(element, "counter");
             var value = ko.utils.recursiveUnwrap(valueAccessor);
-            adjustElementWidthForCounterValue(element, value);
-            counter.setValue(value);
+            counter.setValue(value > 99999 ? 99999 : value);
         }
     };
 

@@ -124,15 +124,17 @@ html, body, #dataValidation {
     width: 100%;
 }
 #counterDiv {
-    text-align: center;
     position: absolute;
     bottom: 5px;
-    left: 85px;
+    width: 100%;
+    text-align: center;
 }
 #counter {
+    display: inline-block;
+    width: auto;
     margin: 0 auto;
-    width: 140px;
     zoom: 0.8;
+    -moz-transform: scale(0.8);
 }
 #counter ul {
     margin: 4px;

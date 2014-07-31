@@ -483,16 +483,10 @@ define([
                     });
                 });
 
-                it("applies a 'value' binding with the parent accessor", function () {
-                    expect(subBindings.value).toBeDefined();
-                    expect(typeof subBindings.value).toBe("function");
-                    expect(subBindings.value).toBe(accessor);
-                });
-
-                it("applies a 'valueUpdate' binding with the value accessor that returns 'input'", function () {
-                    expect(subBindings.valueUpdate).toBeDefined();
-                    expect(typeof subBindings.valueUpdate).toBe("function");
-                    expect(subBindings.valueUpdate()).toBe("input");
+                it("applies a 'syncValue' binding with the parent accessor", function () {
+                    expect(subBindings.syncValue).toBeDefined();
+                    expect(typeof subBindings.syncValue).toBe("function");
+                    expect(subBindings.syncValue).toBe(accessor);
                 });
 
                 it("applies a 'bootstrapDisable' binding with a submitting based accessor", function () {
@@ -504,6 +498,31 @@ define([
 
                     context.find = findBuilder(true, true);  // submitting
                     expect(subBindings.bootstrapDisable()).toBe(true);
+                });
+            });
+
+            describe("the 'syncValue' binding which", function () {
+                var context, subBindings;
+                var element = "1234";
+                var accessor = function () { return { checked: "1234", value: "4321" }; };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    context = { find: function () { return false; } };
+                    ko.bindingHandlers.syncValue.init(element, accessor, {}, {}, context);
+                    subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                });
+
+                it("applies a 'value' binding with the parent accessor", function () {
+                    expect(subBindings.value).toBeDefined();
+                    expect(typeof subBindings.value).toBe("function");
+                    expect(subBindings.value).toBe(accessor);
+                });
+
+                it("applies a 'valueUpdate' binding with the value accessor that returns 'input'", function () {
+                    expect(subBindings.valueUpdate).toBeDefined();
+                    expect(typeof subBindings.valueUpdate).toBe("function");
+                    expect(subBindings.valueUpdate()).toBe("input");
                 });
             });
         });

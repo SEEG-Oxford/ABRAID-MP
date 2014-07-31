@@ -8,16 +8,22 @@ define([
     "use strict";
 
     describe("The 'disease group settings' view model", function () {
-        it("holds the expected properties of a disease group as observables", function () {
+        describe("holds the expected properties of a disease group", function () {
             var vm = new DiseaseGroupSettingsViewModel([], [], "");
-            expect(vm.name).toBeObservable();
-            expect(vm.publicName).toBeObservable();
-            expect(vm.shortName).toBeObservable();
-            expect(vm.abbreviation).toBeObservable();
-            expect(vm.selectedType).toBeObservable();
-            expect(vm.isGlobal).toBeObservable();
-            expect(vm.selectedParentDiseaseGroup).toBeObservable();
-            expect(vm.selectedValidatorDiseaseGroup).toBeObservable();
+            it("as observables", function () {
+                expect(vm.name).toBeObservable();
+                expect(vm.publicName).toBeObservable();
+                expect(vm.shortName).toBeObservable();
+                expect(vm.abbreviation).toBeObservable();
+                expect(vm.selectedType).toBeObservable();
+                expect(vm.isGlobal).toBeObservable();
+                expect(vm.selectedParentDiseaseGroup).toBeObservable();
+                expect(vm.selectedValidatorDiseaseGroup).toBeObservable();
+            });
+
+            it("with appropriate validation rules", function () {
+                expect(vm.name).toHaveValidationRule({ name: "required", params: true });
+            });
         });
 
         describe("holds the list of possible validator disease groups which", function () {
