@@ -197,28 +197,27 @@ define([
 
             it("it specifies the correct 'baseUrl'", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[0]).toBe(baseUrl);
+                expect(args[2]).toBe(baseUrl);
             });
 
             it("it specifies the correct form url", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[1]).toBe("admin/experts");
+                expect(args[3]).toBe("admin/experts");
             });
 
             it("it specifies to send JSON", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[2]).toBe(true);
+                expect(args[0]).toBe(true);
             });
 
             it("it specifies to receive JSON", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[3]).toBe(true);
+                expect(args[1]).toBe(true);
             });
 
             it("it uses the standard UI messages", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[4].fail).toBeUndefined();
-                expect(args[4].success).toBeUndefined();
+                expect(args[4]).toBeUndefined();
             });
 
             describe("overrides the 'buildSubmissionData' function, which", function () {

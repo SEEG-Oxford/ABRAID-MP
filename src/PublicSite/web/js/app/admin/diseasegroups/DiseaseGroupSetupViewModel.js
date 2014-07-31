@@ -46,7 +46,7 @@ define([
 
             if (self.selectedDiseaseGroupId() !== undefined) {
                 // Get information regarding model runs for this disease group
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/modelruninformation";
+                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
                 $.getJSON(url)
                     .done(function (data) {
                         self.lastModelRunText(data.lastModelRunText);

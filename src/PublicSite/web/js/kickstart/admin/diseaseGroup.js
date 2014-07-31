@@ -1,7 +1,7 @@
 /* Kick-start JS for the administration disease group page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, diseaseGroups:false, validatorDiseaseGroups:false*/
+/*global require:false, window:false, baseUrl:false, diseaseGroups:false, validatorDiseaseGroups:false*/
 //Load base configuration, then load the app logic for this page.
 require([baseUrl + "js/require.conf.js"], function () {
     "use strict";
@@ -9,6 +9,7 @@ require([baseUrl + "js/require.conf.js"], function () {
 
     require([
         "ko",
+        "app/admin/diseasegroups/DiseaseExtentParametersViewModel",
         "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
         "app/admin/diseasegroups/DiseaseGroupsListViewModel",
         "app/admin/diseasegroups/DiseaseGroupSettingsViewModel",
@@ -29,9 +30,14 @@ require([baseUrl + "js/require.conf.js"], function () {
             doc.getElementById("disease-groups-list")
         );
 
+        var refresh = function () {
+            window.top.location.reload();
+        };
+
         var diseaseGroupAdministrationViewModel =
             new DiseaseGroupAdministrationViewModel(
                 baseUrl,
+                refresh,
                 new DiseaseGroupSettingsViewModel(diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName),
                 new ModelRunParametersViewModel(diseaseGroupSelectedEventName),
                 new DiseaseExtentParametersViewModel(diseaseGroupSelectedEventName),

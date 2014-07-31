@@ -58,7 +58,7 @@ define([
                 // Arrange
                 var id = 1;
                 var diseaseGroup = { id: id };
-                var expectedUrl = baseUrl + "admin/diseasegroup/" + id + "/modelruninformation";
+                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/modelruninformation";
 
                 // Act
                 ko.postbox.publish(selectedEventName, diseaseGroup);

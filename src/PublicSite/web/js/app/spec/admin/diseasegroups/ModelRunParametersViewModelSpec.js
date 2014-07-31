@@ -7,17 +7,32 @@ define([
 ], function (ko, ModelRunParametersViewModel) {
     "use strict";
 
+    var expectValidationRules = function (arg) {
+        expect(arg).toHaveValidationRule({name: "digit", params: true});
+        expect(arg).toHaveValidationRule({name: "min", params: 0});
+    };
+
     describe("The 'model run parameters' view model", function () {
         var eventName = "disease-group-selected";
 
-        it("holds the expected properties of a disease group as observables", function () {
+        describe("holds the expected properties of a disease group", function () {
             var vm = new ModelRunParametersViewModel("");
-            expect(vm.minNewOccurrences).toBeObservable();
-            expect(vm.minDataVolume).toBeObservable();
-            expect(vm.minDistinctCountries).toBeObservable();
-            expect(vm.minHighFrequencyCountries).toBeObservable();
-            expect(vm.highFrequencyThreshold).toBeObservable();
-            expect(vm.occursInAfrica).toBeObservable();
+            it("as observables", function () {
+                expect(vm.minNewOccurrences).toBeObservable();
+                expect(vm.minDataVolume).toBeObservable();
+                expect(vm.minDistinctCountries).toBeObservable();
+                expect(vm.minHighFrequencyCountries).toBeObservable();
+                expect(vm.highFrequencyThreshold).toBeObservable();
+                expect(vm.occursInAfrica).toBeObservable();
+            });
+
+            it("with appropriate validaiton rules", function () {
+                expectValidationRules(vm.minNewOccurrences);
+                expectValidationRules(vm.minDataVolume);
+                expectValidationRules(vm.minDistinctCountries);
+                expectValidationRules(vm.minHighFrequencyCountries);
+                expectValidationRules(vm.highFrequencyThreshold);
+            });
         });
 
         it("updates the disease group property fields, when the specified event is fired", function () {

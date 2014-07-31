@@ -3,6 +3,7 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#import "../../layout/common.ftl" as c/>
+<#import "../../layout/form.ftl" as f/>
 
 <#assign bootstrapData>
 <script type="text/javascript">
@@ -54,7 +55,7 @@
     <br />
     <div class="panel panel-default">
         <div class="panel-body" id="disease-group-administration-panel">
-            <form id="disease-group-administration" data-bind="formSubmit: submit">
+            <@f.form formId="disease-group-administration">
                 <div data-bind="with: diseaseGroupSettingsViewModel">
                     <#include "settingspanel.ftl"/>
                 </div>
@@ -64,13 +65,7 @@
                 <div data-bind="with: diseaseExtentParametersViewModel">
                     <#include "diseaseextentparameterspanel.ftl"/>
                 </div>
-                <div>
-                    <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Saving...', standard: 'Save' }"></button>
-                </div>
-                <div class="form-group" data-bind="if: notice">
-                    <div data-bind="alert: notice"></div>
-                </div>
-            </form>
+            </@f.form>
         </div>
     </div>
     <#include "setuppanel.ftl"/>
