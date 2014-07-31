@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
@@ -41,7 +41,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     private static final String ADD_DISEASE_GROUP_ERROR = "Error adding new disease group (%s)";
 
     /** The base URL for the system administration disease group controller methods. */
-    public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseasegroup";
+    public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseasegroups";
 
     private DiseaseService diseaseService;
     private GeoJsonObjectMapper geoJsonObjectMapper;
@@ -76,7 +76,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             String validatorDiseaseGroupsJson = convertValidatorDiseaseGroupsToJson(validatorDiseaseGroups);
             model.addAttribute("validatorDiseaseGroups", validatorDiseaseGroupsJson);
 
-            return "admin/diseasegroup/index";
+            return "admin/diseasegroups/index";
         } catch (JsonProcessingException e) {
             LOGGER.error(DISEASE_GROUP_JSON_CONVERSION_ERROR, e);
             throw e;

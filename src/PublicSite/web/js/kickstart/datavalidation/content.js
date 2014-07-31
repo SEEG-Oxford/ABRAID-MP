@@ -9,7 +9,7 @@ require([baseUrl + "js/require.conf.js"], function () {
         "ko",
         "jquery",
         "app/datavalidation/CounterViewModel",
-        "app/datavalidation/LogInViewModel",
+        "app/datavalidation/LogInFormViewModel",
         "app/datavalidation/MapView",
         "app/datavalidation/SelectedPointViewModel",
         "app/datavalidation/SelectedLayerViewModel",
@@ -17,7 +17,7 @@ require([baseUrl + "js/require.conf.js"], function () {
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
         "domReady!"
-    ], function (ko, $, CounterViewModel, LogInViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
+    ], function (ko, $, CounterViewModel, LogInFormViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
                  SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
             ko.applyBindings(
@@ -52,7 +52,7 @@ require([baseUrl + "js/require.conf.js"], function () {
                 };
 
                 ko.applyBindings(
-                    new LogInViewModel(baseUrl, refresh, forceRebind),
+                    new LogInFormViewModel(baseUrl, refresh, forceRebind),
                     doc.getElementById("sidePanelLogin")
                 );
             }

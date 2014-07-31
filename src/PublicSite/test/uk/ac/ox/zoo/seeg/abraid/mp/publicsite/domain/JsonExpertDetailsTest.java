@@ -22,7 +22,7 @@ public class JsonExpertDetailsTest {
         when(mockExpert.getName()).thenReturn("expected name");
         when(mockExpert.getJobTitle()).thenReturn("expected job");
         when(mockExpert.getInstitution()).thenReturn("expected institution");
-        when(mockExpert.isPubliclyVisible()).thenReturn(true);
+        when(mockExpert.getVisibilityRequested()).thenReturn(true);
         when(mockExpert.getValidatorDiseaseGroups()).thenReturn(Arrays.asList(
             new ValidatorDiseaseGroup(1, "foo"),
             new ValidatorDiseaseGroup(2, "foo2")
@@ -35,7 +35,7 @@ public class JsonExpertDetailsTest {
         assertThat(result.getName()).isEqualTo(mockExpert.getName());
         assertThat(result.getJobTitle()).isEqualTo(mockExpert.getJobTitle());
         assertThat(result.getInstitution()).isEqualTo(mockExpert.getInstitution());
-        assertThat(result.isPubliclyVisible()).isEqualTo(mockExpert.isPubliclyVisible());
+        assertThat(result.getVisibilityRequested()).isEqualTo(mockExpert.getVisibilityRequested());
         assertThat(result.getDiseaseInterests()).containsOnly(1, 2);
     }
 }

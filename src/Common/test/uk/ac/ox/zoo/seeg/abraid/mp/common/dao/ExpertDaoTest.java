@@ -27,7 +27,7 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         String expertPassword = "password";
         String expertJob = "job";
         String expertInstitution = "institution";
-
+        boolean visibilityRequested = true;
 
         Expert expert = new Expert();
         expert.setName(expertName);
@@ -35,6 +35,8 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         expert.setPassword(expertPassword);
         expert.setJobTitle(expertJob);
         expert.setInstitution(expertInstitution);
+        //noinspection ConstantConditions
+        expert.setVisibilityRequested(visibilityRequested);
 
         // Act
         expertDao.save(expert);
@@ -52,6 +54,9 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(expert.getJobTitle()).isEqualTo(expertJob);
         assertThat(expert.getInstitution()).isEqualTo(expertInstitution);
         assertThat(expert.getCreatedDate()).isNotNull();
+        assertThat(expert.getUpdatedDate()).isNotNull();
+        //noinspection ConstantConditions
+        assertThat(expert.getVisibilityRequested()).isEqualTo(visibilityRequested);
     }
 
     @Test
@@ -62,6 +67,7 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         String expertPassword = "password";
         String expertJob = "job";
         String expertInstitution = "institution";
+        boolean visibilityRequested = true;
 
 
         Expert expert = new Expert();
@@ -70,6 +76,8 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         expert.setPassword(expertPassword);
         expert.setJobTitle(expertJob);
         expert.setInstitution(expertInstitution);
+        //noinspection ConstantConditions
+        expert.setVisibilityRequested(visibilityRequested);
 
         // Act
         expertDao.save(expert);
@@ -88,6 +96,9 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(expert.getJobTitle()).isEqualTo(expertJob);
         assertThat(expert.getInstitution()).isEqualTo(expertInstitution);
         assertThat(expert.getCreatedDate()).isNotNull();
+        assertThat(expert.getUpdatedDate()).isNotNull();
+        //noinspection ConstantConditions
+        assertThat(expert.getVisibilityRequested()).isEqualTo(visibilityRequested);
     }
 
     @Test

@@ -14,7 +14,7 @@ import static ch.lambdaj.Lambda.on;
  */
 public class JsonExpertDetails {
     private String name;
-    private boolean isPubliclyVisible;
+    private Boolean visibilityRequested;
     private List<Integer> diseaseInterests;
     private String jobTitle;
     private String institution;
@@ -24,7 +24,7 @@ public class JsonExpertDetails {
 
     public JsonExpertDetails(Expert expert) {
         this.setName(expert.getName());
-        this.setPubliclyVisible(expert.isPubliclyVisible());
+        this.setVisibilityRequested(expert.getVisibilityRequested());
         this.setJobTitle(expert.getJobTitle());
         this.setInstitution(expert.getInstitution());
         this.setDiseaseInterests(extract(expert.getValidatorDiseaseGroups(), on(ValidatorDiseaseGroup.class).getId()));
@@ -38,12 +38,12 @@ public class JsonExpertDetails {
         this.name = name;
     }
 
-    public boolean isPubliclyVisible() {
-        return isPubliclyVisible;
+    public Boolean getVisibilityRequested() {
+        return visibilityRequested;
     }
 
-    public void setPubliclyVisible(boolean isPubliclyVisible) {
-        this.isPubliclyVisible = isPubliclyVisible;
+    public void setVisibilityRequested(Boolean visibilityRequested) {
+        this.visibilityRequested = visibilityRequested;
     }
 
     public List<Integer> getDiseaseInterests() {

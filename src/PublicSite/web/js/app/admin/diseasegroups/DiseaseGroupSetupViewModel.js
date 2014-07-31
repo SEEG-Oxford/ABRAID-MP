@@ -23,7 +23,7 @@ define([
             self.notices.removeAll();
             if (self.canRunModel()) {
                 self.working(true);
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
                 $.post(url, { diseaseGroupId: self.selectedDiseaseGroupId() })
                     .done(function () {
                         self.notices.push({ message: "Model run requested.", priority: "success"});

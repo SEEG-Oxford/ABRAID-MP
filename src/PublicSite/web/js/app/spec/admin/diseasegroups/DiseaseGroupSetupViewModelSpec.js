@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/admin/diseasegroup/DiseaseGroupSetupViewModel",
+    "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
     "ko"
 ], function (DiseaseGroupSetupViewModel, ko) {
     "use strict";

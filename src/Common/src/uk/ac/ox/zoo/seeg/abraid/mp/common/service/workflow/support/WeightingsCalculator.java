@@ -106,8 +106,7 @@ public class WeightingsCalculator {
     private List<Double> calculateWeightingForEachReview(List<DiseaseOccurrenceReview> reviews) {
         return convert(reviews, new Converter<DiseaseOccurrenceReview, Double>() {
             public Double convert(DiseaseOccurrenceReview review) {
-                Double expertWeighting = review.getExpert().getWeighting();
-                return (expertWeighting == null) ? null : (review.getResponse().getValue() * expertWeighting);
+                return review.getResponse().getValue() * review.getExpert().getWeighting();
             }
         });
     }

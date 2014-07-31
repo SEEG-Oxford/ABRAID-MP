@@ -109,12 +109,6 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         updateDiseaseOccurrenceExpertWeightings(0.9, 0.95);
     }
 
-    // If the expert weighting is null, the review should be ignored.
-    @Test
-    public void updateDiseaseOccurrenceExpertWeightingsGivesExpectedResultIfExpertWeightingIsNull() throws Exception {
-        updateDiseaseOccurrenceExpertWeightings(null, 0.5);
-    }
-
     private void updateDiseaseOccurrenceExpertWeightings(Double expertsWeighting, double expectedWeighting) {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now().minusDays(7);
