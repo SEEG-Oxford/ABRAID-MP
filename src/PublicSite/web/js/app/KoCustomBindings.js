@@ -50,12 +50,14 @@ define([
         init: function (element, valueAccessor) {
             var arg = ko.utils.recursiveUnwrap(valueAccessor);
 
-            var date = arg.date || arg;
-            var format = ko.utils.recursiveUnwrap(arg.format) || "dd M yyyy";
-            var startDate = ko.utils.recursiveUnwrap(arg.startDate) || undefined;
-            var endDate = ko.utils.recursiveUnwrap(arg.endDate) || undefined;
+            var date = arg.date;
+            var format = "dd M yyyy";
 
-            $(element).parent().datepicker({
+            // Start date and end date MUST be ko obs
+            var startDate = arg.startDate() || -Infinity;
+            var endDate = arg.endDate() || Infinity;
+
+            var picker = $(element).parent().datepicker({
                 format: format,
                 startDate: startDate,
                 endDate: endDate,
@@ -63,8 +65,16 @@ define([
                 todayHighlight: true
             });
 
+            arg.startDate.subscribe(function (value) {
+                picker.datepicker("setStartDate", value || -Infinity);
+            });
+
+            arg.endDate.subscribe(function (value) {
+                picker.datepicker("setEndDate", value || Infinity);
+            });
+
             ko.applyBindingAccessorsToNode(element, {
-                value: date,
+                value: function() { return date; },
                 valueUpdate: function () { return "input"; }
             });
         }

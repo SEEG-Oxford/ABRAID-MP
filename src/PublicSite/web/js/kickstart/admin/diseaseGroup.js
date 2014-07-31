@@ -9,6 +9,7 @@ require([baseUrl + "js/require.conf.js"], function () {
 
     require([
         "ko",
+        "app/admin/diseasegroups/DiseaseExtentParametersViewModel",
         "app/admin/diseasegroups/DiseaseGroupAdministrationViewModel",
         "app/admin/diseasegroups/DiseaseGroupsListViewModel",
         "app/admin/diseasegroups/DiseaseGroupSettingsViewModel",

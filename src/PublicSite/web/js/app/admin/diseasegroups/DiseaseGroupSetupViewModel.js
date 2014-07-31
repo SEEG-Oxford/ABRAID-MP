@@ -15,9 +15,12 @@ define([
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
-        self.canRunModel = ko.observable(false);
+        self.canRunModelServerResponse = ko.observable(false);
+        self.canRunModel = ko.computed(function () {
+            return self.canRunModelServerResponse() && self.isValid() && !self.working();
+        }, self);
 
-        self.batchEndDate = ko.observable("").extend({required: true});
+        self.batchEndDate = ko.observable("").extend({required: true, date: true});
         self.batchEndDateMinimum = ko.observable("");
         self.batchEndDateMaximum = ko.observable("");
 
@@ -52,7 +55,7 @@ define([
 
             if (self.selectedDiseaseGroupId() !== undefined) {
                 // Get information regarding model runs for this disease group
-                var url = baseUrl + "admin/diseasegroup/" + self.selectedDiseaseGroupId() + "/modelruninformation";
+                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
                 $.getJSON(url)
                     .done(function (data) {
                         self.lastModelRunText(data.lastModelRunText);
@@ -61,8 +64,8 @@ define([
                         self.batchEndDateMinimum(data.batchEndDateMinimum);
                         self.batchEndDateMaximum(data.batchEndDateMaximum);
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
-                        self.canRunModel(data.canRunModel);
-                        if (!self.canRunModel()) {
+                        self.canRunModelServerResponse(data.canRunModel);
+                        if (!self.canRunModelServerResponse()) {
                             var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
                             self.notices.push({ message: errorMessage, priority: "warning"});
                         }
