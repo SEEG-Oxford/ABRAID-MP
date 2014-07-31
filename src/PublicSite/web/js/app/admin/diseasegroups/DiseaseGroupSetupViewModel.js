@@ -4,53 +4,36 @@
 define([
     "ko",
     "jquery",
-    "moment"
-], function (ko, $, moment) {
+    "moment",
+    "app/BaseFormViewModel"
+], function (ko, $, moment, BaseFormViewModel) {
     "use strict";
 
     return function (baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
         var self = this;
+        BaseFormViewModel.call(self, false, true, undefined, undefined, { success: "Model run requested." }, true);
 
         self.selectedDiseaseGroupId = ko.observable();
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
-        self.canRunModelServerResponse = ko.observable(false);
-        self.canRunModel = ko.computed(function () {
-            return self.canRunModelServerResponse() && self.isValid() && !self.working();
-        }, self);
-
+        self.canRunModelServerResponse = ko.observable(false).extend({equal: true});
         self.batchEndDate = ko.observable("").extend({required: true, date: true});
         self.batchEndDateMinimum = ko.observable("");
         self.batchEndDateMaximum = ko.observable("");
 
-        self.working = ko.observable(false);
-        self.notices = ko.observableArray();
+        self.buildSubmissionUrl = function () {
+            return baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+        };
 
-        self.runModel = function () {
-            self.notices.removeAll();
-            if (self.canRunModel()) {
-                self.working(true);
-                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
-                var batchEndDateText = moment(self.batchEndDate()).format();
-                $.post(url, { batchEndDate: batchEndDateText })
-                    .done(function () {
-                        self.notices.push({ message: "Model run requested.", priority: "success"});
-                    })
-                    .fail(function (data) {
-                        var errorMessage = data.responseJSON;
-                        if (!errorMessage) {
-                            errorMessage = "Model run could not be requested.";
-                        }
-                        self.notices.push({ message: errorMessage, priority: "warning"});
-                    })
-                    .always(function () { self.working(false); });
-            }
+        self.buildSubmissionData = function () {
+            var batchEndDateText = moment(self.batchEndDate(), "DD MMM YYYY").format();
+            return { batchEndDate: batchEndDateText };
         };
 
         var getModelRunInfo = function (diseaseGroupId) {
             self.selectedDiseaseGroupId(diseaseGroupId);
-            self.working(true);
+            self.isSubmitting(true);
             self.notices.removeAll();
 
             if (self.selectedDiseaseGroupId() !== undefined) {
@@ -73,7 +56,7 @@ define([
                     .fail(function () {
                         self.notices.push({ message: "Could not retrieve model run details.", priority: "warning"});
                     })
-                    .always(function () { self.working(false); });
+                    .always(function () { self.isSubmitting(false); });
             }
         };
 

@@ -131,7 +131,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

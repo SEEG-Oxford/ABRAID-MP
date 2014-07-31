@@ -13,7 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowServi
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseExtentGenerationHandler {
-    private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(DiseaseExtentGenerationHandler.class);
     private static final String STARTING_LOG_MESSAGE =
             "Model run %d: generating disease extent for disease group %d (%s)";
     private static final String NO_GENERATION_LOG_MESSAGE = "Model run %d: no disease extent generation to do";

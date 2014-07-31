@@ -9,9 +9,10 @@ define([
 ], function (ko, $, _) {
     "use strict";
 
-    return function (sendJson, receiveJson, baseUrl, targetUrl, messages) {
+    return function (sendJson, receiveJson, baseUrl, targetUrl, messages, excludeGenericFailureMessage) {
         var self = this;
 
+        excludeGenericFailureMessage = excludeGenericFailureMessage || false;
         messages = messages || {};
 
         // It is assumed that self.isValid will be overridden by the ko.validation mixin, this is provided as a
@@ -49,7 +50,12 @@ define([
         var processResponse = function (xhr, priority) {
             if (xhr.responseText && xhr.responseText.length !== 0) {
                 if (receiveJson) {
-                    self.pushNotices(JSON.parse(xhr.responseText), priority);
+                    var response = JSON.parse(xhr.responseText);
+                    if (typeof response === "string") {
+                        self.pushNotice(response, priority);
+                    } else {
+                        self.pushNotices(response, priority);
+                    }
                 } else {
                     self.pushNotice(xhr.responseText, priority);
                 }
@@ -75,11 +81,13 @@ define([
 
         self.failureHandler = function (xhr) {
             if (xhr.status === 500) {
-                self.pushNotice(messages.success || "Server error.", "warning");
+                self.pushNotice(messages.error || "Server error.", "warning");
             } else if (xhr.status === 401) {
-                self.pushNotice(messages.success || "Authentication error.", "warning");
+                self.pushNotice(messages.auth || "Authentication error.", "warning");
             } else {
-                self.pushNotice(messages.fail || "Failed to save form.", "warning");
+                if (!excludeGenericFailureMessage) {
+                    self.pushNotice(messages.fail || "Failed to save form.", "warning");
+                }
                 processResponse(xhr, "warning");
             }
         };

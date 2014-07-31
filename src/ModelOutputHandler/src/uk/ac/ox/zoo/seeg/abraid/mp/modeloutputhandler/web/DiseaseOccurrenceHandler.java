@@ -23,6 +23,7 @@ public class DiseaseOccurrenceHandler {
             "(batch end date %s)";
     private static final String VALIDATION_COMPLETED_LOG_MESSAGE =
             "Model run %d: setting validation parameters completed";
+    private static final String LOG_DATE_FORMAT = "dd MMM yyyy";
     private static final String NO_HANDLING_LOG_MESSAGE = "Model run %d: no disease occurrence handling to do";
     private static final Integer TRANSACTION_SIZE = 100;
 
@@ -61,7 +62,8 @@ public class DiseaseOccurrenceHandler {
             List<Integer> occurrenceIDs = diseaseService.getDiseaseOccurrenceIDsForBatching(diseaseGroup.getId(),
                     batchEndDateWithMaximumTime);
             LOGGER.info(String.format(VALIDATION_LOG_MESSAGE, modelRun.getId(), occurrenceIDs.size(),
-                    diseaseGroup.getId(), diseaseGroup.getName(), batchEndDateWithMaximumTime.toString("dd MMM yyyy")));
+                    diseaseGroup.getId(), diseaseGroup.getName(),
+                    batchEndDateWithMaximumTime.toString(LOG_DATE_FORMAT)));
             setValidationParametersForOccurrencesBatch(occurrenceIDs);
             diseaseOccurrenceHandlerHelper.setBatchingParameters(modelRun, occurrenceIDs.size());
             LOGGER.info(String.format(VALIDATION_COMPLETED_LOG_MESSAGE, modelRun.getId()));

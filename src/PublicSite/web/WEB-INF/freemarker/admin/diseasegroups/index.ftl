@@ -13,16 +13,6 @@
 </script>
 </#assign>
 
-<#assign templates>
-<script type="text/html" id="modelwrapper-alert-template">
-    <p>Please configure ModelWrapper for this disease group if necessary.</p>
-    <br /><br />
-    <p>
-        <span class="btn btn-default" data-bind="click: runModel" data-dismiss="popover">Proceed with Model Run</span>
-    </p>
-</script>
-</#assign>
-
 <#assign css>
 <style>
     #disease-group-name-input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
@@ -35,7 +25,7 @@
 </style>
 </#assign>
 
-<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData templates=templates endOfHead=css>
+<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData endOfHead=css>
 <div class="container">
     <div id="disease-groups-list">
         <div class="col-sm-8">
