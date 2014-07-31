@@ -498,12 +498,6 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return alert;
     }
 
-    private void setFinalWeightingOfAllOccurrencesToNull() {
-        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getAll()) {
-            occurrence.setFinalWeighting(null);
-            diseaseOccurrenceDao.save(occurrence);
-        }
-    }
     private void setFinalWeightingOfSelectedOccurrencesToNull(Integer... ids) {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
             occurrence.setFinalWeighting(null);

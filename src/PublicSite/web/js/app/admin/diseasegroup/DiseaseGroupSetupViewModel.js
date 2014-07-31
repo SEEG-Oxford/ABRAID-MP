@@ -17,7 +17,7 @@ define([
         self.diseaseOccurrencesText = ko.observable("");
         self.canRunModel = ko.observable(false);
 
-        self.batchEndDate = ko.validatedObservable("").extend({required: true});
+        self.batchEndDate = ko.observable("").extend({required: true});
         self.batchEndDateMinimum = ko.observable("");
         self.batchEndDateMaximum = ko.observable("");
 

@@ -43,7 +43,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @return The disease occurrences with the specified IDs.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public List<DiseaseOccurrence> getByIds(List<Integer> diseaseOccurrenceIds) {
         return listNamedQuery("getDiseaseOccurrencesByIds", "diseaseOccurrenceIds", diseaseOccurrenceIds);
     }
