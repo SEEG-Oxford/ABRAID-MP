@@ -10,7 +10,7 @@ define([
 
     return function (baseUrl, refresh, forceRebind) {
         var self = this;
-        BaseFormViewModel.call(self, baseUrl, "j_spring_security_check", false, false);
+        BaseFormViewModel.call(self, false, false, baseUrl, "j_spring_security_check");
 
         // Field state
         self.username = ko.observable("");

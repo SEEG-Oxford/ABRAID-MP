@@ -4,47 +4,43 @@
 define([
     "ko",
     "jquery",
-    "app/admin/diseasegroups/DiseaseGroupPayload"
-], function (ko, $, DiseaseGroupPayload) {
+    "app/admin/diseasegroups/DiseaseGroupPayload",
+    "app/BaseFormViewModel"
+], function (ko, $, DiseaseGroupPayload, BaseFormViewModel) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSettingsViewModel, modelRunParametersViewModel,
-                     diseaseExtentParametersViewModel, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
+    return function (baseUrl, refresh,
+                     diseaseGroupSettingsViewModel, modelRunParametersViewModel, diseaseExtentParametersViewModel,
+                     diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
 
         var self = this;
+        BaseFormViewModel.call(self, true, false);
+
         self.diseaseGroupSettingsViewModel = diseaseGroupSettingsViewModel;
         self.modelRunParametersViewModel = modelRunParametersViewModel;
         self.diseaseExtentParametersViewModel = diseaseExtentParametersViewModel;
 
         var diseaseGroupId;
-        var getUrl = function () {
+        self.buildSubmissionUrl = function () {
+            return baseUrl + "admin/diseasegroups/" + (diseaseGroupId ?  (diseaseGroupId + "/save") : "add");
+        };
+
+        var baseSuccessHandler = self.successHandler;
+        self.successHandler = function (data, textStatus, xhr) {
+            baseSuccessHandler(data, textStatus, xhr);
             if (diseaseGroupId) {
-                return baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/save";
+                ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
             } else {
-                return baseUrl + "admin/diseasegroups/add";
+                refresh();
             }
         };
 
-        self.isSubmitting = ko.observable(false);
-        self.submit = function () {
-            self.isSubmitting(true);
-            var data = new DiseaseGroupPayload(self.diseaseGroupSettingsViewModel,
-                                               self.modelRunParametersViewModel,
-                                               self.diseaseExtentParametersViewModel);
-            $.ajax({
-                method: "POST",
-                url: getUrl(),
-                data: JSON.stringify(data),
-                contentType : "application/json"
-            })
-                .done(function () {
-                    self.notice({ message: "Saved successfully", priority: "success" });
-                    ko.postbox.publish(diseaseGroupSavedEventName, diseaseGroupId);
-                })
-                .fail(function () { self.notice({ message: "Error saving disease group", priority: "warning"}); })
-                .always(function () { self.isSubmitting(false); });
+        self.buildSubmissionData = function () {
+            return new DiseaseGroupPayload(
+                self.diseaseGroupSettingsViewModel,
+                self.modelRunParametersViewModel,
+                self.diseaseExtentParametersViewModel);
         };
-        self.notice = ko.observable();
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             diseaseGroupId = diseaseGroup.id;
