@@ -151,7 +151,7 @@ public class ModelRunRequesterHelper {
     }
 
     // Only "Countries of Interest" are added to the map - with their corresponding occurrence count
-    private void addCountryToOccurrenceCountMap(int gaulCode) {
+    private void addCountryToOccurrenceCountMap(Integer gaulCode) {
         if (countriesOfInterest.contains(gaulCode)) {
             int value = (occurrenceCountPerCountry.containsKey(gaulCode)) ? occurrenceCountPerCountry.get(gaulCode) : 0;
             occurrenceCountPerCountry.put(gaulCode, value + 1);

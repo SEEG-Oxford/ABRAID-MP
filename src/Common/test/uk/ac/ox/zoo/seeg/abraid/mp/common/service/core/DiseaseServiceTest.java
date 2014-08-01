@@ -121,6 +121,34 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getDiseaseOccurrencesById() {
+        // Arrange
+        List<Integer> ids = new ArrayList<>();
+        List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
+        when(diseaseOccurrenceDao.getByIds(ids)).thenReturn(expectedOccurrences);
+
+        // Act
+        List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesById(ids);
+
+        // Assert
+        assertThat(actualOccurrences).isSameAs(expectedOccurrences);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesByDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = 1;
+        List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
+        when(diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId)).thenReturn(expectedOccurrences);
+
+        // Act
+        List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(actualOccurrences).isSameAs(expectedOccurrences);
+    }
+
+    @Test
     public void diseaseOccurrenceExists() {
         // Arrange
         Alert alert = new Alert(1);
@@ -453,6 +481,21 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
 
         // Act
         List<Integer> actualIDs = diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
+
+        // Assert
+        assertThat(actualIDs).isSameAs(expectedIDs);
+    }
+
+    @Test
+    public void getDiseaseOccurrenceIDsForBatching() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DateTime batchEndDate = DateTime.now();
+        List<Integer> expectedIDs = new ArrayList<>();
+        when(diseaseOccurrenceDao.getIDsForBatching(diseaseGroupId, batchEndDate)).thenReturn(expectedIDs);
+
+        // Act
+        List<Integer> actualIDs = diseaseService.getDiseaseOccurrenceIDsForBatching(diseaseGroupId, batchEndDate);
 
         // Assert
         assertThat(actualIDs).isSameAs(expectedIDs);

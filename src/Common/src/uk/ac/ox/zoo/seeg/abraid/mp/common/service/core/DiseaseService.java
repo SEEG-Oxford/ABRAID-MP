@@ -60,6 +60,20 @@ public interface DiseaseService {
             Integer diseaseGroupId);
 
     /**
+     * Gets disease occurrences with the specified IDs.
+     * @param diseaseOccurrenceIds The disease occurrence IDs.
+     * @return The disease occurrences with the specified IDs.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesById(List<Integer> diseaseOccurrenceIds);
+
+    /**
+     * Gets all disease occurrences for the specified disease group.
+     * @param diseaseGroupId The disease group's ID.
+     * @return all disease occurrences for the specified disease group.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(int diseaseGroupId);
+
+    /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
@@ -205,4 +219,12 @@ public interface DiseaseService {
      * @return The IDs of relevant disease groups.
      */
     List<Integer> getDiseaseGroupIdsForAutomaticModelRuns();
+
+    /**
+     * Gets a list of disease occurrence IDs for validation batching, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @param batchEndDate The end date of the batch.
+     * @return A list of disease occurrence IDs.
+     */
+    List<Integer> getDiseaseOccurrenceIDsForBatching(int diseaseGroupId, DateTime batchEndDate);
 }

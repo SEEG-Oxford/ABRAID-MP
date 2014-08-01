@@ -14,6 +14,19 @@ define([
         var savedEventName = "saved";
         beforeEach(function () {
             vm = new DiseaseGroupSetupViewModel(baseUrl, selectedEventName, savedEventName);
+            vm.isValid = ko.observable(true);
+        });
+
+        describe("holds the select disease group ID which", function () {
+            it("is an observable", function () {
+                expect(vm.selectedDiseaseGroupId).toBeObservable();
+            });
+        });
+
+        describe("holds whether or not the model has been successfully run which", function () {
+            it("is an observable", function () {
+                expect(vm.hasModelBeenSuccessfullyRun).toBeObservable();
+            });
         });
 
         describe("holds the last model run text which", function () {
@@ -24,19 +37,35 @@ define([
 
         describe("holds the disease occurrences text which", function () {
             it("is an observable", function () {
-                expect(vm.lastModelRunText).toBeObservable();
+                expect(vm.diseaseOccurrencesText).toBeObservable();
             });
         });
 
-        describe("holds whether or not the model can be run which", function () {
+        describe("holds whether or not the model can be run (server response) which", function () {
             it("is an observable", function () {
-                expect(vm.canRunModel).toBeObservable();
+                expect(vm.canRunModelServerResponse).toBeObservable();
             });
         });
 
-        describe("holds whether or not the client is awaiting server response which", function () {
+        describe("holds the batch end date which", function () {
             it("is an observable", function () {
-                expect(vm.working).toBeObservable();
+                expect(vm.batchEndDate).toBeObservable();
+            });
+            it("has appropriate validation rules", function () {
+                expect(vm.batchEndDate).toHaveValidationRule({name: "required", params: true});
+                expect(vm.batchEndDate).toHaveValidationRule({name: "date", params: true});
+            });
+        });
+
+        describe("holds the minimum batch end date which", function () {
+            it("is an observable", function () {
+                expect(vm.batchEndDateMinimum).toBeObservable();
+            });
+        });
+
+        describe("holds the maximum batch end date which", function () {
+            it("is an observable", function () {
+                expect(vm.batchEndDateMaximum).toBeObservable();
             });
         });
 
@@ -50,7 +79,7 @@ define([
 
                 // Assert
                 expect(vm.selectedDiseaseGroupId()).toBe(diseaseGroupId);
-                expect(vm.working()).toBe(true);
+                expect(vm.isSubmitting()).toBe(true);
                 expect(vm.notices().length).toBe(0);
             });
 

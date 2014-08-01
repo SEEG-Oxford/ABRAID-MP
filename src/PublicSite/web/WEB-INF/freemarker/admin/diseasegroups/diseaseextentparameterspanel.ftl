@@ -15,7 +15,7 @@
             </a>
         </h2>
     </div>
-    <div class="panel-collapse collapse in" id="disease-extent-parameters">
+    <div class="panel-collapse collapse" id="disease-extent-parameters">
         <div class="panel-body">
             <div class="col-sm-6">
                 <div class="form-horizontal">

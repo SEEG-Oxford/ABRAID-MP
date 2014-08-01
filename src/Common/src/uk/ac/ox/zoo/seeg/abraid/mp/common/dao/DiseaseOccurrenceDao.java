@@ -25,6 +25,20 @@ public interface DiseaseOccurrenceDao {
     DiseaseOccurrence getById(Integer id);
 
     /**
+     * Gets disease occurrences with the specified IDs.
+     * @param diseaseOccurrenceIds The disease occurrence IDs.
+     * @return The disease occurrences with the specified IDs.
+     */
+    List<DiseaseOccurrence> getByIds(List<Integer> diseaseOccurrenceIds);
+
+    /**
+     * Gets all disease occurrences for the specified disease group.
+     * @param diseaseGroupId The disease group's ID.
+     * @return all disease occurrences for the specified disease group.
+     */
+    List<DiseaseOccurrence> getByDiseaseGroupId(int diseaseGroupId);
+
+    /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
@@ -105,4 +119,12 @@ public interface DiseaseOccurrenceDao {
      * @return The statistics.
      */
     DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId);
+
+    /**
+     * Gets a list of disease occurrence IDs for validation batching, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @param batchEndDate The end date of the batch.
+     * @return A list of disease occurrence IDs.
+     */
+    List<Integer> getIDsForBatching(int diseaseGroupId, DateTime batchEndDate);
 }

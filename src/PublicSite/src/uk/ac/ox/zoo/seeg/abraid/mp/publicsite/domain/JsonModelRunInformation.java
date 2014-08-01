@@ -10,6 +10,9 @@ public class JsonModelRunInformation {
     private boolean hasModelBeenSuccessfullyRun;
     private boolean canRunModel;
     private String cannotRunModelReason;
+    private String batchEndDateMinimum;
+    private String batchEndDateMaximum;
+    private String batchEndDateDefault;
 
     public String getLastModelRunText() {
         return lastModelRunText;
@@ -51,5 +54,29 @@ public class JsonModelRunInformation {
 
     public void setCannotRunModelReason(String cannotRunModelReason) {
         this.cannotRunModelReason = cannotRunModelReason;
+    }
+
+    public String getBatchEndDateMinimum() {
+        return batchEndDateMinimum;
+    }
+
+    public void setBatchEndDateMinimum(String batchEndDateMinimum) {
+        this.batchEndDateMinimum = batchEndDateMinimum;
+    }
+
+    public String getBatchEndDateMaximum() {
+        return batchEndDateMaximum;
+    }
+
+    public void setBatchEndDateMaximum(String batchEndDateMaximum) {
+        this.batchEndDateMaximum = batchEndDateMaximum;
+    }
+
+    public String getBatchEndDateDefault() {
+        return batchEndDateDefault;
+    }
+
+    public void setBatchEndDateDefault(String batchEndDateDefault) {
+        this.batchEndDateDefault = batchEndDateDefault;
     }
 }

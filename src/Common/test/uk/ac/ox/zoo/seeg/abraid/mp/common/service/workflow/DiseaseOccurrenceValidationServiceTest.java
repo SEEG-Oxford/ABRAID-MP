@@ -23,50 +23,49 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     private DiseaseOccurrenceValidationService service;
 
     @Test
-    public void addValidationParametersReturnsFalseIfOccurrenceIsNull() {
-        boolean result = service.addValidationParameters(null);
+    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceIsNull() {
+        boolean result = service.addValidationParametersWithChecks(null);
         assertThat(result).isFalse();
     }
 
     @Test
-    public void addValidationParametersReturnsFalseIfOccurrenceLocationIsNull() {
-        boolean result = service.addValidationParameters(new DiseaseOccurrence());
+    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationIsNull() {
+        boolean result = service.addValidationParametersWithChecks(new DiseaseOccurrence());
         assertThat(result).isFalse();
     }
 
     @Test
-    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsEnabled() {
+    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsEnabled() {
         // Arrange
         boolean automaticModelRuns = true;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
 
         // Act
-        boolean result = service.addValidationParameters(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(result).isFalse();
     }
     @Test
-    public void addValidationParametersReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsNotEnabled() {
+    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsNotEnabled() {
         // Arrange
         boolean automaticModelRuns = false;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
 
         // Act
-        boolean result = service.addValidationParameters(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(result).isFalse();
     }
 
     @Test
-    public void addValidationParametersSetsValidationParametersAndReturnsTrueWhenAutomaticModelRunsIsEnabled() {
+    public void addValidationParametersWithChecksSetsValidationParametersAndReturnsTrueWhenAutomaticModelRunsIsEnabled() {
         // Arrange
         Point point = GeometryUtils.createPoint(10, 20);
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
-        double machineWeighting = 0.7;
         boolean automaticModelRuns = true;
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
@@ -77,18 +76,18 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(distanceFromDiseaseExtent);
 
         // Act
-        boolean result = service.addValidationParameters(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
     }
 
     @Test
-    public void addValidationParametersSetsOnlyIsValidatedAndReturnsTrueWhenAutomaticModelRunsIsNotEnabled() {
+    public void addValidationParametersWithChecksSetsOnlyIsValidatedAndReturnsTrueWhenAutomaticModelRunsIsNotEnabled() {
         // Arrange
         Point point = GeometryUtils.createPoint(10, 20);
         int diseaseGroupId = 30;
@@ -99,7 +98,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         occurrence.getLocation().setGeom(point);
 
         // Act
-        boolean result = service.addValidationParameters(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(result).isTrue();
@@ -110,7 +109,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     }
 
     @Test
-    public void addValidationParametersSetsAppropriateValidationParametersAndReturnsTrue() {
+    public void addValidationParametersWithChecksSetsAppropriateValidationParametersAndReturnsTrue() {
         // Arrange - If environmental suitability and distance from disease extent are both null,
         // only set the values of: machine weighting to null, and is validated to true
         Point point = GeometryUtils.createPoint(10, 20);
@@ -125,7 +124,7 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(null);
 
         // Act
-        boolean result = service.addValidationParameters(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(result).isTrue();
@@ -136,13 +135,12 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
     }
 
     @Test
-    public void addValidationParametersSetsAllValidationParametersAndReturnsTrue() {
+    public void addValidationParametersWithChecksSetsAllValidationParametersAndReturnsTrue() {
         // Arrange
         Point point = GeometryUtils.createPoint(10, 20);
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
-        double machineWeighting = 0.7;
 
         boolean automaticModelRuns = true;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
@@ -153,13 +151,39 @@ public class DiseaseOccurrenceValidationServiceTest extends AbstractCommonSpring
         when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(distanceFromDiseaseExtent);
 
         // Act
-        boolean result = service.addValidationParameters(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting);
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    @Test
+    public void addValidationParametersSetsAllValidationParametersRegardlessOfOccurrenceValidity() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(10, 20);
+        int diseaseGroupId = 30;
+        double environmentalSuitability = 0.42;
+        double distanceFromDiseaseExtent = 500;
+
+        boolean automaticModelRuns = false;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        occurrence.getLocation().setHasPassedQc(false);
+        occurrence.getLocation().setGeom(point);
+
+        when(nativeSQL.findEnvironmentalSuitability(diseaseGroupId, point)).thenReturn(environmentalSuitability);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point)).thenReturn(distanceFromDiseaseExtent);
+
+        // Act
+        service.addValidationParameters(occurrence);
+
+        // Assert
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
+        assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
     }
 

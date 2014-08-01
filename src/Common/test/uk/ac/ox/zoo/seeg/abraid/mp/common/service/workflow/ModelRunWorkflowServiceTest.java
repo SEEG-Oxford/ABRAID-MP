@@ -47,12 +47,13 @@ public class ModelRunWorkflowServiceTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         Map<Integer, Double> newWeightings = new HashMap<>();
+        DateTime batchEndDate = DateTime.now().plusDays(1);
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
-        modelRunWorkflowService.prepareForAndRequestManualModelRun(diseaseGroupId);
+        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchEndDate);
 
         // Assert
         verify(weightingsCalculator, times(1)).updateDiseaseOccurrenceExpertWeightings(
@@ -60,7 +61,7 @@ public class ModelRunWorkflowServiceTest {
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(true));
         verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
-        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
+        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), eq(batchEndDate));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(newWeightings));
     }
@@ -85,7 +86,7 @@ public class ModelRunWorkflowServiceTest {
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(false));
         verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
-        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId));
+        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), isNull(DateTime.class));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
     }
 

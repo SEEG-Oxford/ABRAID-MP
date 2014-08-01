@@ -78,7 +78,7 @@ public class HealthMapDataConverterTest {
     @Test
     public void convertTwoSuccessfulLocationsEachWithTwoSuccessfulAlertsButValidationParametersNotAdded() {
         executeTest(false);
-        // Even though automatic_model_runs is not enabled, the addValidationParameters method should still be called.
+        // Even though automatic_model_runs is not enabled, the addValidationParametersWithChecks method should still be called.
         // The behaviour of how the values are set is tested in DiseaseOccurrenceValidationServiceTest.
     }
 
@@ -132,7 +132,7 @@ public class HealthMapDataConverterTest {
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence2));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence3));
         verify(diseaseService).saveDiseaseOccurrence(same(diseaseOccurrence4));
-        verify(diseaseOccurrenceValidationService, times(4)).addValidationParameters(any(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, times(4)).addValidationParametersWithChecks(any(DiseaseOccurrence.class));
     }
 
     @Test

@@ -148,7 +148,6 @@ CREATE TABLE disease_group (
     validator_disease_group_id integer,
     weighting double precision,
     last_model_run_prep_date timestamp,
-    validation_process_start_date timestamp,
     automatic_model_runs boolean NOT NULL,
     min_new_occurrences_trigger integer,
     min_data_volume integer,
@@ -275,7 +274,10 @@ CREATE TABLE model_run (
     output_text text,
     error_text text,
     mean_prediction_raster raster,
-    prediction_uncertainty_raster raster
+    prediction_uncertainty_raster raster,
+    batch_end_date timestamp,
+    batch_occurrence_count integer,
+    batching_completed_date timestamp
 );
 
 CREATE TABLE provenance (

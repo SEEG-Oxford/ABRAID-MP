@@ -115,7 +115,7 @@ public class HealthMapDataConverter {
                         // Location was converted successfully, so add validation parameters to the occurrence and
                         // save it all. Note that the location is saved with the disease occurrence.
                         occurrence.setLocation(location);
-                        diseaseOccurrenceValidationService.addValidationParameters(occurrence);
+                        diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
                         diseaseService.saveDiseaseOccurrence(occurrence);
                         convertedLocations.add(location);
                         convertedOccurrences.add(occurrence);

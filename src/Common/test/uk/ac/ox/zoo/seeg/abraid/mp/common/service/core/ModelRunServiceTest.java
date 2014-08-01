@@ -119,4 +119,17 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
         // Assert
         assertThat(actualModelRun).isEqualTo(expectedModelRun);
     }
+
+    @Test
+    public void hasBatchingEverCompleted() {
+        // Arrange
+        int diseaseGroupId = 87;
+        when(modelRunDao.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
+
+        // Act
+        boolean result = modelRunService.hasBatchingEverCompleted(diseaseGroupId);
+
+        // Assert
+        assertThat(result).isTrue();
+    }
 }

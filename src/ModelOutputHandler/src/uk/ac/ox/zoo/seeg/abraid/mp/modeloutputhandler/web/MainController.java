@@ -32,12 +32,12 @@ public class MainController extends AbstractController {
             "Model outputs handler failed with error \"%s\". See ModelOutputHandler server logs for more details.";
 
     private MainHandler mainHandler;
-    private DiseaseExtentGenerationHandler diseaseExtentGenerationHandler;
+    private HandlersAsyncWrapper handlersAsyncWrapper;
 
     @Autowired
-    public MainController(MainHandler mainHandler, DiseaseExtentGenerationHandler diseaseExtentGenerationHandler) {
+    public MainController(MainHandler mainHandler, HandlersAsyncWrapper handlersAsyncWrapper) {
         this.mainHandler = mainHandler;
-        this.diseaseExtentGenerationHandler = diseaseExtentGenerationHandler;
+        this.handlersAsyncWrapper = handlersAsyncWrapper;
     }
 
     /**
@@ -60,7 +60,7 @@ public class MainController extends AbstractController {
             modelRunZip = null;
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
-            diseaseExtentGenerationHandler.handle(modelRun);
+            handlersAsyncWrapper.handle(modelRun);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return createErrorResponse(String.format(INTERNAL_SERVER_ERROR_MESSAGE, e.getMessage()),
