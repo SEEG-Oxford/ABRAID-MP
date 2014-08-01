@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -85,7 +84,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         this.mockMvc.perform(patch(OUTPUT_HANDLER_PATH)).andExpect(status().isMethodNotAllowed());
     }
 
-    @Ignore
     @Test
     public void handleModelOutputsStoresValidCompletedOutputs() throws Exception {
         // Arrange
@@ -115,7 +113,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
     }
 
-    @Ignore
     @Test
     public void handleModelOutputsStoresValidFailedOutputsWithResults() throws Exception {
         // Arrange
@@ -219,7 +216,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
                 .andExpect(content().string("Model outputs handler failed with error \"File mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
-    @Ignore
     @Test
     public void handleModelOutputsRejectsMissingPredictionUncertaintyRasterIfStatusIsCompleted() throws Exception {
         // Arrange

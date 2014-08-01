@@ -6,7 +6,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -112,13 +111,11 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(gaulCode).isEqualTo(825);
     }
 
-    @Ignore
     @Test
     public void updateAndReloadMeanPredictionRasterForModelRun() throws Exception {
         updateAndReloadRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
     }
 
-    @Ignore
     @Test
     public void updateAndReloadPredictionUncertaintyRasterForModelRun() throws Exception {
         updateAndReloadRasterForModelRun(NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
@@ -166,7 +163,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(actualNewNumGeoms).isEqualTo(expectedNewNumGeoms);
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityReturnsNullIfNoRelevantModelRunsForThisDiseaseGroup() throws Exception {
         // Arrange
@@ -187,7 +183,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isNull();
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityLowerLeftCorner() throws Exception {
         // Arrange
@@ -203,7 +198,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isEqualTo(0.89, offset(0.0000005));
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityUpperRightCorner() throws Exception {
         // Arrange
@@ -221,7 +215,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isEqualTo(0.79, offset(0.0000005));
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityInterpolated() throws Exception {
         // Arrange
@@ -239,7 +232,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isEqualTo(0.89, offset(0.0000005));
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityOutOfRasterRange() throws Exception {
         // Arrange
