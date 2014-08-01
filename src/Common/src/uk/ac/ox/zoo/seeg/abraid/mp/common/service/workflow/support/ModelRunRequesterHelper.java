@@ -76,16 +76,27 @@ public class ModelRunRequesterHelper {
      */
     public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() throws ModelRunRequesterException {
         List<DiseaseOccurrence> occurrences = null;
+
+        // Minimum Data Volume must always be satisfied
         if (minDataVolumeSatisfied()) {
-            occurrences = selectSubset();
-            if (occursInAfrica != null) {
-                occurrences = occursInAfrica ? refineSubsetForAfricanDiseaseGroup(occurrences) :
-                                               refineSubsetForOtherDiseaseGroup(occurrences);
+            if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+                // If automatic model runs are enabled, select the subset of occurrences provided by the Minimum
+                // Data Volume, then add occurrences until the Minimum Data Spread is achieved. These are selected
+                // most recent first, to keep the model input data contemporary.
+                occurrences = selectSubset();
+                if (occursInAfrica != null) {
+                    occurrences = occursInAfrica ? refineSubsetForAfricanDiseaseGroup(occurrences) :
+                                                   refineSubsetForOtherDiseaseGroup(occurrences);
+                }
+            } else {
+                // If automatic model runs are disabled, all occurrences are sent to the model
+                occurrences = allOccurrences;
             }
         } else {
             handleCannotRunModel(String.format(MDV_NOT_SATISFIED_LOG_MESSAGE, minDataVolume),
                     MDV_NOT_SATISFIED_EXCEPTION_MESSAGE);
         }
+
         return occurrences;
     }
 
