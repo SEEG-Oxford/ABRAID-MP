@@ -20,7 +20,7 @@ public class AdminUnitGlobal extends AdminUnitGlobalOrTropical {
         super(gaulCode);
     }
 
-    public AdminUnitGlobal(Integer gaulCode, Integer countryGaulCode) {
-        super(gaulCode, countryGaulCode);
+    public AdminUnitGlobal(Integer gaulCode, Integer countryGaulCode, char level) {
+        super(gaulCode, countryGaulCode, level);
     }
 }

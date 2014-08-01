@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
@@ -82,6 +83,38 @@ public class DiseaseExtentGeneratorHelperTest {
 
         // Assert
         assertThat(helper.getReviewsByAdminUnit()).isEmpty();
+    }
+
+    @Test
+    public void groupOccurrencesByAdminUnitExcludesCountryPrecisionPointsInNonCountryAdminUnits() {
+        // Arrange
+        DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper();
+        DiseaseOccurrenceForDiseaseExtent countryPointInCountry = new DiseaseOccurrenceForDiseaseExtent(
+                DateTime.now(), LocationPrecision.COUNTRY, 150);
+        DiseaseOccurrenceForDiseaseExtent countryPointInAdmin1 = new DiseaseOccurrenceForDiseaseExtent(
+                DateTime.now(), LocationPrecision.COUNTRY, 125); // This point should be excluded
+        DiseaseOccurrenceForDiseaseExtent admin1PointInCountry = new DiseaseOccurrenceForDiseaseExtent(
+                DateTime.now(), LocationPrecision.ADMIN1, 150);
+        DiseaseOccurrenceForDiseaseExtent admin1PointInAdmin1 = new DiseaseOccurrenceForDiseaseExtent(
+                DateTime.now(), LocationPrecision.ADMIN1, 125);
+
+        List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(countryPointInCountry, countryPointInAdmin1,
+                admin1PointInCountry, admin1PointInAdmin1);
+        helper.setOccurrences(occurrences);
+
+        // Act
+        helper.groupOccurrencesByAdminUnit();
+
+        // Assert
+        Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit =
+                helper.getOccurrencesByAdminUnit();
+        assertThat(occurrencesByAdminUnit).hasSize(defaultAdminUnits.size());
+        List<DiseaseOccurrenceForDiseaseExtent> admin1Occurrences =
+                occurrencesByAdminUnit.get(getAdminUnitGlobalOrTropical(125));
+
+        assertThat(admin1Occurrences).hasSize(1);
+        assertThat(admin1Occurrences.get(0).getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+        assertThat(occurrencesByAdminUnit.get(getAdminUnitGlobalOrTropical(150))).hasSize(2);
     }
 
     @Test
@@ -299,19 +332,19 @@ public class DiseaseExtentGeneratorHelperTest {
 
     private List<? extends AdminUnitGlobalOrTropical> createDefaultAdminUnits() {
         return createList(
-                new AdminUnitGlobal(100, 10),
-                new AdminUnitTropical(125, 20),
-                new AdminUnitTropical(130, 30),
-                new AdminUnitGlobal(150),
-                new AdminUnitTropical(200, 20),
-                new AdminUnitTropical(250, 20),
-                new AdminUnitGlobal(300, 30)
+                new AdminUnitGlobal(100, 10, '1'),
+                new AdminUnitTropical(125, 20, '1'),
+                new AdminUnitTropical(130, 30, '1'),
+                new AdminUnitGlobal(150, null, '0'),
+                new AdminUnitTropical(200, 20, '1'),
+                new AdminUnitTropical(250, 20, '1'),
+                new AdminUnitGlobal(300, 30, '1')
         );
     }
 
-    private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfMonthssAgo) {
-        DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthssAgo);
-        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, 0);
+    private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfMonthsAgo) {
+        DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthsAgo);
+        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1, 0);
     }
 
     private AdminUnitReview createReview(DiseaseExtentClass extentClass, double expertWeighting) {
@@ -324,5 +357,14 @@ public class DiseaseExtentGeneratorHelperTest {
         List<T> list = new ArrayList<T>();
         Collections.addAll(list, items);
         return list;
+    }
+
+    private AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropical(int gaulCode) {
+        for (AdminUnitGlobalOrTropical adminUnit : defaultAdminUnits) {
+            if (adminUnit.getGaulCode() == gaulCode) {
+                return adminUnit;
+            }
+        }
+        return null;
     }
 }
