@@ -17,7 +17,7 @@ define([
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
-        self.canRunModelServerResponse = ko.observable(false).extend({equal: true});
+        self.canRunModel = ko.observable(false).extend({equal: true});
         self.batchEndDate = ko.observable("").extend({required: true, date: true});
         self.batchEndDateMinimum = ko.observable("");
         self.batchEndDateMaximum = ko.observable("");
@@ -31,12 +31,23 @@ define([
             return { batchEndDate: batchEndDateText };
         };
 
-        var getModelRunInfo = function (diseaseGroupId) {
-            self.selectedDiseaseGroupId(diseaseGroupId);
-            self.isSubmitting(true);
+        self.resetState = function () { // only public for testing
             self.notices.removeAll();
+            self.lastModelRunText("");
+            self.diseaseOccurrencesText("");
+            self.batchEndDate("");
+            self.batchEndDateMinimum("");
+            self.batchEndDateMaximum("");
+            self.hasModelBeenSuccessfullyRun(false);
+            self.canRunModel(false);
+        };
 
-            if (self.selectedDiseaseGroupId() !== undefined) {
+        self.updateModelRunInfo = function (diseaseGroupId) { // only public for testing
+            self.resetState();
+            self.selectedDiseaseGroupId(diseaseGroupId);
+
+            if (self.selectedDiseaseGroupId()) {
+                self.isSubmitting(true);
                 // Get information regarding model runs for this disease group
                 var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
                 $.getJSON(url)
@@ -47,8 +58,8 @@ define([
                         self.batchEndDateMinimum(data.batchEndDateMinimum);
                         self.batchEndDateMaximum(data.batchEndDateMaximum);
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
-                        self.canRunModelServerResponse(data.canRunModel);
-                        if (!self.canRunModelServerResponse()) {
+                        self.canRunModel(data.canRunModel);
+                        if (!self.canRunModel()) {
                             var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
                             self.notices.push({ message: errorMessage, priority: "warning"});
                         }
@@ -62,12 +73,12 @@ define([
 
         // Called when a disease group is selected from the drop-down list
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
-            getModelRunInfo(selectedDiseaseGroup.id);
+            self.updateModelRunInfo(selectedDiseaseGroup.id);
         });
 
         // Called when changes to a disease group are successfully saved
         ko.postbox.subscribe(diseaseGroupSavedEventName, function (diseaseGroupId) {
-            getModelRunInfo(diseaseGroupId);
+            self.updateModelRunInfo(diseaseGroupId);
         });
     };
 });
