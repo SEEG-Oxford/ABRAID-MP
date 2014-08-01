@@ -2,10 +2,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,17 +22,20 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
+    private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
                                        DiseaseOccurrenceReviewManager reviewManager,
                                        DiseaseService diseaseService,
-                                       DiseaseExtentGenerator diseaseExtentGenerator) {
+                                       DiseaseExtentGenerator diseaseExtentGenerator,
+                                       DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
         this.diseaseService = diseaseService;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
+        this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
     }
 
     /**
@@ -58,6 +64,42 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunRequesterException {
         prepareForAndRequestModelRun(diseaseGroupId, null, false);
+    }
+
+
+    /**
+     * Set model runs to be triggered automatically for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     */
+    @Override
+    public void enableAutomaticModelRuns(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        DateTime now = DateTime.now();
+        saveAutomaticModelRunsStartDate(diseaseGroup, now);
+        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroupId, now);
+        addValidationParameters(diseaseGroupId);
+    }
+
+    private void saveAutomaticModelRunsStartDate(DiseaseGroup diseaseGroup, DateTime now) {
+        diseaseGroup.setAutomaticModelRunsStartDate(now);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
+    }
+
+    private void setAdminUnitDiseaseExtentClassChangedDate(int diseaseGroupId, DateTime now) {
+        List<AdminUnitDiseaseExtentClass> extentClasses = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+        for (AdminUnitDiseaseExtentClass extentClass : extentClasses) {
+            extentClass.setClassChangedDate(now);
+            diseaseService.saveAdminUnitDiseaseExtentClass(extentClass);
+        }
+    }
+
+    private void addValidationParameters(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences =
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            diseaseOccurrenceValidationService.addValidationParameters(occurrence);
+            diseaseService.saveDiseaseOccurrence(occurrence);
+        }
     }
 
     /**
