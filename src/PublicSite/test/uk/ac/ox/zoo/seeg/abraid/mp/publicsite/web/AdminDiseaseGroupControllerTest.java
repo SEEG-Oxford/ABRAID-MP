@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -104,12 +105,15 @@ public class AdminDiseaseGroupControllerTest {
     public void requestModelRun() {
         // Arrange
         int diseaseGroupId = 87;
+        // Set the time zone to UTC, to allow the dates to be compared for equality after converting to/from string
+        DateTime batchEndDate = DateTime.now().withZone(DateTimeZone.UTC).plusDays(1);
 
         // Act
-        controller.requestModelRun(diseaseGroupId);
+        controller.requestModelRun(diseaseGroupId, batchEndDate.toString());
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManualModelRun(eq(diseaseGroupId));
+        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManuallyTriggeredModelRun(
+                eq(diseaseGroupId), eq(batchEndDate));
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

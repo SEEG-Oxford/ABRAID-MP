@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +40,30 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Autowired
     private LocationDao locationDao;
+
+    @Test
+    public void getByIds() {
+        // Arrange
+        List<Integer> ids = Arrays.asList(274016, 274430, 274432);
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByIds(ids);
+
+        // Assert
+        assertThat(occurrences).hasSize(3);
+    }
+
+    @Test
+    public void getByDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(occurrences).hasSize(48);
+    }
 
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnAReviewedPoint() {
@@ -428,6 +453,21 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(statistics.getMaximumOccurrenceDate()).isNull();
     }
 
+    @Test
+    public void getIDsForBatching() {
+        // Arrange - the first 4 of these occurrences are before or on the batch end date, the others are after
+        // or do not have isValidated = true
+        setFinalWeightingOfSelectedOccurrencesToNull(274656, 273401, 275758, 275714, 275107, 274779);
+        int diseaseGroupId = 87;
+        DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
+
+        // Act
+        List<Integer> occurrences = diseaseOccurrenceDao.getIDsForBatching(diseaseGroupId, batchEndDate);
+
+        // Assert
+        assertThat(occurrences).hasSize(3);
+    }
+
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
                                                        DateTime minimumOccurrenceDate, boolean isGlobal,
                                                        int expectedOccurrenceCount) {
@@ -456,6 +496,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         alert.setSummary(summary);
         alert.setUrl(url);
         return alert;
+    }
+
+    private void setFinalWeightingOfSelectedOccurrencesToNull(Integer... ids) {
+        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
+            occurrence.setFinalWeighting(null);
+            diseaseOccurrenceDao.save(occurrence);
+        }
     }
 
     private DiseaseOccurrenceReview createAndSaveDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence,

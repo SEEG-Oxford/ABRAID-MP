@@ -96,4 +96,9 @@ public class ModelRunServiceImpl implements ModelRunService {
     public ModelRun getLastCompletedModelRun(int diseaseGroupId) {
         return modelRunDao.getLastCompletedModelRun(diseaseGroupId);
     }
+
+    @Override
+    public boolean hasBatchingEverCompleted(int diseaseGroupId) {
+        return modelRunDao.hasBatchingEverCompleted(diseaseGroupId);
+    }
 }

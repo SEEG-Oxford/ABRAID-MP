@@ -36,6 +36,12 @@ import java.util.List;
                         "    where diseaseGroupId = :diseaseGroupId" +
                         "    and status = 'COMPLETED')"
         ),
+        @NamedQuery(
+                name = "hasBatchingEverCompleted",
+                query = "select count(*) from ModelRun " +
+                        "where diseaseGroupId = :diseaseGroupId " +
+                        "and batchingCompletedDate is not null"
+        )
 })
 @Entity
 @Table(name = "model_run")
@@ -85,6 +91,20 @@ public class ModelRun {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     @Fetch(FetchMode.SELECT)
     private List<CovariateInfluence> covariateInfluences;
+
+    // The end date of this batch of disease occurrences (if relevant).
+    @Column(name = "batch_end_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime batchEndDate;
+
+    // The number of disease occurrences in this batch (if relevant).
+    @Column(name = "batch_occurrence_count")
+    private Integer batchOccurrenceCount;
+
+    // The date that batching for this model run completed (if relevant).
+    @Column(name = "batching_completed_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime batchingCompletedDate;
 
     public ModelRun() {
     }
@@ -176,6 +196,30 @@ public class ModelRun {
         this.covariateInfluences = covariateInfluences;
     }
 
+    public DateTime getBatchEndDate() {
+        return batchEndDate;
+    }
+
+    public void setBatchEndDate(DateTime batchEndDate) {
+        this.batchEndDate = batchEndDate;
+    }
+
+    public Integer getBatchOccurrenceCount() {
+        return batchOccurrenceCount;
+    }
+
+    public void setBatchOccurrenceCount(Integer batchedOccurrenceCount) {
+        this.batchOccurrenceCount = batchedOccurrenceCount;
+    }
+
+    public DateTime getBatchingCompletedDate() {
+        return batchingCompletedDate;
+    }
+
+    public void setBatchingCompletedDate(DateTime batchingCompletedDate) {
+        this.batchingCompletedDate = batchingCompletedDate;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -186,6 +230,12 @@ public class ModelRun {
         ModelRun modelRun = (ModelRun) o;
 
         if (diseaseGroupId != modelRun.diseaseGroupId) return false;
+        if (batchEndDate != null ? !batchEndDate.equals(modelRun.batchEndDate) : modelRun.batchEndDate != null)
+            return false;
+        if (batchOccurrenceCount != null ? !batchOccurrenceCount.equals(modelRun.batchOccurrenceCount) : modelRun.batchOccurrenceCount != null)
+            return false;
+        if (batchingCompletedDate != null ? !batchingCompletedDate.equals(modelRun.batchingCompletedDate) : modelRun.batchingCompletedDate != null)
+            return false;
         if (errorText != null ? !errorText.equals(modelRun.errorText) : modelRun.errorText != null) return false;
         if (id != null ? !id.equals(modelRun.id) : modelRun.id != null) return false;
         if (name != null ? !name.equals(modelRun.name) : modelRun.name != null) return false;
@@ -209,6 +259,9 @@ public class ModelRun {
         result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
         result = 31 * result + (outputText != null ? outputText.hashCode() : 0);
         result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
+        result = 31 * result + (batchEndDate != null ? batchEndDate.hashCode() : 0);
+        result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);
+        result = 31 * result + (batchOccurrenceCount != null ? batchOccurrenceCount.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

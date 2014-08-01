@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 
@@ -14,9 +15,12 @@ public interface ModelRunWorkflowService {
      * Prepares for and requests a model run, for the specified disease group.
      * This method is designed for use when manually triggering a model run.
      * @param diseaseGroupId The disease group ID.
+     * @param batchEndDate If validator parameter batching should happen after the model run is completed,
+     * this is the end date for batching.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    void prepareForAndRequestManualModelRun(int diseaseGroupId) throws ModelRunRequesterException;
+    void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId, DateTime batchEndDate)
+            throws ModelRunRequesterException;
 
     /**
      * Prepares for and requests a model run, for the specified disease group.

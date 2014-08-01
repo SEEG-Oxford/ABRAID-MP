@@ -45,9 +45,11 @@ public class ModelRunRequester {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
+     * @param batchEndDate If validator parameter batching should happen after the model run is completed,
+     * this is the end date for batching. Otherwise null.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
-    public void requestModelRun(Integer diseaseGroupId) throws ModelRunRequesterException {
+    public void requestModelRun(Integer diseaseGroupId, DateTime batchEndDate) throws ModelRunRequesterException {
         ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
         List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
         if (occurrences != null && occurrences.size() > 0) {
@@ -59,7 +61,7 @@ public class ModelRunRequester {
                 logRequest(diseaseGroup, occurrences);
                 JsonModelRunResponse response =
                         modelWrapperWebService.startRun(diseaseGroup, occurrences, diseaseExtent);
-                handleModelRunResponse(response, diseaseGroupId, requestDate);
+                handleModelRunResponse(response, diseaseGroupId, requestDate, batchEndDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
@@ -73,13 +75,15 @@ public class ModelRunRequester {
                 diseaseOccurrences.size()));
     }
 
-    private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate) {
+    private void handleModelRunResponse(JsonModelRunResponse response, Integer diseaseGroupId, DateTime requestDate,
+                                        DateTime batchEndDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
             throw new ModelRunRequesterException(message);
         } else {
             ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
+            modelRun.setBatchEndDate(batchEndDate);
             modelRunService.saveModelRun(modelRun);
         }
     }

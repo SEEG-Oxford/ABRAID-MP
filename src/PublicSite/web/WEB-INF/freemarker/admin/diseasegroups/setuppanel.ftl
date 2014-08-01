@@ -1,3 +1,15 @@
+<#import "../../layout/form.ftl" as f/>
+
+<!-- Templates -->
+<script type="text/html" id="modelwrapper-alert-template">
+    <p>Please configure ModelWrapper for this disease group if necessary.</p>
+    <br /><br />
+    <p>
+        <span class="btn btn-default" data-bind="click: submit" data-dismiss="popover">Proceed with Model Run</span>
+    </p>
+</script>
+
+<!-- Content -->
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2 class="panel-title">
@@ -18,18 +30,21 @@
             </div>
 
             <br />
-            <div data-bind="if: selectedDiseaseGroupId">
-                <p class="form-group">
-                    <span data-bind="if: hasModelBeenSuccessfullyRun">
-                        <button class="btn btn-primary" data-bind="click: runModel, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
-                    </span>
-                    <span data-bind="ifnot: hasModelBeenSuccessfullyRun">
-                        <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'}, css: { 'disabled': !canRunModel() || working }, text: working() ? 'Working...' : 'Run Model'"></button>
-                    </span>
-                </p>
-                <div class="form-group" data-bind="foreach: notices">
-                    <div data-bind="alert: $data"></div>
-                </div>
+            <div class="form-group" data-bind="if: selectedDiseaseGroupId">
+                <span data-bind="if: hasModelBeenSuccessfullyRun" class="side-by-side">
+                    <button class="btn btn-primary" data-bind="click: submit, formButton: { submitting: 'Working...', standard: 'Run Model and Batch Occurrences For Validation'}"></button>
+                </span>
+                <span data-bind="ifnot: hasModelBeenSuccessfullyRun" class="side-by-side">
+                    <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'}, formButton: { submitting: 'Working...', standard: 'Run Model and Batch Occurrences For Validation'}"></button>
+                </span>
+                <label for="batch-end-date" class="side-by-side" style="margin-left: 20px">Batch End Date:</label>
+                <span class="input-group date">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    <input id="batch-end-date" type="text" class="form-control" data-bind="formDate: { date: batchEndDate, startDate: batchEndDateMinimum, endDate: batchEndDateMaximum }">
+                </span>
+            </div>
+            <div class="form-group" data-bind="foreach: notices">
+                <div data-bind="alert: $data"></div>
             </div>
         </div>
     </div>

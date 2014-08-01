@@ -36,12 +36,15 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * Prepares for and requests a model run, for the specified disease group.
      * This method is designed for use when manually triggering a model run.
      * @param diseaseGroupId The disease group ID.
+     * @param batchEndDate If validator parameter batching should happen after the model run is completed,
+     * this is the end date for batching.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestManualModelRun(int diseaseGroupId) throws ModelRunRequesterException {
+    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId, DateTime batchEndDate)
+            throws ModelRunRequesterException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
-        prepareForAndRequestModelRun(diseaseGroupId, true);
+        prepareForAndRequestModelRun(diseaseGroupId, batchEndDate, true);
         saveExpertsWeightings(newExpertWeightings);
     }
 
@@ -54,7 +57,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     @Override
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunRequesterException {
-        prepareForAndRequestModelRun(diseaseGroupId, false);
+        prepareForAndRequestModelRun(diseaseGroupId, null, false);
     }
 
     /**
@@ -84,7 +87,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
     }
 
-    private void prepareForAndRequestModelRun(int diseaseGroupId, boolean alwaysRemoveFromValidator)
+    private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchEndDate,
+                                              boolean alwaysRemoveFromValidator)
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
@@ -95,7 +99,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
             generateDiseaseExtent(diseaseGroup);
         }
-        modelRunRequester.requestModelRun(diseaseGroupId);
+        modelRunRequester.requestModelRun(diseaseGroupId, batchEndDate);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
 

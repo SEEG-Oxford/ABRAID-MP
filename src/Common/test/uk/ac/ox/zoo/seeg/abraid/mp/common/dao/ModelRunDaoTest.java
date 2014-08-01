@@ -49,11 +49,17 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime responseDate = DateTime.now();
         String outputText = "output text";
         String errorText = "error text";
+        DateTime batchEndDate = DateTime.now().minusHours(6);
+        DateTime batchingCompletionDate = DateTime.now().plusHours(2);
+        int batchedOccurrenceCount = 1000;
 
         ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestDate);
         modelRun.setResponseDate(responseDate);
         modelRun.setOutputText(outputText);
         modelRun.setErrorText(errorText);
+        modelRun.setBatchEndDate(batchEndDate);
+        modelRun.setBatchingCompletedDate(batchingCompletionDate);
+        modelRun.setBatchOccurrenceCount(batchedOccurrenceCount);
         modelRunDao.save(modelRun);
 
         // Act
@@ -68,6 +74,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getRequestDate()).isEqualTo(requestDate);
         assertThat(modelRun.getOutputText()).isEqualTo(outputText);
         assertThat(modelRun.getErrorText()).isEqualTo(errorText);
+        assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
+        assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(batchingCompletionDate);
+        assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(batchedOccurrenceCount);
     }
 
     @Test
@@ -209,6 +218,32 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun).isEqualTo(modelRunDengue2);
     }
 
+    @Test
+    public void hasBatchingEverCompletedReturnsFalseIfNoBatchCompletedDatesExistForTheDiseaseGroup() {
+        // Arrange
+        modelRunMalarias1.setBatchingCompletedDate(DateTime.now());
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        boolean result = modelRunDao.hasBatchingEverCompleted(87);
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void hasBatchingEverCompletedReturnsTrueIfAtLeastOneBatchCompletedDateExists() {
+        // Arrange
+        modelRunDengue3.setBatchingCompletedDate(DateTime.now());
+        modelRunDao.save(modelRunDengue3);
+
+        // Act
+        boolean result = modelRunDao.hasBatchingEverCompleted(87);
+
+        // Assert
+        assertThat(result).isTrue();
+    }
+
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {
         SubmodelStatistic submodelStatistic = new SubmodelStatistic();
         submodelStatistic.setModelRun(modelRun);
@@ -224,17 +259,6 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     private ModelRun createModelRun(String name) {
         return new ModelRun(name, 87, DateTime.now());
-    }
-
-    private List<ModelRun> createTestModelRuns() {
-        List<ModelRun> modelRuns = new ArrayList<>();
-        modelRuns.add(createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "2014/07/01", null));
-        modelRuns.add(createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "2014/07/01", "2014/07/04"));
-        modelRuns.add(createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "2014/07/02", "2014/07/03"));
-        modelRuns.add(createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "2014/07/05", null));
-        modelRuns.add(createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "2014/07/06", "2014/07/05"));
-        modelRuns.add(createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "2014/07/07", "2014/07/08"));
-        return modelRuns;
     }
 
     private static ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestDate,

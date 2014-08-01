@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -105,6 +106,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 .populateHasModelBeenSuccessfullyRun(lastCompletedModelRun)
                 .populateDiseaseOccurrencesText(statistics)
                 .populateCanRunModelWithReason(diseaseGroup)
+                .populateBatchEndDateParameters(lastCompletedModelRun, statistics)
                 .get();
 
         return new ResponseEntity<>(info, HttpStatus.OK);
@@ -113,6 +115,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to request the model run.
+     * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
      * @return An error message string (empty if no error).
      */
     @Secured({ "ROLE_ADMIN" })
@@ -121,12 +124,14 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId) {
+    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId,
+                                                  String batchEndDate) {
         try {
-            modelRunWorkflowService.prepareForAndRequestManualModelRun(diseaseGroupId);
+            DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
+            modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

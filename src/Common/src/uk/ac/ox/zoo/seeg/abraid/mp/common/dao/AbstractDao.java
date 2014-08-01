@@ -4,6 +4,7 @@ import org.hibernate.*;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -104,7 +105,7 @@ public abstract class AbstractDao<E, I extends Serializable> {
     }
 
     /**
-     * Convenience method to return a single instance that matches the named query with 1 parameter,
+     * Convenience method to return a single instance that matches the named query with the specified parameters,
      * or null if the query returns no results.
      * @param namedQuery the named query to run
      * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
@@ -145,7 +146,7 @@ public abstract class AbstractDao<E, I extends Serializable> {
     }
 
     /**
-     * Get the results of a named query with 1 parameter.
+     * Get the results of a named query with the specified parameters.
      * @param namedQuery the named query to run
      * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
      * name1, value1, name2, value2, ...
@@ -208,7 +209,14 @@ public abstract class AbstractDao<E, I extends Serializable> {
     public Query getParameterisedNamedQuery(String namedQuery, Object... parameterNamesAndValues) {
         Query query = namedQuery(namedQuery);
         for (int i = 0; i < parameterNamesAndValues.length; i += 2) {
-            query.setParameter((String) parameterNamesAndValues[i], parameterNamesAndValues[i + 1]);
+            String parameterName = (String) parameterNamesAndValues[i];
+            Object parameterValue = parameterNamesAndValues[i + 1];
+
+            if (parameterValue instanceof Collection) {
+                query.setParameterList(parameterName, (Collection) parameterValue);
+            } else {
+                query.setParameter(parameterName, parameterValue);
+            }
         }
         return query;
     }

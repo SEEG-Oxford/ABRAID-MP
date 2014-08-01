@@ -38,6 +38,21 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
+     * Gets disease occurrences with the specified IDs.
+     * @param diseaseOccurrenceIds The disease occurrence IDs.
+     * @return The disease occurrences with the specified IDs.
+     */
+    @Override
+    public List<DiseaseOccurrence> getByIds(List<Integer> diseaseOccurrenceIds) {
+        return listNamedQuery("getDiseaseOccurrencesByIds", "diseaseOccurrenceIds", diseaseOccurrenceIds);
+    }
+
+    @Override
+    public List<DiseaseOccurrence> getByDiseaseGroupId(int diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrencesByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
      * submitted a review.
      * @param expertId The id of the specified expert.
@@ -161,5 +176,19 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     public DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId) {
         Query query = getParameterisedNamedQuery("getDiseaseOccurrenceStatistics", "diseaseGroupId", diseaseGroupId);
         return (DiseaseOccurrenceStatistics) query.uniqueResult();
+    }
+
+    /**
+     * Gets a list of disease occurrence IDs for validation batching, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @param batchEndDate The end date of the batch.
+     * @return A list of disease occurrence IDs.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Integer> getIDsForBatching(int diseaseGroupId, DateTime batchEndDate) {
+        Query query = getParameterisedNamedQuery("getDiseaseOccurrenceIDsForBatching",
+                "diseaseGroupId", diseaseGroupId, "batchEndDate", batchEndDate);
+        return (List<Integer>) query.list();
     }
 }

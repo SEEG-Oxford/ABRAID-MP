@@ -10,6 +10,9 @@
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 
     <bean id="mainHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.MainHandler" autowire="constructor"/>
+    <bean id="handlersAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.HandlersAsyncWrapper" autowire="constructor"/>
     <bean id="diseaseExtentGenerationHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseExtentGenerationHandler" autowire="constructor"/>
+    <bean id="diseaseOccurrenceHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseOccurrenceHandler" autowire="constructor"/>
+    <bean id="diseaseOccurrenceHandlerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseOccurrenceHandlerHelper" autowire="constructor"/>
 
 </beans>

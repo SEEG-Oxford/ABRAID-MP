@@ -17,6 +17,14 @@ import javax.persistence.Table;
  */
 @NamedQueries({
         @NamedQuery(
+                name = "getDiseaseOccurrencesByIds",
+                query = "from DiseaseOccurrence where id in :diseaseOccurrenceIds"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesByDiseaseGroupId",
+                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
                 query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
                         "and alert=:alert and occurrenceDate=:occurrenceDate"
@@ -60,6 +68,15 @@ import javax.persistence.Table;
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
                         "and isValidated is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrenceIDsForBatching",
+                query = "select id " +
+                        "from DiseaseOccurrence " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
+                        "and isValidated = true " +
+                        "and finalWeighting is null " +
+                        "and occurrenceDate <= :batchEndDate"
         )
 })
 @Entity

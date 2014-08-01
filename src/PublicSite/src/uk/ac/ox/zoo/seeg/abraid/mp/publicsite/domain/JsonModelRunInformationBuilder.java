@@ -23,9 +23,10 @@ public class JsonModelRunInformationBuilder {
     /**
      * Populates text that describes the last model run. Examples:
      *     never
-     *     completed on 10 Jul 2014 03:14:32 [uses the response date]
-     *     failed on 10 Jul 2014 03:14:32 [uses the response date]
-     *     requested on 10 Jul 2014 03:14:32 [uses the request date]
+     *     completed on 10 Jul 2014 08:00:00 (including release of 500 occurrences for validation until 31/12/2006)
+     *     completed on 10 Jul 2014 06:00:00
+     *     failed on 10 Jul 2014 06:00:00
+     *     requested on 09 Jul 2014 21:00:00
      * @param lastRequestedModelRun The most recently-requested model run.
      * @return This builder.
      */
@@ -33,11 +34,9 @@ public class JsonModelRunInformationBuilder {
         String text = "never";
         if (lastRequestedModelRun != null) {
             String statusText = lastRequestedModelRun.getStatus().getDisplayText();
-            DateTime date = lastRequestedModelRun.getResponseDate();
-            if (date == null) {
-                date = lastRequestedModelRun.getRequestDate();
-            }
-            text = String.format("%s on %s", statusText, date.toString(DATE_TIME_FORMAT));
+            String dateText = getLastModelRunDateText(lastRequestedModelRun);
+            String batchingText = getLastModelRunBatchingText(lastRequestedModelRun);
+            text = String.format("%s on %s%s", statusText, dateText, batchingText);
         }
         information.setLastModelRunText(text);
         return this;
@@ -54,7 +53,8 @@ public class JsonModelRunInformationBuilder {
     public JsonModelRunInformationBuilder populateDiseaseOccurrencesText(DiseaseOccurrenceStatistics statistics) {
         String text = "none";
         if (statistics.getOccurrenceCount() > 0) {
-            String dateText = getDateText(statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
+            String dateText = getDiseaseOccurrencesDateText(
+                    statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
             text = String.format("total %d, occurring %s", statistics.getOccurrenceCount(), dateText);
         }
         information.setDiseaseOccurrencesText(text);
@@ -85,6 +85,45 @@ public class JsonModelRunInformationBuilder {
     }
 
     /**
+     * Populates the parameters relating to "batch end date".
+     * @param lastCompletedModelRun The last completed model run (or null if never completed).
+     * @param statistics Statistics that describe the disease occurrences.
+     * @return This builder.
+     */
+    public JsonModelRunInformationBuilder populateBatchEndDateParameters(ModelRun lastCompletedModelRun,
+                                                                         DiseaseOccurrenceStatistics statistics) {
+        // The minimum value of "batch end date" is the minimum occurrence date if this is the first batch, otherwise
+        // it is the day after the latest batch end date.
+        DateTime minimumDate = statistics.getMinimumOccurrenceDate();
+        if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
+                lastCompletedModelRun.getBatchEndDate() != null) {
+            minimumDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
+        }
+
+        // The maximum value of "batch end date" is simply the maximum occurrence date
+        DateTime maximumDate = statistics.getMaximumOccurrenceDate();
+
+        // The default value of "batch end date" is the last day of the minimum date's year, limited to:
+        // (a) the maximum occurrence date; (b) 1 week before now (because that is when batching normally ends)
+        DateTime defaultDate = null;
+        if (minimumDate != null && maximumDate != null) {
+            DateTime defaultFinalBatchEndDate = DateTime.now().minusWeeks(1);
+            defaultDate = minimumDate.plusYears(1).withDayOfYear(1).minusDays(1);
+            if (defaultDate.isAfter(defaultFinalBatchEndDate)) {
+                defaultDate = defaultFinalBatchEndDate;
+            }
+            if (defaultDate.isAfter(maximumDate)) {
+                defaultDate = maximumDate;
+            }
+        }
+
+        information.setBatchEndDateMinimum(getDateText(minimumDate));
+        information.setBatchEndDateDefault(getDateText(defaultDate));
+        information.setBatchEndDateMaximum(getDateText(maximumDate));
+        return this;
+    }
+
+    /**
      * Returns the built JsonModelRunInformation object.
      * @return The built JsonModelRunInformation object.
      */
@@ -92,13 +131,46 @@ public class JsonModelRunInformationBuilder {
         return information;
     }
 
-    private String getDateText(DateTime startDate, DateTime endDate) {
-        String startDateText = startDate.toString(DATE_FORMAT);
-        String endDateText = endDate.toString(DATE_FORMAT);
+    private String getLastModelRunDateText(ModelRun lastRequestedModelRun) {
+        DateTime date = lastRequestedModelRun.getBatchingCompletedDate();
+        if (date == null) {
+            date = lastRequestedModelRun.getResponseDate();
+            if (date == null) {
+                date = lastRequestedModelRun.getRequestDate();
+            }
+        }
+        return getDateTimeText(date);
+    }
+
+    private String getLastModelRunBatchingText(ModelRun lastRequestedModelRun) {
+        String text = "";
+
+        if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
+            String batchEndDateText = getDateText(lastRequestedModelRun.getBatchEndDate());
+            int batchOccurrenceCount = lastRequestedModelRun.getBatchOccurrenceCount();
+            String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
+            text = String.format(" (including batching of %d occurrence%s for validation, end date %s)",
+                    batchOccurrenceCount, pluralEnding, batchEndDateText);
+        }
+
+        return text;
+    }
+
+    private String getDiseaseOccurrencesDateText(DateTime startDate, DateTime endDate) {
+        String startDateText = getDateText(startDate);
+        String endDateText = getDateText(endDate);
         if (startDateText.equals(endDateText)) {
             return String.format("on %s", startDateText);
         } else {
             return String.format("between %s and %s", startDateText, endDateText);
         }
+    }
+
+    private String getDateText(DateTime date) {
+        return (date == null) ? "" : date.toString(DATE_FORMAT);
+    }
+
+    private String getDateTimeText(DateTime dateTime) {
+        return (dateTime == null) ? "" : dateTime.toString(DATE_TIME_FORMAT);
     }
 }
