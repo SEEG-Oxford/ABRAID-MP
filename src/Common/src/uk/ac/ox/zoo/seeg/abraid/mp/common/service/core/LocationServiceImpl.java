@@ -79,23 +79,21 @@ public class LocationServiceImpl implements LocationService {
     /**
      * Finds the first admin unit for global diseases that contains the specified point.
      * @param point The point.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    public Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel) {
-        return nativeSQL.findAdminUnitThatContainsPoint(point, true, adminLevel);
+    public Integer findAdminUnitGlobalThatContainsPoint(Point point) {
+        return nativeSQL.findAdminUnitThatContainsPoint(point, true);
     }
 
     /**
      * Finds the first admin unit for tropical diseases that contains the specified point.
      * @param point The point.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first tropical admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    public Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel) {
-        return nativeSQL.findAdminUnitThatContainsPoint(point, false, adminLevel);
+    public Integer findAdminUnitTropicalThatContainsPoint(Point point) {
+        return nativeSQL.findAdminUnitThatContainsPoint(point, false);
     }
 
     /**

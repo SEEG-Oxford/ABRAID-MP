@@ -9,15 +9,22 @@ import org.joda.time.DateTime;
  */
 public class DiseaseOccurrenceForDiseaseExtent {
     private DateTime occurrenceDate;
+    private LocationPrecision precision;
     private int adminUnitGaulCode;
 
-    public DiseaseOccurrenceForDiseaseExtent(DateTime occurrenceDate, int adminUnitGaulCode) {
+    public DiseaseOccurrenceForDiseaseExtent(DateTime occurrenceDate, LocationPrecision precision,
+                                             int adminUnitGaulCode) {
         this.occurrenceDate = occurrenceDate;
+        this.precision = precision;
         this.adminUnitGaulCode = adminUnitGaulCode;
     }
 
     public DateTime getOccurrenceDate() {
         return occurrenceDate;
+    }
+
+    public LocationPrecision getPrecision() {
+        return precision;
     }
 
     public int getAdminUnitGaulCode() {
