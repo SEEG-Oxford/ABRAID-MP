@@ -138,16 +138,17 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 9936.810453, 0.7, true);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.49, 15749.275209, 0.7, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 9936.810453, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.49, 15749.275209, true);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
-            double environmentalSuitability, double distanceFromDiseaseExtent, double machineWeighting,
-            boolean isValidated) {
+                                                                           double environmentalSuitability,
+                                                                           double distanceFromDiseaseExtent,
+                                                                           boolean isValidated) {
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability, offset(5e-7));
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent, offset(5e-7));
-        assertThat(occurrence.getMachineWeighting()).isEqualTo(machineWeighting, offset(5e-7));
+        assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isEqualTo(isValidated);
     }
 
