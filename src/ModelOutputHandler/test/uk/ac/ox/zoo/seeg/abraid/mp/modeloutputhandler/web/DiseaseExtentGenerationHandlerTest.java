@@ -23,7 +23,7 @@ public class DiseaseExtentGenerationHandlerTest {
     public void handleGeneratesDiseaseExtentIfAutomaticModelRunsEnabled() throws Exception {
         // Arrange
         DiseaseGroup diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
-        diseaseGroup.setAutomaticModelRuns(true);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
 
         ModelRunWorkflowService modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         DiseaseService diseaseService = mockDiseaseService(DISEASE_GROUP_ID, diseaseGroup);
@@ -49,7 +49,7 @@ public class DiseaseExtentGenerationHandlerTest {
     public void handleDoesNotGenerateDiseaseExtentIfAutomaticModelRunsNotEnabled() throws Exception {
         // Arrange
         DiseaseGroup diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
-        diseaseGroup.setAutomaticModelRuns(false);
+        diseaseGroup.setAutomaticModelRunsStartDate(null);
 
         ModelRunWorkflowService modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         DiseaseService diseaseService = mockDiseaseService(DISEASE_GROUP_ID, diseaseGroup);

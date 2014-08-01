@@ -85,6 +85,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         diseaseGroup.setMinDataVolume(28);
         diseaseGroup.setOccursInAfrica(false);
         diseaseGroup.setMinDistinctCountries(null);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         diseaseGroupDao.save(diseaseGroup);
     }
 

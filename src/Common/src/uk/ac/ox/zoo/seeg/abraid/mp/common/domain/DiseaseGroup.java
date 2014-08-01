@@ -17,7 +17,7 @@ import javax.persistence.*;
 @NamedQueries(
         @NamedQuery(
                 name = "getDiseaseGroupIdsForAutomaticModelRuns",
-                query = "select id from DiseaseGroup where automaticModelRuns = true"
+                query = "select id from DiseaseGroup where automaticModelRunsStartDate is not null"
         )
 )
 @Entity
@@ -71,9 +71,10 @@ public class DiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastModelRunPrepDate;
 
-    // Whether or not the system has been approved by an administrator to run the weekly model automatically
-    @Column(name = "automatic_model_runs")
-    private boolean automaticModelRuns;
+    // When the system was approved by an administrator to run the weekly model automatically, if yet.
+    @Column(name = "automatic_model_runs_start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime automaticModelRunsStartDate;
 
     // The minimum number of new occurrences required to trigger a model run.
     @Column(name = "min_new_occurrences_trigger")
@@ -240,11 +241,15 @@ public class DiseaseGroup {
     }
 
     public boolean isAutomaticModelRunsEnabled() {
-        return automaticModelRuns;
+        return (automaticModelRunsStartDate != null);
     }
 
-    public void setAutomaticModelRuns(boolean automaticModelRuns) {
-        this.automaticModelRuns = automaticModelRuns;
+    public DateTime getAutomaticModelRunsStartDate() {
+        return automaticModelRunsStartDate;
+    }
+
+    public void setAutomaticModelRunsStartDate(DateTime automaticModelRunsStartDate) {
+        this.automaticModelRunsStartDate = automaticModelRunsStartDate;
     }
 
     public Integer getMinNewOccurrencesTrigger() {
@@ -320,8 +325,9 @@ public class DiseaseGroup {
 
         DiseaseGroup that = (DiseaseGroup) o;
 
-        if (automaticModelRuns != that.automaticModelRuns) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
+        if (automaticModelRunsStartDate != null ? !automaticModelRunsStartDate.equals(that.automaticModelRunsStartDate) : that.automaticModelRunsStartDate != null)
+            return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseExtentParameters != null ? !diseaseExtentParameters.equals(that.diseaseExtentParameters) : that.diseaseExtentParameters != null)
             return false;
@@ -366,7 +372,7 @@ public class DiseaseGroup {
         result = 31 * result + (validatorDiseaseGroup != null ? validatorDiseaseGroup.hashCode() : 0);
         result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
-        result = 31 * result + (automaticModelRuns ? 1 : 0);
+        result = 31 * result + (automaticModelRunsStartDate != null ? automaticModelRunsStartDate.hashCode() : 0);
         result = 31 * result + (minNewOccurrencesTrigger != null ? minNewOccurrencesTrigger.hashCode() : 0);
         result = 31 * result + (minDataVolume != null ? minDataVolume.hashCode() : 0);
         result = 31 * result + (minDistinctCountries != null ? minDistinctCountries.hashCode() : 0);

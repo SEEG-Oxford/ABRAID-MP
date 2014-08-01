@@ -36,7 +36,7 @@ public class ModelRunManagerTest {
         // The default disease group for dengue has automatic model runs set to true
         diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
         diseaseGroup.setName("Dengue");
-        diseaseGroup.setAutomaticModelRuns(true);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
 
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
     }

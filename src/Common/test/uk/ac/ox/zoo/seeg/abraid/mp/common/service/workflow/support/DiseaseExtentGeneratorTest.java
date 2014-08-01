@@ -59,7 +59,7 @@ public class DiseaseExtentGeneratorTest {
     private DiseaseGroup createDiseaseGroup() {
         DiseaseGroup group = new DiseaseGroup(diseaseGroupId, null, "Dengue", DiseaseGroupType.SINGLE);
         group.setGlobal(false);
-        group.setAutomaticModelRuns(true);
+        group.setAutomaticModelRunsStartDate(DateTime.now());
 
         DiseaseExtent parameters = createParameters();
         group.setDiseaseExtentParameters(parameters);

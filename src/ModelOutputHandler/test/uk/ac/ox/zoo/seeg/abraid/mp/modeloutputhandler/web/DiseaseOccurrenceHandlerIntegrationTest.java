@@ -57,7 +57,6 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
-        setAutomaticModelRunsToFalse(diseaseGroupId);
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
         ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
 
@@ -94,7 +93,6 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
-        setAutomaticModelRunsToFalse(diseaseGroupId);
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
         createAndSaveTestModelRun(diseaseGroupId, batchEndDate, DateTime.now().minusWeeks(1));
         ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
@@ -122,12 +120,6 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         modelRun2 = modelRunService.getModelRunByName(modelRun2.getName());
         assertThat(modelRun2.getBatchingCompletedDate()).isEqualTo(now);
         assertThat(modelRun2.getBatchOccurrenceCount()).isEqualTo(0);
-    }
-
-    private void setAutomaticModelRunsToFalse(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setAutomaticModelRuns(false);
-        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchEndDate,

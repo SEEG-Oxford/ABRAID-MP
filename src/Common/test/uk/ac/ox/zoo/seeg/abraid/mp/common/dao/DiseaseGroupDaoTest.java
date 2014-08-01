@@ -153,10 +153,26 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
+    public void getIdsForAutomaticModelRunsIsEmpty() {
+        List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
+        assertThat(ids).hasSize(0);
+    }
+
+    @Test
     public void getIdsForAutomaticModelRuns() {
+        int id = 87;
+        setAutomaticModelRunsStartDate(id);
+
         List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
         assertThat(ids).hasSize(1);
-        assertThat(ids.get(0)).isEqualTo(87);
+        assertThat(ids.get(0)).isEqualTo(id);
+    }
+
+    private void setAutomaticModelRunsStartDate(int id) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(id);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
     }
 
     @Test
@@ -220,7 +236,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     private DiseaseGroup initialiseDiseaseGroup() {
         DiseaseGroup diseaseGroup = new DiseaseGroup("Name");
         diseaseGroup.setGroupType(DiseaseGroupType.SINGLE);
-        diseaseGroup.setAutomaticModelRuns(false);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         return diseaseGroup;
     }
 }

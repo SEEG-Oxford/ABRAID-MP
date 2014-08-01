@@ -148,7 +148,7 @@ CREATE TABLE disease_group (
     validator_disease_group_id integer,
     weighting double precision,
     last_model_run_prep_date timestamp,
-    automatic_model_runs boolean NOT NULL,
+    automatic_model_runs_start_date timestamp,
     min_new_occurrences_trigger integer,
     min_data_volume integer,
     min_distinct_countries integer,
