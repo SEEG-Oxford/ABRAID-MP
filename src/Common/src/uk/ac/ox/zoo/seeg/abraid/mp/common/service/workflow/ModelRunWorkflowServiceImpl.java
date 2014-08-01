@@ -86,7 +86,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     }
 
     private void setAdminUnitDiseaseExtentClassChangedDate(int diseaseGroupId, DateTime now) {
-        List<AdminUnitDiseaseExtentClass> extentClasses = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+        List<AdminUnitDiseaseExtentClass> extentClasses =
+            diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
         for (AdminUnitDiseaseExtentClass extentClass : extentClasses) {
             extentClass.setClassChangedDate(now);
             diseaseService.saveAdminUnitDiseaseExtentClass(extentClass);

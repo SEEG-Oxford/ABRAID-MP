@@ -14,6 +14,7 @@ define([
         BaseFormViewModel.call(self, false, true, undefined, undefined, { success: "Model run requested." }, true);
 
         self.selectedDiseaseGroupId = ko.observable();
+        self.isAutomaticModelRunsEnabled = ko.observable();
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
@@ -32,14 +33,19 @@ define([
         };
 
         self.enableAutomaticModelRuns = function () {
-            $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns");
+            $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
+                .done(function () { self.isAutomaticModelRunsEnabled(true); })
+                .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); });
         };
 
-        var getModelRunInfo = function (diseaseGroupId) {
-            self.selectedDiseaseGroupId(diseaseGroupId);
+        var initialiseParameters = function (diseaseGroup) {
+            self.selectedDiseaseGroupId(diseaseGroup.id);
+            self.isAutomaticModelRunsEnabled(diseaseGroup.automaticModelRuns);
             self.isSubmitting(true);
             self.notices.removeAll();
+        };
 
+        var getModelRunInfo = function () {
             if (self.selectedDiseaseGroupId() !== undefined) {
                 // Get information regarding model runs for this disease group
                 var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
@@ -66,12 +72,14 @@ define([
 
         // Called when a disease group is selected from the drop-down list
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
-            getModelRunInfo(selectedDiseaseGroup.id);
+            initialiseParameters(selectedDiseaseGroup);
+            getModelRunInfo();
         });
 
         // Called when changes to a disease group are successfully saved
         ko.postbox.subscribe(diseaseGroupSavedEventName, function (diseaseGroupId) {
-            getModelRunInfo(diseaseGroupId);
+            self.selectedDiseaseGroupId(diseaseGroupId);
+            getModelRunInfo();
         });
     };
 });

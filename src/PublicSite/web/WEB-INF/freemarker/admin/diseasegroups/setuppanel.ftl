@@ -10,7 +10,7 @@
 </script>
 
 <!-- Content -->
-<div class="panel panel-default">
+<div class="panel panel-default" data-bind="if: !isAutomaticModelRunsEnabled()">
     <div class="panel-heading">
         <h2 class="panel-title">
             <a data-toggle="collapse" href="#setup-body">
@@ -46,6 +46,7 @@
             <div class="form-group" data-bind="foreach: notices">
                 <div data-bind="alert: $data"></div>
             </div>
+            <button class="btn btn-primary" data-bind="click: enableAutomaticModelRuns, formButton: { submitting: 'Enabling...', standard: 'Enable automatic model runs'}"></button>
         </div>
     </div>
 </div>
