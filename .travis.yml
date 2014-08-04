@@ -19,8 +19,10 @@ before_install:
 install:
   - sudo apt-get -y -q install r-base devscripts
 before_script:
-  - chmod +x .travis.*.sh
+  - sudo sh -c 'echo "POSTGIS_GDAL_ENABLED_DRIVERS=GTiff" >> /etc/postgresql/9.1/main/environment'
+  - sudo service postgresql restart
   - git config core.fileMode false
+  - chmod +x .travis.*.sh
 script:
   - ./.travis.main.sh
 after_success:
