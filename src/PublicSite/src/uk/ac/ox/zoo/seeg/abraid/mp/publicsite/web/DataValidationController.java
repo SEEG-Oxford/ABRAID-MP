@@ -181,6 +181,12 @@ public class DataValidationController extends AbstractController {
         PublicSiteUser user = currentUserService.getCurrentUser();
         List<AdminUnitDiseaseExtentClass> diseaseExtent;
         List<AdminUnitReview> reviews;
+        boolean userIsSEEG = expertService.getExpertById(user.getId()).isSeegMember();
+
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup == null || (!diseaseGroup.isAutomaticModelRunsEnabled() && !userIsSEEG)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         try {
             diseaseExtent = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
