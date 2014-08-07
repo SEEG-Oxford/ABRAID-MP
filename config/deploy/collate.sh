@@ -39,8 +39,10 @@ scp -C -r $COVARIATE_SOURCE/* covariates/
 # Historic healthmap
 mkdir healthmap
 scp -C $HEALTHMAP_SOURCE/alert.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/disease_extent.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/disease_group.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/disease_occurrence.txt healthmap/
+scp -C $HEALTHMAP_SOURCE/feed.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/healthmap_disease.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/location.txt healthmap/
 scp -C $HEALTHMAP_SOURCE/import_into_abraid.sh healthmap/

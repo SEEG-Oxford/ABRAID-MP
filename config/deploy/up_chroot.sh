@@ -9,6 +9,10 @@ if [ "$(whoami)" != "root" ]; then
     exit 1
 fi
 
+# Fix bash files
+find ../.. -name "*.sh" -exec dos2unix {} \;
+find ../.. -name "*.sh" -exec chmod +x {} \;
+
 # Source site specific variables
 source $ABRAID_DEPLOYMENT_CONFIG_FILE
 
@@ -27,6 +31,7 @@ source $ABRAID_DEPLOYMENT_CONFIG_FILE
 : ${GEOSERVER_ADMIN_PASSWORD:?"Variable must be set"}
 : ${GEONAMES_USER:?"Variable must be set"}
 : ${HEALTH_MAP_KEY:?"Variable must be set"}
+: ${MW_DRY_RUN:?"Variable must be set"}
 : ${ABRAID_SUPPORT_PATH:?"Variable must be set"}
 : ${MAIN_TC_PATH:?"Variable must be set"}
 : ${MW_TC_PATH:?"Variable must be set"}
@@ -47,13 +52,8 @@ echo "$DB_ADDRESS:$DB_PORT:$DB_NAME:$PG_ABRAID_USER:$PG_ABRAID_PASS" >> $BASE/pg
 export PGPASSFILE=$BASE/pg_pass
 chmod 0600 $BASE/pg_pass
 
-# Fix bash files
-find ../.. -name "*.sh" -exec dos2unix {} \;
-find ../.. -name "*.sh" -exec chmod +x {} \;
-
 # Stop servlet containers
 service $MAIN_TC_SERVICE stop
-service $MW_TC_SERVICE stop
 
 # Teardown
 rm -rf $MAIN_TC_PATH/*
@@ -65,23 +65,17 @@ dropdb -U $PG_ADMIN_USER "$DB_NAME"
 mkdir $ABRAID_SUPPORT_PATH
 
 # Setup database
-. up_db.sh
+. up_c_db.sh
 
 # Setup main server
-. up_ms.sh
-
-# Setup model wrapper
-. up_mw.sh
+. up_c_ms.sh
 
 # Permissions
 chown -R tomcat7:tomcat7 $MAIN_TC_PATH/*
-chown -R tomcat7:tomcat7 $MW_TC_PATH/*
 chown -R tomcat7:tomcat7 $ABRAID_SUPPORT_PATH/*
 chmod -R 664 $MAIN_TC_PATH/*
-chmod -R 664 $MW_TC_PATH/*
 chmod -R 664 $ABRAID_SUPPORT_PATH/*
 find $MAIN_TC_PATH/ -type d -exec chmod +x {} \;
-find $MW_TC_PATH/ -type d -exec chmod +x {} \;
 find $ABRAID_SUPPORT_PATH/ -type d -exec chmod +x {} \;
 chmod o+x $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.sh
 
@@ -90,4 +84,3 @@ rm $BASE/pg_pass
 
 # Bring services back up
 service $MAIN_TC_SERVICE start
-service $MW_TC_SERVICE start
