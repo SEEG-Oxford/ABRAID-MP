@@ -48,7 +48,7 @@ require([baseUrl + "js/require.conf.js"], function () {
                     // trigger the events that would cause the bind. See:
                     // https://github.com/knockout/knockout/issues/648
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=87943
-                    $("input.ffAutoFillHack").keyup();
+                    $("input.ffAutoFillHack").trigger("change");
                 };
 
                 ko.applyBindings(
