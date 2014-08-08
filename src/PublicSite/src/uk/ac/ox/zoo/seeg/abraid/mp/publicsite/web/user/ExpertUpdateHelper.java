@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
@@ -7,16 +8,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertFull;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.collection.IsIn.isIn;
 
 /**
@@ -51,7 +48,8 @@ public class ExpertUpdateHelper {
             boolean resetVisibility =
                     !expert.getName().equals(expertDto.getName()) ||
                     !expert.getJobTitle().equals(expertDto.getJobTitle()) ||
-                    !expert.getInstitution().equals(expertDto.getInstitution());
+                    !expert.getInstitution().equals(expertDto.getInstitution()) ||
+                    expert.getVisibilityRequested() != expertDto.getVisibilityRequested();
 
             List<ValidatorDiseaseGroup> allValidatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
             List<ValidatorDiseaseGroup> interests = filter(
@@ -66,6 +64,7 @@ public class ExpertUpdateHelper {
 
             if (resetVisibility) {
                 expert.setVisibilityApproved(false);
+                expert.setUpdatedDate(DateTime.now());
             }
 
             expertService.saveExpert(expert);
