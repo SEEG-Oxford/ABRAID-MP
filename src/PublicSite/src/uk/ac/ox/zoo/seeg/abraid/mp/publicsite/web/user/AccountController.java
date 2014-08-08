@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertUpdateValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,19 +50,23 @@ public class AccountController extends AbstractController {
     private final ObjectMapper json;
     private final ExpertUpdateValidator validator;
     private final ExpertUpdateHelper helper;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public AccountController(CurrentUserService currentUserService, ExpertService expertService,
+    public AccountController(CurrentUserService currentUserService,
+                             ExpertService expertService,
                              DiseaseService diseaseService,
                              ObjectMapper geoJsonObjectMapper,
                              ExpertUpdateValidator expertUpdateValidator,
-                             ExpertUpdateHelper expertUpdateHelper) {
+                             ExpertUpdateHelper expertUpdateHelper,
+                             UserDetailsService userDetailsService) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
         this.json = geoJsonObjectMapper;
         this.validator = expertUpdateValidator;
         this.helper = expertUpdateHelper;
+        this.userDetailsService = userDetailsService;
     }
 
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
@@ -78,7 +82,7 @@ public class AccountController extends AbstractController {
         return "account/edit";
     }
 
-    @RequestMapping(value = "/register/details", method = RequestMethod.POST,
+    @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {
         // Validate dto
