@@ -1,7 +1,7 @@
 /* A suite of tests for the DiseaseInterestListViewModel
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/register/DiseaseInterestListViewModel", "underscore"], function (DiseaseInterestListViewModel, _) {
+define(["app/user/DiseaseInterestListViewModel", "underscore"], function (DiseaseInterestListViewModel, _) {
     "use strict";
     var vm = {};
     beforeEach(function () {

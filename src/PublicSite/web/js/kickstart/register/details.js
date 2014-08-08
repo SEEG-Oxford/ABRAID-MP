@@ -9,10 +9,9 @@ require([baseUrl + "js/require.conf.js"], function () {
         "ko",
         "jquery",
         "underscore",
-        "app/register/AccountDetailsFormViewModel",
-        "app/register/DiseaseInterestListViewModel",
-        "domReady!",
-        "navbar"
+        "app/user/AccountDetailsFormViewModel",
+        "app/user/DiseaseInterestListViewModel",
+        "domReady!"
     ], function (ko, $, _, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
             var redirectPage = function (newURL) {
                 doc.location = newURL;
@@ -22,7 +21,10 @@ require([baseUrl + "js/require.conf.js"], function () {
                 new DiseaseInterestListViewModel(initialExpert, diseases);
 
             var accountDetailsFormViewModel =
-                new AccountDetailsFormViewModel(baseUrl, initialExpert, redirectPage, diseaseInterestListViewModel);
+                new AccountDetailsFormViewModel(baseUrl, "register/details", {
+                    success: "Account creation step 2/2 successfully completed.",
+                    fail: "Account creation step 2/2 unsuccessful."
+                }, initialExpert, redirectPage, diseaseInterestListViewModel);
 
             ko.applyBindings(
                 ko.validatedObservable(accountDetailsFormViewModel),

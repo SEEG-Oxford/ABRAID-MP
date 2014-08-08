@@ -8,7 +8,7 @@ require([baseUrl + "js/require.conf.js"], function () {
     require([
         "ko",
         "jquery",
-        "app/register/AccountRegistrationFormViewModel",
+        "app/user/AccountRegistrationFormViewModel",
         "domReady!",
         "navbar"
     ], function (ko, $, AccountRegistrationFormViewModel, doc) {

@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import org.joda.time.DateTime;
 import org.junit.Before;

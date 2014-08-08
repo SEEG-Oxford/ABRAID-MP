@@ -135,3 +135,7 @@ label.side-by-side {
     display: block;
     padding:15px 5px;
 }
+.jumbotron {
+    padding:30px;
+    text-align: center
+}

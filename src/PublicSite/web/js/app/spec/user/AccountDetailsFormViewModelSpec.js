@@ -1,7 +1,7 @@
 /* A suite of tests for the AccountDetailsFormViewModel.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/register/AccountDetailsFormViewModel"], function (AccountDetailsFormViewModel) {
+define(["app/user/AccountDetailsFormViewModel"], function (AccountDetailsFormViewModel) {
     "use strict";
     var noop = function () {};
     var wrap = function (result) {
