@@ -4,17 +4,16 @@ import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 
 import javax.servlet.ServletRequest;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyListOf;
 import static org.mockito.Mockito.*;
 
 /**
@@ -22,19 +21,16 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class ExpertForRegistrationValidatorTest {
-    private ExpertForRegistrationValidator target =
-            new ExpertForRegistrationValidator(mock(ReCaptcha.class), mock(ExpertService.class));
-
     @Test
     public void createValidationCaptchaCallsReCaptchaMethodWithCorrectTheme() throws Exception {
         // Arrange
         ReCaptcha mockCaptcha = mock(ReCaptcha.class);
         when(mockCaptcha.createRecaptchaHtml(anyString(), anyString(), anyInt())).thenReturn("expected");
-        ExpertForRegistrationValidator localTarget =
-                new ExpertForRegistrationValidator(mockCaptcha, null);
+        ExpertForRegistrationValidator target =
+                new ExpertForRegistrationValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
 
         // Act
-        String result = localTarget.createValidationCaptcha();
+        String result = target.createValidationCaptcha();
 
         // Assert
         assertThat(result).isEqualTo("expected");
@@ -42,260 +38,80 @@ public class ExpertForRegistrationValidatorTest {
     }
 
     @Test
-    public void validateBasicFieldsRejectsNullEmails() throws Exception {
+    public void validateBasicFieldsChecksEmail() throws Exception {
         // Arrange
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        ExpertForRegistrationValidator target = new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertBasic();
-        when(expert.getEmail()).thenReturn(null);
+        when(expert.getEmail()).thenReturn("email");
 
         // Act
-        List<String> result = target.validateBasicFields(expert);
+        target.validateBasicFields(expert);
 
         // Assert
-        assertThat(result).contains("Email address must be provided.");
+        verify(checker, times(1)).checkEmail(eq(expert.getEmail()), anyListOf(String.class));
     }
 
     @Test
-    public void validateBasicFieldsRejectsEmptyEmails() throws Exception {
+    public void validateBasicFieldsChecksPassword() throws Exception {
         // Arrange
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        ExpertForRegistrationValidator target = new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertBasic();
-        when(expert.getEmail()).thenReturn("");
+        when(expert.getPassword()).thenReturn("password");
 
         // Act
-        List<String> result = target.validateBasicFields(expert);
+        target.validateBasicFields(expert);
 
         // Assert
-        assertThat(result).contains("Email address must be provided.");
+        verify(checker, times(1)).checkPassword(eq(expert.getPassword()), anyListOf(String.class));
     }
 
     @Test
-    public void validateBasicFieldsRejectsTooLongEmails() throws Exception {
+    public void validateDetailsFieldsChecksName() throws Exception {
         // Arrange
-        Expert expert = mockExpertBasic();
-        char[] chars = new char[158];
-        Arrays.fill(chars, 'a');
-        when(expert.getEmail()).thenReturn(new String(chars) + "@" + new String(chars) + ".com");
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).contains("Email address must less than 320 letters in length.");
-    }
-
-    @Test
-    public void validateBasicFieldsRejectsInvalidEmails() throws Exception {
-        // Arrange
-        Expert expert = mockExpertBasic();
-        when(expert.getEmail()).thenReturn("a_at_b.com");
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).contains("Email address not valid.");
-    }
-
-    @Test
-    public void validateBasicFieldsAcceptsValidEmails() throws Exception {
-        // Arrange
-        Expert expert = mockExpertBasic();
-        when(expert.getEmail()).thenReturn("a@b.com");
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).isEmpty();
-    }
-
-    @Test
-    public void validateBasicFieldsRejectsPreexistingEmails() throws Exception {
-        // Arrange
-        ExpertService mockExpertService = mock(ExpertService.class);
-        ExpertForRegistrationValidator localTarget =
-                new ExpertForRegistrationValidator(mock(ReCaptcha.class), mockExpertService);
-        Expert expert = mockExpertBasic();
-        when(expert.getEmail()).thenReturn("already@exists.com");
-        when(mockExpertService.getExpertByEmail("already@exists.com")).thenReturn(mock(Expert.class));
-
-        // Act
-        List<String> result = localTarget.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).contains("Email address already has an associated account.");
-    }
-
-    @Test
-    public void validateBasicFieldsRejectsNullPassword() throws Exception {
-        // Arrange
-        Expert expert = mockExpertBasic();
-        when(expert.getPassword()).thenReturn(null);
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).contains("Password must be provided.");
-    }
-
-    @Test
-    public void validateBasicFieldsRejectsEmptyPassword() throws Exception {
-        // Arrange
-        Expert expert = mockExpertBasic();
-        when(expert.getPassword()).thenReturn("");
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).contains("Password must be provided.");
-    }
-
-    @Test
-    public void validateBasicFieldsRejectsInvalidPasswords() throws Exception {
-        // Arrange
-        Expert expert = mockExpertBasic();
-        when(expert.getPassword()).thenReturn("abc");
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).contains("Password not sufficiently complex.");
-    }
-
-    @Test
-    public void validateBasicFieldsAcceptsValidPasswords() throws Exception {
-        // Arrange
-        Expert expert = mockExpertBasic();
-        when(expert.getPassword()).thenReturn("qwe123Q");
-
-        // Act
-        List<String> result = target.validateBasicFields(expert);
-
-        // Assert
-        assertThat(result).isEmpty();
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsNullName() throws Exception {
-        // Arrange
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        ExpertForRegistrationValidator target = new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertDetails();
-        when(expert.getName()).thenReturn(null);
+        when(expert.getName()).thenReturn("name");
 
         // Act
-        List<String> result = target.validateDetailsFields(expert);
+        target.validateDetailsFields(expert);
 
         // Assert
-        assertThat(result).contains("Name must be provided.");
+        verify(checker, times(1)).checkName(eq(expert.getName()), anyListOf(String.class));
     }
 
     @Test
-    public void validateDetailsFieldsRejectsEmptyName() throws Exception {
+    public void validateDetailsFieldsChecksJobTitle() throws Exception {
         // Arrange
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        ExpertForRegistrationValidator target =
+                new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertDetails();
-        when(expert.getName()).thenReturn("");
+        when(expert.getJobTitle()).thenReturn("job");
 
         // Act
-        List<String> result = target.validateDetailsFields(expert);
+        target.validateDetailsFields(expert);
 
         // Assert
-        assertThat(result).contains("Name must be provided.");
+        verify(checker, times(1)).checkJobTitle(eq(expert.getJobTitle()), anyListOf(String.class));
     }
 
     @Test
-    public void validateDetailsFieldsRejectsTooLongName() throws Exception {
+    public void validateDetailsFieldsChecksInstitution() throws Exception {
         // Arrange
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        ExpertForRegistrationValidator target =
+                new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertDetails();
-        char[] chars = new char[1001];
-        Arrays.fill(chars, 'a');
-        when(expert.getName()).thenReturn(new String(chars));
+        when(expert.getInstitution()).thenReturn("institute");
 
         // Act
-        List<String> result = target.validateDetailsFields(expert);
+        target.validateDetailsFields(expert);
 
         // Assert
-        assertThat(result).contains("Name must less than 1000 letters in length.");
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsNullJobTitle() throws Exception {
-        // Arrange
-        Expert expert = mockExpertDetails();
-        when(expert.getJobTitle()).thenReturn(null);
-
-        // Act
-        List<String> result = target.validateDetailsFields(expert);
-
-        // Assert
-        assertThat(result).contains("Job title must be provided.");
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsEmptyJobTitle() throws Exception {
-        // Arrange
-        Expert expert = mockExpertDetails();
-        when(expert.getJobTitle()).thenReturn("");
-
-        // Act
-        List<String> result = target.validateDetailsFields(expert);
-
-        // Assert
-        assertThat(result).contains("Job title must be provided.");
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsTooLongJobTitle() throws Exception {
-        // Arrange
-        Expert expert = mockExpertDetails();
-        when(expert.getJobTitle()).thenReturn("Alice was beginning to get very tired of sitting by her sister on the" +
-                "bank, and of having nothing to do.");
-
-        // Act
-        List<String> result = target.validateDetailsFields(expert);
-
-        // Assert
-        assertThat(result).contains("Job title must less than 100 letters in length.");
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsNullInstitution() throws Exception {
-        // Arrange
-        Expert expert = mockExpertDetails();
-        when(expert.getInstitution()).thenReturn(null);
-
-        // Act
-        List<String> result = target.validateDetailsFields(expert);
-
-        // Assert
-        assertThat(result).contains("Institution must be provided.");
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsEmptyInstitution() throws Exception {
-        // Arrange
-        Expert expert = mockExpertDetails();
-        when(expert.getInstitution()).thenReturn("");
-
-        // Act
-        List<String> result = target.validateDetailsFields(expert);
-
-        // Assert
-        assertThat(result).contains("Institution must be provided.");
-    }
-
-    @Test
-    public void validateDetailsFieldsRejectsTooLongInstitution() throws Exception {
-        // Arrange
-        Expert expert = mockExpertDetails();
-        when(expert.getInstitution()).thenReturn("Alice was beginning to get very tired of sitting by her sister on " +
-                "the bank, and of having nothing to do.");
-
-        // Act
-        List<String> result = target.validateDetailsFields(expert);
-
-        // Assert
-        assertThat(result).contains("Institution must less than 100 letters in length.");
+        verify(checker, times(1)).checkInstitution(eq(expert.getInstitution()), anyListOf(String.class));
     }
 
     @Test
@@ -308,13 +124,14 @@ public class ExpertForRegistrationValidatorTest {
         when(mockResponse.isValid()).thenReturn(true);
         when(mockRequest.getRemoteAddr()).thenReturn("");
 
-        ExpertForRegistrationValidator localTarget =
-                new ExpertForRegistrationValidator(mockCaptcha, mock(ExpertService.class));
+        ExpertForRegistrationValidator target =
+                new ExpertForRegistrationValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
+
         JsonExpertBasic expert = mockJsonExpertBasic();
         when(expert.getPasswordConfirmation()).thenReturn("abc123Q");
 
         // Act
-        List<String> result = localTarget.validateTransientFields(expert, mockRequest);
+        List<String> result = target.validateTransientFields(expert, mockRequest);
 
         // Assert
         assertThat(result).contains("Password confirmation pair must match.");
@@ -330,12 +147,12 @@ public class ExpertForRegistrationValidatorTest {
         when(mockResponse.isValid()).thenReturn(false);
         when(mockRequest.getRemoteAddr()).thenReturn("expected address");
 
-        ExpertForRegistrationValidator localTarget =
-                new ExpertForRegistrationValidator(mockCaptcha, mock(ExpertService.class));
+        ExpertForRegistrationValidator target =
+                new ExpertForRegistrationValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
         JsonExpertBasic expert = mockJsonExpertBasic();
 
         // Act
-        List<String> result = localTarget.validateTransientFields(expert, mockRequest);
+        List<String> result = target.validateTransientFields(expert, mockRequest);
 
         // Assert
         assertThat(result).contains("Captcha incorrect.");
@@ -367,5 +184,4 @@ public class ExpertForRegistrationValidatorTest {
         when(result.getCaptchaResponse()).thenReturn("response");
         return result;
     }
-
 }
