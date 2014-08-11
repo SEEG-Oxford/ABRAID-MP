@@ -33,15 +33,15 @@ define(["ko", "underscore", "jquery", "app/BaseFormViewModel"], function (ko, _,
             };
         };
 
-        var baseSuccessHandler = self.successHandler;
+        self.baseSuccessHandler = self.successHandler;
         self.successHandler = function (data, textStatus, xhr) {
-            baseSuccessHandler(data, textStatus, xhr);
+            self.baseSuccessHandler(data, textStatus, xhr);
             redirectPage(baseUrl);
         };
 
-        var baseFailureHandler = self.failureHandler;
+        self.baseFailureHandler = self.failureHandler;
         self.failureHandler = function (xhr) {
-            baseFailureHandler(xhr);
+            self.baseFailureHandler(xhr);
             if (xhr.status === 409) { // email address conflict
                 redirectPage(baseUrl + "register/account");
             }

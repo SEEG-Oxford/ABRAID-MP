@@ -13,7 +13,7 @@ define(["ko", "underscore", "app/BaseTableViewModel"], function (ko, _, BaseTabl
         });
 
         // Mix in the table behavior
-        BaseTableViewModel.call(self, diseases, false, "name", ["name"]);
+        BaseTableViewModel.call(self, diseases, "name", false, ["name"]);
 
         // Used by parent vm
         self.buildSubmissionData = function () {

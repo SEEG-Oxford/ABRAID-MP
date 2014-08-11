@@ -317,7 +317,7 @@ public class ExpertForRegistrationValidatorTest {
         List<String> result = localTarget.validateTransientFields(expert, mockRequest);
 
         // Assert
-        assertThat(result).contains("Password pair must match.");
+        assertThat(result).contains("Password confirmation pair must match.");
     }
 
     @Test

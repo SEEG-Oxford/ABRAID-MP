@@ -50,7 +50,6 @@ public class AccountController extends AbstractController {
     private final ObjectMapper json;
     private final ExpertUpdateValidator validator;
     private final ExpertUpdateHelper helper;
-    private final UserDetailsService userDetailsService;
 
     @Autowired
     public AccountController(CurrentUserService currentUserService,
@@ -58,15 +57,13 @@ public class AccountController extends AbstractController {
                              DiseaseService diseaseService,
                              ObjectMapper geoJsonObjectMapper,
                              ExpertUpdateValidator expertUpdateValidator,
-                             ExpertUpdateHelper expertUpdateHelper,
-                             UserDetailsService userDetailsService) {
+                             ExpertUpdateHelper expertUpdateHelper) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
         this.json = geoJsonObjectMapper;
         this.validator = expertUpdateValidator;
         this.helper = expertUpdateHelper;
-        this.userDetailsService = userDetailsService;
     }
 
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
