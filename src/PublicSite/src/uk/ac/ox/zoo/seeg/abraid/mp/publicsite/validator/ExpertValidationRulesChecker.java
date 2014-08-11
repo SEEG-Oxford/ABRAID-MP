@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
@@ -38,6 +39,7 @@ public class ExpertValidationRulesChecker {
 
     private final ExpertService expertService;
 
+    @Autowired
     public ExpertValidationRulesChecker(ExpertService expertService) {
         this.expertService = expertService;
     }
