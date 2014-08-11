@@ -18,7 +18,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.RegistrationController;
 
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;

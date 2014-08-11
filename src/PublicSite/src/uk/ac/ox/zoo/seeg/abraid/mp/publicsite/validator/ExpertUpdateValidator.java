@@ -1,20 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
 
-import net.tanesha.recaptcha.ReCaptcha;
-import net.tanesha.recaptcha.ReCaptchaResponse;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 
-import javax.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Validates the fields associated with an Expert during registration.
+ * Validates the fields associated with an Expert profile updates.
  * Copyright (c) 2014 University of Oxford
  */
 public class ExpertUpdateValidator extends BaseExpertValidator {
@@ -23,6 +17,11 @@ public class ExpertUpdateValidator extends BaseExpertValidator {
         super(expertService);
     }
 
+    /**
+     * Validates an expert dto for the fields that can be update in the profile details page.
+     * @param expert The expert to validate.
+     * @return A list of validation failures.
+     */
     public List<String> validate(JsonExpertDetails expert) {
         List<String> validationFailures = new ArrayList<>();
 

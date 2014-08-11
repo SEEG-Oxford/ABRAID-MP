@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * foo
+ * Base class for applying validation rules to experts (domain or dto).
  * Copyright (c) 2014 University of Oxford
  */
 public abstract class BaseExpertValidator {
@@ -42,6 +42,15 @@ public abstract class BaseExpertValidator {
         this.expertService = expertService;
     }
 
+    /**
+     * Validates an email address, with the following conditions.
+     *  * Not null
+     *  * Not empty
+     *  * Be a valid email address
+     *  * Not already be in use
+     * @param value The email address to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkEmail(String value, List<String> validationFailures) {
         validateString(EMAIL_ADDRESS_FIELD_NAME, value, MAX_EMAIL_LENGTH, validationFailures);
 
@@ -56,6 +65,14 @@ public abstract class BaseExpertValidator {
         }
     }
 
+    /**
+     * Validates a password, with the following conditions.
+     *  * Not null
+     *  * Not empty
+     *  * Be sufficiently complex
+     * @param value The password to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkPassword(String value, List<String> validationFailures) {
         if (StringUtils.isEmpty(value)) {
             validationFailures.add(String.format(FAILURE_VALUE_MISSING, PASSWORD_FIELD_NAME));
@@ -66,22 +83,55 @@ public abstract class BaseExpertValidator {
         }
     }
 
+    /**
+     * Validates an institution, with the following conditions.
+     *  * Not null
+     *  * Not empty
+     * @param value The institution to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkInstitution(String value, List<String> validationFailures) {
         validateString(INSTITUTION_FIELD_NAME, value, MAX_INSTITUTION_LENGTH, validationFailures);
     }
 
+    /**
+     * Validates a job title, with the following conditions.
+     *  * Not null
+     *  * Not empty
+     * @param value The job title to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkJobTitle(String value, List<String> validationFailures) {
         validateString(JOB_TITLE_FIELD_NAME, value, MAX_JOB_TITLE_LENGTH, validationFailures);
     }
 
+    /**
+     * Validates a name, with the following conditions.
+     *  * Not null
+     *  * Not empty
+     * @param value The name to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkName(String value, List<String> validationFailures) {
         validateString(NAME_FIELD_NAME, value, MAX_NAME_LENGTH, validationFailures);
     }
 
+    /**
+     * Validates visibility requested, with the following conditions.
+     *  * Not null
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkVisibilityRequested(Boolean value, List<String> validationFailures) {
         validateNotNull(VISIBILITY_REQUESTED_FIELD_NAME, value, validationFailures);
     }
 
+    /**
+     * Validates list of disease interests, with the following conditions.
+     *  * Not null
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
     protected void checkDiseaseInterests(List<Integer> value, List<String> validationFailures) {
         validateNotNull(DISEASE_INTERESTS_FIELD_NAME, value, validationFailures);
     }

@@ -9,13 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -66,9 +64,16 @@ public class AccountController extends AbstractController {
         this.helper = expertUpdateHelper;
     }
 
+
+    /**
+     * Loads the account editing page.
+     * @param modelMap The templating model.
+     * @return The template to render.
+     * @throws JsonProcessingException Thrown if issue generating json for bootstrapped variables.
+     */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(value = "/account/edit", method = RequestMethod.GET)
-    public String getAccountEditPage(ModelMap modelMap, SessionStatus status) throws JsonProcessingException {
+    public String getAccountEditPage(ModelMap modelMap) throws JsonProcessingException {
         JsonExpertDetails expert = loadExpertDTO();
         List<JsonValidatorDiseaseGroup> allValidatorDiseaseGroups = loadValidatorDiseaseGroups();
 
@@ -79,6 +84,11 @@ public class AccountController extends AbstractController {
         return "account/edit";
     }
 
+    /**
+     * Receives the user input from the account editing page and responds accordingly.
+     * @param expert The user input from the second account registration page.
+     * @return A failure status with an array of response messages or a success status.
+     */
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {

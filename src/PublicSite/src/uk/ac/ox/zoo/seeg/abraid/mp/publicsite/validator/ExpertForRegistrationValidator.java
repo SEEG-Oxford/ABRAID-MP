@@ -97,7 +97,7 @@ public class ExpertForRegistrationValidator extends BaseExpertValidator {
         return validationFailures;
     }
 
-    protected void checkPasswordConfirmation(JsonExpertBasic expertBasic, List<String> validationFailures) {
+    private void checkPasswordConfirmation(JsonExpertBasic expertBasic, List<String> validationFailures) {
         if (!expertBasic.getPassword().equals(expertBasic.getPasswordConfirmation())) {
             validationFailures.add(String.format(FAILURE_MUST_MATCH, PASSWORD_CONFIRMATION_FIELD_NAME));
         }

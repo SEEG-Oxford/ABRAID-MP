@@ -21,7 +21,7 @@ import static org.hamcrest.collection.IsIn.isIn;
  * Copyright (c) 2014 University of Oxford
  */
 public class ExpertUpdateHelper {
-    private static final String FAIL_NO_ID_MATCH = "No matching expert found to update (S5).";
+    private static final String FAIL_NO_ID_MATCH = "No matching expert found to update (%s).";
     private ExpertService expertService;
     private DiseaseService diseaseService;
 
