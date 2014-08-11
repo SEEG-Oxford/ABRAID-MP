@@ -51,7 +51,7 @@ public class ExpertValidationRulesCheckerTest {
         List<String> result = new ArrayList<>();
         char[] chars = new char[158];
         Arrays.fill(chars, 'a');
-        
+
         // Act
         target.checkEmail(new String(chars) + "@" + new String(chars) + ".com", result);
 

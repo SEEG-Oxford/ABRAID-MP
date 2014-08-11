@@ -31,7 +31,9 @@ public class ExpertForRegistrationValidator {
     private final ReCaptcha reCaptchaService;
 
     @Autowired
-    public ExpertForRegistrationValidator(ExpertValidationRulesChecker expertValidationRulesChecker, ReCaptcha reCaptchaService) {
+    public ExpertForRegistrationValidator(
+            ExpertValidationRulesChecker expertValidationRulesChecker,
+            ReCaptcha reCaptchaService) {
         this.rules = expertValidationRulesChecker;
         this.reCaptchaService = reCaptchaService;
     }
