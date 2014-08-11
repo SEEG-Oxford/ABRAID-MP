@@ -28,7 +28,7 @@ public class ExpertUpdateValidator {
 
         rules.checkName(expert.getName(), validationFailures);
         rules.checkJobTitle(expert.getJobTitle(), validationFailures);
-        rules.checkJobTitle(expert.getInstitution(), validationFailures);
+        rules.checkInstitution(expert.getInstitution(), validationFailures);
         rules.checkVisibilityRequested(expert.getVisibilityRequested(), validationFailures);
         rules.checkDiseaseInterests(expert.getDiseaseInterests(), validationFailures);
 

@@ -38,7 +38,7 @@ public class ExpertUpdateHelper {
      * @throws ValidationException Thrown if an id matching expert can not be found.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void processExpertsAsTransaction(int id, JsonExpertDetails expertDto) throws ValidationException {
+    public void processExpertAsTransaction(int id, JsonExpertDetails expertDto) throws ValidationException {
         // Start of transaction
         Expert expert = expertService.getExpertById(id);
         if (expert == null) {
@@ -71,6 +71,4 @@ public class ExpertUpdateHelper {
         }
         // End of transaction
     }
-
-
 }

@@ -89,6 +89,7 @@ public class AccountController extends AbstractController {
      * @param expert The user input from the second account registration page.
      * @return A failure status with an array of response messages or a success status.
      */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {
@@ -101,7 +102,7 @@ public class AccountController extends AbstractController {
         // Update & save expert
         try {
             int id = currentUserService.getCurrentUser().getId();
-            helper.processExpertsAsTransaction(id, expert);
+            helper.processExpertAsTransaction(id, expert);
             LOGGER.info(String.format(LOG_USER_UPDATED, id));
         } catch (ValidationException e) {
             return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
