@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 
 import java.util.ArrayList;
@@ -11,10 +10,12 @@ import java.util.List;
  * Validates the fields associated with an Expert profile updates.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertUpdateValidator extends BaseExpertValidator {
+public class ExpertUpdateValidator {
+    private final ExpertValidationRulesChecker rules;
+
     @Autowired
-    public ExpertUpdateValidator(ExpertService expertService) {
-        super(expertService);
+    public ExpertUpdateValidator(ExpertValidationRulesChecker expertValidationRulesChecker) {
+        this.rules = expertValidationRulesChecker;
     }
 
     /**
@@ -25,13 +26,12 @@ public class ExpertUpdateValidator extends BaseExpertValidator {
     public List<String> validate(JsonExpertDetails expert) {
         List<String> validationFailures = new ArrayList<>();
 
-        checkName(expert.getName(), validationFailures);
-        checkJobTitle(expert.getJobTitle(), validationFailures);
-        checkJobTitle(expert.getInstitution(), validationFailures);
-        checkVisibilityRequested(expert.getVisibilityRequested(), validationFailures);
-        checkDiseaseInterests(expert.getDiseaseInterests(), validationFailures);
+        rules.checkName(expert.getName(), validationFailures);
+        rules.checkJobTitle(expert.getJobTitle(), validationFailures);
+        rules.checkJobTitle(expert.getInstitution(), validationFailures);
+        rules.checkVisibilityRequested(expert.getVisibilityRequested(), validationFailures);
+        rules.checkDiseaseInterests(expert.getDiseaseInterests(), validationFailures);
 
         return validationFailures;
     }
-
 }

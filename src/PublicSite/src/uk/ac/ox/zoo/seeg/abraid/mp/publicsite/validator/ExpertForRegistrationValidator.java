@@ -5,7 +5,6 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 
 import javax.servlet.ServletRequest;
@@ -16,7 +15,7 @@ import java.util.List;
  * Validates the fields associated with an Expert during registration.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertForRegistrationValidator extends BaseExpertValidator {
+public class ExpertForRegistrationValidator {
     private static final Logger LOGGER = Logger.getLogger(ExpertForRegistrationValidator.class);
     private static final String LOG_CAPTCHA_REJECTED = "Captcha rejected: %s";
 
@@ -28,11 +27,12 @@ public class ExpertForRegistrationValidator extends BaseExpertValidator {
     private static final String FAILURE_INCORRECT_VALUE = "%s incorrect.";
     private static final String FAILURE_MUST_MATCH = "%s pair must match.";
 
+    private final ExpertValidationRulesChecker rules;
     private final ReCaptcha reCaptchaService;
 
     @Autowired
-    public ExpertForRegistrationValidator(ReCaptcha reCaptchaService, ExpertService expertService) {
-        super(expertService);
+    public ExpertForRegistrationValidator(ExpertValidationRulesChecker expertValidationRulesChecker, ReCaptcha reCaptchaService) {
+        this.rules = expertValidationRulesChecker;
         this.reCaptchaService = reCaptchaService;
     }
 
@@ -53,10 +53,10 @@ public class ExpertForRegistrationValidator extends BaseExpertValidator {
         List<String> validationFailures = new ArrayList<>();
 
         // Check email
-        checkEmail(expert.getEmail(), validationFailures);
+        rules.checkEmail(expert.getEmail(), validationFailures);
 
         // Check password
-        checkPassword(expert.getPassword(), validationFailures);
+        rules.checkPassword(expert.getPassword(), validationFailures);
 
         return validationFailures;
     }
@@ -70,13 +70,13 @@ public class ExpertForRegistrationValidator extends BaseExpertValidator {
         List<String> validationFailures = new ArrayList<>();
 
         // name
-        checkName(expert.getName(), validationFailures);
+        rules.checkName(expert.getName(), validationFailures);
 
         // job
-        checkJobTitle(expert.getJobTitle(), validationFailures);
+        rules.checkJobTitle(expert.getJobTitle(), validationFailures);
 
         // institution
-        checkInstitution(expert.getInstitution(), validationFailures);
+        rules.checkInstitution(expert.getInstitution(), validationFailures);
 
         return validationFailures;
     }

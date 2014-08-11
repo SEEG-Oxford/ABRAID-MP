@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Base class for applying validation rules to experts (domain or dto).
+ * Utility class for applying validation rules to experts (domain or dto).
  * Copyright (c) 2014 University of Oxford
  */
-public abstract class BaseExpertValidator {
+public class ExpertValidationRulesChecker {
     // Regex from knockout.validation codebase https://github.com/Knockout-Contrib/Knockout-Validation/blob/4a0f89e6abf468e9ee9dc0d31d7303a40480a807/Src/rules.js#L183 ///CHECKSTYLE:SUPPRESS LineLengthCheck
     private static final Pattern EMAIL_REGEX = Pattern.compile("^((([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))$", Pattern.CASE_INSENSITIVE); ///CHECKSTYLE:SUPPRESS LineLengthCheck
     // Regex from http://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity ///CHECKSTYLE:SUPPRESS LineLengthCheck
@@ -38,7 +38,7 @@ public abstract class BaseExpertValidator {
 
     private final ExpertService expertService;
 
-    public BaseExpertValidator(ExpertService expertService) {
+    public ExpertValidationRulesChecker(ExpertService expertService) {
         this.expertService = expertService;
     }
 
@@ -51,7 +51,7 @@ public abstract class BaseExpertValidator {
      * @param value The email address to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkEmail(String value, List<String> validationFailures) {
+    public void checkEmail(String value, List<String> validationFailures) {
         validateString(EMAIL_ADDRESS_FIELD_NAME, value, MAX_EMAIL_LENGTH, validationFailures);
 
         if (validationFailures.isEmpty()) {
@@ -73,7 +73,7 @@ public abstract class BaseExpertValidator {
      * @param value The password to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkPassword(String value, List<String> validationFailures) {
+    public void checkPassword(String value, List<String> validationFailures) {
         if (StringUtils.isEmpty(value)) {
             validationFailures.add(String.format(FAILURE_VALUE_MISSING, PASSWORD_FIELD_NAME));
         }
@@ -90,7 +90,7 @@ public abstract class BaseExpertValidator {
      * @param value The institution to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkInstitution(String value, List<String> validationFailures) {
+    public void checkInstitution(String value, List<String> validationFailures) {
         validateString(INSTITUTION_FIELD_NAME, value, MAX_INSTITUTION_LENGTH, validationFailures);
     }
 
@@ -101,7 +101,7 @@ public abstract class BaseExpertValidator {
      * @param value The job title to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkJobTitle(String value, List<String> validationFailures) {
+    public void checkJobTitle(String value, List<String> validationFailures) {
         validateString(JOB_TITLE_FIELD_NAME, value, MAX_JOB_TITLE_LENGTH, validationFailures);
     }
 
@@ -112,7 +112,7 @@ public abstract class BaseExpertValidator {
      * @param value The name to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkName(String value, List<String> validationFailures) {
+    public void checkName(String value, List<String> validationFailures) {
         validateString(NAME_FIELD_NAME, value, MAX_NAME_LENGTH, validationFailures);
     }
 
@@ -122,7 +122,7 @@ public abstract class BaseExpertValidator {
      * @param value The value to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkVisibilityRequested(Boolean value, List<String> validationFailures) {
+    public void checkVisibilityRequested(Boolean value, List<String> validationFailures) {
         validateNotNull(VISIBILITY_REQUESTED_FIELD_NAME, value, validationFailures);
     }
 
@@ -132,7 +132,7 @@ public abstract class BaseExpertValidator {
      * @param value The value to validate.
      * @param validationFailures A list of validation failures.
      */
-    protected void checkDiseaseInterests(List<Integer> value, List<String> validationFailures) {
+    public void checkDiseaseInterests(List<Integer> value, List<String> validationFailures) {
         validateNotNull(DISEASE_INTERESTS_FIELD_NAME, value, validationFailures);
     }
 
