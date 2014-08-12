@@ -26,12 +26,14 @@ define([
                 expect(vm.occursInAfrica).toBeObservable();
             });
 
-            it("with appropriate validaiton rules", function () {
+            it("with appropriate validation rules", function () {
                 expectValidationRules(vm.minNewOccurrences);
                 expectValidationRules(vm.minDataVolume);
                 expectValidationRules(vm.minDistinctCountries);
                 expectValidationRules(vm.minHighFrequencyCountries);
                 expectValidationRules(vm.highFrequencyThreshold);
+
+                expect(vm.minDataVolume).toHaveValidationRule({name: "required", params: true});
             });
         });
 

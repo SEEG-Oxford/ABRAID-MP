@@ -10,7 +10,7 @@ define([
         var self = this;
 
         self.minNewOccurrences = ko.observable().extend({ digit: true, min: 0 });
-        self.minDataVolume = ko.observable().extend({ digit: true, min: 0 });
+        self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 0 });
         self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
 

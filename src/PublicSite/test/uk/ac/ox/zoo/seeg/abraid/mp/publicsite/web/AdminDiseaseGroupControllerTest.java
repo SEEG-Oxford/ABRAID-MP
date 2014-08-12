@@ -58,8 +58,8 @@ public class AdminDiseaseGroupControllerTest {
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2);
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
         String expectedJson = "[" +
-                "{\"id\":87,\"name\":\"Dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false}," +
-                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false}]";
+                "{\"id\":87,\"name\":\"Dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0}," +
+                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0}]";
 
         ValidatorDiseaseGroup validator1 = new ValidatorDiseaseGroup(2, "CCHF");
         ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(3, "cholera");

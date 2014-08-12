@@ -80,8 +80,9 @@ public class DiseaseGroup {
     private Integer minNewOccurrencesTrigger;
 
     // The minimum number of occurrences required for a model run to go ahead.
+    // Default value is implicitly zero.
     @Column(name = "min_data_volume")
-    private Integer minDataVolume;
+    private int minDataVolume;
 
     // The following parameters define the Minimum Data Spread conditions, which must be satisfied for a model run to
     // go ahead: There must be at least one occurrence in [minDistinctCountries] and more than [highFrequencyThreshold]
@@ -255,11 +256,11 @@ public class DiseaseGroup {
         this.minNewOccurrencesTrigger = modelRunMinNewOccurrences;
     }
 
-    public Integer getMinDataVolume() {
+    public int getMinDataVolume() {
         return minDataVolume;
     }
 
-    public void setMinDataVolume(Integer minDataVolume) {
+    public void setMinDataVolume(int minDataVolume) {
         this.minDataVolume = minDataVolume;
     }
 
@@ -316,11 +317,12 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseGroup)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
         if (automaticModelRuns != that.automaticModelRuns) return false;
+        if (minDataVolume != that.minDataVolume) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseExtentParameters != null ? !diseaseExtentParameters.equals(that.diseaseExtentParameters) : that.diseaseExtentParameters != null)
@@ -331,8 +333,6 @@ public class DiseaseGroup {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
         if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
-            return false;
-        if (minDataVolume != null ? !minDataVolume.equals(that.minDataVolume) : that.minDataVolume != null)
             return false;
         if (minDistinctCountries != null ? !minDistinctCountries.equals(that.minDistinctCountries) : that.minDistinctCountries != null)
             return false;
@@ -368,7 +368,7 @@ public class DiseaseGroup {
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (automaticModelRuns ? 1 : 0);
         result = 31 * result + (minNewOccurrencesTrigger != null ? minNewOccurrencesTrigger.hashCode() : 0);
-        result = 31 * result + (minDataVolume != null ? minDataVolume.hashCode() : 0);
+        result = 31 * result + minDataVolume;
         result = 31 * result + (minDistinctCountries != null ? minDistinctCountries.hashCode() : 0);
         result = 31 * result + (highFrequencyThreshold != null ? highFrequencyThreshold.hashCode() : 0);
         result = 31 * result + (minHighFrequencyCountries != null ? minHighFrequencyCountries.hashCode() : 0);
