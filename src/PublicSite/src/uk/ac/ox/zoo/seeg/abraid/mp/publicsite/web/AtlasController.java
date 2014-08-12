@@ -11,7 +11,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
  */
 @Controller
 public class AtlasController extends AbstractController {
-
     /**
      * Return the view to display.
      * @return The ftl page name.
@@ -19,14 +18,5 @@ public class AtlasController extends AbstractController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String showPage() {
         return "atlas";
-    }
-
-    /**
-     * Shows the experts page.
-     * @return The ftl page name.
-     */
-    @RequestMapping(value = "/experts", method = RequestMethod.GET)
-    public String showExperts() {
-        return "experts";
     }
 }
