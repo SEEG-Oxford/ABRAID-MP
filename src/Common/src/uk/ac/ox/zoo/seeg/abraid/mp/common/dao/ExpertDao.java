@@ -23,6 +23,10 @@ public interface ExpertDao {
      */
     Expert getById(Integer id);
 
+    List<Expert> getPageOfPubliclyVisible(int pageNumber, int pageSize);
+
+    long getCountOfPubliclyVisible();
+
     /**
      * Gets an expert by email address.
      * @param email The email address.

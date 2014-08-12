@@ -153,6 +153,16 @@ public class ExpertServiceImpl implements ExpertService {
         return adminUnitReviewDao.getCountByExpertId(expertId);
     }
 
+    @Override
+    public List<Expert> getPageOfPubliclyVisibleExperts(int pageNumber, int pageSize) {
+        return expertDao.getPageOfPubliclyVisible(pageNumber, pageSize);
+    }
+
+    @Override
+    public long getCountOfPubliclyVisibleExperts() {
+        return expertDao.getCountOfPubliclyVisible();
+    }
+
     /**
      * Saves the disease occurrence review.
      * @param expertEmail The email address of the expert providing review.
