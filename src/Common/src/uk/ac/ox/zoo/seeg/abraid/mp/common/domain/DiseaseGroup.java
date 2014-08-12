@@ -80,6 +80,7 @@ public class DiseaseGroup {
     private Integer minNewOccurrencesTrigger;
 
     // The minimum number of occurrences required for a model run to go ahead.
+    // Default value is implicitly zero.
     @Column(name = "min_data_volume")
     private int minDataVolume;
 
