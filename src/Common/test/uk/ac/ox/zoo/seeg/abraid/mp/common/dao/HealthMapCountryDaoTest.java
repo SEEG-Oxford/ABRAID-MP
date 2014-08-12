@@ -9,7 +9,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import java.util.List;
 import java.util.Set;
 
+import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
  * Tests the HealthMapCountryDao class.
@@ -28,13 +30,11 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
         // Assert
         assertThat(healthMapCountries).hasSize(224);
 
-        int totalAssociatedCountries = 0;
-        for (HealthMapCountry healthMapCountry : healthMapCountries) {
-            if (healthMapCountry.getCountries() != null) {
-                totalAssociatedCountries += healthMapCountry.getCountries().size();
-            }
-        }
-        assertThat(totalAssociatedCountries).isEqualTo(265);
+        int numberOfAssociatedCountries = getNumberOfAssociatedCountries(healthMapCountries);
+        assertThat(numberOfAssociatedCountries).isEqualTo(265);
+
+        int numberOfCountriesWithCentroidOverride = getNumberOfCountriesWithCentroidOverride(healthMapCountries);
+        assertThat(numberOfCountriesWithCentroidOverride).isEqualTo(11);
     }
 
     @Test
@@ -106,6 +106,22 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
         int id = 5000;
         HealthMapCountry healthMapCountry = healthMapCountryDao.getById(id);
         assertThat(healthMapCountry).isNull();
+    }
+
+    private int getNumberOfAssociatedCountries(List<HealthMapCountry> healthMapCountries) {
+        int totalAssociatedCountries = 0;
+        for (HealthMapCountry healthMapCountry : healthMapCountries) {
+            if (healthMapCountry.getCountries() != null) {
+                totalAssociatedCountries += healthMapCountry.getCountries().size();
+            }
+        }
+        return totalAssociatedCountries;
+    }
+
+    private int getNumberOfCountriesWithCentroidOverride(List<HealthMapCountry> healthMapCountries) {
+        // Return the number of HealthMapCountries with a non-null centroid override
+        return filter(having(on(HealthMapCountry.class).getCentroidOverride(), notNullValue()),
+                healthMapCountries).size();
     }
 
     private Country findCountryByGaulCode(Set<Country> countries, int gaulCode) {

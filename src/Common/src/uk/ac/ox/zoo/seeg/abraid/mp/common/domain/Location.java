@@ -102,6 +102,11 @@ public class Location {
         this.precision = precision;
     }
 
+    public Location(double x, double y, LocationPrecision precision, int healthMapCountryId) {
+        this(x, y, precision);
+        this.healthMapCountryId = healthMapCountryId;
+    }
+
     public Location(String name, double x, double y, LocationPrecision precision) {
         this(x, y, precision);
         this.name = name;

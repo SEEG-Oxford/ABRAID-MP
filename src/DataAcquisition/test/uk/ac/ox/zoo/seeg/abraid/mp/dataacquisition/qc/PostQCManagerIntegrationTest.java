@@ -46,7 +46,7 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
 
     @Test
     public void findsAdminUnitsIfExactlyOnGeometry() {
-        Location location = new Location(172, -42, LocationPrecision.ADMIN1);
+        Location location = new Location(176, -39, LocationPrecision.ADMIN1);
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(179);

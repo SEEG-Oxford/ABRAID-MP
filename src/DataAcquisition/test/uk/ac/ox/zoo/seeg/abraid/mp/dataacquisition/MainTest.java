@@ -138,8 +138,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 9936.810453, true);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.49, 15749.275209, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 8814.186615, true);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.62, 12524.775729, true);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
@@ -241,8 +241,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertSecondOccurrence(DiseaseOccurrence occurrence) {
         Location occurrence2Location = occurrence.getLocation();
         assertThat(occurrence2Location.getName()).isEqualTo("New Zealand");
-        assertThat(occurrence2Location.getGeom().getX()).isEqualTo(172.65939);
-        assertThat(occurrence2Location.getGeom().getY()).isEqualTo(-42.42349);
+        assertThat(occurrence2Location.getGeom().getX()).isEqualTo(176.61475);
+        assertThat(occurrence2Location.getGeom().getY()).isEqualTo(-38.53923);
         assertThat(occurrence2Location.getPrecision()).isEqualTo(LocationPrecision.COUNTRY);
         assertThat(occurrence2Location.getGeoNameId()).isEqualTo(2186224);
         assertThat(occurrence2Location.getHealthMapCountryId()).isEqualTo(164);
@@ -252,8 +252,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence2Location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(occurrence2Location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
-                "ADMIN2. QC stage 2 passed: location is a country. QC stage 3 passed: location already " +
-                "within HealthMap country.");
+                "ADMIN2. QC stage 2 passed: location (172.65939,-42.42349) replaced with fixed country centroid " +
+                "(176.61475,-38.53923). QC stage 3 passed: location already within HealthMap country.");
 
         assertThatGeoNameExists(2186224, "PCLI");
 
@@ -391,7 +391,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private Polygon getFivePointedPolygon() {
-        return GeometryUtils.createPolygon(3, 4, 5, 11, 12, 8, 9, 5, 5, 6, 3, 4);
+        return GeometryUtils.createPolygon(163, 74, 165, 81, 172, 78, 169, 75, 165, 76, 163, 74);
     }
 
     /**

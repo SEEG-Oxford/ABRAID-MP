@@ -9,7 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import java.util.List;
 
 /**
- * QC stage 1: find the admin1 or admin2 that is associated with a location.
+ * Finds the admin1 or admin2 that is associated with a location.
  *
  * Copyright (c) 2014 University of Oxford
  */
@@ -22,10 +22,9 @@ public class AdminUnitFinder {
     // square root of the admin unit's area
     private static final double MAXIMUM_PERCENTAGE_OF_SQUARE_ROOT_OF_AREA = 30;
 
-    private static final String FOUND_MESSAGE = "QC stage 1 passed: closest distance is %.2f%% of the square root of " +
-            "the area.";
-    private static final String NOT_FOUND_MESSAGE = "QC stage 1 failed: closest distance is %.2f%% of the square " +
-            "root of the area (GAUL code %d: \"%s\").";
+    private static final String FOUND_MESSAGE = "closest distance is %.2f%% of the square root of the area";
+    private static final String NOT_FOUND_MESSAGE = "closest distance is %.2f%% of the square root of the area " +
+            "(GAUL code %d: \"%s\")";
 
     private static final double RATIO_TO_PERCENTAGE = 100.0;
     private static final int MAX_LONGITUDE = 180;
@@ -36,8 +35,8 @@ public class AdminUnitFinder {
     private AdminUnitQC closestAdminUnit;
     private double closestDistance = 0;
 
-    // A message that is created when a close enough admin unit is not found.
     private String message;
+    private boolean passed = true;
 
     /**
      * Finds the closest admin unit associated with the specified location. To do this, we find the distance between
@@ -91,6 +90,7 @@ public class AdminUnitFinder {
                     closestDistanceForLogging);
             message = String.format(NOT_FOUND_MESSAGE, percentage,
                     closestAdminUnitForLogging.getGaulCode(), closestAdminUnitForLogging.getName());
+            passed = false;
         }
     }
 
@@ -109,6 +109,14 @@ public class AdminUnitFinder {
      */
     public String getMessage() {
         return message;
+    }
+
+    /**
+     * Returns whether or not the location has passed this QC stage.
+     * @return Whether or not the location has passed this QC stage.
+     */
+    public boolean hasPassed() {
+        return passed;
     }
 
     private void validateLocation(Location location) {
