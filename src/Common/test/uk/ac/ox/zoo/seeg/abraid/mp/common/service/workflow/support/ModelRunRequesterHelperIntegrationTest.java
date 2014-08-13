@@ -63,6 +63,23 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
     }
 
     @Test
+    public void selectModelRunDiseaseOccurrencesThrowsExceptionWhenFewerOccurrencesThanMDVAndAutomaticModelRunsAreDisabled() {
+        // Arrange
+        int diseaseGroupId = 87;
+        disableAutomaticModelRuns(diseaseGroupId);
+
+        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+
+        // Act
+        catchException(helper).selectModelRunDiseaseOccurrences();
+
+        // Assert
+        assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).hasSize(27);
+        assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
+        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+    }
+
+    @Test
     public void selectModelRunDiseaseOccurrencesReturnsFirstSubsetWhenOccursInAfricaIsNull() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
@@ -80,6 +97,27 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
 
         // Assert
         assertThat(occurrences).hasSize(minDataVolume);
+    }
+
+    @Test
+    public void selectModelRunDiseaseOccurrencesReturnsAllOccurrencesWhenAutomaticModelRunsAreDisabled() throws Exception {
+        // Arrange
+        int diseaseGroupId = 87;
+        disableAutomaticModelRuns(diseaseGroupId);
+        int minDataVolume = 20;
+        int expectedAllOccurrencesSize = 27;
+
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setMinDataVolume(minDataVolume);       // Ensure MDVSatisfied check will pass
+        diseaseService.saveDiseaseGroup(diseaseGroup);
+
+        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+
+        // Act
+        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+
+        // Assert
+        assertThat(occurrences).hasSize(expectedAllOccurrencesSize);
     }
 
     @Test
@@ -227,5 +265,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         return new HashSet<>(convert(locations, new Converter<Location, Integer>() {
             public Integer convert(Location location) { return location.getCountryGaulCode(); }
         }));
+    }
+
+    private void disableAutomaticModelRuns(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRuns(false);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 }
