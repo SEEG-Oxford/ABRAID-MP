@@ -13,7 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
  */
 @Controller
 public class ContributorsController {
-    public static final int PAGE_SIZE = 20;
+    public static final int PAGE_SIZE = 16;
     private ExpertService expertService;
 
     @Autowired
@@ -27,19 +27,20 @@ public class ContributorsController {
      */
     @RequestMapping(value = "/experts", method = RequestMethod.GET)
     public String showExperts(ModelMap model, Integer page) {
-        long pageCount = ((expertService.getCountOfPubliclyVisibleExperts() + PAGE_SIZE - 1) / PAGE_SIZE);
-        pageCount = (pageCount == 0) ? 1 : pageCount;
-        int pageNumber = validatePageNumber(page, pageCount) ? page : 1;
+        final long pageCount = calculatePageCount(expertService.getCountOfPubliclyVisibleExperts());
 
-
-        model.addAttribute("page", expertService.getPageOfPubliclyVisibleExperts(pageNumber, PAGE_SIZE));
-        model.addAttribute("pageCount", pageCount);
-        model.addAttribute("pageNumber", pageNumber);
-
-        return "experts";
+        if (page != null && page >= 1 && page <= pageCount) {
+            model.addAttribute("page", expertService.getPageOfPubliclyVisibleExperts(page, PAGE_SIZE));
+            model.addAttribute("pageCount", pageCount);
+            model.addAttribute("pageNumber", page);
+            return "experts";
+        } else {
+            return "redirect:/experts?page=1";
+        }
     }
 
-    private boolean validatePageNumber(Integer page, long pageCount) {
-        return page != null && page >= 1 && page <= pageCount;
+    private static long calculatePageCount(final long expertCount) {
+        final long pageCount = (expertCount + PAGE_SIZE - 1) / PAGE_SIZE;
+        return Math.min(pageCount, 1);
     }
 }
