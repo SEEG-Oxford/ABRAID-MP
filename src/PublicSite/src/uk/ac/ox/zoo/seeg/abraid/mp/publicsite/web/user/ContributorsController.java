@@ -27,7 +27,7 @@ public class ContributorsController {
      */
     @RequestMapping(value = "/experts", method = RequestMethod.GET)
     public String showExperts(ModelMap model, Integer page) {
-        final long pageCount = calculatePageCount(expertService.getCountOfPubliclyVisibleExperts());
+        final int pageCount = calculatePageCount(expertService.getCountOfPubliclyVisibleExperts());
 
         if (page != null && page >= 1 && page <= pageCount) {
             model.addAttribute("page", expertService.getPageOfPubliclyVisibleExperts(page, PAGE_SIZE));
@@ -39,8 +39,8 @@ public class ContributorsController {
         }
     }
 
-    private static long calculatePageCount(final long expertCount) {
+    private static int calculatePageCount(final long expertCount) {
         final long pageCount = (expertCount + PAGE_SIZE - 1) / PAGE_SIZE;
-        return Math.max(pageCount, 1);
+        return (int) Math.max(pageCount, 1);
     }
 }
