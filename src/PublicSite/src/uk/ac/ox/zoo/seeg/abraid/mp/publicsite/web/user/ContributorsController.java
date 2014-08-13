@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
 /**
- * foo
+ * Controller for displaying list of publicly visible experts.
  * Copyright (c) 2014 University of Oxford
  */
 @Controller
 public class ContributorsController {
-    public static final int PAGE_SIZE = 16;
+    private static final int PAGE_SIZE = 16;
     private ExpertService expertService;
 
     @Autowired
@@ -23,6 +23,8 @@ public class ContributorsController {
 
     /**
      * Shows the experts page.
+     * @param model The templating model.
+     * @param page The page number to display.
      * @return The ftl page name.
      */
     @RequestMapping(value = "/experts", method = RequestMethod.GET)

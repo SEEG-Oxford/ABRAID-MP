@@ -153,11 +153,21 @@ public class ExpertServiceImpl implements ExpertService {
         return adminUnitReviewDao.getCountByExpertId(expertId);
     }
 
+    /**
+     * Gets a page worth of publicly visible experts.
+     * @param pageNumber The page number to return.
+     * @param pageSize The size of the pages to split the visible experts into.
+     * @return A page worth of publicly visible experts
+     */
     @Override
     public List<Expert> getPageOfPubliclyVisibleExperts(int pageNumber, int pageSize) {
         return expertDao.getPageOfPubliclyVisible(pageNumber, pageSize);
     }
 
+    /**
+     * Gets a count of the publicly visible experts.
+     * @return The count.
+     */
     @Override
     public long getCountOfPubliclyVisibleExperts() {
         return expertDao.getCountOfPubliclyVisible();

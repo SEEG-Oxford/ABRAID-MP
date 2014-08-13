@@ -177,7 +177,7 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void getPageOfPubliclyVisibleReturnsCorrectExpertsWithMultiplePages() {
         // Arrange
-        for (int i=0; i<=9; i++) {
+        for (int i = 0; i <= 9; i++) {
             Expert expert = new Expert();
             expert.setEmail("i=" + i);
             expert.setName("");
