@@ -41,6 +41,6 @@ public class ContributorsController {
 
     private static long calculatePageCount(final long expertCount) {
         final long pageCount = (expertCount + PAGE_SIZE - 1) / PAGE_SIZE;
-        return Math.min(pageCount, 1);
+        return Math.max(pageCount, 1);
     }
 }
