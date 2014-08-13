@@ -19,7 +19,7 @@ public class JsonDiseaseGroup {
     private Double weighting;
     private boolean automaticModelRuns;
     private Integer minNewOccurrences;
-    private Integer minDataVolume;
+    private int minDataVolume;
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
@@ -152,11 +152,11 @@ public class JsonDiseaseGroup {
         this.automaticModelRuns = automaticModelRuns;
     }
 
-    public Integer getMinDataVolume() {
+    public int getMinDataVolume() {
         return minDataVolume;
     }
 
-    public void setMinDataVolume(Integer minDataVolume) {
+    public void setMinDataVolume(int minDataVolume) {
         this.minDataVolume = minDataVolume;
     }
 
