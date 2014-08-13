@@ -169,7 +169,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                    "\"maxMonthsAgo\": 12, " +
                     "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
                     "\"lowerOccurrenceScore\": 3, " +
                     "\"higherOccurrenceScore\": 4 } }";
@@ -193,7 +192,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(parentDiseaseGroup);
         assertThat(diseaseGroup.getValidatorDiseaseGroup()).isEqualTo(validatorDiseaseGroup);
         // Disease group already had a disease extent (parameters) object - assert that values are updated as expected
-        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 12, 6, 3, 4);
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 6, 3, 4);
     }
 
     @Test
@@ -208,7 +207,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"groupType\": \"MICROCLUSTER\", " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                    "\"maxMonthsAgo\": 12, " +
                     "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
                     "\"lowerOccurrenceScore\": 3, " +
                     "\"higherOccurrenceScore\": 4 } }";
@@ -229,7 +227,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(diseaseGroup.isGlobal()).isEqualTo(false);
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(null);
         // Disease group already had a disease extent (parameters) object - assert that values are updated as expected
-        assertDiseaseExtentParameters(diseaseGroup, diseaseGroupId, 12, 6, 3, 4);
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroupId, 6, 3, 4);
     }
 
     @Test
@@ -248,7 +246,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                    "\"maxMonthsAgo\": 12, " +
                     "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
                     "\"lowerOccurrenceScore\": 3, " +
                     "\"higherOccurrenceScore\": 4 } }";
@@ -274,7 +271,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         assertThat(diseaseGroup.getValidatorDiseaseGroup()).isEqualTo(validatorDiseaseGroup);
         // Disease group didn't previously have disease extent (parameters) defined - assert that extent has been added
         // with the same disease group id and values set as expected
-        assertDiseaseExtentParameters(diseaseGroup, diseaseGroupId, 12, 6, 3, 4);
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroupId, 6, 3, 4);
     }
 
     @Test
@@ -380,7 +377,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 "\"validatorDiseaseGroup\": { \"id\": \"" + validatorId + "\"}, " +
                 "\"isGlobal\": false, " +
                 "\"diseaseExtentParameters\": {" +
-                    "\"maxMonthsAgo\": 12, " +
                     "\"maxMonthsAgoForHigherOccurrenceScore\": 6, " +
                     "\"lowerOccurrenceScore\": 3, " +
                     "\"higherOccurrenceScore\": 4 } }";
@@ -394,15 +390,14 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         // Assert
         DiseaseGroup diseaseGroup = getMostRecentlyAddedDiseaseGroup();
         assertThat(diseaseGroup.getId()).isNotNull();
-        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 12, 6, 3, 4);
+        assertDiseaseExtentParameters(diseaseGroup, diseaseGroup.getId(), 6, 3, 4);
     }
 
     private void assertDiseaseExtentParameters(DiseaseGroup diseaseGroup, int diseaseGroupId,
-                                               int maxMonthsAgo, int maxMonthsAgoForHigherOccurrenceScore,
+                                               int maxMonthsAgoForHigherOccurrenceScore,
                                                int lowerOccurrenceScore, int higherOccurrenceScore) {
         assertThat(diseaseGroup.getDiseaseExtentParameters()).isNotNull();
         assertThat(diseaseGroup.getDiseaseExtentParameters().getDiseaseGroupId()).isEqualTo(diseaseGroupId);
-        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgo()).isEqualTo(maxMonthsAgo);
         assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgoForHigherOccurrenceScore()).isEqualTo(maxMonthsAgoForHigherOccurrenceScore);
         assertThat(diseaseGroup.getDiseaseExtentParameters().getLowerOccurrenceScore()).isEqualTo(lowerOccurrenceScore);
         assertThat(diseaseGroup.getDiseaseExtentParameters().getHigherOccurrenceScore()).isEqualTo(higherOccurrenceScore);

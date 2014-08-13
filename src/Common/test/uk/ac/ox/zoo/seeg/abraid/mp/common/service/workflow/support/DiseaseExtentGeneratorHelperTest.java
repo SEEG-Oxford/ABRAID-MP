@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.offset;
  */
 public class DiseaseExtentGeneratorHelperTest {
     private DiseaseGroup defaultDiseaseGroup = createDiseaseGroup(87, null, "Dengue", DiseaseGroupType.SINGLE,
-            60, 0.6, 5, 1, 24, 1, 2);
+            0.6, 5, 1, 24, 1, 2);
 
     private List<? extends AdminUnitGlobalOrTropical> defaultAdminUnits = createDefaultAdminUnits();
 
@@ -110,7 +110,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeDiseaseExtentClassUsingOccurrenceCountWithNonDefaultParameters() {
         // Arrange
         // Minimum occurrences for presence = 8, for possible presence = 4
-        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 60, 0.6, 8, 4, 24, 1, 2);
+        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 0.6, 8, 4, 24, 1, 2);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         // Act and assert
@@ -150,7 +150,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForOccurrencesOnlyAndNonDefaultParameters() {
         // Arrange
         // Maximum months = 84, maximum months for higher score = 36, lower score = 10, higher score = 20
-        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 84, 0.6, 5, 1, 36, 10, 20);
+        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
@@ -170,7 +170,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForReviewsOnlyAndNonDefaultParameters() {
         // Arrange
         // Maximum months = 84, maximum months for higher score = 36, lower score = 10, higher score = 20
-        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 84, 0.6, 5, 1, 36, 10, 20);
+        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<AdminUnitReview> reviews = createList(
@@ -195,7 +195,7 @@ public class DiseaseExtentGeneratorHelperTest {
     public void computeScoreForOccurrencesAndReviewsAndNonDefaultParameters() {
         // Arrange
         // Maximum months = 7 x 12 = 84, maximum months for higher score = 3 x 12 = 36, lower score = 2, higher score = 3
-        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 84, 0.6, 5, 1, 36, 2, 3);
+        DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 0.6, 5, 1, 36, 2, 3);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
@@ -269,12 +269,12 @@ public class DiseaseExtentGeneratorHelperTest {
 
     ///CHECKSTYLE:OFF ParameterNumber
     private DiseaseGroup createDiseaseGroup(int id, DiseaseGroup parentGroup, String name, DiseaseGroupType groupType,
-                                            int maxMonthsAgo, double minValidationWeighting, int minOccurrencesForPresence,
+                                            double minValidationWeighting, int minOccurrencesForPresence,
                                             int minOccurrenceForPossiblePresence, int maxMonthsAgoForHigherOccurrenceScore,
                                             int lowerOccurrenceScore, int higherOccurrenceScore) {
     ///CHECKSTYLE:ON
         DiseaseGroup diseaseGroup = new DiseaseGroup(id, parentGroup, name, groupType);
-        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup, maxMonthsAgo, minValidationWeighting,
+        DiseaseExtent parameters = new DiseaseExtent(diseaseGroup, minValidationWeighting,
                 minOccurrencesForPresence, minOccurrenceForPossiblePresence, maxMonthsAgoForHigherOccurrenceScore,
                 lowerOccurrenceScore, higherOccurrenceScore);
 

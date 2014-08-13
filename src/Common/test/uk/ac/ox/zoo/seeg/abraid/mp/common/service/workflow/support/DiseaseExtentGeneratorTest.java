@@ -10,10 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
@@ -40,6 +37,8 @@ public class DiseaseExtentGeneratorTest {
     private int diseaseGroupId = 87;
     private DiseaseGroup diseaseGroup;
     private List<? extends AdminUnitGlobalOrTropical> adminUnits;
+    private List<DiseaseOccurrence> occurrencesForModelRun;
+    private int maximumMonthsAgo = 24;
 
     @Before
     public void setUp() {
@@ -54,6 +53,7 @@ public class DiseaseExtentGeneratorTest {
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
 
         diseaseGroup = createDiseaseGroup();
+        occurrencesForModelRun = createDiseaseOccurrencesForModelRun();
     }
 
     private DiseaseGroup createDiseaseGroup() {
@@ -67,6 +67,12 @@ public class DiseaseExtentGeneratorTest {
         return group;
     }
 
+    private List<DiseaseOccurrence> createDiseaseOccurrencesForModelRun() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setOccurrenceDate(getFixedMonthsAgo(maximumMonthsAgo));
+        return Arrays.asList(occurrence);
+    }
+
     @Test
     public void generateDiseaseExtentSetsAllToUncertainIfNoRelevantOccurrencesExist() {
         // Arrange
@@ -77,7 +83,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -95,7 +101,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -129,7 +135,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -151,7 +157,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -173,7 +179,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(getReviews());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -199,7 +205,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
 
         // Act
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
 
         // Assert
         expectGetDiseaseOccurrencesForDiseaseExtent(1);
@@ -209,7 +215,6 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private DiseaseExtent createParameters() {
-        int maximumMonthsAgo = 24;
         double minimumValidationWeighting = 0.2;
         int minimumOccurrencesForPresence = 5;
         int minimumOccurrencesForPossiblePresence = 1;
@@ -217,7 +222,7 @@ public class DiseaseExtentGeneratorTest {
         int lowerOccurrenceScore = 1;
         int higherOccurrenceScore = 2;
 
-        return new DiseaseExtent(diseaseGroup, maximumMonthsAgo,
+        return new DiseaseExtent(diseaseGroup,
                 minimumValidationWeighting, minimumOccurrencesForPresence, minimumOccurrencesForPossiblePresence,
                 minimumMonthsAgoForHigherOccurrenceScore, lowerOccurrenceScore, higherOccurrenceScore);
     }
@@ -246,7 +251,7 @@ public class DiseaseExtentGeneratorTest {
     private void mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(DiseaseExtent parameters,
                                                                   List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
         double minimumValidationWeighting = parameters.getMinValidationWeighting();
-        DateTime minimumOccurrenceDate = getFixedMonthsAgo(parameters.getMaxMonthsAgo());
+        DateTime minimumOccurrenceDate = getFixedMonthsAgo(maximumMonthsAgo);
 
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 eq(diseaseGroupId), eq(minimumValidationWeighting), eq(minimumOccurrenceDate))).thenReturn(occurrences);

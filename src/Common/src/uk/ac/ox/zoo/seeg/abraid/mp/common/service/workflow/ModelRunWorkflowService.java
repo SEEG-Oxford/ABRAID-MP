@@ -2,8 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +47,8 @@ public interface ModelRunWorkflowService {
     /**
      * Generates the disease extent for the specified disease group.
      * @param diseaseGroup The disease group.
+     * @return A list of occurrences that will be sent to the model (if relevant). This is selected as input to the
+     * disease extent generation process.
      */
-    void generateDiseaseExtent(DiseaseGroup diseaseGroup);
+    List<DiseaseOccurrence> generateDiseaseExtent(DiseaseGroup diseaseGroup);
 }

@@ -3,9 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,17 +21,20 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private ModelRunRequester modelRunRequester;
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
+    private LocationService locationService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
                                        DiseaseOccurrenceReviewManager reviewManager,
                                        DiseaseService diseaseService,
+                                       LocationService locationService,
                                        DiseaseExtentGenerator diseaseExtentGenerator) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
         this.diseaseService = diseaseService;
+        this.locationService = locationService;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
     }
 
@@ -81,10 +87,25 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     /**
      * Generate the disease extent for the specified disease group.
      * @param diseaseGroup The disease group.
+     * @return A list of occurrences that will be sent to the model (if relevant). This is selected as input to the
+     * disease extent generation process.
      */
     @Override
-    public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+    public List<DiseaseOccurrence> generateDiseaseExtent(DiseaseGroup diseaseGroup) {
+        List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
+        return occurrencesForModelRun;
+    }
+
+    /**
+     * Selects occurrences for a model run, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The occurrences to send to the model.
+     */
+    public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
+        return selector.selectModelRunDiseaseOccurrences();
     }
 
     private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchEndDate,
@@ -92,14 +113,17 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
+
+        List<DiseaseOccurrence> occurrencesForModelRun;
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
-            generateDiseaseExtent(diseaseGroup);
+            occurrencesForModelRun = generateDiseaseExtent(diseaseGroup);
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
         } else {
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
-            generateDiseaseExtent(diseaseGroup);
+            occurrencesForModelRun = generateDiseaseExtent(diseaseGroup);
         }
-        modelRunRequester.requestModelRun(diseaseGroupId, batchEndDate);
+
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRun, batchEndDate);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
 

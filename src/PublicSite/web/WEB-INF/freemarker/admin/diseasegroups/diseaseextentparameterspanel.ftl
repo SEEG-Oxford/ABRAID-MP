@@ -19,7 +19,6 @@
         <div class="panel-body">
             <div class="col-sm-6">
                 <div class="form-horizontal">
-                    <@formGroup id="max-months-ago" title="Max. Months Ago" bind="maxMonthsAgo"></@formGroup>
                     <@formGroup id="max-months-ago-for-higher-score" title="Max. Months Ago for Higher Occurrence Score" bind="maxMonthsAgoForHigherOccurrenceScore"></@formGroup>
                     <@formGroup id="higher-occurrence-score" title="Higher Occurrence Score" bind="higherOccurrenceScore"></@formGroup>
                     <@formGroup id="lower-occurrence-score" title="Lower Occurrence Score" bind="lowerOccurrenceScore"></@formGroup>

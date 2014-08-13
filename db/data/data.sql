@@ -11,7 +11,7 @@
 \copy healthmap_country_country (healthmap_country_id, gaul_code) FROM 'healthmap_country_country.txt' (ENCODING utf8, NULL '')
 \copy validator_disease_group (id, name) FROM 'validator_disease_group.txt' (ENCODING utf8, NULL '')
 \copy disease_group (id, parent_id, name, group_type, public_name, short_name, abbreviation, is_global, validator_disease_group_id, weighting, automatic_model_runs, min_new_occurrences_trigger, min_data_volume, min_distinct_countries, high_frequency_threshold, min_high_frequency_countries, occurs_in_africa) FROM 'disease_group.txt' (ENCODING utf8, NULL '')
-\copy disease_extent (disease_group_id, max_months_ago, min_validation_weighting, min_occurrences_for_presence, min_occurrences_for_possible_presence, max_months_ago_for_higher_occurrence_score, lower_occurrence_score, higher_occurrence_score) FROM 'disease_extent.txt' (ENCODING utf8, NULL '')
+\copy disease_extent (disease_group_id, min_validation_weighting, min_occurrences_for_presence, min_occurrences_for_possible_presence, max_months_ago_for_higher_occurrence_score, lower_occurrence_score, higher_occurrence_score) FROM 'disease_extent.txt' (ENCODING utf8, NULL '')
 \copy healthmap_disease (id, name, disease_group_id) FROM 'healthmap_disease.txt' (ENCODING utf8, NULL '')
 \copy geonames_location_precision (geonames_feature_code, location_precision) FROM 'geonames_location_precision.txt' (ENCODING utf8, NULL '')
 \copy disease_extent_class (name, weighting, distance_if_within_extent) FROM 'disease_extent_class.txt' (ENCODING utf8, NULL '')

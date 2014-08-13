@@ -7,7 +7,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonDiseaseExtent {
-    private Integer maxMonthsAgo;
     private Integer maxMonthsAgoForHigherOccurrenceScore;
     private Integer higherOccurrenceScore;
     private Integer lowerOccurrenceScore;
@@ -19,21 +18,12 @@ public class JsonDiseaseExtent {
     }
 
     public JsonDiseaseExtent(DiseaseExtent parameters) {
-        setMaxMonthsAgo(parameters.getMaxMonthsAgo());
         setMaxMonthsAgoForHigherOccurrenceScore(parameters.getMaxMonthsAgoForHigherOccurrenceScore());
         setHigherOccurrenceScore(parameters.getHigherOccurrenceScore());
         setLowerOccurrenceScore(parameters.getLowerOccurrenceScore());
         setMinValidationWeighting(parameters.getMinValidationWeighting());
         setMinOccurrencesForPresence(parameters.getMinOccurrencesForPresence());
         setMinOccurrencesForPossiblePresence(parameters.getMinOccurrencesForPossiblePresence());
-    }
-
-    public Integer getMaxMonthsAgo() {
-        return maxMonthsAgo;
-    }
-
-    public void setMaxMonthsAgo(Integer maxMonthsAgo) {
-        this.maxMonthsAgo = maxMonthsAgo;
     }
 
     public Integer getMaxMonthsAgoForHigherOccurrenceScore() {

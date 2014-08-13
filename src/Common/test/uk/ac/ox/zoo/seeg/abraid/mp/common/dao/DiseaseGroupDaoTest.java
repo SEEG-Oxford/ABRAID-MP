@@ -163,7 +163,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getExistingDiseaseExtent() {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
         DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
-        assertThat(diseaseExtent.getMaxMonthsAgo()).isEqualTo(60);
+        assertThat(diseaseExtent.getMaxMonthsAgoForHigherOccurrenceScore()).isEqualTo(24);
         assertThat(diseaseExtent.getMinValidationWeighting()).isEqualTo(0.6);
     }
 
@@ -174,13 +174,13 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
 
         // Act
-        diseaseExtent.setMaxMonthsAgo(120);
+        diseaseExtent.setMaxMonthsAgoForHigherOccurrenceScore(48);
         diseaseGroupDao.save(diseaseGroup);
         flushAndClear();
 
         // Assert
         diseaseGroup = diseaseGroupDao.getById(87);
-        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgo()).isEqualTo(120);
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgoForHigherOccurrenceScore()).isEqualTo(48);
     }
 
     @Test

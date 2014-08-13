@@ -7,10 +7,8 @@ define(["ko"], function (ko) {
     return function (diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.maxMonthsAgo = ko.observable()
-            .extend({ digit: true, min: 0 });
         self.maxMonthsAgoForHigherOccurrenceScore = ko.observable()
-            .extend({ digit: true, min: 0, max: self.maxMonthsAgo });
+            .extend({ digit: true, min: 0 });
         self.higherOccurrenceScore = ko.observable()
             .extend({ digit: true, min: 0 });
         self.lowerOccurrenceScore = ko.observable()
@@ -27,7 +25,6 @@ define(["ko"], function (ko) {
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             var parameters = diseaseGroup.diseaseExtentParameters;
             if (parameters === undefined) {
-                self.maxMonthsAgo("");
                 self.maxMonthsAgoForHigherOccurrenceScore("");
                 self.higherOccurrenceScore("");
                 self.lowerOccurrenceScore("");
@@ -35,7 +32,6 @@ define(["ko"], function (ko) {
                 self.minOccurrencesForPresence("");
                 self.minOccurrencesForPossiblePresence("");
             } else {
-                self.maxMonthsAgo(parameters.maxMonthsAgo || "");
                 self.maxMonthsAgoForHigherOccurrenceScore(parameters.maxMonthsAgoForHigherOccurrenceScore || "");
                 self.higherOccurrenceScore(parameters.higherOccurrenceScore || "");
                 self.lowerOccurrenceScore(parameters.lowerOccurrenceScore || "");
