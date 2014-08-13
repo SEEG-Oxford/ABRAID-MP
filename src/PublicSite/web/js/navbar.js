@@ -7,8 +7,39 @@
 define(["jquery", "bootstrap", "domReady!"], function ($) {
     "use strict";
 
+    var cleanUrl = function (url) {
+        var out = url.toLowerCase();
+
+        // ignore params
+        if (out.indexOf("?") !== -1) {
+            out = url.substring(0, out.indexOf("?"));
+        }
+
+        // ignore anchors
+        if (out.indexOf("#") !== -1) {
+            out = url.substring(0, out.indexOf("#"));
+        }
+
+        // ignore http basic auth (unlikely)
+        if (out.indexOf("@") !== -1) {
+            out = url.substring(out.indexOf("@"), out.length);
+        }
+
+        // ignore protocol
+        if (out.match(/^.*?:\/\/.*/g)) {
+            out = out.replace(/^.*?:\/\//g, "");
+        }
+
+        // ignore www
+        if (out.match(/^www\..*/g)) {
+            out = out.replace(/^www\./g, "");
+        }
+
+        return out;
+    };
+
     // Highlight the link for the current page
     $("ul.nav a").filter(function () {
-        return this.href.toLowerCase() === window.location.href.toLowerCase();
+        return cleanUrl(this.href) === cleanUrl(window.location.href);
     }).parent().addClass("active");
 });
