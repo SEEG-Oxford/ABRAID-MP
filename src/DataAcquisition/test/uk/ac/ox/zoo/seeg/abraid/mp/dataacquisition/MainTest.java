@@ -80,7 +80,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
     private void setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(28);
+        diseaseGroup.setMinDataVolume(27);
         diseaseGroup.setOccursInAfrica(false);
         diseaseGroup.setMinDistinctCountries(null);
         diseaseGroupDao.save(diseaseGroup);
@@ -157,7 +157,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         // the specified number of occurrence points and disease extent classes
         verify(modelWrapperWebService, atLeastOnce()).startRun(
                 argThat(new DiseaseGroupIdMatcher(87)),
-                argThat(new ListSizeMatcher<DiseaseOccurrence>(28)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
                 argThat(new MapSizeMatcher<Integer, Integer>(460)));
         verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
                 startsWith(MODELWRAPPER_URL_PREFIX), anyString());

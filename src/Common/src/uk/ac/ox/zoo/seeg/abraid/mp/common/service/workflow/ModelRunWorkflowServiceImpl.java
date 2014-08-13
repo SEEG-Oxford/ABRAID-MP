@@ -91,10 +91,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * disease extent generation process.
      */
     @Override
-    public List<DiseaseOccurrence> generateDiseaseExtent(DiseaseGroup diseaseGroup) {
+    public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
         List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, occurrencesForModelRun);
-        return occurrencesForModelRun;
     }
 
     /**
@@ -114,15 +113,18 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
 
-        List<DiseaseOccurrence> occurrencesForModelRun;
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
-            occurrencesForModelRun = generateDiseaseExtent(diseaseGroup);
+            generateDiseaseExtent(diseaseGroup);
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
         } else {
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
-            occurrencesForModelRun = generateDiseaseExtent(diseaseGroup);
+            generateDiseaseExtent(diseaseGroup);
         }
 
+        // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
+        // they may have changed as a resulting of updating weightings / isValidated. So retrieve them again before
+        // running the model.
+        List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
         modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRun, batchEndDate);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
