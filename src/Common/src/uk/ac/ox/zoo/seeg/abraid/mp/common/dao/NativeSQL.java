@@ -26,12 +26,12 @@ public interface NativeSQL {
     Integer findCountryThatContainsPoint(Point point);
 
     /**
-     * Loads the mean prediction raster for a model run.
+     * Gets the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
      * @param rasterColumnName The column name of the raster in the model_run table.
-     * @return The mean prediction raster, in ASCII raster format.
+     * @return The mean prediction raster.
      */
-    byte[] loadRasterForModelRun(int modelRunId, String rasterColumnName);
+    byte[] getRasterForModelRun(int modelRunId, String rasterColumnName);
 
     /**
      * Updates the specified model run to include the specified mean prediction raster.

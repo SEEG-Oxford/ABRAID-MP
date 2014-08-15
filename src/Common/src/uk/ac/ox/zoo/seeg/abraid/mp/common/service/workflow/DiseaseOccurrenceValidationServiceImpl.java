@@ -1,9 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
+
+import java.util.List;
 
 /**
  * Adds validation parameters to a disease occurrence. Marks it for manual validation (via the Data Validator GUI)
@@ -13,10 +17,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromD
  */
 @Transactional(rollbackFor = Exception.class)
 public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrenceValidationService {
-    private NativeSQL nativeSQL;
+    private EnvironmentalSuitabilityHelper esHelper;
+    private DistanceFromDiseaseExtentHelper dfdeHelper;
 
-    public DiseaseOccurrenceValidationServiceImpl(NativeSQL nativeSQL) {
-        this.nativeSQL = nativeSQL;
+    public DiseaseOccurrenceValidationServiceImpl(EnvironmentalSuitabilityHelper esHelper,
+                                                  DistanceFromDiseaseExtentHelper dfdeHelper) {
+        this.esHelper = esHelper;
+        this.dfdeHelper = dfdeHelper;
     }
 
     /**
@@ -26,10 +33,11 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      * @param occurrence The disease occurrence.
      * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
+    @Override
     public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
         if (isEligibleForValidation(occurrence)) {
             if (automaticModelRunsEnabled(occurrence)) {
-                addValidationParameters(occurrence);
+                addValidationParameters(occurrence, null);
             } else {
                 occurrence.setValidated(true);
             }
@@ -39,12 +47,26 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a disease occurrence (without checks).
-     * @param occurrence The disease occurrence.
+     * Adds validation parameters to a list of disease occurrences (without checks). Each occurrence must belong to
+     * the same disease group.
+     * @param occurrences The list of disease occurrences.
      */
-    public void addValidationParameters(DiseaseOccurrence occurrence) {
-        occurrence.setEnvironmentalSuitability(findEnvironmentalSuitability(occurrence));
-        occurrence.setDistanceFromDiseaseExtent(findDistanceFromDiseaseExtent(occurrence));
+    @Override
+    public void addValidationParameters(List<DiseaseOccurrence> occurrences) {
+        DiseaseGroup diseaseGroup = getDiseaseGroup(occurrences);
+        if (diseaseGroup != null) {
+            // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
+            // to all occurrences
+            GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+            for (DiseaseOccurrence occurrence : occurrences) {
+                addValidationParameters(occurrence, raster);
+            }
+        }
+    }
+
+    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
+        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
         occurrence.setMachineWeighting(findMachineWeighting(occurrence));
         occurrence.setValidated(findIsValidated(occurrence));
     }
@@ -55,16 +77,6 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
         return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
-    }
-
-    private Double findEnvironmentalSuitability(DiseaseOccurrence occurrence) {
-        return nativeSQL.findEnvironmentalSuitability(occurrence.getDiseaseGroup().getId(),
-                occurrence.getLocation().getGeom());
-    }
-
-    private Double findDistanceFromDiseaseExtent(DiseaseOccurrence occurrence) {
-        DistanceFromDiseaseExtentHelper helper = new DistanceFromDiseaseExtentHelper(nativeSQL);
-        return helper.findDistanceFromDiseaseExtent(occurrence);
     }
 
     private Double findMachineWeighting(DiseaseOccurrence occurrence) {
@@ -86,5 +98,9 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     private boolean noModelRunsYet(DiseaseOccurrence occurrence) {
         return (occurrence.getEnvironmentalSuitability() == null) &&
                (occurrence.getDistanceFromDiseaseExtent() == null);
+    }
+
+    private DiseaseGroup getDiseaseGroup(List<DiseaseOccurrence> occurrences) {
+        return (occurrences != null && occurrences.size() > 0) ? occurrences.get(0).getDiseaseGroup() : null;
     }
 }

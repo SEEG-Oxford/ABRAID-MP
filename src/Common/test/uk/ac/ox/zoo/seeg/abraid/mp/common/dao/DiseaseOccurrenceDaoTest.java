@@ -454,7 +454,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getIDsForBatching() {
+    public void getOccurrencesForBatching() {
         // Arrange - the first 4 of these occurrences are before or on the batch end date, the others are after
         // or do not have isValidated = true
         setFinalWeightingOfSelectedOccurrencesToNull(274656, 273401, 275758, 275714, 275107, 274779);
@@ -462,7 +462,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
 
         // Act
-        List<Integer> occurrences = diseaseOccurrenceDao.getIDsForBatching(diseaseGroupId, batchEndDate);
+        List<DiseaseOccurrence> occurrences =
+                diseaseOccurrenceDao.getOccurrencesForBatching(diseaseGroupId, batchEndDate);
 
         // Assert
         assertThat(occurrences).hasSize(3);

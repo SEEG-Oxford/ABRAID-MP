@@ -57,12 +57,12 @@ public class NativeSQLImpl implements NativeSQL {
      * Loads the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
      * @param rasterColumnName The column name of the raster in the model_run table.
-     * @return The mean prediction raster, in ASCII raster format.
+     * @return The mean prediction raster.
      */
     @Override
-    public byte[] loadRasterForModelRun(int modelRunId, String rasterColumnName) {
+    public byte[] getRasterForModelRun(int modelRunId, String rasterColumnName) {
         String query = String.format(LOAD_RASTER_QUERY, rasterColumnName);
-        return (byte[]) uniqueResult(query, "gdalFormat", GDAL_RASTER_FORMAT, "id", modelRunId);
+        return (byte[]) uniqueResult(query, "gdalFormat", GEOTIFF_RASTER_FORMAT, "id", modelRunId);
     }
 
     /**

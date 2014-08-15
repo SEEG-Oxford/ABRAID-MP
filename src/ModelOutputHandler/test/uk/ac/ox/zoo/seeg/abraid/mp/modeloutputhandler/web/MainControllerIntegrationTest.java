@@ -266,7 +266,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     private void assertThatRasterInDatabaseMatchesRasterInFile(ModelRun run, String fileName, String rasterColumnName) throws IOException {
         byte[] expectedRaster = loadTestFile(fileName);
-        byte[] actualRaster = nativeSQL.loadRasterForModelRun(run.getId(), rasterColumnName);
+        byte[] actualRaster = nativeSQL.getRasterForModelRun(run.getId(), rasterColumnName);
 
         assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
     }
