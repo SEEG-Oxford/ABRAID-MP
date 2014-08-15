@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class DiseaseOccurrenceHandler {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceHandler.class);
+    private static final String STARTING_HANDLING_LOG_MESSAGE = "Model run %d: starting disease occurrence handling";
     private static final String INITIAL_BATCH_LOG_MESSAGE = "Model run %d: this is the initial batch, so setting " +
             "final weighting to null for %d occurrence(s) of disease group %d (%s)";
     private static final String VALIDATION_LOG_MESSAGE =
@@ -55,6 +56,7 @@ public class DiseaseOccurrenceHandler {
 
         // If disease group is in the setup phase, set validation parameters on a batch of disease occurrences
         if (didModelRunComplete(modelRun) && !areAutomaticModelRunsEnabled(diseaseGroup)) {
+            LOGGER.info(String.format(STARTING_HANDLING_LOG_MESSAGE, modelRun.getId()));
             initialiseBatchingIfNecessary(modelRun, diseaseGroup);
             handleBatch(modelRun, diseaseGroup);
         } else {
