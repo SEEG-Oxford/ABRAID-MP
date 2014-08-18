@@ -92,7 +92,7 @@ public class DiseaseGroupForModelRunValidatorTest {
         String errorMessage = validator.validate();
 
         // Assert
-        assertThat(errorMessage).isEqualTo("the Data Validator disease group is missing");
+        assertThat(errorMessage).isEqualTo("the validator disease group is missing");
     }
 
     @Test

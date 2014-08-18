@@ -17,7 +17,7 @@ public class DiseaseGroupForModelRunValidator {
     private static final String SHORT_NAME = "the short name";
     private static final String ABBREVIATION = "the abbreviation";
     private static final String GLOBAL_TROPICAL = "global/tropical";
-    private static final String VALIDATOR_DISEASE_GROUP = "the Data Validator disease group";
+    private static final String VALIDATOR_DISEASE_GROUP = "the validator disease group";
     private static final String MAX_MONTHS_AGO = "maximum months ago";
     private static final String MIN_VALIDATION_WEIGHTING = "minimum validation weighting";
     private static final String MIN_OCCURRENCES_FOR_PRESENCE = "minimum occurrences for presence";
@@ -89,6 +89,15 @@ public class DiseaseGroupForModelRunValidator {
             if (parameters.getMaxMonthsAgo() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MAX_MONTHS_AGO);
             }
+            if (parameters.getMaxMonthsAgoForHigherOccurrenceScore() == null) {
+                return String.format(PARAMETER_MISSING_MESSAGE, MAX_MONTHS_AGO_FOR_HIGHER_SCORE);
+            }
+            if (parameters.getHigherOccurrenceScore() == null) {
+                return String.format(PARAMETER_MISSING_MESSAGE, HIGHER_SCORE);
+            }
+            if (parameters.getLowerOccurrenceScore() == null) {
+                return String.format(PARAMETER_MISSING_MESSAGE, LOWER_SCORE);
+            }
             if (parameters.getMinValidationWeighting() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MIN_VALIDATION_WEIGHTING);
             }
@@ -97,15 +106,6 @@ public class DiseaseGroupForModelRunValidator {
             }
             if (parameters.getMinOccurrencesForPossiblePresence() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MIN_OCCURRENCES_FOR_POSSIBLE_PRESENCE);
-            }
-            if (parameters.getMaxMonthsAgoForHigherOccurrenceScore() == null) {
-                return String.format(PARAMETER_MISSING_MESSAGE, MAX_MONTHS_AGO_FOR_HIGHER_SCORE);
-            }
-            if (parameters.getLowerOccurrenceScore() == null) {
-                return String.format(PARAMETER_MISSING_MESSAGE, LOWER_SCORE);
-            }
-            if (parameters.getHigherOccurrenceScore() == null) {
-                return String.format(PARAMETER_MISSING_MESSAGE, HIGHER_SCORE);
             }
         }
         return null;

@@ -32,20 +32,20 @@ define([
             return { batchEndDate: batchEndDateText };
         };
 
+        self.isEnablingAutomaticModelRuns = ko.observable(false);
         self.enableAutomaticModelRuns = function () {
+            self.isEnablingAutomaticModelRuns(true);
             $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
                 .done(function () { self.isAutomaticModelRunsEnabled(true); })
-                .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); });
+                .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
+                .always(function () { self.isEnablingAutomaticModelRuns(false); });
         };
-
-        var initialiseParameters = function (diseaseGroup) {
-            self.selectedDiseaseGroupId(diseaseGroup.id);
-            self.isAutomaticModelRunsEnabled(diseaseGroup.automaticModelRuns);
-            self.isSubmitting(true);
-            self.notices.removeAll();
-        };
+        self.disableButtonThatEnablesAutomaticModelRuns = ko.computed(function () {
+            return !self.canRunModelServerResponse() || self.isSubmitting() || self.isEnablingAutomaticModelRuns();
+        });
 
         var getModelRunInfo = function () {
+            self.notices.removeAll();
             if (self.selectedDiseaseGroupId() !== undefined) {
                 // Get information regarding model runs for this disease group
                 var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
@@ -72,7 +72,8 @@ define([
 
         // Called when a disease group is selected from the drop-down list
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
-            initialiseParameters(selectedDiseaseGroup);
+            self.selectedDiseaseGroupId(selectedDiseaseGroup.id);
+            self.isAutomaticModelRunsEnabled(selectedDiseaseGroup.automaticModelRuns);
             getModelRunInfo();
         });
 
