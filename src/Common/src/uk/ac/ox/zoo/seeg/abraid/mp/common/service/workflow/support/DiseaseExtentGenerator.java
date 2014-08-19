@@ -32,9 +32,10 @@ public class DiseaseExtentGenerator {
     /**
      * Generates a disease extent for a single disease group.
      * @param diseaseGroup The disease group.
-     * @param occurrencesForModelRun The disease occurrences that are eligible to be sent to the model.
+     * @param minimumOccurrenceDate The minimum occurrence date for the disease extent, as calculated from minimum
+     *                              occurrence date of all the occurrences that can be sent to the model.
      */
-    public void generateDiseaseExtent(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> occurrencesForModelRun) {
+    public void generateDiseaseExtent(DiseaseGroup diseaseGroup, DateTime minimumOccurrenceDate) {
         DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
@@ -42,7 +43,7 @@ public class DiseaseExtentGenerator {
         if (helper.getCurrentDiseaseExtent().size() == 0) {
             createInitialExtent(helper);
         } else {
-            updateExistingExtent(helper, occurrencesForModelRun);
+            updateExistingExtent(helper, minimumOccurrenceDate);
         }
     }
 
@@ -75,10 +76,9 @@ public class DiseaseExtentGenerator {
         updateAggregatedDiseaseExtent(helper.getDiseaseGroup());
     }
 
-    private void updateExistingExtent(DiseaseExtentGeneratorHelper helper,
-                                      List<DiseaseOccurrence> occurrencesForModelRun) {
+    private void updateExistingExtent(DiseaseExtentGeneratorHelper helper, DateTime minimumOccurrenceDate) {
         List<AdminUnitReview> reviews = getRelevantReviews(helper);
-        setUpdatedExtentOccurrences(helper, occurrencesForModelRun);
+        setUpdatedExtentOccurrences(helper, minimumOccurrenceDate);
         LOGGER.info(String.format(UPDATING_MESSAGE, getDiseaseGroupAndOccurrencesLogMessage(helper), reviews.size()));
 
         helper.groupOccurrencesByAdminUnit();
@@ -95,17 +95,12 @@ public class DiseaseExtentGenerator {
         helper.setOccurrences(occurrences);
     }
 
-    private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper,
-                                             List<DiseaseOccurrence> occurrencesForModelRun) {
+    private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper, DateTime minimumOccurrenceDate) {
         DiseaseExtent parameters = helper.getParameters();
 
         // The minimum occurrence date is only relevant if automatic model runs are enabled for the disease
-        DateTime minimumOccurrenceDate = null;
-        if (helper.getDiseaseGroup().isAutomaticModelRunsEnabled() &&
-                occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
-            // The minimum occurrence date for the disease extent is the same as the minimum occurrence date of all
-            // the occurrences that can be sent to the model
-            minimumOccurrenceDate = occurrencesForModelRun.get(0).getOccurrenceDate();
+        if (!helper.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
+            minimumOccurrenceDate = null;
         }
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
