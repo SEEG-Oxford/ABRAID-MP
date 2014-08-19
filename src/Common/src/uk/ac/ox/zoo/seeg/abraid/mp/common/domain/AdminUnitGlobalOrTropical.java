@@ -40,9 +40,10 @@ public abstract class AdminUnitGlobalOrTropical {
         this.gaulCode = gaulCode;
     }
 
-    protected AdminUnitGlobalOrTropical(Integer gaulCode, Integer countryGaulCode) {
+    protected AdminUnitGlobalOrTropical(Integer gaulCode, Integer countryGaulCode, char level) {
         this.gaulCode = gaulCode;
         this.countryGaulCode = countryGaulCode;
+        this.level = level;
     }
 
     public Integer getGaulCode() {

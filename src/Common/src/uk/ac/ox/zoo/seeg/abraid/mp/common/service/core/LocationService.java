@@ -56,20 +56,18 @@ public interface LocationService {
     /**
      * Finds the first admin unit for global diseases that contains the specified point.
      * @param point The point.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    Integer findAdminUnitGlobalThatContainsPoint(Point point, Character adminLevel);
+    Integer findAdminUnitGlobalThatContainsPoint(Point point);
 
     /**
      * Finds the first admin unit for tropical diseases that contains the specified point.
      * @param point The point.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first tropical admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    Integer findAdminUnitTropicalThatContainsPoint(Point point, Character adminLevel);
+    Integer findAdminUnitTropicalThatContainsPoint(Point point);
 
     /**
      * Finds the country that contains the specified point.
