@@ -64,9 +64,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
 
     @Test
     public void selectModelRunDiseaseOccurrencesThrowsExceptionWhenFewerOccurrencesThanMDVAndAutomaticModelRunsAreDisabled() {
-        // Arrange
+        // Arrange - NB. Automatic model runs are disabled by default
         int diseaseGroupId = 87;
-        disableAutomaticModelRuns(diseaseGroupId);
 
         ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
 
@@ -86,7 +85,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         int minDataVolume = 20;
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(minDataVolume);       // Ensure MDVSatisfied check will pass
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
+        diseaseGroup.setMinDataVolume(minDataVolume);                   // Ensure MDVSatisfied check will pass
         diseaseGroup.setOccursInAfrica(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
@@ -101,9 +101,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
 
     @Test
     public void selectModelRunDiseaseOccurrencesReturnsAllOccurrencesWhenAutomaticModelRunsAreDisabled() throws Exception {
-        // Arrange
+        // Arrange - NB. Automatic model runs are disabled by default
         int diseaseGroupId = 87;
-        disableAutomaticModelRuns(diseaseGroupId);
         int minDataVolume = 20;
         int expectedAllOccurrencesSize = 27;
 
@@ -127,7 +126,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         int minDataVolume = 20;
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(minDataVolume);       // Ensure MDVSatisfied check will pass
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
+        diseaseGroup.setMinDataVolume(minDataVolume);                   // Ensure MDVSatisfied check will pass
         diseaseGroup.setOccursInAfrica(true);
         diseaseGroup.setHighFrequencyThreshold(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
@@ -148,7 +148,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         int minDataVolume = 20;
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(minDataVolume);       // Ensure MDVSatisfied check will pass
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
+        diseaseGroup.setMinDataVolume(minDataVolume);                   // Ensure MDVSatisfied check will pass
         diseaseGroup.setOccursInAfrica(false);
         diseaseGroup.setMinDistinctCountries(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
@@ -167,7 +168,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         // Arrange
         int diseaseGroupId = 87;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(20);       // Ensure MDVSatisfied check will pass
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
+        diseaseGroup.setMinDataVolume(20);                              // Ensure MDVSatisfied check will pass
         diseaseGroup.setOccursInAfrica(true);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
@@ -185,7 +187,8 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         // Arrange
         int diseaseGroupId = 87;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(20);       // Ensure MDVSatisfied check will pass
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
+        diseaseGroup.setMinDataVolume(20);                              // Ensure MDVSatisfied check will pass
         diseaseGroup.setOccursInAfrica(false);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
@@ -203,6 +206,7 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         // Arrange
         int diseaseGroupId = 87;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
         addOccurrences(diseaseGroup);
         diseaseGroup.setMinDataVolume(2);               // Helper will initially get the first 2 occurrences
         diseaseGroup.setOccursInAfrica(true);
@@ -219,7 +223,6 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         // Assert
         assertThat(occurrences).hasSize(3);
         assertThat(extractDistinctGaulCodes(occurrences)).hasSize(2);
-
     }
 
     // Set up so that there is at least 1 occurrence in (minDistinctCountries = 2) countries,
@@ -245,6 +248,7 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         int diseaseGroupId = 87;
         int minDistinctCountries = 2;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
         diseaseGroup.setMinDataVolume(1);
         diseaseGroup.setOccursInAfrica(false);
         diseaseGroup.setMinDistinctCountries(minDistinctCountries);
@@ -265,11 +269,5 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         return new HashSet<>(convert(locations, new Converter<Location, Integer>() {
             public Integer convert(Location location) { return location.getCountryGaulCode(); }
         }));
-    }
-
-    private void disableAutomaticModelRuns(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
-        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 }
