@@ -73,7 +73,7 @@
                                                                bootstrapDisable: disableButtonThatEnablesAutomaticModelRuns()">
                     </button>
 
-                    <br />
+                    <br /><br />
                     <div class="form-group" data-bind="foreach: notices">
                         <div data-bind="alert: $data"></div>
                     </div>
