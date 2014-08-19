@@ -14,11 +14,11 @@ define([
         BaseFormViewModel.call(self, false, true, undefined, undefined, { success: "Model run requested." }, true);
 
         self.selectedDiseaseGroupId = ko.observable();
-        self.isAutomaticModelRunsEnabled = ko.observable();
+        self.isAutomaticModelRunsEnabled = ko.observable(false);
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
-        self.canRunModelServerResponse = ko.observable(false).extend({equal: true});
+        self.canRunModel = ko.observable(false).extend({equal: true});
         self.batchEndDate = ko.observable("").extend({required: true, date: true});
         self.batchEndDateMinimum = ko.observable("");
         self.batchEndDateMaximum = ko.observable("");
@@ -41,13 +41,26 @@ define([
                 .always(function () { self.isEnablingAutomaticModelRuns(false); });
         };
         self.disableButtonThatEnablesAutomaticModelRuns = ko.computed(function () {
-            return !self.canRunModelServerResponse() || self.isSubmitting() || self.isEnablingAutomaticModelRuns();
+            return !self.canRunModel() || self.isSubmitting() || self.isEnablingAutomaticModelRuns();
         });
 
-        var getModelRunInfo = function () {
+        self.resetState = function () { // only public for testing
             self.notices.removeAll();
-            self.isSubmitting(true);
-            if (self.selectedDiseaseGroupId() !== undefined) {
+            self.lastModelRunText("");
+            self.diseaseOccurrencesText("");
+            self.batchEndDate("");
+            self.batchEndDateMinimum("");
+            self.batchEndDateMaximum("");
+            self.hasModelBeenSuccessfullyRun(false);
+            self.canRunModel(false);
+        };
+
+        self.updateModelRunInfo = function (diseaseGroupId) { // only public for testing
+            self.resetState();
+            self.selectedDiseaseGroupId(diseaseGroupId);
+
+            if (self.selectedDiseaseGroupId()) {
+                self.isSubmitting(true);
                 // Get information regarding model runs for this disease group
                 var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
                 $.getJSON(url)
@@ -58,8 +71,8 @@ define([
                         self.batchEndDateMinimum(data.batchEndDateMinimum);
                         self.batchEndDateMaximum(data.batchEndDateMaximum);
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
-                        self.canRunModelServerResponse(data.canRunModel);
-                        if (!self.canRunModelServerResponse()) {
+                        self.canRunModel(data.canRunModel);
+                        if (!self.canRunModel()) {
                             var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
                             self.notices.push({ message: errorMessage, priority: "warning"});
                         }
@@ -75,15 +88,13 @@ define([
 
         // Called when a disease group is selected from the drop-down list
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
-            self.selectedDiseaseGroupId(selectedDiseaseGroup.id);
             self.isAutomaticModelRunsEnabled(selectedDiseaseGroup.automaticModelRuns);
-            getModelRunInfo();
+            self.updateModelRunInfo(selectedDiseaseGroup.id);
         });
 
         // Called when changes to a disease group are successfully saved
         ko.postbox.subscribe(diseaseGroupSavedEventName, function (diseaseGroupId) {
-            self.selectedDiseaseGroupId(diseaseGroupId);
-            getModelRunInfo();
+            self.updateModelRunInfo(diseaseGroupId);
         });
     };
 });

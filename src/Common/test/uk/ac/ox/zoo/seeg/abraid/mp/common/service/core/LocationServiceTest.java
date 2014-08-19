@@ -131,10 +131,10 @@ public class LocationServiceTest extends AbstractCommonSpringUnitTests {
         // Arrange
         Point point = GeometryUtils.createPoint(1, 2);
         Integer expectedGaulCode = 123;
-        when(nativeSQL.findAdminUnitThatContainsPoint(point, true, null)).thenReturn(expectedGaulCode);
+        when(nativeSQL.findAdminUnitThatContainsPoint(point, true)).thenReturn(expectedGaulCode);
 
         // Act
-        Integer actualGaulCode = locationService.findAdminUnitGlobalThatContainsPoint(point, null);
+        Integer actualGaulCode = locationService.findAdminUnitGlobalThatContainsPoint(point);
 
         // Assert
         assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
@@ -145,10 +145,10 @@ public class LocationServiceTest extends AbstractCommonSpringUnitTests {
         // Arrange
         Point point = GeometryUtils.createPoint(1, 2);
         Integer expectedGaulCode = 123;
-        when(nativeSQL.findAdminUnitThatContainsPoint(point, false, '0')).thenReturn(expectedGaulCode);
+        when(nativeSQL.findAdminUnitThatContainsPoint(point, false)).thenReturn(expectedGaulCode);
 
         // Act
-        Integer actualGaulCode = locationService.findAdminUnitTropicalThatContainsPoint(point, '0');
+        Integer actualGaulCode = locationService.findAdminUnitTropicalThatContainsPoint(point);
 
         // Assert
         assertThat(actualGaulCode).isEqualTo(expectedGaulCode);

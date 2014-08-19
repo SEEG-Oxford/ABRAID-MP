@@ -12,11 +12,10 @@ public interface NativeSQL {
      * Finds the first admin unit that contains the specified point.
      * @param point The point.
      * @param isGlobal True to use admin units for global diseases, otherwise false.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal, Character adminLevel);
+    Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal);
 
     /**
      * Finds the country that contains the specified point.

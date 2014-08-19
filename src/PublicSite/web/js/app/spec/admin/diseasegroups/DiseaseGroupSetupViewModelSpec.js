@@ -3,263 +3,362 @@
  */
 define([
     "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
-    "app/BaseFormViewModel",
-    "ko",
-    "underscore",
-    "app/spec/lib/squire"
-], function (DiseaseGroupSetupViewModel, BaseFormViewModel, ko, _, Squire) {
+    "ko"
+], function (DiseaseGroupSetupViewModel, ko) {
     "use strict";
 
     describe("The 'disease group setup' view model", function () {
         var vm = {};
-        var baseUrl = "";
+        var baseUrl = "http://abraid.zoo.ox.ac.uk/publicsite/";
         var selectedEventName = "selected";
         var savedEventName = "saved";
+        beforeEach(function () {
+            vm = new DiseaseGroupSetupViewModel(baseUrl, selectedEventName, savedEventName);
+            vm.isValid = ko.observable(true);
+        });
 
-        describe("has the BaseFormViewModel behavior which", function () {
-            var vm;
-            var formSpy;
-            beforeEach(function (done) {
-                if (vm === undefined) { // before first
-                    // Squire is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
-                    jasmine.Ajax.uninstall();
-                    var injector = new Squire();
-
-                    formSpy = jasmine.createSpy("formSpy").and.callFake(BaseFormViewModel);
-                    injector.mock("app/BaseFormViewModel", formSpy);
-
-                    injector.require(["app/admin/diseasegroups/DiseaseGroupSetupViewModel"],
-                        function (DiseaseGroupSetupViewModel) {
-                            vm = new DiseaseGroupSetupViewModel(baseUrl, selectedEventName, savedEventName);
-                            jasmine.Ajax.install();
-                            done();
-                        }
-                    );
-                } else {
-                    done();
-                }
+        describe("holds the selected disease group ID which", function () {
+            it("is an observable", function () {
+                expect(vm.selectedDiseaseGroupId).toBeObservable();
             });
 
-            it("it gets at construction", function () {
-                expect(formSpy).toHaveBeenCalled();
-            });
-
-            it("only receives JSON", function () {
-                expect(formSpy.calls.argsFor(0)[0]).toEqual(false);
-                expect(formSpy.calls.argsFor(0)[1]).toEqual(true);
-            });
-
-            it("builds the correct submission url", function () {
-                var id = 1;
-                vm.selectedDiseaseGroupId(id);
-                expect(vm.buildSubmissionUrl()).toEqual(baseUrl + "admin/diseasegroups/" + id + "/requestmodelrun");
-
-                // A custom buildSubmissionUrl was constructed in DiseaseGroupSetupViewModel,
-                // so baseUrl and targetUrl arguments to BaseFormViewModel are undefined
-                expect(formSpy.calls.argsFor(0)[2]).toEqual(undefined);
-                expect(formSpy.calls.argsFor(0)[3]).toEqual(undefined);
-            });
-
-            it("builds the correct submission data", function () {
-                var date = "19 Aug 2014";
-                vm.batchEndDate(date);
-                expect(vm.buildSubmissionData().batchEndDate).toBeDefined();
-                expect(vm.buildSubmissionData().batchEndDate).toContain("2014-08-19T00:00:00");
-            });
-
-            it("uses the provided messages", function () {
-                expect(formSpy.calls.argsFor(0)[4]).toEqual({ success: "Model run requested." });
-            });
-
-            it("excludes the generic failure message", function () {
-                expect(formSpy.calls.argsFor(0)[5]).toEqual(true);
+            it("starts empty", function () {
+                expect(vm.selectedDiseaseGroupId()).toBeUndefined();
             });
         });
 
-        describe("has the expected extended behaviour. It", function () {
-            beforeEach(function () {
-                vm = new DiseaseGroupSetupViewModel(baseUrl, selectedEventName, savedEventName);
-                vm.isValid = ko.observable(true);
+        describe("holds whether or not automatic model runs have been enabled for the disease group", function () {
+            it("is an observable", function () {
+                expect(vm.isAutomaticModelRunsEnabled).toBeObservable();
             });
 
-            describe("holds the expected state fields", function () {
-                it("as observables", function () {
-                    expect(vm.selectedDiseaseGroupId).toBeObservable();
-                    expect(vm.isAutomaticModelRunsEnabled).toBeObservable();
-                    expect(vm.hasModelBeenSuccessfullyRun).toBeObservable();
-                    expect(vm.lastModelRunText).toBeObservable();
-                    expect(vm.diseaseOccurrencesText).toBeObservable();
-                    expect(vm.canRunModelServerResponse).toBeObservable();
-                    expect(vm.batchEndDate).toBeObservable();
-                    expect(vm.batchEndDateMinimum).toBeObservable();
-                    expect(vm.batchEndDateMaximum).toBeObservable();
-                });
+            it("starts false", function () {
+                expect(vm.isAutomaticModelRunsEnabled()).toBe(false);
+            });
+        });
 
-                it("with the expected validation rules specified", function () {
-                    expect(vm.canRunModelServerResponse).toHaveValidationRule({ name: "equal", params: true });
-                    expect(vm.batchEndDate).toHaveValidationRule({name: "required", params: true});
-                    expect(vm.batchEndDate).toHaveValidationRule({name: "date", params: true});
-                });
+        describe("holds whether or not the model has been successfully run which", function () {
+            it("is an observable", function () {
+                expect(vm.hasModelBeenSuccessfullyRun).toBeObservable();
             });
 
-            describe("has a method to enable automatic model runs which", function () {
-                it("POSTs to the expected URL", function () {
+            it("starts false", function () {
+                expect(vm.hasModelBeenSuccessfullyRun()).toBe(false);
+            });
+        });
+
+        describe("holds the last model run text which", function () {
+            it("is an observable", function () {
+                expect(vm.lastModelRunText).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.lastModelRunText()).toBe("");
+            });
+        });
+
+        describe("holds the disease occurrences text which", function () {
+            it("is an observable", function () {
+                expect(vm.diseaseOccurrencesText).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.diseaseOccurrencesText()).toBe("");
+            });
+        });
+
+        describe("holds whether or not the model can be run (server response) which", function () {
+            it("is an observable", function () {
+                expect(vm.canRunModel).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.canRunModel()).toBe(false);
+            });
+
+            it("is required to be true for the view model to be valid", function () {
+                expect(vm.canRunModel).toHaveValidationRule({name: "equal", params: true});
+            });
+        });
+
+        describe("holds the batch end date which", function () {
+            it("is an observable", function () {
+                expect(vm.batchEndDate).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.batchEndDate()).toBe("");
+            });
+
+            it("has appropriate validation rules", function () {
+                expect(vm.batchEndDate).toHaveValidationRule({name: "required", params: true});
+                expect(vm.batchEndDate).toHaveValidationRule({name: "date", params: true});
+            });
+        });
+
+        describe("holds the batch end date minimum which", function () {
+            it("is an observable", function () {
+                expect(vm.batchEndDateMinimum).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.batchEndDateMinimum()).toBe("");
+            });
+        });
+
+        describe("holds the batch end date maximum which", function () {
+            it("is an observable", function () {
+                expect(vm.batchEndDateMaximum).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.batchEndDateMaximum()).toBe("");
+            });
+        });
+
+        describe("has the behavior of BaseFormView model, but overrides to", function () {
+            it("build a submission URL which is correct", function () {
+                // Arrange
+                vm.selectedDiseaseGroupId(10);
+                var expectedUrl = "http://abraid.zoo.ox.ac.uk/publicsite/admin/diseasegroups/10/requestmodelrun";
+
+                // Act
+                var actualUrl = vm.buildSubmissionUrl();
+
+                // Assert
+                expect(actualUrl).toBe(expectedUrl);
+            });
+
+            it("build submission data which is correct", function () {
+                // Arrange
+                vm.batchEndDate("10 Jul 2014");
+                var expectedBatchEndDate = "2014-07-10T00:00:00";
+
+                // Act
+                var actualData = vm.buildSubmissionData();
+
+                // Assert
+                expect(actualData.batchEndDate).toContain(expectedBatchEndDate);
+            });
+        });
+
+        it("has a 'resetState' method, which clears the state of the view model fields", function () {
+            // Arrange
+            vm.lastModelRunText("a");
+            vm.diseaseOccurrencesText("b");
+            vm.batchEndDate("c");
+            vm.batchEndDateMinimum("d");
+            vm.batchEndDateMaximum("e");
+            vm.hasModelBeenSuccessfullyRun(true);
+            vm.canRunModel(true);
+
+            // Act
+            vm.resetState(undefined);
+
+            // Assert
+            expect(vm.lastModelRunText()).toBe("");
+            expect(vm.diseaseOccurrencesText()).toBe("");
+            expect(vm.batchEndDate()).toBe("");
+            expect(vm.batchEndDateMinimum()).toBe("");
+            expect(vm.batchEndDateMaximum()).toBe("");
+            expect(vm.hasModelBeenSuccessfullyRun()).toBe(false);
+            expect(vm.canRunModel()).toBe(false);
+        });
+
+        describe("has a 'updateModelRunInfo' method, which", function () {
+            it("is called in response to the 'disease group selected' event", function () {
+                // Arrange
+                var diseaseGroupId = 1;
+                spyOn(vm, "updateModelRunInfo");
+
+                // Act
+                ko.postbox.publish(selectedEventName, { id: diseaseGroupId });
+
+                // Assert
+                expect(vm.updateModelRunInfo).toHaveBeenCalledWith(diseaseGroupId);
+            });
+
+            it("is called in response to the 'disease group saved' event", function () {
+                // Arrange
+                var diseaseGroupId = 1;
+                spyOn(vm, "updateModelRunInfo");
+
+                // Act
+                ko.postbox.publish(savedEventName, diseaseGroupId);
+
+                // Assert
+                expect(vm.updateModelRunInfo).toHaveBeenCalledWith(diseaseGroupId);
+            });
+
+            it("updates the 'selected disease group id'", function () {
+                vm.updateModelRunInfo(1);
+                expect(vm.selectedDiseaseGroupId()).toBe(1);
+                vm.updateModelRunInfo(undefined);
+                expect(vm.selectedDiseaseGroupId()).toBe(undefined);
+                vm.updateModelRunInfo(999);
+                expect(vm.selectedDiseaseGroupId()).toBe(999);
+            });
+
+            it("clears the state of view model", function () {
+                // Arrange
+                spyOn(vm, "resetState");
+
+                // Act
+                vm.updateModelRunInfo(1);
+
+                // Assert
+                expect(vm.resetState).toHaveBeenCalled();
+            });
+
+            describe("updates the view model 'busy' state to", function () {
+                it("busy when the update starts", function () {
                     // Arrange
-                    var id = 1;
-                    vm.selectedDiseaseGroupId(id);
-                    var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/automaticmodelruns";
+                    vm.updateModelRunInfo(1);
+
+                    // Assert
+                    expect(vm.isSubmitting()).toBe(true);
+                    expect(vm.notices().length).toBe(0);
+                });
+
+                it("not busy when the update completes", function () {
+                    // Act
+                    vm.updateModelRunInfo(1);
+                    jasmine.Ajax.requests.mostRecent().response({"status": 500});
+
+                    // Assert
+                    expect(vm.isSubmitting()).toBe(false);
+                });
+            });
+
+            describe("fetches the last model run information, which", function () {
+                it("is skipped if no disease group id is specified", function () {
+                    // Act
+                    vm.updateModelRunInfo(undefined);
+
+                    // Assert
+                    expect(jasmine.Ajax.requests.mostRecent()).toBeUndefined();
+                });
+
+                it("sends a GET request to the expected URL", function () {
+                    // Arrange
+                    var diseaseGroupId = 1;
+                    var expectedUrl = baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/modelruninformation";
 
                     // Act
-                    vm.enableAutomaticModelRuns();
+                    vm.updateModelRunInfo(diseaseGroupId);
 
                     // Arrange
                     expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
-                    expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+                    expect(jasmine.Ajax.requests.mostRecent().method).toBe("GET");
                 });
 
-                it("when successful, updates the isAutomaticModelRunsEnabled flag", function () {
-                    // Arrange
-                    vm.selectedDiseaseGroupId(1);
-                    vm.isAutomaticModelRunsEnabled(false);
-                    // Act
-                    vm.enableAutomaticModelRuns();
-                    jasmine.Ajax.requests.mostRecent().response({ status: 204 });
-                    // Assert
-                    expect(vm.isAutomaticModelRunsEnabled()).toBe(true);
-                });
-
-                it("when unsuccessful, updates the 'notices' with an error", function () {
-                    // Arrange
-                    var expectedNotice = { message: "Server error.", priority: "warning" };
-                    // Act
-                    vm.enableAutomaticModelRuns();
-                    jasmine.Ajax.requests.mostRecent().response({ status: 500 });
-                    // Assert
-                    expect(vm.notices()).toContain(expectedNotice);
-                });
-
-                describe("responds to the 'disease group selected' event by", function () {
+                it("updates the view model fields with the obtained data", function () {
                     // Arrange
                     var diseaseGroupId = 1;
-                    var diseaseGroup = { id: diseaseGroupId };
+                    var response = {
+                        lastModelRunText: "a",
+                        diseaseOccurrencesText: "b",
+                        batchEndDateDefault: "c",
+                        batchEndDateMinimum: "d",
+                        batchEndDateMaximum: "e",
+                        hasModelBeenSuccessfullyRun: "f",
+                        canRunModel: "g"
+                    };
 
-                    it("updating the expected parameters", function () {
-                        // Act
-                        ko.postbox.publish(selectedEventName, { id: diseaseGroupId, automaticModelRuns: false });
-
-                        // Assert
-                        expect(vm.selectedDiseaseGroupId()).toBe(diseaseGroupId);
-                        expect(vm.isAutomaticModelRunsEnabled()).toBe(false);
-                        expect(vm.isSubmitting()).toBe(true);
-                        expect(vm.notices().length).toBe(0);
+                    // Act
+                    vm.updateModelRunInfo(diseaseGroupId);
+                    jasmine.Ajax.requests.mostRecent().response({
+                        "status": 200,
+                        responseText: JSON.stringify(response),
+                        contentType: "application/json"
                     });
 
-                    it("GETing from the expected URL", function () {
-                        // Arrange
-                        var expectedUrl = baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/modelruninformation";
+                    // Arrange
+                    expect(vm.lastModelRunText()).toBe(response.lastModelRunText);
+                    expect(vm.diseaseOccurrencesText()).toBe(response.diseaseOccurrencesText);
+                    expect(vm.batchEndDate()).toBe(response.batchEndDateDefault);
+                    expect(vm.batchEndDateMinimum()).toBe(response.batchEndDateMinimum);
+                    expect(vm.batchEndDateMaximum()).toBe(response.batchEndDateMaximum);
+                    expect(vm.hasModelBeenSuccessfullyRun()).toBe(response.hasModelBeenSuccessfullyRun);
+                    expect(vm.canRunModel()).toBe(response.canRunModel);
 
-                        // Act
-                        ko.postbox.publish(selectedEventName, diseaseGroup);
+                    expect(vm.notices().length).toBe(0);
+                });
 
-                        // Assert
-                        expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
-                        expect(jasmine.Ajax.requests.mostRecent().method).toBe("GET");
+                it("shows a message if data indicates that the model cannot be run", function () {
+                    // Arrange
+                    var diseaseGroupId = 1;
+                    var response = {
+                        canRunModel: false,
+                        cannotRunModelReason: "abc"
+                    };
+
+                    // Act
+                    vm.updateModelRunInfo(diseaseGroupId);
+                    jasmine.Ajax.requests.mostRecent().response({
+                        "status": 200,
+                        responseText: JSON.stringify(response),
+                        contentType: "application/json"
                     });
 
-                    describe("updating the fields with the values from the response data when successful", function () {
-                        // Arrange
-                        var baseData = {
-                            lastModelRunText: "lastModelRunText",
-                            diseaseOccurrencesText: "diseaseOccurrencesText",
-                            batchEndDateDefault: "batchEndDateDefault",
-                            batchEndDateMinimum: "batchEndDateMinimum",
-                            batchEndDateMaximum: "batchEndDateMaximum",
-                            hasModelBeenSuccessfullyRun: "hasModelBeenSuccessfullyRun"
-                        };
-
-                        it("if the model cannot run", function () {
-                            // Arrange
-                            var reason = "something is wrong";
-                            var responseJson = _(baseData).extend({ canRunModel: false, cannotRunModelReason: reason });
-                            var responseText = JSON.stringify(responseJson);
-
-                            // Act
-                            ko.postbox.publish(selectedEventName, diseaseGroup);
-                            jasmine.Ajax.requests.mostRecent().response({ status : 200, responseText : responseText });
-
-                            // Assert
-                            expectBaseData();
-                            expect(vm.canRunModelServerResponse()).toBe(false);
-                            expect(vm.notices().length).toBe(1);
-                            expect(vm.notices()[0]).toEqual(
-                                { message: "Cannot run model because " + reason, priority: "warning" }
-                            );
-                        });
-
-                        it("if the model can run", function () {
-                            // Arrange
-                            var responseJson = _(baseData).extend({ canRunModel: true });
-                            var responseText = JSON.stringify(responseJson);
-
-                            // Act
-                            ko.postbox.publish(selectedEventName, diseaseGroup);
-                            jasmine.Ajax.requests.mostRecent().response({ status: 200, responseText : responseText });
-
-                            // Assert
-                            expectBaseData();
-                            expect(vm.canRunModelServerResponse()).toBe(true);
-                            expect(vm.notices().length).toBe(0);
-                        });
-                    });
-
-                    it("updating the notice with the error message when unsuccessful", function () {
-                        // Act
-                        ko.postbox.publish(selectedEventName, diseaseGroup);
-                        jasmine.Ajax.requests.mostRecent().response({ status: 500 });
-
-                        // Assert
-                        expect(vm.notices().length).toBe(1);
-                        expect(vm.notices()[0]).toEqual(
-                            { message: "Could not retrieve model run details.", priority: "warning" }
-                        );
+                    // Assert
+                    expect(vm.notices()).toContain({
+                        message: "Cannot run model because " + response.cannotRunModelReason,
+                        priority: "warning"
                     });
                 });
 
-                var expectBaseData = function () {
-                    expect(vm.lastModelRunText()).toBe("lastModelRunText");
-                    expect(vm.diseaseOccurrencesText()).toBe("diseaseOccurrencesText");
-                    expect(vm.batchEndDate()).toBe("batchEndDateDefault");
-                    expect(vm.batchEndDateMinimum()).toBe("batchEndDateMinimum");
-                    expect(vm.batchEndDateMaximum()).toBe("batchEndDateMaximum");
-                };
+                it("shows a message if the data can not be obtained", function () {
+                    // Arrange
+                    var diseaseGroupId = 1;
 
-                describe("responds to the 'disease group saved' event by", function () {
-                    it("updating the expected parameters", function () {
-                        // Arrange
-                        var diseaseGroupId = 1;
+                    // Act
+                    vm.updateModelRunInfo(diseaseGroupId);
+                    jasmine.Ajax.requests.mostRecent().response({"status": 400});
 
-                        // Act
-                        ko.postbox.publish(savedEventName, diseaseGroupId);
-
-                        // Assert
-                        expect(vm.selectedDiseaseGroupId()).toBe(diseaseGroupId);
-                        expect(vm.isSubmitting()).toBe(true);
-                        expect(vm.notices().length).toBe(0);
-                    });
-
-                    it("GETing from the expected URL", function () {
-                        // Arrange
-                        var diseaseGroupId = 1;
-                        var expectedUrl = baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/modelruninformation";
-
-                        // Act
-                        ko.postbox.publish(savedEventName, diseaseGroupId);
-
-                        // Arrange
-                        expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
-                        expect(jasmine.Ajax.requests.mostRecent().method).toBe("GET");
+                    // Assert
+                    expect(vm.notices()).toContain({
+                        message: "Could not retrieve model run details.",
+                        priority: "warning"
                     });
                 });
+            });
+        });
+
+        describe("has a method to enable automatic model runs which", function () {
+            it("POSTs to the expected URL", function () {
+                // Arrange
+                var id = 1;
+                vm.selectedDiseaseGroupId(id);
+                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/automaticmodelruns";
+
+                // Act
+                vm.enableAutomaticModelRuns();
+
+                // Arrange
+                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+            });
+
+            it("when successful, updates the isAutomaticModelRunsEnabled flag", function () {
+                // Arrange
+                vm.selectedDiseaseGroupId(1);
+                vm.isAutomaticModelRunsEnabled(false);
+                // Act
+                vm.enableAutomaticModelRuns();
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                // Assert
+                expect(vm.isAutomaticModelRunsEnabled()).toBe(true);
+            });
+
+            it("when unsuccessful, updates the 'notices' with an error", function () {
+                // Arrange
+                var expectedNotice = { message: "Server error.", priority: "warning" };
+                // Act
+                vm.enableAutomaticModelRuns();
+                jasmine.Ajax.requests.mostRecent().response({ status: 500 });
+                // Assert
+                expect(vm.notices()).toContain(expectedNotice);
             });
         });
     });

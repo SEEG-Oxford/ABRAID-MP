@@ -6,7 +6,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -56,69 +55,50 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void findAdminUnitGlobalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isEqualTo(826);
     }
 
     @Test
     public void findAdminUnitGlobalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitGlobalWherePointIsOnBorder() {
         Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isEqualTo(179);
-    }
-
-    @Test
-    public void findAdminUnitGlobalWherePointIsNotInTheRequestedAdminLevel() {
-        // This point is within British Columbia, which is an admin1
-        Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, '0');
-        assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test
     public void findAdminUnitTropicalWherePointIsOnBorder() {
         Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isEqualTo(179);
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isNull();
     }
 
-    @Test
-    public void findAdminUnitTropicalWherePointIsNotInTheRequestedAdminLevel() {
-        // This point is within British Columbia, which is an admin1
-        Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, '0');
-        // And it is assigned GAUL code 825 (Canada) which is an admin0
-        assertThat(gaulCode).isEqualTo(825);
-    }
-
-    @Ignore
     @Test
     public void updateAndReloadMeanPredictionRasterForModelRun() throws Exception {
         updateAndReloadRasterForModelRun(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
     }
 
-    @Ignore
     @Test
     public void updateAndReloadPredictionUncertaintyRasterForModelRun() throws Exception {
         updateAndReloadRasterForModelRun(NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME, SMALL_RASTER_FILENAME);
@@ -166,7 +146,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(actualNewNumGeoms).isEqualTo(expectedNewNumGeoms);
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityReturnsNullIfNoRelevantModelRunsForThisDiseaseGroup() throws Exception {
         // Arrange
@@ -187,7 +166,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isNull();
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityLowerLeftCorner() throws Exception {
         // Arrange
@@ -203,7 +181,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isEqualTo(0.89, offset(0.0000005));
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityUpperRightCorner() throws Exception {
         // Arrange
@@ -221,7 +198,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isEqualTo(0.79, offset(0.0000005));
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityInterpolated() throws Exception {
         // Arrange
@@ -239,7 +215,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         assertThat(suitability).isEqualTo(0.89, offset(0.0000005));
     }
 
-    @Ignore
     @Test
     public void findEnvironmentalSuitabilityOutOfRasterRange() throws Exception {
         // Arrange

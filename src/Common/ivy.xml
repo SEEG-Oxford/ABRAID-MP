@@ -44,6 +44,7 @@
         <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41" conf="external->default" />
         <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2" conf="external->default" />
         <dependency org="org.jadira.usertype" name="usertype.core" rev="3.1.0.GA" conf="external->default" />
+        <dependency org="com.mchange" name="c3p0" rev="0.9.5-pre8" />
 
         <dependency org="org.hibernate" name="hibernate-spatial" rev="4.3" conf="external->default" >
             <!-- Newer version explicitly included -->
