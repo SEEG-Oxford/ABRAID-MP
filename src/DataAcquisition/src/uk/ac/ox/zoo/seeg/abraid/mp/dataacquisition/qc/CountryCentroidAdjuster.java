@@ -41,7 +41,7 @@ public class CountryCentroidAdjuster {
                     Point originalPoint = location.getGeom();
                     message = String.format(REPLACED_MESSAGE, originalPoint.getX(), originalPoint.getY(),
                             centroid.getX(), centroid.getY());
-                    location.setGeom(country.getCentroidOverride());
+                    location.setGeom(centroid);
                     return true;
                 }
             }
