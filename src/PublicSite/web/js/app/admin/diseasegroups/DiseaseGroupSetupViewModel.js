@@ -46,6 +46,7 @@ define([
 
         var getModelRunInfo = function () {
             self.notices.removeAll();
+            self.isSubmitting(true);
             if (self.selectedDiseaseGroupId() !== undefined) {
                 // Get information regarding model runs for this disease group
                 var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
@@ -66,7 +67,9 @@ define([
                     .fail(function () {
                         self.notices.push({ message: "Could not retrieve model run details.", priority: "warning"});
                     })
-                    .always(function () { self.isSubmitting(false); });
+                    .always(function () {
+                        self.isSubmitting(false);
+                    });
             }
         };
 
