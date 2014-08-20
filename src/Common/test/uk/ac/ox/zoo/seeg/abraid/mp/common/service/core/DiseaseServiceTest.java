@@ -102,9 +102,9 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         DiseaseGroup diseaseGroup2 = new DiseaseGroup("Trypanosomiasis - American", validatorDiseaseGroup2);
         DiseaseGroup diseaseGroup3 = new DiseaseGroup("Poliomyelitis");
         DiseaseGroup diseaseGroup4 = new DiseaseGroup("Trypanosomiases", validatorDiseaseGroup2);
-        diseaseGroup4.setAutomaticModelRuns(true);
+        diseaseGroup4.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
         DiseaseGroup diseaseGroup5 = new DiseaseGroup("Trypanosomiasis - African", validatorDiseaseGroup2);
-        diseaseGroup5.setAutomaticModelRuns(true);
+        diseaseGroup5.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
 
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2, diseaseGroup3, diseaseGroup4,
                 diseaseGroup5);
@@ -131,9 +131,9 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         DiseaseGroup diseaseGroup2 = new DiseaseGroup("Trypanosomiasis - American", validatorDiseaseGroup2);
         DiseaseGroup diseaseGroup3 = new DiseaseGroup("Poliomyelitis");
         DiseaseGroup diseaseGroup4 = new DiseaseGroup("Trypanosomiases", validatorDiseaseGroup2);
-        diseaseGroup4.setAutomaticModelRuns(true);
+        diseaseGroup4.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
         DiseaseGroup diseaseGroup5 = new DiseaseGroup("Trypanosomiasis - African", validatorDiseaseGroup2);
-        diseaseGroup5.setAutomaticModelRuns(true);
+        diseaseGroup5.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
 
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2, diseaseGroup3, diseaseGroup4,
                 diseaseGroup5);
