@@ -39,9 +39,10 @@ public class CountryCentroidAdjuster {
                 if (centroid != null) {
                     // Location is a country and a predetermined centroid exists
                     Point originalPoint = location.getGeom();
+                    Point clonedCentroid = (Point) centroid.clone();
                     message = String.format(REPLACED_MESSAGE, originalPoint.getX(), originalPoint.getY(),
                             centroid.getX(), centroid.getY());
-                    location.setGeom(centroid);
+                    location.setGeom(clonedCentroid);
                     return true;
                 }
             }

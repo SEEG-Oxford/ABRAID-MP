@@ -25,6 +25,8 @@ public class QCManager {
     private static final int STAGE_3_ID = 3;
     private static final int STAGE_2_MAXIMUM_DISTANCE = 5;
     private static final int STAGE_3_MAXIMUM_DISTANCE = 5;
+    private static final String STAGE_2_GEOMETRY_DESCRIPTION = "land";
+    private static final String STAGE_3_GEOMETRY_DESCRIPTION = "HealthMap country";
 
     private QCLookupData qcLookupData;
 
@@ -83,7 +85,7 @@ public class QCManager {
             message = adjuster.getMessage();
         } else {
             // Ensure that the location is on land. If not, snap to land if within the maximum distance away.
-            Snapper snapper = new Snapper("land", STAGE_2_MAXIMUM_DISTANCE);
+            Snapper snapper = new Snapper(STAGE_2_GEOMETRY_DESCRIPTION, STAGE_2_MAXIMUM_DISTANCE);
             applySnapperToLocation(snapper, location, qcLookupData.getLandSeaBorders());
             message = snapper.getMessage();
             passed = snapper.hasPassed();
@@ -103,7 +105,7 @@ public class QCManager {
         if (healthMapCountryId != null) {
             MultiPolygon countryGeometry = qcLookupData.getHealthMapCountryGeometryMap().get(healthMapCountryId);
             if (countryGeometry != null) {
-                Snapper snapper = new Snapper("HealthMap country", STAGE_3_MAXIMUM_DISTANCE);
+                Snapper snapper = new Snapper(STAGE_3_GEOMETRY_DESCRIPTION, STAGE_3_MAXIMUM_DISTANCE);
                 applySnapperToLocation(snapper, location, countryGeometry);
                 passed = snapper.hasPassed();
                 message = snapper.getMessage();
