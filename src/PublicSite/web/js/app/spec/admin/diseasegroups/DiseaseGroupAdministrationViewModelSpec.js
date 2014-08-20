@@ -53,7 +53,6 @@ define([
                 occursInAfrica: wrap(true)
             };
             var diseaseExtentParametersViewModel = {
-                maxMonthsAgo: wrap(60),
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
                 higherOccurrenceScore: wrap(2),
                 lowerOccurrenceScore: wrap(1),
@@ -78,7 +77,6 @@ define([
                 "\"highFrequencyThreshold\":5," +
                 "\"occursInAfrica\":true," +
                 "\"diseaseExtentParameters\":{" +
-                    "\"maxMonthsAgo\":60," +
                     "\"maxMonthsAgoForHigherOccurrenceScore\":24," +
                     "\"lowerOccurrenceScore\":1," +
                     "\"higherOccurrenceScore\":2," +
@@ -209,7 +207,6 @@ define([
                 occursInAfrica: wrap(undefined)
             };
             var diseaseExtentParametersViewModel = {
-                maxMonthsAgo: wrap(""),
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
                 higherOccurrenceScore: wrap(""),
                 lowerOccurrenceScore: wrap(""),

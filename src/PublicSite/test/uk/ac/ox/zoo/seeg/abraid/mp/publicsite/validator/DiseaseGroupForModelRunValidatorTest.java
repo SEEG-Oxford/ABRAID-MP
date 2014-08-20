@@ -110,38 +110,33 @@ public class DiseaseGroupForModelRunValidatorTest {
     }
 
     @Test
-    public void parameterMaxMonthsAgoIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), null, 0.6, 3, 1, 36, 1, 2), "maximum months ago");
-    }
-
-    @Test
     public void parameterMinValidationWeightingIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 60, null, 3, 1, 36, 1, 2), "minimum validation weighting");
+        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), null, 3, 1, 36, 1, 2), "minimum validation weighting");
     }
 
     @Test
     public void parameterMinOccurrencesForPresenceIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 60, 0.6, null, 1, 36, 1, 2), "minimum occurrences for presence");
+        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 0.6, null, 1, 36, 1, 2), "minimum occurrences for presence");
     }
 
     @Test
     public void parameterMinOccurrencesForPossiblePresenceIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 60, 0.6, 3, null, 36, 1, 2), "minimum occurrences for possible presence");
+        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), .6, 3, null, 36, 1, 2), "minimum occurrences for possible presence");
     }
 
     @Test
     public void parameterMaximumMonthsAgoForHigherOccurrenceScoreIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 60, 0.6, 3, 1, null, 1, 2), "maximum months ago for higher occurrence score");
+        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 0.6, 3, 1, null, 1, 2), "maximum months ago for higher occurrence score");
     }
 
     @Test
     public void parameterLowerOccurrenceScoreIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 60, 0.6, 3, 1, 36, null, 2), "lower occurrence score");
+        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 0.6, 3, 1, 36, null, 2), "lower occurrence score");
     }
 
     @Test
     public void parameterHigherOccurrenceScoreIsMissing() {
-        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 60, 0.6, 3, 1, 36, 1, null), "higher occurrence score");
+        parameterIsMissing(new DiseaseExtent(new DiseaseGroup(), 0.6, 3, 1, 36, 1, null), "higher occurrence score");
     }
 
     private void parameterIsMissing(DiseaseExtent parameters, String missingParameterName) {
@@ -166,7 +161,7 @@ public class DiseaseGroupForModelRunValidatorTest {
         diseaseGroup.setAbbreviation("Test abbreviation");
         diseaseGroup.setGlobal(false);
         diseaseGroup.setValidatorDiseaseGroup(new ValidatorDiseaseGroup());
-        diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(new DiseaseGroup(), 60, 0.6, 3, 1, 36, 1, 2));
+        diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(new DiseaseGroup(), 0.6, 3, 1, 36, 1, 2));
         return diseaseGroup;
     }
 }

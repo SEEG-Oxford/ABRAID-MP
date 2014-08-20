@@ -30,7 +30,6 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 occursInAfrica: wrap(true)
             };
             var diseaseExtentParametersViewModel = {
-                maxMonthsAgo: wrap(60),
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
                 higherOccurrenceScore: wrap(2),
                 lowerOccurrenceScore: wrap(1),
@@ -54,7 +53,6 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 highFrequencyThreshold: 5,
                 occursInAfrica: true,
                 diseaseExtentParameters: {
-                    maxMonthsAgo: 60,
                     maxMonthsAgoForHigherOccurrenceScore: 24,
                     higherOccurrenceScore: 2,
                     lowerOccurrenceScore: 1,
@@ -91,7 +89,6 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 occursInAfrica: wrap(undefined)
             };
             var diseaseExtentParametersViewModel = {
-                maxMonthsAgo: wrap(""),
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
                 higherOccurrenceScore: wrap(""),
                 lowerOccurrenceScore: wrap(""),
@@ -115,7 +112,6 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 highFrequencyThreshold: undefined,
                 occursInAfrica: undefined,
                 diseaseExtentParameters: {
-                    maxMonthsAgo: undefined,
                     maxMonthsAgoForHigherOccurrenceScore: undefined,
                     higherOccurrenceScore: undefined,
                     lowerOccurrenceScore: undefined,
