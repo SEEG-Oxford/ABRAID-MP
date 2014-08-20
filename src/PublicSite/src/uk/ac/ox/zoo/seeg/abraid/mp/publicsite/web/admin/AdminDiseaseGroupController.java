@@ -143,10 +143,10 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/automaticmodelruns",
                     method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity enableAutomaticModelRuns(@PathVariable Integer diseaseGroupId) {
+    public ResponseEntity enableAutomaticModelRuns(@PathVariable int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup != null) {
-            modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
+            modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);

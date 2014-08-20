@@ -32,9 +32,9 @@ public interface ModelRunWorkflowService {
 
     /**
      * Set model runs to be triggered automatically for the specified disease group.
-     * @param diseaseGroup The disease group.
+     * @param diseaseGroupId The disease group ID.
      */
-    void enableAutomaticModelRuns(DiseaseGroup diseaseGroup);
+    void enableAutomaticModelRuns(int diseaseGroupId);
 
     /**
      * Gets the new weighting for each active expert.

@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div data-bind="if: isAutomaticModelRunsEnabled">
-                <div data-bind="alert: { message: 'Automatic model runs have been enabled for this disease group. No further setup is required.', priority: 'success' }"></div>
+                <div class="alert alert-success" role="alert">Automatic model runs have been enabled for this disease group. No further setup is required.</div>
             </div>
         </div>
     </div>

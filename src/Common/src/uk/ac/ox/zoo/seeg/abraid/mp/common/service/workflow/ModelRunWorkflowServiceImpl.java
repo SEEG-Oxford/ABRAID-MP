@@ -69,28 +69,29 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     /**
      * Set model runs to be triggered automatically for the specified disease group.
-     * @param diseaseGroup The disease group.
+     * @param diseaseGroupId The disease group ID.
      */
     @Override
-    public void enableAutomaticModelRuns(DiseaseGroup diseaseGroup) {
+    public void enableAutomaticModelRuns(int diseaseGroupId) {
         DateTime now = DateTime.now();
-        saveAutomaticModelRunsStartDate(diseaseGroup, now);
-        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroup, now);
-        addValidationParameters(diseaseGroup);
+        saveAutomaticModelRunsStartDate(diseaseGroupId, now);
+        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroupId, now);
+        addValidationParameters(diseaseGroupId);
     }
 
-    private void saveAutomaticModelRunsStartDate(DiseaseGroup diseaseGroup, DateTime now) {
+    private void saveAutomaticModelRunsStartDate(int diseaseGroupId, DateTime now) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setAutomaticModelRunsStartDate(now);
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     /**
      * Update the ClassChangedDate of all AdminUnitDiseaseExtentClasses for this DiseaseGroup
-     * so that all polygons are available for review on DataValidator
+     * so that all polygons are available for review on DataValidator.
      */
-    private void setAdminUnitDiseaseExtentClassChangedDate(DiseaseGroup diseaseGroup, DateTime now) {
+    private void setAdminUnitDiseaseExtentClassChangedDate(int diseaseGroupId, DateTime now) {
         List<AdminUnitDiseaseExtentClass> extentClasses =
-            diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroup.getId());
+            diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
         for (AdminUnitDiseaseExtentClass extentClass : extentClasses) {
             extentClass.setClassChangedDate(now);
             diseaseService.saveAdminUnitDiseaseExtentClass(extentClass);
@@ -101,9 +102,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * Calculate validation parameters for occurrences without a final weighting, because the set-up process is
      * complete. Calculation of other weightings happens on first automatic model run.
      */
-    private void addValidationParameters(DiseaseGroup diseaseGroup) {
+    private void addValidationParameters(int diseaseGroupId) {
         List<DiseaseOccurrence> occurrences =
-            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroup.getId(), false);
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false);
         diseaseOccurrenceValidationService.addValidationParameters(occurrences);
         for (DiseaseOccurrence occurrence : occurrences) {
             diseaseService.saveDiseaseOccurrence(occurrence);

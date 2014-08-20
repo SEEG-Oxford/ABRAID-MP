@@ -126,7 +126,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).enableAutomaticModelRuns(eq(diseaseGroup));
+        verify(modelRunWorkflowService, times(1)).enableAutomaticModelRuns(eq(diseaseGroupId));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 

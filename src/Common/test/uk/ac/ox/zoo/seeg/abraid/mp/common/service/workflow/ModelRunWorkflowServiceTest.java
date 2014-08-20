@@ -106,7 +106,7 @@ public class ModelRunWorkflowServiceTest {
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
+        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
         verify(diseaseService, times(1)).saveDiseaseGroup(diseaseGroup);
@@ -126,7 +126,7 @@ public class ModelRunWorkflowServiceTest {
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
+        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
         verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(extentClass);
@@ -146,7 +146,7 @@ public class ModelRunWorkflowServiceTest {
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
+        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
         verify(diseaseOccurrenceValidationService, times(1)).addValidationParameters(Arrays.asList(occurrence));

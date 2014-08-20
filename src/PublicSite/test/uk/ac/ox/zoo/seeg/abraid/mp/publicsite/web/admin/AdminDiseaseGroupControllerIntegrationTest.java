@@ -185,7 +185,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(
                 post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/null/automaticmodelruns"))
                 .andExpect(status().isBadRequest());
-
     }
 
     @Test
