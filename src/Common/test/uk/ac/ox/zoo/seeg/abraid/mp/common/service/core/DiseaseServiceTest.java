@@ -94,7 +94,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
-    public void getValidatorDiseaseGroupMap() {
+    public void getValidatorDiseaseGroupMapForSeegMember() {
         // Arrange
         ValidatorDiseaseGroup validatorDiseaseGroup1 = new ValidatorDiseaseGroup("ascariasis");
         ValidatorDiseaseGroup validatorDiseaseGroup2 = new ValidatorDiseaseGroup("trypanosomiases");
@@ -102,7 +102,9 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         DiseaseGroup diseaseGroup2 = new DiseaseGroup("Trypanosomiasis - American", validatorDiseaseGroup2);
         DiseaseGroup diseaseGroup3 = new DiseaseGroup("Poliomyelitis");
         DiseaseGroup diseaseGroup4 = new DiseaseGroup("Trypanosomiases", validatorDiseaseGroup2);
+        diseaseGroup4.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
         DiseaseGroup diseaseGroup5 = new DiseaseGroup("Trypanosomiasis - African", validatorDiseaseGroup2);
+        diseaseGroup5.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
 
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2, diseaseGroup3, diseaseGroup4,
                 diseaseGroup5);
@@ -114,7 +116,35 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         when(diseaseGroupDao.getAll()).thenReturn(diseaseGroups);
 
         // Act
-        Map<String, List<DiseaseGroup>> actualMap = diseaseService.getValidatorDiseaseGroupMap();
+        Map<String, List<DiseaseGroup>> actualMap = diseaseService.getValidatorDiseaseGroupMap(true);
+
+        // Assert
+        assertThat(actualMap).isEqualTo(expectedMap);
+    }
+
+    @Test
+    public void getValidatorDiseaseGroupMapForNonSeegMember() {
+        // Arrange
+        ValidatorDiseaseGroup validatorDiseaseGroup1 = new ValidatorDiseaseGroup("ascariasis");
+        ValidatorDiseaseGroup validatorDiseaseGroup2 = new ValidatorDiseaseGroup("trypanosomiases");
+        DiseaseGroup diseaseGroup1 = new DiseaseGroup("Ascariasis", validatorDiseaseGroup1);
+        DiseaseGroup diseaseGroup2 = new DiseaseGroup("Trypanosomiasis - American", validatorDiseaseGroup2);
+        DiseaseGroup diseaseGroup3 = new DiseaseGroup("Poliomyelitis");
+        DiseaseGroup diseaseGroup4 = new DiseaseGroup("Trypanosomiases", validatorDiseaseGroup2);
+        diseaseGroup4.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
+        DiseaseGroup diseaseGroup5 = new DiseaseGroup("Trypanosomiasis - African", validatorDiseaseGroup2);
+        diseaseGroup5.setAutomaticModelRunsStartDate(DateTime.now().minusDays(1));
+
+        List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2, diseaseGroup3, diseaseGroup4,
+                diseaseGroup5);
+
+        when(diseaseGroupDao.getAll()).thenReturn(diseaseGroups);
+
+        Map<String, List<DiseaseGroup>> expectedMap = new HashMap<>();
+        expectedMap.put("trypanosomiases", Arrays.asList(diseaseGroup4, diseaseGroup5));
+
+        // Act
+        Map<String, List<DiseaseGroup>> actualMap = diseaseService.getValidatorDiseaseGroupMap(false);
 
         // Assert
         assertThat(actualMap).isEqualTo(expectedMap);

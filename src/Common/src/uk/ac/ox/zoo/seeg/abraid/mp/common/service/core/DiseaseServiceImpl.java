@@ -96,14 +96,15 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Gets the list of disease groups, for each validator disease group.
+     * @param includeNewDiseases Whether new (not set up fully) diseases should be included in the map.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
     @Override
-    public Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap() {
+    public Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap(boolean includeNewDiseases) {
         List<DiseaseGroup> allDiseaseGroups = getAllDiseaseGroups();
         Map<String, List<DiseaseGroup>> map = new HashMap<>();
         for (DiseaseGroup diseaseGroup : allDiseaseGroups) {
-            if (diseaseGroup.getValidatorDiseaseGroup() != null) {
+            if (includeInDiseaseGroupMap(includeNewDiseases, diseaseGroup)) {
                 String name = diseaseGroup.getValidatorDiseaseGroup().getName();
                 if (map.containsKey(name)) {
                     map.get(name).add(diseaseGroup);
@@ -113,6 +114,11 @@ public class DiseaseServiceImpl implements DiseaseService {
             }
         }
         return map;
+    }
+
+    private boolean includeInDiseaseGroupMap(boolean includeNewDiseases, DiseaseGroup diseaseGroup) {
+        return diseaseGroup.getValidatorDiseaseGroup() != null &&
+                (includeNewDiseases || diseaseGroup.isAutomaticModelRunsEnabled());
     }
 
     /**
