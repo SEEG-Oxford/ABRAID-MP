@@ -206,7 +206,7 @@ define([
             expect(body.diseaseInterests).toContain(7);
         });
 
-        describe("handles successful form submission by", function () {
+        describe("handles successful form submission", function () {
             it("with the standard successful form submission behavior", function () {
                 // Arrange
                 var vm = new AccountDetailsFormViewModel("baseUrl/", "", {}, {}, noop, diseasesVM);
@@ -221,7 +221,7 @@ define([
                 expect(vm.baseSuccessHandler).toHaveBeenCalled();
             });
 
-            it("redirecting to the home page", function () {
+            it("by redirecting to the home page", function () {
                 // Arrange
                 var redirect = jasmine.createSpy();
                 var vm = new AccountDetailsFormViewModel("baseUrl/", "", {}, {}, redirect, diseasesVM);

@@ -47,7 +47,7 @@ define([
                 expect(tableSpy.calls.argsFor(0)[2]).toEqual(false);
             });
 
-            it("defaults to only being filtered base on name", function () {
+            it("defaults to only being filtered based on name", function () {
                 expect(tableSpy.calls.argsFor(0)[3].length).toEqual(1);
                 expect(tableSpy.calls.argsFor(0)[3][0]).toEqual("name");
             });

@@ -139,3 +139,9 @@ label.side-by-side {
     padding:30px;
     text-align: center
 }
+.pagination {
+    margin: 0px;
+}
+.pagination-holder {
+    margin: 20px;
+}

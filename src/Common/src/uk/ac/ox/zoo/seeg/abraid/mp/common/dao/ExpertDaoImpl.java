@@ -1,8 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+
+import java.util.List;
 
 /**
  * The Expert entity's Data Access Object.
@@ -13,6 +16,27 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 public class ExpertDaoImpl extends AbstractDao<Expert, Integer> implements ExpertDao {
     public ExpertDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
+    }
+
+    /**
+     * Gets a page worth of publicly visible experts.
+     * @param pageNumber The page number to return.
+     * @param pageSize The size of the pages to split the visible experts into.
+     * @return A page worth of publicly visible experts
+     */
+    @Override
+    public List<Expert> getPageOfPubliclyVisible(int pageNumber, int pageSize) {
+        return listPageOfNamedQuery("getPubliclyVisibleExperts", pageNumber, pageSize);
+    }
+
+    /**
+     * Gets a count of the publicly visible experts.
+     * @return The count.
+     */
+    @Override
+    public long getCountOfPubliclyVisible() {
+        Query query = namedQuery("countPubliclyVisibleExperts");
+        return (long) query.uniqueResult();
     }
 
     /**

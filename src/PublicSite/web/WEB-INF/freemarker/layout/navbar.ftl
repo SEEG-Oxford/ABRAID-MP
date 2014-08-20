@@ -21,8 +21,8 @@
                 <li><a href="<@spring.url "/"/>">Atlas</a></li>
                 <li><a href="<@spring.url "/datavalidation"/>">Data Validation</a></li>
                 <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
-                <li><a>About</a></li>
-                <li><a>Publications</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Publications</a></li>
                 <@security.authorize ifAnyGranted="ROLE_ADMIN">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration <span class="caret"></span></a>
