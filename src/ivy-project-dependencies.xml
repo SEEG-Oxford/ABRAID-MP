@@ -8,7 +8,7 @@
     <!-- Workaround: Excluded as this conflicts with javax.persistence 2.1 which is required by Hibernate 4 in Common -->
     <exclude org="org.apache.openejb" name="javaee-api"/>
 </dependency>
-<dependency org="org.springframework" name="spring-context" rev="4.0.1.RELEASE" conf="external->default"/>
+<dependency org="org.springframework" name="spring-context" rev="4.0.2.RELEASE" conf="external->default"/>
 <dependency org="com.googlecode.lambdaj" name="lambdaj" rev="2.3.3" conf="external->default" />
 <dependency org="joda-time" name="joda-time" rev="2.3" conf="external->default" />
 <dependency org="commons-io" name="commons-io" rev="2.4" conf="external->default"/>
