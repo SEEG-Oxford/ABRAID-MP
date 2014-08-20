@@ -14,7 +14,7 @@
     </script>
     </#assign>
     <#assign templates>
-        <@t.tableTemplates numberOfColumns=2 plural="diseases" subpath="diseaseInterestListViewModel.">
+        <@t.tableTemplates numberOfColumns=2 plural="diseases" subpath="diseaseInterestListViewModel">
             <tr>
                 <td><span data-bind="text: name"></td>
                 <td><input type="checkbox" data-bind="formChecked: interested"></td>
@@ -61,7 +61,7 @@
                         </span>
                     </p>
                     <p class="form-group">
-                        <label for="user-show">Show on site?</label>
+                        <label for="user-show">Are you happy to be displayed on our list of expert contributors?</label>
                         <span id="user-show" class="input-group btn-group" data-bind="foreach: [ { value: true, label: 'Show me' }, { value: false, label: 'Don\'t show me' } ]">
                             <label class="btn btn-default" data-bind="css: { active: $parent.visibilityRequested() === value, disabled: find('isSubmitting') }">
                                 <input type="radio" name="user-show" data-bind="formRadio: { selected: $parent.visibilityRequested, value: value }">
@@ -80,7 +80,7 @@
                     </h2>
                 </div>
                 <div class="panel-body" id="interests-body">
-                    <@t.tableBody singular="disease" title="Diseases" subpath="diseaseInterestListViewModel.">
+                    <@t.tableBody singular="disease" title="Diseases" subpath="diseaseInterestListViewModel">
                         [
                             { name: 'name', display: 'Disease' },
                             { name: 'interested', display: 'Interested?' }
