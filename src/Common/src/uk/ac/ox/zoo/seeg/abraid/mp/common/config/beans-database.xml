@@ -52,11 +52,30 @@
         </property>
     </bean>
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <!-- NB: See documentation for the (many) other c3p0 configuration settings -->
+        <!-- Access settings -->
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
+        <!-- Number of connections acquired when the pool is exhausted -->
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+        <!-- Number of connections acquired on startup -->
+        <property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
+        <!-- Minimum number of connections in the pool -->
+        <property name="minPoolSize" value="${c3p0.minPoolSize}" />
+        <!-- Maximum number of connections in the pool -->
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+        <!-- Maximum connection idle time (seconds) before being automatically closed (0 = never close) -->
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+        <!-- Keep connections alive by performing a simple query upon checking into the pool (asynchronously) -->
+        <property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}" />
+        <!-- Keep connections alive by performing a simple query upon checking out of the pool (NB this strategy has
+             high reliability but there is a delay before returning to the client) -->
+        <property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}" />
+        <!-- Keep connections alive by performing a simple query every n seconds if the connection is idle -->
+        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

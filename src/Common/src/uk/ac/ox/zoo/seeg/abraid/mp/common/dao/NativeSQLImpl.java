@@ -23,24 +23,13 @@ public class NativeSQLImpl implements NativeSQL {
      * Finds the first admin unit that contains the specified point.
      * @param point The point.
      * @param isGlobal True to use admin units for global diseases, false for tropical diseases.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
     @Override
-    public Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal, Character adminLevel) {
-        String queryString = String.format(ADMIN_UNIT_CONTAINS_POINT_QUERY, getGlobalOrTropical(isGlobal));
-        if (adminLevel != null) {
-            queryString += ADMIN_UNIT_CONTAINS_POINT_LEVEL_FILTER;
-        }
-
-        SQLQuery query = createSQLQuery(queryString);
-        query.setParameter("point", point);
-        if (adminLevel != null) {
-            query.setParameter("adminLevel", adminLevel);
-        }
-
-        return (Integer) query.uniqueResult();
+    public Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal) {
+        String query = String.format(ADMIN_UNIT_CONTAINS_POINT_QUERY, getGlobalOrTropical(isGlobal));
+        return (Integer) uniqueResult(query, "point", point);
     }
 
     /**

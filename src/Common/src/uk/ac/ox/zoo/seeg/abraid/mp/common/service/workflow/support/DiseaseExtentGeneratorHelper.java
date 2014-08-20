@@ -96,8 +96,18 @@ public class DiseaseExtentGeneratorHelper {
         // Add occurrences to the groups
         for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
             AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(occurrence.getAdminUnitGaulCode());
-            occurrencesByAdminUnit.get(adminUnit).add(occurrence);
+            // Exclude occurrences that have country precision if the admin unit is not a country. For example, the
+            // centroid of the United States is in Kansas, but we should not count a United Status country-level point
+            // as being a disease occurrence in Kansas itself.
+            if (!isACountryPointInANonCountryAdminUnit(occurrence, adminUnit)) {
+                occurrencesByAdminUnit.get(adminUnit).add(occurrence);
+            }
         }
+    }
+
+    private boolean isACountryPointInANonCountryAdminUnit(DiseaseOccurrenceForDiseaseExtent occurrence,
+                                                          AdminUnitGlobalOrTropical adminUnit) {
+        return (occurrence.getPrecision() == LocationPrecision.COUNTRY) && (adminUnit.getLevel() != '0');
     }
 
     /**

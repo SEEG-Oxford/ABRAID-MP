@@ -19,12 +19,11 @@
     </publications>
     <dependencies>
         <!-- Common -->
-        <dependency org="org.springframework" name="spring-context" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-orm" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-web" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
-        <dependency  org="commons-collections" name="commons-collections" rev="3.2.1" conf="external->default"/>
+        <dependency org="commons-collections" name="commons-collections" rev="3.2.1" conf="external->default"/>
 
         <!-- Web services -->
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
@@ -33,17 +32,12 @@
         <dependency org="com.fasterxml.jackson.datatype" name="jackson-datatype-joda" rev="2.3.1" conf="external->default" />
         <dependency org="com.fasterxml.jackson.dataformat" name="jackson-dataformat-csv" rev="2.3.1" conf="external->default" />
 
-        <!-- Workaround for https://jira.springsource.org/browse/SPR-11248 -->
-        <dependency org="org.aspectj" name="aspectjweaver" rev="1.7.4" force="true" conf="external->default" />
-        <!-- Workaround: spring-orm depends on revision 2.4.0 of these libraries, but it is not found -->
-        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.core" rev="2.5.1" conf="external->default" />
-        <dependency org="org.eclipse.persistence" name="org.eclipse.persistence.jpa" rev="2.5.1" conf="external->default" />
-
         <!-- Database -->
-        <dependency org="org.hibernate" name="hibernate-core" rev="4.3.1.Final" conf="external->default" />
+        <dependency org="org.hibernate" name="hibernate-core" rev="4.3.6.Final" conf="external->default" />
         <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41" conf="external->default" />
         <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2" conf="external->default" />
         <dependency org="org.jadira.usertype" name="usertype.core" rev="3.1.0.GA" conf="external->default" />
+        <dependency org="com.mchange" name="c3p0" rev="0.9.5-pre8" />
 
         <dependency org="org.hibernate" name="hibernate-spatial" rev="4.3" conf="external->default" >
             <!-- Newer version explicitly included -->
@@ -75,11 +69,6 @@
         <dependency org="java3d" name="vecmath" rev="1.3.1"  conf="external->default"/>
         <dependency org="org.jdom" name="jdom" rev="1.1.3" conf="external->default"/>
         <dependency org="net.java.dev.jsr-275" name="jsr-275" rev="1.0-beta-2" conf="external->default"/>
-
-        <!-- Workaround: Excluded as these conflict with javax.persistence 2.1 which is required by Hibernate 4 -->
-        <!-- These are transitive dependencies of org.springframework.spring-orm -->
-        <exclude org="org.hibernate.javax.persistence" module="hibernate-jpa-2.0-api"/>
-        <exclude org="org.apache.geronimo.specs" module="geronimo-jpa_2.0_spec"/>
 
         <!-- JUnit should only be in the testing configuration, also the version usertype depends on clashes with the more recent version we use -->
         <exclude org="junit" module="junit" conf="external" />

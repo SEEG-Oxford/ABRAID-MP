@@ -18,7 +18,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     // HQL fragments used to build a query to obtain disease occurrences for disease extent generation
     private static final String DISEASE_EXTENT_QUERY =
             "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, case when :isGlobal = true then" +
+            "       (d.occurrenceDate, d.location.precision, case when :isGlobal = true then" +
             "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
