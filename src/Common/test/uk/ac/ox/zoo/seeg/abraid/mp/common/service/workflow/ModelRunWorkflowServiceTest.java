@@ -8,10 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseExtentGenerator;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseOccurrenceReviewManager;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequester;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.WeightingsCalculator;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,14 +99,14 @@ public class ModelRunWorkflowServiceTest {
     public void enableAutomaticModelRunsSavesAutomaticModelRunsStartDateOnDiseaseGroup() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         DateTime now = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
+        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
 
         // Assert
         verify(diseaseService, times(1)).saveDiseaseGroup(diseaseGroup);
@@ -121,7 +118,7 @@ public class ModelRunWorkflowServiceTest {
         // Arrange
         int diseaseGroupId = 87;
         AdminUnitDiseaseExtentClass extentClass = new AdminUnitDiseaseExtentClass();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(Arrays.asList(extentClass));
 
@@ -129,7 +126,7 @@ public class ModelRunWorkflowServiceTest {
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
+        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
 
         // Assert
         verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(extentClass);
@@ -140,7 +137,7 @@ public class ModelRunWorkflowServiceTest {
     public void enableAutomaticModelRunsAddsValidationParametersToDiseaseOccurrence() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false)).thenReturn(Arrays.asList(occurrence));
@@ -149,7 +146,7 @@ public class ModelRunWorkflowServiceTest {
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
+        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
 
         // Assert
         verify(diseaseOccurrenceValidationService, times(1)).addValidationParameters(occurrence);

@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joda.time.DateTime;
@@ -15,7 +15,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminDiseaseGroupController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonParentDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 
@@ -116,59 +115,31 @@ public class AdminDiseaseGroupControllerTest {
                 eq(diseaseGroupId), eq(batchEndDate));
     }
 
-    ///CHECKSTYLE:OFF ParameterNumber - constructor for tests
-    private DiseaseGroup createDiseaseGroup(int id, Integer parentGroupId, String name, String parentName,
-                                            DiseaseGroupType groupType, String publicName, String shortName,
-                                            String abbreviation, boolean isGlobal, Integer validatorDiseaseGroupId,
-                                            double weighting) {
-        DiseaseGroup diseaseGroup = new DiseaseGroup(id);
-        if (parentGroupId != null) {
-            DiseaseGroup parentGroup = createParentDiseaseGroup(parentGroupId, parentName);
-            diseaseGroup.setParentGroup(parentGroup);
-        }
-        diseaseGroup.setName(name);
-        diseaseGroup.setGroupType(groupType);
-        diseaseGroup.setPublicName(publicName);
-        diseaseGroup.setShortName(shortName);
-        diseaseGroup.setAbbreviation(abbreviation);
-        diseaseGroup.setGlobal(isGlobal);
-        if (validatorDiseaseGroupId != null) {
-            ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup(validatorDiseaseGroupId);
-            diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
-        }
-        diseaseGroup.setWeighting(weighting);
-        return diseaseGroup;
-    }
-    ///CHECKSTYLE:ON ParameterNumber
+    @Test
+    public void enableAutomaticModelRunsCallsWorkflowServiceForValidDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
-    private DiseaseGroup createParentDiseaseGroup(int id, String name) {
-        DiseaseGroup diseaseGroup = new DiseaseGroup(id);
-        diseaseGroup.setName(name);
-        return diseaseGroup;
+        // Act
+        ResponseEntity response = controller.enableAutomaticModelRuns(diseaseGroupId);
+
+        // Assert
+        verify(modelRunWorkflowService, times(1)).enableAutomaticModelRuns(eq(diseaseGroup));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
-    private JsonDiseaseGroup createJsonDiseaseGroup(String name, String publicName, String shortName,
-                                 String abbreviation, String groupType, boolean isGlobal, Integer parentId, Integer validatorId) {
-        JsonDiseaseGroup json = new JsonDiseaseGroup();
-        json.setName(name);
-        json.setPublicName(publicName);
-        json.setShortName(shortName);
-        json.setAbbreviation(abbreviation);
-        json.setGroupType(groupType);
-        json.setIsGlobal(isGlobal);
+    @Test
+    public void enableAutomaticModelRunsCallsWorkflowServiceReturnsNotFoundForInvalidDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = -1;
 
-        if (parentId != null) {
-            JsonParentDiseaseGroup parent = new JsonParentDiseaseGroup();
-            parent.setId(parentId);
-            json.setParentDiseaseGroup(parent);
-        }
+        // Act
+        ResponseEntity response = controller.enableAutomaticModelRuns(diseaseGroupId);
 
-        if (validatorId != null) {
-            JsonValidatorDiseaseGroup validator = new JsonValidatorDiseaseGroup();
-            validator.setId(validatorId);
-            json.setValidatorDiseaseGroup(validator);
-        }
-        return json;
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -336,5 +307,60 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    ///CHECKSTYLE:OFF ParameterNumber - constructor for tests
+    private DiseaseGroup createDiseaseGroup(int id, Integer parentGroupId, String name, String parentName,
+                                            DiseaseGroupType groupType, String publicName, String shortName,
+                                            String abbreviation, boolean isGlobal, Integer validatorDiseaseGroupId,
+                                            double weighting) {
+        DiseaseGroup diseaseGroup = new DiseaseGroup(id);
+        if (parentGroupId != null) {
+            DiseaseGroup parentGroup = createParentDiseaseGroup(parentGroupId, parentName);
+            diseaseGroup.setParentGroup(parentGroup);
+        }
+        diseaseGroup.setName(name);
+        diseaseGroup.setGroupType(groupType);
+        diseaseGroup.setPublicName(publicName);
+        diseaseGroup.setShortName(shortName);
+        diseaseGroup.setAbbreviation(abbreviation);
+        diseaseGroup.setGlobal(isGlobal);
+        if (validatorDiseaseGroupId != null) {
+            ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup(validatorDiseaseGroupId);
+            diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        }
+        diseaseGroup.setWeighting(weighting);
+        return diseaseGroup;
+    }
+    ///CHECKSTYLE:ON ParameterNumber
+
+    private DiseaseGroup createParentDiseaseGroup(int id, String name) {
+        DiseaseGroup diseaseGroup = new DiseaseGroup(id);
+        diseaseGroup.setName(name);
+        return diseaseGroup;
+    }
+
+    private JsonDiseaseGroup createJsonDiseaseGroup(String name, String publicName, String shortName,
+                                                    String abbreviation, String groupType, boolean isGlobal, Integer parentId, Integer validatorId) {
+        JsonDiseaseGroup json = new JsonDiseaseGroup();
+        json.setName(name);
+        json.setPublicName(publicName);
+        json.setShortName(shortName);
+        json.setAbbreviation(abbreviation);
+        json.setGroupType(groupType);
+        json.setIsGlobal(isGlobal);
+
+        if (parentId != null) {
+            JsonParentDiseaseGroup parent = new JsonParentDiseaseGroup();
+            parent.setId(parentId);
+            json.setParentDiseaseGroup(parent);
+        }
+
+        if (validatorId != null) {
+            JsonValidatorDiseaseGroup validator = new JsonValidatorDiseaseGroup();
+            validator.setId(validatorId);
+            json.setValidatorDiseaseGroup(validator);
+        }
+        return json;
     }
 }

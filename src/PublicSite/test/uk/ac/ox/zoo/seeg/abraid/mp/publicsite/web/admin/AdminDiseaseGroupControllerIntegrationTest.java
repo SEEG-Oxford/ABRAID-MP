@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -17,7 +17,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminDiseaseGroupController;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.util.List;
@@ -151,6 +150,53 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     private void mockModelWrapperWebServiceCall() {
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
                 .thenReturn("{\"modelRunName\":\"testname\"}");
+    }
+
+    @Test
+    public void enableAutomaticModelRunsRejectsNonPOSTRequests() throws Exception {
+        this.mockMvc.perform(
+                get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+
+    @Test
+    public void enableAutomaticModelRunsRejectsNonIntegerPathVariables() throws Exception {
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/a/automaticmodelruns"))
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/0.2/automaticmodelruns"))
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/null/automaticmodelruns"))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void enableAutomaticModelRunsGivesNotFoundForInvalidIntegerPathVariables() throws Exception {
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/-1/automaticmodelruns"))
+                .andExpect(status().isNotFound());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/999999/automaticmodelruns"))
+                .andExpect(status().isNotFound());
     }
 
     @Test

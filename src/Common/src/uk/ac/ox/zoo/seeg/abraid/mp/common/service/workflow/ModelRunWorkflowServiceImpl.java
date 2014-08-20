@@ -69,15 +69,14 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     /**
      * Set model runs to be triggered automatically for the specified disease group.
-     * @param diseaseGroupId The disease group ID.
+     * @param diseaseGroup The disease group.
      */
     @Override
-    public void enableAutomaticModelRuns(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+    public void enableAutomaticModelRuns(DiseaseGroup diseaseGroup) {
         DateTime now = DateTime.now();
         saveAutomaticModelRunsStartDate(diseaseGroup, now);
-        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroupId, now);
-        addValidationParameters(diseaseGroupId);
+        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroup, now);
+        addValidationParameters(diseaseGroup);
     }
 
     private void saveAutomaticModelRunsStartDate(DiseaseGroup diseaseGroup, DateTime now) {
@@ -85,18 +84,18 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
-    private void setAdminUnitDiseaseExtentClassChangedDate(int diseaseGroupId, DateTime now) {
+    private void setAdminUnitDiseaseExtentClassChangedDate(DiseaseGroup diseaseGroup, DateTime now) {
         List<AdminUnitDiseaseExtentClass> extentClasses =
-            diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+            diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroup.getId());
         for (AdminUnitDiseaseExtentClass extentClass : extentClasses) {
             extentClass.setClassChangedDate(now);
             diseaseService.saveAdminUnitDiseaseExtentClass(extentClass);
         }
     }
 
-    private void addValidationParameters(int diseaseGroupId) {
+    private void addValidationParameters(DiseaseGroup diseaseGroup) {
         List<DiseaseOccurrence> occurrences =
-            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false);
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroup.getId(), false);
         for (DiseaseOccurrence occurrence : occurrences) {
             diseaseOccurrenceValidationService.addValidationParameters(occurrence);
             diseaseService.saveDiseaseOccurrence(occurrence);

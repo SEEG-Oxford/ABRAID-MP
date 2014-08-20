@@ -124,8 +124,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId,
-                                                  String batchEndDate) {
+    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId, String batchEndDate) {
         try {
             DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
             modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
@@ -138,20 +137,19 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Enables automatic model runs for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to enable automatic model runs.
-     * @return An error message string (empty if no error).
+     * @return An error status: 204 for success, 404 if disease group cannot be found in database.
      */
     @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(
-            value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/automaticmodelruns",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/automaticmodelruns",
+                    method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> enableAutomaticModelRuns(@PathVariable Integer diseaseGroupId) {
-        try {
-            modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ModelRunRequesterException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity enableAutomaticModelRuns(@PathVariable Integer diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup != null) {
+            modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
 
