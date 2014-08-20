@@ -201,6 +201,20 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
+    public void getLastCompletedModelRunReturnsNullIfCompletedModelRunHasNoResponseDate() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDengue2.setResponseDate(null);
+        modelRunDao.save(modelRunDengue2);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
     public void getLastCompletedModelRunReturnsNonNullIfCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;

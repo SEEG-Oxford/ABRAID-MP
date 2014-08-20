@@ -121,10 +121,10 @@ public interface DiseaseOccurrenceDao {
     DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId);
 
     /**
-     * Gets a list of disease occurrence IDs for validation batching, for the specified disease group.
+     * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      * @param batchEndDate The end date of the batch.
-     * @return A list of disease occurrence IDs.
+     * @return A list of disease occurrences.
      */
-    List<Integer> getIDsForBatching(int diseaseGroupId, DateTime batchEndDate);
+    List<DiseaseOccurrence> getOccurrencesForBatching(int diseaseGroupId, DateTime batchEndDate);
 }
