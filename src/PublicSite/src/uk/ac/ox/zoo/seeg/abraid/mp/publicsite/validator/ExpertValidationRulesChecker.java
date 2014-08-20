@@ -30,7 +30,7 @@ public class ExpertValidationRulesChecker {
     private static final String DISEASE_INTERESTS_FIELD_NAME = "Disease interests";
     private static final String VISIBILITY_REQUESTED_FIELD_NAME = "Visibility requested";
 
-    private static final String FAILURE_STRING_LENGTH = "%s must less than %s letters in length.";
+    private static final String FAILURE_STRING_LENGTH = "%s must be fewer than %s letters in length.";
     private static final String FAILURE_VALUE_MISSING = "%s must be provided.";
 
     private static final String FAILURE_INSUFFICIENT_COMPLEXITY = "%s not sufficiently complex.";

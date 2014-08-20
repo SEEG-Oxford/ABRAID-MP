@@ -1,7 +1,11 @@
 /* AMD to represent the data in the account registration page.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "underscore", "jquery"], function (ko, _, $) {
+define([
+    "ko",
+    "underscore",
+    "jquery"
+], function (ko, _, $) {
     "use strict";
 
     return function (baseUrl, initialExpert, initialAlerts, captcha, redirectPage) {

@@ -1,7 +1,12 @@
 /* AMD to represent the data in the account details page.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "underscore", "jquery", "app/BaseFormViewModel"], function (ko, _, $, BaseFormViewModel) {
+define([
+    "ko",
+    "underscore",
+    "jquery",
+    "app/BaseFormViewModel"
+], function (ko, _, $, BaseFormViewModel) {
     "use strict";
 
     return function (baseUrl, targetUrl, messages, initialExpert, redirectPage, diseaseInterestListViewModel) {

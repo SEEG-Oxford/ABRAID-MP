@@ -1,7 +1,11 @@
 /* AMD to represent the data in the disease interests table.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "underscore", "app/BaseTableViewModel"], function (ko, _, BaseTableViewModel) {
+define([
+    "ko",
+    "underscore",
+    "app/BaseTableViewModel"
+], function (ko, _, BaseTableViewModel) {
     "use strict";
 
     return function (initialExpert, diseases) {
