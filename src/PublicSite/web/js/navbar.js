@@ -38,8 +38,8 @@ define(["jquery", "bootstrap", "domReady!"], function ($) {
         return out;
     };
 
-    // Highlight the link for the current page
+    var currentURL = cleanUrl(window.location.href);
     $("ul.nav a").filter(function () {
-        return cleanUrl(this.href) === cleanUrl(window.location.href);
+        return $(this).attr("href") !== "#" && cleanUrl(this.href) === currentURL;
     }).parent().addClass("active");
 });
