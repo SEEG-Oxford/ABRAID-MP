@@ -69,17 +69,6 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     }
 
     @Test
-    public void doesNotFindAdminUnitIfCountryPrecisionAndNoAdminZerosMatch() {
-        Location britishColumbiaCanadaCentroid = new Location(-124.76033, 54.75946, LocationPrecision.COUNTRY);
-        postQCManager.runPostQCProcesses(britishColumbiaCanadaCentroid);
-        // admin_unit_tropical contains Canada (825) as an admin0, whereas admin_unit_global does not (it contains
-        // Canada's admin1s instead e.g. British Columbia). So a country-precision British Columbia location will
-        // not be found in admin_unit_global but will be found in admin_unit_tropical.
-        assertThat(britishColumbiaCanadaCentroid.getAdminUnitGlobalGaulCode()).isNull();
-        assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isEqualTo(825);
-    }
-
-    @Test
     public void doesNotFindAdminUnitsIfOutsideGeometry() {
         Location location = new Location(-40, 50, LocationPrecision.PRECISE);
         location.setHasPassedQc(true);

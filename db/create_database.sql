@@ -13,7 +13,7 @@ SET client_min_messages TO WARNING;
 
 -- Drop and create the database
 DROP DATABASE IF EXISTS :database_name;
-CREATE DATABASE :database_name;
+CREATE DATABASE :database_name ENCODING 'UTF8';
 
 -- Change context to the newly-created database
 \c :database_name
