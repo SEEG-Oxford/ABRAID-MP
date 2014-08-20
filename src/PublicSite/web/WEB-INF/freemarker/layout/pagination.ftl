@@ -1,5 +1,5 @@
 <#--
-    foo.
+    Macro for including pagination controls on a page.
     Copyright (c) 2014 University of Oxford
 -->
 <#import "/spring.ftl" as spring />

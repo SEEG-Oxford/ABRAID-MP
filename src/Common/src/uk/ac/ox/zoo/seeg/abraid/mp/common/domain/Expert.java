@@ -21,11 +21,11 @@ import java.util.List;
         ),
         @NamedQuery(
                 name = "getPubliclyVisibleExperts",
-                query = "from Expert where visibilityApproved=TRUE"
+                query = "from Expert where visibilityApproved=true"
         ),
         @NamedQuery(
-            name = "countPubliclyVisibleExperts",
-            query = "select count(e) from Expert e where visibilityApproved=TRUE"
+                name = "countPubliclyVisibleExperts",
+                query = "select count(e) from Expert e where visibilityApproved=true"
         )
 })
 @Entity
