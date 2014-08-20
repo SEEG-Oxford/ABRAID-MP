@@ -131,7 +131,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         }
 
         // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
-        // they may have changed as a resulting of updating weightings / isValidated. So retrieve them again before
+        // they may have changed as a result of updating weightings and isValidated. So retrieve them again before
         // running the model.
         List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
         modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRun, batchEndDate);
