@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLookupData;
 
 /**
  * The Quality Control (QC) manager. Performs quality control on a location.
@@ -13,15 +14,19 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
  * Copyright (c) 2014 University of Oxford
  */
 public class QCManager {
-    private static final String QC_STAGE_1_PASSED_MESSAGE = "QC stage 1 passed: location not an ADMIN1 or ADMIN2.";
-    private static final String QC_STAGE_2_PASSED_MESSAGE = "QC stage 2 passed: location is a country.";
-    private static final String QC_STAGE_3_PASSED_MESSAGE = "QC stage 3 passed: no country geometries associated " +
-            "with this location.";
+    private static final String MESSAGE_FORMAT = "QC stage %d %s: %s.";
+    private static final String PASSED = "passed";
+    private static final String FAILED = "failed";
+    private static final String NOT_ADMIN12_MESSAGE = "location not an ADMIN1 or ADMIN2";
+    private static final String NO_COUNTRIES_MESSAGE = "no country geometries associated with this location";
 
-    private static final int QC_STAGE_2_ID = 2;
-    private static final int QC_STAGE_3_ID = 3;
-    private static final int QC_STAGE_2_MAXIMUM_DISTANCE = 5;
-    private static final int QC_STAGE_3_MAXIMUM_DISTANCE = 5;
+    private static final int STAGE_1_ID = 1;
+    private static final int STAGE_2_ID = 2;
+    private static final int STAGE_3_ID = 3;
+    private static final int STAGE_2_MAXIMUM_DISTANCE = 5;
+    private static final int STAGE_3_MAXIMUM_DISTANCE = 5;
+    private static final String STAGE_2_GEOMETRY_DESCRIPTION = "land";
+    private static final String STAGE_3_GEOMETRY_DESCRIPTION = "HealthMap country";
 
     private QCLookupData qcLookupData;
 
@@ -46,6 +51,7 @@ public class QCManager {
 
     private boolean performQCStage1(Location location) {
         boolean passed = true;
+        String message = NOT_ADMIN12_MESSAGE;
 
         if (isAdmin1OrAdmin2(location)) {
             // Location is an admin1 or admin2, so find the closest admin unit to the location
@@ -57,26 +63,35 @@ public class QCManager {
             if (closestAdminUnit != null) {
                 location.setAdminUnitQCGaulCode(closestAdminUnit.getGaulCode());
             }
-            appendQcMessage(location, adminUnitFinder.getMessage());
-            passed = (closestAdminUnit != null);
-        } else {
-            appendQcMessage(location, QC_STAGE_1_PASSED_MESSAGE);
+            passed = adminUnitFinder.hasPassed();
+            message = adminUnitFinder.getMessage();
         }
 
+        appendQcMessage(location, STAGE_1_ID, passed, message);
         return passed;
     }
 
     private boolean performQCStage2(Location location) {
         boolean passed = true;
+        String message;
 
-        if (!isCountry(location)) {
-            // Ensure that the location is on land. If not, snap to land if within the maximum distance away.
-            Snapper snapper = new Snapper(QC_STAGE_2_ID, "land", QC_STAGE_2_MAXIMUM_DISTANCE);
-            passed = applySnapperToLocation(snapper, location, qcLookupData.getLandSeaBorders());
+        // Adjust the centroid of the country if necessary. For example, the centroid of the Philippines is not on
+        // land, so replace it with a predefined point in the Philippines that is on land.
+        CountryCentroidAdjuster adjuster = new CountryCentroidAdjuster();
+        HealthMapLookupData healthMapLookupData = qcLookupData.getHealthMapLookupData();
+        boolean hasBeenAdjusted = adjuster.adjustCountryCentroid(location, healthMapLookupData.getCountryMap());
+
+        if (hasBeenAdjusted) {
+            message = adjuster.getMessage();
         } else {
-            appendQcMessage(location, QC_STAGE_2_PASSED_MESSAGE);
+            // Ensure that the location is on land. If not, snap to land if within the maximum distance away.
+            Snapper snapper = new Snapper(STAGE_2_GEOMETRY_DESCRIPTION, STAGE_2_MAXIMUM_DISTANCE);
+            applySnapperToLocation(snapper, location, qcLookupData.getLandSeaBorders());
+            message = snapper.getMessage();
+            passed = snapper.hasPassed();
         }
 
+        appendQcMessage(location, STAGE_2_ID, passed, message);
         return passed;
     }
 
@@ -84,35 +99,29 @@ public class QCManager {
         // Ensure that the location is within the geometries associated with the location's HealthMap country. If not,
         // snap to the geometries if within the maximum distance away.
         boolean passed = true;
+        String message = NO_COUNTRIES_MESSAGE;
 
-        if (location.getHealthMapCountryId() != null) {
-            MultiPolygon countryGeometry = qcLookupData.getHealthMapCountryGeometryMap().get(
-                    location.getHealthMapCountryId());
+        Integer healthMapCountryId = location.getHealthMapCountryId();
+        if (healthMapCountryId != null) {
+            MultiPolygon countryGeometry = qcLookupData.getHealthMapCountryGeometryMap().get(healthMapCountryId);
             if (countryGeometry != null) {
-                Snapper snapper = new Snapper(QC_STAGE_3_ID, "HealthMap country", QC_STAGE_3_MAXIMUM_DISTANCE);
-                passed = applySnapperToLocation(snapper, location, countryGeometry);
-            } else {
-                appendQcMessage(location, QC_STAGE_3_PASSED_MESSAGE);
+                Snapper snapper = new Snapper(STAGE_3_GEOMETRY_DESCRIPTION, STAGE_3_MAXIMUM_DISTANCE);
+                applySnapperToLocation(snapper, location, countryGeometry);
+                passed = snapper.hasPassed();
+                message = snapper.getMessage();
             }
-        } else {
-            appendQcMessage(location, QC_STAGE_3_PASSED_MESSAGE);
         }
 
+        appendQcMessage(location, STAGE_3_ID, passed, message);
         return passed;
     }
 
     private boolean isAdmin1OrAdmin2(Location location) {
-        return (location.getPrecision() == LocationPrecision.ADMIN1) ||
-                (location.getPrecision() == LocationPrecision.ADMIN2);
+        LocationPrecision precision = location.getPrecision();
+        return (precision == LocationPrecision.ADMIN1) || (precision == LocationPrecision.ADMIN2);
     }
 
-    private boolean isCountry(Location location) {
-        return (location.getPrecision() == LocationPrecision.COUNTRY);
-    }
-
-    private boolean applySnapperToLocation(Snapper snapper, Location location, MultiPolygon geometry) {
-        boolean passed = true;
-
+    private void applySnapperToLocation(Snapper snapper, Location location, MultiPolygon geometry) {
         if (geometry != null) {
             snapper.ensureWithinGeometry(location, geometry);
             Point closestPoint = snapper.getClosestPoint();
@@ -120,17 +129,13 @@ public class QCManager {
                 // Set the location to the returned closest point, which has been snapped if necessary
                 location.setGeom(closestPoint);
             }
-            appendQcMessage(location, snapper.getMessage());
-
-            // Passes if a closest point was returned (if null, the closest point is too far away from the geometry)
-            passed = (closestPoint != null);
         }
-
-        return passed;
     }
 
-    private void appendQcMessage(Location location, String qcMessage) {
+    private void appendQcMessage(Location location, int qcStage, boolean hasPassed, String qcMessage) {
         if (StringUtils.hasText(qcMessage)) {
+            qcMessage = String.format(MESSAGE_FORMAT, qcStage, hasPassed ? PASSED : FAILED, qcMessage);
+
             String locationQcMessage = location.getQcMessage();
             if (locationQcMessage == null) {
                 locationQcMessage = "";

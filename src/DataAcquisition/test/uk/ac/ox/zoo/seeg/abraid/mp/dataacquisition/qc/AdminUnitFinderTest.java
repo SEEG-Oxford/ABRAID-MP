@@ -76,8 +76,8 @@ public class AdminUnitFinderTest {
 
         // Assert
         assertThat(adminUnitFinder.getClosestAdminUnit()).isSameAs(hampshire);
-        assertThat(adminUnitFinder.getMessage()).isEqualTo("QC stage 1 passed: closest distance is 12.48% of the " +
-                "square root of the area.");
+        assertThat(adminUnitFinder.getMessage()).isEqualTo("closest distance is 12.48% of the square root of the area");
+        assertThat(adminUnitFinder.hasPassed()).isTrue();
     }
 
     @Test
@@ -93,8 +93,9 @@ public class AdminUnitFinderTest {
 
         // Assert
         assertThat(adminUnitFinder.getClosestAdminUnit()).isNull();
-        assertThat(adminUnitFinder.getMessage()).isEqualTo("QC stage 1 failed: closest distance is 146.17% of the " +
-                "square root of the area (GAUL code 40096: \"Berkshire\").");
+        assertThat(adminUnitFinder.getMessage()).isEqualTo("closest distance is 146.17% of the square root of the " +
+                "area (GAUL code 40096: \"Berkshire\")");
+        assertThat(adminUnitFinder.hasPassed()).isFalse();
     }
 
     @Test
@@ -110,8 +111,8 @@ public class AdminUnitFinderTest {
         // Assert
         assertThat(adminUnitFinder.getClosestAdminUnit()).isNotNull();
         assertThat(adminUnitFinder.getClosestAdminUnit().getName()).isEqualTo("Hampshire");
-        assertThat(adminUnitFinder.getMessage()).isEqualTo("QC stage 1 passed: closest distance is 12.48% of the " +
-                "square root of the area.");
+        assertThat(adminUnitFinder.getMessage()).isEqualTo("closest distance is 12.48% of the square root of the area");
+        assertThat(adminUnitFinder.hasPassed()).isTrue();
     }
 
     @Test
@@ -127,8 +128,8 @@ public class AdminUnitFinderTest {
         // Assert
         assertThat(adminUnitFinder.getClosestAdminUnit()).isNotNull();
         assertThat(adminUnitFinder.getClosestAdminUnit().getName()).isEqualTo("West Virginia");
-        assertThat(adminUnitFinder.getMessage()).isEqualTo("QC stage 1 passed: closest distance is 6.79% of the " +
-                "square root of the area.");
+        assertThat(adminUnitFinder.getMessage()).isEqualTo("closest distance is 6.79% of the square root of the area");
+        assertThat(adminUnitFinder.hasPassed()).isTrue();
     }
 
     @Test
@@ -143,8 +144,9 @@ public class AdminUnitFinderTest {
 
         // Assert
         assertThat(adminUnitFinder.getClosestAdminUnit()).isNull();
-        assertThat(adminUnitFinder.getMessage()).isEqualTo("QC stage 1 failed: closest distance is 128.21% of the " +
-                "square root of the area (GAUL code 40096: \"Berkshire\").");
+        assertThat(adminUnitFinder.getMessage()).isEqualTo("closest distance is 128.21% of the square root of the " +
+                "area (GAUL code 40096: \"Berkshire\")");
+        assertThat(adminUnitFinder.hasPassed()).isFalse();
     }
 
     private List<AdminUnitQC> createAdminUnits() {

@@ -20,7 +20,7 @@ public class SnapperTest {
     public void throwsExceptionIfLocationHasNoGeometry() {
         // Arrange
         Location location = new Location();
-        Snapper snapper = new Snapper(2, "land", 5);
+        Snapper snapper = new Snapper("land", 5);
 
         // Act
         catchException(snapper).ensureWithinGeometry(location, getGeometry());
@@ -33,13 +33,14 @@ public class SnapperTest {
     public void locationInsideFirstGeometry() {
         // Arrange
         Location location = new Location(20, 30);
-        Snapper snapper = new Snapper(2, "land", 5);
+        Snapper snapper = new Snapper("land", 5);
 
         // Act
         snapper.ensureWithinGeometry(location, getGeometry());
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("QC stage 2 passed: location already within land.");
+        assertThat(snapper.getMessage()).isEqualTo("location already within land");
+        assertThat(snapper.hasPassed()).isTrue();
         assertThat(snapper.getClosestPoint()).isNotNull();
         assertThat(snapper.getClosestPoint().equalsExact(location.getGeom())).isTrue();
     }
@@ -48,13 +49,14 @@ public class SnapperTest {
     public void locationInsideSecondGeometry() {
         // Arrange
         Location location = new Location(117, 115);
-        Snapper snapper = new Snapper(3, "HealthMap country", 5);
+        Snapper snapper = new Snapper("HealthMap country", 5);
 
         // Act
         snapper.ensureWithinGeometry(location, getGeometry());
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("QC stage 3 passed: location already within HealthMap country.");
+        assertThat(snapper.getMessage()).isEqualTo("location already within HealthMap country");
+        assertThat(snapper.hasPassed()).isTrue();
         assertThat(snapper.getClosestPoint()).isNotNull();
         assertThat(snapper.getClosestPoint().equalsExact(location.getGeom())).isTrue();
     }
@@ -63,14 +65,14 @@ public class SnapperTest {
     public void locationJustOutsideGeometries() {
         // Arrange
         Location location = new Location(100, 100.04);
-        Snapper snapper = new Snapper(2, "land", 5);
+        Snapper snapper = new Snapper("land", 5);
 
         // Act
         snapper.ensureWithinGeometry(location, getGeometry());
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("QC stage 2 passed: location (100.000000,100.040000) snapped to " +
-                "land (distance 4.466km).");
+        assertThat(snapper.getMessage()).isEqualTo("location (100.00000,100.04000) snapped to land (distance 4.466km)");
+        assertThat(snapper.hasPassed()).isTrue();
         assertThat(snapper.getClosestPoint()).isNotNull();
         assertThat(snapper.getClosestPoint().getX()).isEqualTo(100);
         assertThat(snapper.getClosestPoint().getY()).isEqualTo(100);
@@ -80,14 +82,15 @@ public class SnapperTest {
     public void locationJustOutsideGeometriesWithReducedMaximumDistance() {
         // Arrange
         Location location = new Location(100, 100.04);
-        Snapper snapper = new Snapper(2, "land", 2);
+        Snapper snapper = new Snapper("land", 2);
 
         // Act
         snapper.ensureWithinGeometry(location, getGeometry());
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("QC stage 2 failed: location too distant from land (closest " +
-                "point is (100.000000,100.000000) at distance 4.466km).");
+        assertThat(snapper.getMessage()).isEqualTo("location too distant from land (closest point is " +
+                "(100.00000,100.00000) at distance 4.466km)");
+        assertThat(snapper.hasPassed()).isFalse();
         assertThat(snapper.getClosestPoint()).isNull();
     }
 
@@ -95,14 +98,15 @@ public class SnapperTest {
     public void locationWellOutsideGeometries() {
         // Arrange
         Location location = new Location(150, 150);
-        Snapper snapper = new Snapper(2, "land", 5);
+        Snapper snapper = new Snapper("land", 5);
 
         // Act
         snapper.ensureWithinGeometry(location, getGeometry());
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("QC stage 2 failed: location too distant from land (closest " +
-                "point is (120.000000,120.000000) at distance 4015.703km).");
+        assertThat(snapper.getMessage()).isEqualTo("location too distant from land (closest point is " +
+                "(120.00000,120.00000) at distance 4015.703km)");
+        assertThat(snapper.hasPassed()).isFalse();
         assertThat(snapper.getClosestPoint()).isNull();
     }
 
@@ -110,7 +114,7 @@ public class SnapperTest {
     public void locationCannotBeSnapped() {
         // Arrange
         Location location = new Location(9, 9);
-        Snapper snapper = new Snapper(2, "land", 5);
+        Snapper snapper = new Snapper("land", 5);
 
         Polygon polygon = GeometryUtils.createPolygon(false, 10.000003, 10.000003, 10.000003, 10.000006, 10.000006,
                 10.000006, 10.000006, 10.000003, 10.000003, 10.000003);
@@ -120,7 +124,8 @@ public class SnapperTest {
         snapper.ensureWithinGeometry(location, multiPolygon);
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("QC stage 2 failed: location cannot be snapped.");
+        assertThat(snapper.getMessage()).isEqualTo("location cannot be snapped");
+        assertThat(snapper.hasPassed()).isFalse();
         assertThat(snapper.getClosestPoint()).isNull();
     }
 
