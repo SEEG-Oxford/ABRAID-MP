@@ -149,7 +149,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroup);
 
         // Assert
-        verify(diseaseOccurrenceValidationService, times(1)).addValidationParameters(occurrence);
+        verify(diseaseOccurrenceValidationService, times(1)).addValidationParameters(Arrays.asList(occurrence));
         verify(diseaseService, times(1)).saveDiseaseOccurrence(occurrence);
     }
 

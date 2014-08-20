@@ -2,7 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.datum.DefaultEllipsoid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
 public final class GeometryUtils {
     /** The SRID number for the co-ordinate reference system WGS 84. */
     public static final int SRID_FOR_WGS_84 = 4326;
+    /** The co-ordinate reference system WGS 84. */
+    public static final CoordinateReferenceSystem WGS_84_CRS = DefaultGeographicCRS.WGS84;
 
     // Enforces co-ordinate precision to 5 decimal places (the standard for the Malaria Atlas Project)
     private static final double PRECISION_DECIMAL_PLACES = 5;

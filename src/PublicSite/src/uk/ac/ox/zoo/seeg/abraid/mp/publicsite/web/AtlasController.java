@@ -20,4 +20,13 @@ public class AtlasController extends AbstractController {
     public String showPage() {
         return "atlas";
     }
+
+    /**
+     * Shows the experts page.
+     * @return The ftl page name.
+     */
+    @RequestMapping(value = "/experts", method = RequestMethod.GET)
+    public String showExperts() {
+        return "experts";
+    }
 }

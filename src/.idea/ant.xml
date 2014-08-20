@@ -4,7 +4,6 @@
     <defaultAnt name="Apache Ant version 1.9.3" />
     <buildFile url="file://$PROJECT_DIR$/build.xml" />
     <buildFile url="file://$PROJECT_DIR$/Common/build.xml" />
-    <buildFile url="file://$PROJECT_DIR$/DiseaseExtent/build.xml" />
     <buildFile url="file://$PROJECT_DIR$/ModelWrapper/build.xml" />
     <buildFile url="file://$PROJECT_DIR$/PublicSite/build.xml" />
   </component>

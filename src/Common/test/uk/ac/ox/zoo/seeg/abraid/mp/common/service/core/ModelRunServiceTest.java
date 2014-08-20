@@ -53,6 +53,22 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getMeanPredictionRasterForModelRun() {
+        // Arrange
+        int modelRunId = 1;
+        byte[] expectedRaster = new byte[1];
+
+        when(nativeSQL.getRasterForModelRun(modelRunId, NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME))
+                .thenReturn(expectedRaster);
+
+        // Act
+        byte[] actualRaster = modelRunService.getMeanPredictionRasterForModelRun(modelRunId);
+
+        // Assert
+        assertThat(actualRaster).isSameAs(expectedRaster);
+    }
+
+    @Test
     public void updateMeanPredictionRasterForModelRun() {
         // Arrange
         int modelRunId = 1;

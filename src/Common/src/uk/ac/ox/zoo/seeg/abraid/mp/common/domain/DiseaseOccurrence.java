@@ -70,13 +70,12 @@ import javax.persistence.Table;
                         "and isValidated is not null"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrenceIDsForBatching",
-                query = "select id " +
-                        "from DiseaseOccurrence " +
-                        "where diseaseGroup.id=:diseaseGroupId " +
-                        "and isValidated = true " +
-                        "and finalWeighting is null " +
-                        "and occurrenceDate <= :batchEndDate"
+                name = "getDiseaseOccurrencesForBatching",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.isValidated = true " +
+                        "and d.finalWeighting is null " +
+                        "and d.occurrenceDate <= :batchEndDate"
         )
 })
 @Entity

@@ -96,8 +96,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private void addValidationParameters(DiseaseGroup diseaseGroup) {
         List<DiseaseOccurrence> occurrences =
             diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroup.getId(), false);
+        diseaseOccurrenceValidationService.addValidationParameters(occurrences);
         for (DiseaseOccurrence occurrence : occurrences) {
-            diseaseOccurrenceValidationService.addValidationParameters(occurrence);
             diseaseService.saveDiseaseOccurrence(occurrence);
         }
     }

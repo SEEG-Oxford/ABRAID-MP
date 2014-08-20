@@ -92,5 +92,5 @@ public final class NativeSQLConstants {
     /** Other: Tropical. */
     public static final String TROPICAL = "tropical";
     /** Other: PostGIS's name for the GeoTiff raster format. */
-    public static final String GDAL_RASTER_FORMAT = "GTiff";
+    public static final String GEOTIFF_RASTER_FORMAT = "GTiff";
 }

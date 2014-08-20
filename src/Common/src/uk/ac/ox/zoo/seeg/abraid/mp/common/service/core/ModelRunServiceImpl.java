@@ -56,6 +56,16 @@ public class ModelRunServiceImpl implements ModelRunService {
     }
 
     /**
+     * Gets the mean prediction raster of the specified model run, as a GeoTIFF.
+     * @param modelRunId The model run's ID.
+     * @return gdalRaster The mean prediction raster, in GeoTIFF format.
+     */
+    @Override
+    public byte[] getMeanPredictionRasterForModelRun(int modelRunId) {
+        return nativeSQL.getRasterForModelRun(modelRunId, NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
+    }
+
+    /**
      * Updates the specified model run to include the specified mean prediction raster.
      * @param modelRunId The model run's ID.
      * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.

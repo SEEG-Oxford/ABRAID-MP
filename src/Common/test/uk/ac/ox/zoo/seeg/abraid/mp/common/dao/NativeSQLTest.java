@@ -352,7 +352,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         byte[] expectedGDALRasterResult = updateRasterForModelRun(rasterColumnName, modelRun, filename);
 
         // Assert - load mean prediction raster from model run and compare for equality (ignoring whitespace)
-        byte[] actualGDALRasterResult = nativeSQL.loadRasterForModelRun(modelRun.getId(), rasterColumnName);
+        byte[] actualGDALRasterResult = nativeSQL.getRasterForModelRun(modelRun.getId(), rasterColumnName);
         assertThat(new String(actualGDALRasterResult)).isEqualTo(new String(expectedGDALRasterResult));
     }
 

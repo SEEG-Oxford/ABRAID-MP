@@ -36,7 +36,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 @WebAppConfiguration("file:ModelOutputHandler/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringIntegrationTests {
-    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
+    private static final String LARGE_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
 
     @Autowired
     private ModelRunService modelRunService;

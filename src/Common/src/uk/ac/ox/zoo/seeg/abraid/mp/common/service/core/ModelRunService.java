@@ -32,6 +32,13 @@ public interface ModelRunService {
     void saveModelRun(ModelRun modelRun);
 
     /**
+     * Gets the mean prediction raster of the specified model run.
+     * @param modelRunId The model run's ID.
+     * @return gdalRaster The mean prediction raster.
+     */
+    byte[] getMeanPredictionRasterForModelRun(int modelRunId);
+
+    /**
      * Updates the specified model run to include the specified mean prediction raster.
      * @param modelRunId The model run's ID.
      * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
