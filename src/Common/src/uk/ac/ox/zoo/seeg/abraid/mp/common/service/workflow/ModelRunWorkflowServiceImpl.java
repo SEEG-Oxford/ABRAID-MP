@@ -84,6 +84,10 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
+    /**
+     * Update the ClassChangedDate of all AdminUnitDiseaseExtentClasses for this DiseaseGroup
+     * so that all polygons are available for review on DataValidator
+     */
     private void setAdminUnitDiseaseExtentClassChangedDate(DiseaseGroup diseaseGroup, DateTime now) {
         List<AdminUnitDiseaseExtentClass> extentClasses =
             diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroup.getId());
@@ -93,6 +97,10 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         }
     }
 
+    /**
+     * Calculate validation parameters for occurrences without a final weighting, because the set-up process is
+     * complete. Calculation of other weightings happens on first automatic model run.
+     */
     private void addValidationParameters(DiseaseGroup diseaseGroup) {
         List<DiseaseOccurrence> occurrences =
             diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroup.getId(), false);
