@@ -7,7 +7,7 @@
 <@c.page title="ABRAID MP">
 
 <div class="container">
-    <div class="jumbotron" style="padding:30px; text-align: center">
+    <div class="jumbotron">
 
         <div>This page will present the model outputs and links to download data.</div>
         <div>Please navigate to the Data Validation page to review disease occurrences.</div>

@@ -1,7 +1,7 @@
 /* A suite of tests for the AccountRegistrationFormViewModel.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/register/AccountRegistrationFormViewModel"], function (AccountRegistrationFormViewModel) {
+define(["app/user/AccountRegistrationFormViewModel"], function (AccountRegistrationFormViewModel) {
     "use strict";
     var noop = function () {};
     var wrap = function (result) {

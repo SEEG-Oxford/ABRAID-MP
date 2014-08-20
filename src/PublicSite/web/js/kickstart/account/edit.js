@@ -13,18 +13,15 @@ require([baseUrl + "js/require.conf.js"], function () {
         "app/user/DiseaseInterestListViewModel",
         "domReady!"
     ], function (ko, $, _, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
-            var redirectPage = function (newURL) {
-                doc.location = newURL;
+            var redirectPage = function () {
+                // In this version of the view, we don't want a redirect.
             };
 
             var diseaseInterestListViewModel =
                 new DiseaseInterestListViewModel(initialExpert, diseases);
 
-            var accountDetailsFormViewModel =
-                new AccountDetailsFormViewModel(baseUrl, "register/details", {
-                    success: "Account creation step 2/2 successfully completed.",
-                    fail: "Account creation step 2/2 unsuccessful."
-                }, initialExpert, redirectPage, diseaseInterestListViewModel);
+            var accountDetailsFormViewModel = new AccountDetailsFormViewModel(
+                    baseUrl, "account/edit", {}, initialExpert, redirectPage, diseaseInterestListViewModel);
 
             ko.applyBindings(
                 ko.validatedObservable(accountDetailsFormViewModel),

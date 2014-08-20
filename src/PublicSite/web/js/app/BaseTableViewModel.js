@@ -36,7 +36,7 @@ define([
                 var filter = self.filter().toLowerCase();
 
                 iterable = iterable.filter(function (disease) {
-                    _(filterableFields).some(function (field) {
+                    return _(filterableFields).some(function (field) {
                         return (ko.utils.recursivePeek(disease[field]) || "").toLowerCase().indexOf(filter) !== -1;
                     });
                 });

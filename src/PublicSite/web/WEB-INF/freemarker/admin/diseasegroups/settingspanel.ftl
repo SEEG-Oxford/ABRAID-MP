@@ -35,7 +35,7 @@
                     <div class="form-group">
                         <label for="disease-group-type" class="col-sm-5 control-label">Group Type</label>
                         <div class="col-sm-7 btn-group" id="disease-group-type" data-bind="foreach: groupTypes">
-                            <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value}">
+                            <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value, disabled: find('isSubmitting')}">
                                 <input type="radio" name="disease-group-type" data-bind="formRadio: { selected: $parent.selectedType, value: value }">
                                 <span data-bind="text: label"></span>
                             </label>
@@ -44,7 +44,7 @@
                     <div class="form-group">
                         <label for="global-or-tropical" class="col-sm-5 control-label">Global or Tropical</label>
                         <div class="col-sm-7 btn-group" id="global-or-tropical"  data-bind="foreach: [ {value: true, label: 'Global'}, {value: false, label: 'Tropical'} ]">
-                            <label class="btn btn-default" data-bind="css: {active : $parent.isGlobal() === value}">
+                            <label class="btn btn-default" data-bind="css: {active : $parent.isGlobal() === value, disabled: find('isSubmitting')}">
                                 <input type="radio" name="global-or-tropical" data-bind="formRadio: { selected: $parent.isGlobal, value: value }">
                                 <span data-bind="text: label"></span>
                             </label>
