@@ -56,7 +56,7 @@ public class ExpertValidationRulesCheckerTest {
         target.checkEmail(new String(chars) + "@" + new String(chars) + ".com", result);
 
         // Assert
-        assertThat(result).contains("Email address must less than 320 letters in length.");
+        assertThat(result).contains("Email address must be fewer than 320 letters in length.");
     }
 
     @Test
@@ -190,7 +190,7 @@ public class ExpertValidationRulesCheckerTest {
         target.checkName(new String(chars), result);
 
         // Assert
-        assertThat(result).contains("Name must less than 1000 letters in length.");
+        assertThat(result).contains("Name must be fewer than 1000 letters in length.");
     }
 
     @Test
@@ -231,7 +231,7 @@ public class ExpertValidationRulesCheckerTest {
             result);
 
         // Assert
-        assertThat(result).contains("Job title must less than 100 letters in length.");
+        assertThat(result).contains("Job title must be fewer than 100 letters in length.");
     }
 
     @Test
@@ -272,7 +272,7 @@ public class ExpertValidationRulesCheckerTest {
                 result);
 
         // Assert
-        assertThat(result).contains("Institution must less than 100 letters in length.");
+        assertThat(result).contains("Institution must be fewer than 100 letters in length.");
     }
 
     @Test
