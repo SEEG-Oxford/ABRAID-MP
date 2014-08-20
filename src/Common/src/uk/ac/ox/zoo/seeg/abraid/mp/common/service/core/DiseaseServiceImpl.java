@@ -96,7 +96,7 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Gets the list of disease groups, for each validator disease group.
-     * @param includeNewDiseases Whether new (not setup fully) diseases should be included in the map.
+     * @param includeNewDiseases Whether new (not set up fully) diseases should be included in the map.
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
     @Override

@@ -67,7 +67,7 @@ public class DataValidationController extends AbstractController {
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);
-        boolean userIsSEEG = userLoggedIn && expertService.getExpertById(user.getId()).isSeegMember();
+        boolean userIsSEEG = userLoggedIn && checkIfSeegMember(user);
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
         if (userLoggedIn) {
@@ -181,7 +181,7 @@ public class DataValidationController extends AbstractController {
         PublicSiteUser user = currentUserService.getCurrentUser();
         List<AdminUnitDiseaseExtentClass> diseaseExtent;
         List<AdminUnitReview> reviews;
-        boolean userIsSEEG = expertService.getExpertById(user.getId()).isSeegMember();
+        boolean userIsSEEG = checkIfSeegMember(user);
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup == null || (!diseaseGroup.isAutomaticModelRunsEnabled() && !userIsSEEG)) {
@@ -214,7 +214,7 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
                                                 String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        boolean userIsSEEG = expertService.getExpertById(user.getId()).isSeegMember();
+        boolean userIsSEEG = checkIfSeegMember(user);
 
         Integer expertId = user.getId();
         String expertEmail = user.getUsername();
@@ -243,5 +243,18 @@ public class DataValidationController extends AbstractController {
             expertService.updateExistingAdminUnitReview(adminUnitReview, adminUnitReviewResponse);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
+    }
+
+    private boolean checkIfSeegMember(PublicSiteUser user) {
+        if (user == null) {
+            throw new IllegalArgumentException("No logged in user");
+        }
+
+        Expert expert = expertService.getExpertById(user.getId());
+        if (expert == null) {
+            throw new IllegalArgumentException("Logged in user does not have an associated expert.");
+        }
+
+        return expert.isSeegMember();
     }
 }
