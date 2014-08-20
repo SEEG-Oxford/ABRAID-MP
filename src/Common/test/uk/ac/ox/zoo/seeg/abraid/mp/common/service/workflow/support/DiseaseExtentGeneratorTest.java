@@ -350,13 +350,13 @@ public class DiseaseExtentGeneratorTest {
 
     private List<? extends AdminUnitGlobalOrTropical> getAdminUnits() {
         return createList(
-                new AdminUnitGlobal(100, 10),
-                new AdminUnitTropical(125, 20),
-                new AdminUnitTropical(130, 30),
-                new AdminUnitGlobal(150),
-                new AdminUnitTropical(200, 20),
-                new AdminUnitTropical(250, 20),
-                new AdminUnitGlobal(300, 30)
+                new AdminUnitGlobal(100, 10, '1'),
+                new AdminUnitTropical(125, 20, '1'),
+                new AdminUnitTropical(130, 30, '1'),
+                new AdminUnitGlobal(150, null, '0'),
+                new AdminUnitTropical(200, 20, '1'),
+                new AdminUnitTropical(250, 20, '1'),
+                new AdminUnitGlobal(300, 30, '1')
         );
     }
 
@@ -428,7 +428,8 @@ public class DiseaseExtentGeneratorTest {
         DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthsAgo);
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
-            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, adminUnitGaulCode));
+            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1,
+                    adminUnitGaulCode));
         }
         return occurrences;
     }

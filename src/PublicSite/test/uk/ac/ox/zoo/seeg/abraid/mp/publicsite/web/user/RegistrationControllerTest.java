@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;

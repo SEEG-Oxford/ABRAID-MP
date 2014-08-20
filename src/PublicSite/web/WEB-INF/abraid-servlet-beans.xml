@@ -49,9 +49,12 @@
 
     <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 
+    <bean id="expertValidationRulesChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertValidationRulesChecker" />
     <bean id="expertForRegistrationValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator" />
+    <bean id="expertUpdateValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertUpdateValidator" />
 
     <bean id="adminExpertsHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminExpertsHelper" />
+    <bean id="expertUpdateHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.ExpertUpdateHelper" />
 
     <mvc:default-servlet-handler/>
 

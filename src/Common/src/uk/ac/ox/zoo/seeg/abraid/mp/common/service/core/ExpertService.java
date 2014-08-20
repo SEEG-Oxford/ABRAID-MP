@@ -101,6 +101,20 @@ public interface ExpertService {
     Long getAdminUnitReviewCount(Integer expertId);
 
     /**
+     * Gets a page worth of publicly visible experts.
+     * @param pageNumber The page number to return.
+     * @param pageSize The size of the pages to split the visible experts into.
+     * @return A page worth of publicly visible experts
+     */
+    List<Expert> getPageOfPubliclyVisibleExperts(int pageNumber, int pageSize);
+
+    /**
+     * Gets a count of the publicly visible experts.
+     * @return The count.
+     */
+    long getCountOfPubliclyVisibleExperts();
+
+    /**
      * Saves the disease occurrence review.
      * @param expertEmail The email address of the expert providing review.
      * @param occurrenceId The id of the disease occurrence.

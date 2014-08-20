@@ -24,6 +24,20 @@ public interface ExpertDao {
     Expert getById(Integer id);
 
     /**
+     * Gets a page worth of publicly visible experts.
+     * @param pageNumber The page number to return.
+     * @param pageSize The size of the pages to split the visible experts into.
+     * @return A page worth of publicly visible experts
+     */
+    List<Expert> getPageOfPubliclyVisible(int pageNumber, int pageSize);
+
+    /**
+     * Gets a count of the publicly visible experts.
+     * @return The count.
+     */
+    long getCountOfPubliclyVisible();
+
+    /**
      * Gets an expert by email address.
      * @param email The email address.
      * @return The expert, or null if not found.

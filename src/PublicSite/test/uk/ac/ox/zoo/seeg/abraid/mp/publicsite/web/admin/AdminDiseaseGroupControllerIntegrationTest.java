@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -17,7 +17,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminDiseaseGroupController;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.util.List;

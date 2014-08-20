@@ -226,7 +226,8 @@ CREATE TABLE geonames_location_precision (
 
 CREATE TABLE healthmap_country (
     id integer NOT NULL,
-    name varchar(100) NOT NULL
+    name varchar(100) NOT NULL,
+    centroid_override geometry(POINT, 4326)
 );
 
 CREATE TABLE healthmap_country_country (

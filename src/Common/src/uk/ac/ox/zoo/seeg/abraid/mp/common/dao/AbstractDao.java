@@ -161,6 +161,27 @@ public abstract class AbstractDao<E, I extends Serializable> {
     }
 
     /**
+     * Get a page of the results of a named query with the specified parameters.
+     * @param namedQuery the named query to run
+     * @param pageNumber the number of the page to return
+     * @param pageSize the size of the pages to split the result into
+     * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
+     * @return the list of matched query results
+     * @throws HibernateException Indicates a problem executing the SQL or processing the SQL results.
+     */
+    @SuppressWarnings("unchecked")
+    protected final List<E> listPageOfNamedQuery(
+            String namedQuery, int pageNumber, int pageSize, Object... parameterNamesAndValues)
+            throws HibernateException {
+        Query query = getParameterisedNamedQuery(namedQuery, parameterNamesAndValues);
+        query.setMaxResults(pageSize);
+        query.setFirstResult((pageNumber - 1) * pageSize);
+        return list(query);
+    }
+
+
+    /**
      * Get all entities of the given type.
      * @return the list of entities
      * @throws HibernateException Indicates a problem executing the SQL or processing the SQL results.

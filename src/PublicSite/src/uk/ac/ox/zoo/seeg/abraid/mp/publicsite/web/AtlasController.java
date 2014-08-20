@@ -11,7 +11,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
  */
 @Controller
 public class AtlasController extends AbstractController {
-
     /**
      * Return the view to display.
      * @return The ftl page name.

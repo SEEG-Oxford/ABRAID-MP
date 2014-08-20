@@ -12,11 +12,10 @@ public interface NativeSQL {
      * Finds the first admin unit that contains the specified point.
      * @param point The point.
      * @param isGlobal True to use admin units for global diseases, otherwise false.
-     * @param adminLevel Only considers admin units at this level. Specify null to consider all admin units.
      * @return The GAUL code of the first global admin unit that contains the specified point, or null if no
      * admin units found.
      */
-    Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal, Character adminLevel);
+    Integer findAdminUnitThatContainsPoint(Point point, boolean isGlobal);
 
     /**
      * Finds the country that contains the specified point.
@@ -26,12 +25,12 @@ public interface NativeSQL {
     Integer findCountryThatContainsPoint(Point point);
 
     /**
-     * Loads the mean prediction raster for a model run.
+     * Gets the mean prediction raster for a model run.
      * @param modelRunId The model run's ID.
      * @param rasterColumnName The column name of the raster in the model_run table.
-     * @return The mean prediction raster, in ASCII raster format.
+     * @return The mean prediction raster.
      */
-    byte[] loadRasterForModelRun(int modelRunId, String rasterColumnName);
+    byte[] getRasterForModelRun(int modelRunId, String rasterColumnName);
 
     /**
      * Updates the specified model run to include the specified mean prediction raster.

@@ -55,60 +55,43 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void findAdminUnitGlobalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isEqualTo(826);
     }
 
     @Test
     public void findAdminUnitGlobalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitGlobalWherePointIsOnBorder() {
-        Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, null);
+        Point point = GeometryUtils.createPoint(176, -38);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isEqualTo(179);
-    }
-
-    @Test
-    public void findAdminUnitGlobalWherePointIsNotInTheRequestedAdminLevel() {
-        // This point is within British Columbia, which is an admin1
-        Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true, '0');
-        assertThat(gaulCode).isNull();
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test
     public void findAdminUnitTropicalWherePointIsOnBorder() {
-        Point point = GeometryUtils.createPoint(172, -42);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
+        Point point = GeometryUtils.createPoint(177, -39);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isEqualTo(179);
     }
 
     @Test
     public void findAdminUnitTropicalThatContainsPointReturnsNullIfNoGaulCodesContainThePoint() {
         Point point = GeometryUtils.createPoint(0, 0);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, null);
+        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isNull();
-    }
-
-    @Test
-    public void findAdminUnitTropicalWherePointIsNotInTheRequestedAdminLevel() {
-        // This point is within British Columbia, which is an admin1
-        Point point = GeometryUtils.createPoint(-124.2, 54.1);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false, '0');
-        // And it is assigned GAUL code 825 (Canada) which is an admin0
-        assertThat(gaulCode).isEqualTo(825);
     }
 
     @Test
@@ -285,7 +268,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         int diseaseGroupId = 87;
         updateExtentForTropicalDisease(diseaseGroupId);
-        Point point = GeometryUtils.createPoint(172, -42);
+        Point point = GeometryUtils.createPoint(177, -38);
         double expectedDistance = -300; // Nominal distance for possible presence
 
         // Act
@@ -369,7 +352,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         byte[] expectedGDALRasterResult = updateRasterForModelRun(rasterColumnName, modelRun, filename);
 
         // Assert - load mean prediction raster from model run and compare for equality (ignoring whitespace)
-        byte[] actualGDALRasterResult = nativeSQL.loadRasterForModelRun(modelRun.getId(), rasterColumnName);
+        byte[] actualGDALRasterResult = nativeSQL.getRasterForModelRun(modelRun.getId(), rasterColumnName);
         assertThat(new String(actualGDALRasterResult)).isEqualTo(new String(expectedGDALRasterResult));
     }
 

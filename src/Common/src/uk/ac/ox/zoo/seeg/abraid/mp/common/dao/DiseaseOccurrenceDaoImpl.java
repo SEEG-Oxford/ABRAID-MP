@@ -18,7 +18,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     // HQL fragments used to build a query to obtain disease occurrences for disease extent generation
     private static final String DISEASE_EXTENT_QUERY =
             "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, case when :isGlobal = true then" +
+            "       (d.occurrenceDate, d.location.precision, case when :isGlobal = true then" +
             "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
@@ -179,16 +179,15 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets a list of disease occurrence IDs for validation batching, for the specified disease group.
+     * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      * @param batchEndDate The end date of the batch.
-     * @return A list of disease occurrence IDs.
+     * @return A list of disease occurrences.
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Integer> getIDsForBatching(int diseaseGroupId, DateTime batchEndDate) {
-        Query query = getParameterisedNamedQuery("getDiseaseOccurrenceIDsForBatching",
-                "diseaseGroupId", diseaseGroupId, "batchEndDate", batchEndDate);
-        return (List<Integer>) query.list();
+    public List<DiseaseOccurrence> getOccurrencesForBatching(int diseaseGroupId, DateTime batchEndDate) {
+        return listNamedQuery("getDiseaseOccurrencesForBatching", "diseaseGroupId", diseaseGroupId,
+                "batchEndDate", batchEndDate);
     }
 }

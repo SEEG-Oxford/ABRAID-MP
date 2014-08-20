@@ -48,7 +48,7 @@ public class AdminExpertsHelperTest {
     }
 
     @Test
-         public void processExpertsAsTransactionCanProcessMultipleExperts() throws Exception {
+    public void processExpertsAsTransactionCanProcessMultipleExperts() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         AdminExpertsHelper target = new AdminExpertsHelper(expertService);

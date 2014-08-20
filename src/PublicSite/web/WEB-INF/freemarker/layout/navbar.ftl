@@ -20,8 +20,9 @@
             <ul class="nav navbar-nav">
                 <li><a href="<@spring.url "/"/>">Atlas</a></li>
                 <li><a href="<@spring.url "/datavalidation"/>">Data Validation</a></li>
-                <li><a>About</a></li>
-                <li><a>Publications</a></li>
+                <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Publications</a></li>
                 <@security.authorize ifAnyGranted="ROLE_ADMIN">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration <span class="caret"></span></a>
@@ -33,9 +34,10 @@
                 </@security.authorize>
             </ul>
             <@security.authorize ifAnyGranted="ROLE_USER">
-                <ul class="nav navbar-nav navbar-right text-muted">
-                    <li><div>Hello <@security.authentication property="principal.fullName"/></div></li>
-                    <li><a href="<@spring.url "/j_spring_security_logout"/>">Log out</a></li>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><span class="text-muted"><@security.authentication property="principal.fullName"/></span></li>
+                    <li><a title="Edit profile" href="<@spring.url "/account/edit"/>"><span class="fa fa-lg fa-gear"></span></a></li>
+                    <li><a title="Log out" href="<@spring.url "/j_spring_security_logout"/>"><span class="fa fa-lg fa-sign-out"></span></a></li>
                 </ul>
             </@security.authorize>
         </div>

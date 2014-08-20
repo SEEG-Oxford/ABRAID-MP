@@ -6,7 +6,6 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
-import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.gce.geotiff.GeoTiffWriteParams;
@@ -38,7 +37,6 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             "Transforming gaul code raster to weightings raster.";
     private static final int RASTER_NO_DATA_VALUE = -9999;
     private static final AbstractGridFormat GEOTIFF_FORMAT = new GeoTiffFormat();
-    private static final Hints GEOTIFF_HINTS = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
     private static final float GEOTIFF_COMPRESSION_LEVEL = 0.9F;
     private static final String GEOTIFF_COMPRESSION_TYPE = "Deflate";
 
@@ -65,7 +63,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
     private GridCoverage2D loadRaster(File location) throws IOException {
         LOGGER.info(String.format(LOG_LOADING_SOURCE_RASTER, location.toString()));
         try {
-            GridCoverage2DReader reader = new GeoTiffReader(location, GEOTIFF_HINTS);
+            GridCoverage2DReader reader = new GeoTiffReader(location);
             return reader.read(null);
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString());

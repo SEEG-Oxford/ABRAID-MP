@@ -42,24 +42,6 @@
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.dataacquisition.dir}"/>
   </target>
 
-  <!-- DiseaseExtent -->
-  <property name="module.diseaseextent.dir" value="${basedir}/DiseaseExtent"/>
-  <target name="module.diseaseextent.build">
-    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="build" dir="${module.diseaseextent.dir}"/>
-  </target>
-  <target name="module.diseaseextent.clean">
-    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="clean" dir="${module.diseaseextent.dir}"/>
-  </target>
-  <target name="module.diseaseextent.quality">
-    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality" dir="${module.diseaseextent.dir}"/>
-  </target>
-  <target name="module.diseaseextent.test">
-    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="run.tests" dir="${module.diseaseextent.dir}"/>
-  </target>
-  <target name="module.diseaseextent.full">
-    <ant antfile="${module.diseaseextent.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.diseaseextent.dir}"/>
-  </target>
-
   <!-- PublicSite -->
   <property name="module.publicsite.dir" value="${basedir}/PublicSite"/>
   <target name="module.publicsite.build">
