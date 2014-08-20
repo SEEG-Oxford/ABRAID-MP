@@ -75,6 +75,52 @@ public class DataValidationControllerTest {
     }
 
     @Test
+    public void showPageReturnsReducedValidatorDiseaseGroupsForNonSeegMember() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).isSeegMember()).thenReturn(false);
+        DiseaseService diseaseService = createDiseaseService();
+        HashMap<String, List<DiseaseGroup>> correctResult = new HashMap<>();
+        when(diseaseService.getValidatorDiseaseGroupMap(false)).thenReturn(correctResult);
+        HashMap<String, List<DiseaseGroup>> incorrectResult = new HashMap<>();
+        when(diseaseService.getValidatorDiseaseGroupMap(true)).thenReturn(incorrectResult);
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        correctResult.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
+        incorrectResult.put("bar", Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class)));
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", correctResult);
+    }
+
+    @Test
+    public void showPageReturnsFullValidatorDiseaseGroupsForSeegMember() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
+        DiseaseService diseaseService = createDiseaseService();
+        HashMap<String, List<DiseaseGroup>> incorrectResult = new HashMap<>();
+        when(diseaseService.getValidatorDiseaseGroupMap(false)).thenReturn(incorrectResult);
+        HashMap<String, List<DiseaseGroup>> correctResult = new HashMap<>();
+        when(diseaseService.getValidatorDiseaseGroupMap(true)).thenReturn(correctResult);
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        incorrectResult.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
+        correctResult.put("bar", Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class)));
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", correctResult);
+    }
+
+    @Test
     public void showPageReturnsDataModelForAnonymousUser() {
         // Arrange
         CurrentUserService currentUserService = createCurrentUserService();
@@ -222,6 +268,129 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpNoContentForValidInputs() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseService();
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        DiseaseExtentClass diseaseExtentClass = mock(DiseaseExtentClass.class);
+        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(diseaseExtentClass);
+
+        CurrentUserService currentUserService = createCurrentUserService();
+        when(currentUserService.getCurrentUser().getUsername()).thenReturn("foo");
+
+        ExpertService expertService = createExpertService();
+
+        DataValidationController target = createTarget(currentUserService, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(1, 2, "PRESENCE");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService, times(1)).saveNewAdminUnitReview("foo", 1, 2, diseaseExtentClass);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForInvalidDisease() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseService();
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(null);
+
+        DataValidationController target = createTarget(null, diseaseService, null);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpForbiddenForNonSeegMemberReviewingNotAutomaticDisease() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseService();
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(false);
+
+        DataValidationController target = createTarget(null, diseaseService, null);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpNoContentForSeegMemberReviewingNotAutomaticDisease() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseService();
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(mock(DiseaseExtentClass.class));
+
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForInvalidReview() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseService();
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+
+        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(null);
+
+        DataValidationController target = createTarget(null, diseaseService, null);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpNoContentForValidInputsWhenUpdatingExistingReview() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseService();
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        DiseaseExtentClass diseaseExtentClass = mock(DiseaseExtentClass.class);
+        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(diseaseExtentClass);
+
+        ExpertService expertService = createExpertService();
+        AdminUnitReview adminUnitReview = mock(AdminUnitReview.class);
+        when(expertService.getAdminUnitReview(1, 1, 1)).thenReturn(adminUnitReview);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        verify(expertService, times(1)).updateExistingAdminUnitReview(adminUnitReview, diseaseExtentClass);
     }
 
     private DataValidationController createTarget(CurrentUserService currentUserService, DiseaseService diseaseService, ExpertService expertService) {

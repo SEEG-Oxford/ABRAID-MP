@@ -198,7 +198,6 @@ public class DataValidationController extends AbstractController {
         return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews), HttpStatus.OK);
     }
 
-
     /**
      * Saves the expert's review to the database.
      * @param diseaseGroupId The id of the disease group.
