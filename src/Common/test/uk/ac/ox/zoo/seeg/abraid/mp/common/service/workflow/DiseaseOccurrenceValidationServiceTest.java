@@ -13,6 +13,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.Environmental
 import java.util.Arrays;
 import java.util.List;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
@@ -202,6 +204,21 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence2.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent2);
         assertThat(occurrence2.getMachineWeighting()).isNull();
         assertThat(occurrence2.isValidated()).isTrue();
+    }
+
+    @Test
+    public void addValidationParametersThrowsExceptionIfOccurrencesHaveDifferentDiseaseGroups() {
+        // Arrange
+        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(1, true);
+        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(1, true);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(2, true);
+        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2, occurrence3);
+
+        // Act
+        catchException(service).addValidationParameters(occurrences);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 
     private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean automaticModelRuns) {

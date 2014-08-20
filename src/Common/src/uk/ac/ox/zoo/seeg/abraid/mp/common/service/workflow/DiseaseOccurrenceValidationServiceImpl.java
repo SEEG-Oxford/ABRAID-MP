@@ -53,7 +53,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      */
     @Override
     public void addValidationParameters(List<DiseaseOccurrence> occurrences) {
-        DiseaseGroup diseaseGroup = getDiseaseGroup(occurrences);
+        DiseaseGroup diseaseGroup = validateAndGetDiseaseGroup(occurrences);
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
@@ -100,7 +100,19 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
                (occurrence.getDistanceFromDiseaseExtent() == null);
     }
 
-    private DiseaseGroup getDiseaseGroup(List<DiseaseOccurrence> occurrences) {
-        return (occurrences != null && occurrences.size() > 0) ? occurrences.get(0).getDiseaseGroup() : null;
+    private DiseaseGroup validateAndGetDiseaseGroup(List<DiseaseOccurrence> occurrences) {
+        DiseaseGroup diseaseGroup = null;
+        if (occurrences != null && occurrences.size() > 0) {
+            // Get the disease group of the first occurrence in the list
+            diseaseGroup = occurrences.get(0).getDiseaseGroup();
+            // Ensure that all other occurrences have the same disease group
+            for (int i = 1; i < occurrences.size(); i++) {
+                DiseaseGroup otherDiseaseGroup = occurrences.get(i).getDiseaseGroup();
+                if (otherDiseaseGroup == null || !diseaseGroup.getId().equals(otherDiseaseGroup.getId())) {
+                    throw new RuntimeException("All occurrences must have the same disease group");
+                }
+            }
+        }
+        return diseaseGroup;
     }
 }
