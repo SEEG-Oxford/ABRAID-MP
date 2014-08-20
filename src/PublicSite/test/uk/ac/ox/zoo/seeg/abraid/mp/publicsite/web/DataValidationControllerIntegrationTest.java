@@ -126,7 +126,13 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
         List<AdminUnitDiseaseExtentClass> map = Arrays.asList(adminUnitDiseaseExtentClass);
+        Expert expert = mock(Expert.class);
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(anyInt())).thenReturn(map);
+        when(diseaseService.getDiseaseGroupById(2)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        when(expertService.getExpertById(1)).thenReturn(expert);
+        when(expert.isSeegMember()).thenReturn(true);
 
         this.mockMvc.perform(
                 get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/2/adminunits"))
@@ -143,6 +149,13 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
 
     @Test
     public void extentResourceOnlyAcceptsGET() throws Exception {
+        Expert expert = mock(Expert.class);
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        when(expertService.getExpertById(1)).thenReturn(expert);
+        when(expert.isSeegMember()).thenReturn(true);
+
         this.mockMvc.perform(
                 get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
                 .andExpect(status().isOk());
