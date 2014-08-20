@@ -11,22 +11,19 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
  * Copyright (c) 2014 University of Oxford
  */
 public class Snapper {
-    private static final String WITHIN_MESSAGE = "QC stage %d passed: location already within %s.";
-    private static final String SNAPPED_MESSAGE = "QC stage %d passed: location (%f,%f) snapped to %s (distance " +
-            "%.3fkm).";
-    private static final String DISCARDED_MESSAGE = "QC stage %d failed: location too distant from %s (closest " +
-            "point is (%f,%f) at distance %.3fkm).";
-    private static final String CANNOT_BE_SNAPPED_MESSAGE = "QC stage %d failed: location cannot be snapped.";
+    private static final String WITHIN_MESSAGE = "location already within %s";
+    private static final String SNAPPED_MESSAGE = "location (%.5f,%.5f) snapped to %s (distance %.3fkm)";
+    private static final String DISCARDED_MESSAGE = "location too distant from %s (closest point is (%.5f,%.5f) at " +
+            "distance %.3fkm)";
+    private static final String CANNOT_BE_SNAPPED_MESSAGE = "location cannot be snapped";
 
     private Point closestPoint;
     private String message;
-
-    private int qcStage;
+    private boolean passed = true;
     private String geometryDescription;
     private double maximumDistance;
 
-    public Snapper(int qcStage, String geometryDescription, double maximumDistance) {
-        this.qcStage = qcStage;
+    public Snapper(String geometryDescription, double maximumDistance) {
         this.geometryDescription = geometryDescription;
         this.maximumDistance = maximumDistance;
     }
@@ -45,17 +42,19 @@ public class Snapper {
         Point locationPoint = location.getGeom();
         closestPoint = GeometryUtils.findClosestPointOnGeometry(geometry, locationPoint);
         if (closestPoint == null) {
-            message = String.format(CANNOT_BE_SNAPPED_MESSAGE, qcStage);
+            message = CANNOT_BE_SNAPPED_MESSAGE;
+            passed = false;
         } else if (closestPoint.equalsExact(locationPoint)) {
-            message = String.format(WITHIN_MESSAGE, qcStage, geometryDescription);
+            message = String.format(WITHIN_MESSAGE, geometryDescription);
         } else {
             double distance = GeometryUtils.findOrthodromicDistance(closestPoint, locationPoint);
             if (distance > maximumDistance) {
-                message = String.format(DISCARDED_MESSAGE, qcStage, geometryDescription, closestPoint.getX(),
+                message = String.format(DISCARDED_MESSAGE, geometryDescription, closestPoint.getX(),
                         closestPoint.getY(), distance);
                 closestPoint = null;
+                passed = false;
             } else {
-                message = String.format(SNAPPED_MESSAGE, qcStage, locationPoint.getX(), locationPoint.getY(),
+                message = String.format(SNAPPED_MESSAGE, locationPoint.getX(), locationPoint.getY(),
                         geometryDescription, distance);
             }
         }
@@ -63,6 +62,14 @@ public class Snapper {
 
     public Point getClosestPoint() {
         return closestPoint;
+    }
+
+    /**
+     * Returns whether or not the location has passed this QC stage.
+     * @return Whether or not the location has passed this QC stage.
+     */
+    public boolean hasPassed() {
+        return passed;
     }
 
     public String getMessage() {

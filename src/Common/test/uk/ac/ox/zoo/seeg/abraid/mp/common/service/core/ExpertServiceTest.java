@@ -177,6 +177,34 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getCountOfPubliclyVisibleExpertsCallsDaoCorrectly() {
+        // Arrange
+        long expectedResult = 987654321L;
+        when(expertDao.getCountOfPubliclyVisible()).thenReturn(expectedResult);
+
+        // Act
+        long result = expertService.getCountOfPubliclyVisibleExperts();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void getPageOfPubliclyVisibleExpertsCallsDaoCorrectly() {
+        // Arrange
+        List<Expert> expectedResult = new ArrayList<>();
+        int expectedPageSize = 67890;
+        int expectedPageNumber = 12345;
+        when(expertDao.getPageOfPubliclyVisible(expectedPageNumber, expectedPageSize)).thenReturn(expectedResult);
+
+        // Act
+        List<Expert> result = expertService.getPageOfPubliclyVisibleExperts(expectedPageNumber, expectedPageSize);
+
+        // Assert
+        assertThat(result).isSameAs(expectedResult);
+    }
+
+    @Test
     public void saveDiseaseOccurrenceReview() {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(new Expert());

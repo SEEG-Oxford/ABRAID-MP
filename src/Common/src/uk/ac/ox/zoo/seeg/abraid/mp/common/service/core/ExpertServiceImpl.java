@@ -154,6 +154,26 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets a page worth of publicly visible experts.
+     * @param pageNumber The page number to return.
+     * @param pageSize The size of the pages to split the visible experts into.
+     * @return A page worth of publicly visible experts
+     */
+    @Override
+    public List<Expert> getPageOfPubliclyVisibleExperts(int pageNumber, int pageSize) {
+        return expertDao.getPageOfPubliclyVisible(pageNumber, pageSize);
+    }
+
+    /**
+     * Gets a count of the publicly visible experts.
+     * @return The count.
+     */
+    @Override
+    public long getCountOfPubliclyVisibleExperts() {
+        return expertDao.getCountOfPubliclyVisible();
+    }
+
+    /**
      * Saves the disease occurrence review.
      * @param expertEmail The email address of the expert providing review.
      * @param occurrenceId The id of the disease occurrence.

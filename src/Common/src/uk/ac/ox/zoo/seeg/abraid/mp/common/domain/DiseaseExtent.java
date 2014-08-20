@@ -19,9 +19,6 @@ public class DiseaseExtent {
                       parameters = @Parameter(name = "property", value = "diseaseGroup"))
     private Integer diseaseGroupId;
 
-    @Column(name = "max_months_ago")
-    private Integer maxMonthsAgo;
-
     @Column(name = "min_validation_weighting")
     private Double minValidationWeighting;
 
@@ -51,12 +48,11 @@ public class DiseaseExtent {
         this.diseaseGroup = diseaseGroup;
     }
 
-    public DiseaseExtent(DiseaseGroup diseaseGroup, Integer maxMonthsAgo, Double minValidationWeighting,
+    public DiseaseExtent(DiseaseGroup diseaseGroup, Double minValidationWeighting,
                          Integer minOccurrencesForPresence, Integer minOccurrencesForPossiblePresence,
                          Integer maxMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
         this.diseaseGroup = diseaseGroup;
-        this.maxMonthsAgo = maxMonthsAgo;
         this.minValidationWeighting = minValidationWeighting;
         this.minOccurrencesForPresence = minOccurrencesForPresence;
         this.minOccurrencesForPossiblePresence = minOccurrencesForPossiblePresence;
@@ -67,14 +63,6 @@ public class DiseaseExtent {
 
     public Integer getDiseaseGroupId() {
         return diseaseGroupId;
-    }
-
-    public Integer getMaxMonthsAgo() {
-        return maxMonthsAgo;
-    }
-
-    public void setMaxMonthsAgo(Integer maximumMonthsAgo) {
-        this.maxMonthsAgo = maximumMonthsAgo;
     }
 
     public Double getMinValidationWeighting() {
@@ -140,8 +128,6 @@ public class DiseaseExtent {
             return false;
         if (lowerOccurrenceScore != null ? !lowerOccurrenceScore.equals(that.lowerOccurrenceScore) : that.lowerOccurrenceScore != null)
             return false;
-        if (maxMonthsAgo != null ? !maxMonthsAgo.equals(that.maxMonthsAgo) : that.maxMonthsAgo != null)
-            return false;
         if (maxMonthsAgoForHigherOccurrenceScore != null ? !maxMonthsAgoForHigherOccurrenceScore.equals(that.maxMonthsAgoForHigherOccurrenceScore) : that.maxMonthsAgoForHigherOccurrenceScore != null)
             return false;
         if (minOccurrencesForPossiblePresence != null ? !minOccurrencesForPossiblePresence.equals(that.minOccurrencesForPossiblePresence) : that.minOccurrencesForPossiblePresence != null)
@@ -157,7 +143,6 @@ public class DiseaseExtent {
     @Override
     public int hashCode() {
         int result = diseaseGroupId != null ? diseaseGroupId.hashCode() : 0;
-        result = 31 * result + (maxMonthsAgo != null ? maxMonthsAgo.hashCode() : 0);
         result = 31 * result + (minValidationWeighting != null ? minValidationWeighting.hashCode() : 0);
         result = 31 * result + (minOccurrencesForPresence != null ? minOccurrencesForPresence.hashCode() : 0);
         result = 31 * result + (minOccurrencesForPossiblePresence != null ? minOccurrencesForPossiblePresence.hashCode() : 0);

@@ -19,10 +19,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -47,6 +49,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     @Autowired
     private DiseaseService diseaseService;
 
+    @Autowired
+    private LocationService locationService;
+
     @ReplaceWithMock
     @Autowired
     protected WebServiceClient webServiceClient;
@@ -65,19 +70,6 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private static final String URL = "http://username:password@localhost:8080/modelwrapper/model/run";
 
     @Test
-    public void requestModelRunNotExecutedIfNotEnoughOccurrences() {
-        // Arrange
-        int diseaseGroupId = 87;
-
-        // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
-
-        // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
-        assertThat(modelRunDao.getAll()).isEmpty();
-    }
-
-    @Test
     public void requestModelRunSucceedsWithBatching() {
         requestModelRunSucceeds(DateTime.now().plusDays(2));
     }
@@ -90,7 +82,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private void requestModelRunSucceeds(DateTime batchEndDate) {
         // Arrange
         int diseaseGroupId = 87;
-        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
+        setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
         DateTime now = DateTime.now();
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
         String modelName = "testname";
@@ -98,7 +90,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
-        modelRunRequester.requestModelRun(diseaseGroupId, batchEndDate);
+        List<DiseaseOccurrence> occurrences = selectOccurrencesForModelRun(diseaseGroupId);
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrences, batchEndDate);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -110,7 +103,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
     }
 
-    private void setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(int diseaseGroupId) {
+    private void setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setMinDataVolume(27);
         diseaseGroup.setOccursInAfrica(null);
@@ -120,12 +113,13 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void requestModelRunWithErrorReturnedByModelThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
-        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
+        setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
         String responseJson = "{\"errorText\":\"testerror\"}";
         mockPostRequest(responseJson); // Note that this includes code to assert the request JSON
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
+        List<DiseaseOccurrence> occurrences = selectOccurrencesForModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -135,13 +129,14 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void requestModelRunWithWebClientExceptionThrowsModelRunManagerException() {
         // Arrange
         int diseaseGroupId = 87;
-        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
+        setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
         String exceptionMessage = "Web service failed";
         WebServiceClientException thrownException = new WebServiceClientException(exceptionMessage);
         when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenThrow(thrownException);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
+        List<DiseaseOccurrence> occurrences = selectOccurrencesForModelRun(diseaseGroupId);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -151,15 +146,20 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void requestModelRunWithNoDiseaseOccurrencesDoesNothing() {
         // Arrange
         int diseaseGroupId = 87;
-        clearFinalWeightingsFromDatabase(diseaseGroupId);
 
         // Act
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, null);
+        List<DiseaseOccurrence> occurrences = new ArrayList<>();
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
         List<ModelRun> modelRuns = modelRunDao.getAll();
         assertThat(modelRuns).hasSize(0);
+    }
+
+    private List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
+        return selector.selectModelRunDiseaseOccurrences();
     }
 
     // Set the final weighting of all occurrences to null so the query will return an empty list - as is desired for this test.

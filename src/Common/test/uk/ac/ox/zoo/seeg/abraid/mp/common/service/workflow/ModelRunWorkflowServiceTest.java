@@ -8,10 +8,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,22 +27,25 @@ import static org.mockito.Mockito.*;
 public class ModelRunWorkflowServiceTest {
     private WeightingsCalculator weightingsCalculator;
     private ModelRunRequester modelRunRequester;
+    private ModelRunOccurrencesSelector modelRunOccurrencesSelector;
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
-    private ModelRunWorkflowService modelRunWorkflowService;
+    private ModelRunWorkflowServiceImpl modelRunWorkflowService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
     @Before
     public void setUp() {
         weightingsCalculator = mock(WeightingsCalculator.class);
         modelRunRequester = mock(ModelRunRequester.class);
+        modelRunOccurrencesSelector = mock(ModelRunOccurrencesSelector.class);
         reviewManager = mock(DiseaseOccurrenceReviewManager.class);
         diseaseService = mock(DiseaseService.class);
+        LocationService locationService = mock(LocationService.class);
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
-        modelRunWorkflowService = new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
-                reviewManager, diseaseService, diseaseExtentGenerator, diseaseOccurrenceValidationService);
+        modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
+                reviewManager, diseaseService, locationService, diseaseExtentGenerator, diseaseOccurrenceValidationService));
     }
 
     @Test
@@ -53,8 +58,12 @@ public class ModelRunWorkflowServiceTest {
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         Map<Integer, Double> newWeightings = new HashMap<>();
         DateTime batchEndDate = DateTime.now().plusDays(1);
+        DateTime minimumOccurrenceDate = DateTime.now();
+        List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId);
+        when(modelRunOccurrencesSelector.selectModelRunDiseaseOccurrences()).thenReturn(occurrences);
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
@@ -65,8 +74,8 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(true));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
-        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), eq(batchEndDate));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate));
+        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchEndDate));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(newWeightings));
     }
@@ -79,8 +88,12 @@ public class ModelRunWorkflowServiceTest {
         DateTime lastModelRunPrepDate = DateTime.now().minusWeeks(1);
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+        DateTime minimumOccurrenceDate = DateTime.now();
+        List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId);
 
         // Act
         modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
@@ -90,8 +103,8 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(false));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
-        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), isNull(DateTime.class));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate));
+        verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
     }
 
@@ -183,11 +196,20 @@ public class ModelRunWorkflowServiceTest {
         // Arrange
         int diseaseGroupId = 1;
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        DateTime minimumOccurrenceDate = DateTime.now();
+        List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
+        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId);
 
         // Act
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
 
         // Assert
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate));
+    }
+
+    private List<DiseaseOccurrence> createListWithDate(DateTime minimumOccurrenceDate) {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setOccurrenceDate(minimumOccurrenceDate);
+        return Arrays.asList(occurrence);
     }
 }

@@ -68,7 +68,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
     @Test
     public void findAdminUnitGlobalWherePointIsOnBorder() {
-        Point point = GeometryUtils.createPoint(172, -42);
+        Point point = GeometryUtils.createPoint(176, -38);
         Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, true);
         assertThat(gaulCode).isEqualTo(179);
     }
@@ -82,7 +82,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
     @Test
     public void findAdminUnitTropicalWherePointIsOnBorder() {
-        Point point = GeometryUtils.createPoint(172, -42);
+        Point point = GeometryUtils.createPoint(177, -39);
         Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
         assertThat(gaulCode).isEqualTo(179);
     }
@@ -268,7 +268,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         int diseaseGroupId = 87;
         updateExtentForTropicalDisease(diseaseGroupId);
-        Point point = GeometryUtils.createPoint(172, -42);
+        Point point = GeometryUtils.createPoint(177, -38);
         double expectedDistance = -300; // Nominal distance for possible presence
 
         // Act

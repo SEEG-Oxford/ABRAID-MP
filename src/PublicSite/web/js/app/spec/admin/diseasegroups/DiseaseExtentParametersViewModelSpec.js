@@ -7,10 +7,9 @@ define([
 ], function (ko, DiseaseExtentParametersViewModel) {
     "use strict";
 
-    var constructDiseaseGroup = function (maxMonthsAgo, maxMonthsAgoForHigherOccurrenceScore, higherOccurrenceScore,
+    var constructDiseaseGroup = function (maxMonthsAgoForHigherOccurrenceScore, higherOccurrenceScore,
         lowerOccurrenceScore, minValidationWeighting, minOccurrencesForPresence, minOccurrencesForPossiblePresence) {
         return { diseaseExtentParameters: {
-            maxMonthsAgo: maxMonthsAgo,
             maxMonthsAgoForHigherOccurrenceScore: maxMonthsAgoForHigherOccurrenceScore,
             higherOccurrenceScore: higherOccurrenceScore,
             lowerOccurrenceScore: lowerOccurrenceScore,
@@ -21,7 +20,6 @@ define([
     };
 
     var expectParameters = function (vm, parameters) {
-        expect(vm.maxMonthsAgo()).toBe(parameters.maxMonthsAgo);
         expect(vm.maxMonthsAgoForHigherOccurrenceScore()).toBe(parameters.maxMonthsAgoForHigherOccurrenceScore);
         expect(vm.higherOccurrenceScore()).toBe(parameters.higherOccurrenceScore);
         expect(vm.lowerOccurrenceScore()).toBe(parameters.lowerOccurrenceScore);
@@ -40,7 +38,6 @@ define([
         describe("holds the expected parameters for disease extent calculation", function () {
             var vm = new DiseaseExtentParametersViewModel("");
             it("as observables", function () {
-                expect(vm.maxMonthsAgo).toBeObservable();
                 expect(vm.maxMonthsAgoForHigherOccurrenceScore).toBeObservable();
                 expect(vm.higherOccurrenceScore).toBeObservable();
                 expect(vm.lowerOccurrenceScore).toBeObservable();
@@ -50,12 +47,8 @@ define([
             });
 
             it("with the appropriate validation rules", function () {
-                expectRule(vm.maxMonthsAgo, "digit", true);
-                expectRule(vm.maxMonthsAgo, "min", 0);
-
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "digit", true);
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "min", 0);
-                expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "max", vm.maxMonthsAgo);
 
                 expectRule(vm.higherOccurrenceScore, "digit", true);
                 expectRule(vm.higherOccurrenceScore, "min", 0);
@@ -99,7 +92,6 @@ define([
                 ko.postbox.publish(eventName, diseaseGroup);
 
                 // Assert
-                expect(vm.maxMonthsAgo()).toBe("");
                 expect(vm.maxMonthsAgoForHigherOccurrenceScore()).toBe("");
                 expect(vm.higherOccurrenceScore()).toBe("");
                 expect(vm.lowerOccurrenceScore()).toBe("");
@@ -114,7 +106,6 @@ define([
 
                 var diseaseGroup1 = constructDiseaseGroup("60", "24", "4", "2", "0.6", "5", "2");
                 var diseaseGroup2 = { diseaseExtentParameters: {
-                    maxMonthsAgo: "30",
                     maxMonthsAgoForHigherOccurrenceScore: "12",
                     higherOccurrenceScore: "0",
                     lowerOccurrenceScore: null,
@@ -128,7 +119,6 @@ define([
 
                 // Assert
                 var expectedParameters = {
-                    maxMonthsAgo: "30",
                     maxMonthsAgoForHigherOccurrenceScore: "12",
                     higherOccurrenceScore: "0",
                     lowerOccurrenceScore: "",

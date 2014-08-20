@@ -80,4 +80,8 @@ public class QCLookupData {
 
         return healthMapCountryGeometryMap;
     }
+
+    public HealthMapLookupData getHealthMapLookupData() {
+        return healthMapLookupData;
+    }
 }

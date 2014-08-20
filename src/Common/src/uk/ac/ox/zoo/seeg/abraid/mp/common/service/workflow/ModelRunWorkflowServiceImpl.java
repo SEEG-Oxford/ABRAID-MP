@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private ModelRunRequester modelRunRequester;
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
+    private LocationService locationService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
@@ -28,12 +30,14 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
                                        ModelRunRequester modelRunRequester,
                                        DiseaseOccurrenceReviewManager reviewManager,
                                        DiseaseService diseaseService,
+                                       LocationService locationService,
                                        DiseaseExtentGenerator diseaseExtentGenerator,
                                        DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
         this.diseaseService = diseaseService;
+        this.locationService = locationService;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
     }
@@ -135,7 +139,30 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      */
     @Override
     public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup);
+        List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
+        DateTime minimumOccurrenceDate = extractMinimumOccurrenceDate(occurrencesForModelRun);
+        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate);
+    }
+
+    private DateTime extractMinimumOccurrenceDate(List<DiseaseOccurrence> occurrencesForModelRun) {
+        DateTime minimumOccurrenceDate = null;
+        if (occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
+            // The minimum occurrence date for the disease extent is the same as the minimum occurrence date of all
+            // the occurrences that can be sent to the model
+            minimumOccurrenceDate = occurrencesForModelRun.get(0).getOccurrenceDate();
+        }
+        return minimumOccurrenceDate;
+    }
+
+    /**
+     * Selects occurrences for a model run, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return The occurrences to send to the model.
+     */
+    public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
+        return selector.selectModelRunDiseaseOccurrences();
     }
 
     private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchEndDate,
@@ -143,6 +170,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
+
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             generateDiseaseExtent(diseaseGroup);
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
@@ -150,7 +178,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
             generateDiseaseExtent(diseaseGroup);
         }
-        modelRunRequester.requestModelRun(diseaseGroupId, batchEndDate);
+
+        // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
+        // they may have changed as a result of updating weightings and isValidated. So retrieve them again before
+        // running the model.
+        List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrencesForModelRun, batchEndDate);
         saveModelRunPrepDate(diseaseGroup, modelRunPrepDate);
     }
 

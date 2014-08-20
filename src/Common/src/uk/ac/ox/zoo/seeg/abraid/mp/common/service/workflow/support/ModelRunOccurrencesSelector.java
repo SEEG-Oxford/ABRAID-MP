@@ -15,10 +15,10 @@ import static java.util.Map.Entry;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Return the set of occurrences to be used in the model run, satisfying Minimum Data Spread conditions.
+ * Return the set of occurrences to be used in the model run, satisfying Minimum Data Volume and Spread conditions.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunRequesterHelper {
+public class ModelRunOccurrencesSelector {
 
     // Log messages
     private static final String NOT_REQUESTING_LOG_MESSAGE =
@@ -32,7 +32,7 @@ public class ModelRunRequesterHelper {
     private static final String MDS_NOT_SATISFIED_EXCEPTION_MESSAGE =
             "Model cannot run because minimum data spread is not satisfied.";
 
-    private static final Logger LOGGER = Logger.getLogger(ModelRunRequesterHelper.class);
+    private static final Logger LOGGER = Logger.getLogger(ModelRunOccurrencesSelector.class);
 
     private DiseaseService diseaseService;
     private LocationService locationService;
@@ -51,7 +51,8 @@ public class ModelRunRequesterHelper {
     private Set<Integer> countriesWithAtLeastOneOccurrence;     // For disease groups using all countries
     private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
-    public ModelRunRequesterHelper(DiseaseService diseaseService, LocationService locationService, int diseaseGroupId) {
+    public ModelRunOccurrencesSelector(DiseaseService diseaseService, LocationService locationService,
+                                       int diseaseGroupId) {
         this.diseaseService = diseaseService;
         this.locationService = locationService;
         initialise(diseaseGroupId);

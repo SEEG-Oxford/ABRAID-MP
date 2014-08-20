@@ -18,7 +18,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     private QCManager qcManager;
 
     @Test
-    public void stage1AndStage2NotRunWhenLocationPrecisionIsCountryAndStage3Passes() {
+    public void stage1NotRunWhenLocationPrecisionIsCountryAndStages2And3Pass() {
         // Arrange
         int japanId = 156;
         Location location = new Location("Japan", 138.47861, 36.09854, LocationPrecision.COUNTRY, japanId);
@@ -30,7 +30,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(hasPassedQc).isTrue();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
-                "stage 2 passed: location is a country. QC stage 3 passed: location already within HealthMap " +
+                "stage 2 passed: location already within land. QC stage 3 passed: location already within HealthMap " +
                 "country.");
     }
 
@@ -46,8 +46,24 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(hasPassedQc).isFalse();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC stage " +
-                "2 failed: location too distant from land (closest point is (4.916600,53.291620) at distance " +
+                "2 failed: location too distant from land (closest point is (4.91660,53.29162) at distance " +
                 "320.061km).");
+    }
+
+    @Test
+    public void stage2OverridesCountryCentroidIfNecessary() {
+        // Arrange
+        int philippinesId = 158;
+        Location location = new Location("Philippines", 122.86711, 11.73469, LocationPrecision.COUNTRY, philippinesId);
+
+        // Act
+        boolean hasPassedQc = qcManager.performQC(location);
+
+        // Assert
+        assertThat(hasPassedQc).isTrue();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
+        assertThat(location.getQcMessage()).contains("QC stage 2 passed: location (122.86711,11.73469) replaced with " +
+                "fixed country centroid (120.81897,15.37497).");
     }
 
     @Test
@@ -99,7 +115,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(1013690);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 9.01% of the square " +
                 "root of the area. QC stage 2 failed: location too distant from land (closest point is " +
-                "(121.208220,-1.166700) at distance 29.611km).");
+                "(121.20822,-1.16670) at distance 29.611km).");
     }
 
     @Test
@@ -115,7 +131,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         // Assert
         assertThat(hasPassedQc).isTrue();
         assertThat(location.getQcMessage()).contains("QC stage 2 passed: " +
-                "location (116.367000,-0.270000) snapped to land (distance 2.209km).");
+                "location (116.36700,-0.27000) snapped to land (distance 2.209km).");
     }
 
     @Test
@@ -165,8 +181,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         // Assert
         assertThat(hasPassedQc).isTrue();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
-        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
-                "stage 2 passed: location is a country. QC stage 3 passed: no country geometries associated with " +
+        assertThat(location.getQcMessage()).contains("QC stage 3 passed: no country geometries associated with " +
                 "this location.");
     }
 }

@@ -26,11 +26,11 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests that the ModelRunRequesterHelper returns expected list of occurrences under each condition.
+ * Tests that the ModelRunOccurrencesSelector returns expected list of occurrences under each condition.
  * Copyright (c) 2014 University of Oxford
  */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpringIntegrationTests {
+public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
 
@@ -51,10 +51,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         // Arrange
         int diseaseGroupId = 87;
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        catchException(helper).selectModelRunDiseaseOccurrences();
+        catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).hasSize(27);
@@ -67,10 +68,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         // Arrange - NB. Automatic model runs are disabled by default
         int diseaseGroupId = 87;
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        catchException(helper).selectModelRunDiseaseOccurrences();
+        catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).hasSize(27);
@@ -90,10 +92,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setOccursInAfrica(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(occurrences).hasSize(minDataVolume);
@@ -110,10 +113,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setMinDataVolume(minDataVolume);       // Ensure MDVSatisfied check will pass
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(occurrences).hasSize(expectedAllOccurrencesSize);
@@ -132,10 +136,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setHighFrequencyThreshold(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(occurrences).hasSize(minDataVolume);
@@ -154,17 +159,18 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setMinDistinctCountries(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(occurrences).hasSize(minDataVolume);
     }
 
     @Test
-    public void helperThrowsExceptionWhenMDSNotMetBeforeRunningOutOfOccurrencesForAfricanDiseaseGroup() {
+    public void selectorThrowsExceptionWhenMDSNotMetBeforeRunningOutOfOccurrencesForAfricanDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -173,17 +179,18 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setOccursInAfrica(true);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        catchException(helper).selectModelRunDiseaseOccurrences();
+        catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
     }
 
     @Test
-    public void helperReturnsNullWhenMDSNotMetBeforeRunningOutOfOccurrencesForOtherDiseaseGroup() {
+    public void selectorReturnsNullWhenMDSNotMetBeforeRunningOutOfOccurrencesForOtherDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -192,33 +199,35 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setOccursInAfrica(false);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        catchException(helper).selectModelRunDiseaseOccurrences();
+        catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
     }
 
     @Test
-    public void helperAddsOccurrencesUntilMinDataSpreadIsSatisfiedForAfricanDiseaseGroup() {
+    public void selectorAddsOccurrencesUntilMinDataSpreadIsSatisfiedForAfricanDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());    // Enable automatic model runs
         addOccurrences(diseaseGroup);
-        diseaseGroup.setMinDataVolume(2);               // Helper will initially get the first 2 occurrences
+        diseaseGroup.setMinDataVolume(2);               // Selector will initially get the first 2 occurrences
         diseaseGroup.setOccursInAfrica(true);
         diseaseGroup.setMinDistinctCountries(2);
         diseaseGroup.setHighFrequencyThreshold(2);      // Then add the 3rd occurrence to satisfy high frequency check
         diseaseGroup.setMinHighFrequencyCountries(1);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(occurrences).hasSize(3);
@@ -243,7 +252,7 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
     }
 
     @Test
-    public void helperAddsOccurrencesUntilMinDataSpreadIsSatisfiedForOtherDiseaseGroup() {
+    public void selectorAddsOccurrencesUntilMinDataSpreadIsSatisfiedForOtherDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
         int minDistinctCountries = 2;
@@ -254,10 +263,11 @@ public class ModelRunRequesterHelperIntegrationTest extends AbstractCommonSpring
         diseaseGroup.setMinDistinctCountries(minDistinctCountries);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunRequesterHelper helper = new ModelRunRequesterHelper(diseaseService, locationService, diseaseGroupId);
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId);
 
         // Act
-        List<DiseaseOccurrence> occurrences = helper.selectModelRunDiseaseOccurrences();
+        List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(occurrences).hasSize(2);

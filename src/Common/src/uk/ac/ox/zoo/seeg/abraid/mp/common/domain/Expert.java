@@ -18,6 +18,14 @@ import java.util.List;
         @NamedQuery(
                 name = "getExpertByEmail",
                 query = "from Expert where email=:email"
+        ),
+        @NamedQuery(
+                name = "getPubliclyVisibleExperts",
+                query = "from Expert where visibilityApproved=true"
+        ),
+        @NamedQuery(
+                name = "countPubliclyVisibleExperts",
+                query = "select count(e) from Expert e where visibilityApproved=true"
         )
 })
 @Entity
