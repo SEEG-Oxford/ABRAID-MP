@@ -153,6 +153,52 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     }
 
     @Test
+    public void enableAutomaticModelRunsRejectsNonPOSTRequests() throws Exception {
+        this.mockMvc.perform(
+                get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+
+    @Test
+    public void enableAutomaticModelRunsRejectsNonIntegerPathVariables() throws Exception {
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/a/automaticmodelruns"))
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/0.2/automaticmodelruns"))
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/null/automaticmodelruns"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void enableAutomaticModelRunsGivesNotFoundForInvalidIntegerPathVariables() throws Exception {
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/-1/automaticmodelruns"))
+                .andExpect(status().isNotFound());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/999999/automaticmodelruns"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void saveDiseaseGroupSetsParameters() throws Exception {
         // Arrange
         int diseaseGroupId = 87;

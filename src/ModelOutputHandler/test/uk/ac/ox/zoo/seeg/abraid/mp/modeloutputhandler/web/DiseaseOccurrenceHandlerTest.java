@@ -69,7 +69,7 @@ public class DiseaseOccurrenceHandlerTest {
         int diseaseGroupId = 87;
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        diseaseGroup.setAutomaticModelRuns(true);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);

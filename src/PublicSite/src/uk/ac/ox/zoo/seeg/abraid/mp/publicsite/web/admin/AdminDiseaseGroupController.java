@@ -124,8 +124,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId,
-                                                  String batchEndDate) {
+    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId, String batchEndDate) {
         try {
             DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
             modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
@@ -135,31 +134,23 @@ public class AdminDiseaseGroupController extends AbstractController {
         }
     }
 
-    private List<DiseaseGroup> getSortedDiseaseGroups() {
-        List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
-        return sort(diseaseGroups, on(DiseaseGroup.class).getName());
-    }
-
-    private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
-        List<JsonDiseaseGroup> jsonDiseaseGroups = new ArrayList<>();
-        for (DiseaseGroup diseaseGroup : diseaseGroups) {
-            jsonDiseaseGroups.add(new JsonDiseaseGroup(diseaseGroup));
+    /**
+     * Enables automatic model runs for the specified disease group.
+     * @param diseaseGroupId The id of the disease group for which to enable automatic model runs.
+     * @return An error status: 204 for success, 404 if disease group cannot be found in database.
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/automaticmodelruns",
+                    method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity enableAutomaticModelRuns(@PathVariable int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup != null) {
+            modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
-    }
-
-    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
-        List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
-        return sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
-    }
-
-    private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups)
-            throws JsonProcessingException {
-        List<JsonValidatorDiseaseGroup> jsonValidatorDiseaseGroups = new ArrayList<>();
-        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
-            jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
-        }
-        return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
     }
 
     /**
@@ -207,6 +198,33 @@ public class AdminDiseaseGroupController extends AbstractController {
         }
         LOGGER.info(String.format(ADD_DISEASE_GROUP_ERROR, settings.getName()));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    private List<DiseaseGroup> getSortedDiseaseGroups() {
+        List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
+        return sort(diseaseGroups, on(DiseaseGroup.class).getName());
+    }
+
+    private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
+        List<JsonDiseaseGroup> jsonDiseaseGroups = new ArrayList<>();
+        for (DiseaseGroup diseaseGroup : diseaseGroups) {
+            jsonDiseaseGroups.add(new JsonDiseaseGroup(diseaseGroup));
+        }
+        return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
+    }
+
+    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
+        return sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
+    }
+
+    private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups)
+            throws JsonProcessingException {
+        List<JsonValidatorDiseaseGroup> jsonValidatorDiseaseGroups = new ArrayList<>();
+        for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
+            jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
+        }
+        return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
     }
 
     private boolean validInputs(JsonDiseaseGroup settings) {

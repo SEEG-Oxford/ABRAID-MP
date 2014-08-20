@@ -23,14 +23,14 @@ public class ModelRunOccurrencesSelector {
     // Log messages
     private static final String NOT_REQUESTING_LOG_MESSAGE =
             "Not requesting a model run for disease group %d (%s) because ";
-    private static final String MDV_NOT_SATISFIED_LOG_MESSAGE = "minimum data volume (%d) not satisfied";
-    private static final String MDS_NOT_SATISFIED_LOG_MESSAGE = "minimum data spread not satisfied";
+    private static final String MDV_NOT_SATISFIED_LOG_MESSAGE = "minimum data volume (%d) is not satisfied";
+    private static final String MDS_NOT_SATISFIED_LOG_MESSAGE = "minimum data spread is not satisfied";
 
-    // Exception messages (these might be displayed in the user interface)
+    // Exception messages (these are displayed in the user interface via the Bad Request response text)
     private static final String MDV_NOT_SATISFIED_EXCEPTION_MESSAGE =
-            "Model cannot run because minimum data volume not satisfied.";
+            "Model cannot run because minimum data volume is not satisfied.";
     private static final String MDS_NOT_SATISFIED_EXCEPTION_MESSAGE =
-            "Model cannot run because minimum data spread not satisfied.";
+            "Model cannot run because minimum data spread is not satisfied.";
 
     private static final Logger LOGGER = Logger.getLogger(ModelRunOccurrencesSelector.class);
 

@@ -14,6 +14,7 @@ define([
         BaseFormViewModel.call(self, false, true, undefined, undefined, { success: "Model run requested." }, true);
 
         self.selectedDiseaseGroupId = ko.observable();
+        self.isAutomaticModelRunsEnabled = ko.observable(false);
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
@@ -30,6 +31,18 @@ define([
             var batchEndDateText = moment(self.batchEndDate(), "DD MMM YYYY").format();
             return { batchEndDate: batchEndDateText };
         };
+
+        self.isEnablingAutomaticModelRuns = ko.observable(false);
+        self.enableAutomaticModelRuns = function () {
+            self.isEnablingAutomaticModelRuns(true);
+            $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
+                .done(function () { self.isAutomaticModelRunsEnabled(true); })
+                .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
+                .always(function () { self.isEnablingAutomaticModelRuns(false); });
+        };
+        self.disableButtonThatEnablesAutomaticModelRuns = ko.computed(function () {
+            return !self.canRunModel() || self.isSubmitting() || self.isEnablingAutomaticModelRuns();
+        });
 
         self.resetState = function () { // only public for testing
             self.notices.removeAll();
@@ -67,12 +80,15 @@ define([
                     .fail(function () {
                         self.notices.push({ message: "Could not retrieve model run details.", priority: "warning"});
                     })
-                    .always(function () { self.isSubmitting(false); });
+                    .always(function () {
+                        self.isSubmitting(false);
+                    });
             }
         };
 
         // Called when a disease group is selected from the drop-down list
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (selectedDiseaseGroup) {
+            self.isAutomaticModelRunsEnabled(selectedDiseaseGroup.automaticModelRuns);
             self.updateModelRunInfo(selectedDiseaseGroup.id);
         });
 

@@ -53,7 +53,7 @@ require([baseUrl + "js/require.conf.js"], function () {
             new DiseaseGroupSetupViewModel(baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName);
         ko.applyBindings(
             ko.validatedObservable(diseaseGroupSetupViewModel),
-            doc.getElementById("setup-body"));
+            doc.getElementById("disease-group-setup"));
 
         // Publish the initial state of the disease group drop-down list
         ko.postbox.publish(diseaseGroupSelectedEventName, diseaseGroupsListViewModel.selectedDiseaseGroup());

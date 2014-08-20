@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
@@ -52,8 +53,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsEnabled() {
         // Arrange
-        boolean automaticModelRuns = true;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
 
         // Act
         boolean result = service.addValidationParametersWithChecks(occurrence);
@@ -64,8 +64,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsNotEnabled() {
         // Arrange
-        boolean automaticModelRuns = false;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
 
         // Act
         boolean result = service.addValidationParametersWithChecks(occurrence);
@@ -80,9 +79,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
-        boolean automaticModelRuns = true;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
@@ -103,9 +101,8 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSetsOnlyIsValidatedAndReturnsTrueWhenAutomaticModelRunsIsNotEnabled() {
         // Arrange
         int diseaseGroupId = 30;
-        boolean automaticModelRuns = false;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
         occurrence.getLocation().setHasPassedQc(true);
 
         // Act
@@ -125,8 +122,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // only set the values of: machine weighting to null, and is validated to true
         int diseaseGroupId = 30;
 
-        boolean automaticModelRuns = true;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(null);
@@ -150,8 +146,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
 
-        boolean automaticModelRuns = true;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, automaticModelRuns);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
@@ -221,11 +216,11 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 
-    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean automaticModelRuns) {
+    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean isAutomaticModelRunsEnabled) {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        diseaseGroup.setAutomaticModelRuns(automaticModelRuns);
+        DateTime automaticModelRunsStartDate = isAutomaticModelRunsEnabled ? DateTime.now() : null;
+        diseaseGroup.setAutomaticModelRunsStartDate(automaticModelRunsStartDate);
         diseaseGroup.setGlobal(false);
-        return new DiseaseOccurrence(1, diseaseGroup, new Location(), new Alert(), null, null,
-                null);
+        return new DiseaseOccurrence(1, diseaseGroup, new Location(), new Alert(), null, null, null);
     }
 }

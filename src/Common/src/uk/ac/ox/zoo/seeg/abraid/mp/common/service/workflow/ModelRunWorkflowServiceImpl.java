@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -23,19 +24,22 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private DiseaseService diseaseService;
     private LocationService locationService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
+    private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
                                        DiseaseOccurrenceReviewManager reviewManager,
                                        DiseaseService diseaseService,
                                        LocationService locationService,
-                                       DiseaseExtentGenerator diseaseExtentGenerator) {
+                                       DiseaseExtentGenerator diseaseExtentGenerator,
+                                       DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
         this.diseaseService = diseaseService;
         this.locationService = locationService;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
+        this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
     }
 
     /**
@@ -64,6 +68,51 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunRequesterException {
         prepareForAndRequestModelRun(diseaseGroupId, null, false);
+    }
+
+
+    /**
+     * Set model runs to be triggered automatically for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     */
+    @Override
+    public void enableAutomaticModelRuns(int diseaseGroupId) {
+        DateTime now = DateTime.now();
+        saveAutomaticModelRunsStartDate(diseaseGroupId, now);
+        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroupId, now);
+        addValidationParameters(diseaseGroupId);
+    }
+
+    private void saveAutomaticModelRunsStartDate(int diseaseGroupId, DateTime now) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRunsStartDate(now);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
+    }
+
+    /**
+     * Update the ClassChangedDate of all AdminUnitDiseaseExtentClasses for this DiseaseGroup
+     * so that all polygons are available for review on DataValidator.
+     */
+    private void setAdminUnitDiseaseExtentClassChangedDate(int diseaseGroupId, DateTime now) {
+        List<AdminUnitDiseaseExtentClass> extentClasses =
+            diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+        for (AdminUnitDiseaseExtentClass extentClass : extentClasses) {
+            extentClass.setClassChangedDate(now);
+            diseaseService.saveAdminUnitDiseaseExtentClass(extentClass);
+        }
+    }
+
+    /**
+     * Calculate validation parameters for occurrences without a final weighting, because the set-up process is
+     * complete. Calculation of other weightings happens on first automatic model run.
+     */
+    private void addValidationParameters(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences =
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false);
+        diseaseOccurrenceValidationService.addValidationParameters(occurrences);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            diseaseService.saveDiseaseOccurrence(occurrence);
+        }
     }
 
     /**

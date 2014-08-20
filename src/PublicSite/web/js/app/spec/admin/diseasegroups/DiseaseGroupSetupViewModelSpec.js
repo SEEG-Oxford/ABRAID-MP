@@ -17,13 +17,23 @@ define([
             vm.isValid = ko.observable(true);
         });
 
-        describe("holds the select disease group ID which", function () {
+        describe("holds the selected disease group ID which", function () {
             it("is an observable", function () {
                 expect(vm.selectedDiseaseGroupId).toBeObservable();
             });
 
             it("starts empty", function () {
                 expect(vm.selectedDiseaseGroupId()).toBeUndefined();
+            });
+        });
+
+        describe("holds whether or not automatic model runs have been enabled for the disease group", function () {
+            it("is an observable", function () {
+                expect(vm.isAutomaticModelRunsEnabled).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.isAutomaticModelRunsEnabled()).toBe(false);
             });
         });
 
@@ -106,7 +116,7 @@ define([
             });
         });
 
-        describe("has the behavior of BaseFormView model, but overrides to", function() {
+        describe("has the behavior of BaseFormView model, but overrides to", function () {
             it("build a submission URL which is correct", function () {
                 // Arrange
                 vm.selectedDiseaseGroupId(10);
@@ -312,6 +322,43 @@ define([
                         priority: "warning"
                     });
                 });
+            });
+        });
+
+        describe("has a method to enable automatic model runs which", function () {
+            it("POSTs to the expected URL", function () {
+                // Arrange
+                var id = 1;
+                vm.selectedDiseaseGroupId(id);
+                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/automaticmodelruns";
+
+                // Act
+                vm.enableAutomaticModelRuns();
+
+                // Arrange
+                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+            });
+
+            it("when successful, updates the isAutomaticModelRunsEnabled flag", function () {
+                // Arrange
+                vm.selectedDiseaseGroupId(1);
+                vm.isAutomaticModelRunsEnabled(false);
+                // Act
+                vm.enableAutomaticModelRuns();
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                // Assert
+                expect(vm.isAutomaticModelRunsEnabled()).toBe(true);
+            });
+
+            it("when unsuccessful, updates the 'notices' with an error", function () {
+                // Arrange
+                var expectedNotice = { message: "Server error.", priority: "warning" };
+                // Act
+                vm.enableAutomaticModelRuns();
+                jasmine.Ajax.requests.mostRecent().response({ status: 500 });
+                // Assert
+                expect(vm.notices()).toContain(expectedNotice);
             });
         });
     });
