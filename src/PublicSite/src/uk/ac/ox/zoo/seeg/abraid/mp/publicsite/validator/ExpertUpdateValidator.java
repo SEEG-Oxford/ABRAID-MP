@@ -19,7 +19,7 @@ public class ExpertUpdateValidator {
     }
 
     /**
-     * Validates an expert dto for the fields that can be update in the profile details page.
+     * Validates an expert dto for the fields that can be updated in the profile details page.
      * @param expert The expert to validate.
      * @return A list of validation failures.
      */

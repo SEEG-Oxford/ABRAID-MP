@@ -32,7 +32,7 @@ public class ExpertUpdateHelper {
     }
 
     /**
-     * Updates the database entry for an experts.
+     * Updates the database entry for an expert.
      * @param id The expert to update.
      * @param expertDto The data to overwrite.
      * @throws ValidationException Thrown if an id matching expert can not be found.
