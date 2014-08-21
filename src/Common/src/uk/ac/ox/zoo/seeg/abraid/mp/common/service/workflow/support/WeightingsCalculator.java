@@ -99,16 +99,14 @@ public class WeightingsCalculator {
     }
 
     private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
-        List<Double> weightings = calculateWeightingForEachReview(reviews);
-        return shift(average(weightings));
-    }
-
-    private List<Double> calculateWeightingForEachReview(List<DiseaseOccurrenceReview> reviews) {
-        return convert(reviews, new Converter<DiseaseOccurrenceReview, Double>() {
-            public Double convert(DiseaseOccurrenceReview review) {
-                return review.getResponse().getValue() * review.getExpert().getWeighting();
-            }
-        });
+        double weightedResponseTotal = 0.0;
+        double expertWeightingsTotal = 0.0;
+        for (DiseaseOccurrenceReview review : reviews) {
+            double expertWeighting = review.getExpert().getWeighting();
+            weightedResponseTotal += review.getResponse().getValue() * expertWeighting;
+            expertWeightingsTotal += expertWeighting;
+        }
+        return (expertWeightingsTotal == 0.0) ? 0.0 : shift(weightedResponseTotal / expertWeightingsTotal);
     }
 
     // Shift weighting from range [-1, 1] to desired range of [0, 1]
