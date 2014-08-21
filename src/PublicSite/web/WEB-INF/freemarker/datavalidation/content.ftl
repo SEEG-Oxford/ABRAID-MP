@@ -63,7 +63,7 @@
                                         name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                         id: ${diseaseGroup.id?c},
                                         occurrenceOnly: ${(!diseaseGroup.isAutomaticModelRunsEnabled() && !userSeeg)?c}
-                                    },
+                                    }<#if diseaseGroup_has_next>,</#if>
                                 </#list>
                             ]
                         },
@@ -73,7 +73,7 @@
                         name: "${defaultValidatorDiseaseGroupName?js_string}",
                         diseaseGroups: [
                             {
-                                name: "${defaultDiseaseGroupShortName?js_string}",
+                                name: "${defaultDiseaseGroupShortName?js_string}"
                             }
                         ]
                     }
@@ -91,7 +91,7 @@
                                         name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
                                         id: ${diseaseGroup.id?c},
                                         occurrenceOnly: ${(!diseaseGroup.isAutomaticModelRunsEnabled() && !userSeeg)?c}
-                                    },
+                                    }<#if diseaseGroup_has_next>,</#if>
                                 </#list>
                             ]
                         },
