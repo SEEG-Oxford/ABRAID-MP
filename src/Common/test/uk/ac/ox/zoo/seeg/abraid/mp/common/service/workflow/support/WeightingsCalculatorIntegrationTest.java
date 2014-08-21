@@ -147,7 +147,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 87;
 
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
         DiseaseOccurrence occ1 = occurrences.get(0);
         DiseaseOccurrence occ2 = occurrences.get(1);
         DiseaseOccurrence occ3 = occurrences.get(2);
@@ -175,6 +175,27 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(87)).thenReturn(reviews);
         return mockDiseaseService;
+    }
+
+    @Test
+    public void updateDiseaseOccurrenceExpertWeightingsReturnsZeroWhenAllExpertsWeightingsAreZero() throws  Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+
+        DiseaseService mockDiseaseService = mock(DiseaseService.class);
+        when(mockDiseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(anyInt())).thenReturn(Arrays.asList(
+                new DiseaseOccurrenceReview(createExpert(1, "ex1", 0.0), occurrence, DiseaseOccurrenceReviewResponse.YES),
+                new DiseaseOccurrenceReview(createExpert(2, "ex2", 0.0), occurrence, DiseaseOccurrenceReviewResponse.YES),
+                new DiseaseOccurrenceReview(createExpert(3, "ex3", 0.0), occurrence, DiseaseOccurrenceReviewResponse.NO)
+        ));
+
+        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class), modelRunService);
+
+        // Act
+        target.updateDiseaseOccurrenceExpertWeightings(null, 1);
+
+        // Assert
+        assertThat(occurrence.getExpertWeighting()).isEqualTo(0.0);
     }
 
     @Test
@@ -431,7 +452,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     }
 
     private DiseaseService mockUpDiseaseServiceWithManyReviewsForExpertsTest() {
-        List<DiseaseOccurrenceReview> reviews = defaultListOfManyReviews();
+        List<DiseaseOccurrenceReview> reviews = defaultListOfManyReviews(87);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(reviews);
         return mockDiseaseService;
@@ -484,8 +505,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         assertThat(result).isEqualTo(0);
     }
 
-    private List<DiseaseOccurrenceReview> defaultListOfManyReviews() {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87).subList(0, 3);
+    private List<DiseaseOccurrenceReview> defaultListOfManyReviews(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId).subList(0, 3);
 
         Expert ex1 = createExpert(1, "ex1", 0.0);
         Expert ex2 = createExpert(2, "ex2", 0.0);

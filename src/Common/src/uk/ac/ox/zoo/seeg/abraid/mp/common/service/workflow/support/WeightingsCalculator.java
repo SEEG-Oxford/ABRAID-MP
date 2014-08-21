@@ -106,8 +106,7 @@ public class WeightingsCalculator {
             weightedResponseTotal += review.getResponse().getValue() * expertWeighting;
             expertWeightingsTotal += expertWeighting;
         }
-        double normalisedValue = weightedResponseTotal / expertWeightingsTotal;
-        return shift(normalisedValue);
+        return (expertWeightingsTotal == 0.0) ? 0.0 : shift(weightedResponseTotal / expertWeightingsTotal);
     }
 
     // Shift weighting from range [-1, 1] to desired range of [0, 1]
