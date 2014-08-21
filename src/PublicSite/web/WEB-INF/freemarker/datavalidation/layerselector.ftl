@@ -18,4 +18,11 @@
             'There are no occurrences in need of review for this disease'">
         </div>
     </div>
+
+    <div class="alert alert-info alert-dismissable" data-bind="visible: notReadyForReview()" style="text-align: center">
+        <div data-bind="text: showDiseaseExtentLayer() ?
+            'This disease is not ready for disease extent reviews.' :
+            'This disease is not ready for disease occurrence reviews.'">
+        </div>
+    </div>
 </div>

@@ -84,6 +84,7 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
         model.addAttribute("userLoggedIn", userLoggedIn);
+        model.addAttribute("userSeeg", userIsSEEG);
         model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
         return "datavalidation/content";

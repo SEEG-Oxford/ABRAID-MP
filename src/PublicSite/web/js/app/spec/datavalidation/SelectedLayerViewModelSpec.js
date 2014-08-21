@@ -145,5 +145,24 @@ define([
                 });
             });
         });
+
+        describe("holds a field indicating whether the disease is ready for review which", function () {
+            it("is an observable", function () {
+                expect(vm.notReadyForReview).toBeObservable();
+            });
+
+            describe("reacts to the 'disease-not-ready-for-review' event", function () {
+
+                it("when true", function () {
+                    ko.postbox.publish("disease-not-ready-for-review", true);
+                    expect(vm.notReadyForReview()).toBe(true);
+                });
+
+                it("when false", function () {
+                    ko.postbox.publish("disease-not-ready-for-review", false);
+                    expect(vm.notReadyForReview()).toBe(false);
+                });
+            });
+        });
     });
 });

@@ -70,8 +70,24 @@ public class DataValidationControllerTest {
         verify(model, times(1)).addAttribute("allOtherDiseases", new ArrayList<>());
         verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
         verify(model, times(1)).addAttribute("userLoggedIn", true);
+        verify(model, times(1)).addAttribute("userSeeg", false);
         verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
+    }
+
+    @Test
+    public void showPageReturnsDataModelForLoggedInSeegUser() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        String result = target.showPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("userSeeg", true);
     }
 
     @Test
@@ -111,6 +127,7 @@ public class DataValidationControllerTest {
         verify(model, times(1)).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
         verify(model, times(1)).addAttribute("defaultDiseaseGroupShortName", "dengue");
         verify(model, times(1)).addAttribute("userLoggedIn", false);
+        verify(model, times(1)).addAttribute("userSeeg", false);
         verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }
