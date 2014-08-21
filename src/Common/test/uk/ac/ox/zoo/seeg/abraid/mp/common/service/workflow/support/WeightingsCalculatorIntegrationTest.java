@@ -101,19 +101,18 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         verify(logger, times(1)).info(eq("No new reviews have been submitted - expert weightings of disease occurrences will not be updated"));
     }
 
-    // An expert (who has a weighting of 0.9) has reviewed YES (value of 1) to an occurrence, so the occurrence's
-    // weighting should update to take a value of 0.95 ie (expert's weighting x response value) shifted from range
-    // [-1, 1] to desired range [0,1].
+    // One expert (who has a weighting of 0.9) has reviewed YES (value of 1) to an occurrence. The total weighting
+    // (expert's weighting x response value = 0.9) is normalised by the sum of all the experts' weightings (in this case
+    // just 0.9), so the occurrence's resulting weighting should be 1, even after the shift from range [-1, 1] to [0,1].
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsGivesExpectedResult() throws Exception {
-        updateDiseaseOccurrenceExpertWeightings(0.9, 0.95);
-    }
-
-    private void updateDiseaseOccurrenceExpertWeightings(Double expertsWeighting, double expectedWeighting) {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now().minusDays(7);
         int diseaseGroupId = 87;
+
+        double expertsWeighting = 0.9;
         double initialWeighting = 0.0;
+        double expectedWeighting = 1.0;
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setExpertWeighting(initialWeighting);
@@ -162,9 +161,12 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
 
         // Assert
         verify(logger, times(1)).info(eq("Recalculating expert weightings for 3 disease occurrence(s) given 9 new review(s)"));
-        assertThat(occ1.getExpertWeighting()).isEqualTo(0.7833, offset(0.05));
-        assertThat(occ2.getExpertWeighting()).isEqualTo(0.5836, offset(0.05));
-        assertThat(occ3.getExpertWeighting()).isEqualTo(0.2166, offset(0.05));
+        // All experts reviewed YES (+1) for occ1, shifted from [-1, +1] to [0,1]
+        assertThat(occ1.getExpertWeighting()).isEqualTo(1.0);
+        // Split responses (1 YES, 1 UNSURE, 1 NO) for occ2, so the expert weighting is the total weighted response, normalised by sum of all expert weightings
+        assertThat(occ2.getExpertWeighting()).isEqualTo(0.6476, offset(0.05));
+        // All experts reviewed NO (-1) for occ3, shifted from [-1, +1] to [0,1]
+        assertThat(occ3.getExpertWeighting()).isEqualTo(0.0);
     }
 
     private DiseaseService mockUpDiseaseServiceWithManyReviews(DiseaseOccurrence occ1, DiseaseOccurrence occ2, DiseaseOccurrence occ3) {
