@@ -18,6 +18,9 @@ html, body, #dataValidation {
     z-index: 100;                /* Overlay to ensure clicks*/
     margin-left: 50px;           /* Space for zoomslider */
 }
+#layerSelector .alert {
+    text-align: center;
+}
 #layerSelector > h4, select {
     background: none;
     color: rgb(51, 51, 51);

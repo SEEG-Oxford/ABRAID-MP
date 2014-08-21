@@ -336,9 +336,14 @@ define([
         }
 
         // Display the admin units, and disease extent class, for the selected validator disease group.
-        function switchDiseaseExtentLayer(diseaseId) {
+        function switchDiseaseExtentLayer(diseaseId, occurrenceOnly) {
             clearDiseaseExtentLayers();
-            addDiseaseExtentData(diseaseId);
+            if (!occurrenceOnly) {
+                addDiseaseExtentData(diseaseId);
+            } else {
+                ko.postbox.publish("disease-not-ready-for-review", true);
+                ko.postbox.publish("map-view-update-in-progress", false);
+            }
         }
 
         /** LEGEND */
@@ -403,13 +408,14 @@ define([
 
         ko.postbox.subscribe("layers-changed", function (data) {
             ko.postbox.publish("map-view-update-in-progress", true);
+            ko.postbox.publish("disease-not-ready-for-review", false);
             validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
             switchValidationTypeView();
             resetSelectedFeature();
             if (validationTypeIsDiseaseOccurrenceLayer) {
                 switchDiseaseOccurrenceLayer(data.diseaseId);
             } else {
-                switchDiseaseExtentLayer(data.diseaseId);
+                switchDiseaseExtentLayer(data.diseaseId, data.occurrenceOnly);
             }
         });
 

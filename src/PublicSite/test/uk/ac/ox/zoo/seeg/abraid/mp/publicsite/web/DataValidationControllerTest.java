@@ -70,54 +70,44 @@ public class DataValidationControllerTest {
         verify(model, times(1)).addAttribute("allOtherDiseases", new ArrayList<>());
         verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
         verify(model, times(1)).addAttribute("userLoggedIn", true);
+        verify(model, times(1)).addAttribute("userSeeg", false);
         verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }
 
     @Test
-    public void showPageReturnsReducedValidatorDiseaseGroupsForNonSeegMember() {
+    public void showPageReturnsDataModelForLoggedInSeegUser() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        String result = target.showPage(model);
+
+        // Assert
+        verify(model, times(1)).addAttribute("userSeeg", true);
+    }
+
+    @Test
+    public void showPageReturnsValidatorDiseaseGroups() {
         // Arrange
         Model model = mock(Model.class);
         ExpertService expertService = createExpertService();
         when(expertService.getExpertById(1).isSeegMember()).thenReturn(false);
         DiseaseService diseaseService = createDiseaseService();
-        HashMap<String, List<DiseaseGroup>> correctResult = new HashMap<>();
-        when(diseaseService.getValidatorDiseaseGroupMap(false)).thenReturn(correctResult);
-        HashMap<String, List<DiseaseGroup>> incorrectResult = new HashMap<>();
-        when(diseaseService.getValidatorDiseaseGroupMap(true)).thenReturn(incorrectResult);
+        HashMap<String, List<DiseaseGroup>> result = new HashMap<>();
+        when(diseaseService.getValidatorDiseaseGroupMap()).thenReturn(result);
         DataValidationController target = createTarget(null, diseaseService, expertService);
 
-        correctResult.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
-        incorrectResult.put("bar", Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class)));
+        result.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
 
         // Act
         target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", correctResult);
-    }
-
-    @Test
-    public void showPageReturnsFullValidatorDiseaseGroupsForSeegMember() {
-        // Arrange
-        Model model = mock(Model.class);
-        ExpertService expertService = createExpertService();
-        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
-        DiseaseService diseaseService = createDiseaseService();
-        HashMap<String, List<DiseaseGroup>> incorrectResult = new HashMap<>();
-        when(diseaseService.getValidatorDiseaseGroupMap(false)).thenReturn(incorrectResult);
-        HashMap<String, List<DiseaseGroup>> correctResult = new HashMap<>();
-        when(diseaseService.getValidatorDiseaseGroupMap(true)).thenReturn(correctResult);
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-
-        incorrectResult.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
-        correctResult.put("bar", Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class)));
-
-        // Act
-        target.showPage(model);
-
-        // Assert
-        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", correctResult);
+        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", result);
     }
 
     @Test
@@ -137,6 +127,7 @@ public class DataValidationControllerTest {
         verify(model, times(1)).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
         verify(model, times(1)).addAttribute("defaultDiseaseGroupShortName", "dengue");
         verify(model, times(1)).addAttribute("userLoggedIn", false);
+        verify(model, times(1)).addAttribute("userSeeg", false);
         verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
     }

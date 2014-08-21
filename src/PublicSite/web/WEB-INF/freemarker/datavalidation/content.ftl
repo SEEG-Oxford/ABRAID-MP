@@ -61,8 +61,9 @@
                                 <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                     {
                                         name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
-                                        id: ${diseaseGroup.id?c}
-                                    },
+                                        id: ${diseaseGroup.id?c},
+                                        occurrenceOnly: ${(!diseaseGroup.isAutomaticModelRunsEnabled() && !userSeeg)?c}
+                                    }<#if diseaseGroup_has_next>,</#if>
                                 </#list>
                             ]
                         },
@@ -88,8 +89,9 @@
                                 <#list validatorDiseaseGroupMap[validatorDiseaseGroup.getName()] as diseaseGroup>
                                     {
                                         name: "${diseaseGroup.getShortNameForDisplay()?js_string}",
-                                        id: ${diseaseGroup.id?c}
-                                    },
+                                        id: ${diseaseGroup.id?c},
+                                        occurrenceOnly: ${(!diseaseGroup.isAutomaticModelRunsEnabled() && !userSeeg)?c}
+                                    }<#if diseaseGroup_has_next>,</#if>
                                 </#list>
                             ]
                         },
