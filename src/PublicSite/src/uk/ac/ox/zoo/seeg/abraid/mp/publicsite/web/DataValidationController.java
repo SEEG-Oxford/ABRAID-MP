@@ -78,7 +78,7 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
                     getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
-            model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap(userIsSEEG));
+            model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
