@@ -42,7 +42,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     private static final String ADD_DISEASE_GROUP_ERROR = "Error adding new disease group (%s)";
 
     /** The base URL for the system administration disease group controller methods. */
-    public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseasegroups";
+    public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseases";
 
     private DiseaseService diseaseService;
     private GeoJsonObjectMapper geoJsonObjectMapper;

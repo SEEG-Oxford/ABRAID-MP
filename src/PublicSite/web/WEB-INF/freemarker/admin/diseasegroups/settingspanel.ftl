@@ -33,7 +33,7 @@
             <div class="col-sm-6">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label for="disease-group-type" class="col-sm-5 control-label">Group Type</label>
+                        <label for="disease-group-type" class="col-sm-5 control-label">Type</label>
                         <div class="col-sm-7 btn-group" id="disease-group-type" data-bind="foreach: groupTypes">
                             <label class="btn btn-default" data-bind="css: {active : $parent.selectedType() === value, disabled: find('isSubmitting')}">
                                 <input type="radio" name="disease-group-type" data-bind="formRadio: { selected: $parent.selectedType, value: value }">
@@ -51,13 +51,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="parent-disease-group" class="col-sm-5 control-label">Parent Disease Group</label>
+                        <label for="parent-disease-group" class="col-sm-5 control-label">Parent Disease</label>
                         <div class="col-sm-7">
                             <select class="form-control" id="parent-disease-group" data-bind="options: parentDiseaseGroups, value: selectedParentDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...', bootstrapDisable: find('isSubmitting') || !enableParentDiseaseGroups()"></select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="validator-disease-group" class="col-sm-5 control-label">Validator Disease Group</label>
+                        <label for="validator-disease-group" class="col-sm-5 control-label">Validator Disease</label>
                         <div class="col-sm-7">
                             <select class="form-control" id="validator-disease-group" data-bind="options: validatorDiseaseGroups, value: selectedValidatorDiseaseGroup, optionsText: 'name', optionsCaption:'Select one...', bootstrapDisable: find('isSubmitting')"></select>
                         </div>

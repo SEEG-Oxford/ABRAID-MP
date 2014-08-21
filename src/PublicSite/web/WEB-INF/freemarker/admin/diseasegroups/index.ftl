@@ -25,11 +25,11 @@
 </style>
 </#assign>
 
-<@c.page title="ABRAID-MP Administration: Disease Group" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData endOfHead=css>
+<@c.page title="ABRAID-MP Administration: Diseases" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData endOfHead=css>
 <div class="container">
     <div id="disease-groups-list">
         <div class="col-sm-8">
-            <label for="disease-group-picker" class="side-by-side">Selected Disease Group</label>
+            <label for="disease-group-picker" class="side-by-side">Selected Disease</label>
             <span class="input-group">
                 <span class="input-group-addon">
                     <i class="fa fa-medkit"></i>
@@ -38,7 +38,7 @@
             </span>
         </div>
         <div class="col-sm-4">
-            <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease group</button>
+            <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease</button>
         </div>
     </div>
     <br />
