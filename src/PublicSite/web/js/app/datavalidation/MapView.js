@@ -88,6 +88,7 @@ define([
         function selectPoint(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
             resetDiseaseOccurrenceLayerStyle();
+            marker.openPopup();
             if (loggedIn) {
                 marker.setStyle({
                     stroke: false,
@@ -116,6 +117,11 @@ define([
                     })
                 });
             }
+            marker.bindPopup(feature.properties.locationName, {
+                closeButton: false,
+                maxWidth: 500,
+                offset: [0, 35]
+            });
             marker.on("click", function () {
                 ko.postbox.publish("point-selected", feature);
                 selectPoint(this);
@@ -387,6 +393,7 @@ define([
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
         function resetSelectedPoint() {
             ko.postbox.publish("point-selected", null);
+            map.closePopup();
             resetDiseaseOccurrenceLayerStyle();
         }
 

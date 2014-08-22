@@ -169,3 +169,15 @@ html, body, #dataValidation {
 .fa-square-o {
     padding: 2px;
 }
+.leaflet-popup-content {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+}
+.leaflet-popup-content-wrapper {
+    background: transparent;
+    box-shadow: none;
+}
+.leaflet-popup-tip-container {
+    display: none;
+}
