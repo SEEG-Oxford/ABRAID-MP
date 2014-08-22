@@ -31,18 +31,18 @@ define([
             attributionControl: false,
             zoomControl: false,
             zoomsliderControl: true,
-            maxBounds: [ [-60, -180], [85, 180] ],
+            maxBounds: [ [-60, -220], [85, 220] ],
             maxZoom: 7,
             minZoom: 3,
-            animate: true
+            animate: true,
+            bounceAtZoomLimits: false
         }).fitWorld();
 
         // Add the simplified shapefile base layer with WMS GET request
         var baseLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:base_layer"],
             format: "image/png",
-            reuseTiles: true,
-            noWrap: true
+            reuseTiles: true
         }).addTo(map);
 
         var hatchingLayer = L.tileLayer.wms(wmsUrl, {
@@ -259,7 +259,7 @@ define([
             resetDiseaseExtentLayerStyle();
             layer.setStyle({ weight: 3.5, color: "#5c5c5c" });
             if (!L.Browser.ie && !L.Browser.opera) { layer.bringToFront(); }
-            map.fitBounds(layer.getBounds(), { maxZoom: 5 });
+            map.fitBounds(layer.getBounds(), { padding: [300, 300] });
         }
 
         // Define the geoJson layer, to which the disease extent data will be added via AJAX request
