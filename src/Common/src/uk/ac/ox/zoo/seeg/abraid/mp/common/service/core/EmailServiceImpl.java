@@ -9,6 +9,7 @@ import freemarker.template.TemplateException;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
+import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactory;
@@ -23,6 +24,9 @@ import java.io.Writer;
  * Copyright (c) 2014 University of Oxford
  */
 public class EmailServiceImpl implements EmailService {
+    private static final Logger LOGGER = Logger.getLogger(EmailServiceImpl.class);
+    private static final String LOG_EMAIL_SENT = "Email sent to '%s' with subject '%s'";
+
     private final EmailFactory emailFactory;
     private final String fromAddress;
     private final SmtpConfiguration smtpConfig;
@@ -74,6 +78,7 @@ public class EmailServiceImpl implements EmailService {
         email.addTo(toAddress);
         email.setFrom(fromAddress);
         email.send();
+        LOGGER.info(String.format(LOG_EMAIL_SENT, toAddress, subject));
     }
 
     private static void setupSMTP(Email email, SmtpConfiguration smtpConfig) throws EmailException {
