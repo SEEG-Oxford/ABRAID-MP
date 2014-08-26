@@ -5,6 +5,7 @@ import org.apache.commons.mail.EmailException;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /**
  * Defines a service for sending emails.
@@ -33,4 +34,21 @@ public interface EmailService {
      */
     void sendEmail(String toAddress, String subject, String body)
             throws EmailException;
+
+    /**
+     * Sends an email message, using a background process. Logs errors.
+     * @param toAddress The target address to send the email to.
+     * @param subject The subject of the email.
+     * @param templateName The name of the template to use in the body of the email.
+     * @param templateData The data to use when generating the body of the email.
+     */
+    Future sendEmailInBackground(String toAddress, String subject, String templateName, Map<String, Object> templateData);
+
+    /**
+     * Sends an email message, using a background process. Logs errors.
+     * @param toAddress The target address to send the email to.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     */
+    Future sendEmailInBackground(String toAddress, String subject, String body);
 }
