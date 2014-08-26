@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+      Contains the email service bean and associated components.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="commonEmailTemplateLookupPaths" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <!-- Add any uk.ac.ox.zoo.seeg.abraid.mp.common paths -->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="emailTemplateLookupPaths" parent="commonEmailTemplateLookupPaths" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list merge="true">
+                <!-- Inherit just commonEmailTemplateLookupPaths, but can be overridden in specific contexts to add
+                     more paths (eg public site paths). This gives an alternate id so that contexts can override value
+                     while still inheriting commonEmailTemplateLookupPaths to merge extra values in to existing list. -->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="emailService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailServiceImpl">
+        <constructor-arg name="emailFactory">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactoryImpl" />
+        </constructor-arg>
+        <constructor-arg name="fromAddress" value=""/>
+        <constructor-arg name="smtpConfig">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
+                <constructor-arg name="address" value="" />
+                <constructor-arg name="port" value="1" />
+                <constructor-arg name="useSSL" value="true" />
+                <constructor-arg name="username" value="" />
+                <constructor-arg name="password" value="" />
+            </bean>
+        </constructor-arg>
+        <constructor-arg name="emailTemplateLookupPaths" ref="emailTemplateLookupPaths" />
+    </bean>
+</beans>
