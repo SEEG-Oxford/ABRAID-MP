@@ -32,7 +32,7 @@
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
                 <constructor-arg name="address" value="mailtrap.io" />
                 <constructor-arg name="port" value="2525" />
-                <constructor-arg name="useSSL" value="true" />
+                <constructor-arg name="useSSL" value="false" />
                 <constructor-arg name="username" value="235398130c23105ca" />
                 <constructor-arg name="password" value="b69aea70436f30" />
             </bean>

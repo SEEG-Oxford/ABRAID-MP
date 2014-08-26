@@ -2,9 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import freemarker.template.TemplateException;
 import org.apache.commons.mail.EmailException;
-import org.springframework.ui.Model;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Defines a service for sending emails.
@@ -21,7 +21,7 @@ public interface EmailService {
      * @throws TemplateException Fired if the template can not be applied to the data.
      * @throws EmailException Fired if the email can not be sent.
      */
-    void sendEmail(String toAddress, String subject, String templateName, Model templateData)
+    void sendEmail(String toAddress, String subject, String templateName, Map<String, Object> templateData)
             throws IOException, TemplateException, EmailException;
 
     /**

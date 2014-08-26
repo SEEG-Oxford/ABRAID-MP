@@ -10,7 +10,6 @@ import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.log4j.Logger;
-import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactory;
 
@@ -18,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Map;
 
 /**
  * A service for sending emails.
@@ -52,7 +52,7 @@ public class EmailServiceImpl implements EmailService {
      * @throws EmailException Fired if the email can not be sent.
      */
     @Override
-    public void sendEmail(String toAddress, String subject, String templateName, Model templateData)
+    public void sendEmail(String toAddress, String subject, String templateName, Map<String, Object> templateData)
             throws IOException, TemplateException, EmailException {
         Template template = freemarkerConfig.getTemplate(templateName);
         Writer bodyWriter = new StringWriter();
@@ -84,6 +84,7 @@ public class EmailServiceImpl implements EmailService {
     private static void setupSMTP(Email email, SmtpConfiguration smtpConfig) throws EmailException {
         email.setHostName(smtpConfig.getAddress());
         email.setSmtpPort(smtpConfig.getPort());
+        email.setSslSmtpPort(Integer.toString(smtpConfig.getPort()));
         email.setAuthenticator(new DefaultAuthenticator(smtpConfig.getUsername(), smtpConfig.getPassword()));
         email.setSSLOnConnect(smtpConfig.useSSL());
     }
