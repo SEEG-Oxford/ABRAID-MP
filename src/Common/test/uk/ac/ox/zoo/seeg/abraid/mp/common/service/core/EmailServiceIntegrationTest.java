@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Integration test fro EmailServiceImpl.
+ * Integration test for EmailServiceImpl.
  * Copyright (c) 2014 University of Oxford
  */
 @Ignore
@@ -34,7 +34,7 @@ public class EmailServiceIntegrationTest {
                     "235398130c23105ca",
                     "b69aea70436f30"
                 ),
-                new String[] {testFolder.getRoot().toString()});
+                new File[] {testFolder.getRoot()});
 
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "${foo} ${date}");
         Map<String, Object> data = new HashMap<>();

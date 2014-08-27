@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
     private final Configuration freemarkerConfig;
 
     public EmailServiceImpl(EmailFactory emailFactory, String fromAddress, SmtpConfiguration smtpConfig,
-                            String[] emailTemplateLookupPaths)
+                            File[] emailTemplateLookupPaths)
             throws IOException {
         this.emailFactory = emailFactory;
         this.fromAddress = fromAddress;
@@ -63,12 +63,12 @@ public class EmailServiceImpl implements EmailService {
         email.setSSLOnConnect(smtpConfig.useSSL());
     }
 
-    private static Configuration setupFreemarkerConfig(String[] templateLookupPaths) throws IOException {
+    private static Configuration setupFreemarkerConfig(File[] templateLookupPaths) throws IOException {
         Configuration config = new Configuration();
 
         TemplateLoader[] loaders = new TemplateLoader[templateLookupPaths.length];
         for (int i = 0; i < templateLookupPaths.length; i++) {
-            loaders[i] = new FileTemplateLoader(new File(templateLookupPaths[i]));
+            loaders[i] = new FileTemplateLoader(templateLookupPaths[i]);
         }
         config.setTemplateLoader(new MultiTemplateLoader(loaders));
 
