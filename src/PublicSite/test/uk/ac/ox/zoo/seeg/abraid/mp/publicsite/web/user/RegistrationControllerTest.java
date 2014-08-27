@@ -501,7 +501,8 @@ public class RegistrationControllerTest {
         Map<String, Object> data = new HashMap<>();
         data.put("expert", expert);
         verify(emailService, times(1)).sendEmailInBackground(
-                "New user requiring visibility sign off",                "newUserEmail.ftl",
+                "New user requiring visibility sign off",
+                "newUserEmail.ftl",
                 data);
     }
 
