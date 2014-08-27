@@ -51,4 +51,40 @@ public interface EmailService {
      * @param body The body of the email.
      */
     Future sendEmailInBackground(String toAddress, String subject, String body);
+
+    /**
+     * Sends an email message to the default address.
+     * @param subject The subject of the email.
+     * @param templateName The name of the template to use in the body of the email.
+     * @param templateData The data to use when generating the body of the email.
+     * @throws IOException Fired if the specified template can not be found.
+     * @throws TemplateException Fired if the template can not be applied to the data.
+     * @throws EmailException Fired if the email can not be sent.
+     */
+    void sendEmail(String subject, String templateName, Map<String, Object> templateData)
+            throws IOException, TemplateException, EmailException;
+
+    /**
+     * Sends an email message to the default address.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     * @throws EmailException Fired if the email can not be sent.
+     */
+    void sendEmail(String subject, String body)
+            throws EmailException;
+
+    /**
+     * Sends an email message to the default address, using a background process. Logs errors.
+     * @param subject The subject of the email.
+     * @param templateName The name of the template to use in the body of the email.
+     * @param templateData The data to use when generating the body of the email.
+     */
+    Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData);
+
+    /**
+     * Sends an email message to the default address, using a background process. Logs errors.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     */
+    Future sendEmailInBackground(String subject, String body);
 }

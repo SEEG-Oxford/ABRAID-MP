@@ -163,4 +163,50 @@ public class EmailServiceImpl implements EmailService {
             }
         });
     }
+
+    /**
+     * Sends an email message to the default address.
+     * @param subject The subject of the email.
+     * @param templateName The name of the template to use in the body of the email.
+     * @param templateData The data to use when generating the body of the email.
+     * @throws java.io.IOException Fired if the specified template can not be found.
+     * @throws freemarker.template.TemplateException Fired if the template can not be applied to the data.
+     * @throws org.apache.commons.mail.EmailException Fired if the email can not be sent.
+     */
+    @Override
+    public void sendEmail(String subject, String templateName, Map<String, Object> templateData) throws IOException, TemplateException, EmailException {
+        sendEmail(fromAddress, subject, templateName, templateData);
+    }
+
+    /**
+     * Sends an email message to the default address.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     * @throws org.apache.commons.mail.EmailException Fired if the email can not be sent.
+     */
+    @Override
+    public void sendEmail(String subject, String body) throws EmailException {
+        sendEmail(fromAddress, subject, body);
+    }
+
+    /**
+     * Sends an email message to the default address, using a background process. Logs errors.
+     * @param subject The subject of the email.
+     * @param templateName The name of the template to use in the body of the email.
+     * @param templateData The data to use when generating the body of the email.
+     */
+    @Override
+    public Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData) {
+        return sendEmailInBackground(fromAddress, subject, templateName, templateData);
+    }
+
+    /**
+     * Sends an email message to the default address, using a background process. Logs errors.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     */
+    @Override
+    public Future sendEmailInBackground(String subject, String body) {
+        return sendEmailInBackground(fromAddress, subject, body);
+    }
 }

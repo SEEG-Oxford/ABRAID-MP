@@ -15,6 +15,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -183,5 +184,149 @@ public class EmailServiceTest {
 
         // Assert
         verify(email, times(1)).setMsg("expected result!");
+    }
+
+    @Test
+    public void sendEmailSendsCorrectMessage() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[0]);
+
+        // Act
+        target.sendEmail("ToAddress", "Subject", "Body");
+
+        // Assert
+        verify(email, times(1)).addTo("ToAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailSendsCorrectTemplatedMessage() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[] {testFolder.getRoot().toString()});
+
+        // Act
+        target.sendEmail("ToAddress", "Subject", "template.ftl", new HashMap<String, Object>());
+
+        // Assert
+        verify(email, times(1)).addTo("ToAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailInBackgroundSendsCorrectMessage() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[0]);
+
+        // Act
+        Future result = target.sendEmailInBackground("ToAddress", "Subject", "Body");
+        result.get();
+
+        // Assert
+        verify(email, times(1)).addTo("ToAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailInBackgroundSendsCorrectTemplatedMessage() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[] {testFolder.getRoot().toString()});
+
+        // Act
+        Future result = target.sendEmailInBackground("ToAddress", "Subject", "template.ftl", new HashMap<String, Object>());
+        result.get();
+
+        // Assert
+        verify(email, times(1)).addTo("ToAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailSendsCorrectMessageWithDefaultToAddress() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[0]);
+
+        // Act
+        target.sendEmail("Subject", "Body");
+
+        // Assert
+        verify(email, times(1)).addTo("FromAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailSendsCorrectTemplatedMessageWithDefaultToAddress() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[] {testFolder.getRoot().toString()});
+
+        // Act
+        target.sendEmail("Subject", "template.ftl", new HashMap<String, Object>());
+
+        // Assert
+        verify(email, times(1)).addTo("FromAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailInBackgroundSendsCorrectMessageWithDefaultToAddress() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[0]);
+
+        // Act
+        Future result = target.sendEmailInBackground("Subject", "Body");
+        result.get();
+
+        // Assert
+        verify(email, times(1)).addTo("FromAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
+    }
+
+    @Test
+    public void sendEmailInBackgroundSendsCorrectTemplatedMessageWithDefaultToAddress() throws Exception {
+        // Arrange
+        SmtpConfiguration expectation = arrangeSMTP();
+        Email email = mock(Email.class);
+        FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", expectation, new String[] {testFolder.getRoot().toString()});
+
+        // Act
+        Future result = target.sendEmailInBackground("Subject", "template.ftl", new HashMap<String, Object>());
+        result.get();
+
+        // Assert
+        verify(email, times(1)).addTo("FromAddress");
+        verify(email, times(1)).setSubject("Subject");
+        verify(email, times(1)).setMsg("Body");
+        verify(email, times(1)).send();
     }
 }
