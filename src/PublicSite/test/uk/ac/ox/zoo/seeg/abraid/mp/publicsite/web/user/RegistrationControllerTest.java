@@ -498,7 +498,7 @@ public class RegistrationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Map<String,Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         data.put("expert", expert);
         verify(emailService, times(1)).sendEmailInBackground(
                 "New user requiring visibility sign off",                "newUserEmail.ftl",

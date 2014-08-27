@@ -9,6 +9,10 @@ import org.apache.commons.mail.SimpleEmail;
  * Copyright (c) 2014 University of Oxford
  */
 public class EmailFactoryImpl implements EmailFactory {
+    /**
+     * Creates a new instance of SimpleEmail.
+     * @return The new instance.
+     */
     @Override
     public Email createEmail() {
         return new SimpleEmail();

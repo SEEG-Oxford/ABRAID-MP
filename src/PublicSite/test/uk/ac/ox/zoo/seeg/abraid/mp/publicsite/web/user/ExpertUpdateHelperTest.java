@@ -136,7 +136,7 @@ public class ExpertUpdateHelperTest {
 
         // Assert
         verify(expertService, times(1)).saveExpert(expert);
-        Map<String,Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         data.put("expert", expert);
         verify(emailService, times(1)).sendEmailInBackground(
                 "Updated user requiring visibility sign off",

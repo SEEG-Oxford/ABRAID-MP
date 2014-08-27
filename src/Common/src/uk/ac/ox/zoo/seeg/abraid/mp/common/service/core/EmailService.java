@@ -41,14 +41,17 @@ public interface EmailService {
      * @param subject The subject of the email.
      * @param templateName The name of the template to use in the body of the email.
      * @param templateData The data to use when generating the body of the email.
+     * @return A future for the background operation.
      */
-    Future sendEmailInBackground(String toAddress, String subject, String templateName, Map<String, Object> templateData);
+    Future sendEmailInBackground(
+            String toAddress, String subject, String templateName, Map<String, Object> templateData);
 
     /**
      * Sends an email message, using a background process. Logs errors.
      * @param toAddress The target address to send the email to.
      * @param subject The subject of the email.
      * @param body The body of the email.
+     * @return A future for the background operation.
      */
     Future sendEmailInBackground(String toAddress, String subject, String body);
 
@@ -78,6 +81,7 @@ public interface EmailService {
      * @param subject The subject of the email.
      * @param templateName The name of the template to use in the body of the email.
      * @param templateData The data to use when generating the body of the email.
+     * @return A future for the background operation.
      */
     Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData);
 
@@ -85,6 +89,7 @@ public interface EmailService {
      * Sends an email message to the default address, using a background process. Logs errors.
      * @param subject The subject of the email.
      * @param body The body of the email.
+     * @return A future for the background operation.
      */
     Future sendEmailInBackground(String subject, String body);
 }

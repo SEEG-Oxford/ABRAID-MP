@@ -8,5 +8,9 @@ import org.apache.commons.mail.Email;
  * Copyright (c) 2014 University of Oxford
  */
 public interface EmailFactory {
+    /**
+     * Creates a new instance of SimpleEmail.
+     * @return The new instance.
+     */
     Email createEmail();
 }

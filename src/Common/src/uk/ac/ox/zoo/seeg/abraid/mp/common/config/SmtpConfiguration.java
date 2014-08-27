@@ -27,6 +27,10 @@ public class SmtpConfiguration {
         return port;
     }
 
+    /**
+     * Gets the value of the "use ssl" flag.
+     * @return the value of the "use ssl" flag.
+     */
     public boolean useSSL() {
         return useSSL;
     }

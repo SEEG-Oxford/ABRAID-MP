@@ -121,9 +121,11 @@ public class EmailServiceImpl implements EmailService {
      * @param subject The subject of the email.
      * @param templateName The name of the template to use in the body of the email.
      * @param templateData The data to use when generating the body of the email.
+     * @return A future for the background operation.
      */
     @Override
-    public Future sendEmailInBackground(final String toAddress, final String subject, final String templateName, final Map<String, Object> templateData) {
+    public Future sendEmailInBackground(final String toAddress, final String subject,
+                                        final String templateName, final Map<String, Object> templateData) {
         return pool.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -147,6 +149,7 @@ public class EmailServiceImpl implements EmailService {
      * @param toAddress The target address to send the email to.
      * @param subject The subject of the email.
      * @param body The body of the email.
+     * @return A future for the background operation.
      */
     @Override
     public Future sendEmailInBackground(final String toAddress, final String subject, final String body) {
@@ -174,7 +177,8 @@ public class EmailServiceImpl implements EmailService {
      * @throws org.apache.commons.mail.EmailException Fired if the email can not be sent.
      */
     @Override
-    public void sendEmail(String subject, String templateName, Map<String, Object> templateData) throws IOException, TemplateException, EmailException {
+    public void sendEmail(String subject, String templateName, Map<String, Object> templateData)
+            throws IOException, TemplateException, EmailException {
         sendEmail(fromAddress, subject, templateName, templateData);
     }
 
@@ -194,6 +198,7 @@ public class EmailServiceImpl implements EmailService {
      * @param subject The subject of the email.
      * @param templateName The name of the template to use in the body of the email.
      * @param templateData The data to use when generating the body of the email.
+     * @return A future for the background operation.
      */
     @Override
     public Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData) {
@@ -204,6 +209,7 @@ public class EmailServiceImpl implements EmailService {
      * Sends an email message to the default address, using a background process. Logs errors.
      * @param subject The subject of the email.
      * @param body The body of the email.
+     * @return A future for the background operation.
      */
     @Override
     public Future sendEmailInBackground(String subject, String body) {
