@@ -37,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
     private static final String LOG_FAILED_LOAD_TEMPLATE =
             "Failed to send email (%s - %s) due to failure to load template";
     private static final String LOG_FAILED_APPLY_TEMPLATE =
-            "Failed to send email (%s - %s) due to failure to load template";
+            "Failed to send email (%s - %s) due to failure to apply template";
 
     private final ExecutorService pool = Executors.newFixedThreadPool(3);
 
