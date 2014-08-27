@@ -6,12 +6,15 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.collection.IsIn.isIn;
@@ -22,13 +25,18 @@ import static org.hamcrest.collection.IsIn.isIn;
  */
 public class ExpertUpdateHelper {
     private static final String FAIL_NO_ID_MATCH = "No matching expert found to update (%s).";
-    private ExpertService expertService;
-    private DiseaseService diseaseService;
+    private static final String EMAIL_DATA_KEY = "expert";
+    private static final String EMAIL_SUBJECT = "Updated user requiring visibility sign off";
+    private static final String EMAIL_TEMPLATE = "updatedUserEmail.ftl";
+    private final ExpertService expertService;
+    private final DiseaseService diseaseService;
+    private final EmailService emailService;
 
     @Autowired
-    public ExpertUpdateHelper(ExpertService expertService, DiseaseService diseaseService) {
+    public ExpertUpdateHelper(ExpertService expertService, DiseaseService diseaseService, EmailService emailService) {
         this.expertService = expertService;
         this.diseaseService = diseaseService;
+        this.emailService = emailService;
     }
 
     /**
@@ -68,7 +76,19 @@ public class ExpertUpdateHelper {
             }
 
             expertService.saveExpert(expert);
+
+            if (resetVisibility) {
+                emailAdmin(expert);
+            }
         }
         // End of transaction
+    }
+
+    private void emailAdmin(Expert expert) {
+        if (expert.getVisibilityRequested()) {
+            Map<String, Object> data = new HashMap<>();
+            data.put(EMAIL_DATA_KEY, expert);
+            emailService.sendEmailInBackground(EMAIL_SUBJECT, EMAIL_TEMPLATE, data);
+        }
     }
 }

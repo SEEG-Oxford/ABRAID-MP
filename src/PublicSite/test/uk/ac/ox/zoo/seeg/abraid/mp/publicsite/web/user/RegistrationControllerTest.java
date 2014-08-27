@@ -12,6 +12,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
@@ -50,7 +51,7 @@ public class RegistrationControllerTest {
         validator = mock(ExpertForRegistrationValidator.class);
 
         target = new RegistrationController(
-                currentUserService, expertService, diseaseService, passwordEncoder, json, validator);
+                currentUserService, expertService, diseaseService, mock(EmailService.class), passwordEncoder, json, validator);
     }
 
     @Test

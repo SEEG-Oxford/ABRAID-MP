@@ -5,6 +5,7 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
@@ -27,7 +28,7 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService);
+        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mockExpertDomain();
 
@@ -51,7 +52,7 @@ public class ExpertUpdateHelperTest {
         DateTimeUtils.setCurrentMillisFixed(12345);
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService);
+        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mockExpertDomain();
 
@@ -73,7 +74,7 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService);
+        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mock(Expert.class);
 
@@ -102,7 +103,7 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService);
+        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expert = mock(JsonExpertDetails.class);
 
         when(expertService.getExpertById(anyInt())).thenReturn(null);

@@ -15,6 +15,7 @@
         <property name="sourceList">
             <list merge="true">
                 <!-- Add public site context specific email template lookup locations -->
+                <value>classpath:uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/user</value>
             </list>
         </property>
     </bean>
