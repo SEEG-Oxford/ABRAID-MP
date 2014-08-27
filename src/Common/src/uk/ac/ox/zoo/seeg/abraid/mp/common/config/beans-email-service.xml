@@ -4,7 +4,14 @@
       Copyright (c) 2014 University of Oxford
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Property files -->
+    <context:property-placeholder location="
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
+        WEB-INF/common-override.properties" ignore-resource-not-found="true" />
+
     <bean id="commonEmailTemplateLookupPaths" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
@@ -27,14 +34,14 @@
         <constructor-arg name="emailFactory">
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactoryImpl" />
         </constructor-arg>
-        <constructor-arg name="fromAddress" value="test@email.com"/>
+        <constructor-arg name="fromAddress" value="${email.from.address}"/>
         <constructor-arg name="smtpConfig">
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
-                <constructor-arg name="address" value="mailtrap.io" />
-                <constructor-arg name="port" value="2525" />
-                <constructor-arg name="useSSL" value="false" />
-                <constructor-arg name="username" value="235398130c23105ca" />
-                <constructor-arg name="password" value="b69aea70436f30" />
+                <constructor-arg name="address" value="${email.smtp.host}" />
+                <constructor-arg name="port" value="${email.smtp.port}" />
+                <constructor-arg name="useSSL" value="${email.smtp.ssl}" />
+                <constructor-arg name="username" value="${email.smtp.username}" />
+                <constructor-arg name="password" value="${email.smtp.password}" />
             </bean>
         </constructor-arg>
         <constructor-arg name="emailTemplateLookupPaths" ref="emailTemplateLookupPaths" />
