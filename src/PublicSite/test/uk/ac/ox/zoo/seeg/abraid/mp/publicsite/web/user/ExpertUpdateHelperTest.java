@@ -11,6 +11,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -113,6 +115,55 @@ public class ExpertUpdateHelperTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ValidationException.class);
+    }
+
+    @Test
+    public void processExpertAsTransactionSendsEmailForUpdatedUserRequiringVisibilityApproval() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        EmailService emailService = mock(EmailService.class);
+        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, emailService);
+        JsonExpertDetails expertDto = mockExpert();
+        when(expertDto.getName()).thenReturn("asdfas");
+        Expert expert = mockExpertDomain();
+        when(expert.getVisibilityRequested()).thenReturn(true);
+
+        when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
+
+        // Act
+        target.processExpertAsTransaction(321, expertDto);
+
+        // Assert
+        verify(expertService, times(1)).saveExpert(expert);
+        Map<String,Object> data = new HashMap<>();
+        data.put("expert", expert);
+        verify(emailService, times(1)).sendEmailInBackground(
+                "Updated user requiring visibility sign off",
+                "updatedUserEmail.ftl",
+                data);
+    }
+
+    @Test
+    public void processExpertAsTransactionSkipsEmailForUpdatedUserNotRequiringVisibilityApproval() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        EmailService emailService = mock(EmailService.class);
+        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, emailService);
+        JsonExpertDetails expertDto = mockExpert();
+        when(expertDto.getName()).thenReturn("asdfas");
+        Expert expert = mockExpertDomain();
+        when(expert.getVisibilityRequested()).thenReturn(false);
+
+        when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
+
+        // Act
+        target.processExpertAsTransaction(321, expertDto);
+
+        // Assert
+        verify(expertService, times(1)).saveExpert(expert);
+        verify(emailService, never()).sendEmailInBackground(anyString(), anyString(), anyMapOf(String.class, Object.class));
     }
 
     private static JsonExpertDetails mockExpert() {

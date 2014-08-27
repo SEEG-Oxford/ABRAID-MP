@@ -21,9 +21,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator;
 
 import javax.servlet.ServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -37,8 +35,19 @@ public class RegistrationControllerTest {
     private CurrentUserService currentUserService;
     private ExpertService expertService;
     private DiseaseService diseaseService;
+    private EmailService emailService;
     private PasswordEncoder passwordEncoder;
     private ExpertForRegistrationValidator validator;
+
+    private static JsonExpertBasic mockJsonExpertBasic() {
+        JsonExpertBasic result = mock(JsonExpertBasic.class);
+        when(result.getEmail()).thenReturn("a@b.com");
+        when(result.getPassword()).thenReturn("qwe123Q");
+        when(result.getPasswordConfirmation()).thenReturn("qwe123Q");
+        when(result.getCaptchaChallenge()).thenReturn("challenge");
+        when(result.getCaptchaResponse()).thenReturn("response");
+        return result;
+    }
 
     @Before
     public void setup() {
@@ -46,12 +55,13 @@ public class RegistrationControllerTest {
         when(currentUserService.getCurrentUser()).thenReturn(null);
         expertService = mock(ExpertService.class);
         diseaseService = mock(DiseaseService.class);
+        emailService = mock(EmailService.class);
         passwordEncoder = mock(PasswordEncoder.class);
         ObjectMapper json = new ObjectMapper();
         validator = mock(ExpertForRegistrationValidator.class);
 
         target = new RegistrationController(
-                currentUserService, expertService, diseaseService, mock(EmailService.class), passwordEncoder, json, validator);
+                currentUserService, expertService, diseaseService, emailService, passwordEncoder, json, validator);
     }
 
     @Test
@@ -468,13 +478,53 @@ public class RegistrationControllerTest {
         assertThat(expert.getPassword()).isEqualTo("hash");
     }
 
-    private static JsonExpertBasic mockJsonExpertBasic() {
-        JsonExpertBasic result = mock(JsonExpertBasic.class);
-        when(result.getEmail()).thenReturn("a@b.com");
-        when(result.getPassword()).thenReturn("qwe123Q");
-        when(result.getPasswordConfirmation()).thenReturn("qwe123Q");
-        when(result.getCaptchaChallenge()).thenReturn("challenge");
-        when(result.getCaptchaResponse()).thenReturn("response");
-        return result;
+    @Test
+    public void submitDetailsPageSendsEmailForNewUserRequiringVisibilityApproval() throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        expert.setPassword("qwe123Q");
+        modelMap.addAttribute("expert", expert);
+
+        when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
+        when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        JsonExpertDetails jsonExpertDetails = mock(JsonExpertDetails.class);
+        when(jsonExpertDetails.getVisibilityRequested()).thenReturn(true);
+        ResponseEntity<List<String>> result = target.submitDetailsPage(
+                modelMap, mock(SessionStatus.class), jsonExpertDetails);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        Map<String,Object> data = new HashMap<>();
+        data.put("expert", expert);
+        verify(emailService, times(1)).sendEmailInBackground(
+                "New user requiring visibility sign off",                "newUserEmail.ftl",
+                data);
+    }
+
+    @Test
+    public void submitDetailsPageSkipsEmailForNewUserNotRequiringVisibilityApproval() throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        expert.setPassword("qwe123Q");
+        modelMap.addAttribute("expert", expert);
+
+        when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
+        when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        JsonExpertDetails jsonExpertDetails = mock(JsonExpertDetails.class);
+        when(jsonExpertDetails.getVisibilityRequested()).thenReturn(false);
+        ResponseEntity<List<String>> result = target.submitDetailsPage(
+                modelMap, mock(SessionStatus.class), jsonExpertDetails);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        verify(emailService, never()).sendEmailInBackground(anyString(), anyString(), anyMapOf(String.class, Object.class));
     }
 }
