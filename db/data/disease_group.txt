@@ -126,7 +126,6 @@
 126		Fungus_environment	CLUSTER						0		400				t
 127		Gastrodiscoidiasis	SINGLE						1		400				t
 128		Gastroenteritis - viral	SINGLE						1		400				t
-129		Gastroenteritis - viral	SINGLE						1		400				t
 130		Gianotti-Crosti syndrome	SINGLE						1		400				t
 131		Giardiasis	SINGLE						1		400				t
 132		Glanders	SINGLE						1		400				t
@@ -152,8 +151,6 @@
 152		Histoplasmosis	SINGLE						1		400				t
 153		Histoplasmosis - African	SINGLE						1		400				t
 154		HIV	SINGLE	HIV	HIV	HIV	t	6	1		400				t
-155		HIV infection - initial illness (part)	SINGLE	HIV	HIV	HIV	t	6	1		400				t
-156		HIV infection (part)	SINGLE	HIV	HIV	HIV	t	6	1		400				t
 157		Hookworm	SINGLE	hookworm	hookworm	hkwm	t	7	1		1000				t
 158		hospital	CLUSTER						0		400				t
 159		Human papillomavirus	SINGLE						1		400				t
@@ -163,7 +160,6 @@
 163		Infection of wound, puncture, IV line, etc	SINGLE						1		400				t
 164		Infectious mononucleosis or EBV infection	SINGLE						1		400				t
 165		Influenza	SINGLE						1		400				t
-166		Influenza	SINGLE						1		400				t
 167		Ingestion-seafood	MICROCLUSTER						0.5		400				t
 168		Intestinal spirochetosis	SINGLE						1		400				t
 169		Intra-abdominal abscess	SINGLE						1		400				t
@@ -210,7 +206,6 @@
 210		Measles	SINGLE						1		400				t
 211		Melioidosis	SINGLE	melioidosis	melioidosis	melio	t	13	1		500	5	10	3	t
 212		Meningitis - aseptic (viral)	SINGLE						1		400				t
-213		Meningitis - aseptic (viral)	SINGLE						1		400				t
 214		Meningitis - bacterial 	SINGLE						1		400				t
 215		Metagonimiasis (see Heterophyids)	SINGLE						1		400				t
 216		Metorchiasis	SINGLE						1		400				t
@@ -288,7 +283,6 @@
 288		Rat bite fever - streptobacillary	SINGLE						1		400				t
 289		Relapsing fever	SINGLE						1		400				t
 290		Respiratory syncytial virus infection	SINGLE						1		400				t
-291		Respiratory syncytial virus infection	SINGLE						1		400				t
 292		Respiratory viruses - miscellaneous	SINGLE						1		400				t
 293		Reye's syndrome	SINGLE						1		400				t
 294		Rheumatic fever	SINGLE						1		400				t
@@ -303,7 +297,6 @@
 303		Rocio	SINGLE						1		400				t
 304		Rocky Mountain spotted fever	SINGLE						1		400				t
 305		Roseola or human herpesvirus 6	SINGLE						1		400				t
-306		Roseola or human herpesvirus 6	SINGLE						1		400				t
 307		Ross River virus	SINGLE						1		400				t
 308		Rotavirus infection	SINGLE						1		400				t
 309		Rubella	SINGLE						1		400				t
@@ -336,7 +329,6 @@
 336		Strongyloidiasis	SINGLE						1		400				t
 337		Subdural empyema	SINGLE						1		400				t
 338		Suppurative parotitis	SINGLE						1		400				t
-339		Suppurative parotitis	SINGLE						1		400				t
 340		Syphilis	SINGLE						1		400				t
 341		Taeniasis	SINGLE						1		400				t
 342		Tanapox virus disease	SINGLE						1		400				t
