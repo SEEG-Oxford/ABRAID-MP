@@ -23,6 +23,8 @@ sed -i "s/PW\_REPLACE/$PG_ABRAID_PASS/g" $MAIN_TC_PATH/geoserver/data/workspaces
 sed -i "s/DB\_REPLACE/$DB_NAME/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
 sed -i "s/PORT\_REPLACE/$DB_PORT/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
 sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
+cp ../geoserver/logging.xml $MAIN_TC_PATH/geoserver/data/logging.xml
+cp ../geoserver/ABRAID_LOGGING.properties $MAIN_TC_PATH/geoserver/data/logs/ABRAID_LOGGING.properties
 
 # Set up PublicSite
 unzip ../../ABRAID-MP_PublicSite.war -d $MAIN_TC_PATH/ROOT
