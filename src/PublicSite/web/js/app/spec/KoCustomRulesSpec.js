@@ -59,6 +59,33 @@ define([
         it("an alternative failure message for the 'digit' rule", function () {
             expect(ko.validation.rules.digit.message).toBe("Please enter a whole number");
         });
+
+        describe("the 'isUniqueProperty' rule which", function () {
+            var diseaseGroup1 = { id: 1, name: "Name 1", publicName: "Public Name 1" };
+            var diseaseGroup2 = { id: 2, name: "Name 2", publicName: "Public Name 2" };
+            var diseaseGroup3 = { id: 3, name: "Name 3", publicName: "Public Name 3" };
+            var diseaseGroups = [diseaseGroup1, diseaseGroup2, diseaseGroup3];
+
+            it("accepts a value if the list is empty", function () {
+                var options = { array: [], id: 2, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
+            });
+            it("accepts a value if absent from the list under the specified property, and the ID is new", function () {
+                var options = { array: diseaseGroups, id: 4, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 4", options)).toBe(true);
+            });
+            it("accepts a value if absent from the list under the specified property", function () {
+                var options = { array: diseaseGroups, id: 1, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Public Name 2", options)).toBe(true);
+            });
+            it("rejects a value if present in the list under the specified property", function () {
+                var options = { array: diseaseGroups, id: 1, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(false);
+            });
+            it("accepts a value if the only occurrence in the list is itself", function () {
+                var options = { array: diseaseGroups, id: 2, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
+            });
+        });
     });
 });
-

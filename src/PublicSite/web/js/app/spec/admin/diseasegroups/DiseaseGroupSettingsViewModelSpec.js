@@ -9,8 +9,10 @@ define([
 
     describe("The 'disease group settings' view model", function () {
         describe("holds the expected properties of a disease group", function () {
-            var vm = new DiseaseGroupSettingsViewModel([], [], "");
+            var diseaseGroups = [ { id: 1 }];
+            var vm = new DiseaseGroupSettingsViewModel(diseaseGroups, [], "");
             it("as observables", function () {
+                expect(vm.id).toBeObservable();
                 expect(vm.name).toBeObservable();
                 expect(vm.publicName).toBeObservable();
                 expect(vm.shortName).toBeObservable();
@@ -23,6 +25,14 @@ define([
 
             it("with appropriate validation rules", function () {
                 expect(vm.name).toHaveValidationRule({ name: "required", params: true });
+                expect(vm.name).toHaveValidationRule({ name: "isUniqueProperty",
+                    params: { array: diseaseGroups, property: "name", id: vm.id }});
+                expect(vm.publicName).toHaveValidationRule({ name: "isUniqueProperty",
+                    params: { array: diseaseGroups, property: "publicName", id: vm.id }});
+                expect(vm.shortName).toHaveValidationRule({ name: "isUniqueProperty",
+                    params: { array: diseaseGroups, property: "shortName", id: vm.id }});
+                expect(vm.abbreviation).toHaveValidationRule({ name: "isUniqueProperty",
+                    params: { array: diseaseGroups, property: "abbreviation", id: vm.id }});
             });
         });
 

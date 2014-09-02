@@ -2,9 +2,10 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
+    "underscore",
     "knockout",
     "knockout.validation"
-], function (ko) {
+], function (_, ko) {
     "use strict";
 
     // Adapted from:
@@ -27,4 +28,19 @@ define([
     };
 
     ko.validation.rules.digit.message = "Please enter a whole number";
+
+    ko.validation.rules.isUniqueProperty = {
+        validator: function (val, options) {
+            var array = options.array;
+            var id = ko.utils.unwrapObservable(options.id);
+            var property = options.property;
+            return ! _(array)
+                .chain()
+                .filter(function (o) { return o.id !== id; })
+                .pluck(property)
+                .contains(val)
+                .value();
+        },
+        message: "Value must be unique"
+    };
 });
