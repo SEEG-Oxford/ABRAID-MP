@@ -33,10 +33,6 @@ source $ABRAID_DEPLOYMENT_CONFIG_FILE
 : ${HEALTH_MAP_KEY:?"Variable must be set"}
 : ${MW_DRY_RUN:?"Variable must be set"}
 : ${ABRAID_SUPPORT_PATH:?"Variable must be set"}
-: ${MAIN_TC_PATH:?"Variable must be set"}
-: ${MW_TC_PATH:?"Variable must be set"}
-: ${MAIN_TC_SERVICE:?"Variable must be set"}
-: ${MW_TC_SERVICE:?"Variable must be set"}
 : ${MW_URL:?"Variable must be set"}
 : ${MAIN_URL:?"Variable must be set"}
 : ${SHAPEFILE_SOURCE:?"Variable must be set"}
@@ -53,11 +49,10 @@ export PGPASSFILE=$BASE/pg_pass
 chmod 0600 $BASE/pg_pass
 
 # Stop servlet containers
-service $MAIN_TC_SERVICE stop
+service tomcat7 stop
 
 # Teardown
-rm -rf $MAIN_TC_PATH/*
-rm -rf $MW_TC_PATH/*
+rm -rf /var/lib/tomcat7/webapps/*
 rm -rf $ABRAID_SUPPORT_PATH
 dropdb -U $PG_ADMIN_USER "$DB_NAME"
 
@@ -71,16 +66,16 @@ mkdir $ABRAID_SUPPORT_PATH
 . up_c_ms.sh
 
 # Permissions
-chown -R tomcat7:tomcat7 $MAIN_TC_PATH/*
+chown -R tomcat7:tomcat7 /var/lib/tomcat7/webapps/*
 chown -R tomcat7:tomcat7 $ABRAID_SUPPORT_PATH/*
-chmod -R 664 $MAIN_TC_PATH/*
+chmod -R 664 /var/lib/tomcat7/webapps/*
 chmod -R 664 $ABRAID_SUPPORT_PATH/*
-find $MAIN_TC_PATH/ -type d -exec chmod +x {} \;
+find /var/lib/tomcat7/webapps/ -type d -exec chmod +x {} \;
 find $ABRAID_SUPPORT_PATH/ -type d -exec chmod +x {} \;
-chmod o+x $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.sh
+chmod ug+x $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.sh
 
 # Clean up psql authentication
 rm $BASE/pg_pass
 
 # Bring services back up
-service $MAIN_TC_SERVICE start
+service tomcat7 start

@@ -33,10 +33,6 @@ source $ABRAID_DEPLOYMENT_CONFIG_FILE
 : ${HEALTH_MAP_KEY:?"Variable must be set"}
 : ${MW_DRY_RUN:?"Variable must be set"}
 : ${ABRAID_SUPPORT_PATH:?"Variable must be set"}
-: ${MAIN_TC_PATH:?"Variable must be set"}
-: ${MW_TC_PATH:?"Variable must be set"}
-: ${MAIN_TC_SERVICE:?"Variable must be set"}
-: ${MW_TC_SERVICE:?"Variable must be set"}
 : ${MW_URL:?"Variable must be set"}
 : ${MAIN_URL:?"Variable must be set"}
 : ${SHAPEFILE_SOURCE:?"Variable must be set"}
@@ -46,10 +42,10 @@ source $ABRAID_DEPLOYMENT_CONFIG_FILE
 : ${GEONAMES_SOURCE:?"Variable must be set"}
 
 # Stop servlet containers
-service $MW_TC_SERVICE stop
+service tomcat7 stop
 
 # Teardown
-rm -rf $MW_TC_PATH/*
+rm -rf /var/lib/tomcat7/webapps/*
 rm -rf $ABRAID_SUPPORT_PATH
 
 # Setup support dir
@@ -59,12 +55,12 @@ mkdir $ABRAID_SUPPORT_PATH
 . up_c_mw.sh
 
 # Permissions
-chown -R tomcat7:tomcat7 $MW_TC_PATH/*
+chown -R tomcat7:tomcat7 /var/lib/tomcat7/webapps/*
 chown -R tomcat7:tomcat7 $ABRAID_SUPPORT_PATH/*
-chmod -R 664 $MW_TC_PATH/*
+chmod -R 664 /var/lib/tomcat7/webapps/*
 chmod -R 664 $ABRAID_SUPPORT_PATH/*
-find $MW_TC_PATH/ -type d -exec chmod +x {} \;
+find /var/lib/tomcat7/webapps/ -type d -exec chmod +x {} \;
 find $ABRAID_SUPPORT_PATH/ -type d -exec chmod +x {} \;
 
 # Bring services back up
-service $MW_TC_SERVICE start
+service tomcat7 start

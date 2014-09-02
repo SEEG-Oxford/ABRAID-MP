@@ -2,13 +2,13 @@
 set -e
 
 # Setup ModelWrapper
-unzip ../../ABRAID-MP_ModelWrapper.war -d $MW_TC_PATH/ROOT
+unzip ../../ABRAID-MP_ModelWrapper.war -d /var/lib/tomcat7/webapps/ROOT
 # Configure
-sed -i "s/auth\.username\=username/auth.username=$MODELWRAPPER_USER/g" $MW_TC_PATH/ROOT/WEB-INF/modelwrapper.properties
-sed -i "s/auth\.password\_hash\=.*/auth.password_hash=$MODELWRAPPER_HASH/g" $MW_TC_PATH/ROOT/WEB-INF/modelwrapper.properties
-sed -i "s/model\.output\.handler\.root\.url\=.*/model.output.handler.root.url=$MAIN_URL\/modeloutput/g" $MW_TC_PATH/ROOT/WEB-INF/modelwrapper.properties
-sed -i "s/\#\ model\.dry\.run\=true/model.dry.run=$MW_DRY_RUN/g" $MW_TC_PATH/ROOT/WEB-INF/modelwrapper.properties
-sed -i "s/\#\ model\.verbose\=true/model.verbose=true/g" $MW_TC_PATH/ROOT/WEB-INF/modelwrapper.properties
+sed -i "s/auth\.username\=username/auth.username=$MODELWRAPPER_USER/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
+sed -i "s/auth\.password\_hash\=.*/auth.password_hash=$MODELWRAPPER_HASH/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
+sed -i "s/model\.output\.handler\.root\.url\=.*/model.output.handler.root.url=$MAIN_URL\/modeloutput/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
+sed -i "s/\#\ model\.dry\.run\=true/model.dry.run=$MW_DRY_RUN/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
+sed -i "s/\#\ model\.verbose\=true/model.verbose=true/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 # Add supporting files
 mkdir $ABRAID_SUPPORT_PATH/modelwrapper
 cp -r $BASE/external/rasters $ABRAID_SUPPORT_PATH/modelwrapper/rasters

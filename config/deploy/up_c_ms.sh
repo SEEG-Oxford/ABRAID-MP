@@ -2,39 +2,39 @@
 set -e
 
 # Set up ModelOutputHandler
-unzip ../../ABRAID-MP_ModelOutputHandler.war -d $MAIN_TC_PATH/modeloutput
+unzip ../../ABRAID-MP_ModelOutputHandler.war -d /var/lib/tomcat7/webapps/modeloutput
 # Configure
-echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > $MAIN_TC_PATH/modeloutput/WEB-INF/common-override.properties
-echo "jdbc.username=$PG_ABRAID_USER" >> $MAIN_TC_PATH/modeloutput/WEB-INF/common-override.properties
-echo "jdbc.password=$PG_ABRAID_PASS" >> $MAIN_TC_PATH/modeloutput/WEB-INF/common-override.properties
-echo "modelwrapper.rootUrl=$MW_URL" >> $MAIN_TC_PATH/modeloutput/WEB-INF/common-override.properties
+echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 
 # Set up GeoServer
-unzip external/geoserver.war -d $MAIN_TC_PATH/geoserver
+unzip external/geoserver.war -d /var/lib/tomcat7/webapps/geoserver
 # Purge demo geoserver config
-rm -rf $MAIN_TC_PATH/geoserver/data/workspaces/* $MAIN_TC_PATH/geoserver/data/styles/* $MAIN_TC_PATH/geoserver/data/palettes/* $MAIN_TC_PATH/geoserver/data/layergroups/* $MAIN_TC_PATH/geoserver/data/data/* $MAIN_TC_PATH/geoserver/data/coverages/*
+rm -rf /var/lib/tomcat7/webapps/geoserver/data/workspaces/* /var/lib/tomcat7/webapps/geoserver/data/styles/* /var/lib/tomcat7/webapps/geoserver/data/palettes/* /var/lib/tomcat7/webapps/geoserver/data/layergroups/* /var/lib/tomcat7/webapps/geoserver/data/data/* /var/lib/tomcat7/webapps/geoserver/data/coverages/*
 # Customize geoserver admin passwords
-echo "$GEOSERVER_ROOT_PASSWORD" > $MAIN_TC_PATH/geoserver/data/security/masterpw/default/passwd
-sed -i "s/password\=\".*\"/password=\"$GEOSERVER_ADMIN_PASSWORD\"/g" $MAIN_TC_PATH/geoserver/data/security/usergroup/default/users.xml
+echo "$GEOSERVER_ROOT_PASSWORD" > /var/lib/tomcat7/webapps/geoserver/data/security/masterpw/default/passwd
+sed -i "s/password\=\".*\"/password=\"$GEOSERVER_ADMIN_PASSWORD\"/g" /var/lib/tomcat7/webapps/geoserver/data/security/usergroup/default/users.xml
 # Add abraid geoserver config
-cp -r ../geoserver/abraid $MAIN_TC_PATH/geoserver/data/workspaces/abraid
-sed -i "s/USER\_REPLACE/$PG_ABRAID_USER/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
-sed -i "s/PW\_REPLACE/$PG_ABRAID_PASS/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
-sed -i "s/DB\_REPLACE/$DB_NAME/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
-sed -i "s/PORT\_REPLACE/$DB_PORT/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
-sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" $MAIN_TC_PATH/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
-cp ../geoserver/logging.xml $MAIN_TC_PATH/geoserver/data/logging.xml
-cp ../geoserver/ABRAID_LOGGING.properties $MAIN_TC_PATH/geoserver/data/logs/ABRAID_LOGGING.properties
+cp -r ../geoserver/abraid /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid
+sed -i "s/USER\_REPLACE/$PG_ABRAID_USER/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
+sed -i "s/PW\_REPLACE/$PG_ABRAID_PASS/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
+sed -i "s/DB\_REPLACE/$DB_NAME/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
+sed -i "s/PORT\_REPLACE/$DB_PORT/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
+sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
+cp ../geoserver/logging.xml /var/lib/tomcat7/webapps/geoserver/data/logging.xml
+cp ../geoserver/ABRAID_LOGGING.properties /var/lib/tomcat7/webapps/geoserver/data/logs/ABRAID_LOGGING.properties
 
 # Set up PublicSite
-unzip ../../ABRAID-MP_PublicSite.war -d $MAIN_TC_PATH/ROOT
+unzip ../../ABRAID-MP_PublicSite.war -d /var/lib/tomcat7/webapps/ROOT
 # Configure database
-echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > $MAIN_TC_PATH/ROOT/WEB-INF/common-override.properties
-echo "jdbc.username=$PG_ABRAID_USER" >> $MAIN_TC_PATH/ROOT/WEB-INF/common-override.properties
-echo "jdbc.password=$PG_ABRAID_PASS" >> $MAIN_TC_PATH/ROOT/WEB-INF/common-override.properties
-echo "modelwrapper.rootUrl=$MW_URL" >> $MAIN_TC_PATH/ROOT/WEB-INF/common-override.properties
+echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 # Configure wms path
-sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" $MAIN_TC_PATH/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
+sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
 
 # Set up DataAcquisition (incomplete)
 cp -r ../../DataAcquisition $ABRAID_SUPPORT_PATH/dataacquisition
