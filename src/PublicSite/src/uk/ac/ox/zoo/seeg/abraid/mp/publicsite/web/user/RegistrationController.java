@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
@@ -28,9 +29,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator;
 
 import javax.servlet.ServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.collection.IsIn.isIn;
@@ -58,24 +57,35 @@ public class RegistrationController extends AbstractController {
     private static final String ERROR_INVALID_REGISTRATION_SESSION =
             "Invalid registration session";
 
+    private static final String EMAIL_DATA_KEY = "expert";
+    private static final String EMAIL_TEMPLATE = "newUserEmail.ftl";
+    private static final String EMAIL_SUBJECT = "New user requiring visibility sign off";
+
     private final CurrentUserService currentUserService;
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper json;
     private final ExpertForRegistrationValidator validator;
 
     @Autowired
     public RegistrationController(CurrentUserService currentUserService, ExpertService expertService,
-                                  DiseaseService diseaseService, PasswordEncoder passwordEncoder,
-                                  ObjectMapper geoJsonObjectMapper,
+                                  DiseaseService diseaseService, EmailService emailService,
+                                  PasswordEncoder passwordEncoder, ObjectMapper geoJsonObjectMapper,
                                   ExpertForRegistrationValidator expertRegistrationValidator) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
+        this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
         this.json = geoJsonObjectMapper;
         this.validator = expertRegistrationValidator;
+    }
+
+    private static void updateExpert(Expert expert, JsonExpertBasic expertBasic) {
+        expert.setEmail(expertBasic.getEmail());
+        expert.setPassword(expertBasic.getPassword());
     }
 
     /**
@@ -113,7 +123,6 @@ public class RegistrationController extends AbstractController {
         // Return registration form
         return "register/account";
     }
-
 
     /**
      * Receives the user input from the first account registration page and responds accordingly.
@@ -240,9 +249,19 @@ public class RegistrationController extends AbstractController {
         expertService.saveExpert(expert);
         LOGGER.info(String.format(LOG_NEW_USER_CREATED, expert.getEmail()));
 
+        emailAdmin(expert);
+
         // Return successfully
         status.setComplete();
         return new ResponseEntity<>(HttpStatus.CREATED); // Could add success page
+    }
+
+    private void emailAdmin(Expert expert) {
+        if (expert.getVisibilityRequested()) {
+            Map<String, Object> data = new HashMap<>();
+            data.put(EMAIL_DATA_KEY, expert);
+            emailService.sendEmailInBackground(EMAIL_SUBJECT, EMAIL_TEMPLATE, data);
+        }
     }
 
     private List<JsonValidatorDiseaseGroup> loadValidatorDiseaseGroups() {
@@ -257,11 +276,6 @@ public class RegistrationController extends AbstractController {
 
     private boolean checkIfUserLoggedIn() {
         return currentUserService.getCurrentUser() != null;
-    }
-
-    private static void updateExpert(Expert expert, JsonExpertBasic expertBasic) {
-        expert.setEmail(expertBasic.getEmail());
-        expert.setPassword(expertBasic.getPassword());
     }
 
     private void updateExpert(Expert expert, JsonExpertDetails expertDetails) {
