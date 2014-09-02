@@ -35,6 +35,7 @@
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactoryImpl" />
         </constructor-arg>
         <constructor-arg name="fromAddress" value="${email.from.address}"/>
+        <constructor-arg name="defaultToAddress" value="${email.default.to.address}"/>
         <constructor-arg name="smtpConfig">
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
                 <constructor-arg name="address" value="${email.smtp.host}" />

@@ -26,7 +26,8 @@ public class EmailServiceIntegrationTest {
     public void sendEmailNow() throws Exception {
         EmailService emailService = new EmailServiceImpl(
                 new EmailFactoryImpl(),
-                "EmailServiceIntegrationTest@uk.ac.ox.zoo.seeg.abraid.mp.common.service.core",
+                "EmailServiceIntegrationTestFrom@uk.ac.ox.zoo.seeg.abraid.mp.common.service.core",
+                "EmailServiceIntegrationTestTo@uk.ac.ox.zoo.seeg.abraid.mp.common.service.core",
                 new SmtpConfiguration(
                     "mailtrap.io",
                     2525,

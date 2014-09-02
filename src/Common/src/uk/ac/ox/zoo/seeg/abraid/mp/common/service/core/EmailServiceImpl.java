@@ -43,14 +43,16 @@ public class EmailServiceImpl implements EmailService {
 
     private final EmailFactory emailFactory;
     private final String fromAddress;
+    private final String defaultToAddress;
     private final SmtpConfiguration smtpConfig;
     private final Configuration freemarkerConfig;
 
-    public EmailServiceImpl(EmailFactory emailFactory, String fromAddress, SmtpConfiguration smtpConfig,
-                            File[] emailTemplateLookupPaths)
+    public EmailServiceImpl(EmailFactory emailFactory, String fromAddress, String defaultToAddress,
+                            SmtpConfiguration smtpConfig, File[] emailTemplateLookupPaths)
             throws IOException {
         this.emailFactory = emailFactory;
         this.fromAddress = fromAddress;
+        this.defaultToAddress = defaultToAddress;
         this.smtpConfig = smtpConfig;
         this.freemarkerConfig = setupFreemarkerConfig(emailTemplateLookupPaths);
     }
@@ -179,7 +181,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendEmail(String subject, String templateName, Map<String, Object> templateData)
             throws IOException, TemplateException, EmailException {
-        sendEmail(fromAddress, subject, templateName, templateData);
+        sendEmail(defaultToAddress, subject, templateName, templateData);
     }
 
     /**
@@ -190,7 +192,7 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public void sendEmail(String subject, String body) throws EmailException {
-        sendEmail(fromAddress, subject, body);
+        sendEmail(defaultToAddress, subject, body);
     }
 
     /**
@@ -202,7 +204,7 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData) {
-        return sendEmailInBackground(fromAddress, subject, templateName, templateData);
+        return sendEmailInBackground(defaultToAddress, subject, templateName, templateData);
     }
 
     /**
@@ -213,6 +215,6 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public Future sendEmailInBackground(String subject, String body) {
-        return sendEmailInBackground(fromAddress, subject, body);
+        return sendEmailInBackground(defaultToAddress, subject, body);
     }
 }
