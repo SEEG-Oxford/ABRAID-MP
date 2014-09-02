@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -64,10 +66,11 @@ public class AdminUnitReview {
     @JoinColumn(name = "response", nullable = false)
     private DiseaseExtentClass response;
 
-    // The date on which the expert's response was last updated.
-    @Column(name = "changed_date")
+    // The database row creation date.
+    @Column(name = "created_date", insertable = false, updatable = false)
+    @Generated(value = GenerationTime.INSERT)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime changedDate;
+    private DateTime createdDate;
 
     public AdminUnitReview() {
     }
@@ -79,7 +82,6 @@ public class AdminUnitReview {
         this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
         this.diseaseGroup = diseaseGroup;
         this.response = response;
-        this.changedDate = DateTime.now();
     }
 
     /**
@@ -138,12 +140,8 @@ public class AdminUnitReview {
         this.response = response;
     }
 
-    public DateTime getChangedDate() {
-        return changedDate;
-    }
-
-    public void setChangedDate(DateTime changedDate) {
-        this.changedDate = changedDate;
+    public DateTime getCreatedDate() {
+        return createdDate;
     }
 
     ///COVERAGE:OFF - generated code
@@ -159,7 +157,7 @@ public class AdminUnitReview {
             return false;
         if (adminUnitTropicalGaulCode != null ? !adminUnitTropicalGaulCode.equals(that.adminUnitTropicalGaulCode) : that.adminUnitTropicalGaulCode != null)
             return false;
-        if (changedDate != null ? !changedDate.equals(that.changedDate) : that.changedDate != null) return false;
+        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (expert != null ? !expert.equals(that.expert) : that.expert != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
@@ -176,7 +174,7 @@ public class AdminUnitReview {
         result = 31 * result + (adminUnitTropicalGaulCode != null ? adminUnitTropicalGaulCode.hashCode() : 0);
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (response != null ? response.hashCode() : 0);
-        result = 31 * result + (changedDate != null ? changedDate.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON
