@@ -141,7 +141,6 @@ public class DataValidationController extends AbstractController {
                                                         String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Integer expertId = user.getId();
-        String expertEmail = user.getUsername();
 
         // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
         // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
@@ -154,11 +153,10 @@ public class DataValidationController extends AbstractController {
 
         boolean validInputParameters =
                 diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
-                        validatorDiseaseGroupId) &&
-                (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
+                validatorDiseaseGroupId) && (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
 
         if (validInputParameters) {
-            expertService.saveDiseaseOccurrenceReview(expertEmail, occurrenceId, diseaseOccurrenceReviewResponse);
+            expertService.saveDiseaseOccurrenceReview(expertId, occurrenceId, diseaseOccurrenceReviewResponse);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -180,15 +178,16 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<AdminUnitDiseaseExtentClass> diseaseExtent;
-        List<AdminUnitReview> reviews;
         boolean userIsSEEG = checkIfSeegMember(user);
 
+        // Only SEEG members may view disease extent for disease groups still in setup phase
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup == null || (!diseaseGroup.isAutomaticModelRunsEnabled() && !userIsSEEG)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        List<AdminUnitDiseaseExtentClass> diseaseExtent;
+        List<AdminUnitReview> reviews;
         try {
             diseaseExtent = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
             reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
@@ -216,9 +215,7 @@ public class DataValidationController extends AbstractController {
                                                 String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userIsSEEG = checkIfSeegMember(user);
-
         Integer expertId = user.getId();
-        String expertEmail = user.getUsername();
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup == null) {
@@ -236,14 +233,8 @@ public class DataValidationController extends AbstractController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        AdminUnitReview adminUnitReview = expertService.getAdminUnitReview(expertId, diseaseGroupId, gaulCode);
-        if (adminUnitReview == null) {
-            expertService.saveNewAdminUnitReview(expertEmail, diseaseGroupId, gaulCode, adminUnitReviewResponse);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } else {
-            expertService.updateExistingAdminUnitReview(adminUnitReview, adminUnitReviewResponse);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        }
+        expertService.saveAdminUnitReview(expertId, diseaseGroupId, gaulCode, adminUnitReviewResponse);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     private boolean checkIfSeegMember(PublicSiteUser user) {

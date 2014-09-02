@@ -18,21 +18,12 @@ import javax.persistence.*;
                 query = "select count(*) from AdminUnitReview where expert.id=:expertId"
         ),
         @NamedQuery(
-                name = "getAdminUnitReviewsByExpertId",
-                query = "from AdminUnitReview where expert.id=:expertId"
-        ),
-        @NamedQuery(
                 name = "getAdminUnitReviewsByDiseaseGroupId",
                 query = "from AdminUnitReview where diseaseGroup.id=:diseaseGroupId"
         ),
         @NamedQuery(
                 name = "getAdminUnitReviewsByExpertIdAndDiseaseGroupId",
                 query = "from AdminUnitReview where expert.id=:expertId and diseaseGroup.id=:diseaseGroupId"
-        ),
-        @NamedQuery(
-                name = "getAdminUnitReviewByExpertIdAndDiseaseGroupIdAndGaulCode",
-                query = "from AdminUnitReview where expert.id=:expertId and diseaseGroup.id=:diseaseGroupId and " +
-                        "(adminUnitGlobalGaulCode=:gaulCode or adminUnitTropicalGaulCode=:gaulCode)"
         )
 })
 @Entity

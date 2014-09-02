@@ -3,12 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import ch.lambdaj.group.Group;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -81,6 +77,69 @@ public class DiseaseExtentGeneratorHelper {
 
     public void setReviews(List<AdminUnitReview> reviews) {
         this.reviews = reviews;
+    }
+
+    /**
+     * Sets the reviews, excluding the repeat reviews, since disease extent generation needs only consider the latest
+     * response from each expert, for each admin unit.
+     * @param allReviews Every admin unit review, including repeat reviews.
+     */
+    public void setRelevantReviews(List<AdminUnitReview> allReviews) {
+        List<AdminUnitReview> sortedReviews = sortReviews(allReviews);
+        List<AdminUnitReview> latestReviews = new ArrayList<>();
+        for (AdminUnitReview review : sortedReviews) {
+            if (!listContainsReview(review, latestReviews)) {
+                latestReviews.add(review);
+            }
+        }
+        setReviews(latestReviews);
+    }
+
+    private List<AdminUnitReview> sortReviews(List<AdminUnitReview> allReviews) {
+        final Comparator<AdminUnitReview> expertComparator = new Comparator<AdminUnitReview>() {
+            @Override
+            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
+                return o1.getExpert().getId().compareTo(o2.getExpert().getId());
+            }
+        };
+        final Comparator<AdminUnitReview> gaulCodeComparator = new Comparator<AdminUnitReview>() {
+            @Override
+            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
+                return o1.getAdminUnitGlobalOrTropicalGaulCode().compareTo(o2.getAdminUnitGlobalOrTropicalGaulCode());
+            }
+        };
+        final Comparator<AdminUnitReview> dateComparator = new Comparator<AdminUnitReview>() {
+            @Override
+            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
+                return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+            }
+        };
+        Comparator<AdminUnitReview> chainedComparator = new Comparator<AdminUnitReview>() {
+            private List<Comparator<AdminUnitReview>> listComparators =
+                Arrays.asList(expertComparator, gaulCodeComparator, Collections.reverseOrder(dateComparator));
+            @Override
+            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
+                for (Comparator<AdminUnitReview> comparator : listComparators) {
+                    int result = comparator.compare(o1, o2);
+                    if (result != 0) {
+                        return result;
+                    }
+                }
+                return 0;
+            }
+        };
+        Collections.sort(allReviews, chainedComparator);
+        return allReviews;
+    }
+
+    private boolean listContainsReview(AdminUnitReview reviewToFind, List<AdminUnitReview> list) {
+        for (AdminUnitReview review : list) {
+            if (review.getExpert().equals(reviewToFind.getExpert()) &&
+            review.getAdminUnitGlobalOrTropicalGaulCode().equals(reviewToFind.getAdminUnitGlobalOrTropicalGaulCode())) {
+                    return true;
+            }
+        }
+        return false;
     }
 
     /**

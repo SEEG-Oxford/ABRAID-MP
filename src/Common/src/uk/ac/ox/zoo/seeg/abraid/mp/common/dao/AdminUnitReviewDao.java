@@ -17,21 +17,15 @@ public interface AdminUnitReviewDao {
     AdminUnitReview getById(Integer id);
 
     /**
-     * Gets the total number of reviews submitted by the specified expert.
+     * Gets the total number of reviews submitted by the specified expert, including repeat reviews. The (expert,
+     * disease group, admin unit) triplet is not unique; an expert can submit another review if the class has changed.
      * @param expertId The expert's Id.
      * @return The count of the expert's reviews.
      */
     Long getCountByExpertId(Integer expertId);
 
     /**
-     * Gets all the reviews of administrative units, submitted by the specified expert.
-     * @param expertId The id of the expert.
-     * @return A list of the expert's reviews.
-     */
-    List<AdminUnitReview> getByExpertId(Integer expertId);
-
-    /**
-     * Gets all the reviews of administrative units, for the specified disease group.
+     * Gets all the reviews of administrative units, for the specified disease group, including repeat reviews.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of the reviews for the disease group.
      */
@@ -44,15 +38,6 @@ public interface AdminUnitReviewDao {
      * @return A list of the expert's reviews for the disease group.
      */
     List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId);
-
-    /**
-     * Gets the review, defined by the unique triplet of input arguments, if it exists in the database.
-     * @param expertId The id of the expert.
-     * @param diseaseGroupId The id of the disease group.
-     * @param gaulCode The gaulCode of the administrative unit.
-     * @return The adminUnitReview if it exists, otherwise null.
-     */
-    AdminUnitReview getAdminUnitReview(Integer expertId, Integer diseaseGroupId, Integer gaulCode);
 
     /**
      * Saves the specified review.

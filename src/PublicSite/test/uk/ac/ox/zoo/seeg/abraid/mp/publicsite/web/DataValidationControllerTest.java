@@ -273,7 +273,7 @@ public class DataValidationControllerTest {
         when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(diseaseExtentClass);
 
         CurrentUserService currentUserService = createCurrentUserService();
-        when(currentUserService.getCurrentUser().getUsername()).thenReturn("foo");
+        when(currentUserService.getCurrentUser().getId()).thenReturn(1);
 
         ExpertService expertService = createExpertService();
 
@@ -284,7 +284,7 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(expertService, times(1)).saveNewAdminUnitReview("foo", 1, 2, diseaseExtentClass);
+        verify(expertService, times(1)).saveAdminUnitReview(1, 1, 2, diseaseExtentClass);
     }
 
     @Test
@@ -357,31 +357,6 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    public void submitAdminUnitReviewReturnsHttpNoContentForValidInputsWhenUpdatingExistingReview() {
-        // Arrange
-        DiseaseService diseaseService = createDiseaseService();
-        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
-        DiseaseExtentClass diseaseExtentClass = mock(DiseaseExtentClass.class);
-        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(diseaseExtentClass);
-
-        ExpertService expertService = createExpertService();
-        AdminUnitReview adminUnitReview = mock(AdminUnitReview.class);
-        when(expertService.getAdminUnitReview(1, 1, 1)).thenReturn(adminUnitReview);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-
-        // Act
-        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-
-        verify(expertService, times(1)).updateExistingAdminUnitReview(adminUnitReview, diseaseExtentClass);
     }
 
     private DataValidationController createTarget(CurrentUserService currentUserService, DiseaseService diseaseService, ExpertService expertService) {

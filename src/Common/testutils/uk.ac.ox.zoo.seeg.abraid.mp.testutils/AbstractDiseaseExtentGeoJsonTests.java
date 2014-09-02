@@ -39,7 +39,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             new DiseaseGroup(),
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
             0,
-            classChangedLaterThanReview ? review.getChangedDate().plusDays(1) : review.getChangedDate().minusDays(1));
+            classChangedLaterThanReview ? review.getCreatedDate().plusDays(1) : review.getCreatedDate().minusDays(1));
     }
 
     public static AdminUnitGlobal defaultAdminUnitGlobal() {
@@ -62,7 +62,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
     private static AdminUnitReview mockAdminUnitReview(AdminUnitGlobal adminUnitGlobal) {
         AdminUnitReview review = mock(AdminUnitReview.class);
         when(review.getAdminUnitGlobalOrTropicalGaulCode()).thenReturn(adminUnitGlobal.getGaulCode());
-        when(review.getChangedDate()).thenReturn(DateTime.now());
+        when(review.getCreatedDate()).thenReturn(DateTime.now());
         return review;
     }
 }
