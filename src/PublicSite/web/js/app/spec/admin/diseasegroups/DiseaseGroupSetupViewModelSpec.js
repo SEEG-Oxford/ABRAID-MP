@@ -120,7 +120,7 @@ define([
             it("build a submission URL which is correct", function () {
                 // Arrange
                 vm.selectedDiseaseGroupId(10);
-                var expectedUrl = "http://abraid.zoo.ox.ac.uk/publicsite/admin/diseasegroups/10/requestmodelrun";
+                var expectedUrl = "http://abraid.zoo.ox.ac.uk/publicsite/admin/diseases/10/requestmodelrun";
 
                 // Act
                 var actualUrl = vm.buildSubmissionUrl();
@@ -242,7 +242,7 @@ define([
                 it("sends a GET request to the expected URL", function () {
                     // Arrange
                     var diseaseGroupId = 1;
-                    var expectedUrl = baseUrl + "admin/diseasegroups/" + diseaseGroupId + "/modelruninformation";
+                    var expectedUrl = baseUrl + "admin/diseases/" + diseaseGroupId + "/modelruninformation";
 
                     // Act
                     vm.updateModelRunInfo(diseaseGroupId);
@@ -330,7 +330,7 @@ define([
                 // Arrange
                 var id = 1;
                 vm.selectedDiseaseGroupId(id);
-                var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/automaticmodelruns";
+                var expectedUrl = baseUrl + "admin/diseases/" + id + "/automaticmodelruns";
 
                 // Act
                 vm.enableAutomaticModelRuns();

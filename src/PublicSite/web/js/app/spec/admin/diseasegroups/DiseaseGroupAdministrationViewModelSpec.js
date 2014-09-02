@@ -97,7 +97,7 @@ define([
                         // Arrange
                         var id = 1;
                         var diseaseGroup = { id: id };
-                        var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/save";
+                        var expectedUrl = baseUrl + "admin/diseases/" + id + "/save";
 
                         // Act
                         ko.postbox.publish(selectedEvent, diseaseGroup);
@@ -154,7 +154,7 @@ define([
                 it("posts to the expected URL with the expected payload", function () {
                     // Arrange
                     var diseaseGroup = { };
-                    var expectedUrl = baseUrl + "admin/diseasegroups/add";
+                    var expectedUrl = baseUrl + "admin/diseases/add";
 
                     // Act
                     ko.postbox.publish(selectedEvent, diseaseGroup);
