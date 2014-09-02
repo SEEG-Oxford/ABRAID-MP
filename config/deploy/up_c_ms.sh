@@ -48,5 +48,6 @@ sed -i "s/modelwrapper\.rootUrl\=.*/modelwrapper.rootUrl=$MW_URL/g" $ABRAID_SUPP
 # Set defaultStartDate?
 sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/dataacquisition/log4j.properties
 mkdir -p $ABRAID_SUPPORT_PATH/dataacquisition/logs
+mkdir -p $ABRAID_SUPPORT_PATH/dataacquisition/logs/old
 # Cron job
 

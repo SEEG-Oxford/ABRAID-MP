@@ -73,6 +73,7 @@ chmod -R 664 $ABRAID_SUPPORT_PATH/*
 find /var/lib/tomcat7/webapps/ -type d -exec chmod +x {} \;
 find $ABRAID_SUPPORT_PATH/ -type d -exec chmod +x {} \;
 chmod ug+x $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.sh
+chmod -R 644 $ABRAID_SUPPORT_PATH/logs
 
 # Clean up psql authentication
 rm $BASE/pg_pass
