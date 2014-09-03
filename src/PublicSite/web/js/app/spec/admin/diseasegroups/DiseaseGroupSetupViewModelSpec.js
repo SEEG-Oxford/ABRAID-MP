@@ -116,6 +116,48 @@ define([
             });
         });
 
+        describe("holds whether to disable the button that generates disease extents, which", function () {
+            it("disables if the model cannot be run", function () {
+                vm.canRunModel(false);
+                vm.hasModelBeenSuccessfullyRun(false);
+                vm.isSubmitting(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatGeneratesDiseaseExtent()).toBe(true);
+            });
+
+            it("disables if the model has been successfully run at least once", function () {
+                vm.canRunModel(true);
+                vm.hasModelBeenSuccessfullyRun(true);
+                vm.isSubmitting(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatGeneratesDiseaseExtent()).toBe(true);
+            });
+
+            it("disables if we are submitting", function () {
+                vm.canRunModel(true);
+                vm.hasModelBeenSuccessfullyRun(false);
+                vm.isSubmitting(true);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatGeneratesDiseaseExtent()).toBe(true);
+            });
+
+            it("disables if we are generating the disease extent", function () {
+                vm.canRunModel(true);
+                vm.hasModelBeenSuccessfullyRun(false);
+                vm.isSubmitting(false);
+                vm.isGeneratingDiseaseExtent(true);
+                expect(vm.disableButtonThatGeneratesDiseaseExtent()).toBe(true);
+            });
+
+            it("enables the disease extent should be able to be generated", function () {
+                vm.canRunModel(true);
+                vm.hasModelBeenSuccessfullyRun(false);
+                vm.isSubmitting(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatGeneratesDiseaseExtent()).toBe(false);
+            });
+        });
+
         describe("has the behaviour of BaseFormView model, but overrides to", function () {
             it("build a submission URL which is correct", function () {
                 // Arrange
@@ -303,7 +345,7 @@ define([
 
                     // Assert
                     expect(vm.notices()).toContain({
-                        message: "Cannot run model because " + response.cannotRunModelReason,
+                        message: "Cannot run model or generate disease extent because " + response.cannotRunModelReason,
                         priority: "warning"
                     });
                 });
@@ -325,6 +367,46 @@ define([
             });
         });
 
+        describe("has a method to generate a disease extent which", function () {
+            it("POSTs to the expected URL", function () {
+                // Arrange
+                var id = 1;
+                vm.selectedDiseaseGroupId(id);
+                var expectedUrl = baseUrl + "admin/diseases/" + id + "/generatediseaseextent";
+
+                // Act
+                vm.generateDiseaseExtent();
+
+                // Assert
+                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+            });
+
+            it("when successful, updates the 'notices' with a success message", function () {
+                // Arrange
+                var id = 1;
+                vm.selectedDiseaseGroupId(id);
+                var expectedNotice = { message: "Disease extent generated.", priority: "success" };
+
+                // Act
+                vm.generateDiseaseExtent();
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+
+                // Assert
+                expect(vm.notices()).toContain(expectedNotice);
+            });
+
+            it("when unsuccessful, updates the 'notices' with an error", function () {
+                // Arrange
+                var expectedNotice = { message: "Server error.", priority: "warning" };
+                // Act
+                vm.generateDiseaseExtent();
+                jasmine.Ajax.requests.mostRecent().response({ status: 500 });
+                // Assert
+                expect(vm.notices()).toContain(expectedNotice);
+            });
+        });
+
         describe("has a method to enable automatic model runs which", function () {
             it("POSTs to the expected URL", function () {
                 // Arrange
@@ -335,7 +417,7 @@ define([
                 // Act
                 vm.enableAutomaticModelRuns();
 
-                // Arrange
+                // Assert
                 expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
                 expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
             });
