@@ -10,9 +10,9 @@
         <@p.panel "password-body" "Password">
             <p>Some text about password changes</p>
             <@f.form "password-form">
-                <@f.formGroupBasic "old-password" "Current Password" "oldPassword" "fa fa-lg fa-unlock" />
-                <@f.formGroupBasic "new-password" "New Password" "newPassword" "fa fa-lg fa-lock" />
-                <@f.formGroupBasic "confirm-password" "New Password (confirm)" "confirmPassword" "fa fa-lg fa-lock" />
+                <@f.formGroupBasic "old-password" "Current Password" "oldPassword" "fa fa-lg fa-unlock" "password" />
+                <@f.formGroupBasic "new-password" "New Password" "newPassword" "fa fa-lg fa-lock" "password" />
+                <@f.formGroupBasic "confirm-password" "New Password (confirm)" "confirmPassword" "fa fa-lg fa-lock" "password" />
             </@f.form>
         </@p.panel>
     </div>
