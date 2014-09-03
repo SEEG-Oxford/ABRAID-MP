@@ -15,7 +15,7 @@
 
 <#assign css>
 <style>
-    #disease-group-name-input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
+    #disease-group-settings .input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
         padding-left: 15px;
         padding-right: 15px;
     }

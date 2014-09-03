@@ -1,7 +1,7 @@
 <#macro formGroup id title bind placeholder>
 <div class="form-group">
     <label for="${id}" class="col-sm-4 control-label">${title}</label>
-    <div class="col-sm-8">
+    <div class="input-group col-sm-8">
         <input type="text" class="form-control" id="${id}" data-bind="formValue: ${bind}" placeholder="${placeholder}">
     </div>
 </div>
@@ -19,15 +19,10 @@
         <div class="panel-body">
             <div class="col-sm-6">
                 <div class="form-horizontal">
-                    <div class="form-group">
-                        <label for="disease-group-name" class="col-sm-4 control-label">Name</label>
-                        <div id="disease-group-name-input-group" class="input-group col-sm-8">
-                            <input type="text" class="form-control" id="disease-group-name" data-bind="formValue: name" placeholder="Enter disease group name">
-                        </div>
-                    </div>
-                    <@formGroup id="public-name" title="Public Name" bind="publicName" placeholder="Enter a name for display on Data Validator"></@formGroup>
-                    <@formGroup id="short-name" title="Short Name" bind="shortName" placeholder="Enter a shorter version of the name"></@formGroup>
-                    <@formGroup id="abbreviation" title="Abbreviation" bind="abbreviation" placeholder="Enter an abbreviation"></@formGroup>
+                    <@formGroup id="name" title="Name" bind="name" placeholder="Enter disease group name"/>
+                    <@formGroup id="public-name" title="Public Name" bind="publicName" placeholder="Enter a name for display on Data Validator"/>
+                    <@formGroup id="short-name" title="Short Name" bind="shortName" placeholder="Enter a shorter version of the name"/>
+                    <@formGroup id="abbreviation" title="Abbreviation" bind="abbreviation" placeholder="Enter an abbreviation"/>
                 </div>
             </div>
             <div class="col-sm-6">

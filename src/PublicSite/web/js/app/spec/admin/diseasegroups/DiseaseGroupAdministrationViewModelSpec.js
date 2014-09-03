@@ -111,7 +111,8 @@ define([
 
                     it("when unsuccessful, updates the 'notices' with an error", function () {
                         // Arrange
-                        var expectedNotice = { message: "Server error.", priority: "warning" };
+                        var expectedNotice = { message: "Server error. Please refresh the page and try again.",
+                                               priority: "warning" };
                         // Act
                         vm.submit();
                         jasmine.Ajax.requests.mostRecent().response({ status: 500 });
@@ -168,7 +169,8 @@ define([
 
                 it("when unsuccessful, updates the 'notice' with an error", function () {
                     // Arrange
-                    var expectedNotice = { message: "Server error.", priority: "warning" };
+                    var expectedNotice = { message: "Server error. Please refresh the page and try again.",
+                                           priority: "warning" };
                     // Act
                     vm.submit();
                     jasmine.Ajax.requests.mostRecent().response({ status: 500 });
