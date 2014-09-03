@@ -1,13 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 
 import java.util.List;
 
@@ -166,6 +167,42 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
         assertThat(ids).hasSize(1);
         assertThat(ids.get(0)).isEqualTo(id);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void duplicatingADiseaseGroupNameViolatesUniqueConstraint() {
+        DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
+        DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
+        diseaseGroup2.setName(diseaseGroup1.getName());
+        diseaseGroupDao.save(diseaseGroup2);
+        flushAndClear();
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void duplicatingADiseaseGroupPublicNameViolatesUniqueConstraint() {
+        DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
+        DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
+        diseaseGroup2.setPublicName(diseaseGroup1.getPublicName());
+        diseaseGroupDao.save(diseaseGroup2);
+        flushAndClear();
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void duplicatingADiseaseGroupShortNameViolatesUniqueConstraint() {
+        DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
+        DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
+        diseaseGroup2.setShortName(diseaseGroup1.getShortName());
+        diseaseGroupDao.save(diseaseGroup2);
+        flushAndClear();
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void duplicatingADiseaseGroupAbbreviationViolatesUniqueConstraint() {
+        DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
+        DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
+        diseaseGroup2.setAbbreviation(diseaseGroup1.getAbbreviation());
+        diseaseGroupDao.save(diseaseGroup2);
+        flushAndClear();
     }
 
     private void setAutomaticModelRunsStartDate(int id) {
