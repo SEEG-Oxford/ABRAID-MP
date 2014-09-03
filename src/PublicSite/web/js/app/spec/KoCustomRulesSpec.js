@@ -93,19 +93,21 @@ define([
             });
 
             it("accepts a value if the only occurrence in the list is itself, with observable ID", function () {
-                var id = ko.observable();
-                id(2);
+                var id = ko.observable(2);
                 var options = { array: diseaseGroups, id: id, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
             });
 
-            it("accepts a null value even if there are null values in the list", function () {
-                var options = { array: diseaseGroups, id: 2, property: "publicName" };
-                expect(ko.validation.rules.isUniqueProperty.validator(null, options)).toBe(true);
+            it("accepts a undefined ID", function () {
+                var options = { array: diseaseGroups, id: undefined, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(false);
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 10", options)).toBe(true);
             });
 
-            it("accepts an empty value even if there are empty values in the list", function () {
+            it("always accepts empty values", function () {
                 var options = { array: diseaseGroups, id: 2, property: "publicName" };
+                expect(ko.validation.rules.isUniqueProperty.validator(undefined, options)).toBe(true);
+                expect(ko.validation.rules.isUniqueProperty.validator(null, options)).toBe(true);
                 expect(ko.validation.rules.isUniqueProperty.validator("", options)).toBe(true);
             });
 
