@@ -64,7 +64,6 @@ public class AccountController extends AbstractController {
         this.helper = expertUpdateHelper;
     }
 
-
     /**
      * Loads the account editing page.
      * @param modelMap The templating model.
@@ -76,7 +75,6 @@ public class AccountController extends AbstractController {
     public String getAccountEditPage(ModelMap modelMap) throws JsonProcessingException {
         JsonExpertDetails expert = loadExpertDTO();
         List<JsonValidatorDiseaseGroup> allValidatorDiseaseGroups = loadValidatorDiseaseGroups();
-
 
         modelMap.addAttribute(DISEASES_ATTRIBUTE_KEY, json.writeValueAsString(allValidatorDiseaseGroups));
         modelMap.addAttribute(JSON_EXPERT_ATTRIBUTE_KEY, json.writeValueAsString(expert));
@@ -110,6 +108,16 @@ public class AccountController extends AbstractController {
 
         // Return successfully
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Could add success page
+    }
+
+    /**
+     * Loads the password change page.
+     * @return the template for the password page.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(value = "/account/password", method = RequestMethod.GET)
+    public String getChangePasswordPage() {
+        return "account/password";
     }
 
     private JsonExpertDetails loadExpertDTO() {
