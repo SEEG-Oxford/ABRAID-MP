@@ -14,7 +14,8 @@ define([
                      diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
 
         var self = this;
-        BaseFormViewModel.call(self, true, false);
+        var messages = { error: "Server error. Please refresh the page and try again." };
+        BaseFormViewModel.call(self, true, false, undefined, undefined, messages);
 
         self.diseaseGroupSettingsViewModel = diseaseGroupSettingsViewModel;
         self.modelRunParametersViewModel = modelRunParametersViewModel;
@@ -22,7 +23,7 @@ define([
 
         var diseaseGroupId;
         self.buildSubmissionUrl = function () {
-            return baseUrl + "admin/diseasegroups/" + (diseaseGroupId ?  (diseaseGroupId + "/save") : "add");
+            return baseUrl + "admin/diseases/" + (diseaseGroupId ?  (diseaseGroupId + "/save") : "add");
         };
 
         var baseSuccessHandler = self.successHandler;

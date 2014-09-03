@@ -24,6 +24,18 @@ ALTER TABLE alert
 ALTER TABLE covariate_influence
     ADD CONSTRAINT uq_model_run_id_covariate_name UNIQUE (model_run_id, covariate_name);
 
+ALTER TABLE disease_group
+    ADD CONSTRAINT uq_disease_group_abbreviation UNIQUE (abbreviation);
+
+ALTER TABLE disease_group
+    ADD CONSTRAINT uq_disease_group_name UNIQUE (name);
+
+ALTER TABLE disease_group
+    ADD CONSTRAINT uq_disease_group_public_name UNIQUE (public_name);
+
+ALTER TABLE disease_group
+    ADD CONSTRAINT uq_disease_group_short_name UNIQUE (short_name);
+
 ALTER TABLE disease_occurrence_review
     ADD CONSTRAINT uq_disease_occurrence_review_expert_id_disease_occurrence_id UNIQUE (expert_id, disease_occurrence_id);
 

@@ -24,7 +24,7 @@ define([
         self.batchEndDateMaximum = ko.observable("");
 
         self.buildSubmissionUrl = function () {
-            return baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+            return baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
         };
 
         self.buildSubmissionData = function () {
@@ -35,7 +35,7 @@ define([
         self.isEnablingAutomaticModelRuns = ko.observable(false);
         self.enableAutomaticModelRuns = function () {
             self.isEnablingAutomaticModelRuns(true);
-            $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
+            $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
                 .done(function () { self.isAutomaticModelRunsEnabled(true); })
                 .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
                 .always(function () { self.isEnablingAutomaticModelRuns(false); });
@@ -62,7 +62,7 @@ define([
             if (self.selectedDiseaseGroupId()) {
                 self.isSubmitting(true);
                 // Get information regarding model runs for this disease group
-                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
+                var url = baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/modelruninformation";
                 $.getJSON(url)
                     .done(function (data) {
                         self.lastModelRunText(data.lastModelRunText);
