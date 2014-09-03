@@ -9,7 +9,7 @@ define([
 
     describe("The 'disease group settings' view model", function () {
         describe("holds the expected properties of a disease group", function () {
-            var diseaseGroups = [ { id: 1 }];
+            var diseaseGroups = [{ id: 1 }];
             var vm = new DiseaseGroupSettingsViewModel(diseaseGroups, [], "");
             it("as observables", function () {
                 expect(vm.id).toBeObservable();
@@ -89,9 +89,9 @@ define([
 
         describe("subscribes to the specified event and, when fired,", function () {
             // Arrange
-            var parentDiseaseGroup = {id: 1, name: "Parent", groupType: "MICROCLUSTER" };
+            var parentDiseaseGroup = { id: 1, name: "Parent", groupType: "MICROCLUSTER" };
             var diseaseGroups = [parentDiseaseGroup];
-            var validatorDiseaseGroup = { id: 2, name: "Validator"};
+            var validatorDiseaseGroup = { id: 2, name: "Validator" };
             var validatorDiseaseGroups = [validatorDiseaseGroup];
             var diseaseGroup = {
                 name: "Ascariasis",

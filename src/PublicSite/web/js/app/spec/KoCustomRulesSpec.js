@@ -70,21 +70,37 @@ define([
                 var options = { array: [], id: 2, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
             });
+
             it("accepts a value if absent from the list under the specified property, and the ID is new", function () {
                 var options = { array: diseaseGroups, id: 4, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 4", options)).toBe(true);
             });
+
             it("accepts a value if absent from the list under the specified property", function () {
                 var options = { array: diseaseGroups, id: 1, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Public Name 2", options)).toBe(true);
             });
+
             it("rejects a value if present in the list under the specified property", function () {
                 var options = { array: diseaseGroups, id: 1, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(false);
             });
+
             it("accepts a value if the only occurrence in the list is itself", function () {
                 var options = { array: diseaseGroups, id: 2, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
+            });
+
+            it("accepts a value if the only occurrence in the list is itself, with observable ID", function () {
+                var id = ko.observable();
+                id(2);
+                var options = { array: diseaseGroups, id: id, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
+            });
+
+            it("has a suitable failure message", function () {
+                expect(ko.validation.rules.isUniqueProperty.message)
+                    .toContain("Value must be unique");
             });
         });
     });
