@@ -17,10 +17,6 @@ export GEONAMES_USER=''
 export HEALTH_MAP_KEY=''
 
 export ABRAID_SUPPORT_PATH=''
-export MAIN_TC_PATH=''
-export MW_TC_PATH=''
-export MAIN_TC_SERVICE=''
-export MW_TC_SERVICE=''
 
 export MW_URL=''
 export MAIN_URL=''
