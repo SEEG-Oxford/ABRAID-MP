@@ -61,10 +61,11 @@ define([
         });
 
         describe("the 'isUniqueProperty' rule which", function () {
-            var diseaseGroup1 = { id: 1, name: "Name 1", publicName: "Public Name 1" };
+            var diseaseGroup1 = { id: 1, name: "Name 1", publicName: "" };
             var diseaseGroup2 = { id: 2, name: "Name 2", publicName: "Public Name 2" };
             var diseaseGroup3 = { id: 3, name: "Name 3", publicName: "Public Name 3" };
-            var diseaseGroups = [diseaseGroup1, diseaseGroup2, diseaseGroup3];
+            var diseaseGroup4 = { id: 4, name: "Name 4", publicName: null };
+            var diseaseGroups = [diseaseGroup1, diseaseGroup2, diseaseGroup3, diseaseGroup4];
 
             it("accepts a value if the list is empty", function () {
                 var options = { array: [], id: 2, property: "name" };
@@ -72,8 +73,8 @@ define([
             });
 
             it("accepts a value if absent from the list under the specified property, and the ID is new", function () {
-                var options = { array: diseaseGroups, id: 4, property: "name" };
-                expect(ko.validation.rules.isUniqueProperty.validator("Name 4", options)).toBe(true);
+                var options = { array: diseaseGroups, id: 5, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("Name 5", options)).toBe(true);
             });
 
             it("accepts a value if absent from the list under the specified property", function () {
@@ -96,6 +97,16 @@ define([
                 id(2);
                 var options = { array: diseaseGroups, id: id, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
+            });
+
+            it("accepts a null value even if there are null values in the list", function () {
+                var options = { array: diseaseGroups, id: 2, property: "publicName" };
+                expect(ko.validation.rules.isUniqueProperty.validator(null, options)).toBe(true);
+            });
+
+            it("accepts an empty value even if there are empty values in the list", function () {
+                var options = { array: diseaseGroups, id: 2, property: "publicName" };
+                expect(ko.validation.rules.isUniqueProperty.validator("", options)).toBe(true);
             });
 
             it("has a suitable failure message", function () {

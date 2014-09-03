@@ -31,15 +31,19 @@ define([
 
     ko.validation.rules.isUniqueProperty = {
         validator: function (val, options) {
-            var array = options.array;
-            var id = ko.utils.unwrapObservable(options.id);
-            var property = options.property;
-            return ! _(array)
-                .chain()
-                .filter(function (o) { return o.id !== id; })
-                .pluck(property)
-                .contains(val)
-                .value();
+            if (val) {
+                var array = options.array;
+                var id = ko.utils.unwrapObservable(options.id);
+                var property = options.property;
+                return ! _(array)
+                    .chain()
+                    .filter(function (o) { return o.id !== id; })
+                    .pluck(property)
+                    .contains(val)
+                    .value();
+            } else {
+                return true;
+            }
         },
         message: "Value must be unique"
     };
