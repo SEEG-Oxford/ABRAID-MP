@@ -16,7 +16,7 @@ define([
             disease.interested = ko.observable(_(initialExpert.diseaseInterests || []).contains(disease.id));
         });
 
-        // Mix in the table behavior
+        // Mix in the table behaviour
         BaseTableViewModel.call(self, diseases, "name", false, ["name"]);
 
         // Used by parent vm

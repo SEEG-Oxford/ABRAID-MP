@@ -43,7 +43,7 @@ define([
             }
         ];
 
-        describe("has the behavior of BaseTableViewModel", function () {
+        describe("has the behaviour of BaseTableViewModel", function () {
             var vm;
             var baseSpy;
             beforeEach(function (done) {
@@ -166,7 +166,7 @@ define([
             });
         });
 
-        describe("has the behavior of BaseFormViewModel", function () {
+        describe("has the behaviour of BaseFormViewModel", function () {
             var vm;
             var baseSpy;
             beforeEach(function (done) {

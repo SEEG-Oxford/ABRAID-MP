@@ -109,7 +109,7 @@ public class ModuleTests extends BaseWebIntegrationTests {
                 .webAppContextSetup(webApplicationContext)
                 .build();
 
-        // Override behavior of configuration service for items where we don't want the defaults
+        // Override behaviour of configuration service for items where we don't want the defaults
         setupConfigurationServiceSpy();
 
         // Track the async stuff for the most recently triggered model run, so that test can wait for completion

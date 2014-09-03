@@ -116,7 +116,7 @@ define([
             });
         });
 
-        describe("has the behavior of BaseFormView model, but overrides to", function () {
+        describe("has the behaviour of BaseFormView model, but overrides to", function () {
             it("build a submission URL which is correct", function () {
                 // Arrange
                 vm.selectedDiseaseGroupId(10);
