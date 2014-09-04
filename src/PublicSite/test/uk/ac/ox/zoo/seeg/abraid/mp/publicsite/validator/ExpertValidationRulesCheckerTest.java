@@ -157,7 +157,7 @@ public class ExpertValidationRulesCheckerTest {
         target.checkPasswordConfirmation("password", "confirmation", result);
 
         // Assert
-        assertThat(result).contains("Password pair must match.");
+        assertThat(result).contains("Password confirmation pair must match.");
     }
 
     @Test

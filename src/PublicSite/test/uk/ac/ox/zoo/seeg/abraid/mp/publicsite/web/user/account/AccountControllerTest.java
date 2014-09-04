@@ -105,14 +105,12 @@ public class AccountControllerTest {
         assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
     }
 
-
     @Test
     public void submitAccountEditPageReturnsBadRequestIfSaveFails() throws Exception {
         // Arrange
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
         AccountController target = createTarget(1, null, null, validator, helper);
-        when(validator.validate(any(JsonExpertDetails.class))).thenReturn(new ArrayList<String>());
         doThrow(new ValidationException(Arrays.asList("FAIL3")))
                 .when(helper).processExpertProfileUpdateAsTransaction(anyInt(), any(JsonExpertDetails.class));
 
@@ -130,7 +128,6 @@ public class AccountControllerTest {
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
         int userId = 99;
         AccountController target = createTarget(userId, null, null, validator, helper);
-        when(validator.validate(any(JsonExpertDetails.class))).thenReturn(new ArrayList<String>());
 
         // Act
         JsonExpertDetails expert = mock(JsonExpertDetails.class);
@@ -138,6 +135,66 @@ public class AccountControllerTest {
 
         // Assert
         verify(helper, times(1)).processExpertProfileUpdateAsTransaction(userId, expert);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void getChangePasswordPageReturnsCorrectTemplate() throws Exception {
+        // Arrange
+        AccountController target = createTarget(1, null, null, null, null);
+
+        // Act
+        String result = target.getChangePasswordPage();
+
+        // Assert
+        assertThat(result).isEqualTo("account/password");
+    }
+
+    @Test
+    public void submitChangePasswordPageReturnsBadRequestIfValidationFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper);
+        when(validator.validatePasswordChange(anyString(), anyString(), anyString(), anyInt())).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void submitChangePasswordPageReturnsBadRequestIfSaveFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper);
+        doThrow(new ValidationException(Arrays.asList("FAIL3")))
+                .when(helper).processExpertPasswordChangeAsTransaction(anyInt(), anyString());
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL3");
+    }
+
+    @Test
+    public void submitChangePasswordPageSavesPasswordAndReturnsNoContentForValidRequest() throws Exception {
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        int userId = 99;
+        AccountController target = createTarget(userId, null, null, validator, helper);
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
+
+        // Assert
+        verify(helper, times(1)).processExpertPasswordChangeAsTransaction(userId, "newPassword");
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 

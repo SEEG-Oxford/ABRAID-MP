@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
@@ -31,13 +32,15 @@ public class AccountControllerHelper {
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountControllerHelper(
-            ExpertService expertService, DiseaseService diseaseService, EmailService emailService) {
+    public AccountControllerHelper(ExpertService expertService, DiseaseService diseaseService,
+                                   EmailService emailService, PasswordEncoder passwordEncoder) {
         this.expertService = expertService;
         this.diseaseService = diseaseService;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -89,7 +92,7 @@ public class AccountControllerHelper {
     /**
      * Updates the database entry for an expert's password.
      * @param id The expert to update.
-     * @param expertDto The data to overwrite.
+     * @param password The new password.
      * @throws ValidationException Thrown if an id matching expert can not be found.
      */
     public void processExpertPasswordChangeAsTransaction(int id, String password) throws ValidationException {
@@ -99,7 +102,8 @@ public class AccountControllerHelper {
             // Roll back
             throw new ValidationException(Arrays.asList(String.format(FAIL_NO_ID_MATCH, id)));
         } else {
-            expert.setPassword(password);
+            String passwordHash = passwordEncoder.encode(password);
+            expert.setPassword(passwordHash);
             expertService.saveExpert(expert);
         }
         // End of transaction
