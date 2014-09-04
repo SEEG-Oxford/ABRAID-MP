@@ -12,8 +12,7 @@ define([
 
         BaseFormViewModel.call(self, false, true, baseUrl, "/account/password");
 
-        self.oldPassword = ko.observable("")
-            .extend({ required: true, passwordComplexity: true });
+        self.oldPassword = ko.observable("").extend({ required: true });
         self.newPassword = ko.observable("")
             .extend({ required: true, passwordComplexity: true });
         self.confirmPassword = ko.observable("")

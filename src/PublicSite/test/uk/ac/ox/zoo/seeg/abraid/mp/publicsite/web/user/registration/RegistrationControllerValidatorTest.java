@@ -1,10 +1,11 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration;
 
 import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertValidationRulesChecker;
 
 import javax.servlet.ServletRequest;
 import java.util.List;
@@ -17,17 +18,17 @@ import static org.mockito.Mockito.anyListOf;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for ExpertForRegistrationValidator.
+ * Tests for RegistrationControllerValidator.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertForRegistrationValidatorTest {
+public class RegistrationControllerValidatorTest {
     @Test
     public void createValidationCaptchaCallsReCaptchaMethodWithCorrectTheme() throws Exception {
         // Arrange
         ReCaptcha mockCaptcha = mock(ReCaptcha.class);
         when(mockCaptcha.createRecaptchaHtml(anyString(), anyString(), anyInt())).thenReturn("expected");
-        ExpertForRegistrationValidator target =
-                new ExpertForRegistrationValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
+        RegistrationControllerValidator target =
+                new RegistrationControllerValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
 
         // Act
         String result = target.createValidationCaptcha();
@@ -41,7 +42,7 @@ public class ExpertForRegistrationValidatorTest {
     public void validateBasicFieldsChecksEmail() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertForRegistrationValidator target = new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
+        RegistrationControllerValidator target = new RegistrationControllerValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertBasic();
         when(expert.getEmail()).thenReturn("email");
 
@@ -56,7 +57,7 @@ public class ExpertForRegistrationValidatorTest {
     public void validateBasicFieldsChecksPassword() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertForRegistrationValidator target = new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
+        RegistrationControllerValidator target = new RegistrationControllerValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertBasic();
         when(expert.getPassword()).thenReturn("password");
 
@@ -71,7 +72,7 @@ public class ExpertForRegistrationValidatorTest {
     public void validateDetailsFieldsChecksName() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertForRegistrationValidator target = new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
+        RegistrationControllerValidator target = new RegistrationControllerValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertDetails();
         when(expert.getName()).thenReturn("name");
 
@@ -86,8 +87,8 @@ public class ExpertForRegistrationValidatorTest {
     public void validateDetailsFieldsChecksJobTitle() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertForRegistrationValidator target =
-                new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
+        RegistrationControllerValidator target =
+                new RegistrationControllerValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertDetails();
         when(expert.getJobTitle()).thenReturn("job");
 
@@ -102,8 +103,8 @@ public class ExpertForRegistrationValidatorTest {
     public void validateDetailsFieldsChecksInstitution() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertForRegistrationValidator target =
-                new ExpertForRegistrationValidator(checker, mock(ReCaptcha.class));
+        RegistrationControllerValidator target =
+                new RegistrationControllerValidator(checker, mock(ReCaptcha.class));
         Expert expert = mockExpertDetails();
         when(expert.getInstitution()).thenReturn("institute");
 
@@ -115,7 +116,7 @@ public class ExpertForRegistrationValidatorTest {
     }
 
     @Test
-    public void validateTransientFieldsRejectsMismatchedPasswords() throws Exception {
+    public void validateTransientFieldsChecksPasswordsConfirmation() throws Exception {
         // Arrange
         ReCaptcha mockCaptcha = mock(ReCaptcha.class);
         ServletRequest mockRequest = mock(ServletRequest.class);
@@ -124,17 +125,19 @@ public class ExpertForRegistrationValidatorTest {
         when(mockResponse.isValid()).thenReturn(true);
         when(mockRequest.getRemoteAddr()).thenReturn("");
 
-        ExpertForRegistrationValidator target =
-                new ExpertForRegistrationValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        RegistrationControllerValidator target =
+                new RegistrationControllerValidator(checker, mockCaptcha);
 
         JsonExpertBasic expert = mockJsonExpertBasic();
+        when(expert.getPassword()).thenReturn("abc123q");
         when(expert.getPasswordConfirmation()).thenReturn("abc123Q");
 
         // Act
         List<String> result = target.validateTransientFields(expert, mockRequest);
 
         // Assert
-        assertThat(result).contains("Password confirmation pair must match.");
+        verify(checker, times(1)).checkPasswordConfirmation(eq("abc123q"), eq("abc123Q"), anyListOf(String.class));
     }
 
     @Test
@@ -147,8 +150,8 @@ public class ExpertForRegistrationValidatorTest {
         when(mockResponse.isValid()).thenReturn(false);
         when(mockRequest.getRemoteAddr()).thenReturn("expected address");
 
-        ExpertForRegistrationValidator target =
-                new ExpertForRegistrationValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
+        RegistrationControllerValidator target =
+                new RegistrationControllerValidator(mock(ExpertValidationRulesChecker.class), mockCaptcha);
         JsonExpertBasic expert = mockJsonExpertBasic();
 
         // Act

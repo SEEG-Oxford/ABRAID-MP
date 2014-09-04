@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -18,7 +18,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator;
 
 import javax.servlet.ServletRequest;
 import java.util.*;
@@ -37,7 +36,7 @@ public class RegistrationControllerTest {
     private DiseaseService diseaseService;
     private EmailService emailService;
     private PasswordEncoder passwordEncoder;
-    private ExpertForRegistrationValidator validator;
+    private RegistrationControllerValidator validator;
 
     private static JsonExpertBasic mockJsonExpertBasic() {
         JsonExpertBasic result = mock(JsonExpertBasic.class);
@@ -58,7 +57,7 @@ public class RegistrationControllerTest {
         emailService = mock(EmailService.class);
         passwordEncoder = mock(PasswordEncoder.class);
         ObjectMapper json = new ObjectMapper();
-        validator = mock(ExpertForRegistrationValidator.class);
+        validator = mock(RegistrationControllerValidator.class);
 
         target = new RegistrationController(
                 currentUserService, expertService, diseaseService, emailService, passwordEncoder, json, validator);

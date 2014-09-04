@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -21,23 +21,23 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for ExpertUpdateHelper.
+ * Tests for AccountControllerHelper.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertUpdateHelperTest {
+public class AccountControllerHelperTest {
     @Test
     public void processExpertAsTransactionUpdatesAndSavesCorrectSingleExpertCorrectly() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mockExpertDomain();
 
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expert, times(1)).setName(expertDto.getName());
@@ -54,14 +54,14 @@ public class ExpertUpdateHelperTest {
         DateTimeUtils.setCurrentMillisFixed(12345);
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mockExpertDomain();
 
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expert, times(1)).setVisibilityApproved(false);
@@ -76,7 +76,7 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mock(Expert.class);
 
@@ -92,7 +92,7 @@ public class ExpertUpdateHelperTest {
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expert, times(0)).setVisibilityApproved(anyBoolean());
@@ -105,13 +105,13 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class));
         JsonExpertDetails expert = mock(JsonExpertDetails.class);
 
         when(expertService.getExpertById(anyInt())).thenReturn(null);
 
         // Act
-        catchException(target).processExpertAsTransaction(-1, expert);
+        catchException(target).processExpertProfileUpdateAsTransaction(-1, expert);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ValidationException.class);
@@ -123,7 +123,7 @@ public class ExpertUpdateHelperTest {
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
         EmailService emailService = mock(EmailService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, emailService);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, emailService);
         JsonExpertDetails expertDto = mockExpert();
         when(expertDto.getName()).thenReturn("asdfas");
         Expert expert = mockExpertDomain();
@@ -132,7 +132,7 @@ public class ExpertUpdateHelperTest {
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expertService, times(1)).saveExpert(expert);
@@ -150,7 +150,7 @@ public class ExpertUpdateHelperTest {
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
         EmailService emailService = mock(EmailService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, emailService);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, emailService);
         JsonExpertDetails expertDto = mockExpert();
         when(expertDto.getName()).thenReturn("asdfas");
         Expert expert = mockExpertDomain();
@@ -159,7 +159,7 @@ public class ExpertUpdateHelperTest {
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expertService, times(1)).saveExpert(expert);

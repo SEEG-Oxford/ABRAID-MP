@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration;
 
 import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaResponse;
@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertValidationRulesChecker;
 
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
@@ -15,23 +16,19 @@ import java.util.List;
  * Validates the fields associated with an Expert during registration.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertForRegistrationValidator {
-    private static final Logger LOGGER = Logger.getLogger(ExpertForRegistrationValidator.class);
+public class RegistrationControllerValidator {
+    private static final Logger LOGGER = Logger.getLogger(RegistrationControllerValidator.class);
     private static final String LOG_CAPTCHA_REJECTED = "Captcha rejected: %s";
 
     private static final String RECAPTCHA_THEME = "clean";
 
-    private static final String CAPTCHA_FIELD_NAME = "Captcha";
-    private static final String PASSWORD_CONFIRMATION_FIELD_NAME = "Password confirmation";
-
-    private static final String FAILURE_INCORRECT_VALUE = "%s incorrect.";
-    private static final String FAILURE_MUST_MATCH = "%s pair must match.";
+    private static final String FAILURE_INCORRECT_CAPTCHA = "Captcha incorrect.";
 
     private final ExpertValidationRulesChecker rules;
     private final ReCaptcha reCaptchaService;
 
     @Autowired
-    public ExpertForRegistrationValidator(
+    public RegistrationControllerValidator(
             ExpertValidationRulesChecker expertValidationRulesChecker,
             ReCaptcha reCaptchaService) {
         this.rules = expertValidationRulesChecker;
@@ -92,17 +89,12 @@ public class ExpertForRegistrationValidator {
     public List<String> validateTransientFields(JsonExpertBasic expertBasic, ServletRequest request) {
         List<String> validationFailures = new ArrayList<>();
 
-        checkPasswordConfirmation(expertBasic, validationFailures);
+        rules.checkPasswordConfirmation(
+                expertBasic.getPassword(), expertBasic.getPasswordConfirmation(), validationFailures);
 
         checkCaptcha(expertBasic.getCaptchaChallenge(), expertBasic.getCaptchaResponse(), request, validationFailures);
 
         return validationFailures;
-    }
-
-    private void checkPasswordConfirmation(JsonExpertBasic expertBasic, List<String> validationFailures) {
-        if (!expertBasic.getPassword().equals(expertBasic.getPasswordConfirmation())) {
-            validationFailures.add(String.format(FAILURE_MUST_MATCH, PASSWORD_CONFIRMATION_FIELD_NAME));
-        }
     }
 
     private void checkCaptcha(
@@ -114,7 +106,7 @@ public class ExpertForRegistrationValidator {
         );
 
         if (!result.isValid()) {
-            validationFailures.add(String.format(FAILURE_INCORRECT_VALUE, CAPTCHA_FIELD_NAME));
+            validationFailures.add(FAILURE_INCORRECT_CAPTCHA);
             LOGGER.info(String.format(LOG_CAPTCHA_REJECTED, result.getErrorMessage()));
         }
     }

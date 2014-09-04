@@ -1,7 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
 import java.util.List;
@@ -29,19 +31,28 @@ public class ExpertValidationRulesChecker {
     private static final String PASSWORD_FIELD_NAME = "Password";
     private static final String DISEASE_INTERESTS_FIELD_NAME = "Disease interests";
     private static final String VISIBILITY_REQUESTED_FIELD_NAME = "Visibility requested";
+    private static final String PASSWORD_CONFIRMATION_FIELD_NAME = "Password confirmation";
+    private static final String ID_FIELD_NAME = "Id (id)";
+    private static final String VISIBILITY_APPROVED_FIELD_NAME = "Is public visibility approved (visibilityApproved)";
+    private static final String WEIGHTING_FIELD_NAME = "Weighting (weighting)";
+    private static final String ADMINISTRATOR_FIELD_NAME = "Is administrator (administrator)";
+    private static final String SEEG_FIELD_NAME = "Is SEEG member (seegmember)";
 
     private static final String FAILURE_STRING_LENGTH = "%s must be fewer than %s letters in length.";
     private static final String FAILURE_VALUE_MISSING = "%s must be provided.";
-
-    private static final String FAILURE_INSUFFICIENT_COMPLEXITY = "%s not sufficiently complex.";
     private static final String FAILURE_INVALID_VALUE = "%s not valid.";
+    private static final String FAILURE_INSUFFICIENT_COMPLEXITY = "%s not sufficiently complex.";
     private static final String FAILURE_ALREADY_EXISTS = "%s already has an associated account.";
+    private static final String FAILURE_INCORRECT_VALUE = "%s incorrect.";
+    private static final String FAILURE_MUST_MATCH = "%s pair must match.";
 
     private final ExpertService expertService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ExpertValidationRulesChecker(ExpertService expertService) {
+    public ExpertValidationRulesChecker(ExpertService expertService, PasswordEncoder passwordEncoder) {
         this.expertService = expertService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -82,6 +93,31 @@ public class ExpertValidationRulesChecker {
 
         if (validationFailures.isEmpty() && !PASSWORD_REGEX.matcher(value).matches()) {
             validationFailures.add(String.format(FAILURE_INSUFFICIENT_COMPLEXITY, PASSWORD_FIELD_NAME));
+        }
+    }
+
+    /**
+     * Validates a password matches the current password in the database.
+     * @param value The password to validate.
+     * @param expertId The id of the expert to validate against.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkCurrentPassword(String value, int expertId, List<String> validationFailures) {
+        Expert expert = expertService.getExpertById(expertId);
+        if (!passwordEncoder.matches(value, expert.getPassword())) {
+            validationFailures.add(String.format(FAILURE_INCORRECT_VALUE, PASSWORD_FIELD_NAME));
+        }
+    }
+
+    /**
+     * Validates a password and confirmation pair matches.
+     * @param value The password to validate.
+     * @param confirmation The password confirmation.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkPasswordConfirmation(String value, String confirmation, List<String> validationFailures) {
+        if (value != null && !value.equals(confirmation)) {
+            validationFailures.add(String.format(FAILURE_MUST_MATCH, PASSWORD_CONFIRMATION_FIELD_NAME));
         }
     }
 
@@ -138,6 +174,57 @@ public class ExpertValidationRulesChecker {
         validateNotNull(DISEASE_INTERESTS_FIELD_NAME, value, validationFailures);
     }
 
+    /**
+     * Validates an id, with the following conditions.
+     *  * Not null
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkId(Integer value, List<String> validationFailures) {
+        validateNotNull(ID_FIELD_NAME, value, validationFailures);
+    }
+
+    /**
+     * Validates visibility approved, with the following conditions.
+     *  * Not null
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkVisibilityApproved(Boolean value, List<String> validationFailures) {
+        validateNotNull(VISIBILITY_APPROVED_FIELD_NAME, value, validationFailures);
+    }
+
+    /**
+     * Validates a weighting, with the following conditions.
+     *  * Not null
+     *  * Not NaN or Inf
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkWeighting(Double value, List<String> validationFailures) {
+        validateDouble(WEIGHTING_FIELD_NAME, value, validationFailures);
+    }
+
+    /**
+     * Validates is administrator, with the following conditions.
+     *  * Not null
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkIsAdministrator(Boolean value, List<String> validationFailures) {
+        validateNotNull(ADMINISTRATOR_FIELD_NAME, value, validationFailures);
+    }
+
+    /**
+     * Validates is SEEG member, with the following conditions.
+     *  * Not null
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkIsSeegMember(Boolean value, List<String> validationFailures) {
+        validateNotNull(SEEG_FIELD_NAME, value, validationFailures);
+    }
+
     private static void validateNotNull(String name, Object value, List<String> validationFailures) {
         if (value == null) {
             validationFailures.add(String.format(FAILURE_VALUE_MISSING, name));
@@ -153,4 +240,11 @@ public class ExpertValidationRulesChecker {
             validationFailures.add(String.format(FAILURE_STRING_LENGTH, name, maxLength));
         }
     }
+
+    private static void validateDouble(String name, Double value, List<String> validationFailures) {
+        validateNotNull(name, value, validationFailures);
+        if (value != null && (Double.isNaN(value) || Double.isInfinite(value))) {
+            validationFailures.add(String.format(FAILURE_INVALID_VALUE, name));
+        }
+     }
 }

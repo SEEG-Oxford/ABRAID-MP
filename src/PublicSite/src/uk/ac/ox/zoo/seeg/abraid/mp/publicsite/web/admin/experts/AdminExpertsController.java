@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,7 +21,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertFull;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,28 +38,19 @@ public class AdminExpertsController extends AbstractController {
     private static final String LOG_INVALID_EXPERT_ID =
             "Expert administration form encountered invalid expert id: %s.";
 
-    private static final String FAIL_NO_ID_FIELD =
-            "One or more experts contain no 'id' field.";
-    private static final String FAIL_NO_VISIBILITY_APPROVED_FIELD =
-            "One or more experts contain no 'visibilityApproved' field.";
-    private static final String FAIL_NO_WEIGHTING_FIELD =
-            "One or more experts contain no 'weighting' field.";
-    private static final String FAIL_INVALID_WEIGHTING_FIELD =
-            "One or more experts contain an invalid (NaN or Inf) 'weighting' field.";
-    private static final String FAIL_NO_ADMINISTRATOR_FIELD =
-            "One or more experts contain no 'administrator' field.";
-    private static final String FAIL_NO_SEEG_FIELD =
-            "One or more experts contain no 'seegmember' field.";
-
-    private ExpertService expertService;
-    private GeoJsonObjectMapper json;
-    private AdminExpertsHelper helper;
+    private final ExpertService expertService;
+    private final GeoJsonObjectMapper json;
+    private final AdminExpertsControllerValidator validator;
+    private final AdminExpertsControllerHelper helper;
 
     @Autowired
-    public AdminExpertsController(ExpertService expertService, GeoJsonObjectMapper geoJsonObjectMapper,
-                                  AdminExpertsHelper adminExpertsHelper) {
+    public AdminExpertsController(ExpertService expertService,
+                                  GeoJsonObjectMapper geoJsonObjectMapper,
+                                  AdminExpertsControllerValidator adminExpertsControllerValidator,
+                                  AdminExpertsControllerHelper adminExpertsHelper) {
         this.expertService = expertService;
         this.json = geoJsonObjectMapper;
+        this.validator = adminExpertsControllerValidator;
         this.helper = adminExpertsHelper;
     }
 
@@ -99,7 +89,7 @@ public class AdminExpertsController extends AbstractController {
             new Converter<JsonExpertFull, Collection<String>>() {
                 @Override
                 public Collection<String> convert(JsonExpertFull expert) {
-                    return validateExpert(expert);
+                    return validator.validate(expert);
                 }
             })
         );
@@ -119,32 +109,5 @@ public class AdminExpertsController extends AbstractController {
         }
     }
 
-    private Collection<String> validateExpert(JsonExpertFull expert) {
-        Collection<String> expertMessages = new ArrayList<>();
-
-        if (expert.getId() == null) {
-            expertMessages.add(FAIL_NO_ID_FIELD);
-        }
-
-        if (expert.getVisibilityApproved() == null) {
-            expertMessages.add(FAIL_NO_VISIBILITY_APPROVED_FIELD);
-        }
-
-        if (expert.getWeighting() == null) {
-            expertMessages.add(FAIL_NO_WEIGHTING_FIELD);
-        } else if (Double.isNaN(expert.getWeighting()) || Double.isInfinite(expert.getWeighting())) {
-            expertMessages.add(FAIL_INVALID_WEIGHTING_FIELD);
-        }
-
-        if (expert.isAdministrator() == null) {
-            expertMessages.add(FAIL_NO_ADMINISTRATOR_FIELD);
-        }
-
-        if (expert.isSEEGMember() == null) {
-            expertMessages.add(FAIL_NO_SEEG_FIELD);
-        }
-
-        return expertMessages;
-    }
 
 }

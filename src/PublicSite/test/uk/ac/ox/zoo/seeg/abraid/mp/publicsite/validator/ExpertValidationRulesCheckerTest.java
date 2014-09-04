@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
 
 import org.junit.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
@@ -21,7 +22,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkEmailRejectsNullEmails() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -34,7 +35,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkEmailRejectsEmptyEmails() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -47,7 +48,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkEmailRejectsTooLongEmails() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
         char[] chars = new char[158];
         Arrays.fill(chars, 'a');
@@ -62,7 +63,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkEmailRejectsInvalidEmails() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -77,7 +78,7 @@ public class ExpertValidationRulesCheckerTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         when(expertService.getExpertByEmail("already@exists.com")).thenReturn(mock(Expert.class));
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService);
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService, null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -90,7 +91,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkEmailAcceptsValidEmails() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -103,7 +104,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkPasswordRejectsNullPassword() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -116,7 +117,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkPasswordRejectsEmptyPassword() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -127,9 +128,42 @@ public class ExpertValidationRulesCheckerTest {
     }
 
     @Test
+    public void checkCurrentPasswordRejectsIncorrectPasswords() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        when(expertService.getExpertById(321)).thenReturn(mock(Expert.class));
+        when(expertService.getExpertById(321).getPassword()).thenReturn("passwordHash");
+
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        when(passwordEncoder.matches("password", "passwordHash")).thenReturn(false);
+
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService, passwordEncoder);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkCurrentPassword("password", 321, result);
+
+        // Assert
+        assertThat(result).contains("Password incorrect.");
+    }
+
+    @Test
+    public void checkPasswordConfirmationRejectsUnmatchedPair() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkPasswordConfirmation("password", "confirmation", result);
+
+        // Assert
+        assertThat(result).contains("Password pair must match.");
+    }
+
+    @Test
     public void checkPasswordRejectsInvalidPasswords() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -142,7 +176,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkPasswordAcceptsValidPasswords() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -155,7 +189,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkNameRejectsNullName() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -168,7 +202,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkNameRejectsEmptyName() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -181,7 +215,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkNameRejectsTooLongName() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
         char[] chars = new char[1001];
         Arrays.fill(chars, 'a');
@@ -196,7 +230,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkJobTitleRejectsNullJobTitle() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -209,7 +243,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkJobTitleRejectsEmptyJobTitle() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -222,7 +256,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkJobTitleRejectsTooLongJobTitle() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -237,7 +271,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkInstitutionRejectsNullInstitution() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -250,7 +284,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkInstitutionsRejectsEmptyInstitution() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -263,7 +297,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkInstitutionRejectsTooLongInstitution() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -278,7 +312,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkVisibilityRequestedRejectsNull() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -291,7 +325,7 @@ public class ExpertValidationRulesCheckerTest {
     @Test
     public void checkDiseaseInterestsRejectsNull() throws Exception {
         // Arrange
-        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class));
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
         List<String> result = new ArrayList<>();
 
         // Act
@@ -299,5 +333,109 @@ public class ExpertValidationRulesCheckerTest {
 
         // Assert
         assertThat(result).contains("Disease interests must be provided.");
+    }
+
+    @Test
+    public void checkIdRejectsNull() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkId(null, result);
+
+        // Assert
+        assertThat(result).contains("Id (id) must be provided.");
+    }
+
+    @Test
+    public void checkVisibilityApprovedRejectsNull() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkVisibilityApproved(null, result);
+
+        // Assert
+        assertThat(result).contains("Is public visibility approved (visibilityApproved) must be provided.");
+    }
+
+    @Test
+    public void checkWeightingRejectsNull() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkWeighting(null, result);
+
+        // Assert
+        assertThat(result).contains("Weighting (weighting) must be provided.");
+    }
+
+    @Test
+    public void checkWeightingRejectsPositiveInf() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkWeighting(Double.POSITIVE_INFINITY, result);
+
+        // Assert
+        assertThat(result).contains("Weighting (weighting) not valid.");
+    }
+
+    @Test
+    public void checkWeightingRejectsNegativeInf() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkWeighting(Double.NEGATIVE_INFINITY, result);
+
+        // Assert
+        assertThat(result).contains("Weighting (weighting) not valid.");
+    }
+
+    @Test
+    public void checkWeightingRejectsNaN() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkWeighting(Double.NaN, result);
+
+        // Assert
+        assertThat(result).contains("Weighting (weighting) not valid.");
+    }
+
+    @Test
+    public void checkIsAdministratorRejectsNull() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkIsAdministrator(null, result);
+
+        // Assert
+        assertThat(result).contains("Is administrator (administrator) must be provided.");
+    }
+
+    @Test
+    public void checkIsSeegMemberRejectsNull() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkIsSeegMember(null, result);
+
+        // Assert
+        assertThat(result).contains("Is SEEG member (seegmember) must be provided.");
     }
 }
