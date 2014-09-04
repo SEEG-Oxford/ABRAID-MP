@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.AbstractDataManagerSpringIntegrationTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Tests the ModelRunGatekeeper class.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunGatekeeperTest extends AbstractDataAcquisitionSpringIntegrationTests {
+public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
 

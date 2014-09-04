@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
@@ -46,7 +46,7 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
     public void mainMethodAcquiresDataFromFiles() {
         // Arrange
         String[] fileNames = {
-                "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json_qc.txt"
+                "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json_qc.txt"
         };
         mockGeoNamesRequests();
 

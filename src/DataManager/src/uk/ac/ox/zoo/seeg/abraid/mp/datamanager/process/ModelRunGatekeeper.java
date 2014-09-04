@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;

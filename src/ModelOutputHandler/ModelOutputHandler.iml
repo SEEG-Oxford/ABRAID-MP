@@ -34,7 +34,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="modeloutputhandler-lib" level="project" />
-    <orderEntry type="module" module-name="Common" exported="" />
+    <orderEntry type="module" module-name="Common" />
   </component>
 </module>
 
