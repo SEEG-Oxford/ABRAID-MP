@@ -95,6 +95,7 @@ public class AccountControllerHelper {
      * @param password The new password.
      * @throws ValidationException Thrown if an id matching expert can not be found.
      */
+    @Transactional(rollbackFor = Exception.class)
     public void processExpertPasswordChangeAsTransaction(int id, String password) throws ValidationException {
         // Start of transaction
         Expert expert = expertService.getExpertById(id);
