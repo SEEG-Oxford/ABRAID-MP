@@ -17,9 +17,10 @@
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml"/>
 
-    <!-- Model run manager beans -->
-    <bean id="modelRunGatekeeper" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.model.ModelRunGatekeeper" autowire="constructor"/>
-    <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.model.ModelRunManager" autowire="constructor"/>
+    <!-- Process beans -->
+    <bean id="dataAcquisitionManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager" autowire="constructor"/>
+    <bean id="modelRunGatekeeper" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunGatekeeper" autowire="constructor"/>
+    <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager" autowire="constructor"/>
 
     <!-- Main bean (program entry point) -->
     <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor"/>

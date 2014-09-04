@@ -8,6 +8,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
+ * Tests the DataAcquisitionManager class.
  * Copyright (c) 2014 University of Oxford
  */
 public class DataAcquisitionManagerTest {
