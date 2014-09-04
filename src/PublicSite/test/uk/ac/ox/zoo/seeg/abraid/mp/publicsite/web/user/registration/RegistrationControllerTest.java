@@ -501,7 +501,7 @@ public class RegistrationControllerTest {
         data.put("expert", expert);
         verify(emailService, times(1)).sendEmailInBackground(
                 "New user requiring visibility sign off",
-                "newUserEmail.ftl",
+                "registration/newUserEmail.ftl",
                 data);
     }
 

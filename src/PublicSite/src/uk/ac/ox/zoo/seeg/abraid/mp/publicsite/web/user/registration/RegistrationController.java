@@ -57,7 +57,7 @@ public class RegistrationController extends AbstractController {
             "Invalid registration session";
 
     private static final String EMAIL_DATA_KEY = "expert";
-    private static final String EMAIL_TEMPLATE = "newUserEmail.ftl";
+    private static final String EMAIL_TEMPLATE = "registration/newUserEmail.ftl";
     private static final String EMAIL_SUBJECT = "New user requiring visibility sign off";
 
     private final CurrentUserService currentUserService;

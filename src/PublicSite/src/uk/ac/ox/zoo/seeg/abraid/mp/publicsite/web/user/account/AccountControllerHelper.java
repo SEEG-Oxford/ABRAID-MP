@@ -28,7 +28,7 @@ public class AccountControllerHelper {
     private static final String FAIL_NO_ID_MATCH = "No matching expert found to update (%s).";
     private static final String EMAIL_DATA_KEY = "expert";
     private static final String EMAIL_SUBJECT = "Updated user requiring visibility sign off";
-    private static final String EMAIL_TEMPLATE = "updatedUserEmail.ftl";
+    private static final String EMAIL_TEMPLATE = "account/updatedUserEmail.ftl";
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
     private final EmailService emailService;

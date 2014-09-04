@@ -141,7 +141,7 @@ public class AccountControllerHelperTest {
         data.put("expert", expert);
         verify(emailService, times(1)).sendEmailInBackground(
                 "Updated user requiring visibility sign off",
-                "updatedUserEmail.ftl",
+                "account/updatedUserEmail.ftl",
                 data);
     }
 
