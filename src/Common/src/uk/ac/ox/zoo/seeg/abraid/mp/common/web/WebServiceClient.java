@@ -5,6 +5,7 @@ import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -113,10 +114,12 @@ public class WebServiceClient {
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 
             // If HTTP Basic Auth credentials are provided (in the url) send them with the initial request, rather
-            // than waiting for a challenge request. This means Jersey can remain in "chunking" mode rather than
-            // falling back to "buffered" sending (as the Jersey implementation of "chunking" does not support
-            // challenge request/response).
+            // than waiting for a challenge request.
             client.property(ApacheClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION, true);
+
+            // Use buffered transfer encoding over chunked as we wont normally be sending data while it is
+            // still being generated. (Additionally httpbin.org - used in tests - doesn't handle chunked correctly).
+            client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
 
             DateTime startDate = DateTime.now();
             Response response = action.invoke(client.target(url).request());
