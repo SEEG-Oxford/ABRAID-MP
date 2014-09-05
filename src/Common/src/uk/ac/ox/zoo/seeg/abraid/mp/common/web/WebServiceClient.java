@@ -115,7 +115,7 @@ public class WebServiceClient {
             // If HTTP Basic Auth credentials are provided (in the url) send them with the initial request, rather
             // than waiting for a challenge request. This means Jersey can remain in "chunking" mode rather than
             // falling back to "buffered" sending (as the Jersey implementation of "chunking" does not support
-            // challenge request/responce).
+            // challenge request/response).
             client.property(ApacheClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION, true);
 
             DateTime startDate = DateTime.now();
