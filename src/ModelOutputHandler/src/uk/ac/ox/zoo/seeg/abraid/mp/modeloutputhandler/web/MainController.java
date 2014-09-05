@@ -45,7 +45,7 @@ public class MainController extends AbstractController {
      * @param modelRunZip The model run's outputs, as a zip file.
      * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
-    @RequestMapping(value = "/modeloutputhandler/handleoutputs", method = RequestMethod.POST,
+    @RequestMapping(value = "/handleoutputs", method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<String> handleModelOutputs(@RequestBody byte[] modelRunZip) {

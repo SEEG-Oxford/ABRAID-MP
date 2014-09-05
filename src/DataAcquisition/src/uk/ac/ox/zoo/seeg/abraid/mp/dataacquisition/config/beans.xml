@@ -3,17 +3,18 @@
       Contains all beans in this module.
       Copyright (c) 2014 University of Oxford
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- This ensures that if a file named dataacquisition.properties exists in the current directory, it will
          override the default properties specified in the classpath files -->
-    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
-                                            classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties,
-                                            file:dataacquisition.properties"
-                                  ignore-resource-not-found="true"/>
+    <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties,
+        file:dataacquisition.properties" />
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 

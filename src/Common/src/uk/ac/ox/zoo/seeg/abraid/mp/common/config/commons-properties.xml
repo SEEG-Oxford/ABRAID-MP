@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-      Contains all beans in this module.
+      Loads the common properties file and override file.
       Copyright (c) 2014 University of Oxford
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -10,10 +10,8 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <import resource="commons-properties.xml"/>
-
-    <import resource="beans-database.xml"/>
-    <import resource="beans-service.xml"/>
-    <import resource="beans-web.xml"/>
+    <context:property-placeholder order="1" ignore-unresolvable="false" ignore-resource-not-found="true" location="
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
+        WEB-INF/common-override.properties" />
 
 </beans>
