@@ -33,7 +33,7 @@ public class ModelOutputHandlerWebServiceTest {
         when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
 
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
-        String expectedUrl = rootUrl + "modeloutputhandler/handleoutputs";
+        String expectedUrl = rootUrl + "handleoutputs";
         when(webServiceClient.makePostRequest(expectedUrl, testBody)).thenReturn("expected Result");
 
         ModelOutputHandlerWebService target = new ModelOutputHandlerWebService(webServiceClient, configurationService);
