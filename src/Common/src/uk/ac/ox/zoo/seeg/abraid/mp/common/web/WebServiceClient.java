@@ -1,10 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -112,9 +112,11 @@ public class WebServiceClient {
             client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 
-            // Buffer the request body and send it in one go instead of "chunking". This allows Jersey to handle
-            // authentication challenges (e.g. if the server is using HTTP basic auth).
-            client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
+            // If HTTP Basic Auth credentials are provided (in the url) send them with the initial request, rather
+            // than waiting for a challenge request. This means Jersey can remain in "chunking" mode rather than
+            // falling back to "buffered" sending (as the Jersey implementation of "chunking" does not support
+            // challenge request/responce).
+            client.property(ApacheClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION, true);
 
             DateTime startDate = DateTime.now();
             Response response = action.invoke(client.target(url).request());
