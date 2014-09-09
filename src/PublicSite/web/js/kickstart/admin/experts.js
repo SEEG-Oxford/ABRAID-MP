@@ -3,14 +3,14 @@
  */
 /*global require:false, baseUrl:false, experts:false*/
 //Load base configuration, then load the app logic for this page.
-require([baseUrl + "js/require.conf.js"], function () {
+require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require([
         "ko",
         "app/admin/ExpertAdministrationViewModel",
         "domReady!",
-        "navbar"
+        "shared/navbar"
     ], function (ko, ExpertAdministrationViewModel, doc) {
 
         ko.applyBindings(

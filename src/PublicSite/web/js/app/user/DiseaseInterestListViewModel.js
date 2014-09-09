@@ -4,7 +4,7 @@
 define([
     "ko",
     "underscore",
-    "app/BaseTableViewModel"
+    "shared/app/BaseTableViewModel"
 ], function (ko, _, BaseTableViewModel) {
     "use strict";
 

@@ -42,6 +42,18 @@
     <ant antfile="${module.dataacquisition.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.dataacquisition.dir}"/>
   </target>
 
+  <!-- CommonWeb -->
+  <property name="module.commonweb.dir" value="${basedir}/CommonWeb"/>
+  <target name="module.commonweb.quality">
+    <ant antfile="${module.commonweb.dir}/build.xml" inheritrefs="false" inheritall="false" target="check.quality.js" dir="${module.commonweb.dir}"/>
+  </target>
+  <target name="module.commonweb.test">
+    <ant antfile="${module.commonweb.dir}/build.xml" inheritrefs="false" inheritall="false" target="unit.test.js" dir="${module.commonweb.dir}"/>
+  </target>
+  <target name="module.commonweb.full">
+    <ant antfile="${module.commonweb.dir}/build.xml" inheritrefs="false" inheritall="false" target="full" dir="${module.commonweb.dir}"/>
+  </target>
+
   <!-- PublicSite -->
   <property name="module.publicsite.dir" value="${basedir}/PublicSite"/>
   <target name="module.publicsite.build">
@@ -99,7 +111,7 @@
   <!-- Targets -->
   <target name="clean" depends="module.common.clean, module.dataacquisition.clean, module.publicsite.clean, module.modelwrapper.clean, module.modeloutputhandler.clean" description="cleanup all"/>
   <target name="build" depends="module.common.build, module.dataacquisition.build, module.publicsite.build, module.modelwrapper.build, module.modeloutputhandler.build" description="build all modules"/>
-  <target name="quality" depends="module.common.quality, module.dataacquisition.quality, module.publicsite.quality, module.modelwrapper.quality, module.modeloutputhandler.quality" description="check quality of all modules"/>
-  <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.publicsite.test, module.modelwrapper.test, module.modeloutputhandler.test" description="test all modules"/>
-  <target name="full" depends="module.common.full, module.dataacquisition.full, module.publicsite.full, module.modelwrapper.full, module.modeloutputhandler.full" description="build pipeline" />
+  <target name="quality" depends="module.common.quality, module.dataacquisition.quality, module.commonweb.full, module.publicsite.quality, module.modelwrapper.quality, module.modeloutputhandler.quality" description="check quality of all modules"/>
+  <target name="test" depends="build, module.common.test, module.dataacquisition.test, module.commonweb.test, module.publicsite.test, module.modelwrapper.test, module.modeloutputhandler.test" description="test all modules"/>
+  <target name="full" depends="module.common.full, module.dataacquisition.full, module.commonweb.quality, module.publicsite.full, module.modelwrapper.full, module.modeloutputhandler.full" description="build pipeline" />
 </project>

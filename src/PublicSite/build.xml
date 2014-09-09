@@ -7,7 +7,7 @@
   <import file="${basedir}/../build-module.xml"/>
 
   <!-- Override the imported build.package task, to switch it from building a JAR to a WAR -->
-  <target name="build.package" depends="build.war"/>
+  <target name="build.package" depends="build.war.with.commonweb"/>
 
   <target name="check.extras" depends="module_build.check.extras, check.quality.js" />
   <target name="retrieve.manual.libs" depends="module_build.retrieve.manual.libs, retrieve.phantom, retrieve.jshint" />

@@ -2,7 +2,7 @@
     ModelWrapper's index landing page, to display model outputs.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "common.ftl" as c/>
+<#import "shared/layout/common.ftl" as c/>
 
 <#assign bootstrapData>
     <script type="text/javascript">
@@ -20,7 +20,7 @@
     </script>
 </#assign>
 
-<@c.page title="ABRAID-MP ModelWrapper" mainjs="/js/index" bootstrapData=bootstrapData templates="">
+<@c.page title="ABRAID-MP ModelWrapper" mainjs="/js/kickstart/index" bootstrapData=bootstrapData templates="">
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">

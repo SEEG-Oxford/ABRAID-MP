@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$/ModelWrapper/web/WEB-INF/freemarker/common.ftl" libraries="{bootstrap, jquery, knockout-bootstrap, knockout-debug, knockout.validation, modernizr, require}" />
+    <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/kickstart/default.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/navbar.js" libraries="{jquery, require}" />
+    <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/require.conf.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/AuthViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/CovariatesListRowViewModel.js" libraries="{knockout-debug}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/CovariatesListViewModel.js" libraries="{knockout-debug}" />
-    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/KoCustomRules.js" libraries="{knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/RepositoryViewModel.js" libraries="{jquery, knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/SingleFieldFormViewModel.js" libraries="{jquery, knockout-debug}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/AuthViewModelSpec.js" libraries="{jasmine, knockout-bootstrap, knockout-debug, knockout.validation}" />
@@ -13,9 +14,7 @@
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/MiscViewModelSpec.js" libraries="{jasmine, require}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SingleFieldFormViewModelSpec.js" libraries="{jasmine, mock-ajax, underscore}" />
     <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/app/spec/SpecRunner.html" libraries="{boot, console, jasmine, jasmine-html, mock-ajax, require}" />
-    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/index.js" libraries="{knockout-debug, knockout.validation, require}" />
-    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/require.conf.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/KoCustomBindings.js" libraries="{require}" />
+    <file url="file://$PROJECT_DIR$/ModelWrapper/web/js/kickstart/index.js" libraries="{knockout-debug, knockout.validation, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/CounterViewModel.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/MapView.js" libraries="{jquery, leaflet, leaflet.markercluster-src, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/datavalidation/SelectedAdminUnitViewModel.js" libraries="{require}" />
@@ -25,9 +24,6 @@
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/SelectedLayerViewModelSpec.js" libraries="{jasmine, require}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/app/spec/datavalidation/SelectedPointViewModelSpec.js" libraries="{jasmine}" />
     <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/datavalidation/content.js" libraries="{jquery, knockout-debug, moment}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/kickstart/default.js" libraries="{require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/navbar.js" libraries="{jquery, require}" />
-    <file url="file://$PROJECT_DIR$/PublicSite/web/js/require.conf.js" libraries="{require}" />
   </component>
 </project>
 

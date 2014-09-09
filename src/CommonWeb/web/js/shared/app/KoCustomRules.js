@@ -4,7 +4,8 @@
 define([
     "underscore",
     "knockout",
-    "knockout.validation"
+    "knockout.validation",
+    "shared/app/KoCustomUtils"
 ], function (_, ko) {
     "use strict";
 
@@ -27,13 +28,22 @@ define([
         message: "Password must be between 6 and 128 characters long and contain three of the following 4 items: upper case letter, lower case letter, a symbol, a number" /* jshint ignore:line */ // Line length
     };
 
+    // Adapted from:
+    // https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
+    ko.validation.rules.usernameComplexity = {
+        validator: function (val) {
+            return (new RegExp("^[a-z0-9_-]{3,15}$")).test("" + val + "");
+        },
+        message: "Username must be between 3 and 15 characters long and consist of only letters, numbers, '_' or '-'"
+    };
+
     ko.validation.rules.digit.message = "Please enter a whole number";
 
     ko.validation.rules.isUniqueProperty = {
         validator: function (val, options) {
             if (val) {
                 var array = options.array;
-                var id = ko.utils.unwrapObservable(options.id);
+                var id = ko.utils.recursiveUnwrap(options.id);
                 var property = options.property;
                 return ! _(array)
                     .chain()

@@ -3,9 +3,9 @@
  */
 define([
     "app/user/DiseaseInterestListViewModel",
-    "app/BaseTableViewModel",
+    "shared/app/BaseTableViewModel",
     "underscore",
-    "app/spec/lib/squire"
+    "squire"
 ], function (DiseaseInterestListViewModel, BaseTableViewModel, _, Squire) {
     "use strict";
 
@@ -20,7 +20,7 @@ define([
                     var injector = new Squire();
 
                     tableSpy = jasmine.createSpy("tableSpy").and.callFake(BaseTableViewModel);
-                    injector.mock("app/BaseTableViewModel", tableSpy);
+                    injector.mock("shared/app/BaseTableViewModel", tableSpy);
 
                     injector.require(["app/user/DiseaseInterestListViewModel"],
                         function (DiseaseInterestListViewModel) {

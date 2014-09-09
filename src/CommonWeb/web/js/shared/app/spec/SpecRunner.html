@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <!--
-    A test runner for the public site data validation component of ABRAID-MP.
+    A test runner for the shared js components of ABRAID-MP.
     Copyright (c) 2014 University of Oxford
 -->
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>PublicSite Spec Runner</title>
+    <title>CommonWeb Spec Runner</title>
 
     <link rel="shortcut icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine_favicon.png">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.css">
@@ -15,35 +15,10 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/console.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 
-    <!-- Add specs here -->
-    <script type="text/javascript">
-        var specs = [
-            "app/spec/admin/diseasegroups/DiseaseExtentParametersViewModelSpec",
-            "app/spec/admin/diseasegroups/DiseaseGroupAdministrationViewModelSpec",
-            "app/spec/admin/diseasegroups/DiseaseGroupPayloadSpec",
-            "app/spec/admin/diseasegroups/DiseaseGroupSettingsViewModelSpec",
-            "app/spec/admin/diseasegroups/DiseaseGroupSetupViewModelSpec",
-            "app/spec/admin/diseasegroups/DiseaseGroupsListViewModelSpec",
-            "app/spec/admin/diseasegroups/ModelRunParametersViewModelSpec",
-            "app/spec/admin/ExpertAdministrationViewModelSpec",
-            "app/spec/datavalidation/CounterViewModelSpec",
-            "app/spec/datavalidation/LogInFormViewModelSpec",
-            "app/spec/datavalidation/MapViewSpec",
-            "app/spec/datavalidation/SelectedAdminUnitViewModelSpec",
-            "app/spec/datavalidation/SelectedLayerViewModelSpec",
-            "app/spec/datavalidation/SelectedPointViewModelSpec",
-            "app/spec/datavalidation/SidePanelViewModelSpec",
-            "app/spec/datavalidation/SpinnerViewModelSpec",
-            "app/spec/user/AccountDetailsFormViewModelSpec",
-            "app/spec/user/AccountRegistrationFormViewModelSpec",
-            "app/spec/user/DiseaseInterestListViewModelSpec",
-        ];
-    </script>
-
     <!-- Make Jasmine play nice with phantom, require and ant -->
     <script type="text/javascript">
         /*global specs:false, require:false, jasmine:false, jasmineRequire:false, document:false*/
-        var baseUrl = document.URL.substring(0, document.URL.indexOf("js/app/spec/SpecRunner.html"));
+        var baseUrl = document.URL.substring(0, document.URL.indexOf("js/shared/app/spec/SpecRunner.html"));
         var includeCoverage = document.URL.indexOf("coverage=true") !== -1;
         var includeConsole = document.URL.indexOf("console=true") !== -1;
 
@@ -51,6 +26,12 @@
         if (location.protocol === "file:" || window._phantom) {
             commonBaseUrl = baseUrl + "../../CommonWeb/web/";
         }
+
+        // Add specs here
+        var specs = [
+            (commonBaseUrl || baseUrl) + "js/shared/app/spec/KoCustomBindingsSpec.js",
+            (commonBaseUrl || baseUrl) + "js/shared/app/spec/KoCustomRulesSpec.js"
+        ];
 
         require([ (commonBaseUrl || baseUrl) + 'js/shared/require.conf.js' ], function() {
             require(["domReady!", "https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js"], function() {
@@ -64,7 +45,7 @@
 
                 require(beforeSpecs, function() {
                     if (includeCoverage) {
-                        blanket.options({ filter: "/js/app", antifilter: "/js/app/spec" });
+                        blanket.options({ filter: "/js/shared/app", antifilter: "/js/shared/app/spec" });
                         jasmine.getEnv().addReporter(new jasmine.BlanketReporter());
                     }
 

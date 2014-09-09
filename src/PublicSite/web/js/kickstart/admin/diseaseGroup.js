@@ -3,7 +3,7 @@
  */
 /*global require:false, window:false, baseUrl:false, diseaseGroups:false, validatorDiseaseGroups:false*/
 //Load base configuration, then load the app logic for this page.
-require([baseUrl + "js/require.conf.js"], function () {
+require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
 
@@ -16,7 +16,7 @@ require([baseUrl + "js/require.conf.js"], function () {
         "app/admin/diseasegroups/ModelRunParametersViewModel",
         "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
         "domReady!",
-        "navbar"
+        "shared/navbar"
     ], function (ko, DiseaseExtentParametersViewModel, DiseaseGroupAdministrationViewModel, DiseaseGroupsListViewModel,
                  DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel, doc) {
 

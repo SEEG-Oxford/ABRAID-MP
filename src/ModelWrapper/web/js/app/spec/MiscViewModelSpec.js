@@ -6,7 +6,7 @@ define([
     "app/MiscViewModel",
     "ko",
     "underscore",
-    "app/spec/lib/squire"
+    "squire"
 ], function (MiscViewModel, ko, _, Squire) {
     "use strict";
 

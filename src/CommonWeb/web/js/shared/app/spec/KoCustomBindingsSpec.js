@@ -1,6 +1,6 @@
 define([
     "ko",
-    "app/spec/lib/squire"
+    "squire"
 ], function (ko, Squire) {
     "use strict";
 

@@ -3,17 +3,15 @@
  */
 /* global require:false, baseUrl: false, initialData:false, window:false */
 //Load base configuration, then load the app logic for this page.
-require(["require.conf"], function () {
+require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require([
         "ko",
         "app/CovariatesListViewModel",
-        "navbar",
-        "domReady!"
-    ], function (ko, CovariatesListViewModel, setupNavbar, doc) {
-        setupNavbar();
-
+        "domReady!",
+        "shared/navbar"
+    ], function (ko, CovariatesListViewModel, doc) {
         var covariatesViewModel = new CovariatesListViewModel(baseUrl, initialData);
 
         ko.applyBindings(

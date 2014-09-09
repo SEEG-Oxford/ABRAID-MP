@@ -5,7 +5,7 @@ define([
     "ko",
     "jquery",
     "moment",
-    "app/BaseFormViewModel"
+    "shared/app/BaseFormViewModel"
 ], function (ko, $, moment, BaseFormViewModel) {
     "use strict";
 

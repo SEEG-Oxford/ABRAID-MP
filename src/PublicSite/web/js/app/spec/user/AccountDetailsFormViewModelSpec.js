@@ -3,8 +3,8 @@
  */
 define([
     "app/user/AccountDetailsFormViewModel",
-    "app/BaseFormViewModel",
-    "app/spec/lib/squire"
+    "shared/app/BaseFormViewModel",
+    "squire"
 ], function (AccountDetailsFormViewModel, BaseFormViewModel, Squire) {
     "use strict";
     var noop = function () {};
@@ -29,7 +29,7 @@ define([
                     var injector = new Squire();
 
                     formSpy = jasmine.createSpy("formSpy").and.callFake(BaseFormViewModel);
-                    injector.mock("app/BaseFormViewModel", formSpy);
+                    injector.mock("shared/app/BaseFormViewModel", formSpy);
 
                     injector.require(["app/user/AccountDetailsFormViewModel"],
                         function (AccountDetailsFormViewModel) {

@@ -1,10 +1,28 @@
 define([
-    "ko",
-    "app/spec/lib/squire"
-], function (ko) {
+    "squire"
+], function (Squire) {
     "use strict";
 
     describe("KoCustomRules defines", function () {
+        var ko = { validation: { rules:  undefined }, utils: {}, bindingContext: { prototype: {} } };
+        beforeEach(function (done) {
+            if (!ko.validation.rules) {
+                ko.validation.rules = { digit: {} };
+                jasmine.Ajax.uninstall();
+                var injector = new Squire();
+
+                injector.mock("knockout", ko);
+                injector.mock("knockout.validation", function () {
+                });
+
+                injector.require(["shared/app/KoCustomRules"], function () {
+                    done();
+                });
+            } else {
+                done();
+            }
+        });
+
         describe("the 'areSame' rule which", function () {
             it("checks the two values are the same", function () {
                 expect(ko.validation.rules.areSame.validator(1, 1)).toBe(true);
@@ -93,7 +111,7 @@ define([
             });
 
             it("accepts a value if the only occurrence in the list is itself, with observable ID", function () {
-                var id = ko.observable(2);
+                var id = function () { return 2; };
                 var options = { array: diseaseGroups, id: id, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);
             });

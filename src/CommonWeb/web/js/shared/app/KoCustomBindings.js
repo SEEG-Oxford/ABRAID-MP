@@ -3,11 +3,12 @@
  * Copyright (c) 2014 University of Oxford.
  */
 define([
-    "knockout",
     "jquery",
     "moment",
+    "knockout",
+    "shared/app/KoCustomUtils",
     "flipclock"
-], function (ko, $, moment) {
+], function ($, moment, ko) {
     "use strict";
 
     // Custom binding to set the value on the flipclock.js counter
