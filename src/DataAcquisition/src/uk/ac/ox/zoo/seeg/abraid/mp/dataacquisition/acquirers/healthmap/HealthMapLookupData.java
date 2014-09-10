@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;

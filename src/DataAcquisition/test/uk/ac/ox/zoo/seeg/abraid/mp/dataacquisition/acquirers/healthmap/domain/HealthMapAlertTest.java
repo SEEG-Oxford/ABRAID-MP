@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain;
 
 import org.junit.Test;
 

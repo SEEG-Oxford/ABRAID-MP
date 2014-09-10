@@ -1,9 +1,9 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,10 +1,10 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.domain.GeoName;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;

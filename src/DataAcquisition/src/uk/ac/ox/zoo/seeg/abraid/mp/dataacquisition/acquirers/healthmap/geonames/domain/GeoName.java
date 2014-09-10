@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

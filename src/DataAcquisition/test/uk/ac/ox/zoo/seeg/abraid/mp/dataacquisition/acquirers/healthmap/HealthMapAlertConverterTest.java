@@ -1,11 +1,11 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -490,46 +490,6 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         verify(alertService, times(1)).saveFeed(same(feed));
-    }
-
-    @Test
-    public void occurrenceAlreadyExists() {
-        // Arrange
-        String feedName = "Test feed";
-        String summary = "Test summary";
-        String feedLanguage = "en";
-        String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        int diseaseId = 1;
-        int feedId = 1;
-        DateTime publicationDate = DateTime.now();
-        String link = "http://healthmap.org/ln.php?2154965";
-        String healthMapDiseaseName = "Test disease";
-        String description = "Test description";
-        int healthMapAlertId = 2154965;
-
-        Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
-        Alert alert = new Alert();
-        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
-
-        HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl, feedLanguage);
-
-        // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
-        mockOutGetFeed(lookupData, feed);
-        mockOutGetExistingHealthMapDisease(lookupData, diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, true);
-
-        // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, lookupData);
-        DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, location);
-
-        // Assert
-        assertThat(occurrence).isNull();
     }
 
     private void mockOutGetAlertByID(AlertService alertService, int healthMapAlertId, Alert alert) {

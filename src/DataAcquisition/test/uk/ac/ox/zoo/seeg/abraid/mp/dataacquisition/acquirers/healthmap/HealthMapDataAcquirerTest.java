@@ -1,11 +1,11 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the HealthMapDataAcquisition class.
+ * Tests the HealthMapDataAcquirer class.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class HealthMapDataAcquisitionTest {
+public class HealthMapDataAcquirerTest {
     private HealthMapWebService webService = mock(HealthMapWebService.class);
     private HealthMapDataConverter dataConverter = mock(HealthMapDataConverter.class);
     private HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
@@ -38,7 +38,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.sendRequest(eq(defaultStartDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -63,7 +63,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -86,7 +86,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.sendRequest(eq(defaultStartDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -112,7 +112,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -137,7 +137,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -163,7 +163,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -185,7 +185,7 @@ public class HealthMapDataAcquisitionTest {
         when(webService.getEndDateDaysAfterStartDate()).thenReturn(null);
 
         // Act
-        HealthMapDataAcquisition dataAcquisition = new HealthMapDataAcquisition(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
         dataAcquisition.acquireDataFromWebService();
 
         // Assert

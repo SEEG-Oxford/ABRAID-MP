@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
@@ -10,10 +10,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.GeoNamesWebService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapLocation;
-
-import java.util.List;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.GeoNamesWebService;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 /**
  * Converts a HealthMap location into an ABRAID location.
@@ -22,9 +20,6 @@ import java.util.List;
  */
 public class HealthMapLocationConverter {
     private static final Logger LOGGER = Logger.getLogger(HealthMapLocationConverter.class);
-    private static final String MULTIPLE_LOCATIONS_MATCH_MESSAGE =
-            "More than one location already exists at point (%f,%f) and with precision %s, and HealthMap location " +
-            "has no GeoNames ID. Arbitrarily using location ID %d.";
     private static final String IGNORING_COUNTRY_MESSAGE =
             "Ignoring HealthMap location in country \"%s\" as it is not of interest";
     private static final String GEONAMES_FCODE_NOT_IN_DATABASE_MESSAGE =
@@ -58,33 +53,13 @@ public class HealthMapLocationConverter {
         if (validate(healthMapLocation)) {
             Point point = createPointFromLatLong(healthMapLocation);
 
-            location = findExistingLocation(healthMapLocation, point);
+            location = findExistingLocationByGeoNameId(healthMapLocation);
             if (location == null) {
                 location = createLocation(healthMapLocation, point);
             }
         }
 
         return location;
-    }
-
-    /**
-     * Adds location precision to a location. This is split out from the rest of the convert method, so that we only
-     * call GeoNames if necessary.
-     * @param healthMapLocation The HealthMap location.
-     * @param location The location.
-     */
-    public void addPrecision(HealthMapLocation healthMapLocation, Location location) {
-        Integer geoNameId = healthMapLocation.getGeoNameId();
-
-        if (geoNameId != null) {
-            addPrecisionUsingGeoNames(location, geoNameId);
-        }
-
-        if (location.getPrecision() == null) {
-            // The precision could not be added using GeoNames for whatever reason. So use the "rough" location
-            // precision supplied in HealthMap's place_basic_type field.
-            addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
-        }
     }
 
     private boolean validate(HealthMapLocation healthMapLocation) {
@@ -97,45 +72,12 @@ public class HealthMapLocationConverter {
         return true;
     }
 
-    private Location findExistingLocation(HealthMapLocation healthMapLocation, Point point) {
-        Location location;
-
+    private Location findExistingLocationByGeoNameId(HealthMapLocation healthMapLocation) {
+        Location location = null;
         if (healthMapLocation.getGeoNameId() != null) {
             // Query for an existing location at the specified GeoNames ID
             location = locationService.getLocationByGeoNameId(healthMapLocation.getGeoNameId());
-        } else {
-            // Query for an existing location at the specified lat/long and location precision
-            LocationPrecision precision = findLocationPrecision(healthMapLocation);
-            location = findExistingLocation(point, precision);
         }
-
-        return location;
-    }
-
-    /**
-     * Finds an existing location at the specified point and precision.
-     * @param point The point.
-     * @param precision The precision.
-     * @return The first found location, or null if none found.
-     */
-    public Location findExistingLocation(Point point, LocationPrecision precision) {
-        Location location = null;
-        List<Location> locations = locationService.getLocationsByPointAndPrecision(point, precision);
-
-        if (locations.size() > 0) {
-            location = locations.get(0);
-            if (locations.size() > 1) {
-                // There may be multiple locations at the specified lat/long and location precision. For example:
-                // - Location 1 is created at point (x,y) with no GeoNames ID and place_basic_type 'p' (precise)
-                // - Location 2 is created at the same point (x,y) with a specified GeoNames ID, whose feature code
-                //   indicates a precise location
-                // It is valid for these to co-exist, but which one wins in this case is arbitrary. So we just pick
-                // the first one and log that fact.
-                LOGGER.warn(String.format(MULTIPLE_LOCATIONS_MATCH_MESSAGE, point.getX(), point.getY(), precision,
-                        location.getId()));
-            }
-        }
-
         return location;
     }
 
@@ -150,9 +92,24 @@ public class HealthMapLocationConverter {
             location.setHealthMapCountryId(healthMapCountry.getId());
             location.setGeom(point);
             location.setName(healthMapLocation.getPlaceName());
+            addPrecision(healthMapLocation, location);
         }
 
         return location;
+    }
+
+    private void addPrecision(HealthMapLocation healthMapLocation, Location location) {
+        Integer geoNameId = healthMapLocation.getGeoNameId();
+
+        if (geoNameId != null) {
+            addPrecisionUsingGeoNames(location, geoNameId);
+        }
+
+        if (location.getPrecision() == null) {
+            // The precision could not be added using GeoNames for whatever reason. So use the "rough" location
+            // precision supplied in HealthMap's place_basic_type field.
+            addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
+        }
     }
 
     private void addPrecisionUsingGeoNames(Location location, int geoNameId) {
@@ -209,7 +166,7 @@ public class HealthMapLocationConverter {
 
         if (geoName == null) {
             // We do not, so look it up using the GeoNames web service
-            uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName geoNameDTO =
+            uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.domain.GeoName geoNameDTO =
                     geoNamesWebService.getById(geoNameId);
 
             if (geoNameDTO != null) {
@@ -227,7 +184,7 @@ public class HealthMapLocationConverter {
     }
 
     private GeoName createAndSaveGeoName(
-            uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.domain.GeoName geoNameDTO) {
+            uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.domain.GeoName geoNameDTO) {
         GeoName geoName = new GeoName(geoNameDTO.getGeoNameId(), geoNameDTO.getFeatureCode());
         locationService.saveGeoName(geoName);
         return geoName;

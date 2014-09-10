@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
+package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.ObjectUtils;
@@ -6,7 +6,7 @@ import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
 /**
  * Converts a HealthMap alert into an ABRAID disease occurrence.
@@ -53,11 +53,6 @@ public class HealthMapAlertConverter {
             occurrence.setOccurrenceDate(healthMapAlert.getDate());
             occurrence.setAlert(alert);
             occurrence.setLocation(location);
-
-            if (diseaseService.doesDiseaseOccurrenceExist(occurrence)) {
-                // If this disease occurrence already exists, do not write it again
-                occurrence = null;
-            }
         }
 
         return occurrence;

@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer;
 
 /**
  * Service class for data acquisition.
@@ -10,10 +10,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquis
  */
 @Transactional(rollbackFor = Exception.class)
 public class DataAcquisitionServiceImpl implements DataAcquisitionService {
-    private HealthMapDataAcquisition healthMapDataAcquisition;
+    private HealthMapDataAcquirer healthMapDataAcquirer;
 
-    public DataAcquisitionServiceImpl(HealthMapDataAcquisition healthMapDataAcquisition) {
-        this.healthMapDataAcquisition = healthMapDataAcquisition;
+    public DataAcquisitionServiceImpl(HealthMapDataAcquirer healthMapDataAcquirer) {
+        this.healthMapDataAcquirer = healthMapDataAcquirer;
     }
 
     /**
@@ -21,7 +21,7 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
      */
     @Override
     public void acquireHealthMapDataFromWebService() {
-        healthMapDataAcquisition.acquireDataFromWebService();
+        healthMapDataAcquirer.acquireDataFromWebService();
     }
 
     /**
@@ -30,6 +30,6 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
      */
     @Override
     public void acquireHealthMapDataFromFile(String jsonFileName) {
-        healthMapDataAcquisition.acquireDataFromFile(jsonFileName);
+        healthMapDataAcquirer.acquireDataFromFile(jsonFileName);
     }
 }
