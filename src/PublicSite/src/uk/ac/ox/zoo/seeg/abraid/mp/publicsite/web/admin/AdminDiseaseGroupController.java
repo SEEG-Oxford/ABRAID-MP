@@ -113,6 +113,25 @@ public class AdminDiseaseGroupController extends AbstractController {
     }
 
     /**
+     * Generates a disease extent for the specified disease group.
+     * @param diseaseGroupId The id of the disease group.
+     * @return An error status: 204 for success, 404 if disease group cannot be found in database.
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/generatediseaseextent",
+            method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup != null) {
+            modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to request the model run.
      * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
@@ -124,7 +143,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable Integer diseaseGroupId, String batchEndDate) {
+    public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchEndDate) {
         try {
             DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
             modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
@@ -164,7 +183,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                     method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity save(@PathVariable Integer diseaseGroupId, @RequestBody JsonDiseaseGroup settings) {
+    public ResponseEntity save(@PathVariable int diseaseGroupId, @RequestBody JsonDiseaseGroup settings) {
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if ((diseaseGroup != null) && validInputs(settings)) {

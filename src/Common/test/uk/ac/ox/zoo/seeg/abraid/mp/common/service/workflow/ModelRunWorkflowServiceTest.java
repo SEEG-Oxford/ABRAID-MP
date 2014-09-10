@@ -63,7 +63,6 @@ public class ModelRunWorkflowServiceTest {
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId);
-        when(modelRunOccurrencesSelector.selectModelRunDiseaseOccurrences()).thenReturn(occurrences);
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
@@ -74,7 +73,7 @@ public class ModelRunWorkflowServiceTest {
                 eq(lastModelRunPrepDate), eq(diseaseGroupId));
         verify(reviewManager, times(1)).updateDiseaseOccurrenceIsValidatedValues(
                 eq(diseaseGroupId), eq(DateTime.now()), eq(true));
-        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate));
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class));
         verify(modelRunRequester, times(1)).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchEndDate));
         verify(diseaseService, times(1)).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator, times(1)).saveExpertsWeightings(same(newWeightings));
@@ -192,10 +191,25 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void generateDiseaseExtent() {
+    public void generateDiseaseExtentWithAutomaticModelRunsDisabled() {
         // Arrange
         int diseaseGroupId = 1;
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+
+        // Act
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+
+        // Assert
+        verify(diseaseExtentGenerator, times(1)).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null));
+        verify(modelRunWorkflowService, never()).selectOccurrencesForModelRun(anyInt());
+    }
+
+    @Test
+    public void generateDiseaseExtentWithAutomaticModelRunsEnabled() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
         doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId);

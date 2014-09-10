@@ -46,6 +46,12 @@ public class DiseaseExtentGeneratorHelperTest {
     }
 
     @Test
+    public void hasModelBeenSuccessfullyRunReturnsCorrectValue() {
+        DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper();
+        assertThat(helper.hasModelBeenSuccessfullyRun()).isTrue();
+    }
+
+    @Test
     public void groupOccurrencesByAdminUnitWithNoOccurrencesCreatesEmptyMappings() {
         // Arrange
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper();
@@ -317,7 +323,7 @@ public class DiseaseExtentGeneratorHelperTest {
 
     private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper() {
         DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
-                defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses);
+                defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses, true);
         helper.setOccurrences(emptyOccurrences);
         return helper;
     }
@@ -325,7 +331,7 @@ public class DiseaseExtentGeneratorHelperTest {
     private DiseaseExtentGeneratorHelper createDefaultDiseaseExtentGeneratorHelper(DiseaseExtent parameters) {
         defaultDiseaseGroup.setDiseaseExtentParameters(parameters);
         DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
-                defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses);
+                defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses, true);
         helper.setOccurrences(emptyOccurrences);
         return helper;
     }

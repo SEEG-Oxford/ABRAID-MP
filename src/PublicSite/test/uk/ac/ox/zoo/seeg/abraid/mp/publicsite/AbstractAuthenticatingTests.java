@@ -28,7 +28,7 @@ public abstract class AbstractAuthenticatingTests {
 
     public static void setupAnonymousUser() {
         Authentication authentication = mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn("anonymousUser"); // This is the documented behavior of spring
+        when(authentication.getPrincipal()).thenReturn("anonymousUser"); // This is the documented behaviour of spring
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
