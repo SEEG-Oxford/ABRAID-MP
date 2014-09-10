@@ -31,7 +31,6 @@
         <property name="passwordEncoder" ref="passwordEncoder" /> <!-- Uses http basic password to hold the API key -->
     </bean>
 
-
     <bean id="apiUserDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.ApiUserDetailsServiceImpl" >
         <constructor-arg name="apiKeyHash" value="${api.key.hash}" />
     </bean>
