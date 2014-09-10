@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,7 +26,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator;
 
 import javax.servlet.ServletRequest;
 import java.util.*;
@@ -58,7 +57,7 @@ public class RegistrationController extends AbstractController {
             "Invalid registration session";
 
     private static final String EMAIL_DATA_KEY = "expert";
-    private static final String EMAIL_TEMPLATE = "newUserEmail.ftl";
+    private static final String EMAIL_TEMPLATE = "registration/newUserEmail.ftl";
     private static final String EMAIL_SUBJECT = "New user requiring visibility sign off";
 
     private final CurrentUserService currentUserService;
@@ -67,13 +66,13 @@ public class RegistrationController extends AbstractController {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper json;
-    private final ExpertForRegistrationValidator validator;
+    private final RegistrationControllerValidator validator;
 
     @Autowired
     public RegistrationController(CurrentUserService currentUserService, ExpertService expertService,
                                   DiseaseService diseaseService, EmailService emailService,
                                   PasswordEncoder passwordEncoder, ObjectMapper geoJsonObjectMapper,
-                                  ExpertForRegistrationValidator expertRegistrationValidator) {
+                                  RegistrationControllerValidator expertRegistrationValidator) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;

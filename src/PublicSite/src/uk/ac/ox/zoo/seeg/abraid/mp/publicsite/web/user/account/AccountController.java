@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +22,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertUpdateValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
 import java.util.Collection;
@@ -37,8 +36,9 @@ import static ch.lambdaj.Lambda.convert;
 @Controller
 public class AccountController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(AccountController.class);
-
     private static final String LOG_USER_UPDATED = "User updated (%s)";
+    private static final String LOG_PASSWORD_CHANGED = "Password updated (%s)";
+
     private static final String DISEASES_ATTRIBUTE_KEY = "diseases";
     private static final String JSON_EXPERT_ATTRIBUTE_KEY = "jsonExpert";
 
@@ -46,24 +46,23 @@ public class AccountController extends AbstractController {
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
     private final ObjectMapper json;
-    private final ExpertUpdateValidator validator;
-    private final ExpertUpdateHelper helper;
+    private final AccountControllerValidator validator;
+    private final AccountControllerHelper helper;
 
     @Autowired
     public AccountController(CurrentUserService currentUserService,
                              ExpertService expertService,
                              DiseaseService diseaseService,
                              ObjectMapper geoJsonObjectMapper,
-                             ExpertUpdateValidator expertUpdateValidator,
-                             ExpertUpdateHelper expertUpdateHelper) {
+                             AccountControllerValidator adminControllerValidator,
+                             AccountControllerHelper accountControllerTransactionHelper) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
         this.json = geoJsonObjectMapper;
-        this.validator = expertUpdateValidator;
-        this.helper = expertUpdateHelper;
+        this.validator = adminControllerValidator;
+        this.helper = accountControllerTransactionHelper;
     }
-
 
     /**
      * Loads the account editing page.
@@ -76,7 +75,6 @@ public class AccountController extends AbstractController {
     public String getAccountEditPage(ModelMap modelMap) throws JsonProcessingException {
         JsonExpertDetails expert = loadExpertDTO();
         List<JsonValidatorDiseaseGroup> allValidatorDiseaseGroups = loadValidatorDiseaseGroups();
-
 
         modelMap.addAttribute(DISEASES_ATTRIBUTE_KEY, json.writeValueAsString(allValidatorDiseaseGroups));
         modelMap.addAttribute(JSON_EXPERT_ATTRIBUTE_KEY, json.writeValueAsString(expert));
@@ -93,6 +91,8 @@ public class AccountController extends AbstractController {
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {
+        int expertId = currentUserService.getCurrentUser().getId();
+
         // Validate dto
         Collection<String> validationFailures = validator.validate(expert);
         if (!validationFailures.isEmpty()) {
@@ -101,9 +101,52 @@ public class AccountController extends AbstractController {
 
         // Update & save expert
         try {
-            int id = currentUserService.getCurrentUser().getId();
-            helper.processExpertAsTransaction(id, expert);
-            LOGGER.info(String.format(LOG_USER_UPDATED, id));
+            helper.processExpertProfileUpdateAsTransaction(expertId, expert);
+            LOGGER.info(String.format(LOG_USER_UPDATED, expertId));
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
+        }
+
+        // Return successfully
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Could add success page
+    }
+
+    /**
+     * Loads the password change page.
+     * @return the template for the password page.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(value = "/account/password", method = RequestMethod.GET)
+    public String getChangePasswordPage() {
+        return "account/password";
+    }
+
+    /**
+     * Receives the user input from the password change page and responds accordingly.
+     * @param oldPassword The user input for their existing password.
+     * @param newPassword The user input for their new password.
+     * @param confirmPassword The user input for their new password (confirmation).
+     * @return A failure status with an array of response messages or a success status.
+     */
+    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @RequestMapping(value = "/account/password",
+            method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<String>> submitChangePasswordPage(
+            String oldPassword, String newPassword, String confirmPassword) {
+        int expertId = currentUserService.getCurrentUser().getId();
+
+        // Validate inputs
+        Collection<String> validationFailures =
+                validator.validatePasswordChange(oldPassword, newPassword, confirmPassword, expertId);
+
+        if (!validationFailures.isEmpty()) {
+            return new ResponseEntity<>(validationFailures, HttpStatus.BAD_REQUEST);
+        }
+
+        // Update & save expert
+        try {
+            helper.processExpertPasswordChangeAsTransaction(expertId, newPassword);
+            LOGGER.info(String.format(LOG_PASSWORD_CHANGED, expertId));
         } catch (ValidationException e) {
             return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
         }

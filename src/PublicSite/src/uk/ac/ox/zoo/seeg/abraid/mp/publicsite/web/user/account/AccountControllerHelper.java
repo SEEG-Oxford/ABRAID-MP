@@ -1,7 +1,8 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
@@ -23,20 +24,23 @@ import static org.hamcrest.collection.IsIn.isIn;
  * Helper for the AccountController, separated out into a class to isolate the transaction/exception rollback.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertUpdateHelper {
+public class AccountControllerHelper {
     private static final String FAIL_NO_ID_MATCH = "No matching expert found to update (%s).";
     private static final String EMAIL_DATA_KEY = "expert";
     private static final String EMAIL_SUBJECT = "Updated user requiring visibility sign off";
-    private static final String EMAIL_TEMPLATE = "updatedUserEmail.ftl";
+    private static final String EMAIL_TEMPLATE = "account/updatedUserEmail.ftl";
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ExpertUpdateHelper(ExpertService expertService, DiseaseService diseaseService, EmailService emailService) {
+    public AccountControllerHelper(ExpertService expertService, DiseaseService diseaseService,
+                                   EmailService emailService, PasswordEncoder passwordEncoder) {
         this.expertService = expertService;
         this.diseaseService = diseaseService;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -46,7 +50,8 @@ public class ExpertUpdateHelper {
      * @throws ValidationException Thrown if an id matching expert can not be found.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void processExpertAsTransaction(int id, JsonExpertDetails expertDto) throws ValidationException {
+    public void processExpertProfileUpdateAsTransaction(int id, JsonExpertDetails expertDto)
+            throws ValidationException {
         // Start of transaction
         Expert expert = expertService.getExpertById(id);
         if (expert == null) {
@@ -80,6 +85,27 @@ public class ExpertUpdateHelper {
             if (resetVisibility) {
                 emailAdmin(expert);
             }
+        }
+        // End of transaction
+    }
+
+    /**
+     * Updates the database entry for an expert's password.
+     * @param id The expert to update.
+     * @param password The new password.
+     * @throws ValidationException Thrown if an id matching expert can not be found.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void processExpertPasswordChangeAsTransaction(int id, String password) throws ValidationException {
+        // Start of transaction
+        Expert expert = expertService.getExpertById(id);
+        if (expert == null) {
+            // Roll back
+            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_ID_MATCH, id)));
+        } else {
+            String passwordHash = passwordEncoder.encode(password);
+            expert.setPassword(passwordHash);
+            expertService.saveExpert(expert);
         }
         // End of transaction
     }

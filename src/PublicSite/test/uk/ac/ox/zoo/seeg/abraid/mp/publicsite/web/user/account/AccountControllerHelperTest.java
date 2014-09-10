@@ -1,8 +1,9 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
@@ -21,23 +22,23 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for ExpertUpdateHelper.
+ * Tests for AccountControllerHelper.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertUpdateHelperTest {
+public class AccountControllerHelperTest {
     @Test
     public void processExpertAsTransactionUpdatesAndSavesCorrectSingleExpertCorrectly() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), null);
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mockExpertDomain();
 
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expert, times(1)).setName(expertDto.getName());
@@ -54,14 +55,14 @@ public class ExpertUpdateHelperTest {
         DateTimeUtils.setCurrentMillisFixed(12345);
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), null);
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mockExpertDomain();
 
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expert, times(1)).setVisibilityApproved(false);
@@ -76,7 +77,7 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), null);
         JsonExpertDetails expertDto = mockExpert();
         Expert expert = mock(Expert.class);
 
@@ -92,7 +93,7 @@ public class ExpertUpdateHelperTest {
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expert, times(0)).setVisibilityApproved(anyBoolean());
@@ -105,13 +106,13 @@ public class ExpertUpdateHelperTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, mock(EmailService.class));
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), null);
         JsonExpertDetails expert = mock(JsonExpertDetails.class);
 
         when(expertService.getExpertById(anyInt())).thenReturn(null);
 
         // Act
-        catchException(target).processExpertAsTransaction(-1, expert);
+        catchException(target).processExpertProfileUpdateAsTransaction(-1, expert);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ValidationException.class);
@@ -123,7 +124,7 @@ public class ExpertUpdateHelperTest {
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
         EmailService emailService = mock(EmailService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, emailService);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, emailService, null);
         JsonExpertDetails expertDto = mockExpert();
         when(expertDto.getName()).thenReturn("asdfas");
         Expert expert = mockExpertDomain();
@@ -132,7 +133,7 @@ public class ExpertUpdateHelperTest {
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expertService, times(1)).saveExpert(expert);
@@ -140,7 +141,7 @@ public class ExpertUpdateHelperTest {
         data.put("expert", expert);
         verify(emailService, times(1)).sendEmailInBackground(
                 "Updated user requiring visibility sign off",
-                "updatedUserEmail.ftl",
+                "account/updatedUserEmail.ftl",
                 data);
     }
 
@@ -150,7 +151,7 @@ public class ExpertUpdateHelperTest {
         ExpertService expertService = mock(ExpertService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
         EmailService emailService = mock(EmailService.class);
-        ExpertUpdateHelper target = new ExpertUpdateHelper(expertService, diseaseService, emailService);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, emailService, null);
         JsonExpertDetails expertDto = mockExpert();
         when(expertDto.getName()).thenReturn("asdfas");
         Expert expert = mockExpertDomain();
@@ -159,11 +160,47 @@ public class ExpertUpdateHelperTest {
         when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
 
         // Act
-        target.processExpertAsTransaction(321, expertDto);
+        target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
         verify(expertService, times(1)).saveExpert(expert);
         verify(emailService, never()).sendEmailInBackground(anyString(), anyString(), anyMapOf(String.class, Object.class));
+    }
+
+    @Test
+    public void processExpertPasswordChangeAsTransactionUpdatesAndSavesPasswordCorrectly() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), passwordEncoder);
+        Expert expert = mockExpertDomain();
+
+        when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
+        when(passwordEncoder.encode("password")).thenReturn("passwordHash");
+
+        // Act
+        target.processExpertPasswordChangeAsTransaction(321, "password");
+
+        // Assert
+        verify(expert, times(1)).setPassword("passwordHash");
+        verify(expertService, times(1)).saveExpert(expert);
+    }
+
+    @Test
+    public void processExpertPasswordChangeAsTransactionThrowsValidationExceptionIfNoMatchingExpert() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), mock(PasswordEncoder.class));
+
+        when(expertService.getExpertById(anyInt())).thenReturn(null);
+
+        // Act
+        catchException(target).processExpertPasswordChangeAsTransaction(-1, "password");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(ValidationException.class);
     }
 
     private static JsonExpertDetails mockExpert() {

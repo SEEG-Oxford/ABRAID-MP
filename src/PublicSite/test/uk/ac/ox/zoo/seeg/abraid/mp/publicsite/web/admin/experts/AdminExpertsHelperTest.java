@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for AdminExpertsHelper.
+ * Tests for AdminExpertsControllerHelper.
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminExpertsHelperTest {
@@ -23,7 +23,7 @@ public class AdminExpertsHelperTest {
     public void processExpertsAsTransactionUpdatesAndSavesCorrectSingleExpertCorrectly() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper target = new AdminExpertsHelper(expertService);
+        AdminExpertsControllerHelper target = new AdminExpertsControllerHelper(expertService);
         JsonExpertFull expertDto = mock(JsonExpertFull.class);
         List<JsonExpertFull> experts = Arrays.asList(expertDto);
         Expert expert = mock(Expert.class);
@@ -51,7 +51,7 @@ public class AdminExpertsHelperTest {
     public void processExpertsAsTransactionCanProcessMultipleExperts() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper target = new AdminExpertsHelper(expertService);
+        AdminExpertsControllerHelper target = new AdminExpertsControllerHelper(expertService);
         List<JsonExpertFull> experts =
                 Arrays.asList(mock(JsonExpertFull.class), mock(JsonExpertFull.class), mock(JsonExpertFull.class));
 
@@ -68,7 +68,7 @@ public class AdminExpertsHelperTest {
     public void processExpertsAsTransactionThrowsValidationExceptionIfNoMatchingExpert() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper target = new AdminExpertsHelper(expertService);
+        AdminExpertsControllerHelper target = new AdminExpertsControllerHelper(expertService);
         List<JsonExpertFull> experts =
                 Arrays.asList(mock(JsonExpertFull.class), mock(JsonExpertFull.class), mock(JsonExpertFull.class));
 

@@ -13,3 +13,15 @@
     </div>
 </form>
 </#macro>
+
+<#macro formGroupBasic id label bind glyph type="text">
+<p class="form-group">
+    <label for="${id}">${label}: </label>
+    <span class="input-group">
+        <span class="input-group-addon">
+            <i class="${glyph}"></i>
+        </span>
+        <input id="${id}" type="${type}" class="form-control" placeholder="${label}" data-bind="formValue: ${bind}">
+    </span>
+</p>
+</#macro>

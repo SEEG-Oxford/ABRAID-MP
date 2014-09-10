@@ -1,7 +1,8 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertValidationRulesChecker;
 
 import java.util.Arrays;
 
@@ -10,15 +11,15 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for ExpertUpdateValidator.
+ * Tests for AccountControllerValidator.
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertUpdateValidatorTest {
+public class AccountControllerValidatorTest {
     @Test
     public void validateChecksName() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertUpdateValidator target = new ExpertUpdateValidator(checker);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
         JsonExpertDetails expert = mockExpert();
         when(expert.getName()).thenReturn("name");
 
@@ -33,7 +34,7 @@ public class ExpertUpdateValidatorTest {
     public void validateChecksJobTitle() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertUpdateValidator target = new ExpertUpdateValidator(checker);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
         JsonExpertDetails expert = mockExpert();
         when(expert.getJobTitle()).thenReturn("job");
 
@@ -48,7 +49,7 @@ public class ExpertUpdateValidatorTest {
     public void validateChecksInstitution() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertUpdateValidator target = new ExpertUpdateValidator(checker);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
         JsonExpertDetails expert = mockExpert();
         when(expert.getInstitution()).thenReturn("institute");
 
@@ -63,7 +64,7 @@ public class ExpertUpdateValidatorTest {
     public void validateChecksVisibilityRequested() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertUpdateValidator target = new ExpertUpdateValidator(checker);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
         JsonExpertDetails expert = mockExpert();
         when(expert.getVisibilityRequested()).thenReturn(true);
 
@@ -78,7 +79,7 @@ public class ExpertUpdateValidatorTest {
     public void validateChecksDiseaseInterests() throws Exception {
         // Arrange
         ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
-        ExpertUpdateValidator target = new ExpertUpdateValidator(checker);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
         JsonExpertDetails expert = mockExpert();
         when(expert.getDiseaseInterests()).thenReturn(Arrays.asList(1, 2));
 

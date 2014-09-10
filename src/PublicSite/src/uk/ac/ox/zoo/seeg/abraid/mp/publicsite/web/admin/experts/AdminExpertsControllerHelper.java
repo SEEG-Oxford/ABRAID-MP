@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,12 +14,12 @@ import java.util.Collection;
  * Helper for the AdminExpertsController, separated out into a class to isolate the transaction/exception rollback.
  * Copyright (c) 2014 University of Oxford
  */
-public class AdminExpertsHelper {
+public class AdminExpertsControllerHelper {
     private static final String FAIL_NO_ID_MATCH = "At least one expert was specified with an invalid ID (%s).";
     private ExpertService expertService;
 
     @Autowired
-    public AdminExpertsHelper(ExpertService expertService) {
+    public AdminExpertsControllerHelper(ExpertService expertService) {
         this.expertService = expertService;
     }
 

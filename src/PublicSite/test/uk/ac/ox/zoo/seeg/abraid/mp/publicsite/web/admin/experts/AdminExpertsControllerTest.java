@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,7 +31,7 @@ public class AdminExpertsControllerTest {
         when(expertService.getAllExperts()).thenReturn(new ArrayList<Expert>());
         GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
 
-        AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null);
+        AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null, null);
 
         // Act
         String result = target.showPage(mock(Model.class));
@@ -48,7 +48,7 @@ public class AdminExpertsControllerTest {
         when(expertService.getAllExperts()).thenReturn(experts);
         GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
 
-        AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null);
+        AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null, null);
         Model model = mock(Model.class);
 
         // Act
@@ -81,77 +81,38 @@ public class AdminExpertsControllerTest {
     }
 
     @Test
-    public void submitPageReturnsBadRequestForInvalidExpertsDueToNulls() throws Exception {
+    public void submitPageValidatesAllExpertsAndReturnsBadRequestForFailure() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper helper = mock(AdminExpertsHelper.class);
+        AdminExpertsControllerHelper helper = mock(AdminExpertsControllerHelper.class);
 
-        AdminExpertsController target = new AdminExpertsController(expertService, null, helper);
+        AdminExpertsControllerValidator validator = mock(AdminExpertsControllerValidator.class);
+        AdminExpertsController target = new AdminExpertsController(expertService, null, validator, helper);
 
         JsonExpertFull validExpert = mock(JsonExpertFull.class);
         JsonExpertFull invalidExpert = mock(JsonExpertFull.class);
-        when(invalidExpert.getId()).thenReturn(null);
-        when(invalidExpert.getVisibilityApproved()).thenReturn(null);
-        when(invalidExpert.getWeighting()).thenReturn(null);
-        when(invalidExpert.isAdministrator()).thenReturn(null);
-        when(invalidExpert.isSEEGMember()).thenReturn(null);
         List<JsonExpertFull> experts = Arrays.asList(validExpert, invalidExpert);
+        when(validator.validate(validExpert)).thenReturn(new ArrayList<String>());
+        when(validator.validate(validExpert)).thenReturn(Arrays.asList("Fail1", "Fail2"));
 
         // Act
         ResponseEntity<Collection<String>> result = target.submitPage(experts);
 
         // Assert
+        verify(validator, times(1)).validate(validExpert);
+        verify(validator, times(1)).validate(invalidExpert);
+
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(result.getBody()).hasSize(5);
-    }
-
-    @Test
-    public void submitPageReturnsBadRequestForInvalidExpertsDueToNaNWeighting() throws Exception {
-        // Arrange
-        ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper helper = mock(AdminExpertsHelper.class);
-
-        AdminExpertsController target = new AdminExpertsController(expertService, null, helper);
-
-        JsonExpertFull invalidExpert = mock(JsonExpertFull.class);
-        when(invalidExpert.getWeighting()).thenReturn(Double.NaN);
-        List<JsonExpertFull> experts = Arrays.asList(invalidExpert);
-
-        // Act
-        ResponseEntity<Collection<String>> result = target.submitPage(experts);
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(result.getBody()).hasSize(1);
-    }
-
-    @Test
-    public void submitPageReturnsBadRequestForInvalidExpertsDueToInfWeighting() throws Exception {
-        // Arrange
-        ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper helper = mock(AdminExpertsHelper.class);
-
-        AdminExpertsController target = new AdminExpertsController(expertService, null, helper);
-
-        JsonExpertFull invalidExpert = mock(JsonExpertFull.class);
-        when(invalidExpert.getWeighting()).thenReturn(Double.POSITIVE_INFINITY);
-        List<JsonExpertFull> experts = Arrays.asList(invalidExpert);
-
-        // Act
-        ResponseEntity<Collection<String>> result = target.submitPage(experts);
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(result.getBody()).hasSize(1);
+        assertThat(result.getBody()).containsOnly("Fail1", "Fail2");
     }
 
     @Test
     public void submitPagePassesValidExpertSetsToTransactionHelperMethodAndReturnsNoContent() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper helper = mock(AdminExpertsHelper.class);
+        AdminExpertsControllerHelper helper = mock(AdminExpertsControllerHelper.class);
 
-        AdminExpertsController target = new AdminExpertsController(expertService, null, helper);
+        AdminExpertsController target = new AdminExpertsController(expertService, null, mock(AdminExpertsControllerValidator.class), helper);
 
         JsonExpertFull validExpert = mock(JsonExpertFull.class);
         List<JsonExpertFull> experts = Arrays.asList(validExpert);
@@ -168,12 +129,12 @@ public class AdminExpertsControllerTest {
     public void submitPageReturnsBadRequestForValidationExceptionInHelper() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        AdminExpertsHelper helper = mock(AdminExpertsHelper.class);
+        AdminExpertsControllerHelper helper = mock(AdminExpertsControllerHelper.class);
         List<String> expectedFailures = Arrays.asList("Expected");
         doThrow(new ValidationException(expectedFailures))
                 .when(helper).processExpertsAsTransaction(anyCollectionOf(JsonExpertFull.class));
 
-        AdminExpertsController target = new AdminExpertsController(expertService, null, helper);
+        AdminExpertsController target = new AdminExpertsController(expertService, null, mock(AdminExpertsControllerValidator.class), helper);
 
         JsonExpertFull helperIssueExpert = mock(JsonExpertFull.class);
         List<JsonExpertFull> experts = Arrays.asList(helperIssueExpert);

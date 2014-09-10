@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertUpdateValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
 import java.util.ArrayList;
@@ -31,8 +30,8 @@ import static org.mockito.Mockito.*;
 public class AccountControllerTest {
     private static AccountController createTarget(int userId, ExpertService expertServiceIn,
                                                   DiseaseService diseaseService,
-                                                  ExpertUpdateValidator expertUpdateValidator,
-                                                  ExpertUpdateHelper expertUpdateHelper) {
+                                                  AccountControllerValidator adminControllerValidator,
+                                                  AccountControllerHelper accountControllerTransactionHelper) {
         CurrentUserService userService = mock(CurrentUserService.class);
         PublicSiteUser user = mock(PublicSiteUser.class);
         when(userService.getCurrentUser()).thenReturn(user);
@@ -49,8 +48,8 @@ public class AccountControllerTest {
                 expertService,
                 diseaseService == null ? mock(DiseaseService.class) : diseaseService,
                 new GeoJsonObjectMapper(),
-                expertUpdateValidator == null ? mock(ExpertUpdateValidator.class) : expertUpdateValidator,
-                expertUpdateHelper == null ? mock(ExpertUpdateHelper.class) : expertUpdateHelper);
+                adminControllerValidator == null ? mock(AccountControllerValidator.class) : adminControllerValidator,
+                accountControllerTransactionHelper == null ? mock(AccountControllerHelper.class) : accountControllerTransactionHelper);
     }
 
     @Test
@@ -94,7 +93,7 @@ public class AccountControllerTest {
     @Test
     public void submitAccountEditPageReturnsBadRequestIfValidationFails() throws Exception {
         // Arrange
-        ExpertUpdateValidator validator = mock(ExpertUpdateValidator.class);
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountController target = createTarget(1, null, null, validator, null);
         when(validator.validate(any(JsonExpertDetails.class))).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
 
@@ -106,16 +105,14 @@ public class AccountControllerTest {
         assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
     }
 
-
     @Test
     public void submitAccountEditPageReturnsBadRequestIfSaveFails() throws Exception {
         // Arrange
-        ExpertUpdateValidator validator = mock(ExpertUpdateValidator.class);
-        ExpertUpdateHelper helper = mock(ExpertUpdateHelper.class);
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
         AccountController target = createTarget(1, null, null, validator, helper);
-        when(validator.validate(any(JsonExpertDetails.class))).thenReturn(new ArrayList<String>());
         doThrow(new ValidationException(Arrays.asList("FAIL3")))
-                .when(helper).processExpertAsTransaction(anyInt(), any(JsonExpertDetails.class));
+                .when(helper).processExpertProfileUpdateAsTransaction(anyInt(), any(JsonExpertDetails.class));
 
         // Act
         ResponseEntity<Collection<String>> result = target.submitAccountEditPage(mock(JsonExpertDetails.class));
@@ -127,18 +124,77 @@ public class AccountControllerTest {
 
     @Test
     public void submitAccountEditPageSavesExpertAndReturnsNoContentForValidRequest() throws Exception {
-        ExpertUpdateValidator validator = mock(ExpertUpdateValidator.class);
-        ExpertUpdateHelper helper = mock(ExpertUpdateHelper.class);
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
         int userId = 99;
         AccountController target = createTarget(userId, null, null, validator, helper);
-        when(validator.validate(any(JsonExpertDetails.class))).thenReturn(new ArrayList<String>());
 
         // Act
         JsonExpertDetails expert = mock(JsonExpertDetails.class);
         ResponseEntity<Collection<String>> result = target.submitAccountEditPage(expert);
 
         // Assert
-        verify(helper, times(1)).processExpertAsTransaction(userId, expert);
+        verify(helper, times(1)).processExpertProfileUpdateAsTransaction(userId, expert);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void getChangePasswordPageReturnsCorrectTemplate() throws Exception {
+        // Arrange
+        AccountController target = createTarget(1, null, null, null, null);
+
+        // Act
+        String result = target.getChangePasswordPage();
+
+        // Assert
+        assertThat(result).isEqualTo("account/password");
+    }
+
+    @Test
+    public void submitChangePasswordPageReturnsBadRequestIfValidationFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper);
+        when(validator.validatePasswordChange(anyString(), anyString(), anyString(), anyInt())).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void submitChangePasswordPageReturnsBadRequestIfSaveFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper);
+        doThrow(new ValidationException(Arrays.asList("FAIL3")))
+                .when(helper).processExpertPasswordChangeAsTransaction(anyInt(), anyString());
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL3");
+    }
+
+    @Test
+    public void submitChangePasswordPageSavesPasswordAndReturnsNoContentForValidRequest() throws Exception {
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        int userId = 99;
+        AccountController target = createTarget(userId, null, null, validator, helper);
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
+
+        // Assert
+        verify(helper, times(1)).processExpertPasswordChangeAsTransaction(userId, "newPassword");
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
