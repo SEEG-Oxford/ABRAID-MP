@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration("file:ModelOutputHandler/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainControllerIntegrationTest extends AbstractSpringIntegrationTests {
-    private static final String OUTPUT_HANDLER_PATH = "/modeloutputhandler/handleoutputs";
+    private static final String OUTPUT_HANDLER_PATH = "/handleoutputs";
     private static final String TEST_DATA_PATH = "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata";
 
     private static final String TEST_MODEL_RUN_NAME = "deng_2014-05-16-13-28-57_482ae3ca-ab30-414d-acce-388baae7d83c";

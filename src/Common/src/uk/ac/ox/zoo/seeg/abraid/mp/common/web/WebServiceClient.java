@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -112,8 +113,12 @@ public class WebServiceClient {
             client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 
-            // Buffer the request body and send it in one go instead of "chunking". This allows Jersey to handle
-            // authentication challenges (e.g. if the server is using HTTP basic auth).
+            // If HTTP Basic Auth credentials are provided (in the url) send them with the initial request, rather
+            // than waiting for a challenge request.
+            client.property(ApacheClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION, true);
+
+            // Use buffered transfer encoding instead of chunked as we won't normally be sending data while it is
+            // still being generated. (Additionally httpbin.org - used in tests - doesn't handle chunked correctly).
             client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
 
             DateTime startDate = DateTime.now();

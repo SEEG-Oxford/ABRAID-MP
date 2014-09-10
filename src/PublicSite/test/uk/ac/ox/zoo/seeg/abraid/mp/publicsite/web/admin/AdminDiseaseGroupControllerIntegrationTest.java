@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
         "file:PublicSite/web/WEB-INF/applicationContext.xml" })
 public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSiteIntegrationTests {
-    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/modelwrapper";
+    public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
 
     @ReplaceWithMock
     @Autowired

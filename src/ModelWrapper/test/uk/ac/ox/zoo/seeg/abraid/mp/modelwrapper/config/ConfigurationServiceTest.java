@@ -16,6 +16,8 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -68,6 +70,17 @@ public class ConfigurationServiceTest {
         writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
         writer.println(extraKey + " = " + StringEscapeUtils.escapeJava(extraValue));
+        writer.close();
+    }
+
+    private void writeStandardSimplePropertiesWithExtra(File testFile, String defaultUsername, String defaultPasswordHash, String defaultRepoUrl, String defaultModelVersion, Map<String, String> extraPairs)
+            throws IOException {
+        writeStandardSimpleProperties(testFile, defaultUsername, defaultPasswordHash, defaultRepoUrl, defaultModelVersion);
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(testFile, true)));
+        for (String key : extraPairs.keySet()) {
+            writer.println(key + " = " + StringEscapeUtils.escapeJava(extraPairs.get(key)));
+
+        }
         writer.close();
     }
 
@@ -771,16 +784,21 @@ public class ConfigurationServiceTest {
     public void getModelOutputHandlerRootUrlReturnsCorrectValue() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
-        String expectedValue = "http://localhost/ModelOutputHandler";
-        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "model.output.handler.root.url", expectedValue);
+        Map pairs = new HashMap();
+        pairs.put("model.output.api.key", "password");
+        pairs.put("model.output.handler.host", "localhost:8080");
+        pairs.put("model.output.handler.path", "/modeloutputhandler");
+        pairs.put("model.output.handler.protocol", "http");
+        pairs.put("model.output.handler.root.url", "${model.output.handler.protocol}://api:${model.output.api.key}@${model.output.handler.host}${model.output.handler.path}");
+
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", pairs);
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
         // Act
         String result = target.getModelOutputHandlerRootUrl();
 
         // Assert
-        assertThat(result).isEqualTo(expectedValue);
+        assertThat(result).isEqualTo("http://api:password@localhost:8080/modeloutputhandler");
     }
 
     private static JsonCovariateConfiguration createJsonCovariateConfig() {

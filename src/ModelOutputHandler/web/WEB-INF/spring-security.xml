@@ -14,10 +14,7 @@
 
     <context:property-placeholder order="1" ignore-resource-not-found="false" ignore-unresolvable="true" location="WEB-INF/api.properties" />
 
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-
-    <!-- API realm -->
-    <security:http realm="ABRAID-MP: ModelWrapper API" pattern="/model/**" create-session="stateless" authentication-manager-ref="apiAuthenticationManager">
+    <security:http realm="ABRAID-MP: ModelOutputHandler API" create-session="stateless" authentication-manager-ref="apiAuthenticationManager">
         <security:intercept-url pattern="/**" access="ROLE_API" />
         <security:http-basic />
     </security:http>
@@ -35,20 +32,5 @@
         <constructor-arg name="apiKeyHash" value="${api.key.hash}" />
     </bean>
 
-    <!-- Admin site realm -->
-    <security:http realm="ABRAID-MP: ModelWrapper" authentication-manager-ref="adminAuthenticationManager">
-        <security:intercept-url pattern="/**" access="ROLE_USER" />
-        <security:http-basic />
-    </security:http>
-
-    <bean id="adminAuthenticationManager" class="org.springframework.security.authentication.ProviderManager">
-        <property name="providers" ref="adminDaoAuthenticationProvider" />
-    </bean>
-
-    <bean id="adminDaoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-        <property name="userDetailsService" ref="adminUserDetailsService"/>
-        <property name="passwordEncoder" ref="passwordEncoder" />
-    </bean>
-
-    <bean id="adminUserDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.UserDetailsServiceImpl" autowire="constructor" />
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 </beans>
