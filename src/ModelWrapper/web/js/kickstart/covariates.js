@@ -9,14 +9,19 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     require([
         "ko",
         "app/covariates/CovariatesListViewModel",
+        "app/covariates/CovariateUploadViewModel",
         "domReady!",
         "shared/navbar"
-    ], function (ko, CovariatesListViewModel, doc) {
+    ], function (ko, CovariatesListViewModel, CovariateUploadViewModel, doc) {
         var covariatesViewModel = new CovariatesListViewModel(baseUrl, initialData);
 
         ko.applyBindings(
             covariatesViewModel,
             doc.getElementById("covariate-body"));
+
+        ko.applyBindings(
+            ko.validatedObservable(new CovariateUploadViewModel(baseUrl)),
+            doc.getElementById("add-covariate-body"));
 
         covariatesViewModel.hasUnsavedChanges.subscribe(function (value) {
             if (value) {
