@@ -3,7 +3,7 @@
  */
 define([
     "ko",
-    "app/BaseFormViewModel"
+    "shared/app/BaseFormViewModel"
 ], function (ko, BaseFormViewModel) {
     "use strict";
 
