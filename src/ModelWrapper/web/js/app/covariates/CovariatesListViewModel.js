@@ -3,12 +3,10 @@
  */
 define([
     "ko",
-    "jquery",
-    "underscore",
     "app/covariates/CovariatesListRowViewModel",
     "shared/app/BaseFormViewModel",
     "shared/app/BaseTableViewModel"
-], function (ko, $, _, CovariatesListRowViewModel, BaseFormViewModel, BaseTableViewModel) {
+], function (ko, CovariatesListRowViewModel, BaseFormViewModel, BaseTableViewModel) {
     "use strict";
 
     return function (baseUrl, initialValue) {
