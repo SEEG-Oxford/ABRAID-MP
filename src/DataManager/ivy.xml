@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+      Ivy dependencies for DataManager.
+      Copyright (c) 2014 University of Oxford
+-->
+<!DOCTYPE ivy-module [
+       <!ENTITY ivy-configurations SYSTEM "../ivy-configurations.xml">
+       <!ENTITY ivy-project-dependencies SYSTEM "../ivy-project-dependencies.xml">
+       <!ENTITY ivy-excludes SYSTEM "../ivy-excludes.xml">
+]>
+<ivy-module version="2.0">
+    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="datamanager"/>
+    <configurations>
+        &ivy-configurations;
+    </configurations>
+    <publications>
+        <artifact name="ABRAID-MP_DataManager" type="jar" ext="jar" conf="build"/>
+    </publications>
+    <dependencies>
+        <!-- External -->
+        <dependency org="org.springframework" name="spring-orm" rev="4.0.1.RELEASE" conf="external->default"/>
+        <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.6" conf="external->default"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.1" conf="external->default" />
+        <dependency org="com.vividsolutions" name="jts" rev="1.13" conf="external->default" />
+
+        <!-- Internal -->
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="dataacquisition" changing="true" rev="${repository.version}" conf="build"/>
+
+        <!-- Internal Test -->
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="testutils"/>
+
+        &ivy-project-dependencies;
+
+        &ivy-excludes;
+    </dependencies>
+</ivy-module>

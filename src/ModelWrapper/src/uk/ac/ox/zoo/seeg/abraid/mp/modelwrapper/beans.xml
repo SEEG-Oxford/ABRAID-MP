@@ -10,7 +10,7 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/commons-properties.xml"/>
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common-properties.xml"/>
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-web.xml"/>
 
     <bean id="osChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl" />

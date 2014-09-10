@@ -29,6 +29,7 @@ public class DiseaseExtentGeneratorHelper {
     private List<DiseaseExtentClass> diseaseExtentClasses;
     private List<DiseaseOccurrenceForDiseaseExtent> occurrences;
     private List<AdminUnitReview> reviews;
+    private boolean hasModelBeenSuccessfullyRun;
 
     // Working fields
     private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit;
@@ -39,12 +40,14 @@ public class DiseaseExtentGeneratorHelper {
     public DiseaseExtentGeneratorHelper(DiseaseGroup diseaseGroup,
                                         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent,
                                         List<? extends AdminUnitGlobalOrTropical> adminUnits,
-                                        List<DiseaseExtentClass> diseaseExtentClasses) {
+                                        List<DiseaseExtentClass> diseaseExtentClasses,
+                                        boolean hasModelBeenSuccessfullyRun) {
         this.diseaseGroup = diseaseGroup;
         this.parameters = diseaseGroup.getDiseaseExtentParameters();
         this.currentDiseaseExtent = currentDiseaseExtent;
         this.adminUnits = adminUnits;
         this.diseaseExtentClasses = diseaseExtentClasses;
+        this.hasModelBeenSuccessfullyRun = hasModelBeenSuccessfullyRun;
     }
 
     public DiseaseGroup getDiseaseGroup() {
@@ -73,6 +76,14 @@ public class DiseaseExtentGeneratorHelper {
 
     public Map<Integer, List<AdminUnitReview>> getReviewsByAdminUnit() {
         return reviewsByAdminUnit;
+    }
+
+    /**
+     * Gets whether the model has been successfully run.
+     * @return Whether the model has been successfully run.
+     */
+    public boolean hasModelBeenSuccessfullyRun() {
+        return hasModelBeenSuccessfullyRun;
     }
 
     public void setOccurrences(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {

@@ -47,11 +47,14 @@
     <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 
     <bean id="expertValidationRulesChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertValidationRulesChecker" />
-    <bean id="expertForRegistrationValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertForRegistrationValidator" />
-    <bean id="expertUpdateValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertUpdateValidator" />
 
-    <bean id="adminExpertsHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.AdminExpertsHelper" />
-    <bean id="expertUpdateHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.ExpertUpdateHelper" />
+    <bean id="registrationControllerValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration.RegistrationControllerValidator" />
+
+    <bean id="accountControllerValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account.AccountControllerValidator" />
+    <bean id="accountControllerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account.AccountControllerHelper" />
+
+    <bean id="adminExpertsControllerValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts.AdminExpertsControllerValidator" />
+    <bean id="adminExpertsControllerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts.AdminExpertsControllerHelper" />
 
     <mvc:default-servlet-handler/>
 

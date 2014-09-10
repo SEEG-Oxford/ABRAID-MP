@@ -1,4 +1,4 @@
-/* A base view model to provide a common implementation of knockout client-side table behavior.
+/* A base view model to provide a common implementation of knockout client-side table behaviour.
  * Use "call" to apply. E.g. BaseTableViewModel.call(self, args..)
  * Copyright (c) 2014 University of Oxford.
  */

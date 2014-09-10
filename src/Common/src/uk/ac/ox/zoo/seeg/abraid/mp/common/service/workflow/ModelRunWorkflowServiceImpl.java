@@ -139,8 +139,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      */
     @Override
     public void generateDiseaseExtent(DiseaseGroup diseaseGroup) {
-        List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
-        DateTime minimumOccurrenceDate = extractMinimumOccurrenceDate(occurrencesForModelRun);
+        DateTime minimumOccurrenceDate = null;
+        if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            // Find the minimum occurrence date if automatic model runs are enabled (it is unused if they are disabled)
+            List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId());
+            minimumOccurrenceDate = extractMinimumOccurrenceDate(occurrencesForModelRun);
+        }
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate);
     }
 

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="datamanager-lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/DataManager/lib-local/external" />
+      <root url="file://$PROJECT_DIR$/DataManager/lib/external" />
+      <root url="file://$PROJECT_DIR$/DataManager/lib/test" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/DataManager/lib-local/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/DataManager/lib/external" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/DataManager/lib/test" recursive="false" />
+  </library>
+</component>
