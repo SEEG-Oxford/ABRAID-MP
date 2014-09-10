@@ -3,8 +3,8 @@
  */
 define([
     "app/user/AccountDetailsFormViewModel",
-    "app/BaseFormViewModel",
-    "app/spec/lib/squire"
+    "shared/app/BaseFormViewModel",
+    "squire"
 ], function (AccountDetailsFormViewModel, BaseFormViewModel, Squire) {
     "use strict";
     var noop = function () {};
@@ -19,7 +19,7 @@ define([
     };
 
     describe("The account details form view model", function () {
-        describe("has the BaseFormViewModel behavior which", function () {
+        describe("has the BaseFormViewModel behaviour which", function () {
             var vm;
             var formSpy;
             beforeEach(function (done) {
@@ -29,7 +29,7 @@ define([
                     var injector = new Squire();
 
                     formSpy = jasmine.createSpy("formSpy").and.callFake(BaseFormViewModel);
-                    injector.mock("app/BaseFormViewModel", formSpy);
+                    injector.mock("shared/app/BaseFormViewModel", formSpy);
 
                     injector.require(["app/user/AccountDetailsFormViewModel"],
                         function (AccountDetailsFormViewModel) {
@@ -207,7 +207,7 @@ define([
         });
 
         describe("handles successful form submission", function () {
-            it("with the standard successful form submission behavior", function () {
+            it("with the standard successful form submission behaviour", function () {
                 // Arrange
                 var vm = new AccountDetailsFormViewModel("baseUrl/", "", {}, {}, noop, diseasesVM);
                 spyOn(vm, "baseSuccessHandler");
@@ -239,7 +239,7 @@ define([
         });
 
         describe("handles failed form submission", function () {
-            it("with the standard failed form submission behavior", function () {
+            it("with the standard failed form submission behaviour", function () {
                 // Arrange
                 var vm = new AccountDetailsFormViewModel("baseUrl/", "", {}, {}, noop, diseasesVM);
                 spyOn(vm, "baseFailureHandler");

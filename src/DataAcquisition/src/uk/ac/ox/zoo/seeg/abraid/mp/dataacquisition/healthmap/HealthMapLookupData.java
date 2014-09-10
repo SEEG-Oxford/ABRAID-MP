@@ -35,8 +35,8 @@ public class HealthMapLookupData {
     }
 
     /**
-     * Gets a list of HealthMap countries, indexed by HealthMap country name.
-     * @return A list of HealthMap countries, indexed by HealthMap country name.
+     * Gets a list of HealthMap countries, indexed by HealthMap country ID.
+     * @return A list of HealthMap countries, indexed by HealthMap country ID.
      */
     public Map<Integer, HealthMapCountry> getCountryMap() {
         if (countryMap == null) {

@@ -101,6 +101,34 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
+    public void generateDiseaseExtentCallsWorkflowServiceForValidDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        // Act
+        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId);
+
+        // Assert
+        verify(modelRunWorkflowService, times(1)).generateDiseaseExtent(same(diseaseGroup));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void generateDiseaseExtentCallsWorkflowServiceReturnsNotFoundForInvalidDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = -1;
+
+        // Act
+        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId);
+
+        // Assert
+        verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     public void requestModelRun() {
         // Arrange
         int diseaseGroupId = 87;
@@ -139,6 +167,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
+        verify(modelRunWorkflowService, never()).enableAutomaticModelRuns(anyInt());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 

@@ -2,8 +2,8 @@
     The system administration page for disease groups.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../../layout/common.ftl" as c/>
-<#import "../../layout/form.ftl" as f/>
+<#import "../../shared/layout/common.ftl" as c/>
+<#import "../../shared/layout/form.ftl" as f/>
 
 <#assign bootstrapData>
 <script type="text/javascript">
@@ -15,7 +15,7 @@
 
 <#assign css>
 <style>
-    #disease-group-name-input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
+    #disease-group-settings .input-group, #model-run-parameters .input-group, #disease-extent-parameters .input-group {
         padding-left: 15px;
         padding-right: 15px;
     }

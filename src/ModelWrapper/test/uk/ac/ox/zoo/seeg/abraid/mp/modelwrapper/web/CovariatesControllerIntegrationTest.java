@@ -1,5 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +19,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.hamcrest.text.StringContains.containsString;
 import static org.mockito.Mockito.when;
@@ -37,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @WebAppConfiguration("file:ModelWrapper/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-
 public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests {
     private MockMvc mockMvc;
 
@@ -48,8 +54,18 @@ public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests
     @Autowired
     private ConfigurationService configurationService;
 
+    @Autowired
+    private FreeMarkerConfigurer freemarkerConfig;
+
     @Before
-    public void setup() {
+    public void setup() throws IOException {
+        // Add CommonWeb to the freemarker lookup path. In deployment the files will have been copied to local.
+        TemplateLoader normalLoader = freemarkerConfig.getConfiguration().getTemplateLoader();
+        freemarkerConfig.getConfiguration().setTemplateLoader(new MultiTemplateLoader(new TemplateLoader[] {
+                new FileTemplateLoader(new File("CommonWeb/web/WEB-INF/freemarker")),
+                normalLoader
+        }));
+
         // Setup Spring test in standalone mode
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)

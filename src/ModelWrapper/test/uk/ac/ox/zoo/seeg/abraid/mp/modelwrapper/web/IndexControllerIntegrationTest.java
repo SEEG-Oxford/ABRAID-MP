@@ -1,5 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
 
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +18,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,8 +64,18 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
     @Autowired
     private SourceCodeManager sourceCodeManager;
 
+    @Autowired
+    private FreeMarkerConfigurer freemarkerConfig;
+
     @Before
-    public void setup() {
+    public void setup() throws IOException {
+        // Add CommonWeb to the freemarker lookup path. In deployment the files will have been copied to local.
+        TemplateLoader normalLoader = freemarkerConfig.getConfiguration().getTemplateLoader();
+        freemarkerConfig.getConfiguration().setTemplateLoader(new MultiTemplateLoader(new TemplateLoader[] {
+                new FileTemplateLoader(new File("CommonWeb/web/WEB-INF/freemarker")),
+                normalLoader
+        }));
+
         // Setup Spring test in standalone mode
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)

@@ -43,10 +43,27 @@ define([
             }
         };
 
-        self.name = ko.observable().extend({ required: true });
-        self.publicName = ko.observable();
-        self.shortName = ko.observable();
-        self.abbreviation = ko.observable();
+        self.id = ko.observable();
+        self.name = ko.observable().extend({ required: true, isUniqueProperty: {
+            array: diseaseGroups,
+            property: "name",
+            id: self.id
+        }});
+        self.publicName = ko.observable().extend({ isUniqueProperty: {
+            array: diseaseGroups,
+            property: "publicName",
+            id: self.id
+        }});
+        self.shortName = ko.observable().extend({ isUniqueProperty: {
+            array: diseaseGroups,
+            property: "shortName",
+            id: self.id
+        }});
+        self.abbreviation = ko.observable().extend({ isUniqueProperty: {
+            array: diseaseGroups,
+            property: "abbreviation",
+            id: self.id
+        }});
         self.groupTypes = groupTypes;
         self.selectedType = ko.observable();
         self.isGlobal = ko.observable();
@@ -57,6 +74,7 @@ define([
         self.selectedValidatorDiseaseGroup = ko.observable();
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
+            self.id(diseaseGroup.id);
             self.name(diseaseGroup.name);
             self.publicName(diseaseGroup.publicName);
             self.shortName(diseaseGroup.shortName);

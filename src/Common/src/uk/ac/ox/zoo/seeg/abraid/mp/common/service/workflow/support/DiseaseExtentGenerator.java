@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.List;
 
@@ -23,10 +24,13 @@ public class DiseaseExtentGenerator {
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
+    private ModelRunService modelRunService;
 
-    public DiseaseExtentGenerator(DiseaseService diseaseService, ExpertService expertService) {
+    public DiseaseExtentGenerator(DiseaseService diseaseService, ExpertService expertService,
+                                  ModelRunService modelRunService) {
         this.diseaseService = diseaseService;
         this.expertService = expertService;
+        this.modelRunService = modelRunService;
     }
 
     /**
@@ -62,7 +66,12 @@ public class DiseaseExtentGenerator {
         // Retrieve a lookup table of disease extent classes
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
 
-        return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses);
+        // Determine whether the model has been successfully run
+        ModelRun modelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+        boolean hasModelBeenSuccessfullyRun = (modelRun != null);
+
+        return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses,
+                hasModelBeenSuccessfullyRun);
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
@@ -96,16 +105,22 @@ public class DiseaseExtentGenerator {
     }
 
     private void setUpdatedExtentOccurrences(DiseaseExtentGeneratorHelper helper, DateTime minimumOccurrenceDate) {
-        DiseaseExtent parameters = helper.getParameters();
-
         // The minimum occurrence date is only relevant if automatic model runs are enabled for the disease
         if (!helper.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
             minimumOccurrenceDate = null;
         }
 
+        // The minimum validation weighting is only relevant if the model has successfully run at least once. This is
+        // so that the disease extent can be generated multiple times before the initial model run, using all
+        // disease occurrences.
+        Double minimumValidationWeighting = null;
+        if (helper.hasModelBeenSuccessfullyRun()) {
+            minimumValidationWeighting = helper.getParameters().getMinValidationWeighting();
+        }
+
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
-                parameters.getMinValidationWeighting(),
+                minimumValidationWeighting,
                 minimumOccurrenceDate
         );
         helper.setOccurrences(occurrences);

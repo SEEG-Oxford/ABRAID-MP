@@ -67,7 +67,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
-    private static final String URL = "http://username:password@localhost:8080/modelwrapper/model/run";
+    private static final String URL = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/model/run";
 
     @Test
     public void requestModelRunSucceedsWithBatching() {

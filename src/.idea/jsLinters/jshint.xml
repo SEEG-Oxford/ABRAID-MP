@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JSHintConfiguration" version="2.4.4" use-config-file="false" default-config-file-path="$PROJECT_DIR$/code-style-js.json">
+  <component name="JSHintConfiguration" version="2.4.4" use-config-file="false">
     <option bitwise="true" />
     <option camelcase="true" />
     <option curly="true" />

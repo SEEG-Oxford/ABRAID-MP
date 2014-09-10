@@ -97,7 +97,7 @@ define([
                         // Arrange
                         var id = 1;
                         var diseaseGroup = { id: id };
-                        var expectedUrl = baseUrl + "admin/diseasegroups/" + id + "/save";
+                        var expectedUrl = baseUrl + "admin/diseases/" + id + "/save";
 
                         // Act
                         ko.postbox.publish(selectedEvent, diseaseGroup);
@@ -111,7 +111,8 @@ define([
 
                     it("when unsuccessful, updates the 'notices' with an error", function () {
                         // Arrange
-                        var expectedNotice = { message: "Server error.", priority: "warning" };
+                        var expectedNotice = { message: "Server error. Please refresh the page and try again.",
+                                               priority: "warning" };
                         // Act
                         vm.submit();
                         jasmine.Ajax.requests.mostRecent().response({ status: 500 });
@@ -154,7 +155,7 @@ define([
                 it("posts to the expected URL with the expected payload", function () {
                     // Arrange
                     var diseaseGroup = { };
-                    var expectedUrl = baseUrl + "admin/diseasegroups/add";
+                    var expectedUrl = baseUrl + "admin/diseases/add";
 
                     // Act
                     ko.postbox.publish(selectedEvent, diseaseGroup);
@@ -168,7 +169,8 @@ define([
 
                 it("when unsuccessful, updates the 'notice' with an error", function () {
                     // Arrange
-                    var expectedNotice = { message: "Server error.", priority: "warning" };
+                    var expectedNotice = { message: "Server error. Please refresh the page and try again.",
+                                           priority: "warning" };
                     // Act
                     vm.submit();
                     jasmine.Ajax.requests.mostRecent().response({ status: 500 });

@@ -19,7 +19,7 @@ public class ModelOutputHandlerWebService {
     private ConfigurationService configurationService;
 
     // The ModelWrapper's URL path for the model run (this is hardcoded because it is hardcoded in ModelOutputHandler).
-    private static final String MODEL_RUN_URL_PATH = "/modeloutputhandler/handleoutputs";
+    private static final String MODEL_RUN_URL_PATH = "/handleoutputs";
 
     public ModelOutputHandlerWebService(WebServiceClient webServiceClient, ConfigurationService configurationService) {
         this.webServiceClient = webServiceClient;

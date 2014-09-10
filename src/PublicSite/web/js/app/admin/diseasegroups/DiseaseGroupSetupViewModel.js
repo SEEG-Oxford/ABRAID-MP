@@ -5,7 +5,7 @@ define([
     "ko",
     "jquery",
     "moment",
-    "app/BaseFormViewModel"
+    "shared/app/BaseFormViewModel"
 ], function (ko, $, moment, BaseFormViewModel) {
     "use strict";
 
@@ -24,7 +24,7 @@ define([
         self.batchEndDateMaximum = ko.observable("");
 
         self.buildSubmissionUrl = function () {
-            return baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
+            return baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
         };
 
         self.buildSubmissionData = function () {
@@ -32,10 +32,25 @@ define([
             return { batchEndDate: batchEndDateText };
         };
 
+        self.isGeneratingDiseaseExtent = ko.observable(false);
+        self.generateDiseaseExtent = function () {
+            self.notices.removeAll();
+            self.isGeneratingDiseaseExtent(true);
+            $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/generatediseaseextent")
+                .done(function () { self.notices.push({ message: "Disease extent generated.", priority: "success"}); })
+                .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
+                .always(function () { self.isGeneratingDiseaseExtent(false); });
+        };
+        self.disableButtonThatGeneratesDiseaseExtent = ko.computed(function () {
+            return !self.canRunModel() || self.hasModelBeenSuccessfullyRun() || self.isSubmitting() ||
+                   self.isGeneratingDiseaseExtent();
+        });
+
         self.isEnablingAutomaticModelRuns = ko.observable(false);
         self.enableAutomaticModelRuns = function () {
+            self.notices.removeAll();
             self.isEnablingAutomaticModelRuns(true);
-            $.post(baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
+            $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
                 .done(function () { self.isAutomaticModelRunsEnabled(true); })
                 .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
                 .always(function () { self.isEnablingAutomaticModelRuns(false); });
@@ -62,7 +77,7 @@ define([
             if (self.selectedDiseaseGroupId()) {
                 self.isSubmitting(true);
                 // Get information regarding model runs for this disease group
-                var url = baseUrl + "admin/diseasegroups/" + self.selectedDiseaseGroupId() + "/modelruninformation";
+                var url = baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/modelruninformation";
                 $.getJSON(url)
                     .done(function (data) {
                         self.lastModelRunText(data.lastModelRunText);
@@ -73,7 +88,8 @@ define([
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                         self.canRunModel(data.canRunModel);
                         if (!self.canRunModel()) {
-                            var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
+                            var errorMessage = "Cannot run model or generate disease extent because " +
+                                data.cannotRunModelReason;
                             self.notices.push({ message: errorMessage, priority: "warning"});
                         }
                     })

@@ -18,13 +18,11 @@
         <!-- Add specs here -->
         <script type="text/javascript">
             var specs = [
-                "app/spec/AuthViewModelSpec",
-                "app/spec/KoCustomRulesSpec",
-                "app/spec/MiscViewModelSpec",
-                "app/spec/RepositoryViewModelSpec",
-                "app/spec/SingleFieldFormViewModelSpec",
-                "app/spec/CovariatesListViewModelSpec",
-                "app/spec/CovariatesListRowViewModelSpec"
+                "app/spec/index/AuthViewModelSpec",
+                "app/spec/index/MiscViewModelSpec",
+                "app/spec/index/RepositoryViewModelSpec",
+                // "app/spec/covariates/CovariatesListViewModelSpec",
+                "app/spec/covariates/CovariatesListRowViewModelSpec"
             ];
         </script>
 
@@ -35,19 +33,24 @@
             var includeCoverage = document.URL.indexOf("coverage=true") !== -1;
             var includeConsole = document.URL.indexOf("console=true") !== -1;
 
-            require([ baseUrl + 'js/require.conf.js' ], function() {
+            var commonBaseUrl = undefined;
+            if (location.protocol === "file:" || window._phantom) {
+                commonBaseUrl = baseUrl + "../../CommonWeb/web/";
+            }
+
+            require([ (commonBaseUrl || baseUrl) + 'js/shared/require.conf.js' ], function() {
                 require(["domReady!", "https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js"], function() {
                     var beforeSpecs = [ "https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/2.0.0/mock-ajax.js" ];
                     if (includeCoverage) {
                         beforeSpecs.push("https://cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.js");
-                        beforeSpecs.push("app/spec/util/coverage-reporter");
+                        beforeSpecs.push((commonBaseUrl || baseUrl) + "js/shared/app/spec/util/coverage-reporter.js");
                     }
 
-                    beforeSpecs.push("app/spec/util/jasmineExtensions");
+                    beforeSpecs.push((commonBaseUrl || baseUrl) + "js/shared/app/spec/util/jasmineExtensions.js");
 
                     require(beforeSpecs, function() {
                         if (includeCoverage) {
-                            blanket.options({ filter: baseUrl+"js/app", antifilter: baseUrl+"js/app/spec" });
+                            blanket.options({ filter: "/js/app", antifilter: "/js/app/spec" });
                             jasmine.getEnv().addReporter(new jasmine.BlanketReporter());
                         }
 

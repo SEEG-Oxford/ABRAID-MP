@@ -3,9 +3,9 @@
  */
 define([
     "app/admin/ExpertAdministrationViewModel",
-    "app/BaseTableViewModel",
-    "app/BaseFormViewModel",
-    "app/spec/lib/squire",
+    "shared/app/BaseTableViewModel",
+    "shared/app/BaseFormViewModel",
+    "squire",
     "underscore"
 ], function (DiseaseGroupAdministrationViewModel, BaseTableViewModel, BaseFormViewModel, Squire,  _) {
     "use strict";
@@ -43,7 +43,7 @@ define([
             }
         ];
 
-        describe("has the behavior of BaseTableViewModel", function () {
+        describe("has the behaviour of BaseTableViewModel", function () {
             var vm;
             var baseSpy;
             beforeEach(function (done) {
@@ -53,7 +53,7 @@ define([
                     var injector = new Squire();
 
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseTableViewModel);
-                    injector.mock("app/BaseTableViewModel", baseSpy);
+                    injector.mock("shared/app/BaseTableViewModel", baseSpy);
 
                     injector.require(["app/admin/ExpertAdministrationViewModel"],
                             function (ExpertAdministrationViewModel) {
@@ -166,7 +166,7 @@ define([
             });
         });
 
-        describe("has the behavior of BaseFormViewModel", function () {
+        describe("has the behaviour of BaseFormViewModel", function () {
             var vm;
             var baseSpy;
             beforeEach(function (done) {
@@ -176,7 +176,7 @@ define([
                     var injector = new Squire();
 
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseFormViewModel);
-                    injector.mock("app/BaseFormViewModel", baseSpy);
+                    injector.mock("shared/app/BaseFormViewModel", baseSpy);
 
                     injector.require(["app/admin/ExpertAdministrationViewModel"],
                         function (ExpertAdministrationViewModel) {

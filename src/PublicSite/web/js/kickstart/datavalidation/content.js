@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global require:false, baseUrl:false, data:false, window:false, alert:false*/
-require([baseUrl + "js/require.conf.js"], function () {
+require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require([
@@ -16,7 +16,8 @@ require([baseUrl + "js/require.conf.js"], function () {
         "app/datavalidation/SelectedAdminUnitViewModel",
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
-        "domReady!"
+        "domReady!",
+        "shared/navbar"
     ], function (ko, $, CounterViewModel, LogInFormViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
                  SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
