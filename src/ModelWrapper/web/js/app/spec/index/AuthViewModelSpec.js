@@ -1,7 +1,7 @@
 /* A suite of tests for the AuthViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/AuthViewModel"], function (AuthViewModel) {
+define(["app/index/AuthViewModel"], function (AuthViewModel) {
     "use strict";
 
     describe("The auth view model", function () {

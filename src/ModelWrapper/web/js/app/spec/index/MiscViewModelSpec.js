@@ -3,7 +3,7 @@
  */
 /*jshint nonew: false*/
 define([
-    "app/MiscViewModel",
+    "app/index/MiscViewModel",
     "ko",
     "underscore",
     "squire"
@@ -20,9 +20,9 @@ define([
                 jasmine.Ajax.uninstall();
                 var injector = new Squire();
 
-                injector.mock("app/SingleFieldFormViewModel", spy);
+                injector.mock("app/index/SingleFieldFormViewModel", spy);
 
-                injector.require(["app/MiscViewModel"], function (MiscViewModel) {
+                injector.require(["app/index/MiscViewModel"], function (MiscViewModel) {
                     // Act
                     new MiscViewModel({
                         rPath: "expectedInitialRPath",

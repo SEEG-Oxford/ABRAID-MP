@@ -5,7 +5,7 @@ define([
     "ko",
     "jquery",
     "underscore",
-    "app/CovariatesListRowViewModel",
+    "app/covariates/CovariatesListRowViewModel",
     "shared/app/BaseFormViewModel",
     "shared/app/BaseTableViewModel"
 ], function (ko, $, _, CovariatesListRowViewModel, BaseFormViewModel, BaseTableViewModel) {

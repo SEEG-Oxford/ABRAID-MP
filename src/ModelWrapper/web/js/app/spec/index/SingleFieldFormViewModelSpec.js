@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/SingleFieldFormViewModel",
+    "app/index/SingleFieldFormViewModel",
     "ko",
     "underscore"
 ], function (SingleFieldFormViewModel, ko, _) {

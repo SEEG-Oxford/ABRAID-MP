@@ -4,7 +4,7 @@
 define([
     "ko",
     "jquery",
-    "app/SingleFieldFormViewModel"
+    "app/index/SingleFieldFormViewModel"
 ], function (ko, $, SingleFieldFormViewModel) {
     "use strict";
 

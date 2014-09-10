@@ -8,7 +8,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
 
     require([
         "ko",
-        "app/CovariatesListViewModel",
+        "app/covariates/CovariatesListViewModel",
         "domReady!",
         "shared/navbar"
     ], function (ko, CovariatesListViewModel, doc) {

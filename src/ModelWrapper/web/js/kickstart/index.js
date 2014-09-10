@@ -7,9 +7,9 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require(["ko",
-             "app/RepositoryViewModel",
-             "app/AuthViewModel",
-             "app/MiscViewModel",
+             "app/index/RepositoryViewModel",
+             "app/index/AuthViewModel",
+             "app/index/MiscViewModel",
              "domReady!",
              "shared/navbar"
     ], function (ko, RepositoryViewModel, AuthViewModel, MiscViewModel, doc) {
