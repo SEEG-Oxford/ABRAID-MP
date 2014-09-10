@@ -2,8 +2,8 @@
     The system administration page for experts.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../layout/common.ftl" as c/>
-<#import "../layout/table.ftl" as t/>
+<#import "../shared/layout/common.ftl" as c/>
+<#import "../shared/layout/table.ftl" as t/>
 
 <#assign bootstrapData>
 <script type="text/javascript">
