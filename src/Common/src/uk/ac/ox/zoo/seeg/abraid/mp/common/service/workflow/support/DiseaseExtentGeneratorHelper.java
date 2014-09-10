@@ -96,39 +96,7 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     private List<AdminUnitReview> sortReviews(List<AdminUnitReview> allReviews) {
-        final Comparator<AdminUnitReview> expertComparator = new Comparator<AdminUnitReview>() {
-            @Override
-            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
-                return o1.getExpert().getId().compareTo(o2.getExpert().getId());
-            }
-        };
-        final Comparator<AdminUnitReview> gaulCodeComparator = new Comparator<AdminUnitReview>() {
-            @Override
-            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
-                return o1.getAdminUnitGlobalOrTropicalGaulCode().compareTo(o2.getAdminUnitGlobalOrTropicalGaulCode());
-            }
-        };
-        final Comparator<AdminUnitReview> dateComparator = new Comparator<AdminUnitReview>() {
-            @Override
-            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
-                return o1.getCreatedDate().compareTo(o2.getCreatedDate());
-            }
-        };
-        Comparator<AdminUnitReview> chainedComparator = new Comparator<AdminUnitReview>() {
-            private List<Comparator<AdminUnitReview>> listComparators =
-                Arrays.asList(expertComparator, gaulCodeComparator, Collections.reverseOrder(dateComparator));
-            @Override
-            public int compare(AdminUnitReview o1, AdminUnitReview o2) {
-                for (Comparator<AdminUnitReview> comparator : listComparators) {
-                    int result = comparator.compare(o1, o2);
-                    if (result != 0) {
-                        return result;
-                    }
-                }
-                return 0;
-            }
-        };
-        Collections.sort(allReviews, chainedComparator);
+        Collections.sort(allReviews, new AdminUnitReviewComparator());
         return allReviews;
     }
 
