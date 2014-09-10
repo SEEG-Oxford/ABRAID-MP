@@ -65,7 +65,7 @@ define([
             });
 
             ko.applyBindingAccessorsToNode(element, {
-                value: function() { return date; },
+                value: function () { return date; },
                 valueUpdate: function () { return "input"; }
             });
         }
@@ -104,6 +104,17 @@ define([
             if ((target !== null) && (target[compareOn] === local[compareOn])) {
                 $(element).addClass("highlight");
             }
+        }
+    };
+
+    ko.bindingHandlers.file = {
+        init: function (element, valueAccessor) {
+            $(element).change(function () {
+                var file = this.files[0];
+                if (ko.isObservable(valueAccessor())) {
+                    valueAccessor()(file);
+                }
+            });
         }
     };
 
@@ -163,6 +174,17 @@ define([
             $(element).attr("autocomplete", "off");
             ko.applyBindingAccessorsToNode(element, {
                 syncValue: valueAccessor,
+                bootstrapDisable: function () {
+                    return bindingContext.find("isSubmitting");
+                }
+            });
+        }
+    };
+
+    ko.bindingHandlers.formFile = {
+        init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
+            ko.applyBindingAccessorsToNode(element, {
+                file: valueAccessor,
                 bootstrapDisable: function () {
                     return bindingContext.find("isSubmitting");
                 }

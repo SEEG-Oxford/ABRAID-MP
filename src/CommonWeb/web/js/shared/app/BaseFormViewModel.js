@@ -31,7 +31,7 @@ define([
             return baseUrl + targetUrl;
         };
 
-        var buildAjaxArgs = function () {
+        self.buildAjaxArgs = function () {
             var args = {};
 
             args.method = "POST";
@@ -98,7 +98,7 @@ define([
             self.notices.removeAll();
             self.isSubmitting(true);
 
-            $.ajax(buildAjaxArgs())
+            $.ajax(self.buildAjaxArgs())
                 .done(self.successHandler)
                 .fail(self.failureHandler)
                 .always(function (xhr) {
