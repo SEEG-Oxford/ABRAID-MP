@@ -2,9 +2,9 @@
     User password change page.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../layout/common.ftl" as c/>
-<#import "../layout/form.ftl" as f/>
-<#import "../layout/panel.ftl" as p/>
+<#import "../shared/layout/common.ftl" as c/>
+<#import "../shared/layout/form.ftl" as f/>
+<#import "../shared/layout/panel.ftl" as p/>
 <@c.page title="ABRAID MP - Change Password" mainjs="/js/kickstart/account/password">
     <div class="container">
         <@p.panel "password-body" "Password">

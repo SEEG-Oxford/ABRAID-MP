@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global require:false, baseUrl:false, initialExpert:false, diseases:false*/
-require([baseUrl + "js/require.conf.js"], function () {
+require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require([
@@ -11,7 +11,8 @@ require([baseUrl + "js/require.conf.js"], function () {
         "underscore",
         "app/user/AccountDetailsFormViewModel",
         "app/user/DiseaseInterestListViewModel",
-        "domReady!"
+        "domReady!",
+        "shared/navbar"
     ], function (ko, $, _, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
             var redirectPage = function (newURL) {
                 doc.location = newURL;

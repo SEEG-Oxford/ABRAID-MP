@@ -3,8 +3,8 @@
  */
 define([
     "app/user/PasswordChangeFormViewModel",
-    "app/BaseFormViewModel",
-    "app/spec/lib/squire"
+    "shared/app/BaseFormViewModel",
+    "squire"
 ], function (PasswordChangeFormViewModel, BaseFormViewModel, Squire) {
     "use strict";
 
@@ -75,7 +75,7 @@ define([
                     var injector = new Squire();
 
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseFormViewModel);
-                    injector.mock("app/BaseFormViewModel", baseSpy);
+                    injector.mock("shared/app/BaseFormViewModel", baseSpy);
 
                     injector.require(["app/user/PasswordChangeFormViewModel"],
                         function (PasswordChangeFormViewModel) {

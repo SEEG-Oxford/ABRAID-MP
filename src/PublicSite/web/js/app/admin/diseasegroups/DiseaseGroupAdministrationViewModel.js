@@ -5,7 +5,7 @@ define([
     "ko",
     "jquery",
     "app/admin/diseasegroups/DiseaseGroupPayload",
-    "app/BaseFormViewModel"
+    "shared/app/BaseFormViewModel"
 ], function (ko, $, DiseaseGroupPayload, BaseFormViewModel) {
     "use strict";
 

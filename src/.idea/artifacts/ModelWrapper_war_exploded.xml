@@ -13,6 +13,7 @@
         </element>
       </element>
       <element id="javaee-facet-resources" facet="ModelWrapper/web/Web" />
+      <element id="javaee-facet-resources" facet="CommonWeb/web/Web" />
     </root>
   </artifact>
 </component>

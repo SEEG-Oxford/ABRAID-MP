@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global require:false, baseUrl:false, initialAlerts:false, initialExpert:false, Recaptcha:false*/
-require([baseUrl + "js/require.conf.js"], function () {
+require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require([
@@ -10,7 +10,7 @@ require([baseUrl + "js/require.conf.js"], function () {
         "jquery",
         "app/user/AccountRegistrationFormViewModel",
         "domReady!",
-        "navbar"
+        "shared/navbar"
     ], function (ko, $, AccountRegistrationFormViewModel, doc) {
             var redirectPage = function (newURL) {
                 doc.location = newURL;

@@ -3,9 +3,9 @@
  */
 define([
     "app/admin/ExpertAdministrationViewModel",
-    "app/BaseTableViewModel",
-    "app/BaseFormViewModel",
-    "app/spec/lib/squire",
+    "shared/app/BaseTableViewModel",
+    "shared/app/BaseFormViewModel",
+    "squire",
     "underscore"
 ], function (DiseaseGroupAdministrationViewModel, BaseTableViewModel, BaseFormViewModel, Squire,  _) {
     "use strict";
@@ -53,7 +53,7 @@ define([
                     var injector = new Squire();
 
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseTableViewModel);
-                    injector.mock("app/BaseTableViewModel", baseSpy);
+                    injector.mock("shared/app/BaseTableViewModel", baseSpy);
 
                     injector.require(["app/admin/ExpertAdministrationViewModel"],
                             function (ExpertAdministrationViewModel) {
@@ -176,7 +176,7 @@ define([
                     var injector = new Squire();
 
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseFormViewModel);
-                    injector.mock("app/BaseFormViewModel", baseSpy);
+                    injector.mock("shared/app/BaseFormViewModel", baseSpy);
 
                     injector.require(["app/admin/ExpertAdministrationViewModel"],
                         function (ExpertAdministrationViewModel) {

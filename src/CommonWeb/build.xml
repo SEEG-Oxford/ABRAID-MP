@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Ant build file for CommonWeb.
+      Copyright (c) 2014 University of Oxford
+-->
+<project name="module_commonweb" default="full" xmlns:ivy="antlib:org.apache.ivy.ant">
+  <property name="js.spec.runner.path" value="${basedir}/web/js/shared/app/spec/SpecRunner.html" />
+  <import file="${basedir}/../build-module.xml"/>
+
+  <target name="full" depends="print.start, retrieve.libs, check.quality.js, print.summary" description="Build pipeline">
+    <fail message="Quality checks failed!" if="build.failure" />
+  </target>
+
+  <target name="create.lib.dirs">
+    <mkdir dir="${lib.local.analysis.dir}" />
+  </target>
+  <target name="print.summary" depends="js.test.summary, js.style.summary, combine.results, composite.summary" />
+
+  <target name="retrieve.libs" depends="create.lib.dirs, retrieve.phantom, retrieve.jshint" />
+</project>

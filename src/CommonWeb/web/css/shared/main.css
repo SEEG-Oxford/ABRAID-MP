@@ -1,0 +1,136 @@
+/**
+ * Styling for ABRAID-MP.
+ * Copyright (c) 2014 University of Oxford
+ */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    min-width: 320px;
+}
+#common .container {
+    padding-top: 20px;
+}
+.navbar {
+    min-width: 320px;
+    margin: 0;
+}
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    background-color: #222;
+}
+#footer > .container {
+    background-color: #222;
+}
+#footer > .container {
+    padding-top: 5px;
+}
+#footer .links > a, p {
+    display:inline;
+}
+#footer .links > a:link, #footer .links > a:visited {
+    color:rgb(153, 153, 153);
+    text-decoration:none;
+}
+#footer .links > a:hover {
+    color:white;
+    text-decoration:none;
+}
+#footer .copyright {
+    float: right;
+}
+#footer .links {
+    float: left;
+}
+.bg-success-important {
+    background-color: #DFF0D8 !important;
+}
+.bg-danger-important {
+    background-color: #F2DEDE !important;
+}
+.alert {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.input-group {
+    max-width: 700px;
+}
+form {
+    margin-top: 15px;
+}
+.form-group {
+    display: block;
+}
+.input-group > .clear {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #999;
+    z-index: 999;
+}
+.transparent-input {
+    background: transparent;
+    border: 2px solid transparent;
+}
+.table td input[type="text"] {
+    width: 100%
+}
+.table td.text-muted {
+    text-align: center;
+    font-style: italic
+}
+.table th {
+    cursor: pointer;
+}
+.table th .up-down {
+    float: right;
+    height: 20px;
+    width:20px;
+}
+.side-by-side {
+    float: left;
+}
+label.side-by-side {
+    float: left;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-right: 12px;
+    margin-bottom: 0;
+}
+.btn-group input {
+    display: none;
+}
+.input-group.date {
+    margin-right: 0px;
+    max-width: 200px;
+}
+.navbar-right > li > a {
+    padding:15px 5px;
+}
+.navbar-right > li > span {
+    display: block;
+    padding:15px 5px;
+}
+.jumbotron {
+    padding:30px;
+    text-align: center
+}
+.pagination {
+    margin: 0px;
+}
+.pagination-holder {
+    margin: 20px;
+}
