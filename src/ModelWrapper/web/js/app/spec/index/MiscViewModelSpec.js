@@ -20,23 +20,23 @@ define([
                 jasmine.Ajax.uninstall();
                 var injector = new Squire();
 
-                injector.mock("app/index/SingleFieldFormViewModel", spy);
+                injector.mock("shared/app/SingleFieldFormViewModel", spy);
 
                 injector.require(["app/index/MiscViewModel"], function (MiscViewModel) {
                     // Act
                     new MiscViewModel({
                         rPath: "expectedInitialRPath",
-                        runDuration: "expectedInitialRunDuration",
+                        runDuration: "expectedDuration",
                         covariateDirectory: "expectedInitialCovariateDirectory"
                     }, "expectedBaseUrl");
 
                     // Assert
-                    expect(spy).toHaveBeenCalledWith("expectedBaseUrl", "misc/rpath",
-                        "expectedInitialRPath", { required : true });
-                    expect(spy).toHaveBeenCalledWith("expectedBaseUrl", "misc/runduration",
-                        "expectedInitialRunDuration", { required : true, number: true, min: 1000 });
-                    expect(spy).toHaveBeenCalledWith("expectedBaseUrl", "misc/covariatedirectory",
-                        "expectedInitialCovariateDirectory", { required : true });
+                    expect(spy).toHaveBeenCalledWith("expectedInitialRPath", { required : true },
+                                                     false, false, "expectedBaseUrl", "misc/rpath");
+                    expect(spy).toHaveBeenCalledWith("expectedDuration", { required : true, number: true, min: 1000 },
+                                                     false, false, "expectedBaseUrl", "misc/runduration");
+                    expect(spy).toHaveBeenCalledWith("expectedInitialCovariateDirectory", { required : true },
+                                                     false, false, "expectedBaseUrl", "misc/covariatedirectory");
                     done();
                 });
             });

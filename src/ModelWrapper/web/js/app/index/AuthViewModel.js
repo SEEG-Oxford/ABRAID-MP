@@ -3,40 +3,26 @@
  */
 define([
     "ko",
-    "jquery"
-], function (ko, $) {
+    "jquery",
+    "shared/app/BaseFormViewModel"
+], function (ko, $, BaseFormViewModel) {
     "use strict";
 
     return function (baseUrl) {
         var self = this;
+        BaseFormViewModel.call(self, false, false, baseUrl, "auth");
+
         self.username = ko.observable().extend({ required: true,  usernameComplexity: true });
         self.password = ko.observable().extend({ required: true, passwordComplexity: true });
         self.passwordConfirmation = ko.observable()
             .extend({ required: true, passwordComplexity: true, areSame: self.password });
-        self.saving = ko.observable(false);
-        self.notices = ko.observableArray();
 
-        var pushMessage = function (message, priority) {
-            self.notices.push({ "message": message, "priority": priority});
-        };
-
-        self.submit = function () {
-            self.notices.removeAll();
-            if (self.isValid()) {
-                self.saving(true);
-                var postData = {
-                    username: self.username(),
-                    password: self.password(),
-                    passwordConfirmation: self.passwordConfirmation()
-                };
-
-                $.post(baseUrl + "auth", postData)
-                    .done(function () { pushMessage("Saved successfully.", "success"); })
-                    .fail(function () { pushMessage("Authentication details could not be saved.", "warning"); })
-                    .always(function () { self.saving(false); });
-            } else {
-                pushMessage("All fields must be valid before saving.", "warning");
-            }
+        self.buildSubmissionData = function () {
+            return {
+                username: self.username(),
+                password: self.password(),
+                passwordConfirmation: self.passwordConfirmation()
+            };
         };
     };
 });

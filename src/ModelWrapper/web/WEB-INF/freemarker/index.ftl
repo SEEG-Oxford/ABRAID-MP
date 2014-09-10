@@ -3,6 +3,7 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#import "shared/layout/common.ftl" as c/>
+<#import "shared/layout/form.ftl" as f/>
 
 <#assign bootstrapData>
     <script type="text/javascript">
@@ -76,41 +77,11 @@
         <div class="panel-collapse collapse in" id="auth-body">
             <div class="panel-body">
                 <p>Use the fields below to update the authentication details used to connect to this site.</p>
-                <form action="#">
-                    <p class="form-group">
-                        <label for="auth-username">Username: </label>
-                        <span class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-user"></i>
-                            </span>
-                            <input id="auth-username" type="text" class="form-control" placeholder="New username" autocomplete="off" data-bind="value: username, valueUpdate:'afterkeydown', disable: saving" >
-                        </span>
-                    </p>
-                    <p class="form-group">
-                        <label for="auth-password">Password: </label>
-                        <span class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-lock"></i>
-                            </span>
-                            <input id="auth-password" type="password" class="form-control" placeholder="New password" autocomplete="off" data-bind="value: password, valueUpdate:'afterkeydown', disable: saving" >
-                        </span>
-                    </p>
-                    <p class="form-group">
-                        <label for="auth-password-confirm">Password (confirm): </label>
-                        <span class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-lock"></i>
-                            </span>
-                            <input id="auth-password-confirm" type="password" class="form-control" placeholder="New password (confirm)" autocomplete="off" data-bind="value: passwordConfirmation, valueUpdate:'afterkeydown', disable: saving" >
-                        </span>
-                    </p>
-                    <p class="form-group">
-                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
-                    </p>
-                    <div class="form-group" data-bind="foreach: notices">
-                        <div data-bind="alert: $data"></div>
-                    </div>
-                </form>
+                <@f.form "auth-form">
+                    <@f.formGroupBasic "auth-username" "Username" "username" "glyphicon glyphicon-user" />
+                    <@f.formGroupBasic "auth-password" "New password" "password" "glyphicon glyphicon-lock" "password" />
+                    <@f.formGroupBasic "auth-password-confirm" "New password (confirm)" "passwordConfirmation" "glyphicon glyphicon-lock" "password" />
+                </@f.form>
             </div>
         </div>
     </div>
@@ -125,57 +96,21 @@
         <div class="panel-collapse collapse" id="misc-body">
             <div class="panel-body">
                 <p>Use the fields below to update advanced model wrapper configuration options.</p>
-                <form action="#" data-bind="with: RExecutableViewModel">
-                    <p class="form-group">
-                        <label for="r-exe">R executable path: </label>
-                        <span class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-lg fa-terminal"></i>
-                            </span>
-                            <input id="r-exe" type="text" class="form-control" placeholder="R executable path" autocomplete="off" data-bind="value: value, valueUpdate:'afterkeydown', disable: saving" >
-                        </span>
-                    </p>
-                    <p class="form-group">
-                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
-                    </p>
-                    <div class="form-group" data-bind="foreach: notices">
-                        <div data-bind="alert: $data"></div>
-                    </div>
-                </form>
-                <form action="#" data-bind="with: ModelDurationViewModel">
-                    <p class="form-group">
-                        <label for="max-duration">Model run duration limit (ms): </label>
-                        <span class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-dashboard"></i>
-                            </span>
-                            <input id="max-duration" type="text" class="form-control" placeholder="Model run duration limit" autocomplete="off" data-bind="value: value, valueUpdate:'afterkeydown', disable: saving" >
-                        </span>
-                    </p>
-                    <p class="form-group">
-                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
-                    </p>
-                    <div class="form-group" data-bind="foreach: notices">
-                        <div data-bind="alert: $data"></div>
-                    </div>
-                </form>
-                <form action="#" data-bind="with: CovariateDirectoryViewModel">
-                    <p class="form-group">
-                        <label for="covariate-directory">Covariate directory: </label>
-                        <span class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-folder-open"></i>
-                            </span>
-                            <input id="covariate-directory" type="text" class="form-control" placeholder="Covariate directory" autocomplete="off" data-bind="value: value, valueUpdate:'afterkeydown', disable: saving" >
-                        </span>
-                    </p>
-                    <p class="form-group">
-                        <a class="btn btn-primary" data-bind="click: submit, css: { 'disabled': !isValid() || saving }, text: saving() ? 'Saving ...' : 'Save'"></a>
-                    </p>
-                    <div class="form-group" data-bind="foreach: notices">
-                        <div data-bind="alert: $data"></div>
-                    </div>
-                </form>
+                <!-- ko with:RExecutableViewModel -->
+                    <@f.form "r-form">
+                        <@f.formGroupBasic "r-exe" "R executable path" "value" "fa fa-lg fa-terminal" />
+                    </@f.form>
+                <!-- /ko -->
+                <!-- ko with:ModelDurationViewModel -->
+                    <@f.form "run-duration-form">
+                        <@f.formGroupBasic "max-duration" "Model run duration limit (ms)" "value" "glyphicon glyphicon-dashboard" />
+                    </@f.form>
+                <!-- /ko -->
+                <!-- ko with:CovariateDirectoryViewModel -->
+                    <@f.form "covariate-dir-form">
+                        <@f.formGroupBasic "covariate-directory" "Covariate directory" "value" "glyphicon glyphicon-folder-open" />
+                    </@f.form>
+                <!-- /ko -->
             </div>
         </div>
     </div>

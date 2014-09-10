@@ -43,6 +43,7 @@
             "shared/navbar": basePath + "navbar",
             "shared/app/BaseFormViewModel": basePath + "app/BaseFormViewModel",
             "shared/app/BaseTableViewModel": basePath + "app/BaseTableViewModel",
+            "shared/app/SingleFieldFormViewModel": basePath + "app/SingleFieldFormViewModel",
             "shared/app/KoCustomRules": basePath + "app/KoCustomRules",
             "shared/app/KoCustomBindings": basePath + "app/KoCustomBindings",
             "shared/app/KoCustomUtils": basePath + "app/KoCustomUtils",
