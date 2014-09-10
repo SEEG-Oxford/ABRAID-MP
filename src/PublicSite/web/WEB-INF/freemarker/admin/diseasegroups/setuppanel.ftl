@@ -52,6 +52,12 @@
 
                 <br />
                 <div class="form-group" data-bind="if: selectedDiseaseGroupId">
+                    <button class="btn btn-primary" data-bind="click: generateDiseaseExtent,
+                                                               text: isGeneratingDiseaseExtent() ? 'Working...' : 'Generate Disease Extent',
+                                                               bootstrapDisable: disableButtonThatGeneratesDiseaseExtent()">
+                    </button>
+                    <br /><br />
+
                     <span data-bind="if: hasModelBeenSuccessfullyRun" class="side-by-side">
                         <button class="btn btn-primary" data-bind="click: submit, formButton: { submitting: 'Working...', standard: 'Run Model and Batch Occurrences For Validation'}"></button>
                     </span>

@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
@@ -41,25 +40,21 @@ public class HealthMapDataAcquisition {
     /**
      * Acquires HealthMap data from the HealthMap web service.
      */
-    @Transactional(rollbackFor = Exception.class)
     public void acquireDataFromWebService() {
         DateTime startDate = getStartDate();
         DateTime endDate = getEndDate(startDate);
         List<HealthMapLocation> healthMapLocations = retrieveDataFromWebService(startDate, endDate);
         convert(healthMapLocations, endDate);
-        healthMapLookupData.clearLookups();
     }
 
     /**
      * Acquires HealthMap data from a file.
-     * @param fileName The name of a file that contains HealthMap JSON.
+     * @param jsonFileName The name of a file that contains HealthMap JSON.
      */
-    @Transactional(rollbackFor = Exception.class)
-    public void acquireDataFromFile(String fileName) {
-        LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, fileName));
-        List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(fileName);
+    public void acquireDataFromFile(String jsonFileName) {
+        LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, jsonFileName));
+        List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(jsonFileName);
         convert(healthMapLocations, null);
-        healthMapLookupData.clearLookups();
     }
 
     private List<HealthMapLocation> retrieveDataFromWebService(DateTime startDate, DateTime endDate) {
@@ -71,10 +66,10 @@ public class HealthMapDataAcquisition {
         }
     }
 
-    private List<HealthMapLocation> retrieveDataFromFile(String fileName) {
+    private List<HealthMapLocation> retrieveDataFromFile(String jsonFileName) {
         String json;
         try {
-            json = FileUtils.readFileToString(new File(fileName), StandardCharsets.UTF_8);
+            json = FileUtils.readFileToString(new File(jsonFileName), StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOGGER.fatal(String.format(FILE_ERROR_MESSAGE, e.getMessage()), e);
             return null;
@@ -91,6 +86,7 @@ public class HealthMapDataAcquisition {
     private void convert(List<HealthMapLocation> healthMapLocations, DateTime endDate) {
         if (healthMapLocations != null) {
             healthMapDataConverter.convert(healthMapLocations, endDate);
+            healthMapLookupData.clearLookups();
         }
     }
 

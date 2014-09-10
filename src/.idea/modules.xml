@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Common/Common.iml" filepath="$PROJECT_DIR$/Common/Common.iml" />
       <module fileurl="file://$PROJECT_DIR$/CommonWeb/CommonWeb.iml" filepath="$PROJECT_DIR$/CommonWeb/CommonWeb.iml" />
       <module fileurl="file://$PROJECT_DIR$/DataAcquisition/DataAcquisition.iml" filepath="$PROJECT_DIR$/DataAcquisition/DataAcquisition.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataManager/DataManager.iml" filepath="$PROJECT_DIR$/DataManager/DataManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/ModelOutputHandler/ModelOutputHandler.iml" filepath="$PROJECT_DIR$/ModelOutputHandler/ModelOutputHandler.iml" />
       <module fileurl="file://$PROJECT_DIR$/ModelWrapper/ModelWrapper.iml" filepath="$PROJECT_DIR$/ModelWrapper/ModelWrapper.iml" />
       <module fileurl="file://$PROJECT_DIR$/PublicSite/PublicSite.iml" filepath="$PROJECT_DIR$/PublicSite/PublicSite.iml" />

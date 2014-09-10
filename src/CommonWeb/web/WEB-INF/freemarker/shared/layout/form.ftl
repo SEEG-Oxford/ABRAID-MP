@@ -13,6 +13,7 @@
     </div>
 </form>
 </#macro>
+
 <#macro formGroupBasic id label bind glyph type="text">
 <p class="form-group">
      <label for="${id}">${label}: </label>

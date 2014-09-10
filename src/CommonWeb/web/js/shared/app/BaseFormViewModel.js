@@ -1,4 +1,4 @@
-/* A base view model to provide a common implementation of knockout client-side form behavior.
+/* A base view model to provide a common implementation of knockout client-side form behaviour.
  * Use "call" to apply. E.g. BaseFormViewModel.call(self, args..)
  * Copyright (c) 2014 University of Oxford.
  */

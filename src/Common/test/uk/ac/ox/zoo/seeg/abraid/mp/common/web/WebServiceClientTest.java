@@ -15,7 +15,7 @@ public class WebServiceClientTest {
     private static final String GET_URL = "http://www.google.co.uk";
 
     // This is a POST data echo service
-    private static final String POST_URL = "http://httpbin.org/post";
+    private static final String POST_URL = "https://eu.httpbin.org/post";
 
     @Test
     public void makeGetRequestThrowsExceptionIfUnknownHost() {

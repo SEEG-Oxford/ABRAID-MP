@@ -32,8 +32,23 @@ define([
             return { batchEndDate: batchEndDateText };
         };
 
+        self.isGeneratingDiseaseExtent = ko.observable(false);
+        self.generateDiseaseExtent = function () {
+            self.notices.removeAll();
+            self.isGeneratingDiseaseExtent(true);
+            $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/generatediseaseextent")
+                .done(function () { self.notices.push({ message: "Disease extent generated.", priority: "success"}); })
+                .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
+                .always(function () { self.isGeneratingDiseaseExtent(false); });
+        };
+        self.disableButtonThatGeneratesDiseaseExtent = ko.computed(function () {
+            return !self.canRunModel() || self.hasModelBeenSuccessfullyRun() || self.isSubmitting() ||
+                   self.isGeneratingDiseaseExtent();
+        });
+
         self.isEnablingAutomaticModelRuns = ko.observable(false);
         self.enableAutomaticModelRuns = function () {
+            self.notices.removeAll();
             self.isEnablingAutomaticModelRuns(true);
             $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/automaticmodelruns")
                 .done(function () { self.isAutomaticModelRunsEnabled(true); })
@@ -73,7 +88,8 @@ define([
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                         self.canRunModel(data.canRunModel);
                         if (!self.canRunModel()) {
-                            var errorMessage = "Cannot run model because " + data.cannotRunModelReason;
+                            var errorMessage = "Cannot run model or generate disease extent because " +
+                                data.cannotRunModelReason;
                             self.notices.push({ message: errorMessage, priority: "warning"});
                         }
                     })

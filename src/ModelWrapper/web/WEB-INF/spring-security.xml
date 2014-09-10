@@ -3,34 +3,52 @@
     Spring security beans specification.
     Copyright (c) 2014 University of Oxford
 -->
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns:context="http://www.springframework.org/schema/context"
-             xsi:schemaLocation="
-                http://www.springframework.org/schema/beans
-                http://www.springframework.org/schema/beans/spring-beans.xsd
-                http://www.springframework.org/schema/security
-                http://www.springframework.org/schema/security/spring-security.xsd
-                http://www.springframework.org/schema/context
-                http://www.springframework.org/schema/context/spring-context.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
-    <http realm="ABRAID-MP: ModelWrapper" authentication-manager-ref="authenticationManager">
-        <intercept-url pattern="/**" access="ROLE_USER" />
-        <http-basic />
-    </http>
+    <context:property-placeholder order="1" ignore-resource-not-found="false" ignore-unresolvable="true" location="WEB-INF/api.properties" />
 
-    <beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
-        <beans:property name="providers" ref="daoAuthenticationProvider" />
-    </beans:bean>
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
-    <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-        <beans:property name="userDetailsService" ref="userDetailsService"/>
-        <beans:property name="passwordEncoder" ref="passwordEncoder" />
-    </beans:bean>
+    <!-- API realm -->
+    <security:http realm="ABRAID-MP: ModelWrapper API" pattern="/model/**" create-session="stateless" authentication-manager-ref="apiAuthenticationManager">
+        <security:intercept-url pattern="/**" access="ROLE_API" />
+        <security:http-basic />
+    </security:http>
 
-    <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.UserDetailsServiceImpl" autowire="constructor" />
+    <bean id="apiAuthenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <property name="providers" ref="apiDaoAuthenticationProvider" />
+    </bean>
 
-    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-</beans:beans>
+    <bean id="apiDaoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="apiUserDetailsService"/> <!-- Expects fixed username 'api' -->
+        <property name="passwordEncoder" ref="passwordEncoder" /> <!-- Uses http basic password to hold the API key -->
+    </bean>
+
+    <bean id="apiUserDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.ApiUserDetailsServiceImpl" >
+        <constructor-arg name="apiKeyHash" value="${api.key.hash}" />
+    </bean>
+
+    <!-- Admin site realm -->
+    <security:http realm="ABRAID-MP: ModelWrapper" authentication-manager-ref="adminAuthenticationManager">
+        <security:intercept-url pattern="/**" access="ROLE_USER" />
+        <security:http-basic />
+    </security:http>
+
+    <bean id="adminAuthenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <property name="providers" ref="adminDaoAuthenticationProvider" />
+    </bean>
+
+    <bean id="adminDaoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="adminUserDetailsService"/>
+        <property name="passwordEncoder" ref="passwordEncoder" />
+    </bean>
+
+    <bean id="adminUserDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.UserDetailsServiceImpl" autowire="constructor" />
+</beans>

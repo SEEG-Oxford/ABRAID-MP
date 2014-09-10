@@ -36,18 +36,18 @@ echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/com
 # Configure wms path
 sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
 
-# Set up DataAcquisition (incomplete)
-cp -r ../../DataAcquisition $ABRAID_SUPPORT_PATH/dataacquisition
-rm $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.bat
+# Set up DataManager (incomplete)
+cp -r ../../DataManager $ABRAID_SUPPORT_PATH/datamanager
+rm $ABRAID_SUPPORT_PATH/datamanager/datamanager.bat
 # Configure
-sed -i "s/jdbc\.username\=.*/jdbc.username=$PG_ABRAID_USER/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
-sed -i "s/jdbc\.password\=.*/jdbc.password=$PG_ABRAID_PASS/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
-sed -i "s/healthmap\.authorizationCode\=.*/healthmap.authorizationCode=$HEALTH_MAP_KEY/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
-sed -i "s/geonames\.username\=.*/geonames.username=$GEONAMES_USER/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
-sed -i "s/modelwrapper\.rootUrl\=.*/modelwrapper.rootUrl=$MW_URL/g" $ABRAID_SUPPORT_PATH/dataacquisition/dataacquisition.properties
+sed -i "s/jdbc\.username\=.*/jdbc.username=$PG_ABRAID_USER/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/jdbc\.password\=.*/jdbc.password=$PG_ABRAID_PASS/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/healthmap\.authorizationCode\=.*/healthmap.authorizationCode=$HEALTH_MAP_KEY/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/geonames\.username\=.*/geonames.username=$GEONAMES_USER/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/modelwrapper\.rootUrl\=.*/modelwrapper.rootUrl=$MW_URL/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 # Set defaultStartDate?
-sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/dataacquisition/log4j.properties
-mkdir -p $ABRAID_SUPPORT_PATH/dataacquisition/logs
-mkdir -p $ABRAID_SUPPORT_PATH/dataacquisition/logs/old
+sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
+mkdir -p $ABRAID_SUPPORT_PATH/datamanager/logs
+mkdir -p $ABRAID_SUPPORT_PATH/datamanager/logs/old
 # Cron job
 

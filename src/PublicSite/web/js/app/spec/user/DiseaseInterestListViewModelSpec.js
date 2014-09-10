@@ -10,7 +10,7 @@ define([
     "use strict";
 
     describe("The disease interest list view model", function () {
-        describe("has the BaseTableViewModel behavior which", function () {
+        describe("has the BaseTableViewModel behaviour which", function () {
             var vm;
             var tableSpy;
             beforeEach(function (done) {

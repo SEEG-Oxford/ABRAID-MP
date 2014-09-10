@@ -1,4 +1,4 @@
-/* Apply KO bindings for the account registration details page.
+/* Apply KO bindings for the edit account details page.
  * Copyright (c) 2014 University of Oxford
  */
 /*global require:false, baseUrl:false, initialExpert:false, diseases:false*/

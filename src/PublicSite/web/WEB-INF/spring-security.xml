@@ -3,56 +3,54 @@
     Spring security beans specification.
     Copyright (c) 2014 University of Oxford
 -->
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="
-                http://www.springframework.org/schema/beans
-                http://www.springframework.org/schema/beans/spring-beans.xsd
-                http://www.springframework.org/schema/security
-                http://www.springframework.org/schema/security/spring-security.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
-    <http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
+    <security:http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
         <!-- Redirect to home atlas page at "/" on logout, instead of navigating to j_spring_security_logout -->
-        <logout logout-success-url="/" />
+        <security:logout logout-success-url="/" />
 
         <!-- Use custom Authentication Filter (bean below) instead of default, at this position in the Filter Chain -->
-        <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
+        <security:custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
 
         <!-- Prevent user from logging in multiple times -->
-        <session-management>
-            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
-        </session-management>
-    </http>
+        <security:session-management>
+            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+        </security:session-management>
+    </security:http>
 
     <!-- The Filter Entry Point bean: failed auths should give 403  -->
-    <beans:bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
     <!-- The Authentication Manager bean from http ref, and its sub-beans -->
-    <beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
-        <beans:property name="providers" ref="daoAuthenticationProvider" />
-    </beans:bean>
+    <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <property name="providers" ref="daoAuthenticationProvider" />
+    </bean>
 
-    <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-        <beans:property name="userDetailsService" ref="userDetailsService"/>
-        <beans:property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in applicationContext -->
-    </beans:bean>
+    <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in applicationContext -->
+    </bean>
 
-    <beans:bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
+    <bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
                 autowire="constructor"/>
 
     <!-- The Authentication Filter bean from http custom-filter tag -->
-    <beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="filterProcessesUrl" value="/j_spring_security_check"/>
-        <beans:property name="authenticationFailureHandler" ref="failureHandler"/>
-        <beans:property name="authenticationSuccessHandler" ref="successHandler"/>
-    </beans:bean>
+    <bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="filterProcessesUrl" value="/j_spring_security_check"/>
+        <property name="authenticationFailureHandler" ref="failureHandler"/>
+        <property name="authenticationSuccessHandler" ref="successHandler"/>
+    </bean>
 
     <!-- Define custom handlers to return JSON with status and error message, instead of default redirect -->
-    <beans:bean id="successHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationSuccessHandler"/>
+    <bean id="successHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationSuccessHandler"/>
 
-    <beans:bean id="failureHandler" class=" uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationFailureHandler" />
+    <bean id="failureHandler" class=" uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationFailureHandler" />
 
-</beans:beans>
+</beans>

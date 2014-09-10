@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
         "file:PublicSite/web/WEB-INF/applicationContext.xml" })
 public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSiteIntegrationTests {
-    public static final String MODELWRAPPER_URL_PREFIX = "http://username:password@localhost:8080/modelwrapper";
+    public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
 
     @ReplaceWithMock
     @Autowired
@@ -95,6 +95,51 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(
                 patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/modelruninformation"))
                 .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void generateDiseaseExtentRejectsNonPOSTRequests() throws Exception {
+        this.mockMvc.perform(
+                get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/generatediseaseextent"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/generatediseaseextent"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/generatediseaseextent"))
+                .andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/generatediseaseextent"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void generateDiseaseExtentRejectsNonIntegerPathVariables() throws Exception {
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/a/generatediseaseextent"))
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/0.2/generatediseaseextent"))
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/null/generatediseaseextent"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void generateDiseaseExtentGivesNotFoundForInvalidIntegerPathVariables() throws Exception {
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/-1/generatediseaseextent"))
+                .andExpect(status().isNotFound());
+
+        this.mockMvc.perform(
+                post(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/999999/generatediseaseextent"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -170,7 +215,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
                 patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/automaticmodelruns"))
                 .andExpect(status().isMethodNotAllowed());
     }
-
 
     @Test
     public void enableAutomaticModelRunsRejectsNonIntegerPathVariables() throws Exception {
