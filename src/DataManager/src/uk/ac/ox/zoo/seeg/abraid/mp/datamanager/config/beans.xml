@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Contains all beans in this module.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- This ensures that if a file named dataacquisition.properties exists in the current directory, it will
+         override the default properties specified in the classpath files -->
+    <context:property-placeholder location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties,
+                                            classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties,
+                                            file:datamanager.properties"
+                                  ignore-resource-not-found="true"/>
+
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml"/>
+
+    <!-- Process beans -->
+    <bean id="dataAcquisitionManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager" autowire="constructor"/>
+    <bean id="modelRunGatekeeper" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunGatekeeper" autowire="constructor"/>
+    <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager" autowire="constructor"/>
+
+    <!-- Main bean (program entry point) -->
+    <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor"/>
+
+</beans>

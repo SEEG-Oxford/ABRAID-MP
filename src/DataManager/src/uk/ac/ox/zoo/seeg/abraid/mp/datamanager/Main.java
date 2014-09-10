@@ -1,11 +1,11 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model.ModelRunManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager;
 
 import java.util.Map;
 
@@ -19,14 +19,14 @@ public class Main {
      * The location of the application context.
      */
     public static final String APPLICATION_CONTEXT_LOCATION =
-            "classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml";
+            "classpath:uk/ac/ox/zoo/seeg/abraid/mp/datamanager/config/beans.xml";
     private static final Logger LOGGER = Logger.getLogger(Main.class);
 
-    private HealthMapDataAcquisition healthMapDataAcquisition;
+    private DataAcquisitionManager dataAcquisitionManager;
     private ModelRunManager modelRunManager;
 
-    public Main(HealthMapDataAcquisition healthMapDataAcquisition, ModelRunManager modelRunManager) {
-        this.healthMapDataAcquisition = healthMapDataAcquisition;
+    public Main(DataAcquisitionManager dataAcquisitionManager, ModelRunManager modelRunManager) {
+        this.dataAcquisitionManager = dataAcquisitionManager;
         this.modelRunManager = modelRunManager;
     }
 
@@ -65,18 +65,11 @@ public class Main {
 
     /**
      * Acquires data from all sources.
-     * @param fileNames A list of file names containing HealthMap JSON data to acquire. If no file names are specified
+     * @param fileNames A list of file names containing data to acquire. If no file names are specified
      * (or if null), the HealthMap web service will be called instead.
      */
     public void runDataAcquisition(String[] fileNames) {
-        if (fileNames != null && fileNames.length > 0) {
-            for (String fileName : fileNames) {
-                healthMapDataAcquisition.acquireDataFromFile(fileName);
-            }
-        } else {
-            healthMapDataAcquisition.acquireDataFromWebService();
-        }
-
+        dataAcquisitionManager.runDataAcquisition(fileNames);
     }
 
     /**

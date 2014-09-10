@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
@@ -91,8 +91,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public void mainMethodAcquiresDataFromFiles() {
         // Arrange
         String[] fileNames = {
-                "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json1.txt",
-                "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/healthmap_json2.txt"
+                "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json1.txt",
+                "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json2.txt"
         };
         mockGeoNamesRequests();
         mockModelWrapperRequest();

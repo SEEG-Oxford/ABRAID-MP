@@ -1,10 +1,9 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;

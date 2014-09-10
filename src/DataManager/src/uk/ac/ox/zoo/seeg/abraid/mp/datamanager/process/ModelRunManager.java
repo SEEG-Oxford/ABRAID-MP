@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;

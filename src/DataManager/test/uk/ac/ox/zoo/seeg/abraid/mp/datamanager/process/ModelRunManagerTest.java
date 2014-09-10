@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.model;
+package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;

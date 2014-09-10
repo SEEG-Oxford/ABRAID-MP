@@ -52,9 +52,9 @@
         <include name="*.war" />
       </fileset>
     </copy>
-    <mkdir dir="${artifacts.dir}/DataAcquisition"/>
-    <copy todir="${artifacts.dir}/DataAcquisition">
-      <fileset dir="${code.root}/DataAcquisition/out/artifacts/">
+    <mkdir dir="${artifacts.dir}/DataManager"/>
+    <copy todir="${artifacts.dir}/DataManager">
+      <fileset dir="${code.root}/DataManager/out/artifacts/">
         <include name="**/*" />
       </fileset>
     </copy>
