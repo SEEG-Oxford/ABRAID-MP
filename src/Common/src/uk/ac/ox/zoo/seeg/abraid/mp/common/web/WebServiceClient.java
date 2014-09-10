@@ -117,7 +117,7 @@ public class WebServiceClient {
             // than waiting for a challenge request.
             client.property(ApacheClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION, true);
 
-            // Use buffered transfer encoding over chunked as we wont normally be sending data while it is
+            // Use buffered transfer encoding instead of chunked as we won't normally be sending data while it is
             // still being generated. (Additionally httpbin.org - used in tests - doesn't handle chunked correctly).
             client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
 
