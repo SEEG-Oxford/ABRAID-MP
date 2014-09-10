@@ -155,6 +155,15 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         assertThat(count).isEqualTo(1);
     }
 
+    @Test
+    public void getCountByExpertIdReturnsZeroForNoReviews() {
+        // Act
+        Long count = adminUnitReviewDao.getCountByExpertId(1);
+
+        // Assert
+        assertThat(count).isEqualTo(0);
+    }
+
     private AdminUnitReview createAdminUnitReview(Expert expert, int adminUnitGlobalGaulCode,
                                                   DiseaseGroup diseaseGroup, DiseaseExtentClass response) {
         AdminUnitReview review = new AdminUnitReview();
