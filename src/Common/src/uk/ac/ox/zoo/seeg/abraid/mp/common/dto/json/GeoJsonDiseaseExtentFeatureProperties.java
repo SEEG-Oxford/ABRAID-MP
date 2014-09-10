@@ -7,7 +7,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
-import java.util.Collections;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
@@ -51,24 +50,10 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     }
 
     private DateTime extractExpertReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
-        List<AdminUnitReview> reviewsOfAdminUnit = extractReviewsOfAdminUnit(reviews, adminUnit.getGaulCode());
-        if (reviewsOfAdminUnit.isEmpty()) {
-            return null;
-        }
-        return extractMostRecentCreatedDate(reviewsOfAdminUnit);
+        List<AdminUnitReview> reviewsOfAdminUnit = select(reviews,
+            having(on(AdminUnitReview.class).getAdminUnitGlobalOrTropicalGaulCode(), equalTo(adminUnit.getGaulCode())));
+        return max(reviewsOfAdminUnit, on(AdminUnitReview.class).getCreatedDate());
     }
-
-    private List<AdminUnitReview> extractReviewsOfAdminUnit(List<AdminUnitReview> reviews, Integer gaulCode) {
-        return select(reviews,
-               having(on(AdminUnitReview.class).getAdminUnitGlobalOrTropicalGaulCode(), equalTo(gaulCode)));
-    }
-
-    private DateTime extractMostRecentCreatedDate(List<AdminUnitReview> reviews) {
-        List<DateTime> createdDates = extract(reviews, on(AdminUnitReview.class).getCreatedDate());
-        Collections.sort(createdDates, Collections.reverseOrder());
-        return createdDates.get(0);
-    }
-
 
     public String getName() {
         return name;

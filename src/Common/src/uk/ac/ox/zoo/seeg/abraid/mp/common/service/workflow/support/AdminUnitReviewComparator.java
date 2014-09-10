@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class AdminUnitReviewComparator implements Comparator<AdminUnitReview> {
 
-    Comparator<AdminUnitReview> expertComparator;
-    Comparator<AdminUnitReview> gaulCodeComparator;
-    Comparator<AdminUnitReview> dateComparator;
+    private Comparator<AdminUnitReview> expertComparator;
+    private Comparator<AdminUnitReview> gaulCodeComparator;
+    private Comparator<AdminUnitReview> dateComparator;
 
     public AdminUnitReviewComparator() {
          expertComparator = new Comparator<AdminUnitReview>() {
