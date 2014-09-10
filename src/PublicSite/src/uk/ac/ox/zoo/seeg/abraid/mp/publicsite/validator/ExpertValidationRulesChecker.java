@@ -29,6 +29,7 @@ public class ExpertValidationRulesChecker {
     private static final String INSTITUTION_FIELD_NAME = "Institution";
     private static final String JOB_TITLE_FIELD_NAME = "Job title";
     private static final String PASSWORD_FIELD_NAME = "Password";
+    private static final String CURRENT_PASSWORD_FIELD_NAME = "Current password";
     private static final String DISEASE_INTERESTS_FIELD_NAME = "Disease interests";
     private static final String VISIBILITY_REQUESTED_FIELD_NAME = "Visibility requested";
     private static final String PASSWORD_CONFIRMATION_FIELD_NAME = "Password confirmation";
@@ -105,7 +106,7 @@ public class ExpertValidationRulesChecker {
     public void checkCurrentPassword(String value, int expertId, List<String> validationFailures) {
         Expert expert = expertService.getExpertById(expertId);
         if (!passwordEncoder.matches(value, expert.getPassword())) {
-            validationFailures.add(String.format(FAILURE_INCORRECT_VALUE, PASSWORD_FIELD_NAME));
+            validationFailures.add(String.format(FAILURE_INCORRECT_VALUE, CURRENT_PASSWORD_FIELD_NAME));
         }
     }
 

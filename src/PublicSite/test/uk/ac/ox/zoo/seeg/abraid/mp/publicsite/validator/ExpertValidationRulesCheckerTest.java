@@ -144,7 +144,7 @@ public class ExpertValidationRulesCheckerTest {
         target.checkCurrentPassword("password", 321, result);
 
         // Assert
-        assertThat(result).contains("Password incorrect.");
+        assertThat(result).contains("Current password incorrect.");
     }
 
     @Test

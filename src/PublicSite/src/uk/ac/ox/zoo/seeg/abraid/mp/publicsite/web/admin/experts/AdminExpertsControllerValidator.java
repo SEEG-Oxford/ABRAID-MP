@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Validates the fields associated with an Expert profile updates.
+ * Validates the fields associated with an expert's profile updates.
  * Copyright (c) 2014 University of Oxford
  */
 public class AdminExpertsControllerValidator {
@@ -21,7 +21,7 @@ public class AdminExpertsControllerValidator {
     }
 
     /**
-     * Validates an expert dto for the fields required for an admin updating an expert.
+     * Validates an expert DTO for the fields required for an admin updating an expert.
      * @param expert The expert to validate.
      * @return A list of validation failures.
      */
