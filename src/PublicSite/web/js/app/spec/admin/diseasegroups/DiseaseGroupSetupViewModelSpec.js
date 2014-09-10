@@ -149,7 +149,7 @@ define([
                 expect(vm.disableButtonThatGeneratesDiseaseExtent()).toBe(true);
             });
 
-            it("enables the disease extent should be able to be generated", function () {
+            it("enables if the disease extent should be able to be generated", function () {
                 vm.canRunModel(true);
                 vm.hasModelBeenSuccessfullyRun(false);
                 vm.isSubmitting(false);

@@ -66,11 +66,12 @@ public class DiseaseExtentGenerator {
         // Retrieve a lookup table of disease extent classes
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
 
-        // Determine whether there has been a completed model run for this disease group
+        // Determine whether the model has been successfully run
         ModelRun modelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+        boolean hasModelBeenSuccessfullyRun = (modelRun != null);
 
         return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses,
-                modelRun != null);
+                hasModelBeenSuccessfullyRun);
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
