@@ -39,7 +39,7 @@
         </span>
         <span class="input-group-addon btn btn-default btn-file">
             <span>Select file</span>
-            <input type="file" id="file-picker" placeholder="Choose a file" data-bind="formFile: ${bind}">
+            <input type="file" name="file" id="file-picker" placeholder="Choose a file" data-bind="formFile: ${bind}, useFormData: useFormData">
         </span>
     </@formGroupGeneric>
 </#macro>

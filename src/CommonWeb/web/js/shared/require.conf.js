@@ -36,6 +36,7 @@
             // Move to cdn path when next version is published (AMD support)
             "knockout.bootstrap": basePath + "lib/knockout-bootstrap.min",
             "knockout-postbox": basePath + "lib/knockout-postbox",
+            "jquery.iframe-transport": basePath + "lib/jquery.iframe-transport",
 
             // Shared - makes sure that shared files can load even when not working on deployed artifacts
             "ko": basePath + "ko",
@@ -56,7 +57,8 @@
             "bootstrap-datepicker" :  [ "bootstrap" ],
             "bootstrap.extensions" :  [ "bootstrap" ],
             "leaflet-markercluster": [ "leaflet" ],
-            "flipclock": ["jquery"]
+            "flipclock": ["jquery"],
+            "jquery.iframe-transport": ["jquery"]
         }
     });
 }());

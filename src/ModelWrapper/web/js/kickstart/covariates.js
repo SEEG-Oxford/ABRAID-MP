@@ -20,7 +20,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             doc.getElementById("covariate-body"));
 
         ko.applyBindings(
-            ko.validatedObservable(new CovariateUploadViewModel(baseUrl)),
+            ko.validatedObservable(new CovariateUploadViewModel(baseUrl, false/*window.FormData !== undefined*/)),
             doc.getElementById("add-covariate-body"));
 
         covariatesViewModel.hasUnsavedChanges.subscribe(function (value) {

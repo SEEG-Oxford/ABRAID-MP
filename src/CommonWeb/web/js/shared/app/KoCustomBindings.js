@@ -109,12 +109,15 @@ define([
 
     ko.bindingHandlers.file = {
         init: function (element, valueAccessor) {
-            $(element).change(function () {
-                var file = this.files[0];
+            var updateBinding = function () {
+                var file = element.files[0];
                 if (ko.isObservable(valueAccessor())) {
                     valueAccessor()(file);
                 }
-            });
+            };
+
+            $(element).change(updateBinding);
+            updateBinding();
         }
     };
 
@@ -183,12 +186,22 @@ define([
 
     ko.bindingHandlers.formFile = {
         init: function (element, valueAccessor, allBindings, deprecated, bindingContext) {
-            ko.applyBindingAccessorsToNode(element, {
-                file: valueAccessor,
-                bootstrapDisable: function () {
+            var useFormData = allBindings().useFormData;
+            var bindings = {
+                file: valueAccessor
+            };
+
+            if (useFormData) {
+                bindings.bootstrapDisable = function () {
                     return bindingContext.find("isSubmitting");
-                }
-            });
+                };
+            } else {
+                bindings.css = function () {
+                    return { disabled: valueAccessor() };
+                };
+            }
+
+            ko.applyBindingAccessorsToNode(element, bindings);
         }
     };
 
