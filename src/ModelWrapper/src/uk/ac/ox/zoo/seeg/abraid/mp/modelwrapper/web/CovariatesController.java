@@ -103,7 +103,7 @@ public class CovariatesController {
     @ResponseBody
     public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(String name, String subdirectory,
                                                                     MultipartFile file) {
-        List<String> messages = Arrays.asList("Test message 1", "Test message 2");
+        List<String> messages = Arrays.asList("Not fully implemented");
         if (file == null || file.isEmpty()) {
             return new ResponseEntity<>(new JsonFileUploadResponse(false, messages), HttpStatus.BAD_REQUEST);
         } else {
