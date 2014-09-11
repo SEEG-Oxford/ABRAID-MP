@@ -1,6 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer;
 
 /**
@@ -11,9 +13,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMap
 @Transactional(rollbackFor = Exception.class)
 public class DataAcquisitionServiceImpl implements DataAcquisitionService {
     private HealthMapDataAcquirer healthMapDataAcquirer;
+    private CsvDataAcquirer csvDataAcquirer;
 
-    public DataAcquisitionServiceImpl(HealthMapDataAcquirer healthMapDataAcquirer) {
+    public DataAcquisitionServiceImpl(HealthMapDataAcquirer healthMapDataAcquirer, CsvDataAcquirer csvDataAcquirer) {
         this.healthMapDataAcquirer = healthMapDataAcquirer;
+        this.csvDataAcquirer = csvDataAcquirer;
     }
 
     /**
@@ -31,5 +35,16 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
     @Override
     public void acquireHealthMapDataFromFile(String jsonFileName) {
         healthMapDataAcquirer.acquireDataFromFile(jsonFileName);
+    }
+
+    /**
+     * Acquires data from a generic CSV file.
+     * @param csv The content of the CSV file.
+     * @return A message upon the success of the data acquisition.
+     * @throws DataAcquisitionException Upon failure of the data acquisition.
+     */
+    @Override
+    public String acquireCsvData(String csv) throws DataAcquisitionException {
+        return csvDataAcquirer.acquireDataFromCsv(csv);
     }
 }

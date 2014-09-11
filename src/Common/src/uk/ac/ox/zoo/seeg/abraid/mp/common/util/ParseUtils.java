@@ -1,6 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utilities for parsing.
@@ -68,5 +76,39 @@ public final class ParseUtils {
             convertedString = null;
         }
         return convertedString;
+    }
+
+    /**
+     * Reads a CSV file into a list of the specified type.
+     * @param csv The CSV file.
+     * @param responseClass The type of the returned list's elements.
+     * @param schema A schema representing the CSV file's structure.
+     * @param <T> The type of the returned list's elements.
+     * @return A list of parsed elements.
+     * @throws IOException if parsing failed.
+     */
+    public static <T> List<T> readFromCsv(String csv, Class<T> responseClass, CsvSchema schema) throws IOException {
+        if (csv == null) {
+            // Protect against NullPointerException
+            csv = "";
+        }
+
+        ObjectReader reader = new CsvMapper().reader(responseClass).with(schema);
+        MappingIterator<T> iterator = reader.readValues(csv);
+        ArrayList<T> results = new ArrayList<>();
+        try {
+            while (iterator.hasNext()) {
+                results.add(iterator.next());
+            }
+        } catch (RuntimeException e) {
+            // ObjectReader throws (subclasses of) IOException, but MappingIterator wraps them in a RuntimeException.
+            // We unwrap them for consistency.
+            Throwable cause = e.getCause();
+            if (cause != null && cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw e;
+        }
+        return results;
     }
 }

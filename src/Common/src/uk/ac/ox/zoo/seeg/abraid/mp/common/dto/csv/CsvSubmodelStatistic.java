@@ -1,13 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -160,13 +157,6 @@ public class CsvSubmodelStatistic {
      */
     public static List<CsvSubmodelStatistic> readFromCSV(String csv) throws IOException {
         CsvSchema schema = CsvSchema.emptySchema().withHeader();
-        ObjectReader reader = new CsvMapper().reader(CsvSubmodelStatistic.class).with(schema);
-        MappingIterator<CsvSubmodelStatistic> iterator = reader.readValues(csv);
-        ArrayList<CsvSubmodelStatistic> results = new ArrayList<>();
-        while (iterator.hasNext()) {
-            results.add(iterator.next());
-        }
-
-        return results;
+        return ParseUtils.readFromCsv(csv, CsvSubmodelStatistic.class, schema);
     }
 }

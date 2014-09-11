@@ -51,6 +51,6 @@ public class ProvenanceDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void getAllProvenances() {
         List<Provenance> provenances = provenanceDao.getAll();
-        assertThat(provenances).hasSize(1);
+        assertThat(provenances).hasSize(2);
     }
 }

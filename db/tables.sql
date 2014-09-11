@@ -94,10 +94,10 @@ CREATE TABLE alert (
     id serial NOT NULL,
     feed_id integer NOT NULL,
     title text,
-    publication_date timestamp NOT NULL,
+    publication_date timestamp,
     url varchar(2000),
     summary text,
-    healthmap_alert_id integer NOT NULL,
+    healthmap_alert_id integer,
     created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 

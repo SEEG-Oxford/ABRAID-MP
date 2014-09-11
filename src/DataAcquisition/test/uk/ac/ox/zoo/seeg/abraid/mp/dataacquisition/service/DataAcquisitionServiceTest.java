@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer;
 
 import static org.mockito.Mockito.*;
@@ -13,11 +14,13 @@ import static org.mockito.Mockito.*;
 public class DataAcquisitionServiceTest {
     private DataAcquisitionService service;
     private HealthMapDataAcquirer healthMapDataAcquirer;
+    private CsvDataAcquirer csvDataAcquirer;
 
     @Before
     public void setUp() {
         healthMapDataAcquirer = mock(HealthMapDataAcquirer.class);
-        service = new DataAcquisitionServiceImpl(healthMapDataAcquirer);
+        csvDataAcquirer = mock(CsvDataAcquirer.class);
+        service = new DataAcquisitionServiceImpl(healthMapDataAcquirer, csvDataAcquirer);
     }
 
     @Test
@@ -31,5 +34,12 @@ public class DataAcquisitionServiceTest {
         String fileName = "test.json";
         service.acquireHealthMapDataFromFile(fileName);
         verify(healthMapDataAcquirer, times(1)).acquireDataFromFile(eq(fileName));
+    }
+
+    @Test
+    public void acquireCsvData() {
+        String csv = "1, 2, 3";
+        service.acquireCsvData(csv);
+        verify(csvDataAcquirer, times(1)).acquireDataFromCsv(eq(csv));
     }
 }

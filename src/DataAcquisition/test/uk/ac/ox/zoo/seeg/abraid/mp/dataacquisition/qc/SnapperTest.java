@@ -49,13 +49,13 @@ public class SnapperTest {
     public void locationInsideSecondGeometry() {
         // Arrange
         Location location = new Location(117, 115);
-        Snapper snapper = new Snapper("HealthMap country", 5);
+        Snapper snapper = new Snapper("country", 5);
 
         // Act
         snapper.ensureWithinGeometry(location, getGeometry());
 
         // Assert
-        assertThat(snapper.getMessage()).isEqualTo("location already within HealthMap country");
+        assertThat(snapper.getMessage()).isEqualTo("location already within country");
         assertThat(snapper.hasPassed()).isTrue();
         assertThat(snapper.getClosestPoint()).isNotNull();
         assertThat(snapper.getClosestPoint().equalsExact(location.getGeom())).isTrue();

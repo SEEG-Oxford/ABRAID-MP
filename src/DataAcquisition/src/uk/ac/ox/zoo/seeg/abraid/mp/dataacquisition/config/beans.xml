@@ -49,6 +49,11 @@
     <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLocationConverter" autowire="constructor"/>
     <bean id="healthMapLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLookupData" autowire="constructor"/>
 
+    <!-- CSV data acquisition beans -->
+    <bean id="csvDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer" autowire="constructor"/>
+    <bean id="csvDiseaseOccurrenceConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDiseaseOccurrenceConverter" autowire="constructor"/>
+    <bean id="csvLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvLookupData" autowire="constructor"/>
+
     <!-- General data acquisition beans -->
     <bean id="diseaseOccurrenceDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer" autowire="constructor"/>
 

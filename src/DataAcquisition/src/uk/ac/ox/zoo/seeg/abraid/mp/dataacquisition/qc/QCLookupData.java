@@ -7,7 +7,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLookupData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,15 +21,15 @@ import static ch.lambdaj.Lambda.*;
  */
 public class QCLookupData {
     private List<AdminUnitQC> adminUnits;
+    private Map<Integer, MultiPolygon> countryGeometryMap;
     private MultiPolygon landSeaBorders;
+    private Map<Integer, HealthMapCountry> healthMapCountryMap;
     private Map<Integer, MultiPolygon> healthMapCountryGeometryMap;
 
     private LocationService locationService;
-    private HealthMapLookupData healthMapLookupData;
 
-    public QCLookupData(LocationService locationService, HealthMapLookupData healthMapLookupData) {
+    public QCLookupData(LocationService locationService) {
         this.locationService = locationService;
-        this.healthMapLookupData = healthMapLookupData;
     }
 
     /**
@@ -42,6 +41,23 @@ public class QCLookupData {
             adminUnits = locationService.getAllAdminUnitQCs();
         }
         return adminUnits;
+    }
+
+    /**
+     * Gets a list of country geometries, indexed by GAUL code.
+     * @return A list of country geometries, indexed by GAUL code.
+     */
+    public Map<Integer, MultiPolygon> getCountryGeometryMap() {
+        if (countryGeometryMap == null) {
+            // This will retrieve the countries from the Hibernate cache if already obtained by CsvLookupData
+            List<Country> countries = locationService.getAllCountries();
+            countryGeometryMap = new HashMap<>();
+            for (Country country : countries) {
+                countryGeometryMap.put(country.getGaulCode(), country.getGeom());
+            }
+
+        }
+        return countryGeometryMap;
     }
 
     /**
@@ -58,16 +74,30 @@ public class QCLookupData {
     }
 
     /**
+     * Gets a list of HealthMap countries, indexed by HealthMap country ID.
+     * @return A list of HealthMap countries, indexed by HealthMap country ID.
+     */
+    public Map<Integer, HealthMapCountry> getHealthMapCountryMap() {
+        if (healthMapCountryMap == null) {
+            // This will retrieve the countries from the Hibernate cache if already obtained by HealthMapLookupData
+            List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
+            healthMapCountryMap = index(countries, on(HealthMapCountry.class).getId());
+        }
+        return healthMapCountryMap;
+    }
+
+    /**
      * Gets a mapping between HealthMap country ID and the geometry of the associated GAUL countries.
      * If the HealthMap country has no associated geometries, it does not appear in the map.
      * @return A mapping as described above.
      */
     public Map<Integer, MultiPolygon> getHealthMapCountryGeometryMap() {
         if (healthMapCountryGeometryMap == null) {
-            Map<Integer, HealthMapCountry> countryMap = healthMapLookupData.getCountryMap();
+            // This will retrieve the countries from the Hibernate cache if already obtained by HealthMapLookupData
+            List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
             healthMapCountryGeometryMap = new HashMap<>();
 
-            for (HealthMapCountry country : countryMap.values()) {
+            for (HealthMapCountry country : countries) {
                 if (country.getCountries() != null) {
                     List<MultiPolygon> countryGeometries = extract(country.getCountries(), on(Country.class).getGeom());
                     MultiPolygon countryGeometry = GeometryUtils.concatenate(countryGeometries);
@@ -79,9 +109,5 @@ public class QCLookupData {
         }
 
         return healthMapCountryGeometryMap;
-    }
-
-    public HealthMapLookupData getHealthMapLookupData() {
-        return healthMapLookupData;
     }
 }

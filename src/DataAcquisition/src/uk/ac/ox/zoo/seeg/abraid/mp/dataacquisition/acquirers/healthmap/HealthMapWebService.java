@@ -52,8 +52,7 @@ public class HealthMapWebService {
     private String stripHtmlParameterName;
 
     private static final Logger LOGGER = Logger.getLogger(HealthMapWebService.class);
-    private static final String CALLING_WEB_SERVICE_MESSAGE =
-            "Calling HealthMap web service between dates %s and %s";
+    private static final String CALLING_WEB_SERVICE_MESSAGE = "Calling HealthMap web service between dates %s and %s";
 
     public HealthMapWebService(WebServiceClient webServiceClient) {
         this.webServiceClient = webServiceClient;

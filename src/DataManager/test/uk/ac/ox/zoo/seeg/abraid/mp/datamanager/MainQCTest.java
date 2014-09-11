@@ -71,7 +71,7 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence1Location.getAdminUnitQCGaulCode()).isEqualTo(1312);
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 16.09% of " +
                 "the square root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: " +
-                "location already within HealthMap country.");
+                "location already within country.");
     }
 
     private void assertSecondLocation(DiseaseOccurrence occurrence) {

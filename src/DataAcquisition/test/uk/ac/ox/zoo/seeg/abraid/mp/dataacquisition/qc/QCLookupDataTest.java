@@ -9,15 +9,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLookupData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static ch.lambdaj.Lambda.index;
-import static ch.lambdaj.Lambda.on;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,7 +26,6 @@ import static org.mockito.Mockito.when;
  */
 public class QCLookupDataTest {
     private LocationService locationService = mock(LocationService.class);
-    private HealthMapLookupData healthMapLookupData = mock(HealthMapLookupData.class);
 
     @Test
     public void getAdminUnits() {
@@ -38,7 +34,21 @@ public class QCLookupDataTest {
         when(locationService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService, healthMapLookupData);
+        QCLookupData lookupData = new QCLookupData(locationService);
+        List<AdminUnitQC> actualAdminUnits = lookupData.getAdminUnits();
+
+        // Assert
+        assertThat(actualAdminUnits).isEqualTo(expectedAdminUnits);
+    }
+
+    @Test
+    public void getCountryGeometryMap() {
+        // Arrange
+        List<AdminUnitQC> expectedAdminUnits = new ArrayList<>();
+        when(locationService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
+
+        // Act
+        QCLookupData lookupData = new QCLookupData(locationService);
         List<AdminUnitQC> actualAdminUnits = lookupData.getAdminUnits();
 
         // Assert
@@ -52,7 +62,7 @@ public class QCLookupDataTest {
         when(locationService.getAllLandSeaBorders()).thenReturn(getLandSeaBorderList());
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService, healthMapLookupData);
+        QCLookupData lookupData = new QCLookupData(locationService);
         MultiPolygon actualMultiPolygon = lookupData.getLandSeaBorders();
 
         // Assert
@@ -62,12 +72,12 @@ public class QCLookupDataTest {
     @Test
     public void getHealthMapCountryGeometryMap() {
         // Arrange
-        when(healthMapLookupData.getCountryMap()).thenReturn(getCountryMap());
+        when(locationService.getAllHealthMapCountries()).thenReturn(getHealthMapCountries());
         MultiPolygon expectedGeometry1 = GeometryUtils.createMultiPolygon(getTriangle());
         MultiPolygon expectedGeometry2 = GeometryUtils.createMultiPolygon(getSquare(), getFivePointedPolygon());
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService, healthMapLookupData);
+        QCLookupData lookupData = new QCLookupData(locationService);
         Map<Integer, MultiPolygon> healthMapCountryGeometryMap = lookupData.getHealthMapCountryGeometryMap();
 
         // Assert
@@ -79,15 +89,14 @@ public class QCLookupDataTest {
         assertThat(healthMapCountryGeometryMap.get(3).equals(expectedGeometry2)).isTrue();
     }
 
-    private Map<Integer, HealthMapCountry> getCountryMap() {
+    private List<HealthMapCountry> getHealthMapCountries() {
         Country country1 = new Country(1, "Triangle", GeometryUtils.createMultiPolygon(getTriangle()));
         Country country2 = new Country(2, "Square", GeometryUtils.createMultiPolygon(getSquare()));
         Country country3 = new Country(3, "Five-pointed", GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
-        List<HealthMapCountry> healthMapCountries = Arrays.asList(
+        return Arrays.asList(
                 new HealthMapCountry(1, "HealthMap country 1", country1),
                 new HealthMapCountry(2, "HealthMap country 2"),
                 new HealthMapCountry(3, "HealthMap country 3", country2, country3));
-        return index(healthMapCountries, on(HealthMapCountry.class).getId());
     }
 
     private List<LandSeaBorder> getLandSeaBorderList() {

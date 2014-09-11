@@ -48,17 +48,14 @@ public class DiseaseOccurrenceDataAcquirer {
     public boolean acquire(DiseaseOccurrence occurrence) {
         if (occurrence != null) {
             Location location = continueLocationConversion(occurrence.getLocation());
+            occurrence.setLocation(location);
 
-            if (location != null) {
-                occurrence.setLocation(location);
-
-                if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
-                    // Add validation parameters to the occurrence and save it all. Note that the location is saved with
-                    // the disease occurrence.
-                    diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
-                    diseaseService.saveDiseaseOccurrence(occurrence);
-                    return true;
-                }
+            if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
+                // Add validation parameters to the occurrence and save it all. Note that the location is saved with
+                // the disease occurrence.
+                diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
+                diseaseService.saveDiseaseOccurrence(occurrence);
+                return true;
             }
         }
 

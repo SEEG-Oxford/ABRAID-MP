@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
-import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -9,9 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.GeoNamesWebService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.GeoNamesWebService;
 
 /**
  * Converts a HealthMap location into an ABRAID location.
@@ -51,11 +49,9 @@ public class HealthMapLocationConverter {
         Location location = null;
 
         if (validate(healthMapLocation)) {
-            Point point = createPointFromLatLong(healthMapLocation);
-
             location = findExistingLocationByGeoNameId(healthMapLocation);
             if (location == null) {
-                location = createLocation(healthMapLocation, point);
+                location = createLocation(healthMapLocation);
             }
         }
 
@@ -81,7 +77,7 @@ public class HealthMapLocationConverter {
         return location;
     }
 
-    private Location createLocation(HealthMapLocation healthMapLocation, Point point) {
+    private Location createLocation(HealthMapLocation healthMapLocation) {
         Location location = null;
 
         HealthMapCountry healthMapCountry = lookupData.getCountryMap().get(healthMapLocation.getCountryId());
@@ -90,7 +86,7 @@ public class HealthMapLocationConverter {
         } else {
             location = new Location();
             location.setHealthMapCountryId(healthMapCountry.getId());
-            location.setGeom(point);
+            location.setGeom(healthMapLocation.getLongitude(), healthMapLocation.getLatitude());
             location.setName(healthMapLocation.getPlaceName());
             addPrecision(healthMapLocation, location);
         }
@@ -188,9 +184,5 @@ public class HealthMapLocationConverter {
         GeoName geoName = new GeoName(geoNameDTO.getGeoNameId(), geoNameDTO.getFeatureCode());
         locationService.saveGeoName(geoName);
         return geoName;
-    }
-
-    private Point createPointFromLatLong(HealthMapLocation healthMapLocation) {
-        return GeometryUtils.createPoint(healthMapLocation.getLongitude(), healthMapLocation.getLatitude());
     }
 }
