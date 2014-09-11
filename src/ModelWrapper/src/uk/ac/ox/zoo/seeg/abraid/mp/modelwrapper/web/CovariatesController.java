@@ -4,17 +4,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.CovariateObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Controller for the ModelWrapper Covariates page.
@@ -66,7 +72,8 @@ public class CovariatesController {
      * @return 204 for success or 400 for bad input.
      * @throws java.io.IOException thrown if the configuration could not be saved.
      */
-    @RequestMapping(value = "/covariates/config", method = RequestMethod.POST)
+    @RequestMapping(value = "/covariates/config",
+                    method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateCovariates(@RequestBody JsonCovariateConfiguration config) throws IOException  {
         if (config == null || !config.isValid()) {
             LOGGER.warn(LOG_INVALID_REQUEST_TO_UPDATE_COVARIATES);
@@ -82,5 +89,25 @@ public class CovariatesController {
 
         LOGGER.info(LOG_COVARIATE_CONFIGURATION_UPDATED_SUCCESSFULLY);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Handles the submission of the covariate file upload form.
+     * @param name The name to use for the new file.
+     * @param subdirectory The subdirectory to add the new file to.
+     * @param file The new covariate file.
+     * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
+     */
+    @RequestMapping(value = "/covariates/add", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
+    public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(String name, String subdirectory,
+                                                                    MultipartFile file) {
+        List<String> messages = Arrays.asList("Test message 1", "Test message 2");
+        if (file == null || file.isEmpty()) {
+            return new ResponseEntity<>(new JsonFileUploadResponse(false, messages), HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(new JsonFileUploadResponse(true, messages), HttpStatus.OK);
+        }
     }
 }

@@ -3,10 +3,8 @@
  */
 define([
     "ko",
-    "shared/app/BaseFileFormViewModel",
-    "jquery",
-    "jquery.iframe-transport"
-], function (ko, BaseFileFormViewModel, $) {
+    "shared/app/BaseFileFormViewModel"
+], function (ko, BaseFileFormViewModel) {
     "use strict";
 
     return function (baseUrl) {
@@ -22,28 +20,6 @@ define([
                 name: self.name(),
                 subdirectory: self.subdirectory()
             };
-        };
-
-        var baseBuildAjaxArgs = self.buildAjaxArgs;
-        self.buildAjaxArgs = function () {
-            var args = baseBuildAjaxArgs();
-            args.processData = false; // prevent jquery from turning the FormData in to key/value pairs
-            args.contentType = null; // prevent jquery adding
-            if (!self.useFormData) {
-                args.iframe = true;
-                args.files = $(":file[name=file]").filter(function (i, el) { return el.files[0] === self.file(); });
-            }
-            return args;
-        };
-
-        var baseSuccessHandler = self.successHandler;
-        self.successHandler = function (data) {
-            if (data === "SUCCESS") {
-                baseSuccessHandler(data, data, { responseText : data });
-            } else {
-                self.failureHandler({ responseText : data });
-            }
-
         };
     };
 });

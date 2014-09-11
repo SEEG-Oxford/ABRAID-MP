@@ -18,7 +18,7 @@ define([
 
         // Currently limited to one file, with name='file' on the <input>
         self.file = ko.observable(null).extend({ required: true });
-        self.useFormData = true;// (window.FormData !== undefined);
+        self.useFormData = (window.FormData !== undefined);
 
         BaseFormViewModel.call(self, false, true, baseUrl, targetUrl, messages, excludeGenericFailureMessage);
 
@@ -37,7 +37,7 @@ define([
             // Prevent jquery from turning the data in to key/value pairs
             args.processData = false;
             // Prevent jquery from adding its default content type
-            args.contentType = null;
+            args.contentType = false;
             if (!self.useFormData) {
                 // Set the transport mechanism to iframe
                 args.iframe = true;
@@ -50,23 +50,40 @@ define([
             return args;
         };
 
-        var baseSuccessHandler = self.successHandler;
-        self.successHandler = function (data) {
-            // One limitation of the iframe transport mechanism is that it doesn't see the status code
-            // and calls success for all cases.
+        var baseFailureHandler = self.failureHandler;
+        self.failureHandler = function (xhr) {
             try {
-                data = JSON.parse(data);
+                // Emulate other (non-file) forms
+                var data = JSON.parse(xhr.responseText);
+                if (data.messages !== undefined) {
+                    xhr.responseText = JSON.stringify(data.messages);
+                }
             } catch (e) {
-                self.failureHandler({});
+                // Ignore
             }
 
-            var json = data.messages.toString();
+            baseFailureHandler(xhr);
+        };
+
+        var baseSuccessHandler = self.successHandler;
+        self.successHandler = function (data, textStatus, xhr) {
+            // One limitation of the iframe transport mechanism is that it doesn't see the status code
+            // and calls success for all cases. It also adds html surrounding tags to the response body
+            if (typeof data === "string") {
+                try {
+                    data = JSON.parse($(data).text());
+                } catch (e) {
+                    self.failureHandler({});
+                    return;
+                }
+            }
+
+            var json = JSON.stringify(data.messages); // Emulate other (non-file) forms
             if (data.status === "SUCCESS") {
                 baseSuccessHandler(json, json, { responseText : json });
             } else {
-                self.failureHandler(json);
+                self.failureHandler({ responseText : json, status: ((xhr || {}).status || 400) });
             }
-
         };
     };
 });
