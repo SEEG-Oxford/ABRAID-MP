@@ -1,38 +1,27 @@
 /* An AMD defining the Covariates, a vm to back covariate configuration form.
  * Copyright (c) 2014 University of Oxford
  */
-/* global FormData:false */
 define([
     "ko",
-    "app/covariates/CovariatesListRowViewModel",
-    "shared/app/BaseFormViewModel",
+    "shared/app/BaseFileFormViewModel",
     "jquery",
     "jquery.iframe-transport"
-], function (ko, CovariatesListRowViewModel, BaseFormViewModel, $) {
+], function (ko, BaseFileFormViewModel, $) {
     "use strict";
 
-    return function (baseUrl, useFormData) {
+    return function (baseUrl) {
         var self = this;
 
         self.name = ko.observableArray("").extend({ required: true });
         self.subdirectory = ko.observable("./").extend({ required: true });
-        self.file = ko.observable("").extend({ required: true });
-        self.useFormData = useFormData;
 
-        BaseFormViewModel.call(self, false, true, baseUrl, "covariates/add");
+        BaseFileFormViewModel.call(self, baseUrl, "covariates/add");
+
         self.buildSubmissionData = function () {
-            if (self.useFormData) {
-                var data = new FormData();
-                data.append("name", self.name());
-                data.append("subdirectory", self.subdirectory());
-                data.append("file", self.file());
-                return data;
-            } else {
-                return {
-                    name: self.name(),
-                    subdirectory: self.subdirectory()
-                };
-            }
+            return {
+                name: self.name(),
+                subdirectory: self.subdirectory()
+            };
         };
 
         var baseBuildAjaxArgs = self.buildAjaxArgs;
@@ -48,7 +37,7 @@ define([
         };
 
         var baseSuccessHandler = self.successHandler;
-        self.successHandler = function (data, textStatus, xhr) {
+        self.successHandler = function (data) {
             if (data === "SUCCESS") {
                 baseSuccessHandler(data, data, { responseText : data });
             } else {
