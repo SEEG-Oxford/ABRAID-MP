@@ -23,9 +23,17 @@
                 <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Publications</a></li>
+                <@security.authorize ifAnyGranted="ROLE_SEEG">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="<@spring.url "/tools/uploadcsv/"/>">Upload CSV</a></li>
+                        </ul>
+                    </li>
+                </@security.authorize>
                 <@security.authorize ifAnyGranted="ROLE_ADMIN">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration<span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="<@spring.url "/admin/diseases/"/>">Diseases</a></li>
                             <li><a href="<@spring.url "/admin/experts/"/>">Experts</a></li>

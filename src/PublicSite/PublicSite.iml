@@ -34,7 +34,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="publicsite-lib" level="project" />
-    <orderEntry type="module" module-name="Common" exported="" />
+    <orderEntry type="module" module-name="Common" />
+    <orderEntry type="module" module-name="DataAcquisition" />
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="knockout-debug" level="application" />
     <orderEntry type="library" name="moment" level="application" />

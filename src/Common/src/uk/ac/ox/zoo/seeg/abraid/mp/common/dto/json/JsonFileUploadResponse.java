@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -10,11 +11,15 @@ import java.util.Collection;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonFileUploadResponse {
-    private static final String SUCCESS = "SUCCESS";
-    private static final String FAIL = "FAIL";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String FAIL = "FAIL";
 
     private final String status;
     private final Collection<String> messages;
+
+    public JsonFileUploadResponse(boolean success, String messages) {
+        this(success, Arrays.asList(messages));
+    }
 
     public JsonFileUploadResponse(boolean success, Collection<String> messages) {
         this.status = success ? SUCCESS : FAIL;

@@ -4,6 +4,7 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import static org.mockito.Mockito.*;
+
 /**
  * Tests the HandlersAsyncWrapper class.
  * Copyright (c) 2014 University of Oxford

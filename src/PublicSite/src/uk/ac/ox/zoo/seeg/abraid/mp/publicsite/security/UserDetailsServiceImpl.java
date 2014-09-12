@@ -21,6 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final String ROLE_SEEG = "ROLE_SEEG";
 
     private ExpertService expertService;
 
@@ -43,6 +44,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         authorities.add(new SimpleGrantedAuthority(ROLE_USER));
         if (expert.isAdministrator()) {
             authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
+        }
+        if (expert.isSeegMember()) {
+            authorities.add(new SimpleGrantedAuthority(ROLE_SEEG));
         }
 
         return new PublicSiteUser(

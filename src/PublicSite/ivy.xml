@@ -38,6 +38,7 @@
 
         <!-- Internal -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="build"/>
+        <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="dataacquisition" changing="true" rev="${repository.version}" conf="build"/>
 
         <!-- Internal Test -->
         <dependency org="uk.ac.ox.zoo.seeg.abraid.mp" name="common" changing="true" rev="${repository.version}" conf="testutils"/>

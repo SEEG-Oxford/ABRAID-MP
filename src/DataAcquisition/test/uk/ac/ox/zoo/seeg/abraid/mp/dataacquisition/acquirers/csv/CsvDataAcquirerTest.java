@@ -62,7 +62,7 @@ public class CsvDataAcquirerTest {
     }
 
     @Test
-    public void successMessageHasCorrectCounts() {
+    public void successMessageHasCorrectCountsIfAtLeastOneDiseaseOccurrenceWasAcquired() {
         // Disease occurrence 1 has location 1 (passed QC)
         // Disease occurrence 2 has location 2 (failed QC)
         // Disease occurrence 3 has location 3 (passed QC)
@@ -94,6 +94,18 @@ public class CsvDataAcquirerTest {
 
         // Assert
         assertThat(message).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC)");
+    }
+
+    @Test
+    public void successMessageHasCorrectCountsIfNoDiseaseOccurrencesWereAcquired() {
+        // Arrange
+        String csv = "\n";
+
+        // Act
+        String message = csvDataAcquirer.acquireDataFromCsv(csv);
+
+        // Assert
+        assertThat(message).isEqualTo("Saved 0 disease occurrence(s) in 0 location(s) (of which 0 location(s) passed QC)");
     }
 
     private Location createLocation(int id, boolean hasPassedQc) {
