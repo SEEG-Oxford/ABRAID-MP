@@ -3,13 +3,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Custom comparator to sort list of reviews by expert (asc), admin unit gaul code (asc), then date (desc).
  * Copyright (c) 2014 University of Oxford
  */
-public class AdminUnitReviewComparator implements Comparator<AdminUnitReview> {
+public class AdminUnitReviewComparator implements Comparator<AdminUnitReview>, Serializable {
 
     @Override
     public int compare(AdminUnitReview o1, AdminUnitReview o2) {
