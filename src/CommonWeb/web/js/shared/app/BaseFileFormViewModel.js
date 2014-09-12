@@ -17,7 +17,7 @@ define([
         var self = this;
 
         // Currently limited to one file, with name='file' on the <input>
-        self.file = ko.observable(null).extend({ required: true });
+        self.file = ko.observable().extend({ required: true });
         self.useFormData = (window.FormData !== undefined);
 
         BaseFormViewModel.call(self, false, true, baseUrl, targetUrl, messages, excludeGenericFailureMessage);
@@ -65,6 +65,8 @@ define([
             baseFailureHandler(xhr);
         };
 
+        self.postSuccessAction = function () {};
+
         var baseSuccessHandler = self.successHandler;
         self.successHandler = function (data, textStatus, xhr) {
             // One limitation of the iframe transport mechanism is that it doesn't see the status code
@@ -81,6 +83,7 @@ define([
             var json = JSON.stringify(data.messages); // Emulate other (non-file) forms
             if (data.status === "SUCCESS") {
                 baseSuccessHandler(json, json, { responseText : json });
+                self.postSuccessAction();
             } else {
                 self.failureHandler({ responseText : json, status: ((xhr || {}).status || 400) });
             }

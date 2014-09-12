@@ -6,7 +6,7 @@
 <form id="${formId}" action="" data-bind="formSubmit: submit">
     <#nested/>
     <p class="form-group">
-        <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: '${buttonSubmittingText}', standard: '${buttonStandardText}' }"></button>
+        <button type="submit" class="btn btn-primary disabled" data-bind="formButton: { submitting: '${buttonSubmittingText}', standard: '${buttonStandardText}' }" disabled>&nbsp;</button>
     </p>
     <div class="form-group" data-bind="foreach: notices">
         <div data-bind="alert: $data"></div>
@@ -39,7 +39,7 @@
         </span>
         <span class="input-group-addon btn btn-default btn-file">
             <span>Select file</span>
-            <input type="file" name="file" id="file-picker" placeholder="Choose a file" data-bind="formFile: ${bind}, useFormData: useFormData">
+            <input type="file" name="file" id="file-picker" placeholder="Choose a file" autocomplete="off" data-bind="formFile: ${bind}, useFormData: useFormData">
         </span>
     </@formGroupGeneric>
 </#macro>
