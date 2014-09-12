@@ -12,6 +12,12 @@ ALTER TABLE admin_unit_disease_extent_class
 ALTER TABLE admin_unit_disease_extent_class
     ADD CONSTRAINT uq_tropical_gaul_code_disease_group_id UNIQUE (disease_group_id, tropical_gaul_code);
 
+ALTER TABLE admin_unit_review
+    ADD CONSTRAINT uq_expert_id_disease_group_id_global_gaul_code UNIQUE (expert_id, disease_group_id, global_gaul_code, created_date);
+
+ALTER TABLE admin_unit_review
+    ADD CONSTRAINT uq_expert_id_disease_group_id_tropical_gaul_code UNIQUE (expert_id, disease_group_id, tropical_gaul_code, created_date);
+
 ALTER TABLE alert
     ADD CONSTRAINT uq_alert_healthmap_alert_id UNIQUE (healthmap_alert_id);
 
