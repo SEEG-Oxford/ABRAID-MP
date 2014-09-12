@@ -1,6 +1,6 @@
 /* A base view model to provide a common implementation of knockout client-side form behaviour when the form
  * contains a file.
- * Use "call" to apply. E.g. BaseFormViewModel.call(self, args..)
+ * Use "call" to apply. E.g. BaseFileFormViewModel.call(self, args..)
  * Copyright (c) 2014 University of Oxford.
  */
 /* global window: false, FormData: false */
@@ -24,10 +24,11 @@ define([
 
         var buildFormData = function (subclassData) {
             var data = new FormData();
+            // Add the subclass data key value pairs to the FormData object
             _(subclassData).chain().pairs().map(function (kvp) {
                 data.append(kvp[0], kvp[1]);
             });
-            // Add the file to data
+            // Add the file to the FormData object
             data.append("file", self.file());
             return data;
         };
