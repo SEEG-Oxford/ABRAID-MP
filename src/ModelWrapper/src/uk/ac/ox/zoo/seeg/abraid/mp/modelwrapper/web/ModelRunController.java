@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
@@ -33,15 +34,18 @@ public class ModelRunController extends AbstractController {
     private final RunConfigurationFactory runConfigurationFactory;
     private final ModelRunnerAsyncWrapper modelRunnerAsyncWrapper;
     private final ModelOutputHandlerWebService modelOutputHandlerWebService;
+    private final AbraidJsonObjectMapper objectMapper;
 
     @Autowired
     public ModelRunController(
             RunConfigurationFactory runConfigurationFactory,
             ModelRunnerAsyncWrapper modelRunnerAsyncWrapper,
-            ModelOutputHandlerWebService modelOutputHandlerWebService) {
+            ModelOutputHandlerWebService modelOutputHandlerWebService,
+            AbraidJsonObjectMapper objectMapper) {
         this.runConfigurationFactory = runConfigurationFactory;
         this.modelRunnerAsyncWrapper = modelRunnerAsyncWrapper;
         this.modelOutputHandlerWebService = modelOutputHandlerWebService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -69,7 +73,8 @@ public class ModelRunController extends AbstractController {
             ModelStatusReporter modelStatusReporter = new ModelStatusReporterImpl(
                     runConfiguration.getRunName(),
                     runConfiguration.getWorkingDirectoryPath(),
-                    modelOutputHandlerWebService);
+                    modelOutputHandlerWebService,
+                    objectMapper);
 
             // Ignore result for now
             modelRunnerAsyncWrapper.startModel(

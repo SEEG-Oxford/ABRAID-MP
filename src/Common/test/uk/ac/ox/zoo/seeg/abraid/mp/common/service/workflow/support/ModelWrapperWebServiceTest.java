@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
@@ -90,7 +91,7 @@ public class ModelWrapperWebServiceTest {
     }
 
     private ModelWrapperWebService getModelWrapperWebService(WebServiceClient client) {
-        ModelWrapperWebService webService = new ModelWrapperWebService(client);
+        ModelWrapperWebService webService = new ModelWrapperWebService(client, new AbraidJsonObjectMapper());
         webService.setRootUrl(ROOT_URL);
         return webService;
     }

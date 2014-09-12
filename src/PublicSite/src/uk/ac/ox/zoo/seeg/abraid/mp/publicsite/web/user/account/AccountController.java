@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
@@ -45,7 +45,7 @@ public class AccountController extends AbstractController {
     private final CurrentUserService currentUserService;
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
-    private final ObjectMapper json;
+    private final AbraidJsonObjectMapper json;
     private final AccountControllerValidator validator;
     private final AccountControllerHelper helper;
 
@@ -53,13 +53,13 @@ public class AccountController extends AbstractController {
     public AccountController(CurrentUserService currentUserService,
                              ExpertService expertService,
                              DiseaseService diseaseService,
-                             ObjectMapper geoJsonObjectMapper,
+                             AbraidJsonObjectMapper objectMapper,
                              AccountControllerValidator adminControllerValidator,
                              AccountControllerHelper accountControllerTransactionHelper) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
-        this.json = geoJsonObjectMapper;
+        this.json = objectMapper;
         this.validator = adminControllerValidator;
         this.helper = accountControllerTransactionHelper;
     }

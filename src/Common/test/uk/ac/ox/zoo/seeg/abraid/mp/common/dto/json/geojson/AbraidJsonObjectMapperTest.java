@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
@@ -16,19 +17,19 @@ import java.util.TimeZone;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for GeoJsonObjectMapper.
+ * Tests for AbraidJsonObjectMapper.
  * Copyright (c) 2014 University of Oxford
  */
-public class GeoJsonObjectMapperTest {
+public class AbraidJsonObjectMapperTest {
     @Test
-    public void constructorForGeoJsonObjectMapperConfiguresJodaTimeSerialization() throws Exception {
+    public void constructorForAbraidJsonObjectMapperConfiguresJodaTimeSerialization() throws Exception {
         // Arrange
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         OutputStream stream = new ByteArrayOutputStream();
         DateTime jodaTime = new DateTime(0);
 
         // Act
-        GeoJsonObjectMapper target = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper target = new AbraidJsonObjectMapper();
         target.writeValue(stream, jodaTime);
         String result = stream.toString();
 
@@ -37,13 +38,13 @@ public class GeoJsonObjectMapperTest {
     }
 
     @Test
-    public void constructorForGeoJsonObjectMapperConfiguresEmptyArraySerialization() throws Exception {
+    public void constructorForAbraidJsonObjectMapperConfiguresEmptyArraySerialization() throws Exception {
         // Arrange
         GeoJsonFeatureCollection empty = new GeoJsonDiseaseOccurrenceFeatureCollection(new ArrayList<DiseaseOccurrence>());
         OutputStream stream = new ByteArrayOutputStream();
 
         // Act
-        GeoJsonObjectMapper target = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper target = new AbraidJsonObjectMapper();
         target.writeValue(stream, empty);
         String result = stream.toString();
 
@@ -52,12 +53,12 @@ public class GeoJsonObjectMapperTest {
     }
 
     @Test
-    public void constructorForGeoJsonObjectMapperConfiguresSingletonArraySerialization() throws Exception {
+    public void constructorForAbraidJsonObjectMapperConfiguresSingletonArraySerialization() throws Exception {
         // Arrange
         GeoJsonFeatureCollection singleton = new GeoJsonDiseaseOccurrenceFeatureCollection(Arrays.asList(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence()));
         OutputStream stream = new ByteArrayOutputStream();
         // Act
-        GeoJsonObjectMapper target = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper target = new AbraidJsonObjectMapper();
         target.writeValue(stream, singleton);
         String result = stream.toString();
 

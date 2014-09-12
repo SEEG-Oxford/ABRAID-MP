@@ -2,10 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 
 import java.io.IOException;
 
@@ -15,14 +15,14 @@ import java.io.IOException;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonParser {
-    private ObjectMapper mapper;
+    private AbraidJsonObjectMapper mapper;
 
     public JsonParser() {
         this(null);
     }
 
     public JsonParser(DateTimeFormatter dateTimeFormatter) {
-        mapper = new ObjectMapper();
+        mapper = new AbraidJsonObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         // Register a module that parses Joda time types, with a custom deserializer for DateTime types that is aware
