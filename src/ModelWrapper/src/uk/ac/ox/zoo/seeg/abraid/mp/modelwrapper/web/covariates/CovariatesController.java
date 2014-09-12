@@ -51,9 +51,10 @@ public class CovariatesController {
     private final CovariatesControllerValidator validator;
 
     @Autowired
-    public CovariatesController(ConfigurationService configurationService, CovariatesControllerValidator validator) {
+    public CovariatesController(ConfigurationService configurationService,
+                                CovariatesControllerValidator covariatesControllerValidator) {
         this.configurationService = configurationService;
-        this.validator = validator;
+        this.validator = covariatesControllerValidator;
     }
 
     /**
