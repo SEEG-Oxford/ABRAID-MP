@@ -1,6 +1,7 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,16 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.CovariateObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Controller for the ModelWrapper Covariates page.
@@ -32,17 +39,21 @@ public class CovariatesController {
     private static final String LOG_EXISTING_COVARIATE_CONFIGURATION_IS_INVALID =
             "Existing covariate configuration is invalid.";
     private static final String LOG_INVALID_REQUEST_TO_UPDATE_COVARIATES =
-            "Invalid request to update covariates (specifed configuration is not valid).";
+            "Invalid request to update covariates (specified configuration is not valid).";
     private static final String LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED =
             "Covariate configuration update failed.";
     private static final String LOG_COVARIATE_CONFIGURATION_UPDATED_SUCCESSFULLY =
             "Covariate configuration updated successfully.";
+    public static final String ERROR_CREATE_SUBDIRECTORY = "Could not create subdirectory for new covariate file";
+    public static final String LOG_NEW_COVARIATE = "New covariate uploaded (%s, %s).";
 
     private final ConfigurationService configurationService;
+    private final CovariatesControllerValidator validator;
 
     @Autowired
-    public CovariatesController(ConfigurationService configurationService) {
+    public CovariatesController(ConfigurationService configurationService, CovariatesControllerValidator validator) {
         this.configurationService = configurationService;
+        this.validator = validator;
     }
 
     /**
@@ -93,7 +104,7 @@ public class CovariatesController {
 
     /**
      * Handles the submission of the covariate file upload form.
-     * @param name The name to use for the new file.
+     * @param name The name of the added covariate.
      * @param subdirectory The subdirectory to add the new file to.
      * @param file The new covariate file.
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
@@ -101,13 +112,57 @@ public class CovariatesController {
     @RequestMapping(value = "/covariates/add", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(String name, String subdirectory,
-                                                                    MultipartFile file) {
-        List<String> messages = Arrays.asList("Not fully implemented");
-        if (file == null || file.isEmpty()) {
-            return new ResponseEntity<>(new JsonFileUploadResponse(false, messages), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(String name, String subdirectory, MultipartFile file)
+            throws IOException {
+        String covariateDirectory = configurationService.getCovariateDirectory();
+        JsonCovariateConfiguration covariateConfiguration = configurationService.getCovariateConfiguration();
+        String path = extractTargetPath(subdirectory, file, covariateDirectory);
+
+        Collection<String> validationMessages = validator
+                .validateCovariateUpload(name, subdirectory, file, path, covariateDirectory, covariateConfiguration);
+
+        if (!validationMessages.isEmpty()) {
+            return new ResponseEntity<>(new JsonFileUploadResponse(false, validationMessages), HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<>(new JsonFileUploadResponse(true, messages), HttpStatus.OK);
+            // Create directory
+            File dir = Paths.get(path).getParent().toFile();
+            if (!dir.exists()) {
+                if(!dir.mkdirs()) {
+                    throw new IOException(ERROR_CREATE_SUBDIRECTORY);
+                }
+            }
+
+            // Create the file on server
+            File serverFile = Paths.get(path).toFile();
+            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+            stream.write(file.getBytes());
+            stream.close();
+
+            // Add the entry in the covariate list
+            String relativePath = extractRelativePath(covariateDirectory, path).toString();
+            covariateConfiguration.getFiles().add(new JsonCovariateFile(
+                    relativePath,
+                    name,
+                    null,
+                    false,
+                    new ArrayList<Integer>()
+            ));
+            configurationService.setCovariateConfiguration(covariateConfiguration);
+
+            LOGGER.info(String.format(LOG_NEW_COVARIATE, name, relativePath));
+            return new ResponseEntity<>(new JsonFileUploadResponse(true, validationMessages), HttpStatus.OK);
         }
     }
+
+    private String extractTargetPath(String subdirectory, MultipartFile file, String covariateDirectory) {
+        Path path = Paths.get(covariateDirectory, subdirectory, file.getOriginalFilename());
+        return FilenameUtils.separatorsToUnix(path.toAbsolutePath().toString());
+    }
+
+    private Path extractRelativePath(String covariateDirectory, String path) {
+        Path parent = Paths.get(covariateDirectory).toAbsolutePath();
+        Path child = Paths.get(path).toAbsolutePath();
+        return parent.relativize(child);
+    }
+
 }

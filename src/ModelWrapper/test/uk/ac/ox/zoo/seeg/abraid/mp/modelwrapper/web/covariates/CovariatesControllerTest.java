@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class CovariatesControllerTest {
     public void showCovariatesPageReturnsCorrectModelData() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService);
+        CovariatesController target = new CovariatesController(configurationService, null);
         when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
         Model model = mock(Model.class);
 
@@ -39,7 +39,7 @@ public class CovariatesControllerTest {
     public void showCovariatesPageReturnsCorrectTemplate() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService);
+        CovariatesController target = new CovariatesController(configurationService, null);
         when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
         Model model = mock(Model.class);
 
@@ -54,7 +54,7 @@ public class CovariatesControllerTest {
     public void showCovariatesPageThrowsForInvalidCovariateConfig() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService);
+        CovariatesController target = new CovariatesController(configurationService, null);
         when(configurationService.getCovariateConfiguration()).thenThrow(new IOException());
         Model model = mock(Model.class);
 
@@ -71,7 +71,7 @@ public class CovariatesControllerTest {
     public void updateCovariatesRejectsInvalidInputs() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService);
+        CovariatesController target = new CovariatesController(configurationService, null);
         JsonCovariateConfiguration invalidConf = new JsonCovariateConfiguration();
 
         for (JsonCovariateConfiguration conf : Arrays.asList(invalidConf, null)) {
@@ -87,7 +87,7 @@ public class CovariatesControllerTest {
     public void updateCovariatesThrowsIfConfigurationCanNotBeSaved() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService);
+        CovariatesController target = new CovariatesController(configurationService, null);
         JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
         when(conf.isValid()).thenReturn(true);
         doThrow(new IOException()).when(configurationService).setCovariateConfiguration(conf);
@@ -105,7 +105,7 @@ public class CovariatesControllerTest {
     public void updateCovariatesSavedConfiguration() throws Exception {
         // Arrange
         ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService);
+        CovariatesController target = new CovariatesController(configurationService, null);
         JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
         when(conf.isValid()).thenReturn(true);
 
