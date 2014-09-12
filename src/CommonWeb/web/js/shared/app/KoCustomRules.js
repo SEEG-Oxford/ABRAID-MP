@@ -37,18 +37,46 @@ define([
         message: "Username must be between 3 and 15 characters long and consist of only letters, numbers, '_' or '-'"
     };
 
+    ko.validation.rules.startWith = {
+        validator: function (value, other) {
+            var theValue = ko.utils.recursiveUnwrap(value);
+            var theOther = ko.utils.recursiveUnwrap(other);
+            return theValue.indexOf(theOther) === 0;
+        },
+        message: "Must start with '{0}'"
+    };
+
+    ko.validation.rules.endWith = {
+        validator: function (value, other) {
+            var theValue = ko.utils.recursiveUnwrap(value);
+            var theOther = ko.utils.recursiveUnwrap(other);
+            return theValue.lastIndexOf(theOther) === (theValue.length - theOther.length);
+        },
+        message: "Must end with with '{0}'"
+    };
+
+    ko.validation.rules.notContain = {
+        validator: function (value, other) {
+            var theValue = ko.utils.recursiveUnwrap(value);
+            var theOther = ko.utils.recursiveUnwrap(other);
+            return theValue.indexOf(theOther) === -1;
+        },
+        message: "Must not contain '{0}'"
+    };
+
     ko.validation.rules.digit.message = "Please enter a whole number";
 
     ko.validation.rules.isUniqueProperty = {
         validator: function (val, options) {
             if (val) {
-                var array = options.array;
+                var array = ko.utils.recursiveUnwrap(options.array);
                 var id = ko.utils.recursiveUnwrap(options.id);
                 var property = options.property;
                 return ! _(array)
                     .chain()
-                    .filter(function (o) { return o.id !== id; })
+                    .filter(function (o) { return id === undefined || o.id !== id; })
                     .pluck(property)
+                    .map(ko.utils.recursiveUnwrap)
                     .contains(val)
                     .value();
             } else {
