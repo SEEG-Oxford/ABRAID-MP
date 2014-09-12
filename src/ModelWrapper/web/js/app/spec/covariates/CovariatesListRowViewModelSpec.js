@@ -43,7 +43,7 @@ define([ "app/covariates/CovariatesListRowViewModel" ], function (CovariatesList
             var parentVM = {};
             beforeEach(function () {
                 parentFile = { hide: false, enabled: [] };
-                parentVM = { hasUnsavedChanges: jasmine.createSpy(), files: { valueHasMutated: jasmine.createSpy() } };
+                parentVM = { hasUnsavedChanges: jasmine.createSpy(), entries: { valueHasMutated: jasmine.createSpy() } };
                 vm = new CovariatesListRowViewModel(parentVM, parentFile, 0);
             });
 
@@ -67,7 +67,7 @@ define([ "app/covariates/CovariatesListRowViewModel" ], function (CovariatesList
 
             it("forces a update of the parent view model's 'files' field dependants", function () {
                 vm.hide(true);
-                expect(parentVM.files.valueHasMutated).toHaveBeenCalled();
+                expect(parentVM.entries.valueHasMutated).toHaveBeenCalled();
             });
         });
 
