@@ -110,6 +110,9 @@ label.side-by-side {
     padding-right: 12px;
     margin-bottom: 0;
 }
+button.btn[type=submit] {
+    min-width: 70px
+}
 .btn-group input {
     display: none;
 }
