@@ -31,7 +31,7 @@ define([
             return baseUrl + targetUrl;
         };
 
-        var buildAjaxArgs = function () {
+        self.buildAjaxArgs = function () {
             var args = {};
 
             args.method = "POST";
@@ -76,7 +76,11 @@ define([
 
         self.successHandler = function (data, textStatus, xhr) {
             self.pushNotice(messages.success || "Form saved successfully.", "success");
-            processResponse(xhr, "success");
+            try {
+                processResponse(xhr, "success");
+            } catch (e) {
+                // Ignore failed json parse
+            }
         };
 
         self.failureHandler = function (xhr) {
@@ -88,7 +92,16 @@ define([
                 if (!excludeGenericFailureMessage) {
                     self.pushNotice(messages.fail || "Failed to save form.", "warning");
                 }
-                processResponse(xhr, "warning");
+
+                try {
+                    processResponse(xhr, "warning");
+                } catch (e) {
+                    if (excludeGenericFailureMessage) {
+                        // Make sure that there is an error message.
+                        // Even if the json fails to parse (eg 404) and the subclass says no generic messages
+                        self.pushNotice(messages.fail || "Failed to save form.", "warning");
+                    }
+                }
             }
         };
 
@@ -98,7 +111,7 @@ define([
             self.notices.removeAll();
             self.isSubmitting(true);
 
-            $.ajax(buildAjaxArgs())
+            $.ajax(self.buildAjaxArgs())
                 .done(self.successHandler)
                 .fail(self.failureHandler)
                 .always(function (xhr) {

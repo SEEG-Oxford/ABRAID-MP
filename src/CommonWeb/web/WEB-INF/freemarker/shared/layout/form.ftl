@@ -14,14 +14,32 @@
 </form>
 </#macro>
 
-<#macro formGroupBasic id label bind glyph type="text">
+<#macro formGroupGeneric id label glyph inputGroupOptions='class="input-group"'>
 <p class="form-group">
-     <label for="${id}">${label}: </label>
-     <span class="input-group">
+    <label for="${id}">${label}: </label>
+     <span ${inputGroupOptions}>
          <span class="input-group-addon">
             <i class="${glyph}"></i>
         </span>
-        <input id="${id}" type="${type}" class="form-control" placeholder="${label}" data-bind="formValue: ${bind}" autocomplete="off">
+         <#nested/>
     </span>
 </p>
+</#macro>
+
+<#macro formGroupBasic id label bind glyph type="text">
+    <@formGroupGeneric id label glyph>
+        <input id="${id}" type="${type}" class="form-control" placeholder="${label}" data-bind="formValue: ${bind}" autocomplete="off">
+    </@formGroupGeneric>
+</#macro>
+
+<#macro formGroupFile id label bind>
+    <@formGroupGeneric id label "glyphicon glyphicon-paperclip" 'class="fileinput fileinput-new input-group" data-provides="fileinput"'>
+        <span class="form-control" data-trigger="fileinput">
+            <span class="fileinput-filename"></span>
+        </span>
+        <span class="input-group-addon btn btn-default btn-file">
+            <span>Select file</span>
+            <input type="file" name="file" id="file-picker" placeholder="Choose a file" data-bind="formFile: ${bind}, useFormData: useFormData">
+        </span>
+    </@formGroupGeneric>
 </#macro>

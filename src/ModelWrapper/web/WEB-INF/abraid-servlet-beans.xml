@@ -16,6 +16,11 @@
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
          http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- setting maximum upload size  (1073741824 bytes = 1GiB)-->
+        <property name="maxUploadSize" value="1073741824" />
+    </bean>
+
     <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web"/>
 
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
