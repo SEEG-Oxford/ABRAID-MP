@@ -27,7 +27,7 @@ public class ModelRunControllerTest {
     @Test
     public void startRunDoesNotAcceptNull() {
         // Arrange
-        ModelRunController target = new ModelRunController(mock(RunConfigurationFactory.class), mock(ModelRunnerAsyncWrapperImpl.class), mock(ModelOutputHandlerWebService.class), mock(AbraidJsonObjectMapper.class));
+        ModelRunController target = new ModelRunController(mock(RunConfigurationFactory.class), mock(ModelRunnerAsyncWrapperImpl.class), mock(ModelOutputHandlerWebService.class), new AbraidJsonObjectMapper());
 
         // Act
         ResponseEntity result = target.startRun(null);
@@ -47,7 +47,7 @@ public class ModelRunControllerTest {
         when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString(), anyString())).thenReturn(mockConf);
 
 
-        ModelRunController target = new ModelRunController(mockFactory, mockRunner, mock(ModelOutputHandlerWebService.class), mock(AbraidJsonObjectMapper.class));
+        ModelRunController target = new ModelRunController(mockFactory, mockRunner, mock(ModelOutputHandlerWebService.class), new AbraidJsonObjectMapper());
 
         GeoJsonDiseaseOccurrenceFeatureCollection occurrence = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));

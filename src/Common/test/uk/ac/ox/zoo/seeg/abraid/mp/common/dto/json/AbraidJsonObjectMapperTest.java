@@ -1,11 +1,10 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.io.ByteArrayOutputStream;
