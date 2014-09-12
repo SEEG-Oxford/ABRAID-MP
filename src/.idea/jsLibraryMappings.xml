@@ -2,6 +2,7 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/app/SingleFieldFormViewModel.js" libraries="{jquery, knockout-debug}" />
+    <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/app/spec/BaseFileFormViewModelSpec.js" libraries="{jquery}" />
     <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/app/spec/SingleFieldFormViewModelSpec.js" libraries="{jasmine, mock-ajax, underscore}" />
     <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/kickstart/default.js" libraries="{require}" />
     <file url="file://$PROJECT_DIR$/CommonWeb/web/js/shared/navbar.js" libraries="{jquery, require}" />

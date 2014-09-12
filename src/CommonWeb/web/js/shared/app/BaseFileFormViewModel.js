@@ -32,6 +32,7 @@ define([
             data.append("file", self.file());
             return data;
         };
+
         var baseBuildAjaxArgs = self.buildAjaxArgs;
         self.buildAjaxArgs = function () {
             var args = baseBuildAjaxArgs();
@@ -69,7 +70,7 @@ define([
         self.postSuccessAction = function () {};
 
         var baseSuccessHandler = self.successHandler;
-        self.successHandler = function (data, textStatus, xhr) {
+        self.successHandler = function (data) {
             // One limitation of the iframe transport mechanism is that it doesn't see the status code
             // and calls success for all cases. It also adds html surrounding tags to the response body
             if (typeof data === "string") {
@@ -86,7 +87,7 @@ define([
                 baseSuccessHandler(json, json, { responseText : json });
                 self.postSuccessAction();
             } else {
-                self.failureHandler({ responseText : json, status: ((xhr || {}).status || 400) });
+                baseFailureHandler({ responseText : json });
             }
         };
     };
