@@ -149,6 +149,8 @@ CREATE TABLE disease_group (
     last_model_run_prep_date timestamp,
     automatic_model_runs_start_date timestamp,
     min_new_locations_trigger integer,
+    min_env_suitability double precision,
+    min_distance_from_extent integer,
     min_data_volume integer NOT NULL,
     min_distinct_countries integer,
     high_frequency_threshold integer,

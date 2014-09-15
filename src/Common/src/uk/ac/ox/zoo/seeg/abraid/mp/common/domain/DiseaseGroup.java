@@ -80,6 +80,12 @@ public class DiseaseGroup {
     @Column(name = "min_new_locations_trigger")
     private Integer minNewLocationsTrigger;
 
+    @Column(name = "min_env_suitability")
+    private Double minEnvironmentalSuitability;
+
+    @Column(name = "min_distance_from_extent")
+    private Integer minDistanceFromDiseaseExtent;
+
     // The minimum number of occurrences required for a model run to go ahead.
     // Default value is implicitly zero.
     @Column(name = "min_data_volume")
@@ -261,6 +267,22 @@ public class DiseaseGroup {
         this.minNewLocationsTrigger = minNewLocations;
     }
 
+    public Double getMinEnvironmentalSuitability() {
+        return minEnvironmentalSuitability;
+    }
+
+    public void setMinEnvironmentalSuitability(Double minEnvironmentalSuitability) {
+        this.minEnvironmentalSuitability = minEnvironmentalSuitability;
+    }
+
+    public Integer getMinDistanceFromDiseaseExtent() {
+        return minDistanceFromDiseaseExtent;
+    }
+
+    public void setMinDistanceFromDiseaseExtent(Integer minDistanceFromDiseaseExtent) {
+        this.minDistanceFromDiseaseExtent = minDistanceFromDiseaseExtent;
+    }
+
     public int getMinDataVolume() {
         return minDataVolume;
     }
@@ -322,10 +344,11 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseGroup)) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
+        if (minDataVolume != that.minDataVolume) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (automaticModelRunsStartDate != null ? !automaticModelRunsStartDate.equals(that.automaticModelRunsStartDate) : that.automaticModelRunsStartDate != null)
             return false;
@@ -339,8 +362,11 @@ public class DiseaseGroup {
         if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
         if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
             return false;
-        if (minDataVolume != that.minDataVolume) return false;
+        if (minDistanceFromDiseaseExtent != null ? !minDistanceFromDiseaseExtent.equals(that.minDistanceFromDiseaseExtent) : that.minDistanceFromDiseaseExtent != null)
+            return false;
         if (minDistinctCountries != null ? !minDistinctCountries.equals(that.minDistinctCountries) : that.minDistinctCountries != null)
+            return false;
+        if (minEnvironmentalSuitability != null ? !minEnvironmentalSuitability.equals(that.minEnvironmentalSuitability) : that.minEnvironmentalSuitability != null)
             return false;
         if (minHighFrequencyCountries != null ? !minHighFrequencyCountries.equals(that.minHighFrequencyCountries) : that.minHighFrequencyCountries != null)
             return false;
@@ -374,6 +400,8 @@ public class DiseaseGroup {
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (automaticModelRunsStartDate != null ? automaticModelRunsStartDate.hashCode() : 0);
         result = 31 * result + (minNewLocationsTrigger != null ? minNewLocationsTrigger.hashCode() : 0);
+        result = 31 * result + (minEnvironmentalSuitability != null ? minEnvironmentalSuitability.hashCode() : 0);
+        result = 31 * result + (minDistanceFromDiseaseExtent != null ? minDistanceFromDiseaseExtent.hashCode() : 0);
         result = 31 * result + minDataVolume;
         result = 31 * result + (minDistinctCountries != null ? minDistinctCountries.hashCode() : 0);
         result = 31 * result + (highFrequencyThreshold != null ? highFrequencyThreshold.hashCode() : 0);
