@@ -119,6 +119,56 @@ define([
             });
         });
 
+        describe("the 'file' binding which", function () {
+            var jqSpy, injectorWithJQuerySpy;
+            beforeEach(function () {
+                jqSpy = jasmine.createSpy("jqSpy").and.returnValue({
+                    change: jasmine.createSpy("changeSpy")
+                });
+
+                // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
+                jasmine.Ajax.uninstall();
+                injectorWithJQuerySpy = new Squire();
+
+                injectorWithJQuerySpy.mock("jquery", jqSpy);
+            });
+
+            it("subscribes to changes on the value of the target element, with a callback that updates the value of the observable", function (done) { // jshint ignore:line
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Arrange
+                    var expectedElement = { files: [ "expectedFile" ] };
+                    var observableSpy = jasmine.createSpy("observableSpy");
+
+                    // Act
+                    ko.bindingHandlers.file.init(expectedElement, function () { return observableSpy; });
+
+                    // Assert
+                    expect(observableSpy).toHaveBeenCalledWith("expectedFile");
+                    expect(jqSpy().change).toHaveBeenCalled();
+                    var callback = jqSpy().change.calls.argsFor(0)[0];
+                    expectedElement.files[0] = "newFile";
+                    callback();
+                    expect(observableSpy).toHaveBeenCalledWith("newFile");
+                    done();
+                });
+            });
+
+            it("updates the initial value of the observable", function (done) {
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Arrange
+                    var expectedElement = { files: [ "expectedFile" ] };
+                    var observableSpy = jasmine.createSpy("observableSpy");
+
+                    // Act
+                    ko.bindingHandlers.file.init(expectedElement, function () { return observableSpy; });
+
+                    // Assert
+                    expect(observableSpy).toHaveBeenCalledWith("expectedFile");
+                    done();
+                });
+            });
+        });
+
         describe("the 'date' binding, which", function () {
             var textSpy, jqSpy, injectorWithJQuerySpy, momentSpy, formatSpy;
             var expectedElement = "expectedElement";
@@ -315,6 +365,62 @@ define([
                         subBindings.submit()();
                         expect(submitFunction).not.toHaveBeenCalled();
                     });
+                });
+            });
+
+            describe("the 'formFile' binding, which", function () {
+                var context;
+                var accessor = function () {
+                    return "value";
+                };
+
+                beforeEach(function () {
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    context = { find: function () { return false; } };
+                });
+
+                it("adds composite bindings to the same element", function () {
+                    var element = "1234";
+                    ko.bindingHandlers.formFile.init(
+                        element, accessor, function () { return { useFormData: true }; }, {}, context);
+
+                    expect(ko.applyBindingAccessorsToNode.calls.count()).toBe(1);
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                });
+
+                it("applies a 'bootstrapDisable' binding with a submitting based accessor when useFormData is true",
+                    function () {
+                        ko.bindingHandlers.formFile.init(
+                            {}, accessor, function () { return { useFormData: true }; }, {}, context);
+                        var subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+
+                        expect(subBindings.bootstrapDisable).toBeDefined();
+                        expect(typeof subBindings.bootstrapDisable).toBe("function");
+
+                        context.find = findBuilder(true, false); // not submitting
+                        expect(subBindings.bootstrapDisable()).toBe(false);
+
+                        context.find = findBuilder(true, true);  // submitting
+                        expect(subBindings.bootstrapDisable()).toBe(true);
+                    }
+                );
+
+                it("does not apply a 'bootstrapDisable' binding when useFormData is false", function () {
+                    ko.bindingHandlers.formFile.init(
+                        {}, accessor, function () { return { useFormData: false }; }, {}, context);
+                    var subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+
+                    expect(subBindings.bootstrapDisable).toBeUndefined();
+                });
+
+                it("applies a 'file' binding with the value accessor", function () {
+                    ko.bindingHandlers.formFile.init(
+                        {}, accessor, function () { return { useFormData: true }; }, {}, context);
+                    var subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+
+                    expect(subBindings.file).toBeDefined();
+                    expect(typeof subBindings.file).toBe("function");
+                    expect(subBindings.file()).toBe(accessor());
                 });
             });
 

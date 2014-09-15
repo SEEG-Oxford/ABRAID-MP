@@ -27,7 +27,6 @@ define([
             });
         });
 
-
         describe("has a 'useFormData' field, which", function () {
             it("gets a browser appropriate value", function () {
                 var vm = new BaseFileFormViewModel();
