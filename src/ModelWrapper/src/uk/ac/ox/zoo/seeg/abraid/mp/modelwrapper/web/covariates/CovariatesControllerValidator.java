@@ -77,6 +77,9 @@ public class CovariatesControllerValidator {
     private boolean checkPathUnderCovariateDir(String covariateDirectory, String path) {
         Path parent = Paths.get(covariateDirectory).toAbsolutePath();
         Path child = Paths.get(path).toAbsolutePath();
-        return !parent.relativize(child).isAbsolute();
+        while (child != null && !child.equals(parent)) {
+            child = child.getParent();
+        }
+        return child != null;
     }
 }
