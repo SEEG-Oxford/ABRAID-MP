@@ -1,14 +1,25 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -20,6 +31,9 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class CovariatesControllerTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     @Test
     public void showCovariatesPageReturnsCorrectModelData() throws Exception {
         // Arrange
@@ -115,5 +129,132 @@ public class CovariatesControllerTest {
         // Assert
         verify(configurationService, times(1)).setCovariateConfiguration(conf);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void addCovariateFileValidatesItsInputsCorrectly() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        when(expectedFile.getOriginalFilename()).thenReturn("file.ext");
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        final String expectedSubdirectory = "dir";
+        final String expectedCovariateDir = testFolder.newFolder().toString();
+        final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/file.ext");
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(configurationService, validator);
+        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
+            .thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+
+        // Assert
+        verify(validator, times(1)).validateCovariateUpload(
+                expectedName, expectedSubdirectory, expectedFile, expectedPath, expectedCovariateDir, expectedCovariateConf
+        );
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody().getStatus()).isEqualTo("FAIL");
+        assertThat(result.getBody().getMessages()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void addCovariateFileSavesTheFileCorrectly() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        final String expectedFileName = "file.ext";
+        when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        final String expectedSubdirectory = "dir";
+        final String expectedCovariateDir = testFolder.newFolder().toString();
+        final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/" + expectedFileName);
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(configurationService, validator);
+        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+
+        // Assert
+        assertThat(FileUtils.readFileToString(new File(expectedPath))).isEqualTo("Test content");
+    }
+
+    @Test
+    public void addCovariateFileUpdatesTheCovariateConfigurationCorrectly() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        final String expectedFileName = "file.ext";
+        when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        final String expectedSubdirectory = "dir";
+        final String expectedCovariateDir = testFolder.newFolder().toString();
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+        final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
+        when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(configurationService, validator);
+        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+
+        // Assert
+        assertThat(covariateFileList).hasSize(1);
+        assertThat(covariateFileList.get(0).getName()).isEqualTo(expectedName);
+        assertThat(covariateFileList.get(0).getPath()).isEqualTo(Paths.get(expectedSubdirectory, expectedFileName).toString());
+        assertThat(covariateFileList.get(0).getHide()).isEqualTo(false);
+        assertThat(covariateFileList.get(0).getInfo()).isEqualTo(null);
+        assertThat(covariateFileList.get(0).getEnabled()).hasSize(0);
+    }
+
+    @Test
+    public void addCovariateFileReturnsAnAppropriateStatusForSuccess() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        final String expectedFileName = "file.ext";
+        when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        final String expectedSubdirectory = "dir";
+        final String expectedCovariateDir = testFolder.newFolder().toString();
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+        final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
+        when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(configurationService, validator);
+        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+
+        // Assert
+        assertThat(covariateFileList).hasSize(1);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getStatus()).isEqualTo("SUCCESS");
+        assertThat(result.getBody().getMessages()).hasSize(0);
     }
 }

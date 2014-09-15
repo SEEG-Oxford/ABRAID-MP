@@ -113,7 +113,7 @@ public class CovariatesController {
     @RequestMapping(value = "/covariates/add", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(
+    public ResponseEntity<JsonFileUploadResponse> addCovariateFile(
             String name, String subdirectory, MultipartFile file) throws IOException {
         String covariateDirectory = configurationService.getCovariateDirectory();
         JsonCovariateConfiguration covariateConfiguration = configurationService.getCovariateConfiguration();

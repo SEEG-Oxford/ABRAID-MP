@@ -18,6 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Tests for CovariatesControllerValidator.
+ * Copyright (c) 2014 University of Oxford
+ */
 public class CovariatesControllerValidatorTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -161,5 +165,4 @@ public class CovariatesControllerValidatorTest {
         // Assert
         assertThat(result).hasSize(0);
     }
-
 }
