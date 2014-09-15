@@ -42,11 +42,17 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     private boolean computeNeedsReview(AdminUnitDiseaseExtentClass extentClass, List<AdminUnitReview> reviews) {
         DateTime extentClassChangedDate = extentClass.getClassChangedDate();
-        DateTime expertReviewedDate = extractExpertReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
-        return (expertReviewedDate == null || extentClassChangedDate.isAfter(expertReviewedDate));
+        if (extentClassChangedDate == null) {
+            // Extent class has not changed since last disease extent generation, so does not need review
+            return false;
+        } else {
+            DateTime reviewedDate = extractReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
+            return (reviewedDate == null || extentClassChangedDate.isAfter(reviewedDate));
+            // Needs review if expert has never reviewed it previously, or if class has changed since last review.
+        }
     }
 
-    private DateTime extractExpertReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
+    private DateTime extractReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
         for (AdminUnitReview review : reviews) {
             if (adminUnit.getGaulCode().equals(review.getAdminUnitGlobalOrTropicalGaulCode())) {
                 return review.getChangedDate();
