@@ -15,7 +15,7 @@ import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
 
 /**
- * foo
+ * A validator for checking the user input for the actions associated with the CovariatesController.
  * Copyright (c) 2014 University of Oxford
  */
 public class CovariatesControllerValidator {
@@ -26,6 +26,16 @@ public class CovariatesControllerValidator {
     private static final String FAIL_FILE_ALREADY_EXISTS = "File already exists.";
     private static final String FAIL_TARGET_PATH_NOT_VALID = "Target path not valid.";
 
+    /**
+     * Validate the user input from a covariate upload.
+     * @param name Name of the covariate file.
+     * @param subdirectory The directory to add the file to.
+     * @param file The covariate file.
+     * @param targetPath The absolute path at which the file should be added.
+     * @param covariateDirectory The absolute path of the covariate directory.
+     * @param covariateConfiguration The current covariate config.
+     * @return A set of validation failures.
+     */
     public Collection<String> validateCovariateUpload(String name, String subdirectory, MultipartFile file,
                                                       String targetPath, String covariateDirectory,
                                                       JsonCovariateConfiguration covariateConfiguration) {

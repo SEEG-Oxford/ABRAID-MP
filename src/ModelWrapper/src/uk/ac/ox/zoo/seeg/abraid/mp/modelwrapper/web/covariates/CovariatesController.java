@@ -153,7 +153,6 @@ public class CovariatesController {
         // Create directory
         createDirectoryForCovariate(path);
 
-
         File serverFile = Paths.get(path).toFile();
         BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
         stream.write(file.getBytes());
