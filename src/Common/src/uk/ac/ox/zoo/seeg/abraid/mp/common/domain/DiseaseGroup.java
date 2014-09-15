@@ -84,7 +84,7 @@ public class DiseaseGroup {
     private Double minEnvironmentalSuitability;
 
     @Column(name = "min_distance_from_extent")
-    private Integer minDistanceFromDiseaseExtent;
+    private Double minDistanceFromDiseaseExtent;
 
     // The minimum number of occurrences required for a model run to go ahead.
     // Default value is implicitly zero.
@@ -275,11 +275,11 @@ public class DiseaseGroup {
         this.minEnvironmentalSuitability = minEnvironmentalSuitability;
     }
 
-    public Integer getMinDistanceFromDiseaseExtent() {
+    public Double getMinDistanceFromDiseaseExtent() {
         return minDistanceFromDiseaseExtent;
     }
 
-    public void setMinDistanceFromDiseaseExtent(Integer minDistanceFromDiseaseExtent) {
+    public void setMinDistanceFromDiseaseExtent(Double minDistanceFromDiseaseExtent) {
         this.minDistanceFromDiseaseExtent = minDistanceFromDiseaseExtent;
     }
 
