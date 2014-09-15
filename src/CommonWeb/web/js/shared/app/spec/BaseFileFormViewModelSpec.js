@@ -95,6 +95,7 @@ define([
                     vm.successHandler("<div>" + JSON.stringify({ status: "SUCCESS", messages: ["a", "b"]}) + "</div>");
                     expect(vm.postSuccessAction).toHaveBeenCalled();
                 });
+
                 it("to distinguish real successes from iframe-transport false positives & extract the messages section for the result data", function () { // jshint ignore:line
                     var vm = new BaseFileFormViewModel();
                     vm.successHandler("<div>" + JSON.stringify({ status: "FAIL", messages: ["a", "b"]}) + "</div>");

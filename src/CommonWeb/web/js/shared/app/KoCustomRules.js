@@ -52,7 +52,7 @@ define([
             var theOther = ko.utils.recursiveUnwrap(other);
             return theValue.lastIndexOf(theOther) === (theValue.length - theOther.length);
         },
-        message: "Must end with with '{0}'"
+        message: "Must end with '{0}'"
     };
 
     ko.validation.rules.notContain = {
