@@ -44,8 +44,8 @@ public class CovariatesController {
             "Covariate configuration update failed.";
     private static final String LOG_COVARIATE_CONFIGURATION_UPDATED_SUCCESSFULLY =
             "Covariate configuration updated successfully.";
-    public static final String ERROR_CREATE_SUBDIRECTORY = "Could not create subdirectory for new covariate file";
-    public static final String LOG_NEW_COVARIATE = "New covariate uploaded (%s, %s).";
+    private static final String ERROR_CREATE_SUBDIRECTORY = "Could not create subdirectory for new covariate file";
+    private static final String LOG_NEW_COVARIATE = "New covariate uploaded (%s, %s).";
 
     private final ConfigurationService configurationService;
     private final CovariatesControllerValidator validator;
@@ -113,8 +113,8 @@ public class CovariatesController {
     @RequestMapping(value = "/covariates/add", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(String name, String subdirectory, MultipartFile file)
-            throws IOException {
+    public ResponseEntity<JsonFileUploadResponse> uploadFileHandler(
+            String name, String subdirectory, MultipartFile file) throws IOException {
         String covariateDirectory = configurationService.getCovariateDirectory();
         JsonCovariateConfiguration covariateConfiguration = configurationService.getCovariateConfiguration();
         String path = extractTargetPath(subdirectory, file, covariateDirectory);
@@ -136,16 +136,17 @@ public class CovariatesController {
         }
     }
 
-    private String updateCovariateConfig(String name, String covariateDirectory, JsonCovariateConfiguration covariateConfiguration, String path) throws IOException {
+    private String updateCovariateConfig(String name, String covariateDirectory, JsonCovariateConfiguration config,
+                                         String path) throws IOException {
         String relativePath = extractRelativePath(covariateDirectory, path).toString();
-        covariateConfiguration.getFiles().add(new JsonCovariateFile(
+        config.getFiles().add(new JsonCovariateFile(
                 relativePath,
                 name,
                 null,
                 false,
                 new ArrayList<Integer>()
         ));
-        configurationService.setCovariateConfiguration(covariateConfiguration);
+        configurationService.setCovariateConfiguration(config);
         return relativePath;
     }
 
@@ -162,7 +163,7 @@ public class CovariatesController {
     private void createDirectoryForCovariate(String path) throws IOException {
         File dir = Paths.get(path).getParent().toFile();
         if (!dir.exists()) {
-            if(!dir.mkdirs()) {
+            if (!dir.mkdirs()) {
                 throw new IOException(ERROR_CREATE_SUBDIRECTORY);
             }
         }

@@ -12,7 +12,7 @@ define([
         var vm, covariateListVM, refreshSpy;
 
         beforeEach(function () {
-            refreshSpy = jasmine.createSpy("refresh")
+            refreshSpy = jasmine.createSpy("refresh");
             covariateListVM = {
                 hasUnsavedChanges: ko.observable(false),
                 visibleEntries: ko.observableArray([ { name: "1" }, { name: "2" }, { name: "3" } ]),
@@ -113,8 +113,8 @@ define([
             it("the correct constructor arguments", function (done) {
                 jasmine.Ajax.uninstall();
                 var injector = new Squire();
-                var baseSpy = jasmine.createSpy("baseSpy").and.callFake(function() {
-                    this.file = function () { return undefined };
+                var baseSpy = jasmine.createSpy("baseSpy").and.callFake(function () {
+                    this.file = function () { return undefined; };
                 });
                 injector.mock("shared/app/BaseFileFormViewModel", baseSpy);
 

@@ -43,7 +43,10 @@ define([ "app/covariates/CovariatesListRowViewModel" ], function (CovariatesList
             var parentVM = {};
             beforeEach(function () {
                 parentFile = { hide: false, enabled: [] };
-                parentVM = { hasUnsavedChanges: jasmine.createSpy(), entries: { valueHasMutated: jasmine.createSpy() } };
+                parentVM = {
+                    hasUnsavedChanges: jasmine.createSpy(),
+                    entries: { valueHasMutated: jasmine.createSpy() }
+                };
                 vm = new CovariatesListRowViewModel(parentVM, parentFile, 0);
             });
 
