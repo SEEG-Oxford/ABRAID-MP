@@ -156,16 +156,17 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets the number of new disease occurrences for the specified disease group. A "new" occurrence has is_validated
-     * not null and a created_date that is more recent than the last_mode_run_prep_date for the disease group.
+     * Gets the list of new disease occurrences for the specified disease group.
+     * A "new" occurrence has is_validated not null and a created_date that is more than a week ago.
+     * Occurrence must additionally satisfy that environmental suitability and distance from disease extent values are
+     * greater than minimum specified for the disease group.
      * @param diseaseGroupId The ID of the disease group.
-     * @return The count.
+     * @return The list of relevant new occurrences.
      */
     @Override
-    public long getNewOccurrencesCountByDiseaseGroup(Integer diseaseGroupId) {
-        Query query = getParameterisedNamedQuery("getNewOccurrencesCountByDiseaseGroup",
-                "diseaseGroupId", diseaseGroupId);
-        return (long) query.uniqueResult();
+    public List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(Integer diseaseGroupId) {
+        return listNamedQuery("getNewOccurrencesByDiseaseGroup",
+                "diseaseGroupId", diseaseGroupId, "comparisonDate", DateTime.now().minusWeeks(1));
     }
 
     /**

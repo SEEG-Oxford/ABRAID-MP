@@ -151,6 +151,6 @@ public class ModelRunManagerTest {
     }
 
     private void mockGetNewOccurrencesCountByDiseaseGroup(long newLocationsCount) {
-        when(diseaseService.getNewOccurrencesCountByDiseaseGroup(DISEASE_GROUP_ID)).thenReturn(newLocationsCount);
+        when(diseaseService.getNewOccurrencesByDiseaseGroup(DISEASE_GROUP_ID)).thenReturn(newLocationsCount);
     }
 }

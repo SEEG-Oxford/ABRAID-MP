@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -412,17 +413,34 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getNewOccurrencesCountByDiseaseGroup() {
+    public void getNewOccurrencesByDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        diseaseGroup.setLastModelRunPrepDate(diseaseGroup.getCreatedDate().minusDays(1));
+        int expectedCount = 3;
+        setUpParameterValues(diseaseGroupId, expectedCount);
 
         // Act
-        long count = diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+        DateTimeUtils.setCurrentMillisFixed(DateTime.now().plusDays(8).getMillis());
+        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
 
         // Assert
-        assertThat(count).isEqualTo(45);
+        assertThat(newOccurrences).hasSize(expectedCount);
+    }
+
+    private void setUpParameterValues(int diseaseGroupId, int expectedCount) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        diseaseGroup.setMinEnvironmentalSuitability(0.5);
+        diseaseGroup.setMinDistanceFromDiseaseExtent(50.0);
+        diseaseGroupDao.save(diseaseGroup);
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId);
+        for (int i = 0; i < expectedCount; i++) {
+            DiseaseOccurrence occurrence = occurrences.get(i);
+            occurrence.setEnvironmentalSuitability(0.8);
+            occurrence.setDistanceFromDiseaseExtent(100.0);
+            diseaseOccurrenceDao.save(occurrence);
+        }
+        flushAndClear();
     }
 
     @Test

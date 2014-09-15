@@ -57,9 +57,13 @@ import javax.persistence.Table;
                         "order by d.occurrenceDate desc"
         ),
         @NamedQuery(
-                name = "getNewOccurrencesCountByDiseaseGroup",
-                query = "select count(*) from DiseaseOccurrence where isValidated is not null and " +
-                        "diseaseGroup.id=:diseaseGroupId and createdDate > diseaseGroup.lastModelRunPrepDate"
+                name = "getNewOccurrencesByDiseaseGroup",
+                query = "from DiseaseOccurrence where " +
+                        "isValidated is not null and " +
+                        "diseaseGroup.id=:diseaseGroupId and " +
+                        "createdDate <= :comparisonDate and " +
+                        "environmentalSuitability >= diseaseGroup.minEnvironmentalSuitability and " +
+                        "distanceFromDiseaseExtent >= diseaseGroup.minDistanceFromDiseaseExtent"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",

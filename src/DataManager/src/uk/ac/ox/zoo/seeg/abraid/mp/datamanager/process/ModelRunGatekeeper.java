@@ -4,7 +4,16 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 
 /**
  * Determines whether the model run should execute.
@@ -79,9 +88,16 @@ public class ModelRunGatekeeper {
             return true;
         }
 
-        long count = diseaseService.getNewOccurrencesCountByDiseaseGroup(diseaseGroup.getId());
+        long count = getNewLocationsCount(diseaseGroup.getId());
         boolean hasEnoughNewLocations = count > minimum;
         LOGGER.info(hasEnoughNewLocations ? ENOUGH_NEW_LOCATIONS : NOT_ENOUGH_NEW_LOCATIONS);
         return hasEnoughNewLocations;
+    }
+
+    private long getNewLocationsCount(int diseaseGroupId) {
+        List<DiseaseOccurrence> newOccurrences = diseaseService.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
+        Set<Location> distinctLocations =
+                new HashSet<>(extract(newOccurrences, on(DiseaseOccurrence.class).getLocation()));
+        return distinctLocations.size();
     }
 }

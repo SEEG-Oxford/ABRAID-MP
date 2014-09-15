@@ -203,13 +203,13 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets the number of new disease occurrences for the specified disease group.
+     * Gets the list of new disease occurrences for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @return The count.
+     * @return The list of relevant new occurrences..
      */
     @Override
-    public long getNewOccurrencesCountByDiseaseGroup(int diseaseGroupId) {
-        return diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+    public List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(int diseaseGroupId) {
+        return diseaseOccurrenceDao.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
     }
 
     /**
