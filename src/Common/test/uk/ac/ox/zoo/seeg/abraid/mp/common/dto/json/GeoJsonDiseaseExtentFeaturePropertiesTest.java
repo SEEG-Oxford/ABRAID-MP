@@ -1,10 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseExtentGeoJsonTests;
 
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         assertThat(result.getName()).isEqualTo(adminUnitName);
         assertThat(result.getDiseaseExtentClass()).isEqualTo(diseaseExtentClassName);
         assertThat(result.getOccurrenceCount()).isEqualTo(0);
-        assertThat(result.needsReview()).isTrue();
+        assertThat(result.needsReview()).isFalse(); // since admin unit's disease extent class changed date is null
     }
 
     @Test
@@ -58,7 +56,39 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
 
         // Assert
         assertThat(result.getDiseaseExtentClass()).isEqualTo(outputName);
+    }
 
+    @Test
+    public void needsReviewIsFalseIfAdminUnitDiseaseExtentClassHasNotChangedSinceLastDiseaseExtentGeneration() {
+        // Arrange
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
+            new AdminUnitGlobal(),
+            new DiseaseGroup(),
+            new DiseaseExtentClass("name"),
+            0);
+
+        // Act
+        GeoJsonDiseaseExtentFeatureProperties result =
+            new GeoJsonDiseaseExtentFeatureProperties(adminUnitDiseaseExtentClass, new ArrayList<AdminUnitReview>());
+
+        // Assert
+        assertThat(adminUnitDiseaseExtentClass.getClassChangedDate()).isNull();
+        assertThat(result.needsReview()).isFalse();
+    }
+
+    @Test
+    public void needsReviewIsTrueIfAdminUnitDiseaseExtentClassHasChangedAndAdminUnitDoesNotAppearInReviewsList() {
+        // Arrange
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = defaultAdminUnitDiseaseExtentClassWithoutReview();
+        adminUnitDiseaseExtentClass.setClassChangedDate(DateTime.now());
+
+        // Act
+        GeoJsonDiseaseExtentFeatureProperties result =
+                new GeoJsonDiseaseExtentFeatureProperties(adminUnitDiseaseExtentClass, new ArrayList<AdminUnitReview>());
+
+        // Assert
+        assertThat(adminUnitDiseaseExtentClass.getClassChangedDate()).isNotNull();
+        assertThat(result.needsReview()).isTrue();
     }
 
     @Test
@@ -84,19 +114,6 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         // Act
         GeoJsonDiseaseExtentFeatureProperties result =
                 new GeoJsonDiseaseExtentFeatureProperties(extentClass, reviews);
-
-        // Assert
-        assertThat(result.needsReview()).isTrue();
-    }
-
-    @Test
-    public void needsReviewIsTrueIfAdminUnitDoesNotAppearInReviewsList() {
-        // Arrange
-        AdminUnitDiseaseExtentClass extentClass = defaultAdminUnitDiseaseExtentClassWithoutReview();
-
-        // Act
-        GeoJsonDiseaseExtentFeatureProperties result =
-                new GeoJsonDiseaseExtentFeatureProperties(extentClass, new ArrayList<AdminUnitReview>());
 
         // Assert
         assertThat(result.needsReview()).isTrue();
