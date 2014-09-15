@@ -22,8 +22,8 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
     private static final int DISEASE_GROUP_ID = 87;
     private static DateTime weekHasElapsed;
     private static DateTime weekHasNotElapsed;
-    private static int enoughOccurrences;
-    private static int notEnoughOccurrences;
+    private static int enoughLocations;
+    private static int notEnoughLocations;
 
     @Before
     public void setUp() {
@@ -32,64 +32,64 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
         weekHasElapsed = DateTime.now().minusDays(7);
         weekHasNotElapsed = DateTime.now().minusDays(1);
 
-        // Set value of minNewOccurrences to less than the number of occurrences that there are currently, to
-        // ensure that the test for whether there are enough occurrences will pass.
-        enoughOccurrences = Integer.MIN_VALUE;
+        // Set value of minNewLocations to lower than the number of locations that there are currently, to
+        // ensure that the test for whether there are enough locations will pass.
+        enoughLocations = Integer.MIN_VALUE;
         // Vice versa
-        notEnoughOccurrences = Integer.MAX_VALUE;
+        notEnoughLocations = Integer.MAX_VALUE;
     }
 
     // NB. Boolean value automatic_model_runs is a non-null field, set to true for Dengue (DISEASE_GROUP_ID = 87)
     // in test data, so the following tests are working under that assumption
     @Test
-    public void dueToRunReturnsTrueWhenAWeekHasElapsedWithEnoughOccurrences() {
-        executeTest(weekHasElapsed, enoughOccurrences, true);
+    public void dueToRunReturnsTrueWhenAWeekHasElapsedWithEnoughLocations() {
+        executeTest(weekHasElapsed, enoughLocations, true);
     }
 
     @Test
-    public void dueToRunReturnsTrueWhenAWeekHasElapsedButNotEnoughOccurrences() {
-        executeTest(weekHasElapsed, notEnoughOccurrences, true);
+    public void dueToRunReturnsTrueWhenAWeekHasElapsedButNotEnoughLocations() {
+        executeTest(weekHasElapsed, notEnoughLocations, true);
     }
 
     @Test
-    public void dueToRunReturnsTrueWhenAWeekHasNotElapsedButEnoughOccurrences() {
-        executeTest(weekHasNotElapsed, enoughOccurrences, true);
+    public void dueToRunReturnsTrueWhenAWeekHasNotElapsedButEnoughLocations() {
+        executeTest(weekHasNotElapsed, enoughLocations, true);
     }
 
     @Test
-    public void dueToRunReturnsFalseWhenAWeekHasNotElapsedAndNotEnoughOccurrences() {
-        executeTest(weekHasNotElapsed, notEnoughOccurrences, false);
+    public void dueToRunReturnsFalseWhenAWeekHasNotElapsedAndNotEnoughLocations() {
+        executeTest(weekHasNotElapsed, notEnoughLocations, false);
     }
 
     @Test
-    public void dueToRunReturnsTrueForNullLastModelRunPrepDateWithEnoughOccurrences() {
-        executeTest(null, enoughOccurrences, true);
+    public void dueToRunReturnsTrueForNullLastModelRunPrepDateWithEnoughLocations() {
+        executeTest(null, enoughLocations, true);
     }
 
     @Test
-    public void dueToRunReturnsTrueForNullLastModelRunPrepDateWithNotEnoughOccurrences() {
-        executeTest(null, notEnoughOccurrences, true);
+    public void dueToRunReturnsTrueForNullLastModelRunPrepDateWithNotEnoughLocations() {
+        executeTest(null, notEnoughLocations, true);
     }
 
     @Test
-    public void dueToRunReturnsFalseForNullMinNewOccurrencesWhenAWeekHasPassed() {
+    public void dueToRunReturnsFalseForNullMinNewLocationsWhenAWeekHasPassed() {
         executeTest(weekHasElapsed, null, false);
     }
 
     @Test
-    public void dueToRunReturnsFalseForNullMinNewOccurrencesWhenAWeekHasNotPassed() {
+    public void dueToRunReturnsFalseForNullMinNewLocationsWhenAWeekHasNotPassed() {
         executeTest(weekHasNotElapsed, null, false);
     }
 
     @Test
-    public void dueToRunReturnsFalseForNullMinNewOccurrencesWhenLastModelRunPrepDateIsNull() {
+    public void dueToRunReturnsFalseForNullMinNewLocationsWhenLastModelRunPrepDateIsNull() {
         executeTest(null, null, false);
     }
 
-    private void executeTest(DateTime lastModelRunPrepDate, Integer minNewOccurrences, boolean expectedResult) {
+    private void executeTest(DateTime lastModelRunPrepDate, Integer minNewLocations, boolean expectedResult) {
         // Arrange
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
-        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
+        diseaseGroup.setMinNewLocationsTrigger(minNewLocations);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
 

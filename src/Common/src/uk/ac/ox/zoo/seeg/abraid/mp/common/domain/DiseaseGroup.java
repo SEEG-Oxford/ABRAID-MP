@@ -76,9 +76,9 @@ public class DiseaseGroup {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime automaticModelRunsStartDate;
 
-    // The minimum number of new occurrences required to trigger a model run.
-    @Column(name = "min_new_occurrences_trigger")
-    private Integer minNewOccurrencesTrigger;
+    // The minimum number of new distinct locations required to trigger a model run.
+    @Column(name = "min_new_locations_trigger")
+    private Integer minNewLocationsTrigger;
 
     // The minimum number of occurrences required for a model run to go ahead.
     // Default value is implicitly zero.
@@ -253,12 +253,12 @@ public class DiseaseGroup {
         this.automaticModelRunsStartDate = automaticModelRunsStartDate;
     }
 
-    public Integer getMinNewOccurrencesTrigger() {
-        return minNewOccurrencesTrigger;
+    public Integer getMinNewLocationsTrigger() {
+        return minNewLocationsTrigger;
     }
 
-    public void setMinNewOccurrencesTrigger(Integer modelRunMinNewOccurrences) {
-        this.minNewOccurrencesTrigger = modelRunMinNewOccurrences;
+    public void setMinNewLocationsTrigger(Integer minNewLocations) {
+        this.minNewLocationsTrigger = minNewLocations;
     }
 
     public int getMinDataVolume() {
@@ -344,7 +344,7 @@ public class DiseaseGroup {
             return false;
         if (minHighFrequencyCountries != null ? !minHighFrequencyCountries.equals(that.minHighFrequencyCountries) : that.minHighFrequencyCountries != null)
             return false;
-        if (minNewOccurrencesTrigger != null ? !minNewOccurrencesTrigger.equals(that.minNewOccurrencesTrigger) : that.minNewOccurrencesTrigger != null)
+        if (minNewLocationsTrigger != null ? !minNewLocationsTrigger.equals(that.minNewLocationsTrigger) : that.minNewLocationsTrigger != null)
             return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (occursInAfrica != null ? !occursInAfrica.equals(that.occursInAfrica) : that.occursInAfrica != null)
@@ -373,7 +373,7 @@ public class DiseaseGroup {
         result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (automaticModelRunsStartDate != null ? automaticModelRunsStartDate.hashCode() : 0);
-        result = 31 * result + (minNewOccurrencesTrigger != null ? minNewOccurrencesTrigger.hashCode() : 0);
+        result = 31 * result + (minNewLocationsTrigger != null ? minNewLocationsTrigger.hashCode() : 0);
         result = 31 * result + minDataVolume;
         result = 31 * result + (minDistinctCountries != null ? minDistinctCountries.hashCode() : 0);
         result = 31 * result + (highFrequencyThreshold != null ? highFrequencyThreshold.hashCode() : 0);

@@ -19,7 +19,7 @@
         <div class="panel-body">
             <div class="col-sm-6">
                 <div class="form-horizontal">
-                    <@formGroup id="min-new-occurrences" title="Min. Number of New Occurrences" bind="formValue: minNewOccurrences"></@formGroup>
+                    <@formGroup id="min-new-locations" title="Min. Number of New Locations" bind="formValue: minNewLocations"></@formGroup>
                     <@formGroup id="min-data-volume" title="Min. Data Volume" bind="formValue: minDataVolume"></@formGroup>
                     <@formGroup id="min-distinct-countries" title="Min. Number of Distinct Countries" bind="formValue: minDistinctCountries"></@formGroup>
                 </div>

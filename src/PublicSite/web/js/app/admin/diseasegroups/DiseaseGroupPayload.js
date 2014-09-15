@@ -28,7 +28,7 @@ define([], function () {
             isGlobal: diseaseGroupSettingsViewModel.isGlobal(),
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
-            minNewOccurrences: parseInteger(modelRunParametersViewModel.minNewOccurrences()),
+            minNewLocations: parseInteger(modelRunParametersViewModel.minNewLocations()),
             minDataVolume: parseInteger(modelRunParametersViewModel.minDataVolume()),
             minDistinctCountries: parseInteger(modelRunParametersViewModel.minDistinctCountries()),
             minHighFrequencyCountries: parseInteger(modelRunParametersViewModel.minHighFrequencyCountries()),
