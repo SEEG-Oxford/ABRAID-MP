@@ -12,8 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the ExpertService class.
@@ -146,6 +145,21 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
     }
 
     @Test
+    public void getAdminUnitReviewCountReturnsExpectedLong() {
+        // Arrange
+        int expertId = 1;
+        long expectedLong = 2;
+        when(adminUnitReviewDao.getCountByExpertId(expertId)).thenReturn(expectedLong);
+
+        // Act
+        Long count = expertService.getAdminUnitReviewCount(expertId);
+
+        // Assert
+        verify(adminUnitReviewDao).getCountByExpertId(expertId);
+        assertThat(count).isEqualTo(expectedLong);
+    }
+
+    @Test
     public void getAllAdminUnitReviewsForDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
@@ -174,6 +188,58 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
 
         // Assert
         assertThat(testAdminUnitReviews).isSameAs(adminUnitReviews);
+    }
+
+    @Test
+    public void saveGlobalAdminUnitReview() {
+        // Arrange
+        int expertId = 1;
+        int diseaseGroupId = 2;
+        int gaulCode = 3;
+        DiseaseExtentClass extentClass = new DiseaseExtentClass(DiseaseExtentClass.ABSENCE);
+
+        Expert expert = mockExpert(expertId);
+        DiseaseGroup diseaseGroup = mockDiseaseGroup(diseaseGroupId, true);
+
+        // Act
+        expertService.saveAdminUnitReview(expertId, diseaseGroupId, gaulCode, extentClass);
+
+        // Assert
+        AdminUnitReview review = new AdminUnitReview(expert, gaulCode, null, diseaseGroup, extentClass);
+        verify(adminUnitReviewDao).save(eq(review));
+    }
+
+
+    @Test
+    public void saveTropicalAdminUnitReview() {
+        // Arrange
+        int expertId = 1;
+        int diseaseGroupId = 2;
+        int gaulCode = 3;
+        DiseaseExtentClass extentClass = new DiseaseExtentClass(DiseaseExtentClass.ABSENCE);
+
+        Expert expert = mockExpert(expertId);
+        DiseaseGroup diseaseGroup = mockDiseaseGroup(diseaseGroupId, false);
+
+        // Act
+        expertService.saveAdminUnitReview(expertId, diseaseGroupId, gaulCode, extentClass);
+
+        // Assert
+        AdminUnitReview review = new AdminUnitReview(expert, null, gaulCode, diseaseGroup, extentClass);
+        verify(adminUnitReviewDao).save(eq(review));
+    }
+
+    private Expert mockExpert(int expertId) {
+        Expert expert = mock(Expert.class);
+        when(expertDao.getById(expertId)).thenReturn(expert);
+        return expert;
+    }
+
+    private DiseaseGroup mockDiseaseGroup(int diseaseGroupId, boolean isGlobal) {
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.isGlobal()).thenReturn(isGlobal);
+        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
+        return diseaseGroup;
     }
 
     @Test

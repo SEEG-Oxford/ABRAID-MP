@@ -78,7 +78,7 @@ CREATE TABLE admin_unit_review (
     global_gaul_code integer,
     tropical_gaul_code integer,
     response varchar(17) NOT NULL,
-    changed_date timestamp NOT NULL
+    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 CREATE TABLE admin_unit_tropical (
