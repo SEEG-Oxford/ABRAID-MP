@@ -109,6 +109,7 @@ public class CovariatesController {
      * @param subdirectory The subdirectory to add the new file to.
      * @param file The new covariate file.
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
+     * @throws java.io.IOException Throw if there is an issue writing the covariate file at the specified location.
      */
     @RequestMapping(value = "/covariates/add", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
