@@ -125,33 +125,47 @@ public class CovariatesController {
         if (!validationMessages.isEmpty()) {
             return new ResponseEntity<>(new JsonFileUploadResponse(false, validationMessages), HttpStatus.BAD_REQUEST);
         } else {
-            // Create directory
-            File dir = Paths.get(path).getParent().toFile();
-            if (!dir.exists()) {
-                if(!dir.mkdirs()) {
-                    throw new IOException(ERROR_CREATE_SUBDIRECTORY);
-                }
-            }
-
             // Create the file on server
-            File serverFile = Paths.get(path).toFile();
-            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-            stream.write(file.getBytes());
-            stream.close();
+            writeCovariateFile(file, path);
 
-            // Add the entry in the covariate list
-            String relativePath = extractRelativePath(covariateDirectory, path).toString();
-            covariateConfiguration.getFiles().add(new JsonCovariateFile(
-                    relativePath,
-                    name,
-                    null,
-                    false,
-                    new ArrayList<Integer>()
-            ));
-            configurationService.setCovariateConfiguration(covariateConfiguration);
+            // Add the entry in the covariate config
+            String relativePath = updateCovariateConfig(name, covariateDirectory, covariateConfiguration, path);
 
             LOGGER.info(String.format(LOG_NEW_COVARIATE, name, relativePath));
             return new ResponseEntity<>(new JsonFileUploadResponse(true, validationMessages), HttpStatus.OK);
+        }
+    }
+
+    private String updateCovariateConfig(String name, String covariateDirectory, JsonCovariateConfiguration covariateConfiguration, String path) throws IOException {
+        String relativePath = extractRelativePath(covariateDirectory, path).toString();
+        covariateConfiguration.getFiles().add(new JsonCovariateFile(
+                relativePath,
+                name,
+                null,
+                false,
+                new ArrayList<Integer>()
+        ));
+        configurationService.setCovariateConfiguration(covariateConfiguration);
+        return relativePath;
+    }
+
+    private void writeCovariateFile(MultipartFile file, String path) throws IOException {
+        // Create directory
+        createDirectoryForCovariate(path);
+
+
+        File serverFile = Paths.get(path).toFile();
+        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+        stream.write(file.getBytes());
+        stream.close();
+    }
+
+    private void createDirectoryForCovariate(String path) throws IOException {
+        File dir = Paths.get(path).getParent().toFile();
+        if (!dir.exists()) {
+            if(!dir.mkdirs()) {
+                throw new IOException(ERROR_CREATE_SUBDIRECTORY);
+            }
         }
     }
 
