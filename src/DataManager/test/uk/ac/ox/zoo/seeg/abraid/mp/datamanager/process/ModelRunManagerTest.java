@@ -67,6 +67,11 @@ public class ModelRunManagerTest {
     }
 
     @Test
+    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndThresholdIsNull() throws Exception {
+        expectModelPrepToRun(null, null);
+    }
+
+    @Test
     public void modelPrepShouldRunWhenAWeekHasElapsedAndNewLocationsIsOverThreshold() throws Exception {
         expectModelPrepToRun(true, true);
     }
@@ -77,28 +82,36 @@ public class ModelRunManagerTest {
     }
 
     @Test
+    public void modelPrepShouldRunWhenAWeekHasElapsedAndThresholdIsNull() throws Exception {
+        expectModelPrepToRun(true, null);
+    }
+
+    @Test
     public void modelPrepShouldRunWhenAWeekHasNotElapsedAndNewLocationsIsOverThreshold() throws Exception {
+        validationParametersThresholdsDefined();
         expectModelPrepToRun(false, true);
     }
 
     @Test
     public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndNewLocationsIsUnderThreshold() throws Exception {
+        validationParametersThresholdsDefined();
         expectModelPrepNotToRun(false, false);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndThresholdIsNull() throws Exception {
+    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndLocationsThresholdIsNull() throws Exception {
+        validationParametersThresholdsDefined();
         expectModelPrepNotToRun(false, null);
     }
 
-    @Test
-    public void modelPrepShouldNotRunWhenAWeekHasPassedAndThresholdIsNull() throws Exception {
-        expectModelPrepNotToRun(true, null);
+    private void validationParametersThresholdsDefined() {
+        diseaseGroup.setMinDistanceFromDiseaseExtent(0.0);
+        diseaseGroup.setMinEnvironmentalSuitability(0.0);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenLastModelRunPrepDateIsNullAndThresholdIsNull() throws Exception {
-        expectModelPrepNotToRun(null, null);
+    public void modelPrepShouldNotRunWhenAWeekHasNotElapsedAndMinEnvSuitabilityOrMinDistanceFromExtentNotDefined() throws Exception {
+        expectModelPrepNotToRun(false, true);
     }
 
     private void expectModelPrepToRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {

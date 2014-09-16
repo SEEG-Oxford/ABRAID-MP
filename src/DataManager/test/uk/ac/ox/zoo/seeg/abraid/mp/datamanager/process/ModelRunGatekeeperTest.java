@@ -6,15 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.AbstractDataManagerSpringIntegrationTests;
 
-import java.util.ArrayList;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests the ModelRunGatekeeper class.
@@ -137,10 +132,10 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
         executeTest(weekHasNotElapsed, thresholdNotDefined, false);
     }
 
-    private void executeTest(DateTime lastModelRunPrepDate, boolean enoughLocations, boolean expectedResult) {
+    private void executeTest(DateTime lastModelRunPrepDate, boolean hasEnoughLocations, boolean expectedResult) {
         // Arrange
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
-        if (enoughLocations) {
+        if (hasEnoughLocations) {
             setUpEnoughLocations(Integer.MIN_VALUE);
         }
         ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
