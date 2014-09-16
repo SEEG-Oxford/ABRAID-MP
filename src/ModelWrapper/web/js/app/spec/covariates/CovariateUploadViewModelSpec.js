@@ -84,7 +84,6 @@ define([
         describe("holds an 'uploadPath' field, which", function () {
             it("is observable", function () {
                 expect(vm.uploadPath).toBeObservable(true);
-
             });
 
             it("combines the values from the subdirectory and file fields", function () {

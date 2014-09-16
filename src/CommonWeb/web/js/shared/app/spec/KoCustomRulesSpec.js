@@ -29,7 +29,7 @@ define([
                 expect(ko.validation.rules.areSame.validator(1, 2)).toBe(false);
             });
 
-            it("can validated wrapped values", function () {
+            it("can validate wrapped values", function () {
                 var wrap = function (value) {
                     return function () {
                         return value;
@@ -51,7 +51,7 @@ define([
                 expect(ko.validation.rules.startWith.validator("123", "2")).toBe(false);
             });
 
-            it("can validated wrapped values", function () {
+            it("can validate wrapped values", function () {
                 var wrap = function (value) {
                     return function () {
                         return value;
@@ -73,7 +73,7 @@ define([
                 expect(ko.validation.rules.endWith.validator("123", "2")).toBe(false);
             });
 
-            it("can validated wrapped values", function () {
+            it("can validate wrapped values", function () {
                 var wrap = function (value) {
                     return function () {
                         return value;
@@ -95,7 +95,7 @@ define([
                 expect(ko.validation.rules.notContain.validator("123", "2")).toBe(false);
             });
 
-            it("can validated wrapped values", function () {
+            it("can validate wrapped values", function () {
                 var wrap = function (value) {
                     return function () {
                         return value;
