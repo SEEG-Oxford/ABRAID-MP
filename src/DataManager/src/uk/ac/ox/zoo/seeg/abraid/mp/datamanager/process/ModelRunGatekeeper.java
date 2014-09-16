@@ -22,8 +22,10 @@ import static ch.lambdaj.Lambda.on;
 public class ModelRunGatekeeper {
     private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
     private static final String DISEASE_GROUP_ID_MESSAGE = "MODEL RUN PREPARATION FOR DISEASE GROUP %d (%s)";
-    private static final String NO_MODEL_RUN_MIN_NEW_LOCATIONS =
-            "No min new locations threshold has been defined for this disease group";
+    private static final String AUTOMATIC_MODEL_RUNS_NOT_ENABLED =
+            "Automatic model runs have not been enabled for this disease group";
+    private static final String NO_VALIDATION_PARAMETERS_THRESHOLDS =
+            "Threshold (minNewLocationsTrigger, minEnvSuitability or minDistanceFromExtent) has not been defined";
     private static final String NEVER_BEEN_EXECUTED_BEFORE =
             "Model run has never been executed before for this disease group";
     private static final String WEEK_HAS_NOT_ELAPSED = "A week has not elapsed since last model run preparation on %s";
@@ -41,31 +43,38 @@ public class ModelRunGatekeeper {
 
     /**
      * Determines whether model run preparation tasks should be carried out.
-     * NB: It is assumes that the specified disease group has automatic model runs enabled as a result of a
+     * NB: It is assumed that the specified disease group has automatic model runs enabled as a result of a
      * previous query.
      *
      * @param diseaseGroupId The id of the disease group for which the model run is being prepared.
      * @return True if:
-     *  - there is no lastModelRunPrepDate for disease, or
+     *  - there is no lastModelRunPrepDate for the disease group (ie model has never been run) or
      *  - more than a week has passed since last run, or
      *  - there have been more new locations since the last run than the minimum required for the disease group.
-     * False if automatic model runs are not enabled, or the minimum number of new locations value is not specified.
+     * False if:
+     *  - automatic model runs are not enabled for the disease group, or
+     *  - any of the 3 thresholds for determining whether the number of distinct new locations (minNewLocationsTrigger,
+     *    minEnvSuitability, minDistanceFromExtent) are not specified for the disease group.
      */
     public boolean modelShouldRun(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId, diseaseGroup.getName()));
-        boolean dueToRun = dueToRun(diseaseGroup);
-        LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
-        return dueToRun;
+
+        boolean shouldRun = automaticModelRunsEnabled(diseaseGroup) && dueToRun(diseaseGroup);
+        LOGGER.info(shouldRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
+        return shouldRun;
+    }
+
+    private boolean automaticModelRunsEnabled(DiseaseGroup diseaseGroup) {
+        boolean automaticModelRuns = diseaseGroup.isAutomaticModelRunsEnabled();
+        if (!automaticModelRuns) {
+            LOGGER.info(AUTOMATIC_MODEL_RUNS_NOT_ENABLED);
+        }
+        return automaticModelRuns;
     }
 
     private boolean dueToRun(DiseaseGroup diseaseGroup) {
-        if (diseaseGroup.getMinNewLocationsTrigger() == null) {
-            LOGGER.info(NO_MODEL_RUN_MIN_NEW_LOCATIONS);
-            return false;
-        } else {
-            return neverBeenRunOrWeekHasElapsed(diseaseGroup) || enoughNewLocations(diseaseGroup);
-        }
+        return neverBeenRunOrWeekHasElapsed(diseaseGroup) || enoughNewLocations(diseaseGroup);
     }
 
     private boolean neverBeenRunOrWeekHasElapsed(DiseaseGroup diseaseGroup) {
@@ -83,21 +92,28 @@ public class ModelRunGatekeeper {
     }
 
     private boolean enoughNewLocations(DiseaseGroup diseaseGroup) {
-        Integer minimum = diseaseGroup.getMinNewLocationsTrigger();
-        if (minimum == null) {
-            return true;
-        }
+        if (thresholdsDefined(diseaseGroup)) {
+            long count = getDistinctLocationsCount(diseaseGroup.getId());
+            int minimum = diseaseGroup.getMinNewLocationsTrigger();
 
-        long count = getNewLocationsCount(diseaseGroup.getId());
-        boolean hasEnoughNewLocations = count > minimum;
-        LOGGER.info(hasEnoughNewLocations ? ENOUGH_NEW_LOCATIONS : NOT_ENOUGH_NEW_LOCATIONS);
-        return hasEnoughNewLocations;
+            boolean hasEnoughNewLocations = count >= minimum;
+            LOGGER.info(hasEnoughNewLocations ? ENOUGH_NEW_LOCATIONS : NOT_ENOUGH_NEW_LOCATIONS);
+            return hasEnoughNewLocations;
+        } else {
+            LOGGER.info(NO_VALIDATION_PARAMETERS_THRESHOLDS);
+            return false;
+        }
     }
 
-    private long getNewLocationsCount(int diseaseGroupId) {
-        List<DiseaseOccurrence> newOccurrences = diseaseService.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
-        Set<Location> distinctLocations =
-                new HashSet<>(extract(newOccurrences, on(DiseaseOccurrence.class).getLocation()));
-        return distinctLocations.size();
+    private boolean thresholdsDefined(DiseaseGroup diseaseGroup) {
+        return (diseaseGroup.getMinNewLocationsTrigger() != null) &&
+               (diseaseGroup.getMinEnvironmentalSuitability() != null) &&
+               (diseaseGroup.getMinDistanceFromDiseaseExtent() != null);
+    }
+
+    private long getDistinctLocationsCount(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences = diseaseService.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
+        Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
+        return locations.size();
     }
 }

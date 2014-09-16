@@ -5,6 +5,8 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
@@ -119,10 +121,10 @@ public class ModelRunManagerTest {
 
     private void arrangeAndAct(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
         // Arrange
-        int newLocationsCount = 100;
+        int newLocationsCount = 10;
         setLastModelRunPrepDate(weekHasElapsed);
-        mockGetNewOccurrencesCountByDiseaseGroup(newLocationsCount);
-        setModelRunMinNewLocations(newLocationsCount, newLocationCountOverThreshold);
+        mockGetNewLocationsCountByDiseaseGroup(newLocationsCount);
+        setMinNewLocations(newLocationsCount, newLocationCountOverThreshold);
 
         // Act
         modelRunManager.prepareForAndRequestModelRun(diseaseGroup.getId());
@@ -137,7 +139,7 @@ public class ModelRunManagerTest {
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
     }
 
-    private void setModelRunMinNewLocations(int newLocationsCount, Boolean newLocationCountOverThreshold) {
+    private void setMinNewLocations(int newLocationsCount, Boolean newLocationCountOverThreshold) {
         Integer minNewLocations = null;
         if (newLocationCountOverThreshold != null) {
             int thresholdAdjustment = newLocationCountOverThreshold ? -1 : +1;
@@ -150,7 +152,14 @@ public class ModelRunManagerTest {
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
     }
 
-    private void mockGetNewOccurrencesCountByDiseaseGroup(long newLocationsCount) {
-        when(diseaseService.getNewOccurrencesByDiseaseGroup(DISEASE_GROUP_ID)).thenReturn(newLocationsCount);
+    // Ensure that the number of distinct locations extracted from the new occurrences is >/= threshold
+    private void mockGetNewLocationsCountByDiseaseGroup(long newLocationsCount) {
+        List<DiseaseOccurrence> newOccurrences = new ArrayList<>();
+        for (int i = 0; i < newLocationsCount; i++) {
+            DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
+            when(occurrence.getLocation()).thenReturn(new Location(i));
+            newOccurrences.add(occurrence);
+        }
+        when(diseaseService.getNewOccurrencesByDiseaseGroup(DISEASE_GROUP_ID)).thenReturn(newOccurrences);
     }
 }
