@@ -22,6 +22,7 @@ public class CovariatesControllerValidator {
     private static final String FAIL_FILE_MISSING = "File missing.";
     private static final String FAIL_NAME_MISSING = "Name missing.";
     private static final String FAIL_SUBDIRECTORY_MISSING = "Subdirectory missing.";
+    private static final String FAIL_SUBDIRECTORY_NOT_VALID = "Subdirectory not valid.";
     private static final String FAIL_NAME_NOT_UNIQUE = "Name not unique.";
     private static final String FAIL_FILE_ALREADY_EXISTS = "File already exists.";
     private static final String FAIL_TARGET_PATH_NOT_VALID = "Target path not valid.";
@@ -53,6 +54,10 @@ public class CovariatesControllerValidator {
             messages.add(FAIL_SUBDIRECTORY_MISSING);
         }
 
+        if (!StringUtils.isEmpty(subdirectory) && checkForNonNormalPath(subdirectory)) {
+            messages.add(FAIL_SUBDIRECTORY_NOT_VALID);
+        }
+
         if (!checkCovariateNameUniqueness(name, covariateConfiguration)) {
             messages.add(FAIL_NAME_NOT_UNIQUE);
         }
@@ -68,6 +73,10 @@ public class CovariatesControllerValidator {
         }
 
         return messages;
+    }
+
+    private boolean checkForNonNormalPath(String subdirectory) {
+        return (subdirectory.contains("/./") || subdirectory.contains("/../") || subdirectory.contains("\\") || subdirectory.contains("//"));
     }
 
     private boolean checkCovariateNameUniqueness(String name, JsonCovariateConfiguration covariateConfiguration) {

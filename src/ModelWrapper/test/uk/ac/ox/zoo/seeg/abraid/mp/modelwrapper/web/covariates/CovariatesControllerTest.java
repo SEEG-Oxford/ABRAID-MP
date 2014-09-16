@@ -16,7 +16,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -234,10 +233,8 @@ public class CovariatesControllerTest {
         when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
-        final String expectedSubdirectory = "./..\\../one\\two/dir";
-        File f = Paths.get(testFolder.getRoot().toString(), "one", "two").toFile();
-        f.mkdirs();
-        final String expectedCovariateDir = f.toString();
+        final String expectedSubdirectory = "/one\\two/dir";
+        final String expectedCovariateDir = testFolder.getRoot().toString();
         final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
         when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
@@ -255,7 +252,7 @@ public class CovariatesControllerTest {
 
         // Assert
         assertThat(covariateFileList).hasSize(1);
-        assertThat(covariateFileList.get(0).getPath()).isEqualTo("dir/file.ext");
+        assertThat(covariateFileList.get(0).getPath()).isEqualTo("one/two/dir/file.ext");
     }
 
     @Test

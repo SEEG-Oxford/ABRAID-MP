@@ -100,6 +100,23 @@ public class CovariatesControllerValidatorTest {
     }
 
     @Test
+    public void validateCovariateUploadRejectsInvalid() throws Exception {
+        // Arrange
+        CovariatesControllerValidator target = new CovariatesControllerValidator();
+        Collection<String> result;
+
+        // Act/Assert
+        result = target.validateCovariateUpload("name", "./a/../b", null, "path", "covdir", mock(JsonCovariateConfiguration.class));
+        assertThat(result).contains("Subdirectory not valid.");
+        result = target.validateCovariateUpload("name", "./a/./b", null, "path", "covdir", mock(JsonCovariateConfiguration.class));
+        assertThat(result).contains("Subdirectory not valid.");
+        result = target.validateCovariateUpload("name", "./a//b", null, "path", "covdir", mock(JsonCovariateConfiguration.class));
+        assertThat(result).contains("Subdirectory not valid.");
+        result = target.validateCovariateUpload("name", "./a\\b", null, "path", "covdir", mock(JsonCovariateConfiguration.class));
+        assertThat(result).contains("Subdirectory not valid.");
+    }
+
+    @Test
     public void validateCovariateUploadRejectsNonUniqueName() throws Exception {
         // Arrange
         CovariatesControllerValidator target = new CovariatesControllerValidator();
