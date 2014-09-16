@@ -9,6 +9,9 @@ sed -i "s/auth\.password\_hash\=.*/auth.password_hash=$MODELWRAPPER_HASH/g" /var
 sed -i "s/model\.output\.handler\.root\.url\=.*/model.output.handler.root.url=$MAIN_URL\/modeloutput/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 sed -i "s/\#\ model\.dry\.run\=true/model.dry.run=$MW_DRY_RUN/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 sed -i "s/\#\ model\.verbose\=true/model.verbose=true/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
+# Configure log4j
+sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, stdout, logfile, email/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/log4j.properties
+
 # Add supporting files
 mkdir $ABRAID_SUPPORT_PATH/modelwrapper
 cp -r $BASE/external/rasters $ABRAID_SUPPORT_PATH/modelwrapper/rasters

@@ -8,6 +8,8 @@ echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomca
 echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+# Configure log4j
+sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" /var/lib/tomcat7/webapps/modeloutput/WEB-INF/classes/log4j.properties
 
 # Set up GeoServer
 unzip external/geoserver.war -d /var/lib/tomcat7/webapps/geoserver
@@ -33,6 +35,8 @@ echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomca
 echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+# Configure log4j
+sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, stdout, logfile, email/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/log4j.properties
 # Configure wms path
 sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
 
@@ -45,7 +49,8 @@ sed -i "s/jdbc\.password\=.*/jdbc.password=$PG_ABRAID_PASS/g" $ABRAID_SUPPORT_PA
 sed -i "s/healthmap\.authorizationCode\=.*/healthmap.authorizationCode=$HEALTH_MAP_KEY/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/geonames\.username\=.*/geonames.username=$GEONAMES_USER/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/modelwrapper\.rootUrl\=.*/modelwrapper.rootUrl=$MW_URL/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
-# Set defaultStartDate?
+# Configure log4j
+sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
 sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
 mkdir -p $ABRAID_SUPPORT_PATH/datamanager/logs
 mkdir -p $ABRAID_SUPPORT_PATH/datamanager/logs/old
