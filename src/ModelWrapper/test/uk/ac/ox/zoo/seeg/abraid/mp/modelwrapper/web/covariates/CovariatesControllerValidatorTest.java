@@ -100,7 +100,7 @@ public class CovariatesControllerValidatorTest {
     }
 
     @Test
-    public void validateCovariateUploadRejectsInvalid() throws Exception {
+    public void validateCovariateUploadRejectsInvalidSubdirectory() throws Exception {
         // Arrange
         CovariatesControllerValidator target = new CovariatesControllerValidator();
         Collection<String> result;
