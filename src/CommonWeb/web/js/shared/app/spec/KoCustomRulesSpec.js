@@ -95,6 +95,11 @@ define([
                 expect(ko.validation.rules.notContain.validator("123", "2")).toBe(false);
             });
 
+            it("checks that the value string does not contain any of the array of argument strings", function () {
+                expect(ko.validation.rules.notContain.validator("123", ["4", "5", "6"])).toBe(true);
+                expect(ko.validation.rules.notContain.validator("123", ["4", "2", "6"])).toBe(false);
+            });
+
             it("can validate wrapped values", function () {
                 var wrap = function (value) {
                     return function () {
@@ -106,8 +111,13 @@ define([
                 expect(ko.validation.rules.notContain.validator(wrap("123"), wrap(wrap("2")))).toBe(false);
             });
 
-            it("has a suitable failure message", function () {
-                expect(ko.validation.rules.notContain.message).toBe("Must not contain '{0}'");
+            it("has a suitable failure message, for a single parameter", function () {
+                expect(ko.validation.rules.notContain.message("this")).toBe("Must not contain: 'this'");
+            });
+
+            it("has a suitable failure message, for an array of parameters", function () {
+                expect(ko.validation.rules.notContain.message(["tom", "dick", "harry"]))
+                    .toBe("Must not contain: 'tom', 'dick' or 'harry'");
             });
         });
 

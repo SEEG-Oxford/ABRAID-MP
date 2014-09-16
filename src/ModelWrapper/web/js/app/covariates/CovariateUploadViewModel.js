@@ -26,7 +26,7 @@ define([
             }});
 
         self.subdirectory = ko.observable("./")
-            .extend({ required: true, startWith: "./", endWith: "/", notContain: "/../" });
+            .extend({ required: true, startWith: "./", endWith: "/", notContain: ["/../", "/./", "//", "\\"] });
 
         self.unsavedWarning = ko.computed(function () {
             return covariatesListViewModel.hasUnsavedChanges();

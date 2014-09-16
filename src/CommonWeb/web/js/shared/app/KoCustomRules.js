@@ -59,9 +59,22 @@ define([
         validator: function (value, other) {
             var theValue = ko.utils.recursiveUnwrap(value);
             var theOther = ko.utils.recursiveUnwrap(other);
+            if (_.isArray(theOther)) {
+                return _(theOther).all(function (o) { return theValue.indexOf(o) === -1; });
+            }
             return theValue.indexOf(theOther) === -1;
         },
-        message: "Must not contain '{0}'"
+        message: function (params) {
+            var message = "Must not contain: ";
+            if (_.isArray(params)) {
+                var patterns = params.slice(0); // clone
+                var last = patterns.pop();
+                message = message + "'" + patterns.join("', '") + "' or '" + last + "'";
+            } else {
+                message = message + "'" + params + "'";
+            }
+            return message;
+        }
     };
 
     ko.validation.rules.digit.message = "Please enter a whole number";

@@ -62,6 +62,11 @@ define([
             it("is required to end with '/'", function () {
                 expect(vm.subdirectory).toHaveValidationRule({ name: "endWith", params: "/" });
             });
+
+            it("is required to not contain any questionable substrings", function () {
+                expect(vm.subdirectory)
+                    .toHaveValidationRule({ name: "notContain", params: ["/../", "/./", "//", "\\"]});
+            });
         });
 
         describe("holds an 'unsavedWarning' field, which", function () {

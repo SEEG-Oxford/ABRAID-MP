@@ -220,10 +220,42 @@ public class CovariatesControllerTest {
         // Assert
         assertThat(covariateFileList).hasSize(1);
         assertThat(covariateFileList.get(0).getName()).isEqualTo(expectedName);
-        assertThat(covariateFileList.get(0).getPath()).isEqualTo(Paths.get(expectedSubdirectory, expectedFileName).toString());
+        assertThat(covariateFileList.get(0).getPath()).isEqualTo(expectedSubdirectory +"/"+ expectedFileName);
         assertThat(covariateFileList.get(0).getHide()).isEqualTo(false);
         assertThat(covariateFileList.get(0).getInfo()).isEqualTo(null);
         assertThat(covariateFileList.get(0).getEnabled()).hasSize(0);
+    }
+
+    @Test
+    public void addCovariateFileCorrectlyNormalizesPaths() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        final String expectedFileName = "file.ext";
+        when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        final String expectedSubdirectory = "./..\\../one\\two/dir";
+        File f = Paths.get(testFolder.getRoot().toString(), "one", "two").toFile();
+        f.mkdirs();
+        final String expectedCovariateDir = f.toString();
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+        final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
+        when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
+
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(configurationService, validator);
+        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+
+        // Assert
+        assertThat(covariateFileList).hasSize(1);
+        assertThat(covariateFileList.get(0).getPath()).isEqualTo("dir/file.ext");
     }
 
     @Test

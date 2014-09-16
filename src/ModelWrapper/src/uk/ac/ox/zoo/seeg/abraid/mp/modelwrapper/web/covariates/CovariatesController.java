@@ -130,16 +130,15 @@ public class CovariatesController {
             writeCovariateFile(file, path);
 
             // Add the entry in the covariate config
-            String relativePath = updateCovariateConfig(name, covariateDirectory, covariateConfiguration, path);
+            updateCovariateConfig(name, covariateDirectory, covariateConfiguration, path);
 
-            LOGGER.info(String.format(LOG_NEW_COVARIATE, name, relativePath));
             return new ResponseEntity<>(new JsonFileUploadResponse(true, validationMessages), HttpStatus.OK);
         }
     }
 
-    private String updateCovariateConfig(String name, String covariateDirectory, JsonCovariateConfiguration config,
+    private void updateCovariateConfig(String name, String covariateDirectory, JsonCovariateConfiguration config,
                                          String path) throws IOException {
-        String relativePath = extractRelativePath(covariateDirectory, path).toString();
+        String relativePath = extractRelativePath(covariateDirectory, path);
         config.getFiles().add(new JsonCovariateFile(
                 relativePath,
                 name,
@@ -148,7 +147,8 @@ public class CovariatesController {
                 new ArrayList<Integer>()
         ));
         configurationService.setCovariateConfiguration(config);
-        return relativePath;
+
+        LOGGER.info(String.format(LOG_NEW_COVARIATE, name, relativePath));
     }
 
     private void writeCovariateFile(MultipartFile file, String path) throws IOException {
@@ -171,14 +171,15 @@ public class CovariatesController {
     }
 
     private String extractTargetPath(String subdirectory, MultipartFile file, String covariateDirectory) {
-        Path path = Paths.get(covariateDirectory, subdirectory, file.getOriginalFilename());
+        Path path = Paths.get(covariateDirectory, subdirectory, file.getOriginalFilename()).normalize();
         return FilenameUtils.separatorsToUnix(path.toAbsolutePath().toString());
     }
 
-    private Path extractRelativePath(String covariateDirectory, String path) {
+    private String extractRelativePath(String covariateDirectory, String path) {
         Path parent = Paths.get(covariateDirectory).toAbsolutePath();
         Path child = Paths.get(path).toAbsolutePath();
-        return parent.relativize(child);
+        Path relativePath = parent.relativize(child).normalize();
+        return FilenameUtils.separatorsToUnix(relativePath.toString());
     }
 
 }
