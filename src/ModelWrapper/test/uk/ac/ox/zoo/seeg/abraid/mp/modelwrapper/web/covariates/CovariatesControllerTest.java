@@ -220,7 +220,7 @@ public class CovariatesControllerTest {
         // Assert
         assertThat(covariateFileList).hasSize(1);
         assertThat(covariateFileList.get(0).getName()).isEqualTo(expectedName);
-        assertThat(covariateFileList.get(0).getPath()).isEqualTo(expectedSubdirectory +"/"+ expectedFileName);
+        assertThat(covariateFileList.get(0).getPath()).isEqualTo(expectedSubdirectory + "/" + expectedFileName);
         assertThat(covariateFileList.get(0).getHide()).isEqualTo(false);
         assertThat(covariateFileList.get(0).getInfo()).isEqualTo(null);
         assertThat(covariateFileList.get(0).getEnabled()).hasSize(0);
