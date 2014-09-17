@@ -27,10 +27,12 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
     private static boolean notEnoughLocations = false;
     private static boolean thresholdNotDefined = false;
 
+    // NB. In all the following tests, it is assumed that automatic model runs are enabled. The method shouldModelRun
+    // is only ever called on disease groups where this is the case, thanks to modelRunManager.getDiseaseGroupIdsForAutomaticModelRuns in Main
+
     @Before
     public void setUp() {
         diseaseGroup = diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID);
-        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
 
         // Set fixed time
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
@@ -38,14 +40,6 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
         weekHasNotElapsed = DateTime.now().minusDays(1);
     }
 
-    @Test
-    public void shouldRunReturnsFalseWhenAutomaticModelRunsAreNotEnabled() {
-        diseaseGroup.setAutomaticModelRunsStartDate(null);
-        executeTest(weekHasElapsed, enoughLocations, false);
-    }
-
-    // NB. In the following tests isAutomaticModelRunsEnabled will return true,
-    // since automatic_model_runs_start_date is set to a DateTime value in setUp()
 
     // Null lastModelRunPrepDate means the model has never run, so should run now.
     @Test
