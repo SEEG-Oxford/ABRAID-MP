@@ -49,7 +49,7 @@ CREATE TABLE admin_unit_disease_extent_class (
     disease_group_id integer NOT NULL,
     disease_extent_class varchar(20) NOT NULL,
     occurrence_count integer NOT NULL,
-    class_changed_date timestamp NOT NULL
+    class_changed_date timestamp
 );
 
 CREATE TABLE admin_unit_global (
