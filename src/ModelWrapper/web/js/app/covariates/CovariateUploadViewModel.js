@@ -7,19 +7,42 @@ define([
 ], function (ko, BaseFileFormViewModel) {
     "use strict";
 
-    return function (baseUrl) {
+    return function (baseUrl, covariatesListViewModel, refresh) {
         var self = this;
 
-        self.name = ko.observableArray("").extend({ required: true });
-        self.subdirectory = ko.observable("./").extend({ required: true });
-
         BaseFileFormViewModel.call(self, baseUrl, "covariates/add");
-
         self.buildSubmissionData = function () {
             return {
                 name: self.name(),
                 subdirectory: self.subdirectory()
             };
         };
+        self.postSuccessAction = refresh;
+
+        self.name = ko.observable("")
+            .extend({ required: true, isUniqueProperty: {
+                array: covariatesListViewModel.visibleEntries,
+                property: "name"
+            }});
+
+        self.subdirectory = ko.observable("./")
+            .extend({ required: true, startWith: "./", endWith: "/", notContain: ["/../", "/./", "//", "\\"] });
+
+        self.unsavedWarning = ko.computed(function () {
+            return covariatesListViewModel.hasUnsavedChanges();
+        }).extend({ equal: false });
+
+        self.uploadPath = ko.computed(function () {
+            if (self.file() && self.subdirectory()) {
+                var path = self.subdirectory() + self.file().name;
+                if (path.indexOf("./") === 0) {
+                    path = path.substring(2);
+                }
+                return path;
+            } else {
+                return "";
+            }
+        }).extend({ isUniqueProperty: { array: covariatesListViewModel.entries, property: "path" }});
+
     };
 });

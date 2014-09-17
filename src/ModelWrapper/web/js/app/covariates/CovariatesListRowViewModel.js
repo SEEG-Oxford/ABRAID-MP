@@ -15,7 +15,7 @@ define(["ko", "underscore"], function (ko, _) {
         self.hide.subscribe(function (value) {
             parentFile.hide = value;
             parentViewModel.hasUnsavedChanges(true);
-            parentViewModel.files.valueHasMutated(); //Force view refresh
+            parentViewModel.entries.valueHasMutated(); //Force view refresh
         });
         self.mouseOver = ko.observable(false);
         self.path = "./" + parentFile.path;

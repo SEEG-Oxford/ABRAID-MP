@@ -69,7 +69,7 @@ define([
 
         describe("holds a list of files which", function () {
             it("is observable", function () {
-                expect(vm.files).toBeObservable();
+                expect(vm.entries).toBeObservable();
             });
 
             it("start with the same content as passed to the constructor", function () {
@@ -79,17 +79,17 @@ define([
                     { name: "oof", path: "rab", info: "", enabled: [1], hide: false }
                 ]};
                 vm =  new CovariatesListViewModel("foo", input);
-                expect(vm.files()).toBe(input.files);
+                expect(vm.entries()).toBe(input.files);
             });
         });
 
-        describe("holds a field indicating the form saving state which", function () {
+        describe("holds a field indicating the form isSubmitting state which", function () {
             it("is an observable", function () {
-                expect(vm.saving).toBeObservable();
+                expect(vm.isSubmitting).toBeObservable();
             });
 
             it("starts false", function () {
-                expect(vm.saving()).toBe(false);
+                expect(vm.isSubmitting()).toBe(false);
             });
         });
 
@@ -130,12 +130,12 @@ define([
         });
 
         describe("has a submit method which", function () {
-            it("updates the saving field correctly", function () {
-                expect(vm.saving()).toBe(false);
+            it("updates the isSubmitting field correctly", function () {
+                expect(vm.isSubmitting()).toBe(false);
                 vm.submit();
-                expect(vm.saving()).toBe(true);
+                expect(vm.isSubmitting()).toBe(true);
                 jasmine.Ajax.requests.mostRecent().response({ "status": 204 });
-                expect(vm.saving()).toBe(false);
+                expect(vm.isSubmitting()).toBe(false);
             });
 
             it("updates the modification state field correctly for successful submission", function () {
@@ -156,7 +156,7 @@ define([
 
             it("POSTs to the right url, with the correct data", function () {
                 vm.diseases = function () { return "foo"; };
-                vm.files = function () { return "bar"; };
+                vm.entries = function () { return "bar"; };
                 vm.submit();
 
                 var request = jasmine.Ajax.requests.mostRecent();
@@ -188,7 +188,7 @@ define([
 
         describe("holds list of 'visible files' which", function () {
             it("is an observable", function () {
-                expect(vm.visibleFiles).toBeObservable();
+                expect(vm.visibleEntries).toBeObservable();
             });
 
             describe("is as filtered view of the 'files' list which", function () {
@@ -204,34 +204,34 @@ define([
                 });
 
                 it("is filtered using the 'filter string' field", function () {
-                    expect(vm.visibleFiles().length).toBe(3);
+                    expect(vm.visibleEntries().length).toBe(3);
                     vm.filter("foo");
-                    expect(vm.visibleFiles().length).toBe(2);
+                    expect(vm.visibleEntries().length).toBe(2);
                 });
 
                 it("excludes hidden files", function () {
-                    expect(vm.visibleFiles().length).toBe(3);
-                    vm.visibleFiles()[0].hide(true);
-                    expect(vm.visibleFiles().length).toBe(2);
+                    expect(vm.visibleEntries().length).toBe(3);
+                    vm.visibleEntries()[0].hide(true);
+                    expect(vm.visibleEntries().length).toBe(2);
                 });
 
                 it("converts file objects to row view models", function () {
                     // Note could rewrite this as a squire test that uses a fake version of the row vm constructor
-                    expect(vm.visibleFiles()[0].usageCount).toBeDefined();
-                    expect(vm.visibleFiles()[0].state).toBeDefined();
-                    expect(vm.visibleFiles()[0].mouseOver).toBeDefined();
+                    expect(vm.visibleEntries()[0].usageCount).toBeDefined();
+                    expect(vm.visibleEntries()[0].state).toBeDefined();
+                    expect(vm.visibleEntries()[0].mouseOver).toBeDefined();
                 });
 
                 it("is sorted using the 'sort field'", function () {
-                    expect(_(vm.visibleFiles()).pluck("path")).toEqual([ "./bar", "./FOO", "./rab" ]);
+                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./bar", "./FOO", "./rab" ]);
                     vm.sortField("name");
-                    expect(_(vm.visibleFiles()).pluck("path")).toEqual([ "./FOO", "./bar", "./rab" ]);
+                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./FOO", "./bar", "./rab" ]);
                 });
 
                 it("is sorted using the 'sort order'", function () {
-                    expect(_(vm.visibleFiles()).pluck("path")).toEqual([ "./bar", "./FOO", "./rab" ]);
+                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./bar", "./FOO", "./rab" ]);
                     vm.reverseSort(true);
-                    expect(_(vm.visibleFiles()).pluck("path")).toEqual([ "./rab", "./FOO", "./bar" ]);
+                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./rab", "./FOO", "./bar" ]);
                 });
             });
         });

@@ -13,17 +13,20 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "domReady!",
         "shared/navbar"
     ], function (ko, CovariatesListViewModel, CovariateUploadViewModel, doc) {
-        var covariatesViewModel = new CovariatesListViewModel(baseUrl, initialData);
+        var refresh = function () {
+            window.top.location.reload();
+        };
 
+        var covariatesListViewModel = new CovariatesListViewModel(baseUrl, initialData);
         ko.applyBindings(
-            covariatesViewModel,
+            covariatesListViewModel,
             doc.getElementById("covariate-body"));
 
         ko.applyBindings(
-            ko.validatedObservable(new CovariateUploadViewModel(baseUrl)),
+            ko.validatedObservable(new CovariateUploadViewModel(baseUrl, covariatesListViewModel, refresh)),
             doc.getElementById("add-covariate-body"));
 
-        covariatesViewModel.hasUnsavedChanges.subscribe(function (value) {
+        covariatesListViewModel.hasUnsavedChanges.subscribe(function (value) {
             if (value) {
                 window.onbeforeunload = function (e) {
                     e = e || window.event; // Fallback for grabbing the event old browsers

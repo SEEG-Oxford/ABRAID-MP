@@ -45,6 +45,11 @@
             <@f.formGroupBasic "file-name" "Name" "name" "glyphicon glyphicon-pencil" />
             <@f.formGroupBasic "file-dir" "Subdirectory" "subdirectory" "glyphicon glyphicon-folder-open" />
             <@f.formGroupFile "file-picker" "File" "file" />
+            <div class="hidden" data-bind="css: { hidden: false }">
+                <div class="alert alert-danger" data-bind="visible: unsavedWarning"><p>The lower section of this page has unsaved changes. Please save these first (or refresh).</p></div>
+                <div class="alert alert-warning" data-bind="visible: subdirectory.isValid() && file.isValid() && !uploadPath.isValid() && uploadPath()"><p data-bind="text: 'A file already exists at the target path (./' + uploadPath() + '). Either change the subdirectory or rename the file and try again.'"></p></div>
+                <div class="alert alert-info" data-bind="visible: subdirectory.isValid() && file.isValid() && uploadPath.isValid() && uploadPath()"><p data-bind="text: 'File will be uploaded to ./' + uploadPath()"></p></div>
+            </div>
         </@f.form>
     </@p.panel>
     <@p.panel "covariate-body" "Covariate Settings" true>

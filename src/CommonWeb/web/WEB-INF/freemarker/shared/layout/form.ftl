@@ -20,7 +20,7 @@
      <span ${inputGroupOptions}>
          <span class="input-group-addon">
             <i class="${glyph}"></i>
-        </span>
+         </span>
          <#nested/>
     </span>
 </p>
