@@ -111,7 +111,7 @@ define([
         init: function (element, valueAccessor) {
             var updateBinding = function () {
                 var file = element.files[0];
-                if (ko.isObservable(valueAccessor())) {
+                if (typeof valueAccessor() === "function") {
                     valueAccessor()(file);
                 }
             };

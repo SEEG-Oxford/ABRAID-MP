@@ -21,8 +21,8 @@ public class GeoJsonDiseaseExtentFeatureCollectionTest extends AbstractDiseaseEx
     public void constructorForGeoJsonDiseaseExtentFeatureCollectionExtractsFeaturesCorrectly() {
         // Arrange
         List<AdminUnitReview> reviews = new ArrayList<>();
-        List<AdminUnitDiseaseExtentClass> diseaseExtent = Arrays.asList(defaultAdminUnitDiseaseExtentClass(),
-                                                                        defaultAdminUnitDiseaseExtentClass());
+        List<AdminUnitDiseaseExtentClass> diseaseExtent = Arrays.asList(defaultAdminUnitDiseaseExtentClassWithoutReview(),
+                                                                        defaultAdminUnitDiseaseExtentClassWithoutReview());
         // Act
         GeoJsonDiseaseExtentFeatureCollection result = new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews);
 

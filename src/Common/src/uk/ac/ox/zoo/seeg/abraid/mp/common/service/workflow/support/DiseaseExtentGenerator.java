@@ -135,7 +135,7 @@ public class DiseaseExtentGenerator {
     private List<AdminUnitReview> getRelevantReviews(DiseaseExtentGeneratorHelper helper) {
         Integer diseaseGroupId = helper.getDiseaseGroup().getId();
         List<AdminUnitReview> reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
-        helper.setReviews(reviews);
+        helper.setRelevantReviews(reviews);
         return reviews;
     }
 

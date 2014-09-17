@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
@@ -47,7 +47,7 @@ public class AccountControllerTest {
                 userService,
                 expertService,
                 diseaseService == null ? mock(DiseaseService.class) : diseaseService,
-                new GeoJsonObjectMapper(),
+                new AbraidJsonObjectMapper(),
                 adminControllerValidator == null ? mock(AccountControllerValidator.class) : adminControllerValidator,
                 accountControllerTransactionHelper == null ? mock(AccountControllerHelper.class) : accountControllerTransactionHelper);
     }

@@ -9,6 +9,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsEqual.equalTo;
+
 /**
  * A DTO for the properties of an AdminUnit, with reference to a DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
@@ -42,17 +45,20 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     private boolean computeNeedsReview(AdminUnitDiseaseExtentClass extentClass, List<AdminUnitReview> reviews) {
         DateTime extentClassChangedDate = extentClass.getClassChangedDate();
-        DateTime expertReviewedDate = extractExpertReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
-        return (expertReviewedDate == null || extentClassChangedDate.isAfter(expertReviewedDate));
+        if (extentClassChangedDate == null) {
+            // Extent class has not changed since last disease extent generation, so does not need review
+            return false;
+        } else {
+            DateTime reviewedDate = extractReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
+            return (reviewedDate == null || extentClassChangedDate.isAfter(reviewedDate));
+            // Needs review if expert has never reviewed it previously, or if class has changed since last review.
+        }
     }
 
-    private DateTime extractExpertReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
-        for (AdminUnitReview review : reviews) {
-            if (adminUnit.getGaulCode().equals(review.getAdminUnitGlobalOrTropicalGaulCode())) {
-                return review.getChangedDate();
-            }
-        }
-        return null;
+    private DateTime extractReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
+        List<AdminUnitReview> reviewsOfAdminUnit = select(reviews,
+            having(on(AdminUnitReview.class).getAdminUnitGlobalOrTropicalGaulCode(), equalTo(adminUnit.getGaulCode())));
+        return max(reviewsOfAdminUnit, on(AdminUnitReview.class).getCreatedDate());
     }
 
     public String getName() {

@@ -17,10 +17,6 @@ import static org.mockito.Mockito.when;
  */
 public abstract class AbstractDiseaseExtentGeoJsonTests {
 
-    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClass() {
-        return defaultAdminUnitDiseaseExtentClassWithoutReview();
-    }
-
     public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview() {
         return new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
@@ -39,7 +35,25 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             new DiseaseGroup(),
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
             0,
-            classChangedLaterThanReview ? review.getChangedDate().plusDays(1) : review.getChangedDate().minusDays(1));
+            classChangedLaterThanReview ? review.getCreatedDate().plusDays(1) : review.getCreatedDate().minusDays(1));
+    }
+
+    public static AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClassWithTwoReviews(List<AdminUnitReview> reviews) {
+        AdminUnitGlobal adminUnitGlobal = defaultAdminUnitGlobal();
+        AdminUnitReview review1 = mockAdminUnitReviewWithDate(adminUnitGlobal, DateTime.now().minusDays(1));
+        DateTime classChangedDate = DateTime.now();
+        AdminUnitReview review2 = mockAdminUnitReviewWithDate(adminUnitGlobal, DateTime.now().plusDays(1));
+
+        reviews.add(review1);
+        reviews.add(review2);
+
+        return new AdminUnitDiseaseExtentClass(
+            adminUnitGlobal,
+            new DiseaseGroup(),
+            new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
+            0,
+            classChangedDate
+        );
     }
 
     public static AdminUnitGlobal defaultAdminUnitGlobal() {
@@ -60,9 +74,13 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
     }
 
     private static AdminUnitReview mockAdminUnitReview(AdminUnitGlobal adminUnitGlobal) {
+        return mockAdminUnitReviewWithDate(adminUnitGlobal, DateTime.now());
+    }
+
+    private static AdminUnitReview mockAdminUnitReviewWithDate(AdminUnitGlobal adminUnitGlobal, DateTime createdDate) {
         AdminUnitReview review = mock(AdminUnitReview.class);
         when(review.getAdminUnitGlobalOrTropicalGaulCode()).thenReturn(adminUnitGlobal.getGaulCode());
-        when(review.getChangedDate()).thenReturn(DateTime.now());
+        when(review.getCreatedDate()).thenReturn(createdDate);
         return review;
     }
 }

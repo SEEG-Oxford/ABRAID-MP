@@ -4,16 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
@@ -27,6 +23,7 @@ import java.util.Map;
  */
 public class ModelWrapperWebService {
     private WebServiceClient webServiceClient;
+    private final AbraidJsonObjectMapper objectMapper;
 
     // The root URL for the ModelWrapper web service (i.e. the non-parameterised part).
     private String rootUrl;
@@ -34,8 +31,9 @@ public class ModelWrapperWebService {
     // The ModelWrapper's URL path for the model run (this is hardcoded because it is hardcoded in ModelWrapper).
     private static final String MODEL_RUN_URL_PATH = "/model/run";
 
-    public ModelWrapperWebService(WebServiceClient webServiceClient) {
+    public ModelWrapperWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper) {
         this.webServiceClient = webServiceClient;
+        this.objectMapper = objectMapper;
     }
 
     public void setRootUrl(String rootUrl) {
@@ -78,10 +76,9 @@ public class ModelWrapperWebService {
 
     private String createRequestBodyAsJson(Object body) {
         // To create the JSON body for the POST request:
-        // - use the GeoJsonObjectMapper (because the request contains GeoJson)
+        // - use the AbraidJsonObjectMapper (because the request contains GeoJson)
         // - only serialize properties that are annotated with ModellingJsonView or are not annotated at all
         //   (this selects the properties that are relevant to the model)
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
         ObjectWriter writer = objectMapper.writerWithView(ModellingJsonView.class);
         try {
             return writer.writeValueAsString(body);

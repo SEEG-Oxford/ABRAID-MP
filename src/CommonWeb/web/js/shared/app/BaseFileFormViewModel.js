@@ -1,6 +1,6 @@
 /* A base view model to provide a common implementation of knockout client-side form behaviour when the form
  * contains a file.
- * Use "call" to apply. E.g. BaseFormViewModel.call(self, args..)
+ * Use "call" to apply. E.g. BaseFileFormViewModel.call(self, args..)
  * Copyright (c) 2014 University of Oxford.
  */
 /* global window: false, FormData: false */
@@ -24,13 +24,15 @@ define([
 
         var buildFormData = function (subclassData) {
             var data = new FormData();
+            // Add the subclass data key value pairs to the FormData object
             _(subclassData).chain().pairs().map(function (kvp) {
                 data.append(kvp[0], kvp[1]);
             });
-            // Add the file to data
+            // Add the file to the FormData object
             data.append("file", self.file());
             return data;
         };
+
         var baseBuildAjaxArgs = self.buildAjaxArgs;
         self.buildAjaxArgs = function () {
             var args = baseBuildAjaxArgs();
@@ -68,7 +70,7 @@ define([
         self.postSuccessAction = function () {};
 
         var baseSuccessHandler = self.successHandler;
-        self.successHandler = function (data, textStatus, xhr) {
+        self.successHandler = function (data) {
             // One limitation of the iframe transport mechanism is that it doesn't see the status code
             // and calls success for all cases. It also adds html surrounding tags to the response body
             if (typeof data === "string") {
@@ -85,7 +87,7 @@ define([
                 baseSuccessHandler(json, json, { responseText : json });
                 self.postSuccessAction();
             } else {
-                self.failureHandler({ responseText : json, status: ((xhr || {}).status || 400) });
+                baseFailureHandler({ responseText : json });
             }
         };
     };
