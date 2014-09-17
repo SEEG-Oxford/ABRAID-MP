@@ -9,7 +9,7 @@ define([
     return function (diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.minNewOccurrences = ko.observable().extend({ digit: true, min: 0 });
+        self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
         self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 0 });
         self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
@@ -29,7 +29,7 @@ define([
         }).extend({ digit: true, min: 0 });
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            self.minNewOccurrences((diseaseGroup.minNewOccurrences || "").toString());
+            self.minNewLocations((diseaseGroup.minNewLocations || "").toString());
             self.minDataVolume((diseaseGroup.minDataVolume || "").toString());
             self.minDistinctCountries((diseaseGroup.minDistinctCountries || "").toString());
             self.minHighFrequencyCountries((diseaseGroup.minHighFrequencyCountries || "").toString());

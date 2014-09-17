@@ -18,7 +18,7 @@ define([
         describe("holds the expected properties of a disease group", function () {
             var vm = new ModelRunParametersViewModel("");
             it("as observables", function () {
-                expect(vm.minNewOccurrences).toBeObservable();
+                expect(vm.minNewLocations).toBeObservable();
                 expect(vm.minDataVolume).toBeObservable();
                 expect(vm.minDistinctCountries).toBeObservable();
                 expect(vm.minHighFrequencyCountries).toBeObservable();
@@ -27,7 +27,7 @@ define([
             });
 
             it("with appropriate validation rules", function () {
-                expectValidationRules(vm.minNewOccurrences);
+                expectValidationRules(vm.minNewLocations);
                 expectValidationRules(vm.minDataVolume);
                 expectValidationRules(vm.minDistinctCountries);
                 expectValidationRules(vm.minHighFrequencyCountries);
@@ -40,7 +40,7 @@ define([
         it("updates the disease group property fields, when the specified event is fired", function () {
             // Arrange
             var diseaseGroup = {
-                minNewOccurrences: "1",
+                minNewLocations: "1",
                 minDataVolume: "2",
                 minDistinctCountries: "3",
                 minHighFrequencyCountries: "4",
@@ -53,7 +53,7 @@ define([
             ko.postbox.publish(eventName, diseaseGroup);
 
             // Assert
-            expect(vm.minNewOccurrences()).toBe(diseaseGroup.minNewOccurrences);
+            expect(vm.minNewLocations()).toBe(diseaseGroup.minNewLocations);
             expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
             expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
             expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);

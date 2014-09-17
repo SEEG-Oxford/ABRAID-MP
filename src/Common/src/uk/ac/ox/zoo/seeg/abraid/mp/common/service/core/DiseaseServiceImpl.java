@@ -203,13 +203,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets the number of new disease occurrences for the specified disease group.
+     * Gets the list of new disease occurrences for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @return The count.
+     * @param startDate Occurrences must be newer than this date.
+     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @return The list of relevant new occurrences.
      */
     @Override
-    public long getNewOccurrencesCountByDiseaseGroup(int diseaseGroupId) {
-        return diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForTriggeringModelRun(int diseaseGroupId,
+                                                                              DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
     }
 
     /**

@@ -412,17 +412,34 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getNewOccurrencesCountByDiseaseGroup() {
+    public void getDiseaseOccurrencesForTriggeringModelRunReturnsExpectedList() {
         // Arrange
         int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        diseaseGroup.setLastModelRunPrepDate(diseaseGroup.getCreatedDate().minusDays(1));
+        int expectedCount = 3;
+        setUpParameterValues(diseaseGroupId, expectedCount);
 
         // Act
-        long count = diseaseOccurrenceDao.getNewOccurrencesCountByDiseaseGroup(diseaseGroupId);
+        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForTriggeringModelRun(
+                diseaseGroupId, DateTime.now().minusDays(1), DateTime.now().plusDays(1));
 
         // Assert
-        assertThat(count).isEqualTo(45);
+        assertThat(newOccurrences).hasSize(expectedCount);
+    }
+
+    private void setUpParameterValues(int diseaseGroupId, int expectedCount) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        diseaseGroup.setMinEnvironmentalSuitability(0.5);
+        diseaseGroup.setMinDistanceFromDiseaseExtent(50.0);
+        diseaseGroupDao.save(diseaseGroup);
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId);
+        for (int i = 0; i < expectedCount; i++) {
+            DiseaseOccurrence occurrence = occurrences.get(i);
+            occurrence.setEnvironmentalSuitability(0.8);
+            occurrence.setDistanceFromDiseaseExtent(100.0);
+            diseaseOccurrenceDao.save(occurrence);
+        }
+        flushAndClear();
     }
 
     @Test

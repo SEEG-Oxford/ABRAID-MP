@@ -112,11 +112,14 @@ public interface DiseaseService {
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
 
     /**
-     * Gets the number of new disease occurrences for the specified disease group.
+     * Gets the list of new disease occurrences for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @return The count.
+     * @param startDate Occurrences must be newer than this date.
+     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @return The list of relevant new occurrences.
      */
-    long getNewOccurrencesCountByDiseaseGroup(int diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesForTriggeringModelRun(int diseaseGroupId,
+                                                                       DateTime startDate, DateTime endDate);
 
     /**
      * Gets the disease extent for the specified disease group.
