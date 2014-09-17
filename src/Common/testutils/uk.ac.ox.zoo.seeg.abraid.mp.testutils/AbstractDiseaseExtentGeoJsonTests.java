@@ -17,10 +17,6 @@ import static org.mockito.Mockito.when;
  */
 public abstract class AbstractDiseaseExtentGeoJsonTests {
 
-    public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClass() {
-        return defaultAdminUnitDiseaseExtentClassWithoutReview();
-    }
-
     public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview() {
         return new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
