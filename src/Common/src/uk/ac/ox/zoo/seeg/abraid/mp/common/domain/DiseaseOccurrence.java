@@ -59,10 +59,10 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForTriggeringModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and  d.isValidated is not null " +
-                        "and d.createdDate between :startDate and :endDate and " +
-                        "d.environmentalSuitability >= d.diseaseGroup.minEnvironmentalSuitability and " +
-                        "d.distanceFromDiseaseExtent >= d.diseaseGroup.minDistanceFromDiseaseExtent"
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated is not null " +
+                        "and d.createdDate between :startDate and :endDate " +
+                        "and d.environmentalSuitability >= d.diseaseGroup.minEnvironmentalSuitability " +
+                        "and d.distanceFromDiseaseExtent >= d.diseaseGroup.minDistanceFromDiseaseExtent"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",

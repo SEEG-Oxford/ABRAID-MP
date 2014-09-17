@@ -165,7 +165,7 @@ public class ModelRunManagerTest {
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
     }
 
-    // Ensure that the number of distinct locations extracted from the new occurrences is >/= threshold
+    // Ensure that the number of distinct locations extracted from the new occurrences is >= threshold
     private void mockGetNewLocationsCountByDiseaseGroup(long newLocationsCount) {
         List<DiseaseOccurrence> newOccurrences = new ArrayList<>();
         for (int i = 0; i < newLocationsCount; i++) {
