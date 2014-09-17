@@ -15,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionServic
 
 import java.io.File;
 
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.mockito.Mockito.*;
 
 /**
@@ -55,14 +56,14 @@ public class UploadCsvControllerHelperTest {
         String message = "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)";
         String expectedSubject = "CSV upload succeeded";
         String expectedEmailEnd =
-                "The upload succeeded with message:\r\n" +
-                "\r\n" +
-                "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)\r\n";
+                "The upload succeeded with message:\n" +
+                "\n" +
+                "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)\n";
 
         when(dataAcquisitionService.acquireCsvData(csv)).thenReturn(message);
 
         // Act and assert
-        acquireCsvDataSendsCorrectEmail(message, expectedEmailEnd, expectedSubject);
+        acquireCsvDataSendsCorrectEmail(expectedEmailEnd, expectedSubject);
     }
 
     @Test
@@ -72,17 +73,17 @@ public class UploadCsvControllerHelperTest {
         String message = "Some error during data acquisition";
         String expectedSubject = "CSV upload failed";
         String expectedEmailEnd =
-                "The upload failed with message:\r\n" +
-                "\r\n" +
-                "Some error during data acquisition\r\n";
+                "The upload failed with message:\n" +
+                "\n" +
+                "Some error during data acquisition\n";
 
         when(dataAcquisitionService.acquireCsvData(csv)).thenThrow(new DataAcquisitionException(message));
 
         // Act and assert
-        acquireCsvDataSendsCorrectEmail(message, expectedEmailEnd, expectedSubject);
+        acquireCsvDataSendsCorrectEmail(expectedEmailEnd, expectedSubject);
     }
 
-    private void acquireCsvDataSendsCorrectEmail(String message, String expectedEmailEnding, String expectedSubject)
+    private void acquireCsvDataSendsCorrectEmail(String expectedEmailEnding, String expectedSubject)
             throws Exception {
         // Arrange
         String csv = "Test csv";
@@ -94,13 +95,14 @@ public class UploadCsvControllerHelperTest {
 
         // Assert
         String nowString = DateTimeFormat.longDateTime().print(DateTime.now());
-        verify(email).setMsg("Here are the results of the CSV upload that you submitted.\r\n" +
-                "\r\n" +
-                "File: /path/to/test.csv\r\n" +
-                "Submitted on: " + nowString + "\r\n" +
-                "Completed on: " + nowString + "\r\n" +
-                "\r\n" + expectedEmailEnding);
-        verify(email).setSubject(expectedSubject);
-        verify(email).addTo(userEmailAddress);
+        verify(email).setMsg(argThat(equalToIgnoringWhiteSpace(
+                "Here are the results of the CSV upload that you submitted.\n" +
+                "\n" +
+                "File: /path/to/test.csv\n" +
+                "Submitted on: " + nowString + "\n" +
+                "Completed on: " + nowString + "\n" +
+                "\n" + expectedEmailEnding)));
+        verify(email).setSubject(eq(expectedSubject));
+        verify(email).addTo(eq(userEmailAddress));
     }
 }
