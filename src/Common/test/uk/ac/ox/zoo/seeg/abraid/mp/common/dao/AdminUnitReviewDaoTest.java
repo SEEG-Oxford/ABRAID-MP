@@ -89,8 +89,6 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         // Assert
         assertReviewSaved(review1);
         assertReviewSaved(review2);
-        System.out.println(review1.getCreatedDate());
-        System.out.println(review2.getCreatedDate());
 
         Integer id1 = review1.getId();
         Integer id2 = review2.getId();
