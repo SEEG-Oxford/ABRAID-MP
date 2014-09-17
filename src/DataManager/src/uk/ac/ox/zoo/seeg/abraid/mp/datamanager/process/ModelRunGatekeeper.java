@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
@@ -70,9 +69,9 @@ public class ModelRunGatekeeper {
             LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
             return true;
         } else {
-            LocalDate today = LocalDate.now();
-            LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusDays(DAYS_BETWEEN_MODEL_RUNS);
-            final boolean weekHasElapsed = !comparisonDate.isAfter(today);
+            DateTime comparisonDate = subtractDaysBetweenModelRuns(DateTime.now());
+            DateTime lastModelRunPrepDay = lastModelRunPrepDate.withTimeAtStartOfDay();
+            final boolean weekHasElapsed = !comparisonDate.isBefore(lastModelRunPrepDay);
             LOGGER.info(String.format(weekHasElapsed ? WEEK_HAS_ELAPSED : WEEK_HAS_NOT_ELAPSED, lastModelRunPrepDate));
             return weekHasElapsed;
         }
@@ -99,9 +98,16 @@ public class ModelRunGatekeeper {
     }
 
     private long getDistinctLocationsCount(int diseaseGroupId) {
-        DateTime date = DateTime.now().minusDays(DAYS_BETWEEN_MODEL_RUNS);
-        List<DiseaseOccurrence> occurrences = diseaseService.getNewOccurrencesByDiseaseGroup(diseaseGroupId, date);
+        DateTime endDate = subtractDaysBetweenModelRuns(DateTime.now());
+        DateTime startDate = subtractDaysBetweenModelRuns(endDate);
+
+        List<DiseaseOccurrence> occurrences =
+                diseaseService.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
         Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
         return locations.size();
+    }
+
+    private DateTime subtractDaysBetweenModelRuns(DateTime endDate) {
+        return endDate.minusDays(DAYS_BETWEEN_MODEL_RUNS).withTimeAtStartOfDay();
     }
 }

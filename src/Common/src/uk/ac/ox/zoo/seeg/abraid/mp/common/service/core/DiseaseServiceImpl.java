@@ -205,12 +205,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     /**
      * Gets the list of new disease occurrences for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @param comparisonDate Occurrences must be older than this date, to ensure they have had ample time in validation.
-     * @return The list of relevant new occurrences..
+     * @param startDate Occurrences must be newer than this date.
+     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @return The list of relevant new occurrences.
      */
     @Override
-    public List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(int diseaseGroupId, DateTime comparisonDate) {
-        return diseaseOccurrenceDao.getNewOccurrencesByDiseaseGroup(diseaseGroupId, comparisonDate);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForTriggeringModelRun(int diseaseGroupId,
+                                                                              DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
     }
 
     /**

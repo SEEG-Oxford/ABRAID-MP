@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -413,15 +412,15 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getNewOccurrencesByDiseaseGroup() {
+    public void getDiseaseOccurrencesForTriggeringModelRunReturnsExpectedList() {
         // Arrange
         int diseaseGroupId = 87;
         int expectedCount = 3;
         setUpParameterValues(diseaseGroupId, expectedCount);
 
         // Act
-        DateTimeUtils.setCurrentMillisFixed(DateTime.now().plusDays(8).getMillis());
-        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getNewOccurrencesByDiseaseGroup(diseaseGroupId, DateTime.now());
+        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForTriggeringModelRun(
+                diseaseGroupId, DateTime.now().minusDays(1), DateTime.now().plusDays(1));
 
         // Assert
         assertThat(newOccurrences).hasSize(expectedCount);
