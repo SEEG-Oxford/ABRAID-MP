@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
@@ -25,7 +24,7 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
     public void serializingADiseaseOccurrenceCollectionGivesCorrectDisplayViewOutput() throws Exception {
         // Arrange
         List<DiseaseOccurrence> occurrences = Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence());
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
         OutputStream stream = new ByteArrayOutputStream();
         ObjectWriter writer = objectMapper.writerWithView(DisplayJsonView.class);
 
@@ -40,7 +39,7 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
     public void serializingADiseaseOccurrenceCollectionGivesCorrectModellingViewOutput() throws Exception {
         // Arrange
         List<DiseaseOccurrence> occurrences = Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence());
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
         OutputStream stream = new ByteArrayOutputStream();
         ObjectWriter writer = objectMapper.writerWithView(ModellingJsonView.class);
 
@@ -56,7 +55,7 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
         // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection occurrences = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
         OutputStream stream = new ByteArrayOutputStream();
         objectMapper.writeValue(stream, occurrences);
         String input = stream.toString();
@@ -75,7 +74,7 @@ public class DiseaseOccurrenceGeoJsonIntegrationTest extends AbstractDiseaseOccu
         // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection occurrences = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
         ObjectWriter writer = objectMapper.writerWithView(ModellingJsonView.class);
         OutputStream stream = new ByteArrayOutputStream();
         writer.writeValue(stream, occurrences);

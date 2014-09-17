@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertFull;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
@@ -29,7 +29,7 @@ public class AdminExpertsControllerTest {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
         when(expertService.getAllExperts()).thenReturn(new ArrayList<Expert>());
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
 
         AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null, null);
 
@@ -46,7 +46,7 @@ public class AdminExpertsControllerTest {
         ExpertService expertService = mock(ExpertService.class);
         List<Expert> experts = Arrays.asList(mock(Expert.class), mock(Expert.class));
         when(expertService.getAllExperts()).thenReturn(experts);
-        GeoJsonObjectMapper objectMapper = new GeoJsonObjectMapper();
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
 
         AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null, null);
         Model model = mock(Model.class);

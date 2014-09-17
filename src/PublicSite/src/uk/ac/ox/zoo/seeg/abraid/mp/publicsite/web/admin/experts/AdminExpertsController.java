@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertFull;
@@ -39,17 +39,17 @@ public class AdminExpertsController extends AbstractController {
             "Expert administration form encountered invalid expert id: %s.";
 
     private final ExpertService expertService;
-    private final GeoJsonObjectMapper json;
+    private final AbraidJsonObjectMapper json;
     private final AdminExpertsControllerValidator validator;
     private final AdminExpertsControllerHelper helper;
 
     @Autowired
     public AdminExpertsController(ExpertService expertService,
-                                  GeoJsonObjectMapper geoJsonObjectMapper,
+                                  AbraidJsonObjectMapper objectMapper,
                                   AdminExpertsControllerValidator adminExpertsControllerValidator,
                                   AdminExpertsControllerHelper adminExpertsHelper) {
         this.expertService = expertService;
-        this.json = geoJsonObjectMapper;
+        this.json = objectMapper;
         this.validator = adminExpertsControllerValidator;
         this.helper = adminExpertsHelper;
     }

@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 public class AdminDiseaseGroupControllerTest {
     private DiseaseService diseaseService;
-    private GeoJsonObjectMapper geoJsonObjectMapper;
+    private AbraidJsonObjectMapper objectMapper;
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
     private AdminDiseaseGroupController controller;
@@ -38,10 +38,10 @@ public class AdminDiseaseGroupControllerTest {
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        geoJsonObjectMapper = new GeoJsonObjectMapper();
+        objectMapper = new AbraidJsonObjectMapper();
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunService = mock(ModelRunService.class);
-        controller = new AdminDiseaseGroupController(diseaseService, geoJsonObjectMapper, modelRunWorkflowService,
+        controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
                 modelRunService);
     }
 

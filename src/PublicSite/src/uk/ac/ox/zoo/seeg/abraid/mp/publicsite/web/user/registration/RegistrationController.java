@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration;
 
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +17,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import javax.servlet.ServletRequest;
@@ -65,20 +65,20 @@ public class RegistrationController extends AbstractController {
     private final DiseaseService diseaseService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-    private final ObjectMapper json;
+    private final AbraidJsonObjectMapper json;
     private final RegistrationControllerValidator validator;
 
     @Autowired
     public RegistrationController(CurrentUserService currentUserService, ExpertService expertService,
                                   DiseaseService diseaseService, EmailService emailService,
-                                  PasswordEncoder passwordEncoder, ObjectMapper geoJsonObjectMapper,
+                                  PasswordEncoder passwordEncoder, AbraidJsonObjectMapper objectMapper,
                                   RegistrationControllerValidator expertRegistrationValidator) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
-        this.json = geoJsonObjectMapper;
+        this.json = objectMapper;
         this.validator = expertRegistrationValidator;
     }
 

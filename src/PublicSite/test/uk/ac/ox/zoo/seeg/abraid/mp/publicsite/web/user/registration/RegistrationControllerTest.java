@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.registration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -11,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.support.SessionStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
@@ -56,7 +56,7 @@ public class RegistrationControllerTest {
         diseaseService = mock(DiseaseService.class);
         emailService = mock(EmailService.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        ObjectMapper json = new ObjectMapper();
+        AbraidJsonObjectMapper json = new AbraidJsonObjectMapper();
         validator = mock(RegistrationControllerValidator.class);
 
         target = new RegistrationController(
@@ -155,7 +155,7 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void getAccountPageValidatesAddsTheNeededModelValuesAndReturnsTheCorrectTemplate() throws Exception {
+    public void getAccountPageAddsTheNeededModelValuesAndReturnsTheCorrectTemplate() throws Exception {
         // Arrange
         ModelMap modelMap = new ModelMap();
         Expert expert = new Expert();
@@ -171,8 +171,7 @@ public class RegistrationControllerTest {
         // Assert
         assertThat((String) (modelMap.get("alerts"))).isEqualTo("[\"m1\",\"m2\"]");
         assertThat((String) (modelMap.get("captcha"))).isEqualTo("captcha");
-        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"email\":\"a@b.com\",\"password\":null," +
-                "\"passwordConfirmation\":null,\"captchaChallenge\":\"\",\"captchaResponse\":\"\"}");
+        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"email\":\"a@b.com\",\"captchaChallenge\":\"\",\"captchaResponse\":\"\"}");
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -239,8 +238,8 @@ public class RegistrationControllerTest {
         // Assert
         assertThat((String) (modelMap.get("diseases")))
                 .isEqualTo("[{\"id\":1,\"name\":\"a\"},{\"id\":2,\"name\":\"b\"},{\"id\":3,\"name\":\"c\"}]");
-        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"name\":null,\"visibilityRequested\":false," +
-                "\"diseaseInterests\":[],\"jobTitle\":null,\"institution\":null}");
+        assertThat((String) (modelMap.get("jsonExpert"))).isEqualTo("{\"visibilityRequested\":false," +
+                "\"diseaseInterests\":[]}");
 
         assertThat(result).isEqualTo("register/details");
     }

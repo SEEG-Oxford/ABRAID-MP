@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson;
 
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -24,7 +25,7 @@ public class GeoJsonObjectTypeTest {
         for (GeoJsonObjectType enumValue : GeoJsonObjectType.values()) {
             // Arrange
             OutputStream stream = new ByteArrayOutputStream();
-            GeoJsonObjectMapper target = new GeoJsonObjectMapper();
+            AbraidJsonObjectMapper target = new AbraidJsonObjectMapper();
 
             // Act
             target.writeValue(stream, enumValue);

@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
@@ -9,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
@@ -35,12 +35,14 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private final String runName;
     private final Path workingDirectoryPath;
     private ModelOutputHandlerWebService modelOutputHandlerWebService;
+    private final AbraidJsonObjectMapper objectMapper;
 
-    public ModelStatusReporterImpl(
-            String runName, Path workingDirectory, ModelOutputHandlerWebService modelOutputHandlerWebService) {
+    public ModelStatusReporterImpl(String runName, Path workingDirectory,
+            ModelOutputHandlerWebService modelOutputHandlerWebService, AbraidJsonObjectMapper objectMapper) {
         this.runName = runName;
         this.workingDirectoryPath = workingDirectory;
         this.modelOutputHandlerWebService = modelOutputHandlerWebService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -95,7 +97,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
         // Create metadata and serialize as JSON
         JsonModelOutputsMetadata metadata = new JsonModelOutputsMetadata(runName, status, outputText, errorText);
 
-        String metadataJson = new ObjectMapper().writeValueAsString(metadata);
+        String metadataJson = objectMapper.writeValueAsString(metadata);
 
         // Write metadata to a file
         File metadataFile = getFileInWorkingDirectory(ModelOutputConstants.METADATA_JSON_FILENAME);
