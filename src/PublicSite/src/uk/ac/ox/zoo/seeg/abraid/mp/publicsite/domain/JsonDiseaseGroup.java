@@ -18,7 +18,7 @@ public class JsonDiseaseGroup {
     private JsonValidatorDiseaseGroup validatorDiseaseGroup;
     private Double weighting;
     private boolean automaticModelRuns;
-    private Integer minNewOccurrences;
+    private Integer minNewLocations;
     private int minDataVolume;
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
@@ -45,7 +45,7 @@ public class JsonDiseaseGroup {
         }
         setWeighting(diseaseGroup.getWeighting());
         setAutomaticModelRuns(diseaseGroup.isAutomaticModelRunsEnabled());
-        setMinNewOccurrences(diseaseGroup.getMinNewOccurrencesTrigger());
+        setMinNewLocations(diseaseGroup.getMinNewLocationsTrigger());
         setMinDataVolume(diseaseGroup.getMinDataVolume());
         setMinDistinctCountries(diseaseGroup.getMinDistinctCountries());
         setHighFrequencyThreshold(diseaseGroup.getHighFrequencyThreshold());
@@ -136,12 +136,12 @@ public class JsonDiseaseGroup {
         this.weighting = weighting;
     }
 
-    public Integer getMinNewOccurrences() {
-        return minNewOccurrences;
+    public Integer getMinNewLocations() {
+        return minNewLocations;
     }
 
-    public void setMinNewOccurrences(Integer minNewOccurrences) {
-        this.minNewOccurrences = minNewOccurrences;
+    public void setMinNewLocations(Integer minNewLocations) {
+        this.minNewLocations = minNewLocations;
     }
 
     public boolean isAutomaticModelRuns() {

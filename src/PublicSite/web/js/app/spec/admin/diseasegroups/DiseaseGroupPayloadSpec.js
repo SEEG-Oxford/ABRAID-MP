@@ -22,7 +22,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 selectedValidatorDiseaseGroup: wrap({ id: 3 })
             };
             var modelRunParametersViewModel = {
-                minNewOccurrences: wrap(1),
+                minNewLocations: wrap(1),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
@@ -46,7 +46,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 isGlobal: true,
                 parentDiseaseGroup: { id: 2 },
                 validatorDiseaseGroup: { id: 3 },
-                minNewOccurrences: 1,
+                minNewLocations: 1,
                 minDataVolume: 2,
                 minDistinctCountries: 3,
                 minHighFrequencyCountries:  4,
@@ -81,7 +81,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 selectedValidatorDiseaseGroup: wrap(undefined)
             };
             var modelRunParametersViewModel = {
-                minNewOccurrences: wrap(""),
+                minNewLocations: wrap(""),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
@@ -105,7 +105,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 isGlobal: undefined,
                 parentDiseaseGroup: { id: null },
                 validatorDiseaseGroup: { id: null },
-                minNewOccurrences: undefined,
+                minNewLocations: undefined,
                 minDataVolume: undefined,
                 minDistinctCountries: undefined,
                 minHighFrequencyCountries:  undefined,

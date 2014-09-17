@@ -5,6 +5,8 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
@@ -55,74 +57,87 @@ public class ModelRunManagerTest {
     }
 
     @Test
-    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewOccurrencesIsOverThreshold() throws Exception {
+    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewLocationsIsOverThreshold() throws Exception {
         expectModelPrepToRun(null, true);
     }
 
     @Test
-    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewOccurrencesIsUnderThreshold() throws Exception {
+    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndNewLocationsIsUnderThreshold() throws Exception {
         expectModelPrepToRun(null, false);
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewOccurrencesIsOverThreshold() throws Exception {
+    public void modelPrepShouldRunWhenLastModelRunPrepDateIsNullAndThresholdIsNull() throws Exception {
+        expectModelPrepToRun(null, null);
+    }
+
+    @Test
+    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewLocationsIsOverThreshold() throws Exception {
         expectModelPrepToRun(true, true);
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewOccurrencesIsUnderThreshold() throws Exception {
+    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewLocationsIsUnderThreshold() throws Exception {
         expectModelPrepToRun(true, false);
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasNotElapsedAndNewOccurrencesIsOverThreshold() throws Exception {
+    public void modelPrepShouldRunWhenAWeekHasElapsedAndThresholdIsNull() throws Exception {
+        expectModelPrepToRun(true, null);
+    }
+
+    @Test
+    public void modelPrepShouldRunWhenAWeekHasNotElapsedAndNewLocationsIsOverThreshold() throws Exception {
+        validationParametersThresholdsDefined();
         expectModelPrepToRun(false, true);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndNewOccurrencesIsUnderThreshold() throws Exception {
+    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndNewLocationsIsUnderThreshold() throws Exception {
+        validationParametersThresholdsDefined();
         expectModelPrepNotToRun(false, false);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndThresholdIsNull() throws Exception {
+    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndLocationsThresholdIsNull() throws Exception {
+        validationParametersThresholdsDefined();
         expectModelPrepNotToRun(false, null);
     }
 
-    @Test
-    public void modelPrepShouldNotRunWhenAWeekHasPassedAndThresholdIsNull() throws Exception {
-        expectModelPrepNotToRun(true, null);
+    private void validationParametersThresholdsDefined() {
+        diseaseGroup.setMinDistanceFromDiseaseExtent(0.0);
+        diseaseGroup.setMinEnvironmentalSuitability(0.0);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenLastModelRunPrepDateIsNullAndThresholdIsNull() throws Exception {
-        expectModelPrepNotToRun(null, null);
+    public void modelPrepShouldNotRunWhenAWeekHasNotElapsedAndMinEnvSuitabilityOrMinDistanceFromExtentNotDefined() throws Exception {
+        expectModelPrepNotToRun(false, true);
     }
 
-    private void expectModelPrepToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
+    private void expectModelPrepToRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
         // Arrange and Act
         mockGetDiseaseGroupById();
-        arrangeAndAct(weekHasElapsed, newOccurrenceCountOverThreshold);
+        arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
 
         // Assert
         verify(modelRunWorkflowService, times(1)).prepareForAndRequestAutomaticModelRun(eq(DISEASE_GROUP_ID));
     }
 
-    private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
+    private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
         // Arrange and Act
         mockGetDiseaseGroupById();
-        arrangeAndAct(weekHasElapsed, newOccurrenceCountOverThreshold);
+        arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
 
         // Assert
         verify(modelRunWorkflowService, never()).prepareForAndRequestAutomaticModelRun(eq(DISEASE_GROUP_ID));
     }
 
-    private void arrangeAndAct(Boolean weekHasElapsed, Boolean newOccurrenceCountOverThreshold) {
+    private void arrangeAndAct(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
         // Arrange
-        int newOccurrencesCount = 100;
+        int newLocationsCount = 10;
         setLastModelRunPrepDate(weekHasElapsed);
-        mockGetNewOccurrencesCountByDiseaseGroup(newOccurrencesCount);
-        setModelRunMinNewOccurrences(newOccurrencesCount, newOccurrenceCountOverThreshold);
+        mockGetNewLocationsCountByDiseaseGroup(newLocationsCount);
+        setMinNewLocations(newLocationsCount, newLocationCountOverThreshold);
 
         // Act
         modelRunManager.prepareForAndRequestModelRun(diseaseGroup.getId());
@@ -137,20 +152,28 @@ public class ModelRunManagerTest {
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
     }
 
-    private void setModelRunMinNewOccurrences(int newOccurrencesCount, Boolean newOccurrenceCountOverThreshold) {
-        Integer minNewOccurrences = null;
-        if (newOccurrenceCountOverThreshold != null) {
-            int thresholdAdjustment = newOccurrenceCountOverThreshold ? -1 : +1;
-            minNewOccurrences = newOccurrencesCount + thresholdAdjustment;
+    private void setMinNewLocations(int newLocationsCount, Boolean newLocationCountOverThreshold) {
+        Integer minNewLocations = null;
+        if (newLocationCountOverThreshold != null) {
+            int thresholdAdjustment = newLocationCountOverThreshold ? -1 : +1;
+            minNewLocations = newLocationsCount + thresholdAdjustment;
         }
-        diseaseGroup.setMinNewOccurrencesTrigger(minNewOccurrences);
+        diseaseGroup.setMinNewLocationsTrigger(minNewLocations);
     }
 
     private void mockGetDiseaseGroupById() {
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
     }
 
-    private void mockGetNewOccurrencesCountByDiseaseGroup(long newOccurrencesCount) {
-        when(diseaseService.getNewOccurrencesCountByDiseaseGroup(DISEASE_GROUP_ID)).thenReturn(newOccurrencesCount);
+    // Ensure that the number of distinct locations extracted from the new occurrences is >= threshold
+    private void mockGetNewLocationsCountByDiseaseGroup(long newLocationsCount) {
+        List<DiseaseOccurrence> newOccurrences = new ArrayList<>();
+        for (int i = 0; i < newLocationsCount; i++) {
+            DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
+            when(occurrence.getLocation()).thenReturn(new Location(i));
+            newOccurrences.add(occurrence);
+        }
+        when(diseaseService.getDiseaseOccurrencesForTriggeringModelRun(
+                eq(DISEASE_GROUP_ID), any(DateTime.class), any(DateTime.class))).thenReturn(newOccurrences);
     }
 }

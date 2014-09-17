@@ -106,12 +106,17 @@ public interface DiseaseOccurrenceDao {
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
 
     /**
-     * Gets the number of new disease occurrences for the specified disease group. A "new" occurrence has is_validated
-     * not null and a created_date that is more recent than the last_mode_run_prep_date for the disease group.
+     * Gets the list of new disease occurrences for the specified disease group.
+     * A "new" occurrence has is_validated not null and a created_date that is more than a week ago.
+     * Occurrence must additionally satisfy that environmental suitability and distance from disease extent values are
+     * greater than minimum specified for the disease group.
      * @param diseaseGroupId The ID of the disease group.
-     * @return The count.
+     * @param startDate Occurrences must be newer than this date.
+     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @return The list of relevant new occurrences.
      */
-    long getNewOccurrencesCountByDiseaseGroup(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesForTriggeringModelRun(Integer diseaseGroupId,
+                                                                       DateTime startDate, DateTime endDate);
 
     /**
      * Gets statistics about the occurrences of the specified disease group.
