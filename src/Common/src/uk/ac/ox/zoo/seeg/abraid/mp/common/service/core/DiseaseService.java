@@ -114,9 +114,10 @@ public interface DiseaseService {
     /**
      * Gets the list of new disease occurrences for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @return The list of relevant new occurrences..
+     * @param comparisonDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @return The list of relevant new occurrences.
      */
-    List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(int diseaseGroupId);
+    List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(int diseaseGroupId, DateTime comparisonDate);
 
     /**
      * Gets the disease extent for the specified disease group.

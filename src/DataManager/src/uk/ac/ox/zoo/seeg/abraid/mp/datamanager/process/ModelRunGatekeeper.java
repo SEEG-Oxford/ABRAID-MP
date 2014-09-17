@@ -33,6 +33,8 @@ public class ModelRunGatekeeper {
     private static final String STARTING_MODEL_RUN_PREP = "Starting model run preparation";
     private static final String NOT_STARTING_MODEL_RUN_PREP = "Model run preparation will not be executed";
 
+    private static final int DAYS_BETWEEN_MODEL_RUNS = 7;
+
     private DiseaseService diseaseService;
 
     public ModelRunGatekeeper(DiseaseService diseaseService) {
@@ -69,7 +71,7 @@ public class ModelRunGatekeeper {
             return true;
         } else {
             LocalDate today = LocalDate.now();
-            LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusWeeks(1);
+            LocalDate comparisonDate = lastModelRunPrepDate.toLocalDate().plusDays(DAYS_BETWEEN_MODEL_RUNS);
             final boolean weekHasElapsed = !comparisonDate.isAfter(today);
             LOGGER.info(String.format(weekHasElapsed ? WEEK_HAS_ELAPSED : WEEK_HAS_NOT_ELAPSED, lastModelRunPrepDate));
             return weekHasElapsed;
@@ -97,7 +99,8 @@ public class ModelRunGatekeeper {
     }
 
     private long getDistinctLocationsCount(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
+        DateTime date = DateTime.now().minusDays(DAYS_BETWEEN_MODEL_RUNS);
+        List<DiseaseOccurrence> occurrences = diseaseService.getNewOccurrencesByDiseaseGroup(diseaseGroupId, date);
         Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
         return locations.size();
     }

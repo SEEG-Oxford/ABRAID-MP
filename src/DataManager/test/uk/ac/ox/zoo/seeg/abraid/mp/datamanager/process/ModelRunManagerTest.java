@@ -173,6 +173,6 @@ public class ModelRunManagerTest {
             when(occurrence.getLocation()).thenReturn(new Location(i));
             newOccurrences.add(occurrence);
         }
-        when(diseaseService.getNewOccurrencesByDiseaseGroup(DISEASE_GROUP_ID)).thenReturn(newOccurrences);
+        when(diseaseService.getNewOccurrencesByDiseaseGroup(eq(DISEASE_GROUP_ID), any(DateTime.class))).thenReturn(newOccurrences);
     }
 }

@@ -58,10 +58,8 @@ import javax.persistence.Table;
         ),
         @NamedQuery(
                 name = "getNewOccurrencesByDiseaseGroup",
-                query = "from DiseaseOccurrence where " +
-                        "isValidated is not null and " +
-                        "diseaseGroup.id=:diseaseGroupId and " +
-                        "createdDate <= :comparisonDate and " +
+                query = "from DiseaseOccurrence where isValidated is not null " +
+                        "and diseaseGroup.id=:diseaseGroupId and createdDate <= :comparisonDate and " +
                         "environmentalSuitability >= diseaseGroup.minEnvironmentalSuitability and " +
                         "distanceFromDiseaseExtent >= diseaseGroup.minDistanceFromDiseaseExtent"
         ),

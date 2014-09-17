@@ -161,12 +161,13 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * Occurrence must additionally satisfy that environmental suitability and distance from disease extent values are
      * greater than minimum specified for the disease group.
      * @param diseaseGroupId The ID of the disease group.
+     * @param comparisonDate Occurrences must be older than this date, to ensure they have had ample time in validation.
      * @return The list of relevant new occurrences.
      */
     @Override
-    public List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(Integer diseaseGroupId) {
+    public List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(Integer diseaseGroupId, DateTime comparisonDate) {
         return listNamedQuery("getNewOccurrencesByDiseaseGroup",
-                "diseaseGroupId", diseaseGroupId, "comparisonDate", DateTime.now().minusWeeks(1));
+                "diseaseGroupId", diseaseGroupId, "comparisonDate", comparisonDate);
     }
 
     /**

@@ -111,9 +111,10 @@ public interface DiseaseOccurrenceDao {
      * Occurrence must additionally satisfy that environmental suitability and distance from disease extent values are
      * greater than minimum specified for the disease group.
      * @param diseaseGroupId The ID of the disease group.
-     * @return The list of relevant new occurrences..
+     * @param comparisonDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @return The list of relevant new occurrences.
      */
-    List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getNewOccurrencesByDiseaseGroup(Integer diseaseGroupId, DateTime comparisonDate);
 
     /**
      * Gets statistics about the occurrences of the specified disease group.

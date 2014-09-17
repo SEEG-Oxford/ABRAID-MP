@@ -421,7 +421,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Act
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().plusDays(8).getMillis());
-        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getNewOccurrencesByDiseaseGroup(diseaseGroupId);
+        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getNewOccurrencesByDiseaseGroup(diseaseGroupId, DateTime.now());
 
         // Assert
         assertThat(newOccurrences).hasSize(expectedCount);
