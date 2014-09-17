@@ -17,6 +17,11 @@ public class JsonFileUploadResponse {
     private final String status;
     private final Collection<String> messages;
 
+    public JsonFileUploadResponse() {
+        this.status = SUCCESS;
+        this.messages = null;
+    }
+
     public JsonFileUploadResponse(boolean success, String messages) {
         this(success, Arrays.asList(messages));
     }

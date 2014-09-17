@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
         "file:PublicSite/web/WEB-INF/applicationContext.xml" })
 public class UploadCsvControllerIntegrationTest extends AbstractPublicSiteIntegrationTests {
-    private static final String URL = "/tools/uploadcsv";
+    private static final String UPLOAD_URL = "/tools/uploadcsv/upload";
 
     private MockMvc mockMvc;
 
@@ -46,6 +47,9 @@ public class UploadCsvControllerIntegrationTest extends AbstractPublicSiteIntegr
     @ReplaceWithMock
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private FreeMarkerConfigurer freemarkerConfig;
 
     @Before
     public void setup() throws IOException {
@@ -63,7 +67,7 @@ public class UploadCsvControllerIntegrationTest extends AbstractPublicSiteIntegr
     }
 
     @Test
-    public void updatePageOnlyAcceptsPOST() throws Exception {
+    public void uploadCSVOnlyAcceptsPOST() throws Exception {
         String csv = "\n";
         MockMultipartFile file = new MockMultipartFile("file", "/path/to/filename",
                 MediaType.APPLICATION_OCTET_STREAM_VALUE, csv.getBytes());
@@ -76,10 +80,10 @@ public class UploadCsvControllerIntegrationTest extends AbstractPublicSiteIntegr
     }
 
     private MockMultipartHttpServletRequestBuilder requestToUploadCSV(MockMultipartFile file) {
-        return fileUpload(URL).file(file);
+        return fileUpload(UPLOAD_URL).file(file);
     }
 
     private MockHttpServletRequestBuilder requestToUploadCSV(HttpMethod method) {
-        return request(method, URL).contentType(MediaType.MULTIPART_FORM_DATA);
+        return request(method, UPLOAD_URL).contentType(MediaType.MULTIPART_FORM_DATA);
     }
 }

@@ -41,7 +41,7 @@
 <div class="container">
     <@p.panel "add-covariate-body" "Add Covariate File" true>
         <p>Use the fields below to add new covariate files to the system.</p>
-        <@f.form "add-covariate-form" "Upload" "Uploading ...">
+        <@f.form "add-covariate-form" "Upload" "Uploading...">
             <@f.formGroupBasic "file-name" "Name" "name" "glyphicon glyphicon-pencil" />
             <@f.formGroupBasic "file-dir" "Subdirectory" "subdirectory" "glyphicon glyphicon-folder-open" />
             <@f.formGroupFile "file-picker" "File" "file" />

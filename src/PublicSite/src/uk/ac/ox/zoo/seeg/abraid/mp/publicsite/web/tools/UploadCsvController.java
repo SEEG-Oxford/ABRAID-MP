@@ -24,8 +24,6 @@ import java.io.IOException;
 @Controller
 public class UploadCsvController extends AbstractController {
     private static final String FILE_EMPTY_MESSAGE = "CSV file not supplied.";
-    private static final String FILE_SUBMITTED_MESSAGE =
-            "CSV file submitted. The results of the upload will be e-mailed to you.";
 
     private CurrentUserService currentUserService;
     private UploadCsvControllerHelperAsyncWrapper uploadCsvControllerHelperAsyncWrapper;
@@ -38,12 +36,22 @@ public class UploadCsvController extends AbstractController {
     }
 
     /**
+     * Returns the Upload CSV page.
+     * @return The Upload CSV page name.
+     */
+    @Secured({ "ROLE_SEEG" })
+    @RequestMapping(value = "/tools/uploadcsv", method = RequestMethod.GET)
+    public String showCovariatesPage() {
+        return "tools/uploadcsv";
+    }
+
+    /**
      * Uploads a CSV file to the database, by sending it to data acquisition.
      * @param file The CSV file to be uploaded.
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
      */
     @Secured({ "ROLE_SEEG" })
-    @RequestMapping(value = "/tools/uploadcsv", method = RequestMethod.POST,
+    @RequestMapping(value = "/tools/uploadcsv/upload", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ResponseEntity<JsonFileUploadResponse> uploadCsvFile(MultipartFile file)
@@ -52,7 +60,7 @@ public class UploadCsvController extends AbstractController {
             return new ResponseEntity<>(new JsonFileUploadResponse(false, FILE_EMPTY_MESSAGE), HttpStatus.BAD_REQUEST);
         } else {
             acquireCsvData(file);
-            return new ResponseEntity<>(new JsonFileUploadResponse(true, FILE_SUBMITTED_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new JsonFileUploadResponse(), HttpStatus.OK);
         }
     }
 
