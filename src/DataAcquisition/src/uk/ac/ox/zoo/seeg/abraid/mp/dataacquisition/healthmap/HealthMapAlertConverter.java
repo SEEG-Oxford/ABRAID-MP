@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.domain.HealthMapAlert;
 
 /**
@@ -21,18 +22,22 @@ public class HealthMapAlertConverter {
     private static final String DISEASE_NOT_OF_INTEREST_MESSAGE =
             "Disease occurrence not of interest (HealthMap disease \"%s\", alert ID %d)";
     private static final String FOUND_NEW_FEED = "Found new HealthMap feed \"%s\" - adding it to the database";
+    private static final String FOUND_NEW_DISEASE_SUBJECT = "New HealthMap disease discovered \"%s\"";
     private static final String FOUND_NEW_DISEASE = "Found new HealthMap disease \"%s\" - adding it to the database " +
             "linked to a new disease cluster \"%s\" (please review)";
     private static final String NEW_DISEASE_NAME = "NEW FROM HEALTHMAP: %s";
 
-    private AlertService alertService;
-    private DiseaseService diseaseService;
-    private HealthMapLookupData lookupData;
+
+    private final AlertService alertService;
+    private final DiseaseService diseaseService;
+    private final EmailService emailService;
+    private final HealthMapLookupData lookupData;
 
     public HealthMapAlertConverter(AlertService alertService, DiseaseService diseaseService,
-                                   HealthMapLookupData lookupData) {
+                                   EmailService emailService, HealthMapLookupData lookupData) {
         this.alertService = alertService;
         this.diseaseService = diseaseService;
+        this.emailService = emailService;
         this.lookupData = lookupData;
     }
 
@@ -139,8 +144,15 @@ public class HealthMapAlertConverter {
         } else {
             // HealthMap disease does not exist in database - create it and alert system administrator
             healthMapDisease = createAndSaveHealthMapDisease(healthMapAlert);
-            LOGGER.error(String.format(FOUND_NEW_DISEASE, healthMapAlert.getDisease(),
-                    healthMapDisease.getDiseaseGroup().getName()));
+
+            final String disease = healthMapAlert.getDisease();
+            final String groupName = healthMapDisease.getDiseaseGroup().getName();
+
+            final String subject = String.format(FOUND_NEW_DISEASE_SUBJECT, disease);
+            final String message = String.format(FOUND_NEW_DISEASE, disease, groupName);
+
+            emailService.sendEmailInBackground(subject, message);
+            LOGGER.warn(message);
         }
 
         if (healthMapDisease.getDiseaseGroup() == null) {
