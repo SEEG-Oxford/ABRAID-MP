@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -13,10 +13,10 @@ import java.util.TimeZone;
  * A custom Jackson object mapper to ensure the JSON produced is GeoJSON compliant.
  * Copyright (c) 2014 University of Oxford
  */
-public final class GeoJsonObjectMapper extends ObjectMapper {
+public final class AbraidJsonObjectMapper extends ObjectMapper {
     private static final String UTC = "UTC";
 
-    public GeoJsonObjectMapper() {
+    public AbraidJsonObjectMapper() {
         super();
         this.registerModule(new JodaModule());
         DateFormat dateFormat = ISO8601DateFormat.getDateTimeInstance();

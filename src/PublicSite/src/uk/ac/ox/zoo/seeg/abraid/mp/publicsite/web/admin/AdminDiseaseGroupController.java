@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
@@ -45,16 +45,16 @@ public class AdminDiseaseGroupController extends AbstractController {
     public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseases";
 
     private DiseaseService diseaseService;
-    private GeoJsonObjectMapper geoJsonObjectMapper;
+    private AbraidJsonObjectMapper objectMapper;
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
 
     @Autowired
-    public AdminDiseaseGroupController(DiseaseService diseaseService, GeoJsonObjectMapper geoJsonObjectMapper,
+    public AdminDiseaseGroupController(DiseaseService diseaseService, AbraidJsonObjectMapper objectMapper,
                                        ModelRunWorkflowService modelRunWorkflowService,
                                        ModelRunService modelRunService) {
         this.diseaseService = diseaseService;
-        this.geoJsonObjectMapper = geoJsonObjectMapper;
+        this.objectMapper = objectMapper;
         this.modelRunWorkflowService = modelRunWorkflowService;
         this.modelRunService = modelRunService;
     }
@@ -229,7 +229,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         for (DiseaseGroup diseaseGroup : diseaseGroups) {
             jsonDiseaseGroups.add(new JsonDiseaseGroup(diseaseGroup));
         }
-        return geoJsonObjectMapper.writeValueAsString(jsonDiseaseGroups);
+        return objectMapper.writeValueAsString(jsonDiseaseGroups);
     }
 
     private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
@@ -243,7 +243,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         for (ValidatorDiseaseGroup validatorDiseaseGroup : validatorDiseaseGroups) {
             jsonValidatorDiseaseGroups.add(new JsonValidatorDiseaseGroup(validatorDiseaseGroup));
         }
-        return geoJsonObjectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
+        return objectMapper.writeValueAsString(jsonValidatorDiseaseGroups);
     }
 
     private boolean validInputs(JsonDiseaseGroup settings) {

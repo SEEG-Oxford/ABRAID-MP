@@ -36,15 +36,13 @@
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true" >
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ViewAwareJsonMessageConverter">
-                <property name="objectMapper" ref="geoJsonObjectMapper" />
+                <property name="objectMapper" ref="objectMapper" />
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
 
     <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.JsonViewSupportFactoryBean" />
     <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support" />
-
-    <bean id="geoJsonObjectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectMapper" />
 
     <mvc:default-servlet-handler />
 
