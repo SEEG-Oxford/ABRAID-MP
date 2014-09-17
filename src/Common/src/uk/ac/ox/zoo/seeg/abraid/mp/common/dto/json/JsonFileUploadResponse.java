@@ -11,7 +11,13 @@ import java.util.Collection;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonFileUploadResponse {
+    /**
+     * Indicates success.
+     */
     public static final String SUCCESS = "SUCCESS";
+    /**
+     * Indicates failure.
+     */
     public static final String FAIL = "FAIL";
 
     private final String status;

@@ -57,7 +57,7 @@ public class UploadCsvControllerTest {
     @Test
     public void uploadCsvFileReturnsBadRequestIfFileIsEmpty() throws Exception {
         // Arrange
-        MultipartFile file = new MockMultipartFile("filename", new byte[] { });
+        MultipartFile file = new MockMultipartFile("filename", new byte[] {});
 
         // Act
         ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(file);

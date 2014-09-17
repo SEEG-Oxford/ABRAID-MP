@@ -28,7 +28,7 @@ public class UploadCsvControllerHelperTest {
     private Email email;
     private UploadCsvControllerHelper helper;
 
-    private static String EMAIL_TEMPLATE_PATH = "publicsite/src/uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/tools";
+    private static final String EMAIL_TEMPLATE_PATH = "PublicSite/src/uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/tools";
 
     @Before
     public void setUp() throws Exception {
@@ -45,7 +45,7 @@ public class UploadCsvControllerHelperTest {
         EmailFactory factory = mock(EmailFactory.class);
         when(factory.createEmail()).thenReturn(email);
         return new EmailServiceImpl(factory, "", "", mock(SmtpConfiguration.class),
-                new File[] { new File(EMAIL_TEMPLATE_PATH) });
+                new File[] {new File(EMAIL_TEMPLATE_PATH)});
     }
 
     @Test

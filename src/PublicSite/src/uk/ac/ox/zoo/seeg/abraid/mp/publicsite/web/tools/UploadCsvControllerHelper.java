@@ -47,7 +47,7 @@ public class UploadCsvControllerHelper {
         try {
             message = dataAcquisitionService.acquireCsvData(csv);
             success = true;
-        } catch(DataAcquisitionException e) {
+        } catch (DataAcquisitionException e) {
             message = e.getMessage();
         }
 
@@ -69,7 +69,7 @@ public class UploadCsvControllerHelper {
         try {
             String subject = EMAIL_SUBJECT_PREFIX + succeededOrFailed;
             emailService.sendEmail(userEmailAddress, subject, EMAIL_TEMPLATE, templateData);
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error(EMAIL_FAILED_MESSAGE, e);
         }
     }

@@ -15,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Controller for uploading a CSV file for data acquisition.
@@ -49,6 +50,7 @@ public class UploadCsvController extends AbstractController {
      * Uploads a CSV file to the database, by sending it to data acquisition.
      * @param file The CSV file to be uploaded.
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
+     * @throws Exception if upload could not be performed
      */
     @Secured({ "ROLE_SEEG" })
     @RequestMapping(value = "/tools/uploadcsv/upload", method = RequestMethod.POST,
@@ -65,7 +67,7 @@ public class UploadCsvController extends AbstractController {
     }
 
     private void acquireCsvData(MultipartFile file) throws IOException {
-        String csvFile = new String(file.getBytes());
+        String csvFile = new String(file.getBytes(), StandardCharsets.UTF_8);
         String filePath = file.getOriginalFilename();
         String userEmailAddress = currentUserService.getCurrentUser().getUsername();
         uploadCsvControllerHelperAsyncWrapper.acquireCsvData(csvFile, userEmailAddress, filePath);
