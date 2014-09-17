@@ -76,7 +76,11 @@ public class CovariatesControllerValidator {
     }
 
     private boolean checkForNonNormalPath(String subdirectory) {
-        return (subdirectory.contains("/./") || subdirectory.contains("/../") || subdirectory.contains("\\") || subdirectory.contains("//"));
+        return
+                subdirectory.contains("/./") ||
+                subdirectory.contains("/../") ||
+                subdirectory.contains("\\") ||
+                subdirectory.contains("//");
     }
 
     private boolean checkCovariateNameUniqueness(String name, JsonCovariateConfiguration covariateConfiguration) {
