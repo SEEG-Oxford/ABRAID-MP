@@ -13,7 +13,7 @@ CREATE ROLE :application_username LOGIN PASSWORD :'application_password';
 GRANT SELECT, INSERT, UPDATE        ON admin_unit_disease_extent_class TO :application_username;
 GRANT SELECT                        ON admin_unit_global TO :application_username;
 GRANT SELECT                        ON admin_unit_qc TO :application_username;
-GRANT SELECT, INSERT, UPDATE        ON admin_unit_review TO :application_username;
+GRANT SELECT, INSERT                ON admin_unit_review TO :application_username;
 GRANT SELECT                        ON admin_unit_tropical TO :application_username;
 GRANT SELECT, INSERT                ON alert TO :application_username;
 GRANT SELECT                        ON country TO :application_username;

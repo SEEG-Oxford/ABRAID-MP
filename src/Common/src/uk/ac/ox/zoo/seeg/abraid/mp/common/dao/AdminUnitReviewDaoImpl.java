@@ -27,17 +27,7 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
     }
 
     /**
-     * Gets all the reviews of administrative units, submitted by the specified expert.
-     * @param expertId The id of the expert.
-     * @return A list of the expert's reviews.
-     */
-    @Override
-    public List<AdminUnitReview> getByExpertId(Integer expertId) {
-        return listNamedQuery("getAdminUnitReviewsByExpertId", "expertId", expertId);
-    }
-
-    /**
-     * Gets all the reviews of administrative units, for the specified disease group.
+     * Gets all the reviews of administrative units, for the specified disease group, including repeat reviews.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of the reviews for the disease group.
      */
@@ -56,18 +46,5 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
     public List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
         return listNamedQuery("getAdminUnitReviewsByExpertIdAndDiseaseGroupId", "expertId", expertId, "diseaseGroupId",
                 diseaseGroupId);
-    }
-
-    /**
-     * Gets the review, defined by the unique triplet of input arguments, if it exists in the database.
-     * @param expertId The id of the expert.
-     * @param diseaseGroupId The id of the disease group.
-     * @param gaulCode The gaulCode of the administrative unit.
-     * @return The adminUnitReview if it exists, otherwise null.
-     */
-    @Override
-    public AdminUnitReview getAdminUnitReview(Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
-        return uniqueResultNamedQuery("getAdminUnitReviewByExpertIdAndDiseaseGroupIdAndGaulCode",
-                "expertId", expertId, "diseaseGroupId", diseaseGroupId, "gaulCode", gaulCode);
     }
 }

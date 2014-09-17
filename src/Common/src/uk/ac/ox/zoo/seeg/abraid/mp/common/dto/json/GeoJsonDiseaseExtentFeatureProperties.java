@@ -9,6 +9,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsEqual.equalTo;
+
 /**
  * A DTO for the properties of an AdminUnit, with reference to a DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
@@ -47,12 +50,9 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     }
 
     private DateTime extractExpertReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
-        for (AdminUnitReview review : reviews) {
-            if (adminUnit.getGaulCode().equals(review.getAdminUnitGlobalOrTropicalGaulCode())) {
-                return review.getChangedDate();
-            }
-        }
-        return null;
+        List<AdminUnitReview> reviewsOfAdminUnit = select(reviews,
+            having(on(AdminUnitReview.class).getAdminUnitGlobalOrTropicalGaulCode(), equalTo(adminUnit.getGaulCode())));
+        return max(reviewsOfAdminUnit, on(AdminUnitReview.class).getCreatedDate());
     }
 
     public String getName() {

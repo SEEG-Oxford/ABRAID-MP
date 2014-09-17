@@ -11,7 +11,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
@@ -361,12 +364,12 @@ public class DiseaseExtentGeneratorTest {
         // GAUL code 200: Reviews average exactly -4 -> possible presence (i.e. score is 1 when combined with the occurrences)
         // GAUL code 250: Reviews average just over 1 when combined with the occurrences -> presence
         // GAUL code 300: Reviews average just under 1 when combined with the occurrences -> possible presence
-        Expert expert1 = createExpert(0);
-        Expert expert2 = createExpert(0.25);
-        Expert expert3 = createExpert(0.5);
-        Expert expert4 = createExpert(0.75);
-        Expert expert5 = createExpert(1);
-        Expert expert6 = new Expert();
+        Expert expert1 = createExpert(1, 0);
+        Expert expert2 = createExpert(2, 0.25);
+        Expert expert3 = createExpert(3, 0.5);
+        Expert expert4 = createExpert(4, 0.75);
+        Expert expert5 = createExpert(5, 1);
+        Expert expert6 = new Expert(6);
 
         return randomise(createList(
                 new AdminUnitReview(expert5, null, 130, diseaseGroup, absenceDiseaseExtentClass),
@@ -513,8 +516,8 @@ public class DiseaseExtentGeneratorTest {
         return list;
     }
 
-    private Expert createExpert(double weighting) {
-        Expert expert = new Expert();
+    private Expert createExpert(int id, double weighting) {
+        Expert expert = new Expert(id);
         expert.setWeighting(weighting);
         return expert;
     }

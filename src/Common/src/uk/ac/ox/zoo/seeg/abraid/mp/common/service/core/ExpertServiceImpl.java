@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
-import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -111,19 +110,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
-     * Gets the review, defined by the unique triplet of input arguments, if it exists in the database.
-     * @param expertId The id of the expert.
-     * @param diseaseGroupId The id of the disease group.
-     * @param gaulCode The gaulCode of the administrative unit.
-     * @return The adminUnitReview if it exists, otherwise null.
-     */
-    @Override
-    public AdminUnitReview getAdminUnitReview(Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
-        return adminUnitReviewDao.getAdminUnitReview(expertId, diseaseGroupId, gaulCode);
-    }
-
-    /**
-     * Gets all reviews for the specified disease group.
+     * Gets all reviews for the specified disease group, including repeat reviews.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of reviews.
      */
@@ -175,52 +162,38 @@ public class ExpertServiceImpl implements ExpertService {
 
     /**
      * Saves the disease occurrence review.
-     * @param expertEmail The email address of the expert providing review.
+     * @param expertId The id of the expert providing review.
      * @param occurrenceId The id of the disease occurrence.
      * @param response The expert's response.
      */
     @Override
-    public void saveDiseaseOccurrenceReview(String expertEmail, Integer occurrenceId,
+    public void saveDiseaseOccurrenceReview(Integer expertId, Integer occurrenceId,
                                             DiseaseOccurrenceReviewResponse response) {
-        Expert expert = getExpertByEmail(expertEmail);
+        Expert expert = getExpertById(expertId);
         DiseaseOccurrence diseaseOccurrence = diseaseOccurrenceDao.getById(occurrenceId);
 
-        DiseaseOccurrenceReview diseaseOccurrenceReview = new DiseaseOccurrenceReview(expert, diseaseOccurrence,
-                response);
-        diseaseOccurrenceReviewDao.save(diseaseOccurrenceReview);
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, diseaseOccurrence, response);
+        diseaseOccurrenceReviewDao.save(review);
     }
 
     /**
      * Saves the review of the administrative unit.
-     * @param expertEmail The email address of the expert providing review.
+     * @param expertId The id of the expert providing review.
      * @param diseaseGroupId The id of the disease group.
      * @param gaulCode The gaulCode of the administrative unit.
      * @param response The expert's response.
      */
     @Override
-    public void saveNewAdminUnitReview(String expertEmail, Integer diseaseGroupId, Integer gaulCode,
+    public void saveAdminUnitReview(Integer expertId, Integer diseaseGroupId, Integer gaulCode,
                                     DiseaseExtentClass response) {
-        Expert expert = getExpertByEmail(expertEmail);
+        Expert expert = getExpertById(expertId);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        AdminUnitReview adminUnitReview;
+        AdminUnitReview review;
         if (diseaseGroup.isGlobal()) {
-            adminUnitReview = new AdminUnitReview(expert, gaulCode, null, diseaseGroup, response);
+            review = new AdminUnitReview(expert, gaulCode, null, diseaseGroup, response);
         } else {
-            adminUnitReview = new AdminUnitReview(expert, null, gaulCode, diseaseGroup, response);
+            review = new AdminUnitReview(expert, null, gaulCode, diseaseGroup, response);
         }
-        adminUnitReviewDao.save(adminUnitReview);
-    }
-
-
-    /**
-     * Saves the updated review of the administrative unit (with a new disease extent class, and new changed date).
-     * @param review The existing AdminUnitReview from the database.
-     * @param response The expert's new response.
-     */
-    @Override
-    public void updateExistingAdminUnitReview(AdminUnitReview review, DiseaseExtentClass response) {
-        review.setResponse(response);
-        review.setChangedDate(DateTime.now());
         adminUnitReviewDao.save(review);
     }
 
