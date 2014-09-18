@@ -9,11 +9,13 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
+    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml"/>
 
     <bean id="emailTemplateLookupPaths" parent="commonEmailTemplateLookupPaths" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list merge="true">
                 <!-- Add public site context specific email template lookup locations -->
+                <value>classpath:uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/tools</value>
                 <value>classpath:uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/user</value>
             </list>
         </property>

@@ -10,6 +10,10 @@ public final class ProvenanceNames {
      * The HealthMap provenance.
      */
     public static final String HEALTHMAP = "HealthMap";
+    /**
+     * The uploaded provenance.
+     */
+    public static final String UPLOADED = "Uploaded";
 
     private ProvenanceNames() {
     }

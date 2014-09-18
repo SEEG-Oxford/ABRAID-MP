@@ -1,12 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv;
 
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,13 +80,6 @@ public class CsvCovariateInfluence {
                 .addColumn("upperQuantile", CsvSchema.ColumnType.NUMBER)
                 .build();
 
-        ObjectReader reader = new CsvMapper().reader(CsvCovariateInfluence.class).with(schema);
-        MappingIterator<CsvCovariateInfluence> iterator = reader.readValues(csv);
-        ArrayList<CsvCovariateInfluence> results = new ArrayList<>();
-        while (iterator.hasNext()) {
-            results.add(iterator.next());
-        }
-
-        return results;
+        return ParseUtils.readFromCsv(csv, CsvCovariateInfluence.class, schema);
     }
 }

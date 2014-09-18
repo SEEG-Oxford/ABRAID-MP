@@ -6,7 +6,6 @@ import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLookupData;
 
 /**
  * The Quality Control (QC) manager. Performs quality control on a location.
@@ -26,7 +25,7 @@ public class QCManager {
     private static final int STAGE_2_MAXIMUM_DISTANCE = 5;
     private static final int STAGE_3_MAXIMUM_DISTANCE = 5;
     private static final String STAGE_2_GEOMETRY_DESCRIPTION = "land";
-    private static final String STAGE_3_GEOMETRY_DESCRIPTION = "HealthMap country";
+    private static final String STAGE_3_GEOMETRY_DESCRIPTION = "country";
 
     private QCLookupData qcLookupData;
 
@@ -78,8 +77,7 @@ public class QCManager {
         // Adjust the centroid of the country if necessary. For example, the centroid of the Philippines is not on
         // land, so replace it with a predefined point in the Philippines that is on land.
         CountryCentroidAdjuster adjuster = new CountryCentroidAdjuster();
-        HealthMapLookupData healthMapLookupData = qcLookupData.getHealthMapLookupData();
-        boolean hasBeenAdjusted = adjuster.adjustCountryCentroid(location, healthMapLookupData.getCountryMap());
+        boolean hasBeenAdjusted = adjuster.adjustCountryCentroid(location, qcLookupData.getHealthMapCountryMap());
 
         if (hasBeenAdjusted) {
             message = adjuster.getMessage();
@@ -101,15 +99,12 @@ public class QCManager {
         boolean passed = true;
         String message = NO_COUNTRIES_MESSAGE;
 
-        Integer healthMapCountryId = location.getHealthMapCountryId();
-        if (healthMapCountryId != null) {
-            MultiPolygon countryGeometry = qcLookupData.getHealthMapCountryGeometryMap().get(healthMapCountryId);
-            if (countryGeometry != null) {
-                Snapper snapper = new Snapper(STAGE_3_GEOMETRY_DESCRIPTION, STAGE_3_MAXIMUM_DISTANCE);
-                applySnapperToLocation(snapper, location, countryGeometry);
-                passed = snapper.hasPassed();
-                message = snapper.getMessage();
-            }
+        MultiPolygon countryGeometry = getCountryGeometryForLocation(location);
+        if (countryGeometry != null) {
+            Snapper snapper = new Snapper(STAGE_3_GEOMETRY_DESCRIPTION, STAGE_3_MAXIMUM_DISTANCE);
+            applySnapperToLocation(snapper, location, countryGeometry);
+            passed = snapper.hasPassed();
+            message = snapper.getMessage();
         }
 
         appendQcMessage(location, STAGE_3_ID, passed, message);
@@ -130,6 +125,18 @@ public class QCManager {
                 location.setGeom(closestPoint);
             }
         }
+    }
+
+    private MultiPolygon getCountryGeometryForLocation(Location location) {
+        MultiPolygon countryGeometry = null;
+
+        if (location.getHealthMapCountryId() != null) {
+            countryGeometry = qcLookupData.getHealthMapCountryGeometryMap().get(location.getHealthMapCountryId());
+        } else if (location.getCountryGaulCode() != null) {
+            countryGeometry = qcLookupData.getCountryGeometryMap().get(location.getCountryGaulCode());
+        }
+
+        return countryGeometry;
     }
 
     private void appendQcMessage(Location location, int qcStage, boolean hasPassed, String qcMessage) {

@@ -28,11 +28,10 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         String placeName = "Botswana";
         double x = -22.34284;
         double y = -24.6871;
-        Point point = GeometryUtils.createPoint(x, y);
 
         Location location = new Location();
         location.setName(placeName);
-        location.setGeom(point);
+        location.setGeom(x, y);
         location.setPrecision(LocationPrecision.COUNTRY);
         location.setResolutionWeighting(0.0);
         location.setHealthMapCountryId(healthMapCountryId);
@@ -63,12 +62,11 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         String placeName = "England";
         double x = 52.88496;
         double y = -1.97703;
-        Point point = GeometryUtils.createPoint(x, y);
         int geoNameId = 6269131;
 
         Location location = new Location();
         location.setName(placeName);
-        location.setGeom(point);
+        location.setGeom(x, y);
         location.setPrecision(LocationPrecision.ADMIN1);
         location.setResolutionWeighting(0.5);
         location.setHealthMapCountryId(healthMapCountryId);
@@ -99,14 +97,13 @@ public class LocationDaoTest extends AbstractCommonSpringIntegrationTests {
         String placeName = "Oxfordshire";
         double x = 51.81394;
         double y = -1.29479;
-        Point point = GeometryUtils.createPoint(x, y);
         int adminUnitQCGaulCode = 29863;
         int adminUnitGlobalGaulCode = 3;
         int adminUnitTropicalGaulCode = 4;
 
         Location location = new Location();
         location.setName(placeName);
-        location.setGeom(point);
+        location.setGeom(x, y);
         location.setPrecision(LocationPrecision.ADMIN2);
         location.setResolutionWeighting(0.5);
         location.setAdminUnitQCGaulCode(adminUnitQCGaulCode);

@@ -94,7 +94,7 @@ public class Location {
     }
 
     public Location(double x, double y) {
-        this.geom = GeometryUtils.createPoint(x, y);
+        setGeom(x, y);
     }
 
     public Location(double x, double y, LocationPrecision precision) {
@@ -135,6 +135,15 @@ public class Location {
 
     public void setGeom(Point geom) {
         this.geom = geom;
+    }
+
+    /**
+     * Sets the point's coordinates.
+     * @param x The longitude.
+     * @param y The latitude.
+     */
+    public void setGeom(double x, double y) {
+        this.geom = GeometryUtils.createPoint(x, y);
     }
 
     public LocationPrecision getPrecision() {

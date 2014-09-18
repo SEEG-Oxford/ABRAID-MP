@@ -6,10 +6,12 @@
         <element id="directory" name="classes">
           <element id="module-output" name="PublicSite" />
           <element id="module-output" name="Common" />
+          <element id="module-output" name="DataAcquisition" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="publicsite-lib" />
           <element id="library" level="project" name="common-lib" />
+          <element id="library" level="project" name="dataacquisition-lib" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="PublicSite/web/Web" />

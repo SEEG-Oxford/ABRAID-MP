@@ -2,7 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer;
 
 import static org.mockito.Mockito.*;
 
@@ -12,24 +13,33 @@ import static org.mockito.Mockito.*;
  */
 public class DataAcquisitionServiceTest {
     private DataAcquisitionService service;
-    private HealthMapDataAcquisition healthMapDataAcquisition;
+    private HealthMapDataAcquirer healthMapDataAcquirer;
+    private CsvDataAcquirer csvDataAcquirer;
 
     @Before
     public void setUp() {
-        healthMapDataAcquisition = mock(HealthMapDataAcquisition.class);
-        service = new DataAcquisitionServiceImpl(healthMapDataAcquisition);
+        healthMapDataAcquirer = mock(HealthMapDataAcquirer.class);
+        csvDataAcquirer = mock(CsvDataAcquirer.class);
+        service = new DataAcquisitionServiceImpl(healthMapDataAcquirer, csvDataAcquirer);
     }
 
     @Test
     public void acquireHealthMapDataFromWebService() {
         service.acquireHealthMapDataFromWebService();
-        verify(healthMapDataAcquisition, times(1)).acquireDataFromWebService();
+        verify(healthMapDataAcquirer, times(1)).acquireDataFromWebService();
     }
 
     @Test
     public void acquireHealthMapDataFromFile() {
         String fileName = "test.json";
         service.acquireHealthMapDataFromFile(fileName);
-        verify(healthMapDataAcquisition, times(1)).acquireDataFromFile(eq(fileName));
+        verify(healthMapDataAcquirer, times(1)).acquireDataFromFile(eq(fileName));
+    }
+
+    @Test
+    public void acquireCsvData() {
+        String csv = "1, 2, 3";
+        service.acquireCsvData(csv);
+        verify(csvDataAcquirer, times(1)).acquireDataFromCsv(eq(csv));
     }
 }

@@ -1,12 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -146,22 +144,14 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         return diseaseGroup;
     }
 
-    private ValidatorDiseaseGroup createValidatorDiseaseGroup() {
-        ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup();
-        validatorDiseaseGroup.setName("Test validator disease group");
-        validatorDiseaseGroupDao.save(validatorDiseaseGroup);
-        return validatorDiseaseGroup;
-    }
-
     private Location createLocation() {
         String placeName = "Oxford";
         double x = 51.75042;
         double y = -1.24759;
-        Point point = GeometryUtils.createPoint(x, y);
 
         Location location = new Location();
         location.setName(placeName);
-        location.setGeom(point);
+        location.setGeom(x, y);
         location.setPrecision(LocationPrecision.PRECISE);
         location.setResolutionWeighting(1.0);
         locationDao.save(location);

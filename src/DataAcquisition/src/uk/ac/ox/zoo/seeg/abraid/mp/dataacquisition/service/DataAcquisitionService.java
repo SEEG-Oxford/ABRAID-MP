@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
+
 /**
  * Service interface for data acquisition.
  *
@@ -16,4 +18,12 @@ public interface DataAcquisitionService {
      * @param jsonFileName The name of a file that contains HealthMap JSON.
      */
     void acquireHealthMapDataFromFile(String jsonFileName);
+
+    /**
+     * Acquires data from a generic CSV file.
+     * @param csv The content of the CSV file.
+     * @return A message upon the success of the data acquisition.
+     * @throws DataAcquisitionException Upon failure of the data acquisition.
+     */
+    String acquireCsvData(String csv) throws DataAcquisitionException;
 }

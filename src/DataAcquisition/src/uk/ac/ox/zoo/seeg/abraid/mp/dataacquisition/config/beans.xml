@@ -20,14 +20,14 @@
     <bean id="dataAcquisitionService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionServiceImpl" autowire="constructor"/>
 
     <!-- Web service beans -->
-    <bean id="geoNamesWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.geonames.GeoNamesWebService" autowire="constructor">
+    <bean id="geoNamesWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.geonames.GeoNamesWebService" autowire="constructor">
         <property name="rootUrlGetJSON" value="${geonames.rootUrlGetJSON}"/>
         <property name="username" value="${geonames.username}"/>
         <property name="usernameParameterName" value="${geonames.usernameParameterName}"/>
         <property name="geoNameIdParameterName" value="${geonames.geoNameIdParameterName}"/>
     </bean>
 
-    <bean id="healthMapWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapWebService" autowire="constructor">
+    <bean id="healthMapWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapWebService" autowire="constructor">
         <property name="rootUrl" value="${healthmap.rootUrl}"/>
         <property name="authorizationCode" value="${healthmap.authorizationCode}"/>
         <property name="stripHtml" value="${healthmap.stripHtml}"/>
@@ -42,18 +42,24 @@
         <property name="stripHtmlParameterName" value="${healthmap.stripHtmlParameterName}"/>
     </bean>
 
-    <!-- HealthMap data processing beans -->
-    <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapAlertConverter" autowire="constructor"/>
-    <bean id="healthMapDataAcquisition" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataAcquisition" autowire="constructor"/>
-    <bean id="healthMapDataConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapDataConverter" autowire="constructor"/>
-    <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLocationConverter" autowire="constructor"/>
-    <bean id="healthMapLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.healthmap.HealthMapLookupData" autowire="constructor"/>
+    <!-- HealthMap data acquisition beans -->
+    <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapAlertConverter" autowire="constructor"/>
+    <bean id="healthMapDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer" autowire="constructor"/>
+    <bean id="healthMapDataConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataConverter" autowire="constructor"/>
+    <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLocationConverter" autowire="constructor"/>
+    <bean id="healthMapLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLookupData" autowire="constructor"/>
+
+    <!-- CSV data acquisition beans -->
+    <bean id="csvDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer" autowire="constructor"/>
+    <bean id="csvDiseaseOccurrenceConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDiseaseOccurrenceConverter" autowire="constructor"/>
+    <bean id="csvLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvLookupData" autowire="constructor"/>
+
+    <!-- General data acquisition beans -->
+    <bean id="diseaseOccurrenceDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer" autowire="constructor"/>
 
     <!-- Quality control beans -->
     <bean id="qcManager" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager" autowire="constructor"/>
     <bean id="qcLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCLookupData" autowire="constructor"/>
-
-    <!-- Post-quality control beans -->
     <bean id="postQcManager" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager" autowire="constructor"/>
 
 </beans>

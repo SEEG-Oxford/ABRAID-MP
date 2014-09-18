@@ -30,7 +30,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(hasPassedQc).isTrue();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
-                "stage 2 passed: location already within land. QC stage 3 passed: location already within HealthMap " +
+                "stage 2 passed: location already within land. QC stage 3 passed: location already within " +
                 "country.");
     }
 
@@ -81,7 +81,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(1006355);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 10.92% of the square " +
                 "root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: location " +
-                "already within HealthMap country.");
+                "already within country.");
     }
 
     @Test
@@ -149,11 +149,11 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).contains("QC stage 1 passed: location not an ADMIN1 or ADMIN2. " +
                 "QC stage 2 passed: location already within land. QC stage 3 failed: location too distant from " +
-                "HealthMap country");
+                "country");
     }
 
     @Test
-    public void passesStage3IfNoHealthMapCountrySpecified() {
+    public void passesStage3IfNoHealthMapCountryOrCountryGaulCodeSpecified() {
         // Arrange
         Location location = new Location("Door County, Wisconsin, United States", -87.3001, 44.91666,
                 LocationPrecision.ADMIN2);
@@ -183,5 +183,39 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).contains("QC stage 3 passed: no country geometries associated with " +
                 "this location.");
+    }
+
+    @Test
+    public void passesStage3WithCountryGaulCodeIfPointIsWithinGeometry() {
+        // Arrange
+        Location location = new Location("Japan", 138.47861, 36.09854, LocationPrecision.COUNTRY);
+        location.setCountryGaulCode(126);
+
+        // Act
+        boolean hasPassedQc = qcManager.performQC(location);
+
+        // Assert
+        assertThat(hasPassedQc).isTrue();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
+        assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or ADMIN2. QC " +
+                "stage 2 passed: location already within land. QC stage 3 passed: location already within country.");
+    }
+
+    @Test
+    public void failsStage3WithCountryGaulCodeIfPointIsOutsideGeometry() {
+        // Arrange
+        Location location = new Location("Pointe-Noire, DR Congo", 11.86364, -4.77867,
+                LocationPrecision.PRECISE);
+        location.setCountryGaulCode(259002);
+
+        // Act
+        boolean hasPassedQc = qcManager.performQC(location);
+
+        // Assert
+        assertThat(hasPassedQc).isFalse();
+        assertThat(location.getAdminUnitQCGaulCode()).isNull();
+        assertThat(location.getQcMessage()).contains("QC stage 1 passed: location not an ADMIN1 or ADMIN2. " +
+                "QC stage 2 passed: location already within land. QC stage 3 failed: location too distant from " +
+                "country");
     }
 }

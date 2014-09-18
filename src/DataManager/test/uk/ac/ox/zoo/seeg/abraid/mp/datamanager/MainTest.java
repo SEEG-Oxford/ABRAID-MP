@@ -215,9 +215,10 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence1Location.getAdminUnitQCGaulCode()).isNull();
         assertThat(occurrence1Location.getAdminUnitGlobalGaulCode()).isEqualTo(153);
         assertThat(occurrence1Location.getAdminUnitTropicalGaulCode()).isEqualTo(153);
+        assertThat(occurrence1Location.getCountryGaulCode()).isEqualTo(153);
         assertThat(occurrence1Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
                 "ADMIN2. QC stage 2 passed: location already within land. QC stage 3 passed: location already " +
-                "within HealthMap country.");
+                "within country.");
 
         assertThatGeoNameExists(1735161, "PPLC");
 
@@ -252,9 +253,10 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence2Location.getAdminUnitQCGaulCode()).isNull();
         assertThat(occurrence2Location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(occurrence2Location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
+        assertThat(occurrence2Location.getCountryGaulCode()).isEqualTo(179);
         assertThat(occurrence2Location.getQcMessage()).isEqualTo("QC stage 1 passed: location not an ADMIN1 or " +
                 "ADMIN2. QC stage 2 passed: location (172.65939,-42.42349) replaced with fixed country centroid " +
-                "(176.61475,-38.53923). QC stage 3 passed: location already within HealthMap country.");
+                "(176.61475,-38.53923). QC stage 3 passed: location already within country.");
 
         assertThatGeoNameExists(2186224, "PCLI");
 

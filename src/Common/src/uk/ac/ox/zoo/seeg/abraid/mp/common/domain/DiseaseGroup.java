@@ -128,6 +128,11 @@ public class DiseaseGroup {
         this.id = id;
     }
 
+    public DiseaseGroup(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public DiseaseGroup(DiseaseGroup parentGroup, String name, DiseaseGroupType groupType) {
         this.parentGroup = parentGroup;
         this.name = name;

@@ -15,6 +15,9 @@ ALTER TABLE admin_unit_disease_extent_class
 ALTER TABLE alert
     ADD CONSTRAINT uq_alert_healthmap_alert_id UNIQUE (healthmap_alert_id);
 
+ALTER TABLE country
+    ADD CONSTRAINT uq_country_name UNIQUE (name);
+
 ALTER TABLE covariate_influence
     ADD CONSTRAINT uq_model_run_id_covariate_name UNIQUE (model_run_id, covariate_name);
 
