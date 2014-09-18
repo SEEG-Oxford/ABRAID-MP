@@ -9,6 +9,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Converts a HealthMap alert into an ABRAID disease occurrence.
  *
@@ -22,10 +25,11 @@ public class HealthMapAlertConverter {
     private static final String DISEASE_NOT_OF_INTEREST_MESSAGE =
             "Disease occurrence not of interest (HealthMap disease \"%s\", alert ID %d)";
     private static final String FOUND_NEW_FEED = "Found new HealthMap feed \"%s\" - adding it to the database";
-    private static final String FOUND_NEW_DISEASE_SUBJECT = "New HealthMap disease discovered \"%s\"";
-    private static final String FOUND_NEW_DISEASE = "Found new HealthMap disease \"%s\" - adding it to the database " +
-            "linked to a new disease cluster \"%s\" (please review)";
     private static final String NEW_DISEASE_NAME = "NEW FROM HEALTHMAP: %s";
+    private static final String FOUND_NEW_DISEASE_SUBJECT = "New HealthMap disease discovered: \"%s\"";
+    private static final String FOUND_NEW_DISEASE_TEMPLATE = "newDiseaseEmail.ftl";
+    private static final String FOUND_NEW_DISEASE_TEMPLATE_DISEASE_KEY = "disease";
+    private static final String FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY = "cluster";
 
 
     private final AlertService alertService;
@@ -189,10 +193,14 @@ public class HealthMapAlertConverter {
         final String groupName = healthMapDisease.getDiseaseGroup().getName();
 
         final String subject = String.format(FOUND_NEW_DISEASE_SUBJECT, disease);
-        final String message = String.format(FOUND_NEW_DISEASE, disease, groupName);
 
-        emailService.sendEmailInBackground(subject, message);
-        LOGGER.warn(message);
+        Map<String, Object> templateData = new HashMap<>();
+        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_DISEASE_KEY, disease);
+        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY, groupName);
+
+        emailService.sendEmailInBackground(subject, FOUND_NEW_DISEASE_TEMPLATE, templateData);
+
+        LOGGER.warn(subject);
     }
 
     private void renameFeedIfRequired(Feed feed, HealthMapAlert healthMapAlert) {
