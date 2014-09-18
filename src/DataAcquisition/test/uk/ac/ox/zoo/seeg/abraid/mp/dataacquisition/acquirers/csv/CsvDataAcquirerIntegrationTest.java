@@ -34,7 +34,7 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
                 "New Zealand,176.61475,-38.53923,Country,New Zealand,dengue,13/01/2014,Regional dengue outbreak unprecedented - SPC - Radio New Zealand,\"SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...\",\n";
 
         String message = csvDataAcquirer.acquireDataFromCsv(csv);
-        assertThat(message).isEqualTo("Saved 2 disease occurrence(s) in 2 location(s) (of which 2 location(s) passed QC)");
+        assertThat(message).isEqualTo("Saved 2 disease occurrence(s) in 2 location(s) (of which 2 location(s) passed QC).");
 
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
         assertFirstOccurrence(occurrences.get(0));

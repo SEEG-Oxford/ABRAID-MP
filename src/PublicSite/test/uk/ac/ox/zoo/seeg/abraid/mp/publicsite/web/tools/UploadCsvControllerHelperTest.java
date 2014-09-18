@@ -98,9 +98,9 @@ public class UploadCsvControllerHelperTest {
         verify(email).setMsg(argThat(equalToIgnoringWhiteSpace(
                 "Here are the results of the CSV upload that you submitted.\n" +
                 "\n" +
-                "File: /path/to/test.csv\n" +
-                "Submitted on: " + nowString + "\n" +
-                "Completed on: " + nowString + "\n" +
+                "File: \"/path/to/test.csv\".\n" +
+                "Submitted on: " + nowString + ".\n" +
+                "Completed on: " + nowString + ".\n" +
                 "\n" + expectedEmailEnding)));
         verify(email).setSubject(eq(expectedSubject));
         verify(email).addTo(eq(userEmailAddress));
