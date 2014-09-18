@@ -26,7 +26,7 @@
         </property>
     </bean>
 
-    <bean id="emailService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailServiceImpl">
+    <bean id="emailService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailServiceImpl" destroy-method="cleanup">
         <constructor-arg name="emailFactory">
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactoryImpl" />
         </constructor-arg>
