@@ -58,7 +58,7 @@ public class CsvDataAcquirerTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
-        assertThat(caughtException()).hasMessage("Error in CSV file on line 1: Test message");
+        assertThat(caughtException()).hasMessage("Error in CSV file on line 1: Test message.");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CsvDataAcquirerTest {
         String message = csvDataAcquirer.acquireDataFromCsv(csv);
 
         // Assert
-        assertThat(message).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC)");
+        assertThat(message).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC).");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class CsvDataAcquirerTest {
         String message = csvDataAcquirer.acquireDataFromCsv(csv);
 
         // Assert
-        assertThat(message).isEqualTo("Saved 0 disease occurrence(s) in 0 location(s) (of which 0 location(s) passed QC)");
+        assertThat(message).isEqualTo("Saved 0 disease occurrence(s) in 0 location(s) (of which 0 location(s) passed QC).");
     }
 
     private Location createLocation(int id, boolean hasPassedQc) {

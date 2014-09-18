@@ -35,7 +35,7 @@ public class UserDetailsServiceTest {
                 expertDao, diseaseGroupDao, diseaseOccurrenceDao, diseaseOccurrenceReviewDao));
 
         String fullName = "Helena Patching";
-        String email = "zool1250@zoo.ox.ac.uk";
+        String email = "helena.patching@zoo.ox.ac.uk";
         int id = 1;
         String hashedPassword = "$2a$10$JdJkIeiqwA8Kso3WfvYlT.//vz2M1Tu5iXSy3w0opBtf8cBQEik3y";
         boolean isAdministrator = true;

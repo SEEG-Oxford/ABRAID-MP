@@ -22,11 +22,11 @@ import static ch.lambdaj.Lambda.*;
  */
 public class CsvDataAcquirer {
     private static final Logger LOGGER = Logger.getLogger(CsvDataAcquirer.class);
-    private static final String INVALID_FORMAT_ERROR_MESSAGE = "CSV file has invalid format: %s";
-    private static final String LINE_ERROR_MESSAGE = "Error in CSV file on line %d: %s";
-    private static final String CONVERSION_MESSAGE = "Converting %d CSV file line(s)";
+    private static final String INVALID_FORMAT_ERROR_MESSAGE = "CSV file has invalid format: %s.";
+    private static final String LINE_ERROR_MESSAGE = "Error in CSV file on line %d: %s.";
+    private static final String CONVERSION_MESSAGE = "Converting %d CSV file line(s).";
     private static final String SUCCESS_MESSAGE =
-            "Saved %d disease occurrence(s) in %d location(s) (of which %d location(s) passed QC)";
+            "Saved %d disease occurrence(s) in %d location(s) (of which %d location(s) passed QC).";
 
     private CsvDiseaseOccurrenceConverter converter;
     private DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;

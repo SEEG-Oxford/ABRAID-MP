@@ -78,7 +78,7 @@ CREATE TABLE admin_unit_review (
     global_gaul_code integer,
     tropical_gaul_code integer,
     response varchar(17) NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE admin_unit_tropical (
@@ -98,7 +98,7 @@ CREATE TABLE alert (
     url varchar(2000),
     summary text,
     healthmap_alert_id integer,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE country (
@@ -156,7 +156,7 @@ CREATE TABLE disease_group (
     high_frequency_threshold integer,
     min_high_frequency_countries integer,
     occurs_in_africa boolean,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE disease_occurrence (
@@ -173,7 +173,7 @@ CREATE TABLE disease_occurrence (
     final_weighting double precision,
     final_weighting_excl_spatial double precision,
     is_validated boolean,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE disease_occurrence_review (
@@ -181,7 +181,7 @@ CREATE TABLE disease_occurrence_review (
     expert_id integer NOT NULL,
     disease_occurrence_id integer NOT NULL,
     response varchar(6) NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE expert (
@@ -196,14 +196,14 @@ CREATE TABLE expert (
     weighting double precision NOT NULL,
     visibility_requested boolean NOT NULL,
     visibility_approved boolean NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-    updated_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp(),
+    updated_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE expert_validator_disease_group (
     expert_id integer NOT NULL,
     validator_disease_group_id integer NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE feed (
@@ -213,7 +213,7 @@ CREATE TABLE feed (
     weighting double precision NOT NULL,
     language varchar(4),
     healthmap_feed_id integer,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE geoname (
@@ -241,7 +241,7 @@ CREATE TABLE healthmap_disease (
     id integer NOT NULL,
     name varchar(100) NOT NULL,
     disease_group_id integer,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
 CREATE TABLE land_sea_border (
@@ -256,7 +256,7 @@ CREATE TABLE location (
     precision varchar(10) NOT NULL,
     geoname_id integer,
     resolution_weighting double precision NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    created_date timestamp NOT NULL DEFAULT statement_timestamp(),
     healthmap_country_id integer,
     admin_unit_qc_gaul_code integer,
     admin_unit_global_gaul_code integer,
@@ -286,7 +286,7 @@ CREATE TABLE provenance (
     id serial NOT NULL,
     name varchar(100) NOT NULL,
     default_feed_weighting double precision NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+    created_date timestamp NOT NULL DEFAULT statement_timestamp(),
     last_retrieval_end_date timestamp
 );
 
@@ -311,5 +311,5 @@ CREATE TABLE submodel_statistic (
 CREATE TABLE validator_disease_group (
     id serial NOT NULL,
     name varchar(100) NOT NULL,
-    created_date timestamp NOT NULL DEFAULT LOCALTIMESTAMP
+    created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );

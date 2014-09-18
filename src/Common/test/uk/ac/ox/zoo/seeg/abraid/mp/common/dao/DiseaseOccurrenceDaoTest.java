@@ -68,7 +68,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnAReviewedPoint() {
         // Arrange
-        Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
@@ -86,7 +86,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustOnlyReturnSpecifiedDiseaseGroup() {
         // Arrange
-        Expert expert = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
@@ -107,13 +107,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnOccurrencesForCorrectExpert() {
         // Arrange
         // Two experts save reviews for different disease occurrences of the same disease group
-        Expert expert0 = expertDao.getByEmail("zool1250@zoo.ox.ac.uk");
+        Expert expert0 = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence0 = diseaseOccurrenceDao.getById(272829);
         occurrence0.setValidated(false);
         DiseaseOccurrenceReviewResponse response0 = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert0, occurrence0, response0);
 
-        Expert expert1 = expertDao.getByEmail("zool1251@zoo.ox.ac.uk");
+        Expert expert1 = expertDao.getByEmail("edward.wiles@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence1 = diseaseOccurrenceDao.getById(272830);
         occurrence1.setValidated(false);
         DiseaseOccurrenceReviewResponse response1 = DiseaseOccurrenceReviewResponse.NO;

@@ -4,9 +4,9 @@
 -->
 Here are the results of the CSV upload that you submitted.
 
-File: ${filePath}
-Submitted on: ${submissionDate?string.long}
-Completed on: ${completionDate?string.long}
+File: "${filePath}".
+Submitted on: ${submissionDate?string.long}.
+Completed on: ${completionDate?string.long}.
 
 The upload ${succeededOrFailed} with message:
 
