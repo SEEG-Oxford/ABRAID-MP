@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -44,15 +45,16 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
     private final SmtpConfiguration smtpConfig;
     private final Configuration freemarkerConfig;
 
-    public EmailServiceImpl(EmailFactory emailFactory, String fromAddress, String defaultToAddress,
-                            SmtpConfiguration smtpConfig, File[] emailTemplateLookupPaths)
+    public EmailServiceImpl(EmailFactory emailFactory, String fromAddress,
+                            String defaultToAddress, SmtpConfiguration smtpConfig,
+                            Class[] classTemplateLookupPaths, File[] fileTemplateLookupPaths)
             throws IOException {
         super(THREAD_POOL_SIZE);
         this.emailFactory = emailFactory;
         this.fromAddress = fromAddress;
         this.defaultToAddress = defaultToAddress;
         this.smtpConfig = smtpConfig;
-        this.freemarkerConfig = setupFreemarkerConfig(emailTemplateLookupPaths);
+        this.freemarkerConfig = setupFreemarkerConfig(classTemplateLookupPaths, fileTemplateLookupPaths);
     }
 
     private static void setupSMTP(Email email, SmtpConfiguration smtpConfig) throws EmailException {
@@ -63,13 +65,20 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
         email.setSSLOnConnect(smtpConfig.useSSL());
     }
 
-    private static Configuration setupFreemarkerConfig(File[] templateLookupPaths) throws IOException {
+    private static Configuration setupFreemarkerConfig(Class[] classTemplateLookupPaths, File[] fileTemplateLookupPaths)
+            throws IOException {
         Configuration config = new Configuration();
 
-        TemplateLoader[] loaders = new TemplateLoader[templateLookupPaths.length];
-        for (int i = 0; i < templateLookupPaths.length; i++) {
-            loaders[i] = new FileTemplateLoader(templateLookupPaths[i]);
+        TemplateLoader[] loaders = new TemplateLoader[classTemplateLookupPaths.length + fileTemplateLookupPaths.length];
+
+        for (int i = 0; i < classTemplateLookupPaths.length; i++) {
+            loaders[i] = new ClassTemplateLoader(classTemplateLookupPaths[i], "");
         }
+
+        for (int i = 0; i < fileTemplateLookupPaths.length; i++) {
+            loaders[classTemplateLookupPaths.length + i] = new FileTemplateLoader(fileTemplateLookupPaths[i]);
+        }
+
         config.setTemplateLoader(new MultiTemplateLoader(loaders));
 
         return config;

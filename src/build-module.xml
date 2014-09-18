@@ -455,11 +455,7 @@
 
   <target name="build.jar" depends="compile.production, create.dist.dir, create.jar.manifest">
     <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar" manifest="${dist.out.dir}/MANIFEST.MF">
-      <fileset dir="${module.out.dir}">
-        <include name="**/*.class"/>
-        <include name="**/*.xml"/>
-        <include name="**/*.properties"/>
-      </fileset>
+      <fileset dir="${module.out.dir}" />
     </jar>
     <delete file="${dist.out.dir}/MANIFEST.MF"/>
   </target>

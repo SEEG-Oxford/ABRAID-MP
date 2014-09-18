@@ -35,6 +35,7 @@ public class EmailServiceIntegrationTest {
                     "235398130c23105ca",
                     "b69aea70436f30"
                 ),
+                new Class[0],
                 new File[] {testFolder.getRoot()});
 
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "${foo} ${date}");
