@@ -20,8 +20,8 @@
         <property name="sourceList">
             <list merge="true">
                 <!-- Inherit just commonEmailTemplateClassLookupPaths, but can be overridden in specific contexts to add
-                     more class paths (eg public site paths). This gives an alternate id so that contexts can override value
-                     while still inheriting commonEmailTemplateClassLookupPaths to merge extra values in to existing list. -->
+                     more class paths (eg public site paths). This gives an alternate id so that contexts can override the bean
+                     while still inheriting commonEmailTemplateClassLookupPaths to merge extra entries into existing list. -->
             </list>
         </property>
     </bean>
@@ -38,8 +38,8 @@
         <property name="sourceList">
             <list merge="true">
                 <!-- Inherit just commonEmailTemplateFileLookupPaths, but can be overridden in specific contexts to add
-                     more file paths (eg public site paths). This gives an alternate id so that contexts can override value
-                     while still inheriting commonEmailTemplateFileLookupPaths to merge extra values in to existing list. -->
+                     more file paths (eg public site paths). This gives an alternate id so that contexts can override the bean
+                     while still inheriting commonEmailTemplateFileLookupPaths to merge extra entries into existing list. -->
             </list>
         </property>
     </bean>

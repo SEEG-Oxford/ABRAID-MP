@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * A base class to encapsulate the thread pool behavior required for asynchronous task processing.
+ * A base class to encapsulate the thread pool behaviour required for asynchronous task processing.
  * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractAsynchronousActionHandler {
