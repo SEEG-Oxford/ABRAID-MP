@@ -21,32 +21,26 @@
     <!-- ko with:selectedAdminUnitViewModel -->
     <div>
         <div>
-            <div id="adminUnitTable" class="table-responsive">
-                <table class="table table-condensed table-hover">
-                    <thead>
-                        <tr>
-                            <th>Occurrences</th>
-                            <th>Administrative Unit</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: adminUnits" >
-                        <tr data-bind="click: function () { $parent.selectedAdminUnit($data); },
-                                       highlight: { target: $parent.selectedAdminUnit(), compareOn: 'id' }">
-                            <td class="occurrencesColumn" data-bind="text: count"></td>
-                            <td data-bind="text: name"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table id="adminUnitTable" class="table table-responsive table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="occurrencesColumn">Occurrences</th>
+                        <th>Administrative Unit</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: adminUnits" >
+                    <tr data-bind="click: function () { $parent.selectedAdminUnit($data); },
+                                   highlight: { target: $parent.selectedAdminUnit(), compareOn: 'id' }">
+                        <td class="occurrencesColumn" data-bind="text: count"></td>
+                        <td data-bind="text: name"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+        <span class="sidePanelTextAnnotation">
+            <span data-bind="text: 'X'">X</span> of <span>Y</span> entries remaining.
+        </span>
         <div data-bind="if: hasSelectedAdminUnit()">
-            <ul>
-                <div class="sidePanelText">
-                    <span data-bind="text: selectedAdminUnit().name"></span> has
-                    <span data-bind="text: selectedAdminUnit().count"></span>
-                    <span data-bind="text: selectedAdminUnit().count == 1 ? 'occurrence' : 'occurrences'"></span>
-                </div>
-            </ul>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="reviewButtons">
                 <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('PRESENCE') }">Presence</button>

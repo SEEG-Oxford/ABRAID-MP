@@ -32,7 +32,10 @@ html, body, #dataValidation {
     background-color: white;
 }
 .highlight {
-    border: 3px solid rgb(140, 140, 140);
+    border-top: 2px solid #aaaaaa;
+    border-bottom: 2px solid #aaaaaa;
+    font-weight: bold;
+    background-color: #f5f5f5;
 }
 #spinner > div {
     z-index:10;
@@ -55,6 +58,7 @@ html, body, #dataValidation {
     float: right;
     background-color: rgb(214, 214, 214);
     opacity: 0.8;
+    border-left: 2px solid #aaaaaa;
 }
 #sidePanelContent {
     height: 100%;
@@ -71,20 +75,43 @@ html, body, #dataValidation {
 #sidePanelContent p {
     display: inline;
 }
-#adminUnitTable {
-    max-height: 400px;
+#adminUnitTable tbody {
+    height: 400px;
+    width: 100%;
+    display: block;
     overflow-y: auto;
     overflow-x: hidden;
 }
 #adminUnitTable thead {
-    cursor: default;
+     cursor: default;
+     width: 100%;
+     display: block;
+}
+#adminUnitTable thead th {
+    border-bottom: none;
 }
 #adminUnitTable tbody {
     cursor: pointer;
+    position: relative;
+    background-color: #e3e3e3;
+    border-bottom: 2px solid #aaaaaa;
+    border-top: 2px solid #aaaaaa;
 }
 #adminUnitTable .occurrencesColumn {
-    width: 90px;
+    width: 100px;
     text-align: center;
+}
+#adminUnitTable td {
+    border-top-color: #aaaaaa !important;
+}
+#adminUnitTable tbody tr:first-child td {
+    border-top-width: 0px;
+}
+#adminUnitTable tbody tr:first-child {
+    border-top-width: 0px !important;
+}
+#adminUnitTable tbody tr:last-child {
+    border-bottom-width: 0px !important;
 }
 .sidePanelText {
     margin: 5px;
@@ -92,9 +119,18 @@ html, body, #dataValidation {
     max-height: 600px;
     overflow-y: auto;
     word-wrap: break-word;
-    background-color: rgb(234, 234, 234);
-    border-radius: 25px;
+    background-color: #e3e3e3;
+    border-radius: 10px;
 }
+.sidePanelTextAnnotation {
+    background-color: #e3e3e3;
+    padding: 5px 10px;
+    word-wrap: break-word;
+    border-radius: 10px;
+    display: table;
+    margin: -10px auto 10px auto;
+}
+
 #translationLink {
     float: right;
     padding-right: 5px;
