@@ -10,6 +10,8 @@ define([
         var self = this;
 
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
+        self.minEnvironmentalSuitability = ko.observable().extend({ number: true, min: 0 });
+        self.minDistanceFromDiseaseExtent = ko.observable().extend({ number: true });
         self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 0 });
         self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
@@ -30,6 +32,8 @@ define([
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             self.minNewLocations((diseaseGroup.minNewLocations || "").toString());
+            self.minEnvironmentalSuitability((diseaseGroup.minEnvironmentalSuitability || "").toString());
+            self.minDistanceFromDiseaseExtent((diseaseGroup.minDistanceFromDiseaseExtent || "").toString());
             self.minDataVolume((diseaseGroup.minDataVolume || "").toString());
             self.minDistinctCountries((diseaseGroup.minDistinctCountries || "").toString());
             self.minHighFrequencyCountries((diseaseGroup.minHighFrequencyCountries || "").toString());

@@ -19,6 +19,8 @@ define([
             var vm = new ModelRunParametersViewModel("");
             it("as observables", function () {
                 expect(vm.minNewLocations).toBeObservable();
+                expect(vm.minEnvironmentalSuitability).toBeObservable();
+                expect(vm.minDistanceFromDiseaseExtent).toBeObservable();
                 expect(vm.minDataVolume).toBeObservable();
                 expect(vm.minDistinctCountries).toBeObservable();
                 expect(vm.minHighFrequencyCountries).toBeObservable();
@@ -33,6 +35,9 @@ define([
                 expectValidationRules(vm.minHighFrequencyCountries);
                 expectValidationRules(vm.highFrequencyThreshold);
 
+                expect(vm.minEnvironmentalSuitability).toHaveValidationRule({name: "number", params: true});
+                expect(vm.minEnvironmentalSuitability).toHaveValidationRule({name: "min", params: 0});
+                expect(vm.minDistanceFromDiseaseExtent).toHaveValidationRule({name: "number", params: true});
                 expect(vm.minDataVolume).toHaveValidationRule({name: "required", params: true});
             });
         });
@@ -41,6 +46,8 @@ define([
             // Arrange
             var diseaseGroup = {
                 minNewLocations: "1",
+                minEnvironmentalSuitability: "0.2",
+                minDistanceFromDiseaseExtent: "-300",
                 minDataVolume: "2",
                 minDistinctCountries: "3",
                 minHighFrequencyCountries: "4",
@@ -54,6 +61,8 @@ define([
 
             // Assert
             expect(vm.minNewLocations()).toBe(diseaseGroup.minNewLocations);
+            expect(vm.minEnvironmentalSuitability()).toBe(diseaseGroup.minEnvironmentalSuitability);
+            expect(vm.minDistanceFromDiseaseExtent()).toBe(diseaseGroup.minDistanceFromDiseaseExtent);
             expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
             expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
             expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
