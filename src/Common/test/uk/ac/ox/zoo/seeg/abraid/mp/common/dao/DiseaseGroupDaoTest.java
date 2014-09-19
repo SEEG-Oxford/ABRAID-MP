@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -170,37 +171,41 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void duplicatingADiseaseGroupNameViolatesUniqueConstraint() {
+    public void duplicatingADiseaseGroupNameViolatesCaseInsensitiveUniqueConstraint() {
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
-        diseaseGroup2.setName(diseaseGroup1.getName());
+        String name = StringUtils.swapCase(diseaseGroup1.getName());
+        diseaseGroup2.setName(name);
         diseaseGroupDao.save(diseaseGroup2);
         flushAndClear();
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void duplicatingADiseaseGroupPublicNameViolatesUniqueConstraint() {
+    public void duplicatingADiseaseGroupPublicNameViolatesCaseInsensitiveUniqueConstraint() {
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
-        diseaseGroup2.setPublicName(diseaseGroup1.getPublicName());
+        String publicName = StringUtils.swapCase(diseaseGroup1.getPublicName());
+        diseaseGroup2.setPublicName(publicName);
         diseaseGroupDao.save(diseaseGroup2);
         flushAndClear();
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void duplicatingADiseaseGroupShortNameViolatesUniqueConstraint() {
+    public void duplicatingADiseaseGroupShortNameViolatesCaseInsensitiveUniqueConstraint() {
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
-        diseaseGroup2.setShortName(diseaseGroup1.getShortName());
+        String shortName = StringUtils.swapCase(diseaseGroup1.getShortName());
+        diseaseGroup2.setShortName(shortName);
         diseaseGroupDao.save(diseaseGroup2);
         flushAndClear();
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void duplicatingADiseaseGroupAbbreviationViolatesUniqueConstraint() {
+    public void duplicatingADiseaseGroupAbbreviationViolatesCaseInsensitiveUniqueConstraint() {
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(22);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(87);
-        diseaseGroup2.setAbbreviation(diseaseGroup1.getAbbreviation());
+        String abbreviation = StringUtils.swapCase(diseaseGroup1.getAbbreviation());
+        diseaseGroup2.setAbbreviation(abbreviation);
         diseaseGroupDao.save(diseaseGroup2);
         flushAndClear();
     }

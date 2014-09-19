@@ -33,3 +33,10 @@ CREATE INDEX ix_location_admin_unit_tropical_gaul_code ON location (admin_unit_t
 CREATE INDEX ix_location_healthmap_country_id ON location (healthmap_country_id);
 CREATE INDEX ix_model_run_disease_group_id ON model_run (disease_group_id);
 CREATE INDEX ix_submodel_statistic_model_run_id ON submodel_statistic (model_run_id);
+
+-- Enforce case-insensitive uniqueness
+CREATE UNIQUE INDEX ixu_country_name ON country (LOWER(name));
+CREATE UNIQUE INDEX ixu_disease_group_abbreviation ON disease_group (LOWER(abbreviation));
+CREATE UNIQUE INDEX ixu_disease_group_name ON disease_group (LOWER(name));
+CREATE UNIQUE INDEX ixu_disease_group_public_name ON disease_group (LOWER(public_name));
+CREATE UNIQUE INDEX ixu_disease_group_short_name ON disease_group (LOWER(short_name));

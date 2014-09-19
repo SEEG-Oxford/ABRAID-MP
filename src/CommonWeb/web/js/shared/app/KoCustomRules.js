@@ -85,12 +85,22 @@ define([
                 var array = ko.utils.recursiveUnwrap(options.array);
                 var id = ko.utils.recursiveUnwrap(options.id);
                 var property = options.property;
+                var caseInsensitive = options.caseInsensitive;
+
+                // Operations on the comparison array:
                 return ! _(array)
                     .chain()
+                    // Remove myself
                     .filter(function (o) { return id === undefined || o.id !== id; })
+                    // Select the property for comparison
                     .pluck(property)
+                    // Unwrap if necessary
                     .map(ko.utils.recursiveUnwrap)
-                    .contains(val)
+                    // Make lowercase if the operation is to be case-insensitive
+                    .map(function (p) { return caseInsensitive ? p.toLowerCase(): p; })
+                    // Search for the input value
+                    .contains(caseInsensitive ? val.toLowerCase(): val)
+                    // Return true if found, otherwise false
                     .value();
             } else {
                 return true;
