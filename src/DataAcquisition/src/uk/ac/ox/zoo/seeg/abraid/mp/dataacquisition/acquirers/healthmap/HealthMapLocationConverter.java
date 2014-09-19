@@ -62,7 +62,7 @@ public class HealthMapLocationConverter {
         String validationMessage =
                 new HealthMapLocationValidator(healthMapLocation, lookupData.getCountryMap()).validate();
         if (validationMessage != null) {
-            LOGGER.error(validationMessage);
+            LOGGER.warn(validationMessage);
             return false;
         }
         return true;
