@@ -156,7 +156,7 @@ define([
             });
 
             it("rejects usernames over 15 chars", function () {
-                var longString = "abcdefghijklmno"
+                var longString = "abcdefghijklmno";
                 expect(ko.validation.rules.usernameComplexity.validator(longString + "p")).toBe(false);
             });
 
@@ -182,7 +182,8 @@ define([
 
             it("has a suitable failure message", function () {
                 expect(ko.validation.rules.usernameComplexity.message)
-                    .toContain("Username must be between 3 and 15 characters long and consist of only letters, numbers, '_' or '-'");
+                    .toContain("Username must be between 3 and 15 characters long and consist of only letters, " +
+                        "numbers, '_' or '-'");
             });
         });
 
