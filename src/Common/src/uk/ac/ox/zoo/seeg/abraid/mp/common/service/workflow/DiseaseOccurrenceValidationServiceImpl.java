@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
 
 import java.util.List;
 
@@ -19,11 +20,14 @@ import java.util.List;
 public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrenceValidationService {
     private EnvironmentalSuitabilityHelper esHelper;
     private DistanceFromDiseaseExtentHelper dfdeHelper;
+    private MachineWeightingPredictor mwPredictor;
 
     public DiseaseOccurrenceValidationServiceImpl(EnvironmentalSuitabilityHelper esHelper,
-                                                  DistanceFromDiseaseExtentHelper dfdeHelper) {
+                                                  DistanceFromDiseaseExtentHelper dfdeHelper,
+                                                  MachineWeightingPredictor mwPredictor) {
         this.esHelper = esHelper;
         this.dfdeHelper = dfdeHelper;
+        this.mwPredictor = mwPredictor;
     }
 
     /**
@@ -96,7 +100,14 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
             occurrence.setValidated(false);
         } else {
-            if (!occurrence.getDiseaseGroup().useMachineLearning()) {
+            if (occurrence.getDiseaseGroup().useMachineLearning()) {
+                Double machineWeighting = mwPredictor.findMachineWeighting(occurrence);
+                if (machineWeighting == null) {
+                    occurrence.setValidated(false);
+                } else {
+                    occurrence.setMachineWeighting(machineWeighting);
+                }
+            } else {
                 if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
                     occurrence.setValidated(false);
                 } else {

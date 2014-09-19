@@ -221,8 +221,21 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<DiseaseOccurrence> getOccurrencesForBatching(int diseaseGroupId, DateTime batchEndDate) {
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForBatching(int diseaseGroupId, DateTime batchEndDate) {
         return listNamedQuery("getDiseaseOccurrencesForBatching", "diseaseGroupId", diseaseGroupId,
                 "batchEndDate", batchEndDate);
     }
+
+    /**
+     * Gets a list of recent disease occurrences that have been validated (they have a target expert weighting).
+     * @param diseaseGroupId The disease group ID.
+     * @return A list of disease occurrences.
+     */
+    ///CHECKSTYLE:OFF MagicNumberCheck
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForTrainingPredictor(int diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrencesForTrainingPredictor", "diseaseGroupId", diseaseGroupId,
+                "cutOffDate", DateTime.now().minusWeeks(4));
+    }
+    ///CHECKSTYLE:ON
 }
