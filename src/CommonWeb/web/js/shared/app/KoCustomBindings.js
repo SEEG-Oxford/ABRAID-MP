@@ -103,6 +103,15 @@ define([
             $(element).removeClass("highlight");
             if ((target !== null) && (target[compareOn] === local[compareOn])) {
                 $(element).addClass("highlight");
+
+                if (!$(element).is(":hover")) {
+                    $(element).parent().animate({
+                        scrollTop:
+                            $(element).parent().scrollTop() +
+                            $(element).position().top +
+                            parseInt($(element).css("borderTopWidth"), 10)
+                    }, 250);
+                }
             }
         }
     };
