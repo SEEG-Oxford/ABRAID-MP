@@ -12,14 +12,17 @@
         <@p.panel "upload-csv-body" "Upload CSV File" true>
             <p>Upload a disease occurrences CSV file below.</p>
             <@f.form "upload-csv-form" "Upload" "Uploading...">
-                <@f.formGroupFile "file-picker" "File" "file" />
+                <@f.formGroupFile "file-picker" "File" "file" ".csv" />
             </@f.form>
             <br>
             <br>
-            <p> The CSV file must have a header row, and have columns in the following order:</p>
+            <p> The CSV file must have a header row, and have columns in the following order (column names are
+                ignored). It must also use the UTF-8 character set, though this is only an issue if special characters
+                appear in the text.
+            </p>
             <br>
             <br>
-            <table class="table table-condensed table-hover">
+            <table class="table table-condensed">
                 <thead>
                 <tr>
                     <th>Column Name</th>
