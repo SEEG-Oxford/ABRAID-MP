@@ -28,17 +28,43 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
     @Test
     public void acquireIsSuccessful() {
+        List<DiseaseOccurrence> occurrences = acquire(false);
+        assertNormalValidationParameters(occurrences.get(0));
+        assertNormalValidationParameters(occurrences.get(1));
+    }
+
+    @Test
+    public void acquireGoldStandardIsSuccessful() {
+        List<DiseaseOccurrence> occurrences = acquire(true);
+        assertGoldStandardValidationParameters(occurrences.get(0));
+        assertGoldStandardValidationParameters(occurrences.get(1));
+    }
+
+    private void assertNormalValidationParameters(DiseaseOccurrence occurrence) {
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    private void assertGoldStandardValidationParameters(DiseaseOccurrence occurrence) {
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
+        assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
+        assertThat(occurrence.isValidated()).isTrue();
+    }
+
+    private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {
         String csv =
                 "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Title,Summary,URL\n" +
-                "\"Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia\",101.7,3.16667,precise,Malaysia,dengue,10/3/2014,\"Dengue -- Kuala Lumpur, Malaysia\",,onm.php?id=XX_ALERT_ID_XX\n" +
-                "New Zealand,176.61475,-38.53923,Country,New Zealand,dengue,13/01/2014,Regional dengue outbreak unprecedented - SPC - Radio New Zealand,\"SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...\",\n";
+                        "\"Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia\",101.7,3.16667,precise,Malaysia,dengue,10/3/2014,\"Dengue -- Kuala Lumpur, Malaysia\",,onm.php?id=XX_ALERT_ID_XX\n" +
+                        "New Zealand,176.61475,-38.53923,Country,New Zealand,dengue,13/01/2014,Regional dengue outbreak unprecedented - SPC - Radio New Zealand,\"SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...\",\n";
 
-        String message = csvDataAcquirer.acquireDataFromCsv(csv);
+        String message = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
         assertThat(message).isEqualTo("Saved 2 disease occurrence(s) in 2 location(s) (of which 2 location(s) passed QC).");
 
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
         assertFirstOccurrence(occurrences.get(0));
         assertSecondOccurrence(occurrences.get(1));
+        return occurrences;
     }
 
     private void assertFirstOccurrence(DiseaseOccurrence occurrence) {

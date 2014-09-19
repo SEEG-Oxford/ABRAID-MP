@@ -36,16 +36,17 @@ public class UploadCsvControllerHelper {
      * Acquires the supplied CSV data. Sends an e-mail when completed (either successfully or unsuccessfully).
      *
      * @param csv The contents of the CSV file to upload.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @param userEmailAddress The e-mail address of the user that submitted the upload.
      * @param filePath The full path to the file to upload (used for information only).
      */
-    public void acquireCsvData(String csv, String userEmailAddress, String filePath) {
+    public void acquireCsvData(String csv, boolean isGoldStandard, String userEmailAddress, String filePath) {
         boolean success = false;
         String message;
         Timestamp submissionDate = getNowAsTimestamp();
 
         try {
-            message = dataAcquisitionService.acquireCsvData(csv);
+            message = dataAcquisitionService.acquireCsvData(csv, isGoldStandard);
             success = true;
         } catch (DataAcquisitionException e) {
             message = e.getMessage();

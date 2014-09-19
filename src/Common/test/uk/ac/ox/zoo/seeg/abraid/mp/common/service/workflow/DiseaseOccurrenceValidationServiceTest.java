@@ -40,41 +40,41 @@ public class DiseaseOccurrenceValidationServiceTest {
 
     @Test
     public void addValidationParametersWithChecksReturnsFalseIfOccurrenceIsNull() {
-        boolean result = service.addValidationParametersWithChecks(null);
+        boolean result = service.addValidationParametersWithChecks(null, false);
         assertThat(result).isFalse();
     }
 
     @Test
     public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationIsNull() {
-        boolean result = service.addValidationParametersWithChecks(new DiseaseOccurrence());
+        boolean result = service.addValidationParametersWithChecks(new DiseaseOccurrence(), false);
         assertThat(result).isFalse();
     }
 
     @Test
-    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsEnabled() {
+    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsAreEnabled() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
 
         // Act
-        boolean result = service.addValidationParametersWithChecks(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
         assertThat(result).isFalse();
     }
     @Test
-    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsIsNotEnabled() {
+    public void addValidationParametersWithChecksReturnsFalseIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsAreDisabled() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
 
         // Act
-        boolean result = service.addValidationParametersWithChecks(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
         assertThat(result).isFalse();
     }
 
     @Test
-    public void addValidationParametersWithChecksSetsValidationParametersAndReturnsTrueWhenAutomaticModelRunsIsEnabled() {
+    public void addValidationParametersWithChecksSetsValidationParametersAndReturnsTrueWhenAutomaticModelRunsAreEnabled() {
         // Arrange
         int diseaseGroupId = 30;
         double environmentalSuitability = 0.42;
@@ -87,7 +87,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
 
         // Act
-        boolean result = service.addValidationParametersWithChecks(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
         assertThat(result).isTrue();
@@ -95,10 +95,12 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
     }
 
     @Test
-    public void addValidationParametersWithChecksSetsOnlyIsValidatedAndReturnsTrueWhenAutomaticModelRunsIsNotEnabled() {
+    public void addValidationParametersWithChecksSetsOnlyIsValidatedAndReturnsTrueWhenAutomaticModelRunsAreDisabled() {
         // Arrange
         int diseaseGroupId = 30;
 
@@ -106,7 +108,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getLocation().setHasPassedQc(true);
 
         // Act
-        boolean result = service.addValidationParametersWithChecks(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
         assertThat(result).isTrue();
@@ -114,6 +116,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
         assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
     }
 
     @Test
@@ -129,7 +133,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
 
         // Act
-        boolean result = service.addValidationParametersWithChecks(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
         assertThat(result).isTrue();
@@ -137,6 +141,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
         assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
     }
 
     @Test
@@ -153,7 +159,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
 
         // Act
-        boolean result = service.addValidationParametersWithChecks(occurrence);
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
         assertThat(result).isTrue();
@@ -161,6 +167,46 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
+    public void addValidationParametersWithChecksSetsGoldStandardParametersWhenAutomaticModelRunsAreDisabled() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
+        occurrence.getLocation().setHasPassedQc(true);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, true);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
+    }
+
+    @Test
+    public void addValidationParametersWithChecksSetsGoldStandardParametersWhenAutomaticModelRunsAreEnabled() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
+        occurrence.getLocation().setHasPassedQc(true);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, true);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
     }
 
     @Test
@@ -194,11 +240,15 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence1.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent1);
         assertThat(occurrence1.getMachineWeighting()).isNull();
         assertThat(occurrence1.isValidated()).isTrue();
+        assertThat(occurrence1.getFinalWeighting()).isNull();
+        assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isNull();
 
         assertThat(occurrence2.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability2);
         assertThat(occurrence2.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent2);
         assertThat(occurrence2.getMachineWeighting()).isNull();
         assertThat(occurrence2.isValidated()).isTrue();
+        assertThat(occurrence2.getFinalWeighting()).isNull();
+        assertThat(occurrence2.getFinalWeightingExcludingSpatial()).isNull();
     }
 
     @Test

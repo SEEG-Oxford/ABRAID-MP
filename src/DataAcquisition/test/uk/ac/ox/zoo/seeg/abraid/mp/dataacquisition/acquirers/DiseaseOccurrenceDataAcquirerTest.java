@@ -77,7 +77,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         assertThat(occurrence.getLocation().hasPassedQc()).isFalse();
         verify(qcManager, never()).performQC(any(Location.class));
         verify(postQcManager, never()).runPostQCProcesses(any(Location.class));
-        verifySuccessfulSave(occurrence, result);
+        verifySuccessfulSave(occurrence, false, result);
     }
 
     @Test
@@ -90,14 +90,14 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation1, existingLocation2));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        boolean result = acquirer.acquire(occurrence, false);
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation1);
         assertThat(occurrence.getLocation().hasPassedQc()).isFalse();
         verify(qcManager, never()).performQC(any(Location.class));
         verify(postQcManager, never()).runPostQCProcesses(any(Location.class));
-        verifySuccessfulSave(occurrence, result);
+        verifySuccessfulSave(occurrence, false, result);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         assertThat(occurrence.getLocation()).isSameAs(existingLocation);
         verify(qcManager, times(1)).performQC(same(currentLocation));
         verify(postQcManager, times(1)).runPostQCProcesses(same(currentLocation));
-        verifySuccessfulSave(occurrence, result);
+        verifySuccessfulSave(occurrence, false, result);
     }
 
     @Test
@@ -138,7 +138,24 @@ public class DiseaseOccurrenceDataAcquirerTest {
         // Assert
         assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
         verify(postQcManager, times(1)).runPostQCProcesses(same(occurrence.getLocation()));
-        verifySuccessfulSave(occurrence, result);
+        verifySuccessfulSave(occurrence, false, result);
+    }
+
+    @Test
+    public void acquireSavesGoldStandardDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                new ArrayList<Location>());
+        mockRunQC(occurrence.getLocation(), true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence, true);
+
+        // Assert
+        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
+        verify(postQcManager, times(1)).runPostQCProcesses(same(occurrence.getLocation()));
+        verifySuccessfulSave(occurrence, true, result);
     }
 
     private DiseaseOccurrence createDefaultDiseaseOccurrence() {
@@ -179,8 +196,9 @@ public class DiseaseOccurrenceDataAcquirerTest {
         }).when(qcManager).performQC(same(location));
     }
 
-    private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean result) {
-        verify(diseaseOccurrenceValidationService, times(1)).addValidationParametersWithChecks(same(occurrence));
+    private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean isGoldStandard, boolean result) {
+        verify(diseaseOccurrenceValidationService, times(1)).addValidationParametersWithChecks(same(occurrence),
+                eq(isGoldStandard));
         verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrence));
         assertThat(result).isTrue();
     }

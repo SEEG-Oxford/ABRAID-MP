@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -72,15 +71,16 @@ public class UploadCsvControllerIntegrationTest extends AbstractPublicSiteIntegr
         MockMultipartFile file = new MockMultipartFile("file", "/path/to/filename",
                 MediaType.APPLICATION_OCTET_STREAM_VALUE, csv.getBytes());
 
-        this.mockMvc.perform(requestToUploadCSV(file)).andExpect(status().isOk());
+        this.mockMvc.perform(requestToUploadCSV(file, false)).andExpect(status().isOk());
+        this.mockMvc.perform(requestToUploadCSV(file, true)).andExpect(status().isOk());
         this.mockMvc.perform(requestToUploadCSV(HttpMethod.GET)).andExpect(status().isMethodNotAllowed());
         this.mockMvc.perform(requestToUploadCSV(HttpMethod.PUT)).andExpect(status().isMethodNotAllowed());
         this.mockMvc.perform(requestToUploadCSV(HttpMethod.DELETE)).andExpect(status().isMethodNotAllowed());
         this.mockMvc.perform(requestToUploadCSV(HttpMethod.PATCH)).andExpect(status().isMethodNotAllowed());
     }
 
-    private MockMultipartHttpServletRequestBuilder requestToUploadCSV(MockMultipartFile file) {
-        return fileUpload(UPLOAD_URL).file(file);
+    private MockHttpServletRequestBuilder requestToUploadCSV(MockMultipartFile file, boolean isGoldStandard) {
+        return fileUpload(UPLOAD_URL).file(file).param("isGoldStandard", Boolean.toString(isGoldStandard));
     }
 
     private MockHttpServletRequestBuilder requestToUploadCSV(HttpMethod method) {

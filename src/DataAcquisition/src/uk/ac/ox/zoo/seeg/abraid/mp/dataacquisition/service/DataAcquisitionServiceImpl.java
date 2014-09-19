@@ -40,11 +40,12 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
     /**
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @return A message upon the success of the data acquisition.
      * @throws DataAcquisitionException Upon failure of the data acquisition.
      */
     @Override
-    public String acquireCsvData(String csv) throws DataAcquisitionException {
-        return csvDataAcquirer.acquireDataFromCsv(csv);
+    public String acquireCsvData(String csv, boolean isGoldStandard) throws DataAcquisitionException {
+        return csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
     }
 }

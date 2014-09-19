@@ -52,6 +52,7 @@ public class UploadCsvControllerHelperTest {
     @Test
     public void acquireCsvDataSendsCorrectEmailWhenAcquisitionSucceeds() throws Exception {
         // Arrange
+        boolean isGoldStandard = false;
         String csv = "Test csv";
         String message = "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)";
         String expectedSubject = "CSV upload succeeded";
@@ -60,15 +61,16 @@ public class UploadCsvControllerHelperTest {
                 "\n" +
                 "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)\n";
 
-        when(dataAcquisitionService.acquireCsvData(csv)).thenReturn(message);
+        when(dataAcquisitionService.acquireCsvData(csv, isGoldStandard)).thenReturn(message);
 
         // Act and assert
-        acquireCsvDataSendsCorrectEmail(expectedEmailEnd, expectedSubject);
+        acquireCsvDataSendsCorrectEmail(isGoldStandard, expectedEmailEnd, expectedSubject);
     }
 
     @Test
     public void acquireCsvDataSendsCorrectEmailWhenAcquisitionFails() throws Exception {
         // Arrange
+        boolean isGoldStandard = true;
         String csv = "Test csv";
         String message = "Some error during data acquisition";
         String expectedSubject = "CSV upload failed";
@@ -77,13 +79,14 @@ public class UploadCsvControllerHelperTest {
                 "\n" +
                 "Some error during data acquisition\n";
 
-        when(dataAcquisitionService.acquireCsvData(csv)).thenThrow(new DataAcquisitionException(message));
+        when(dataAcquisitionService.acquireCsvData(csv, isGoldStandard)).thenThrow(new DataAcquisitionException(message));
 
         // Act and assert
-        acquireCsvDataSendsCorrectEmail(expectedEmailEnd, expectedSubject);
+        acquireCsvDataSendsCorrectEmail(isGoldStandard, expectedEmailEnd, expectedSubject);
     }
 
-    private void acquireCsvDataSendsCorrectEmail(String expectedEmailEnding, String expectedSubject)
+    private void acquireCsvDataSendsCorrectEmail(boolean isGoldStandard, String expectedEmailEnding,
+                                                 String expectedSubject)
             throws Exception {
         // Arrange
         String csv = "Test csv";
@@ -91,7 +94,7 @@ public class UploadCsvControllerHelperTest {
         String filePath = "/path/to/test.csv";
 
         // Act
-        helper.acquireCsvData(csv, userEmailAddress, filePath);
+        helper.acquireCsvData(csv, isGoldStandard, userEmailAddress, filePath);
 
         // Assert
         String nowString = DateTimeFormat.longDateTime().print(DateTime.now());

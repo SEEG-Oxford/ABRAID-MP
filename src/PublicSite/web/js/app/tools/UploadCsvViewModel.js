@@ -12,5 +12,13 @@ define([
         BaseFileFormViewModel.call(self, baseUrl, "tools/uploadcsv/upload", {
             success: "CSV file submitted. The results of the upload will be e-mailed to you."
         });
+
+        self.buildSubmissionData = function () {
+            return {
+                isGoldStandard: self.isGoldStandard()
+            };
+        };
+
+        self.isGoldStandard = ko.observable(false);
     };
 });

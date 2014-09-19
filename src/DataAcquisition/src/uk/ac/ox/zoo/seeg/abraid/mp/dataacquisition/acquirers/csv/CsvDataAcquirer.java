@@ -42,13 +42,14 @@ public class CsvDataAcquirer {
     /**
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @return A message upon the success of the data acquisition.
      * @throws DataAcquisitionException Upon failure of the data acquisition.
      */
-    public String acquireDataFromCsv(String csv) throws DataAcquisitionException {
+    public String acquireDataFromCsv(String csv, boolean isGoldStandard) throws DataAcquisitionException {
         try {
             List<CsvDiseaseOccurrence> csvDiseaseOccurrences = retrieveDataFromCsv(csv);
-            List<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences);
+            List<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard);
             return createSuccessMessage(convertedOccurrences);
         } finally {
             csvLookupData.clearLookups();
@@ -65,7 +66,7 @@ public class CsvDataAcquirer {
         }
     }
 
-    private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences) {
+    private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard) {
         List<DiseaseOccurrence> convertedOccurrences = new ArrayList<>();
         LOGGER.info(String.format(CONVERSION_MESSAGE, csvDiseaseOccurrences.size()));
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
@@ -74,7 +75,7 @@ public class CsvDataAcquirer {
                 // Convert the CSV disease occurrence into an ABRAID disease occurrence
                 DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence);
                 // Now acquire the ABRAID disease occurrence
-                if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
+                if (diseaseOccurrenceDataAcquirer.acquire(occurrence, isGoldStandard)) {
                     convertedOccurrences.add(occurrence);
                 }
             } catch (DataAcquisitionException e) {
