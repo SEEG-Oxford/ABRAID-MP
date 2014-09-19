@@ -62,6 +62,23 @@ public class CsvDataAcquirerTest {
     }
 
     @Test
+    public void acquireThrowsExceptionIfMultipleLinesCannotBeConverted() {
+        // Arrange
+        DataAcquisitionException exception = new DataAcquisitionException("Test message");
+        String csv = "\nMy site\nMy second site\n";
+
+        when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
+
+        // Act
+        catchException(csvDataAcquirer).acquireDataFromCsv(csv, false);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
+        assertThat(caughtException()).hasMessage("Error in CSV file on line 1: Test message." + System.lineSeparator() +
+                "Error in CSV file on line 2: Test message.");
+    }
+
+    @Test
     public void successMessageHasCorrectCountsIfAtLeastOneDiseaseOccurrenceWasAcquired() {
         // Disease occurrence 1 has location 1 (passed QC)
         // Disease occurrence 2 has location 2 (failed QC)

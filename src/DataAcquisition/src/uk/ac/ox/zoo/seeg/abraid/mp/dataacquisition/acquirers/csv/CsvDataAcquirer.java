@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -69,6 +70,8 @@ public class CsvDataAcquirer {
     private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard) {
         List<DiseaseOccurrence> convertedOccurrences = new ArrayList<>();
         LOGGER.info(String.format(CONVERSION_MESSAGE, csvDiseaseOccurrences.size()));
+
+        List<String> errorMessages = new ArrayList<>();
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
             CsvDiseaseOccurrence csvDiseaseOccurrence = csvDiseaseOccurrences.get(i);
             try {
@@ -80,12 +83,20 @@ public class CsvDataAcquirer {
                 }
             } catch (DataAcquisitionException e) {
                 // This CSV disease occurrence could not be acquired. So add the CSV line number to
-                // the exception and rethrow it (which will eventually roll back the whole acquisition).
+                // the exception message and store it for later rethrowing.
                 String message = String.format(LINE_ERROR_MESSAGE, i + 1, e.getMessage());
                 LOGGER.error(message, e);
-                throw new DataAcquisitionException(message, e.getCause());
+                errorMessages.add(message);
             }
         }
+
+        if (errorMessages.size() > 0) {
+            // If there were errors during acquisition, they have already been logged so now rethrow them.
+            // This allows all errors in the file to be reported to the user rather than one error at a time.
+            String message = StringUtils.join(errorMessages, System.lineSeparator());
+            throw new DataAcquisitionException(message);
+        }
+
         return convertedOccurrences;
     }
 
