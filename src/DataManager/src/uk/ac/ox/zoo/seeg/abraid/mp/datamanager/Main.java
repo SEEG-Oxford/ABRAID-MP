@@ -36,8 +36,9 @@ public class Main {
      *             HealthMap JSON data to acquire.
      */
     public static void main(String[] args) {
+        ClassPathXmlApplicationContext context = null;
         try {
-            ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
+            context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
             runMain(context, args);
         } catch (Throwable e) {
             try {
@@ -48,6 +49,10 @@ public class Main {
                 throw e;
             }
             throw e;
+        } finally {
+            if (context != null) {
+                context.close();
+            }
         }
     }
 

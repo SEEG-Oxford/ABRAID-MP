@@ -46,7 +46,7 @@ public class UploadCsvControllerHelperTest {
         EmailFactory factory = mock(EmailFactory.class);
         when(factory.createEmail()).thenReturn(email);
         return new EmailServiceImpl(factory, "", "", mock(SmtpConfiguration.class),
-                new File[] {new File(EMAIL_TEMPLATE_PATH)});
+                new Class[0], new File[] {new File(EMAIL_TEMPLATE_PATH)});
     }
 
     @Test

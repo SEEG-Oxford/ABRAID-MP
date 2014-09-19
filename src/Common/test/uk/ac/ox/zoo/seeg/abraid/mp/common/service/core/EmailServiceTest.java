@@ -33,7 +33,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "", "", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "", "", expectation, new Class[0], new File[0]);
 
         // Act
         target.sendEmail("", "", "");
@@ -60,7 +60,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new Class[0], new File[0]);
 
         // Act
         target.sendEmail("ToAddress", "Subject", "Body");
@@ -77,7 +77,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new Class[0], new File[0]);
 
         // Act
         target.sendEmail("ToAddress", "Subject", "Body");
@@ -115,7 +115,7 @@ public class EmailServiceTest {
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "expected result");
 
         EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation,
-                new File[] {testFolder.getRoot()});
+                new Class[0], new File[] {testFolder.getRoot()});
 
         // Act
         target.sendEmail("", "", "template.ftl", null);
@@ -137,7 +137,7 @@ public class EmailServiceTest {
         FileUtils.writeStringToFile(new File(dir2.toString(), "template.ftl"), "expected result");
 
         EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation,
-                new File[] {dir1, dir2});
+                new Class[0], new File[] {dir1, dir2});
 
         // Act
         target.sendEmail("", "", "template.ftl", null);
@@ -157,7 +157,7 @@ public class EmailServiceTest {
         FileUtils.writeStringToFile(new File(dir2.toString(), "template.ftl"), "unexpected result");
 
         EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation,
-                new File[] {dir1, dir2});
+                new Class[0], new File[] {dir1, dir2});
 
         // Act
         target.sendEmail("", "", "template.ftl", null);
@@ -174,7 +174,7 @@ public class EmailServiceTest {
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "expected result${foo}");
 
         EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation,
-                new File[] {testFolder.getRoot()});
+                new Class[0], new File[] {testFolder.getRoot()});
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("foo", "!");
@@ -191,7 +191,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new Class[0],  new File[0]);
 
         // Act
         target.sendEmail("ToAddress", "Subject", "Body");
@@ -209,7 +209,7 @@ public class EmailServiceTest {
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new File[] {testFolder.getRoot()});
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new Class[0], new File[] {testFolder.getRoot()});
 
         // Act
         target.sendEmail("ToAddress", "Subject", "template.ftl", new HashMap<String, Object>());
@@ -226,7 +226,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new Class[0], new File[0]);
 
         // Act
         Future result = target.sendEmailInBackground("ToAddress", "Subject", "Body");
@@ -245,7 +245,7 @@ public class EmailServiceTest {
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new File[] {testFolder.getRoot()});
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation, new Class[0], new File[] {testFolder.getRoot()});
 
         // Act
         Future result = target.sendEmailInBackground("ToAddress", "Subject", "template.ftl", new HashMap<String, Object>());
@@ -263,7 +263,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new Class[0], new File[0]);
 
         // Act
         target.sendEmail("Subject", "Body");
@@ -281,7 +281,7 @@ public class EmailServiceTest {
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new File[] {testFolder.getRoot()});
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new Class[0], new File[] {testFolder.getRoot()});
 
         // Act
         target.sendEmail("Subject", "template.ftl", new HashMap<String, Object>());
@@ -298,7 +298,7 @@ public class EmailServiceTest {
         // Arrange
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new File[0]);
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new Class[0], new File[0]);
 
         // Act
         Future result = target.sendEmailInBackground("Subject", "Body");
@@ -317,7 +317,7 @@ public class EmailServiceTest {
         SmtpConfiguration expectation = arrangeSMTP();
         Email email = mock(Email.class);
         FileUtils.writeStringToFile(new File(testFolder.getRoot().toString(), "template.ftl"), "Body");
-        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new File[] {testFolder.getRoot()});
+        EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "ToAddress", expectation, new Class[0], new File[] {testFolder.getRoot()});
 
         // Act
         Future result = target.sendEmailInBackground("Subject", "template.ftl", new HashMap<String, Object>());

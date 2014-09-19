@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -10,6 +11,7 @@ import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.log4j.Logger;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractAsynchronousActionHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactory;
 
@@ -19,16 +21,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
  * A service for sending emails.
  * Copyright (c) 2014 University of Oxford
  */
-public class EmailServiceImpl implements EmailService {
-
+public class EmailServiceImpl extends AbstractAsynchronousActionHandler implements EmailService {
     private static final Logger LOGGER = Logger.getLogger(EmailServiceImpl.class);
     private static final String LOG_EMAIL_SENT =
             "Email sent to '%s' with subject '%s'";
@@ -38,8 +37,7 @@ public class EmailServiceImpl implements EmailService {
             "Failed to send email (%s - %s) due to failure to load template";
     private static final String LOG_FAILED_APPLY_TEMPLATE =
             "Failed to send email (%s - %s) due to failure to apply template";
-
-    private final ExecutorService pool = Executors.newFixedThreadPool(3);
+    private static final int THREAD_POOL_SIZE = 3;
 
     private final EmailFactory emailFactory;
     private final String fromAddress;
@@ -47,14 +45,16 @@ public class EmailServiceImpl implements EmailService {
     private final SmtpConfiguration smtpConfig;
     private final Configuration freemarkerConfig;
 
-    public EmailServiceImpl(EmailFactory emailFactory, String fromAddress, String defaultToAddress,
-                            SmtpConfiguration smtpConfig, File[] emailTemplateLookupPaths)
+    public EmailServiceImpl(EmailFactory emailFactory, String fromAddress,
+                            String defaultToAddress, SmtpConfiguration smtpConfig,
+                            Class[] classTemplateLookupPaths, File[] fileTemplateLookupPaths)
             throws IOException {
+        super(THREAD_POOL_SIZE);
         this.emailFactory = emailFactory;
         this.fromAddress = fromAddress;
         this.defaultToAddress = defaultToAddress;
         this.smtpConfig = smtpConfig;
-        this.freemarkerConfig = setupFreemarkerConfig(emailTemplateLookupPaths);
+        this.freemarkerConfig = setupFreemarkerConfig(classTemplateLookupPaths, fileTemplateLookupPaths);
     }
 
     private static void setupSMTP(Email email, SmtpConfiguration smtpConfig) throws EmailException {
@@ -65,13 +65,20 @@ public class EmailServiceImpl implements EmailService {
         email.setSSLOnConnect(smtpConfig.useSSL());
     }
 
-    private static Configuration setupFreemarkerConfig(File[] templateLookupPaths) throws IOException {
+    private static Configuration setupFreemarkerConfig(Class[] classTemplateLookupPaths, File[] fileTemplateLookupPaths)
+            throws IOException {
         Configuration config = new Configuration();
 
-        TemplateLoader[] loaders = new TemplateLoader[templateLookupPaths.length];
-        for (int i = 0; i < templateLookupPaths.length; i++) {
-            loaders[i] = new FileTemplateLoader(templateLookupPaths[i]);
+        TemplateLoader[] loaders = new TemplateLoader[classTemplateLookupPaths.length + fileTemplateLookupPaths.length];
+
+        for (int i = 0; i < classTemplateLookupPaths.length; i++) {
+            loaders[i] = new ClassTemplateLoader(classTemplateLookupPaths[i], "");
         }
+
+        for (int i = 0; i < fileTemplateLookupPaths.length; i++) {
+            loaders[classTemplateLookupPaths.length + i] = new FileTemplateLoader(fileTemplateLookupPaths[i]);
+        }
+
         config.setTemplateLoader(new MultiTemplateLoader(loaders));
 
         return config;
@@ -128,7 +135,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public Future sendEmailInBackground(final String toAddress, final String subject,
                                         final String templateName, final Map<String, Object> templateData) {
-        return pool.submit(new Callable<Void>() {
+        return submitAsynchronousTask(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 try {
@@ -155,12 +162,12 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public Future sendEmailInBackground(final String toAddress, final String subject, final String body) {
-        return pool.submit(new Callable<Void>() {
+        return submitAsynchronousTask(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 try {
                     sendEmail(toAddress, subject, body);
-                 } catch (EmailException e) {
+                } catch (EmailException e) {
                     LOGGER.error(String.format(LOG_FAILED_SEND_EMAIL, toAddress, subject), e);
                 }
 

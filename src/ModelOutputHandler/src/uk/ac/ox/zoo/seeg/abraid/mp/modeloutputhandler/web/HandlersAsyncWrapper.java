@@ -2,11 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractAsynchronousActionHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -15,9 +14,9 @@ import java.util.concurrent.Future;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class HandlersAsyncWrapper {
+public class HandlersAsyncWrapper extends AbstractAsynchronousActionHandler {
     private static final Logger LOGGER = Logger.getLogger(HandlersAsyncWrapper.class);
-    private final ExecutorService pool = Executors.newFixedThreadPool(1);
+    private static final int THREAD_POOL_SIZE = 1;
 
     private DiseaseExtentGenerationHandler diseaseExtentGenerationHandler;
     private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
@@ -25,6 +24,7 @@ public class HandlersAsyncWrapper {
     @Autowired
     public HandlersAsyncWrapper(DiseaseExtentGenerationHandler diseaseExtentGenerationHandler,
                                 DiseaseOccurrenceHandler diseaseOccurrenceHandler) {
+        super(THREAD_POOL_SIZE);
         this.diseaseExtentGenerationHandler = diseaseExtentGenerationHandler;
         this.diseaseOccurrenceHandler = diseaseOccurrenceHandler;
     }
@@ -35,7 +35,7 @@ public class HandlersAsyncWrapper {
      * @return A future with a dummy value, to facilitate testing of this class.
      */
     public Future<?> handle(final ModelRun modelRun) {
-        return pool.submit(new Callable<Object>() {
+        return submitAsynchronousTask(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
                 try {

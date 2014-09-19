@@ -61,7 +61,7 @@
 
     <bean id="uploadCsvController" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools.UploadCsvController" />
     <bean id="uploadCsvControllerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools.UploadCsvControllerHelper" />
-    <bean id="uploadCsvControllerHelperAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools.UploadCsvControllerHelperAsyncWrapper" />
+    <bean id="uploadCsvControllerHelperAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools.UploadCsvControllerHelperAsyncWrapper" destroy-method="cleanup" />
 
     <mvc:default-servlet-handler/>
 

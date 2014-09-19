@@ -2,10 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractAsynchronousActionHandler;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -13,15 +12,15 @@ import java.util.concurrent.Future;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class UploadCsvControllerHelperAsyncWrapper {
+public class UploadCsvControllerHelperAsyncWrapper extends AbstractAsynchronousActionHandler {
     private static final Logger LOGGER = Logger.getLogger(UploadCsvController.class);
-
-    private final ExecutorService pool = Executors.newFixedThreadPool(3);
+    private static final int THREAD_POOL_SIZE = 3;
 
     private UploadCsvControllerHelper uploadCsvControllerHelper;
 
     @Autowired
     public UploadCsvControllerHelperAsyncWrapper(UploadCsvControllerHelper uploadCsvControllerHelper) {
+        super(THREAD_POOL_SIZE);
         this.uploadCsvControllerHelper = uploadCsvControllerHelper;
     }
 
@@ -35,7 +34,7 @@ public class UploadCsvControllerHelperAsyncWrapper {
      */
     public Future acquireCsvData(final String csv, final String userEmailAddress,
                                  final String filePath) {
-        return pool.submit(new Callable<Void>() {
+        return submitAsynchronousTask(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 try {

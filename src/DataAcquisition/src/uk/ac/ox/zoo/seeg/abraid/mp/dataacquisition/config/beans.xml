@@ -16,6 +16,15 @@
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 
+    <bean id="emailTemplateClassLookupPaths" parent="commonEmailTemplateClassLookupPaths" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list merge="true">
+                <!-- Add data acquisition context specific email template lookup locations -->
+                <value type="java.lang.Class">uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapAlertConverter</value>
+            </list>
+        </property>
+    </bean>
+
     <!-- Service beans -->
     <bean id="dataAcquisitionService" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionServiceImpl" autowire="constructor"/>
 

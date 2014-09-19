@@ -1,31 +1,31 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.apache.log4j.Logger;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractAsynchronousActionHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
  * Provides a means for triggering model runs where the workspace setup is done asynchronously.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunnerAsyncWrapperImpl implements ModelRunnerAsyncWrapper {
+public class ModelRunnerAsyncWrapperImpl extends AbstractAsynchronousActionHandler implements ModelRunnerAsyncWrapper {
     private static final Logger LOGGER = Logger.getLogger(ModelRunnerAsyncWrapperImpl.class);
     private static final String LOG_ERROR_DURING_THE_MODEL_SETUP =
             "An error occurred during the setup for model run: %s";
 
     private static final String SETUP_FAILED_MESSAGE = "Model setup failed: %s";
+    private static final int THREAD_POOL_SIZE = 1;
 
-    private final ExecutorService pool = Executors.newFixedThreadPool(1);
     private final ModelRunner modelRunner;
 
     public ModelRunnerAsyncWrapperImpl(ModelRunner modelRunner) {
+        super(THREAD_POOL_SIZE);
         this.modelRunner = modelRunner;
     }
 
@@ -42,7 +42,7 @@ public class ModelRunnerAsyncWrapperImpl implements ModelRunnerAsyncWrapper {
                                                   final GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
                                                   final Map<Integer, Integer> extentWeightings,
                                                   final ModelStatusReporter modelStatusReporter) {
-        return pool.submit(new Callable<ModelProcessHandler>() {
+        return submitAsynchronousTask(new Callable<ModelProcessHandler>() {
             @Override
             public ModelProcessHandler call() throws Exception {
                 ModelProcessHandler handler = null;
