@@ -55,6 +55,26 @@ define([
             });
         });
 
+        describe("holds the number of admin units in the table, which", function () {
+            it("responds to changes in the list of admin units", function () {
+                vm.adminUnits([]);
+                expect(vm.adminUnitsCount()).toEqual(0);
+
+                vm.adminUnits([ 1, 2, 3 ]);
+                expect(vm.adminUnitsCount()).toEqual(3);
+
+                vm.adminUnits([ { name: "a" }, { name: "b" }, { name: "c" }, { name: "d" }, { name: "e" } ]);
+                expect(vm.adminUnitsCount()).toEqual(5);
+
+                vm.adminUnits([ wrap({ name: "a" }), wrap({ name: "b" }) ]);
+                expect(vm.adminUnitsCount()).toEqual(2);
+            });
+        });
+
+        function wrap() {
+            return function (arg) { return arg; };
+        }
+
         describe("holds the selected administrative unit which", function () {
             it("is an observable", function () {
                 expect(vm.selectedAdminUnit).toBeObservable();

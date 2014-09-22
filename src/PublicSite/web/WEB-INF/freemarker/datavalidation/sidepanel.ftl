@@ -38,7 +38,7 @@
             </table>
         </div>
         <span class="sidePanelTextAnnotation">
-            <span data-bind="text: 'X'">X</span> of <span>Y</span> entries remaining.
+            <span data-bind="text: adminUnitsCount"/> regions remaining
         </span>
         <div data-bind="if: hasSelectedAdminUnit()">
         <@security.authorize ifAnyGranted="ROLE_USER">
