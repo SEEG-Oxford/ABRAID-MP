@@ -48,6 +48,7 @@
                 <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('UNCERTAIN') }">Uncertain<br /></button>
                 <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_ABSENCE') }">Possible absence</button>
                 <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('ABSENCE') }">Absence</button>
+                <button type="button" class="btn btn-danger btn-sm btn-block" data-bind="click: function () { submitReview(null) }">I Don't Know</button>
             </div>
         </@security.authorize>
         </div>

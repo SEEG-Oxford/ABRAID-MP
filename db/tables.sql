@@ -77,7 +77,7 @@ CREATE TABLE admin_unit_review (
     disease_group_id integer NOT NULL,
     global_gaul_code integer,
     tropical_gaul_code integer,
-    response varchar(17) NOT NULL,
+    response varchar(17),
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 

@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -219,6 +220,25 @@ public class DataValidationControllerTest {
 
         // Act
         ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void submitAdminUnitReviewAcceptsNullReview() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+
+        DiseaseService diseaseService = createDiseaseService();
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        DataValidationController target = createTarget(null, diseaseService, null);
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseGroupId, 2, null);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
