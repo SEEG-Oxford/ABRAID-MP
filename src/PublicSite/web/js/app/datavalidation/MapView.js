@@ -313,17 +313,23 @@ define([
             ko.postbox.publish("no-features-to-review", features.length === 0);
         }
 
-        function fitMapBounds(features, layer) {
+        function fitMapBounds(features) {
             if (features.length === 0) {
                 map.fitWorld();
             } else {
-                map.fitBounds(layer.getBounds());
+                var presenceFeatures = _(features).select(function (f) {
+                    var extent = f.properties.diseaseExtentClass;
+                    return (extent === "Presence" || extent === "Possible presence" || extent === "Uncertain");
+                });
+                map.fitBounds(L.geoJson(presenceFeatures).getBounds());
             }
         }
 
         function addDiseaseExtentData(diseaseId) {
             $.getJSON(getDiseaseExtentRequestUrl(diseaseId))
                 .done(function (fc) {
+                    fitMapBounds(fc.features);
+
                     var featuresNeedReview = _(fc.features).select(function (f) { return f.properties.needsReview; });
                     var featureCollectionNeedReview = createFeatureCollection(fc.type, fc.crs, featuresNeedReview);
                     adminUnitsNeedReviewLayer.addData(featureCollectionNeedReview);
@@ -332,7 +338,6 @@ define([
                     var featureCollectionReviewed = createFeatureCollection(fc.type, fc.crs, featuresReviewed);
                     adminUnitsReviewedLayer.addData(featureCollectionReviewed);
 
-                    fitMapBounds(featuresNeedReview, adminUnitsNeedReviewLayer);
                     publishDiseaseExtentEvents(featuresNeedReview);
                 }).fail(function () {
                     alert("Error fetching disease extent");
