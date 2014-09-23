@@ -37,8 +37,8 @@
                 </tbody>
             </table>
         </div>
-        <span class="sidePanelTextAnnotation">
-            <span data-bind="text: adminUnitsCount"/> regions remaining
+        <span class="sidePanelTextAnnotation" data-bind="visible: typeof adminUnitsCount() !== 'undefined'">
+            <span data-bind="text: adminUnitsCount() + ' region' + (adminUnitsCount() !== 1 ? 's' : '') + ' remaining'"></span>
         </span>
         <div data-bind="if: hasSelectedAdminUnit()">
         <@security.authorize ifAnyGranted="ROLE_USER">
