@@ -317,9 +317,8 @@ define([
             if (features.length === 0) {
                 map.fitWorld();
             } else {
-                var presenceFeatures = _(features).select(function (f) {
-                    var extent = f.properties.diseaseExtentClass;
-                    return (extent === "Presence" || extent === "Possible presence" || extent === "Uncertain");
+                var presenceFeatures = _(features).filter(function (f) {
+                    return _(["Presence", "Possible presence", "Uncertain"]).contains(f.properties.diseaseExtentClass);
                 });
                 map.fitBounds(L.geoJson(presenceFeatures).getBounds());
             }
