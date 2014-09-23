@@ -1,5 +1,5 @@
 <div id="layerSelector">
-    <h4>You are validating
+    <h4 class="hidden" data-bind="css: { 'hidden': false }">You are validating
         <select data-bind="options: validationTypes, value: selectedType"></select>
         of
         <select data-bind="foreach: groups, value: selectedDiseaseSet">
@@ -12,14 +12,14 @@
         </span>
     </h4>
 
-    <div class="alert alert-info" data-bind="visible: noFeaturesToReview()"">
+    <div class="alert alert-info" style="display: none" data-bind="visible: noFeaturesToReview()">
         <div data-bind="text: showDiseaseExtentLayer() ?
             'There are no administrative units in need of review for this disease' :
             'There are no occurrences in need of review for this disease'">
         </div>
     </div>
 
-    <div class="alert alert-info" data-bind="visible: notReadyForReview()">
+    <div class="alert alert-info" style="display: none" data-bind="visible: notReadyForReview()">
         <div data-bind="text: showDiseaseExtentLayer() ?
             'This disease is not ready for disease extent reviews.' :
             'This disease is not ready for disease occurrence reviews.'">
