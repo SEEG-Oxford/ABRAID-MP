@@ -19,11 +19,6 @@ define([], function () {
             return isNaN(val) ? undefined : val;
         };
 
-        // Forces any falsy arguments to be 'undefined', rather than empty string in JSON
-        var parse = function (arg) {
-            return arg ? arg : undefined;
-        };
-
         return {
             name: diseaseGroupSettingsViewModel.name(),
             publicName: diseaseGroupSettingsViewModel.publicName(),
