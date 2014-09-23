@@ -221,11 +221,28 @@ define([
 
         describe("the 'highlight' binding, which", function () {
             // Arrange
-            var expectedElement, removeSpy, addSpy, jqSpy, injectorWithJQuerySpy;
+            var expectedElement, injectorWithJQuerySpy;
+            var removeSpy, addSpy, isSpy, parentSpy, animateSpy, scrollTopSpy, jqSpy, positionSpy, cssSpy;
             beforeEach(function () {
-                removeSpy = jasmine.createSpy();
-                addSpy = jasmine.createSpy();
-                jqSpy = jasmine.createSpy().and.returnValue({removeClass: removeSpy, addClass: addSpy});
+                removeSpy = jasmine.createSpy("removeSpy");
+                addSpy = jasmine.createSpy("addSpy");
+                isSpy = jasmine.createSpy("isSpy").and.returnValue(false);
+                cssSpy = jasmine.createSpy("cssSpy").and.returnValue("5px");
+                animateSpy = jasmine.createSpy("animateSpy");
+                scrollTopSpy = jasmine.createSpy("scrollTopSpy").and.returnValue(100);
+                positionSpy = jasmine.createSpy("positionSpy").and.returnValue({top: 50});
+                parentSpy = jasmine.createSpy("parentSpy").and.returnValue({
+                    animate: animateSpy,
+                    scrollTop: scrollTopSpy
+                });
+                jqSpy = jasmine.createSpy().and.returnValue({
+                    removeClass: removeSpy,
+                    addClass: addSpy,
+                    is: isSpy,
+                    parent: parentSpy,
+                    position: positionSpy,
+                    css: cssSpy
+                });
 
                 // Squire.require is going to load js files via ajax, so get rid of the jasmine mock ajax stuff first
                 jasmine.Ajax.uninstall();
@@ -246,6 +263,52 @@ define([
                     expect(removeSpy).toHaveBeenCalledWith("highlight");
                     expect(addSpy).toHaveBeenCalledWith("highlight");
                     done();
+                });
+            });
+
+            describe("sets the scroll position of selected admin unit's parent", function () {
+                it("to the position of the element", function (done) {
+                    // Arrange
+                    var expectedAdminUnit = { id: "0" };
+                    injectorWithJQuerySpy.require(["ko"], function (ko) {
+                        // Act
+                        ko.bindingHandlers.highlight.update(expectedElement,
+                            { target: expectedAdminUnit, compareOn: "id" }, {}, {}, { "$data": expectedAdminUnit });
+                        // Assert
+                        expect(parentSpy).toHaveBeenCalled();
+                        expect(animateSpy).toHaveBeenCalledWith({ scrollTop: 155 }, 250);
+                        done();
+                    });
+                });
+
+                it("if the mouse is not over the element", function (done) {
+                    // Arrange
+                    var expectedAdminUnit = { id: "0" };
+                    injectorWithJQuerySpy.require(["ko"], function (ko) {
+                        // Act
+                        ko.bindingHandlers.highlight.update(expectedElement,
+                            { target: expectedAdminUnit, compareOn: "id" }, {}, {}, { "$data": expectedAdminUnit });
+                        // Assert
+                        expect(jqSpy).toHaveBeenCalledWith(expectedElement);
+                        expect(isSpy).toHaveBeenCalledWith(":hover");
+                        expect(parentSpy).toHaveBeenCalled();
+                        expect(animateSpy).toHaveBeenCalled();
+                        done();
+                    });
+                });
+
+                it("unless the mouse is over the element", function (done) {
+                    // Arrange
+                    var expectedAdminUnit = { id: "0" };
+                    injectorWithJQuerySpy.require(["ko"], function (ko) {
+                        isSpy.and.returnValue(true);
+                        // Act
+                        ko.bindingHandlers.highlight.update(expectedElement,
+                            { target: expectedAdminUnit, compareOn: "id" }, {}, {}, { "$data": expectedAdminUnit });
+                        // Assert
+                        expect(animateSpy).not.toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
 

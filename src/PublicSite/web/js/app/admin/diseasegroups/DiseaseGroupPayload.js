@@ -14,9 +14,9 @@ define([], function () {
             return isNaN(val) ? undefined : val;
         };
 
-        // Forces any falsy arguments to be 'undefined', rather than empty string in JSON
-        var parse = function (arg) {
-            return arg ? arg : undefined;
+        var parseNumber = function (arg) {
+            var val = parseFloat(arg);
+            return isNaN(val) ? undefined : val;
         };
 
         return {
@@ -29,6 +29,8 @@ define([], function () {
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
             minNewLocations: parseInteger(modelRunParametersViewModel.minNewLocations()),
+            minEnvironmentalSuitability: parseNumber(modelRunParametersViewModel.minEnvironmentalSuitability()),
+            minDistanceFromDiseaseExtent: parseNumber(modelRunParametersViewModel.minDistanceFromDiseaseExtent()),
             minDataVolume: parseInteger(modelRunParametersViewModel.minDataVolume()),
             minDistinctCountries: parseInteger(modelRunParametersViewModel.minDistinctCountries()),
             minHighFrequencyCountries: parseInteger(modelRunParametersViewModel.minHighFrequencyCountries()),
@@ -42,7 +44,7 @@ define([], function () {
                 higherOccurrenceScore:
                     parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
                 minValidationWeighting:
-                    parse(diseaseExtentParametersViewModel.minValidationWeighting()),
+                    parseNumber(diseaseExtentParametersViewModel.minValidationWeighting()),
                 minOccurrencesForPresence:
                     parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
                 minOccurrencesForPossiblePresence:

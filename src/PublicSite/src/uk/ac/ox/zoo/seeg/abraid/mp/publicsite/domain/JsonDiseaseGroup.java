@@ -20,6 +20,8 @@ public class JsonDiseaseGroup {
     private boolean automaticModelRuns;
     private Integer minNewLocations;
     private int minDataVolume;
+    private Double minEnvironmentalSuitability;
+    private Double minDistanceFromDiseaseExtent;
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
@@ -47,6 +49,8 @@ public class JsonDiseaseGroup {
         setAutomaticModelRuns(diseaseGroup.isAutomaticModelRunsEnabled());
         setMinNewLocations(diseaseGroup.getMinNewLocationsTrigger());
         setMinDataVolume(diseaseGroup.getMinDataVolume());
+        setMinEnvironmentalSuitability(diseaseGroup.getMinEnvironmentalSuitability());
+        setMinDistanceFromDiseaseExtent(diseaseGroup.getMinDistanceFromDiseaseExtent());
         setMinDistinctCountries(diseaseGroup.getMinDistinctCountries());
         setHighFrequencyThreshold(diseaseGroup.getHighFrequencyThreshold());
         setMinHighFrequencyCountries(diseaseGroup.getMinHighFrequencyCountries());
@@ -158,6 +162,22 @@ public class JsonDiseaseGroup {
 
     public void setMinDataVolume(int minDataVolume) {
         this.minDataVolume = minDataVolume;
+    }
+
+    public Double getMinEnvironmentalSuitability() {
+        return minEnvironmentalSuitability;
+    }
+
+    public void setMinEnvironmentalSuitability(Double minEnvironmentalSuitability) {
+        this.minEnvironmentalSuitability = minEnvironmentalSuitability;
+    }
+
+    public Double getMinDistanceFromDiseaseExtent() {
+        return minDistanceFromDiseaseExtent;
+    }
+
+    public void setMinDistanceFromDiseaseExtent(Double minDistanceFromDiseaseExtent) {
+        this.minDistanceFromDiseaseExtent = minDistanceFromDiseaseExtent;
     }
 
     public Integer getMinDistinctCountries() {

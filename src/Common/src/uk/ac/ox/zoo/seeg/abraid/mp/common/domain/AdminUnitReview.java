@@ -19,7 +19,7 @@ import javax.persistence.*;
         ),
         @NamedQuery(
                 name = "getAdminUnitReviewsByDiseaseGroupId",
-                query = "from AdminUnitReview where diseaseGroup.id=:diseaseGroupId"
+                query = "from AdminUnitReview where diseaseGroup.id=:diseaseGroupId and response is not null"
         ),
         @NamedQuery(
                 name = "getAdminUnitReviewsByExpertIdAndDiseaseGroupId",
@@ -54,7 +54,7 @@ public class AdminUnitReview {
 
     // The expert's response.
     @ManyToOne
-    @JoinColumn(name = "response", nullable = false)
+    @JoinColumn(name = "response")
     private DiseaseExtentClass response;
 
     // The database row creation date.

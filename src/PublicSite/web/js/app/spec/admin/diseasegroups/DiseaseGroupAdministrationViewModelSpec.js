@@ -46,6 +46,8 @@ define([
             };
             var modelRunParametersViewModel = {
                 minNewLocations: wrap(1),
+                minEnvironmentalSuitability: wrap(0.2),
+                minDistanceFromDiseaseExtent: wrap(-300),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
@@ -71,6 +73,8 @@ define([
                 "\"parentDiseaseGroup\":{\"id\":2}," +
                 "\"validatorDiseaseGroup\":{\"id\":3}," +
                 "\"minNewLocations\":1," +
+                "\"minEnvironmentalSuitability\":0.2," +
+                "\"minDistanceFromDiseaseExtent\":-300," +
                 "\"minDataVolume\":2," +
                 "\"minDistinctCountries\":3," +
                 "\"minHighFrequencyCountries\":4," +
@@ -202,6 +206,8 @@ define([
             };
             var modelRunParametersViewModel = {
                 minNewLocations: wrap(""),
+                minEnvironmentalSuitability: wrap(""),
+                minDistanceFromDiseaseExtent: wrap(""),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),

@@ -100,12 +100,25 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     }
 
     @Test
-    public void getByDiseaseGroupIdReturnsExpectedList() {
+    public void saveAdminUnitReviewWithNullResponse() {
+        // Arrange
+        AdminUnitReview review = createAdminUnitReview(new Expert(1), 100, new DiseaseGroup(2), null);
+
+        // Act
+        adminUnitReviewDao.save(review);
+
+        // Assert
+        assertReviewSaved(review);
+    }
+
+    @Test
+    public void getByDiseaseGroupIdReturnsExpectedListExcludingNullResponses() {
         // Arrange
         AdminUnitReview review = createAndSaveAdminUnitReview(1, 1);
         createAndSaveAdminUnitReview(1, 2);
         AdminUnitReview review2 = createAndSaveAdminUnitReview(2, 1);
         createAndSaveAdminUnitReview(2, 2);
+        AdminUnitReview nullReview = createAndSaveAdminUnitReview(2, 1, null);
 
         // Act
         List<AdminUnitReview> reviews = adminUnitReviewDao.getByDiseaseGroupId(DISEASE_GROUP_ID);
@@ -114,19 +127,22 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         assertThat(reviews.size()).isEqualTo(2);
         assertThat(reviews).contains(review);
         assertThat(reviews).contains(review2);
+        assertThat(reviews).doesNotContain(nullReview);
     }
 
     @Test
-    public void getByExpertIdAndDiseaseGroupReturnsExpectedList() {
+    public void getByExpertIdAndDiseaseGroupReturnsExpectedListIncludingNullResponses() {
         // Arrange
         AdminUnitReview review = createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID);
+        AdminUnitReview nullReview = createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID, null);
 
         // Act
         List<AdminUnitReview> reviews = adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(EXPERT_ID, DISEASE_GROUP_ID);
 
         // Assert
-        assertThat(reviews.size()).isEqualTo(1);
+        assertThat(reviews.size()).isEqualTo(2);
         assertThat(reviews).contains(review);
+        assertThat(reviews).contains(nullReview);
     }
 
     @Test
@@ -142,15 +158,16 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     }
 
     @Test
-    public void getCountByExpertIdReturnsExpectedLong() {
+    public void getCountByExpertIdReturnsExpectedLongIncludingNullResponses() {
         // Arrange
         createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID);
+        createAndSaveAdminUnitReview(EXPERT_ID, DISEASE_GROUP_ID, null);
 
         // Act
-        Long count = adminUnitReviewDao.getCountByExpertId(1);
+        Long count = adminUnitReviewDao.getCountByExpertId(EXPERT_ID);
 
         // Assert
-        assertThat(count).isEqualTo(1);
+        assertThat(count).isEqualTo(2);
     }
 
     @Test
@@ -172,13 +189,17 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
         return review;
     }
 
-    private AdminUnitReview createAndSaveAdminUnitReview(Integer expertId, Integer diseaseGroupId) {
+    private AdminUnitReview createAndSaveAdminUnitReview(Integer expertId, Integer diseaseGroupId, DiseaseExtentClass response) {
         Expert expert = expertDao.getById(expertId);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         int adminUnitGlobalGaulCode = 2;
-        DiseaseExtentClass response = diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE);
         AdminUnitReview review = new AdminUnitReview(expert, adminUnitGlobalGaulCode, null, diseaseGroup, response);
         adminUnitReviewDao.save(review);
         return review;
+    }
+
+    private AdminUnitReview createAndSaveAdminUnitReview(Integer expertId, Integer diseaseGroupId) {
+        DiseaseExtentClass response = diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE);
+        return createAndSaveAdminUnitReview(expertId, diseaseGroupId, response);
     }
 }

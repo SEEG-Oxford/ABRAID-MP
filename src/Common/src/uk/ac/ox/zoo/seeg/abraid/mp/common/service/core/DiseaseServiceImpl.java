@@ -7,6 +7,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.*;
 
+import static java.util.Map.Entry;
+
 /**
  * Service class for diseases, including disease occurrences.
  *
@@ -112,7 +114,23 @@ public class DiseaseServiceImpl implements DiseaseService {
                 }
             }
         }
+        sortMapValueListsByName(map);
         return map;
+    }
+
+    private void sortMapValueListsByName(Map<String, List<DiseaseGroup>> map) {
+        for (Entry<String, List<DiseaseGroup>> entry : map.entrySet()) {
+            sortOnName(entry.getValue());
+        }
+    }
+
+    private void sortOnName(List<DiseaseGroup> diseaseGroups) {
+        Collections.sort(diseaseGroups, new Comparator<DiseaseGroup>() {
+            @Override
+            public int compare(DiseaseGroup o1, DiseaseGroup o2) {
+                return o1.getShortNameForDisplay().toLowerCase().compareTo(o2.getShortNameForDisplay().toLowerCase());
+            }
+        });
     }
 
     /**
