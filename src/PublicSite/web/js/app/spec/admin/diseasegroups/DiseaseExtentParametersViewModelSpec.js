@@ -57,7 +57,7 @@ define([
                 expectRule(vm.lowerOccurrenceScore, "min", 0);
                 expectRule(vm.lowerOccurrenceScore, "max", vm.higherOccurrenceScore);
 
-                expectRule(vm.minValidationWeighting, "digit", false);
+                expectRule(vm.minValidationWeighting, "number", true);
                 expectRule(vm.minValidationWeighting, "min", 0);
                 expectRule(vm.minValidationWeighting, "max", 1);
 

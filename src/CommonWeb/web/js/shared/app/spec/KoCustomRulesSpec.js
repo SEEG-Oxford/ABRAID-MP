@@ -183,7 +183,7 @@ define([
             it("has a suitable failure message", function () {
                 expect(ko.validation.rules.usernameComplexity.message)
                     .toContain("Username must be between 3 and 15 characters long and consist of only letters, " +
-                        "numbers, '_' or '-'");
+                               "numbers, '_' or '-'");
             });
         });
 
