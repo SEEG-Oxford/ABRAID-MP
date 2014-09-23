@@ -34,9 +34,9 @@ define([
                 });
                 injector.mock("shared/app/BaseFileFormViewModel", baseSpy);
 
-                injector.require(["app/tools/UploadCSVViewModel"],
-                    function (UploadCSVViewModel) {
-                        vm = new UploadCSVViewModel("baseUrl");
+                injector.require(["app/tools/UploadCsvViewModel"],
+                    function (UploadCsvViewModel) {
+                        vm = new UploadCsvViewModel("baseUrl");
                         expect(baseSpy.calls.argsFor(0)[0]).toBe("baseUrl");
                         expect(baseSpy.calls.argsFor(0)[1]).toBe("tools/uploadcsv/upload");
                         expect(baseSpy.calls.argsFor(0)[2].success).toBe(

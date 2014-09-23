@@ -97,7 +97,7 @@ define([
                     // Unwrap if necessary
                     .map(ko.utils.recursiveUnwrap)
                     // Make lowercase if the operation is to be case-insensitive
-                    .map(function (p) { return caseInsensitive ? p.toLowerCase(): p; })
+                    .map(function (p) { return (p === undefined || !caseInsensitive) ? p : p.toLowerCase(); })
                     // Search for the input value
                     .contains(caseInsensitive ? val.toLowerCase(): val)
                     // Return true if found, otherwise false
