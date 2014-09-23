@@ -16,10 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -88,6 +85,41 @@ public class DataValidationControllerTest {
 
         // Assert
         verify(model, times(1)).addAttribute("userSeeg", true);
+    }
+
+    @Test
+    public void diseaseInterestsAndAllOtherDiseasesAddedToDataModelInAlphabeticalOrder() {
+        // Arrange
+        Model model = mock(Model.class);
+
+        ValidatorDiseaseGroup a = new ValidatorDiseaseGroup("a");
+        ValidatorDiseaseGroup b = new ValidatorDiseaseGroup("b");
+        ValidatorDiseaseGroup c = new ValidatorDiseaseGroup("c");
+        ValidatorDiseaseGroup d = new ValidatorDiseaseGroup("d");
+        ValidatorDiseaseGroup e = new ValidatorDiseaseGroup("e");
+
+        List<ValidatorDiseaseGroup> diseaseInterests = createList(d, b);
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = createList(c, b, a, e, d);
+
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(validatorDiseaseGroups);
+
+        ExpertService expertService = mock(ExpertService.class);
+        when(expertService.getExpertById(anyInt())).thenReturn(new Expert());
+        when(expertService.getDiseaseInterests(anyInt())).thenReturn(diseaseInterests);
+
+        // Act
+        createTarget(null, diseaseService, expertService).showPage(model);
+
+        // Assert
+        verify(model).addAttribute("diseaseInterests", Arrays.asList(b, d));
+        verify(model).addAttribute("allOtherDiseases", Arrays.asList(a, c, e));
+    }
+
+    private List<ValidatorDiseaseGroup> createList(ValidatorDiseaseGroup... groups) {
+        List<ValidatorDiseaseGroup> list = new ArrayList<>();
+        Collections.addAll(list, groups);
+        return list;
     }
 
     @Test
