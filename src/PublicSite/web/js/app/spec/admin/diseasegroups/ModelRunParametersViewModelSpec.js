@@ -7,9 +7,15 @@ define([
 ], function (ko, ModelRunParametersViewModel) {
     "use strict";
 
-    var expectValidationRules = function (arg) {
+    var expectValidationRulesForNonNegativeInteger = function (arg) {
         expect(arg).toHaveValidationRule({name: "digit", params: true});
         expect(arg).toHaveValidationRule({name: "min", params: 0});
+    };
+
+    var expectValidationRulesForNumberBetweenZeroAndOne = function (arg) {
+        expect(arg).toHaveValidationRule({name: "number", params: true});
+        expect(arg).toHaveValidationRule({name: "min", params: 0});
+        expect(arg).toHaveValidationRule({name: "max", params: 1});
     };
 
     describe("The 'model run parameters' view model", function () {
@@ -26,17 +32,20 @@ define([
                 expect(vm.minHighFrequencyCountries).toBeObservable();
                 expect(vm.highFrequencyThreshold).toBeObservable();
                 expect(vm.occursInAfrica).toBeObservable();
+                expect(vm.useMachineLearning).toBeObservable();
+                expect(vm.maxEnvironmentalSuitabilityWithoutML).toBeObservable();
             });
 
             it("with appropriate validation rules", function () {
-                expectValidationRules(vm.minNewLocations);
-                expectValidationRules(vm.minDataVolume);
-                expectValidationRules(vm.minDistinctCountries);
-                expectValidationRules(vm.minHighFrequencyCountries);
-                expectValidationRules(vm.highFrequencyThreshold);
+                expectValidationRulesForNonNegativeInteger(vm.minNewLocations);
+                expectValidationRulesForNonNegativeInteger(vm.minDataVolume);
+                expectValidationRulesForNonNegativeInteger(vm.minDistinctCountries);
+                expectValidationRulesForNonNegativeInteger(vm.minHighFrequencyCountries);
+                expectValidationRulesForNonNegativeInteger(vm.highFrequencyThreshold);
 
-                expect(vm.minEnvironmentalSuitability).toHaveValidationRule({name: "number", params: true});
-                expect(vm.minEnvironmentalSuitability).toHaveValidationRule({name: "min", params: 0});
+                expectValidationRulesForNumberBetweenZeroAndOne(vm.minEnvironmentalSuitability);
+                expectValidationRulesForNumberBetweenZeroAndOne(vm.maxEnvironmentalSuitabilityWithoutML);
+
                 expect(vm.minDistanceFromDiseaseExtent).toHaveValidationRule({name: "number", params: true});
                 expect(vm.minDataVolume).toHaveValidationRule({name: "required", params: true});
             });
@@ -52,7 +61,9 @@ define([
                 minDistinctCountries: "3",
                 minHighFrequencyCountries: "4",
                 highFrequencyThreshold: "5",
-                occursInAfrica: true
+                occursInAfrica: true,
+                useMachineLearning: true,
+                maxEnvironmentalSuitabilityWithoutML: "0.7"
             };
             var vm = new ModelRunParametersViewModel(eventName);
 
@@ -68,6 +79,8 @@ define([
             expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
             expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
             expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
+            expect(vm.useMachineLearning()).toBe(diseaseGroup.useMachineLearning);
+            expect(vm.maxEnvironmentalSuitabilityWithoutML()).toBe(diseaseGroup.maxEnvironmentalSuitabilityWithoutML);
         });
 
         describe("holds the computed 'high frequency threshold' which", function () {

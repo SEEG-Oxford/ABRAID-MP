@@ -10,11 +10,13 @@ define([
         var self = this;
 
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
-        self.minEnvironmentalSuitability = ko.observable().extend({ number: true, min: 0 });
+        self.minEnvironmentalSuitability = ko.observable().extend({ number: true, min: 0, max: 1 });
         self.minDistanceFromDiseaseExtent = ko.observable().extend({ number: true });
         self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 0 });
         self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
+        self.useMachineLearning = ko.observable();
+        self.maxEnvironmentalSuitabilityWithoutML = ko.observable().extend({ number: true, min: 0, max: 1 });
 
         self.minHighFrequencyCountriesValue = ko.observable();
         self.minHighFrequencyCountries = ko.computed({
@@ -39,6 +41,9 @@ define([
             self.minHighFrequencyCountries((diseaseGroup.minHighFrequencyCountries || "").toString());
             self.highFrequencyThreshold((diseaseGroup.highFrequencyThreshold || "").toString());
             self.occursInAfrica(diseaseGroup.occursInAfrica);
+            self.useMachineLearning(diseaseGroup.useMachineLearning);
+            self.maxEnvironmentalSuitabilityWithoutML(
+                (diseaseGroup.maxEnvironmentalSuitabilityWithoutML || "").toString());
         });
     };
 });
