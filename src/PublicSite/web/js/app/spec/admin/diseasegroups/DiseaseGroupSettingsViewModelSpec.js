@@ -26,13 +26,13 @@ define([
             it("with appropriate validation rules", function () {
                 expect(vm.name).toHaveValidationRule({ name: "required", params: true });
                 expect(vm.name).toHaveValidationRule({ name: "isUniqueProperty",
-                    params: { array: diseaseGroups, property: "name", id: vm.id }});
+                    params: { array: diseaseGroups, property: "name", id: vm.id, caseInsensitive: true }});
                 expect(vm.publicName).toHaveValidationRule({ name: "isUniqueProperty",
-                    params: { array: diseaseGroups, property: "publicName", id: vm.id }});
+                    params: { array: diseaseGroups, property: "publicName", id: vm.id, caseInsensitive: true }});
                 expect(vm.shortName).toHaveValidationRule({ name: "isUniqueProperty",
-                    params: { array: diseaseGroups, property: "shortName", id: vm.id }});
+                    params: { array: diseaseGroups, property: "shortName", id: vm.id, caseInsensitive: true }});
                 expect(vm.abbreviation).toHaveValidationRule({ name: "isUniqueProperty",
-                    params: { array: diseaseGroups, property: "abbreviation", id: vm.id }});
+                    params: { array: diseaseGroups, property: "abbreviation", id: vm.id, caseInsensitive: true }});
             });
         });
 

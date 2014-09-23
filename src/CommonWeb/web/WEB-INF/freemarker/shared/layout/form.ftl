@@ -32,14 +32,14 @@
     </@formGroupGeneric>
 </#macro>
 
-<#macro formGroupFile id label bind>
+<#macro formGroupFile id label bind accept="">
     <@formGroupGeneric id label "glyphicon glyphicon-paperclip" 'class="fileinput fileinput-new input-group" data-provides="fileinput"'>
         <span class="form-control" data-trigger="fileinput">
             <span class="fileinput-filename"></span>
         </span>
         <span class="input-group-addon btn btn-default btn-file">
             <span>Select file</span>
-            <input type="file" name="file" id="file-picker" placeholder="Choose a file" autocomplete="off" data-bind="formFile: ${bind}, useFormData: useFormData">
+            <input type="file" name="file" id="file-picker" accept="${accept}" placeholder="Choose a file" autocomplete="off" data-bind="formFile: ${bind}, useFormData: useFormData">
         </span>
     </@formGroupGeneric>
 </#macro>

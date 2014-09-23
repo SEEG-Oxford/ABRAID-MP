@@ -28,17 +28,18 @@ public class UploadCsvControllerHelperAsyncWrapper extends AbstractAsynchronousA
      * Acquires the supplied CSV data. Sends an e-mail when completed (either successfully or unsuccessfully).
      *
      * @param csv The contents of the CSV file to upload.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @param userEmailAddress The e-mail address of the user that submitted the upload.
      * @param filePath The full path to the file to upload (used for information only).
      * @return A future for the background operation.
      */
-    public Future acquireCsvData(final String csv, final String userEmailAddress,
+    public Future acquireCsvData(final String csv, final boolean isGoldStandard, final String userEmailAddress,
                                  final String filePath) {
         return submitAsynchronousTask(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 try {
-                    uploadCsvControllerHelper.acquireCsvData(csv, userEmailAddress, filePath);
+                    uploadCsvControllerHelper.acquireCsvData(csv, isGoldStandard, userEmailAddress, filePath);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }

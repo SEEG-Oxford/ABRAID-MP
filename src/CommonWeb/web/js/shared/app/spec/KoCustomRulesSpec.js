@@ -218,6 +218,21 @@ define([
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(false);
             });
 
+            it("accepts a value if present in the list with different case (caseInsensitive = undefined)", function () {
+                var options = { array: diseaseGroups, id: 1, property: "name" };
+                expect(ko.validation.rules.isUniqueProperty.validator("nAme 2", options)).toBe(true);
+            });
+
+            it("accepts a value if present in the list with different case (caseInsensitive = false)", function () {
+                var options = { array: diseaseGroups, id: 1, property: "name", caseInsensitive: false };
+                expect(ko.validation.rules.isUniqueProperty.validator("nAme 2", options)).toBe(true);
+            });
+
+            it("rejects a value if present in the list with different case (caseInsensitive = true)", function () {
+                var options = { array: diseaseGroups, id: 1, property: "name", caseInsensitive: true };
+                expect(ko.validation.rules.isUniqueProperty.validator("nAme 2", options)).toBe(false);
+            });
+
             it("accepts a value if the only occurrence in the list is itself", function () {
                 var options = { array: diseaseGroups, id: 2, property: "name" };
                 expect(ko.validation.rules.isUniqueProperty.validator("Name 2", options)).toBe(true);

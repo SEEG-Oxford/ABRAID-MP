@@ -49,6 +49,7 @@ public class UploadCsvController extends AbstractController {
     /**
      * Uploads a CSV file to the database, by sending it to data acquisition.
      * @param file The CSV file to be uploaded.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
      * @throws Exception if upload could not be performed
      */
@@ -56,20 +57,20 @@ public class UploadCsvController extends AbstractController {
     @RequestMapping(value = "/tools/uploadcsv/upload", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<JsonFileUploadResponse> uploadCsvFile(MultipartFile file)
+    public ResponseEntity<JsonFileUploadResponse> uploadCsvFile(MultipartFile file, boolean isGoldStandard)
             throws Exception {
         if (file == null || file.isEmpty()) {
             return new ResponseEntity<>(new JsonFileUploadResponse(false, FILE_EMPTY_MESSAGE), HttpStatus.BAD_REQUEST);
         } else {
-            acquireCsvData(file);
+            acquireCsvData(file, isGoldStandard);
             return new ResponseEntity<>(new JsonFileUploadResponse(), HttpStatus.OK);
         }
     }
 
-    private void acquireCsvData(MultipartFile file) throws IOException {
+    private void acquireCsvData(MultipartFile file, boolean isGoldStandard) throws IOException {
         String csvFile = new String(file.getBytes(), StandardCharsets.UTF_8);
         String filePath = file.getOriginalFilename();
         String userEmailAddress = currentUserService.getCurrentUser().getUsername();
-        uploadCsvControllerHelperAsyncWrapper.acquireCsvData(csvFile, userEmailAddress, filePath);
+        uploadCsvControllerHelperAsyncWrapper.acquireCsvData(csvFile, isGoldStandard, userEmailAddress, filePath);
     }
 }

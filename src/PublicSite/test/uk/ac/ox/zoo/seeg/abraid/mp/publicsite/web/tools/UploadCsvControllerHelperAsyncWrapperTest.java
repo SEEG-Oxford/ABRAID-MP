@@ -13,6 +13,7 @@ public class UploadCsvControllerHelperAsyncWrapperTest {
     @Test
     public void acquireCsvDataRunsSuccessfully() throws Exception {
         // Arrange
+        boolean isGoldStandard = false;
         UploadCsvControllerHelper helper = mock(UploadCsvControllerHelper.class);
         UploadCsvControllerHelperAsyncWrapper wrapper = new UploadCsvControllerHelperAsyncWrapper(helper);
         String csv = "Test csv";
@@ -20,27 +21,29 @@ public class UploadCsvControllerHelperAsyncWrapperTest {
         String filePath = "/path/to/filename.csv";
 
         // Act
-        wrapper.acquireCsvData(csv, emailAddress, filePath).get();
+        wrapper.acquireCsvData(csv, isGoldStandard, emailAddress, filePath).get();
 
         // Assert
-        verify(helper).acquireCsvData(eq(csv), eq(emailAddress), eq(filePath));
+        verify(helper).acquireCsvData(eq(csv), eq(isGoldStandard), eq(emailAddress), eq(filePath));
     }
 
     @Test
     public void acquireCsvDataCatchesThrownException() throws Exception {
         // Arrange
+        boolean isGoldStandard = true;
         UploadCsvControllerHelper helper = mock(UploadCsvControllerHelper.class);
         UploadCsvControllerHelperAsyncWrapper wrapper = new UploadCsvControllerHelperAsyncWrapper(helper);
         String csv = "Test csv";
         String emailAddress = "user@test.com";
         String filePath = "/path/to/filename.csv";
 
-        doThrow(new RuntimeException("Test")).when(helper).acquireCsvData(anyString(), anyString(), anyString());
+        doThrow(new RuntimeException("Test")).when(helper).acquireCsvData(anyString(), anyBoolean(), anyString(),
+                anyString());
 
         // Act
-        wrapper.acquireCsvData(csv, emailAddress, filePath).get();
+        wrapper.acquireCsvData(csv, isGoldStandard, emailAddress, filePath).get();
 
         // Assert
-        verify(helper).acquireCsvData(eq(csv), eq(emailAddress), eq(filePath));
+        verify(helper).acquireCsvData(eq(csv), eq(isGoldStandard), eq(emailAddress), eq(filePath));
     }
 }

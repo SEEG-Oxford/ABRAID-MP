@@ -36,7 +36,7 @@ define([
         var baseBuildAjaxArgs = self.buildAjaxArgs;
         self.buildAjaxArgs = function () {
             var args = baseBuildAjaxArgs();
-            // Prevent jquery from turning the data in to key/value pairs
+            // Prevent jquery from turning the data into key/value pairs
             args.processData = false;
             // Prevent jquery from adding its default content type
             args.contentType = false;

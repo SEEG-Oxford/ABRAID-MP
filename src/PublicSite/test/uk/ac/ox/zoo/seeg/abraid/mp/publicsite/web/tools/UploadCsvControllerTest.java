@@ -47,7 +47,7 @@ public class UploadCsvControllerTest {
     @Test
     public void uploadCsvFileReturnsBadRequestIfFileIsNull() throws Exception {
         // Act
-        ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(null);
+        ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(null, false);
 
         // Assert
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -60,7 +60,7 @@ public class UploadCsvControllerTest {
         MultipartFile file = new MockMultipartFile("filename", new byte[] {});
 
         // Act
-        ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(file);
+        ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(file, false);
 
         // Assert
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -69,6 +69,15 @@ public class UploadCsvControllerTest {
 
     @Test
     public void uploadCsvFileReturnsOKIfSuccessful() throws Exception {
+        uploadCsvFileSuccessful(false);
+    }
+
+    @Test
+    public void uploadGoldStandardCsvFileReturnsOKIfSuccessful() throws Exception {
+        uploadCsvFileSuccessful(false);
+    }
+
+    private void uploadCsvFileSuccessful(boolean isGoldStandard) throws Exception {
         // Arrange
         String csv = "Test CSV";
         String filename = "filename.csv";
@@ -77,12 +86,12 @@ public class UploadCsvControllerTest {
                 csv.getBytes());
 
         // Act
-        ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(file);
+        ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(file, isGoldStandard);
 
         // Assert
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody().getStatus()).isEqualTo(JsonFileUploadResponse.SUCCESS);
-        verify(uploadCsvControllerHelperAsyncWrapper).acquireCsvData(eq(csv), eq(USER_EMAIL_ADDRESS),
-                eq(filePath));
+        verify(uploadCsvControllerHelperAsyncWrapper).acquireCsvData(eq(csv), eq(isGoldStandard),
+                eq(USER_EMAIL_ADDRESS), eq(filePath));
     }
 }

@@ -31,12 +31,15 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      * If automatic model runs are enabled, all validation parameters are set. If they are disabled, then only
      * isValidated is set to true which marks it as ready for an initial model run (when requested).
      * @param occurrence The disease occurrence.
+     * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
      * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
     @Override
-    public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
+    public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
         if (isEligibleForValidation(occurrence)) {
-            if (automaticModelRunsEnabled(occurrence)) {
+            if (isGoldStandard) {
+                addGoldStandardParameters(occurrence);
+            } else if (automaticModelRunsEnabled(occurrence)) {
                 addValidationParameters(occurrence, null);
             } else {
                 occurrence.setValidated(true);
@@ -77,6 +80,14 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
         return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
+    }
+
+    private void addGoldStandardParameters(DiseaseOccurrence occurrence) {
+        // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
+        // final weightings to 1 and isValidated to true.
+        occurrence.setFinalWeighting(1.0);
+        occurrence.setFinalWeightingExcludingSpatial(1.0);
+        occurrence.setValidated(true);
     }
 
     private Double findMachineWeighting(DiseaseOccurrence occurrence) {

@@ -47,22 +47,26 @@ define([
         self.name = ko.observable().extend({ required: true, isUniqueProperty: {
             array: diseaseGroups,
             property: "name",
-            id: self.id
+            id: self.id,
+            caseInsensitive: true
         }});
         self.publicName = ko.observable().extend({ isUniqueProperty: {
             array: diseaseGroups,
             property: "publicName",
-            id: self.id
+            id: self.id,
+            caseInsensitive: true
         }});
         self.shortName = ko.observable().extend({ isUniqueProperty: {
             array: diseaseGroups,
             property: "shortName",
-            id: self.id
+            id: self.id,
+            caseInsensitive: true
         }});
         self.abbreviation = ko.observable().extend({ isUniqueProperty: {
             array: diseaseGroups,
             property: "abbreviation",
-            id: self.id
+            id: self.id,
+            caseInsensitive: true
         }});
         self.groupTypes = groupTypes;
         self.selectedType = ko.observable();

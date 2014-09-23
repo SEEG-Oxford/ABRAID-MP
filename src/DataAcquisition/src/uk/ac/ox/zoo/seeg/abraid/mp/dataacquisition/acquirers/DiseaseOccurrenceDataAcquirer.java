@@ -46,6 +46,16 @@ public class DiseaseOccurrenceDataAcquirer {
      * @return True if the disease occurrence was saved, otherwise false.
      */
     public boolean acquire(DiseaseOccurrence occurrence) {
+        return acquire(occurrence, false);
+    }
+
+    /**
+     * Acquires a disease occurrence, saving it to the database if appropriate.
+     * @param occurrence The occurrence to acquire.
+     * @param isGoldStandard Whether or not this disease occurrence is from a "gold standard" data set.
+     * @return True if the disease occurrence was saved, otherwise false.
+     */
+    public boolean acquire(DiseaseOccurrence occurrence, boolean isGoldStandard) {
         if (occurrence != null) {
             Location location = continueLocationConversion(occurrence.getLocation());
             occurrence.setLocation(location);
@@ -53,7 +63,7 @@ public class DiseaseOccurrenceDataAcquirer {
             if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
                 // Add validation parameters to the occurrence and save it all. Note that the location is saved with
                 // the disease occurrence.
-                diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
+                diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence, isGoldStandard);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 return true;
             }

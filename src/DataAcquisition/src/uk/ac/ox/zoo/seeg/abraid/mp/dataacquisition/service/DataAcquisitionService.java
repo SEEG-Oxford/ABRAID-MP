@@ -22,8 +22,9 @@ public interface DataAcquisitionService {
     /**
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @return A message upon the success of the data acquisition.
      * @throws DataAcquisitionException Upon failure of the data acquisition.
      */
-    String acquireCsvData(String csv) throws DataAcquisitionException;
+    String acquireCsvData(String csv, boolean isGoldStandard) throws DataAcquisitionException;
 }
