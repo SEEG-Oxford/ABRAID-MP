@@ -111,6 +111,16 @@ public class DiseaseGroup {
     @OneToOne(mappedBy = "diseaseGroup", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DiseaseExtent diseaseExtentParameters;
 
+    // True if machine learning should be used to determine whether or not to send a disease occurrence to the Data
+    // Validator, otherwise false
+    @Column(name = "use_machine_learning")
+    private boolean useMachineLearning = true;
+
+    // If useMachineLearning is false, occurrences whose environmental suitability is less than this value will be
+    // sent to the Data Validator
+    @Column(name = "max_env_suitability_without_ml")
+    private Double maxEnvironmentalSuitabilityWithoutML;
+
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
     @Generated(value = GenerationTime.INSERT)
@@ -340,6 +350,26 @@ public class DiseaseGroup {
         this.occursInAfrica = occursInAfrica;
     }
 
+    /**
+     * Whether to use machine learning for sending occurrences to the Data Validator.
+     * @return True if machine learning should be used for sending occurrences to the Data Validator.
+     */
+    public boolean useMachineLearning() {
+        return useMachineLearning;
+    }
+
+    public void setUseMachineLearning(boolean useMachineLearning) {
+        this.useMachineLearning = useMachineLearning;
+    }
+
+    public Double getMaxEnvironmentalSuitabilityWithoutML() {
+        return maxEnvironmentalSuitabilityWithoutML;
+    }
+
+    public void setMaxEnvironmentalSuitabilityWithoutML(Double maxEnvironmentalSuitabilityWithoutML) {
+        this.maxEnvironmentalSuitabilityWithoutML = maxEnvironmentalSuitabilityWithoutML;
+    }
+
     public DateTime getCreatedDate() {
         return createdDate;
     }
@@ -349,11 +379,12 @@ public class DiseaseGroup {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseGroup)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseGroup that = (DiseaseGroup) o;
 
         if (minDataVolume != that.minDataVolume) return false;
+        if (useMachineLearning != that.useMachineLearning) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
         if (automaticModelRunsStartDate != null ? !automaticModelRunsStartDate.equals(that.automaticModelRunsStartDate) : that.automaticModelRunsStartDate != null)
             return false;
@@ -366,6 +397,8 @@ public class DiseaseGroup {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
         if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
+            return false;
+        if (maxEnvironmentalSuitabilityWithoutML != null ? !maxEnvironmentalSuitabilityWithoutML.equals(that.maxEnvironmentalSuitabilityWithoutML) : that.maxEnvironmentalSuitabilityWithoutML != null)
             return false;
         if (minDistanceFromDiseaseExtent != null ? !minDistanceFromDiseaseExtent.equals(that.minDistanceFromDiseaseExtent) : that.minDistanceFromDiseaseExtent != null)
             return false;
@@ -413,6 +446,8 @@ public class DiseaseGroup {
         result = 31 * result + (minHighFrequencyCountries != null ? minHighFrequencyCountries.hashCode() : 0);
         result = 31 * result + (occursInAfrica != null ? occursInAfrica.hashCode() : 0);
         result = 31 * result + (diseaseExtentParameters != null ? diseaseExtentParameters.hashCode() : 0);
+        result = 31 * result + (useMachineLearning ? 1 : 0);
+        result = 31 * result + (maxEnvironmentalSuitabilityWithoutML != null ? maxEnvironmentalSuitabilityWithoutML.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

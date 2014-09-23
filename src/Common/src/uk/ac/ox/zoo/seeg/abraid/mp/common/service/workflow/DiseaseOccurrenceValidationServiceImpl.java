@@ -70,8 +70,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
         occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
         occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-        occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-        occurrence.setValidated(findIsValidated(occurrence));
+        findAndSetMachineWeightingAndIsValidated(occurrence);
     }
 
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
@@ -90,25 +89,38 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setValidated(true);
     }
 
-    private Double findMachineWeighting(DiseaseOccurrence occurrence) {
-        if (noModelRunsYet(occurrence)) {
-            return null;
+    private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
+        // The default values (the occurrence is ready for sending to the model)
+        occurrence.setMachineWeighting(null);
+        occurrence.setValidated(true);
+
+        if (modelHasBeenRun(occurrence)) {
+            if (!occurrence.getDiseaseGroup().useMachineLearning()) {
+                if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
+                    occurrence.setValidated(false);
+                } else {
+                    occurrence.setMachineWeighting(1.0);
+                }
+            }
         }
-        // For now, all machine weightings are null
-        return null;
     }
 
-    private boolean findIsValidated(DiseaseOccurrence occurrence) {
-        if (noModelRunsYet(occurrence)) {
-            return true;
+    private boolean shouldSendToDataValidatorWithoutUsingMachineLearning(DiseaseOccurrence occurrence) {
+        // Send to the validator if environmental suitability does not exceed the maximum threshold
+        Double maxEnvironmentalSuitability = occurrence.getDiseaseGroup().getMaxEnvironmentalSuitabilityWithoutML();
+        if (occurrence.getEnvironmentalSuitability() != null && maxEnvironmentalSuitability != null) {
+            if (occurrence.getEnvironmentalSuitability() <= maxEnvironmentalSuitability) {
+                return true;
+            }
         }
-        // For now hardcode to true, but the proper behaviour will be implemented in a future story.
-        return true;
+
+        // Otherwise, send to the validator if the occurrence is outside of the disease extent
+        return (occurrence.getDistanceFromDiseaseExtent() != null && occurrence.getDistanceFromDiseaseExtent() > 0);
     }
 
-    private boolean noModelRunsYet(DiseaseOccurrence occurrence) {
-        return (occurrence.getEnvironmentalSuitability() == null) &&
-               (occurrence.getDistanceFromDiseaseExtent() == null);
+    private boolean modelHasBeenRun(DiseaseOccurrence occurrence) {
+        return (occurrence.getEnvironmentalSuitability() != null) ||
+                (occurrence.getDistanceFromDiseaseExtent() != null);
     }
 
     private DiseaseGroup validateAndGetDiseaseGroup(List<DiseaseOccurrence> occurrences) {

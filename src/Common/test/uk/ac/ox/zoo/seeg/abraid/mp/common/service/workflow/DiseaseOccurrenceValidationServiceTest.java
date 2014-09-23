@@ -210,6 +210,133 @@ public class DiseaseOccurrenceValidationServiceTest {
     }
 
     @Test
+    public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfBelowMaxES() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.39);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(-300.0);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.39);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(-300.0);
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isFalse();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
+    public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfOutsideDiseaseExtent() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.6);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.6);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(1.0);
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isFalse();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
+    public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfOutsideDiseaseExtentAndESIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(null);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(1.0);
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isFalse();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
+    public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfOutsideDiseaseExtentAndMaxESIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+        occurrence.getDiseaseGroup().setMaxEnvironmentalSuitabilityWithoutML(null);
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.6);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.6);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(1.0);
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isFalse();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
+    public void addValidationParametersWithChecksDoesNotSendToValidatorWithoutMLIfWithinTolerances() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.41);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(-1000.0);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.41);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(-1000.0);
+        assertThat(occurrence.getMachineWeighting()).isEqualTo(1);
+        assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
+    public void addValidationParametersWithChecksDoesNotSendToValidatorWithoutMLIfAboveMaxESAndDistanceFromExtentIsNull() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.5);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
+
+        // Act
+        boolean result = service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertThat(result).isTrue();
+        assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.5);
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isEqualTo(1);
+        assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+    }
+
+    @Test
     public void addValidationParametersSetsAllValidationParametersUsingRasterRegardlessOfOccurrenceValidity() {
         // Arrange
         int diseaseGroupId = 30;
@@ -271,6 +398,15 @@ public class DiseaseOccurrenceValidationServiceTest {
         DateTime automaticModelRunsStartDate = isAutomaticModelRunsEnabled ? DateTime.now() : null;
         diseaseGroup.setAutomaticModelRunsStartDate(automaticModelRunsStartDate);
         diseaseGroup.setGlobal(false);
+        diseaseGroup.setUseMachineLearning(true);
         return new DiseaseOccurrence(1, diseaseGroup, new Location(), new Alert(), null, null, null);
+    }
+
+    private DiseaseOccurrence createDiseaseOccurrenceWithoutMachineLearning() {
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
+        occurrence.getLocation().setHasPassedQc(true);
+        occurrence.getDiseaseGroup().setUseMachineLearning(false);
+        occurrence.getDiseaseGroup().setMaxEnvironmentalSuitabilityWithoutML(0.4);
+        return occurrence;
     }
 }
