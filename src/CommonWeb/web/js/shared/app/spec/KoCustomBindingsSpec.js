@@ -221,7 +221,7 @@ define([
 
         describe("the 'highlight' binding, which", function () {
             // Arrange
-            var expectedElement, injectorWithJQuerySpy
+            var expectedElement, injectorWithJQuerySpy;
             var removeSpy, addSpy, isSpy, parentSpy, animateSpy, scrollTopSpy, jqSpy, positionSpy, cssSpy;
             beforeEach(function () {
                 removeSpy = jasmine.createSpy("removeSpy");

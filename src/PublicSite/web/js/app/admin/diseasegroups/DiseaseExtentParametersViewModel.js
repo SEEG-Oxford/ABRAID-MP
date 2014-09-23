@@ -15,11 +15,11 @@ define(["ko"], function (ko) {
             .extend({ digit: true, min: 0, max: self.higherOccurrenceScore });
 
         self.minValidationWeighting = ko.observable()
-            .extend({ digit: false, min: 0, max: 1 });
+            .extend({ number: true, min: 0, max: 1 });
         self.minOccurrencesForPresence = ko.observable()
             .extend({ digit: true, min: 0 });
         self.minOccurrencesForPossiblePresence = ko.observable()
-            .extend({digit: true, min: 0, max: self.minOccurrencesForPresence });
+            .extend({ digit: true, min: 0, max: self.minOccurrencesForPresence });
 
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {

@@ -44,7 +44,7 @@ define([], function () {
                 higherOccurrenceScore:
                     parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
                 minValidationWeighting:
-                    parse(diseaseExtentParametersViewModel.minValidationWeighting()),
+                    parseNumber(diseaseExtentParametersViewModel.minValidationWeighting()),
                 minOccurrencesForPresence:
                     parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
                 minOccurrencesForPossiblePresence:
