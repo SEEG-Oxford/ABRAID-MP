@@ -111,7 +111,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
 
         Map<String, List<DiseaseGroup>> expectedMap = new HashMap<>();
         expectedMap.put("ascariasis", Arrays.asList(diseaseGroup1));
-        expectedMap.put("trypanosomiases", Arrays.asList(diseaseGroup2, diseaseGroup4, diseaseGroup5));
+        expectedMap.put("trypanosomiases", Arrays.asList(diseaseGroup4, diseaseGroup5, diseaseGroup2));
 
         when(diseaseGroupDao.getAll()).thenReturn(diseaseGroups);
 

@@ -23,6 +23,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -74,10 +76,10 @@ public class DataValidationController extends AbstractController {
             int expertId = user.getId();
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
-            List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
+            List<ValidatorDiseaseGroup> diseaseInterests = getSortedDiseaseInterests(expertId);
             model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
-                    getAllValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
+                    getSortedValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
             model.addAttribute("validatorDiseaseGroupMap", diseaseService.getValidatorDiseaseGroupMap());
         } else {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
@@ -90,11 +92,27 @@ public class DataValidationController extends AbstractController {
         return "datavalidation/content";
     }
 
-    private List<ValidatorDiseaseGroup> getAllValidatorDiseaseGroupsExcludingDiseaseInterests(
+    private List<ValidatorDiseaseGroup> getSortedDiseaseInterests(int expertId) {
+        List<ValidatorDiseaseGroup> diseaseInterests = expertService.getDiseaseInterests(expertId);
+        sortOnName(diseaseInterests);
+        return diseaseInterests;
+    }
+
+    private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroupsExcludingDiseaseInterests(
             List<ValidatorDiseaseGroup> diseaseInterests) {
         List<ValidatorDiseaseGroup> list = diseaseService.getAllValidatorDiseaseGroups();
         list.removeAll(diseaseInterests);
+        sortOnName(list);
         return list;
+    }
+
+    private void sortOnName(List<ValidatorDiseaseGroup> validatorDiseaseGroupList) {
+        Collections.sort(validatorDiseaseGroupList, new Comparator<ValidatorDiseaseGroup>() {
+            @Override
+            public int compare(ValidatorDiseaseGroup o1, ValidatorDiseaseGroup o2) {
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
+        });
     }
 
     /**
