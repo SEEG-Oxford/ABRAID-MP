@@ -42,7 +42,7 @@ define([
             it("subscribes to the 'admin-units-to-be-reviewed' event by " +
                "updating its value when the event fires", function () {
                 var featureArray = [ { properties : { name : "foo" } } ];
-                expect(vm.adminUnits()).not.toBeDefined();
+                expect(vm.adminUnits().length).toBe(0);
                 ko.postbox.publish("admin-units-to-be-reviewed", { data : featureArray });
                 expect(vm.adminUnits()).toEqual(featureArray);
             });
@@ -54,26 +54,6 @@ define([
                 expect(vm.adminUnits()).toEqual([ featureA, featureB ]);
             });
         });
-
-        describe("holds the number of admin units in the table, which", function () {
-            it("responds to changes in the list of admin units", function () {
-                vm.adminUnits([]);
-                expect(vm.adminUnitsCount()).toEqual(0);
-
-                vm.adminUnits([ 1, 2, 3 ]);
-                expect(vm.adminUnitsCount()).toEqual(3);
-
-                vm.adminUnits([ { name: "a" }, { name: "b" }, { name: "c" }, { name: "d" }, { name: "e" } ]);
-                expect(vm.adminUnitsCount()).toEqual(5);
-
-                vm.adminUnits([ wrap({ name: "a" }), wrap({ name: "b" }) ]);
-                expect(vm.adminUnitsCount()).toEqual(2);
-            });
-        });
-
-        function wrap() {
-            return function (arg) { return arg; };
-        }
 
         describe("holds the selected administrative unit which", function () {
             it("is an observable", function () {
