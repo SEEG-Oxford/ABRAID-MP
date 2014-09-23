@@ -246,9 +246,12 @@ public class DataValidationController extends AbstractController {
 
         // Convert the submitted string to its matching DiseaseExtentClass row. Return a Bad Request ResponseEntity if
         // the review value is not found in the database.
-        DiseaseExtentClass adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
-        if (adminUnitReviewResponse == null) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        DiseaseExtentClass adminUnitReviewResponse = null;
+        if (review != null) {
+            adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
+            if (adminUnitReviewResponse == null) {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
         }
 
         expertService.saveAdminUnitReview(expertId, diseaseGroupId, gaulCode, adminUnitReviewResponse);
