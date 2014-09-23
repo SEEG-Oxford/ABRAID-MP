@@ -33,7 +33,7 @@ define([
         }
 
         self.counter = counter;
-        self.adminUnits = ko.observable();
+        self.adminUnits = ko.observableArray();
         self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected");
         self.hasSelectedAdminUnit = ko.computed(function () {
             return self.selectedAdminUnit() !== null;

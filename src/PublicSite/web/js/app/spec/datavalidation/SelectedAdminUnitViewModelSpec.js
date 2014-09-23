@@ -42,7 +42,7 @@ define([
             it("subscribes to the 'admin-units-to-be-reviewed' event by " +
                "updating its value when the event fires", function () {
                 var featureArray = [ { properties : { name : "foo" } } ];
-                expect(vm.adminUnits()).not.toBeDefined();
+                expect(vm.adminUnits().length).toBe(0);
                 ko.postbox.publish("admin-units-to-be-reviewed", { data : featureArray });
                 expect(vm.adminUnits()).toEqual(featureArray);
             });

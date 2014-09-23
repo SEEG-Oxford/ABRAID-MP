@@ -24,21 +24,21 @@
             <table id="adminUnitTable" class="table table-responsive table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th class="occurrencesColumn">Occurrences</th>
+                        <th>Occurrences</th>
                         <th>Administrative Unit</th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: adminUnits" >
                     <tr data-bind="click: function () { $parent.selectedAdminUnit($data); },
                                    highlight: { target: $parent.selectedAdminUnit(), compareOn: 'id' }">
-                        <td class="occurrencesColumn" data-bind="text: count"></td>
+                        <td data-bind="text: count"></td>
                         <td data-bind="text: name"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <span class="sidePanelTextAnnotation">
-            <span data-bind="text: 'X'">X</span> of <span>Y</span> entries remaining.
+        <span class="sidePanelTextAnnotation" data-bind="visible: adminUnits().length > 0">
+            <span data-bind="text: adminUnits().length + ' region' + (adminUnits().length !== 1 ? 's' : '') + ' remaining'"></span>
         </span>
         <div data-bind="if: hasSelectedAdminUnit()">
         <@security.authorize ifAnyGranted="ROLE_USER">

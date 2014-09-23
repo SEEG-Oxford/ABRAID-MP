@@ -97,10 +97,6 @@ html, body, #dataValidation {
     border-bottom: 2px solid #aaaaaa;
     border-top: 2px solid #aaaaaa;
 }
-#adminUnitTable .occurrencesColumn {
-    width: 100px;
-    text-align: center;
-}
 #adminUnitTable td {
     border-top-color: #aaaaaa !important;
 }
@@ -112,6 +108,13 @@ html, body, #dataValidation {
 }
 #adminUnitTable tbody tr:last-child {
     border-bottom-width: 0px !important;
+}
+#adminUnitTable tbody tr td:first-child, #adminUnitTable thead tr th:first-child {
+    width: 100px;
+    text-align: center;
+}
+#adminUnitTable tbody tr td:last-child, #adminUnitTable thead tr th:last-child  {
+    min-width: 180px;
 }
 .sidePanelText {
     margin: 5px;
