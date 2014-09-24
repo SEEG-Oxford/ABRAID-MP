@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,12 +33,12 @@ public class ModelRunGatekeeper {
     private static final String STARTING_MODEL_RUN_PREP = "Starting model run preparation";
     private static final String NOT_STARTING_MODEL_RUN_PREP = "Model run preparation will not be executed";
 
-    private static final int DAYS_BETWEEN_MODEL_RUNS = 7;
-
     private DiseaseService diseaseService;
+    private ModelRunService modelRunService;
 
-    public ModelRunGatekeeper(DiseaseService diseaseService) {
+    public ModelRunGatekeeper(DiseaseService diseaseService, ModelRunService modelRunService) {
         this.diseaseService = diseaseService;
+        this.modelRunService = modelRunService;
     }
 
     /**
@@ -69,7 +70,7 @@ public class ModelRunGatekeeper {
             LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
             return true;
         } else {
-            DateTime comparisonDate = subtractDaysBetweenModelRuns(DateTime.now());
+            DateTime comparisonDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
             DateTime lastModelRunPrepDay = lastModelRunPrepDate.withTimeAtStartOfDay();
             final boolean weekHasElapsed = !comparisonDate.isBefore(lastModelRunPrepDay);
             LOGGER.info(String.format(weekHasElapsed ? WEEK_HAS_ELAPSED : WEEK_HAS_NOT_ELAPSED, lastModelRunPrepDate));
@@ -98,16 +99,12 @@ public class ModelRunGatekeeper {
     }
 
     private long getDistinctLocationsCount(int diseaseGroupId) {
-        DateTime endDate = subtractDaysBetweenModelRuns(DateTime.now());
-        DateTime startDate = subtractDaysBetweenModelRuns(endDate);
+        DateTime endDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
+        DateTime startDate = modelRunService.subtractDaysBetweenModelRuns(endDate);
 
         List<DiseaseOccurrence> occurrences =
                 diseaseService.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
         Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
         return locations.size();
-    }
-
-    private DateTime subtractDaysBetweenModelRuns(DateTime endDate) {
-        return endDate.minusDays(DAYS_BETWEEN_MODEL_RUNS).withTimeAtStartOfDay();
     }
 }

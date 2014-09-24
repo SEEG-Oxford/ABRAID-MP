@@ -32,7 +32,7 @@ public class ModelRunWorkflowServiceTest {
     private DiseaseService diseaseService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private ModelRunWorkflowServiceImpl modelRunWorkflowService;
-    private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
+    private AutomaticModelRunsEnabler automaticModelRunsEnabler;
 
     @Before
     public void setUp() {
@@ -43,10 +43,9 @@ public class ModelRunWorkflowServiceTest {
         diseaseService = mock(DiseaseService.class);
         LocationService locationService = mock(LocationService.class);
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
-        diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
+        automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
         modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
-                reviewManager, diseaseService, locationService, diseaseExtentGenerator,
-                diseaseOccurrenceValidationService));
+                reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler));
     }
 
     @Test
@@ -139,62 +138,15 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void enableAutomaticModelRunsSavesAutomaticModelRunsStartDateOnDiseaseGroup() throws Exception {
+    public void enableAutomaticModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-
-        DateTime now = DateTime.now();
-        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         // Act
         modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
-        verify(diseaseService).saveDiseaseGroup(diseaseGroup);
-        assertThat(diseaseGroup.getAutomaticModelRunsStartDate()).isEqualTo(now);
-    }
-
-    @Test
-    public void enableAutomaticModelRunsSavesClassChangedDateOnAdminUnitDiseaseExtentClasses() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        AdminUnitDiseaseExtentClass extentClass = new AdminUnitDiseaseExtentClass();
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(Arrays.asList(extentClass));
-
-        DateTime now = DateTime.now();
-        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
-
-        // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
-
-        // Assert
-        verify(diseaseService).saveAdminUnitDiseaseExtentClass(extentClass);
-        assertThat(extentClass.getClassChangedDate()).isEqualTo(now);
-    }
-
-    @Test
-    public void enableAutomaticModelRunsAddsValidationParametersToDiseaseOccurrence() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false)).thenReturn(
-                Arrays.asList(occurrence));
-
-        DateTime now = DateTime.now();
-        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
-
-        // Act
-        modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
-
-        // Assert
-        verify(diseaseOccurrenceValidationService).addValidationParameters(Arrays.asList(occurrence));
-        verify(diseaseService).saveDiseaseOccurrence(occurrence);
+        verify(automaticModelRunsEnabler).enable(eq(diseaseGroupId));
     }
 
     @Test

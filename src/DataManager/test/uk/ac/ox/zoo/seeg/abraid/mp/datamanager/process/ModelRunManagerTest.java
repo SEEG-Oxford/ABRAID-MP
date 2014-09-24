@@ -4,10 +4,14 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
 import java.util.ArrayList;
@@ -31,7 +35,8 @@ public class ModelRunManagerTest {
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        ModelRunGatekeeper modelRunGatekeeper = new ModelRunGatekeeper(diseaseService);
+        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), mock(NativeSQL.class));
+        ModelRunGatekeeper modelRunGatekeeper = new ModelRunGatekeeper(diseaseService, modelRunService);
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService, diseaseService);
 

@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
@@ -129,5 +130,18 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
 
         // Assert
         assertThat(result).isTrue();
+    }
+
+    @Test
+    public void subtractDaysBetweenModelRuns() {
+        // Arrange
+        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
+        DateTime expectedResult = new DateTime("2014-10-02T00:00:00");
+
+        // Act
+        DateTime actualResult = modelRunService.subtractDaysBetweenModelRuns(inputDateTime);
+
+        // Assert
+        assertThat(actualResult.getMillis()).isEqualTo(expectedResult.getMillis());
     }
 }
