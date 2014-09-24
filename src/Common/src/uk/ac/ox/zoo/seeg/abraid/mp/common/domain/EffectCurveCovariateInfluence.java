@@ -27,6 +27,7 @@ public class EffectCurveCovariateInfluence extends AbstractCovariateInfluence {
 
     public EffectCurveCovariateInfluence(CsvEffectCurveCovariateInfluence csv, ModelRun modelRun) {
         super(csv, modelRun);
+        setCovariateValue(csv.getCovariateValue());
     }
 
     public Double getCovariateValue() {
@@ -36,7 +37,6 @@ public class EffectCurveCovariateInfluence extends AbstractCovariateInfluence {
     public void setCovariateValue(Double covariateValue) {
         this.covariateValue = covariateValue;
     }
-
 
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
