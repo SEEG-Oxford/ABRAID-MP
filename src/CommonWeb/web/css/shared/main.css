@@ -171,3 +171,22 @@ button.btn[type=submit] {
 .navbar-toggle .glyphicon {
     color: white;
 }
+@media (min-width: 450px) {
+    .collapse-links-only {
+        display: none !important;
+    }
+    .expand-links-only {
+        display: block !important;
+    }
+}
+@media (max-width: 450px) {
+    .collapse-links-only {
+        display: block !important;
+    }
+    .expand-links-only {
+        display: none !important;
+    }
+}
+#footer {
+    padding: 5px 15px;
+}
