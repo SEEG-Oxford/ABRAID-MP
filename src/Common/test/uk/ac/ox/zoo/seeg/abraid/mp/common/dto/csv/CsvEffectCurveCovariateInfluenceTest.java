@@ -6,6 +6,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for CsvEffectCurveCovariateInfluence.
+ * Copyright (c) 2014 University of Oxford
+ */
 public class CsvEffectCurveCovariateInfluenceTest {
     @Test
     public void readFromCSV() throws Exception {

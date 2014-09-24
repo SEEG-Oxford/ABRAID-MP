@@ -168,7 +168,8 @@ public class MainHandler {
             try {
                 List<CsvEffectCurveCovariateInfluence> csvEffectCurveCovariateInfluences =
                         CsvEffectCurveCovariateInfluence.readFromCSV(new String(file, UTF8));
-                List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences = with(csvEffectCurveCovariateInfluences)
+                List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences =
+                    with(csvEffectCurveCovariateInfluences)
                         .convert(new Converter<CsvEffectCurveCovariateInfluence, EffectCurveCovariateInfluence>() {
                             @Override
                             public EffectCurveCovariateInfluence convert(CsvEffectCurveCovariateInfluence csv) {
