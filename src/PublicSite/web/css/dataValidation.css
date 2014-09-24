@@ -10,8 +10,8 @@ html, body, #dataValidation {
 }
 #dataValidation  {
     padding-right: 280px;        /* Side panel width */
-    min-width: 800px;            /* Side panel width + layer selector width */
-    min-height: 775px;
+    min-width: 575px;            /* Side panel width + layer selector width */
+    min-height: 535px;
 }
 #layerSelector {
     position: absolute;
@@ -76,11 +76,17 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable tbody {
-    height: 400px;
     width: 100%;
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
+    cursor: pointer;
+    position: absolute;
+    top:26px;
+    bottom: 385px;
+    background-color: #e3e3e3;
+    border-bottom: 2px solid #aaaaaa;
+    border-top: 2px solid #aaaaaa;
 }
 #adminUnitTable thead {
      cursor: default;
@@ -89,13 +95,6 @@ html, body, #dataValidation {
 }
 #adminUnitTable thead th {
     border-bottom: none;
-}
-#adminUnitTable tbody {
-    cursor: pointer;
-    position: relative;
-    background-color: #e3e3e3;
-    border-bottom: 2px solid #aaaaaa;
-    border-top: 2px solid #aaaaaa;
 }
 #adminUnitTable td {
     border-top-color: #aaaaaa !important;
@@ -138,8 +137,12 @@ html, body, #dataValidation {
     float: right;
     padding-right: 5px;
 }
-#submitReviewSuccess,
-#reviewButtons {
+#remainingCount {
+    position: absolute;
+    width: 100%;
+    bottom: 335px;
+}
+#submitReviewSuccess, #reviewButtons {
     width: 100%;
     padding: 10px;
     position: absolute;
