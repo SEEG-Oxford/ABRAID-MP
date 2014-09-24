@@ -75,7 +75,8 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
                     ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME,
                     ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME,
                     ModelOutputConstants.VALIDATION_STATISTICS_FILENAME,
-                    ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME
+                    ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME,
+                    ModelOutputConstants.EFFECT_CURVES_FILENAME
             };
         } else {
             return new String[] {

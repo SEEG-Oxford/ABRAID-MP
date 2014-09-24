@@ -24,4 +24,7 @@ public final class ModelOutputConstants {
     /** The relative influence filename in the model outputs. */
     public static final String RELATIVE_INFLUENCE_FILENAME = "results/relative_influence.csv";
 
+    /** The effect curves filename in the model outputs. */
+    public static final String EFFECT_CURVES_FILENAME = "results/effect_curves.csv";
+
 }
