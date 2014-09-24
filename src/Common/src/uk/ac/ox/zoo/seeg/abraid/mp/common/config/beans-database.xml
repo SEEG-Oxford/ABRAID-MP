@@ -42,13 +42,13 @@
     <!-- Database configuration -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="configLocation" value="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/hibernate.cfg.xml" />
         <property name="hibernateProperties">
             <value>
                 hibernate.dialect = ${hibernate.dialect}
                 hibernate.show_sql = ${hibernate.show_sql}
             </value>
         </property>
+        <property name="packagesToScan" value="uk.ac.ox.zoo.seeg.abraid.mp.common.domain" />
     </bean>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
