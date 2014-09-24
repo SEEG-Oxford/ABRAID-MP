@@ -268,6 +268,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         CovariateInfluence covariateInfluence = new CovariateInfluence();
         covariateInfluence.setModelRun(modelRun);
         covariateInfluence.setCovariateName(covariateName);
+        covariateInfluence.setMeanInfluence(1.0);
+        covariateInfluence.setLowerQuantile(2.0);
+        covariateInfluence.setUpperQuantile(3.0);
         return covariateInfluence;
     }
 
