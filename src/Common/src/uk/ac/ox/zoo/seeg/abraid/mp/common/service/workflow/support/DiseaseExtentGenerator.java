@@ -38,9 +38,11 @@ public class DiseaseExtentGenerator {
      * @param diseaseGroup The disease group.
      * @param minimumOccurrenceDate The minimum occurrence date for the disease extent, as calculated from minimum
      *                              occurrence date of all the occurrences that can be sent to the model.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      */
-    public void generateDiseaseExtent(DiseaseGroup diseaseGroup, DateTime minimumOccurrenceDate) {
-        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup);
+    public void generateDiseaseExtent(DiseaseGroup diseaseGroup, DateTime minimumOccurrenceDate,
+                                      boolean useGoldStandardOccurrences) {
+        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup, useGoldStandardOccurrences);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
         // update existing extent
@@ -51,7 +53,7 @@ public class DiseaseExtentGenerator {
         }
     }
 
-    private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup) {
+    private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup, boolean useGoldStandardOccurrences) {
         int diseaseGroupId = diseaseGroup.getId();
 
         // Find current disease extent
@@ -71,7 +73,7 @@ public class DiseaseExtentGenerator {
         boolean hasModelBeenSuccessfullyRun = (modelRun != null);
 
         return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses,
-                hasModelBeenSuccessfullyRun);
+                hasModelBeenSuccessfullyRun, useGoldStandardOccurrences);
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
@@ -99,8 +101,11 @@ public class DiseaseExtentGenerator {
     }
 
     private void setInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences =
-                diseaseService.getDiseaseOccurrencesForDiseaseExtent(helper.getDiseaseGroup().getId(), null, null);
+        List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+                helper.getDiseaseGroup().getId(),
+                null,
+                null,
+                helper.useGoldStandardOccurrences());
         helper.setOccurrences(occurrences);
     }
 
@@ -121,7 +126,8 @@ public class DiseaseExtentGenerator {
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 minimumValidationWeighting,
-                minimumOccurrenceDate
+                minimumOccurrenceDate,
+                helper.useGoldStandardOccurrences()
         );
         helper.setOccurrences(occurrences);
     }

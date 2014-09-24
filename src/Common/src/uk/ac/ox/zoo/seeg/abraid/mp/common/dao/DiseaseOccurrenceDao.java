@@ -75,10 +75,12 @@ public interface DiseaseOccurrenceDao {
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
      * @param isGlobal True if the disease group is global, otherwise false.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
-           Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate, boolean isGlobal);
+           Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate, boolean isGlobal,
+           boolean useGoldStandardOccurrences);
 
     /**
      * Gets disease occurrences for the specified disease group whose isValidated flag is false.
@@ -101,9 +103,11 @@ public interface DiseaseOccurrenceDao {
     /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return Disease occurrences for a request to run the model.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId,
+                                                                    boolean useGoldStandardOccurrences);
 
     /**
      * Gets the list of new disease occurrences for the specified disease group.

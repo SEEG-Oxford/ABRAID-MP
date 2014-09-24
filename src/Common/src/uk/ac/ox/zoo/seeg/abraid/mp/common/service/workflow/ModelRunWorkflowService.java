@@ -31,6 +31,15 @@ public interface ModelRunWorkflowService {
     void prepareForAndRequestAutomaticModelRun(int diseaseGroupId) throws ModelRunRequesterException;
 
     /**
+     * Prepares for and requests a model run using "gold standard" disease occurrences, for the specified disease group.
+     * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
+     * been uploaded to send to the model.
+     * @param diseaseGroupId The disease group ID.
+     * @throws ModelRunRequesterException if the model run could not be requested.
+     */
+    void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId) throws ModelRunRequesterException;
+
+    /**
      * Set model runs to be triggered automatically for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      */
@@ -53,4 +62,12 @@ public interface ModelRunWorkflowService {
      * @param diseaseGroup The disease group.
      */
     void generateDiseaseExtent(DiseaseGroup diseaseGroup);
+
+    /**
+     * Generate the disease extent for the specified disease group, only using "gold standard" disease occurrences.
+     * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
+     * been uploaded to send to the model.
+     * @param diseaseGroup The disease group.
+     */
+    void generateDiseaseExtentUsingGoldStandardOccurrences(DiseaseGroup diseaseGroup);
 }

@@ -4,11 +4,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -23,20 +19,6 @@ import static org.mockito.Mockito.when;
 public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
     @Autowired
     private ModelRunService modelRunService;
-
-    @Test
-    public void getDiseaseOccurrencesForModelRunRequest() {
-        // Arrange
-        int diseaseGroupId = 87;
-        List<DiseaseOccurrence> occurrences = Arrays.asList(new DiseaseOccurrence());
-        when(diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(occurrences);
-
-        // Act
-        List<DiseaseOccurrence> testOccurrences = modelRunService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-
-        // Assert
-        assertThat(testOccurrences).isSameAs(occurrences);
-    }
 
     @Test
     public void getModelRunByName() {

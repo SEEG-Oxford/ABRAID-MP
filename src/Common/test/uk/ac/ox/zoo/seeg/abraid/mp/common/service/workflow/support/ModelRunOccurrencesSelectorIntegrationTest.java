@@ -8,11 +8,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
@@ -41,6 +39,9 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     private AlertDao alertDao;
 
     @Autowired
+    private FeedDao feedDao;
+
+    @Autowired
     private LocationDao locationDao;
 
     @Autowired
@@ -52,13 +53,13 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         int diseaseGroupId = 87;
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
-        assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).hasSize(27);
+        assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false)).hasSize(27);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
     }
@@ -69,13 +70,31 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         int diseaseGroupId = 87;
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
-        assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).hasSize(27);
+        assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false)).hasSize(27);
+        assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
+        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+    }
+
+    @Test
+    public void selectModelRunDiseaseOccurrencesThrowsExceptionWhenFewerOccurrencesThanMDVAndGoldStandardDataUsed() {
+        // Arrange - NB. Automatic model runs are disabled by default
+        int diseaseGroupId = 87;
+        addUploadedOccurrences();
+
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+                diseaseGroupId, true);
+
+        // Act
+        catchException(selector).selectModelRunDiseaseOccurrences();
+
+        // Assert
+        assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, true)).hasSize(2);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
     }
@@ -93,7 +112,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -114,7 +133,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -137,7 +156,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -160,7 +179,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -180,7 +199,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
@@ -200,7 +219,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
@@ -224,7 +243,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -264,7 +283,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -279,5 +298,30 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         return new HashSet<>(convert(locations, new Converter<Location, Integer>() {
             public Integer convert(Location location) { return location.getCountryGaulCode(); }
         }));
+    }
+
+    private void addUploadedOccurrences() {
+        createUploadedDiseaseOccurrenceForDengue(null);
+        createUploadedDiseaseOccurrenceForDengue(1.0);
+        createUploadedDiseaseOccurrenceForDengue(0.9);
+        createUploadedDiseaseOccurrenceForDengue(1.0);
+    }
+
+    private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
+        Location location = locationDao.getById(12);
+        Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
+        Alert alert = new Alert();
+        alert.setFeed(feed);
+
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setLocation(location);
+        occurrence.setAlert(alert);
+        occurrence.setFinalWeighting(finalWeighting);
+        occurrence.setFinalWeightingExcludingSpatial(finalWeighting);
+        occurrence.setValidated(true);
+        occurrence.setOccurrenceDate(DateTime.now());
+        diseaseOccurrenceDao.save(occurrence);
     }
 }

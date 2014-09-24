@@ -84,8 +84,8 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     private void addGoldStandardParameters(DiseaseOccurrence occurrence) {
         // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
         // final weightings to 1 and isValidated to true.
-        occurrence.setFinalWeighting(1.0);
-        occurrence.setFinalWeightingExcludingSpatial(1.0);
+        occurrence.setFinalWeighting(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
+        occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
         occurrence.setValidated(true);
     }
 

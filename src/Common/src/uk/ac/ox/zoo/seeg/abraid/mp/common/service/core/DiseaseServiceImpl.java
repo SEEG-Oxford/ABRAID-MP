@@ -176,13 +176,16 @@ public class DiseaseServiceImpl implements DiseaseService {
      * value. If null, the validation weighting is ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return A list of disease occurrences.
      */
     @Override
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
-            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate) {
+            Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
+            boolean useGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId));
+            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId),
+            useGoldStandardOccurrences);
     }
 
     /**
@@ -214,10 +217,13 @@ public class DiseaseServiceImpl implements DiseaseService {
     /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return Disease occurrences for a request to run the model.
      */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId,
+                                                                           boolean useGoldStandardOccurrences) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, useGoldStandardOccurrences);
     }
 
     /**

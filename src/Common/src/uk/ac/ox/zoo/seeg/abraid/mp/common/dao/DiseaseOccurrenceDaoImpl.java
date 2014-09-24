@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Repository
 public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOccurrenceDao {
-    // HQL fragments used to build a query to obtain disease occurrences for disease extent generation
+    // HQL fragments used to build queries to obtain disease occurrences
     private static final String DISEASE_EXTENT_QUERY =
             "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
             "       (d.occurrenceDate, d.location.precision, case when :isGlobal = true then" +
@@ -32,6 +32,20 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     private static final String DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE =
             "and d.occurrenceDate >= :minimumOccurrenceDate ";
+
+    private static final String GOLD_STANDARD_OCCURRENCES_CLAUSE =
+            "and d.finalWeighting = " + DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING + " " +
+            "and d.alert in (from Alert where feed.provenance.name = '" + ProvenanceNames.UPLOADED + "') ";
+
+    private static final String MODEL_RUN_REQUEST_QUERY = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+            "where d.diseaseGroup.id = :diseaseGroupId " +
+            "and d.isValidated = true ";
+
+    private static final String MODEL_RUN_REQUEST_FINAL_WEIGHTING_ABOVE_ZERO_CLAUSE =
+            "and d.finalWeighting > 0 ";
+
+    private static final String MODEL_RUN_REQUEST_ORDER_BY_CLAUSE =
+            "order by d.occurrenceDate desc";
 
     public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
@@ -91,13 +105,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
      * @param isGlobal True if the disease group is global, otherwise false.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return A list of disease occurrences.
      */
     @Override
     @SuppressWarnings("unchecked")
     public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            boolean isGlobal) {
+            boolean isGlobal, boolean useGoldStandardOccurrences) {
         String queryString = DISEASE_EXTENT_QUERY;
 
         if (minimumValidationWeighting != null) {
@@ -105,6 +120,9 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         }
         if (minimumOccurrenceDate != null) {
             queryString += DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE;
+        }
+        if (useGoldStandardOccurrences) {
+            queryString += GOLD_STANDARD_OCCURRENCES_CLAUSE;
         }
 
         Query query = currentSession().createQuery(queryString);
@@ -148,11 +166,24 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return Disease occurrences for a request to run the model.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrencesForModelRunRequest", "diseaseGroupId", diseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId,
+                                                                           boolean useGoldStandardOccurrences) {
+        String queryString = MODEL_RUN_REQUEST_QUERY;
+        if (useGoldStandardOccurrences) {
+            queryString += GOLD_STANDARD_OCCURRENCES_CLAUSE;
+        } else {
+            queryString += MODEL_RUN_REQUEST_FINAL_WEIGHTING_ABOVE_ZERO_CLAUSE;
+        }
+        queryString += MODEL_RUN_REQUEST_ORDER_BY_CLAUSE;
+
+        Query query = currentSession().createQuery(queryString);
+        query.setParameter("diseaseGroupId", diseaseGroupId);
+
+        return list(query);
     }
 
     /**

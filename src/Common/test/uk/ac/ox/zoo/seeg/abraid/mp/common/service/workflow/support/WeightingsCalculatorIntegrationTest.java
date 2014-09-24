@@ -147,7 +147,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 87;
 
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false);
         DiseaseOccurrence occ1 = occurrences.get(0);
         DiseaseOccurrence occ2 = occurrences.get(1);
         DiseaseOccurrence occ3 = occurrences.get(2);
@@ -203,7 +204,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         // Arrange
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         List<DiseaseOccurrence> emptyList = new ArrayList<>();
-        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(anyInt())).thenReturn(emptyList);
+        when(mockDiseaseService.getDiseaseOccurrencesForModelRunRequest(anyInt(), anyBoolean())).thenReturn(emptyList);
 
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, expertService, modelRunService);
         Logger logger = GeneralTestUtils.createMockLogger(target);
@@ -221,7 +222,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         int diseaseGroupId = 87;
         double machineWeighting = 0.3;
         double expertWeighting = 0.2;
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false);
         DiseaseOccurrence occ1 = setWeightings(occurrences.get(0), null, machineWeighting);
         DiseaseOccurrence occ2 = setWeightings(occurrences.get(1), expertWeighting, machineWeighting);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
@@ -408,7 +410,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     @Test
     public void calculateNewExpertsWeightingsReturnsExpectedMap() {
         // Arrange - Experts 1 and 2 submit YES reviews for an occurrence. Their new weightings will be 1.0
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(87);
+        List<DiseaseOccurrence> occurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(87, false);
         DiseaseOccurrence occ = occurrences.get(0);
         int expert1Id = 1;
         int expert2Id = 2;
@@ -506,7 +509,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     }
 
     private List<DiseaseOccurrenceReview> defaultListOfManyReviews(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId).subList(0, 3);
+        List<DiseaseOccurrence> occurrences =
+                diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false).subList(0, 3);
 
         Expert ex1 = createExpert(1, "ex1", 0.0);
         Expert ex2 = createExpert(2, "ex2", 0.0);

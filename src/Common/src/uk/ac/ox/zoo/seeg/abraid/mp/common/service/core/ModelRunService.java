@@ -1,9 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-
-import java.util.List;
 
 /**
  * Service interface for model run inputs and outputs.
@@ -11,13 +8,6 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public interface ModelRunService {
-    /**
-     * Gets disease occurrences for a request to run the model.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for a request to run the model.
-     */
-    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
-
     /**
      * Gets a model run by name.
      * @param name The model run name.
