@@ -117,7 +117,7 @@ button.btn[type=submit] {
     display: none;
 }
 .input-group.date {
-    margin-right: 0px;
+    margin-right: 0;
     max-width: 200px;
 }
 .navbar-right > li > a {
@@ -132,8 +132,42 @@ button.btn[type=submit] {
     text-align: center
 }
 .pagination {
-    margin: 0px;
+    margin: 0;
 }
 .pagination-holder {
     margin: 20px;
+}
+@media (min-width: 768px) {
+    .collapse-only {
+        display: none !important;
+    }
+    .expand-only {
+        display: inline-block !important;
+    }
+}
+@media (max-width: 768px) {
+    .collapse-only {
+        display: inline-block !important;
+    }
+
+    .expand-only {
+        display: none !important;
+    }
+}
+#user-nav  {
+    margin-right: 0;
+}
+#user-nav .centered-nav{
+    text-align: center;
+    width: 100%;
+}
+#user-nav .centered-nav{
+    text-align: center;
+    width: 100%;
+}
+#user-nav .fa-lg {
+    width: 18px;
+}
+.navbar-toggle .glyphicon {
+    color: white;
 }
