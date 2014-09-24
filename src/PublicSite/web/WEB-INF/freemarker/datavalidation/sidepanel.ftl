@@ -96,10 +96,14 @@
         <li><i class="fa fa-medkit"></i>&nbsp;<p data-bind="html: selectedPoint().properties.diseaseGroupPublicName"></p></li>
         <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.locationName"></p></li>
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.occurrenceDate"></p></li>
-        <li>
+        <li data-bind="if: selectedPoint().properties.alert.url">
             <i class="fa fa-external-link"></i>
             <a data-bind="text: selectedPoint().properties.alert.feedName,
-                          attr: {href: selectedPoint().properties.alert.url}" target="_blank"></a>
+                          attr: {href: selectedPoint().properties.alert.url || '#'}" target="_blank"></a>
+        </li>
+        <li data-bind="ifnot: selectedPoint().properties.alert.url">
+            <i class="fa fa-external-link"></i>
+            <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
         </li>
         <li><i class="fa fa-quote-left"></i></li>
         <li>
