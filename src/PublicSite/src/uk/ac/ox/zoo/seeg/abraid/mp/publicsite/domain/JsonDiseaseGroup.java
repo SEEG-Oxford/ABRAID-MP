@@ -26,7 +26,7 @@ public class JsonDiseaseGroup {
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
     private Boolean occursInAfrica;
-    private Boolean useMachineLearning;
+    private boolean useMachineLearning;
     private Double maxEnvironmentalSuitabilityWithoutML;
     private JsonDiseaseExtent diseaseExtentParameters;
 
@@ -216,11 +216,11 @@ public class JsonDiseaseGroup {
         this.occursInAfrica = occursInAfrica;
     }
 
-    public Boolean getUseMachineLearning() {
+    public boolean getUseMachineLearning() {
         return useMachineLearning;
     }
 
-    public void setUseMachineLearning(Boolean useMachineLearning) {
+    public void setUseMachineLearning(boolean useMachineLearning) {
         this.useMachineLearning = useMachineLearning;
     }
 
