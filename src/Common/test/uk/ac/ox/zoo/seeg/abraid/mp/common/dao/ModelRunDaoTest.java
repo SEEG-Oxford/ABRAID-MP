@@ -5,10 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +120,29 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert
         assertThat(run.getCovariateInfluences()).hasSize(3);
+    }
+
+    @Test
+    public void saveAndLoadCascadesToEffectCurveCovariateInfluence() {
+        // Arrange
+        ModelRun run = createModelRun("name");
+        modelRunDao.save(run);
+        flushAndClear();
+        run = modelRunDao.getByName("name");
+
+        List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences = new ArrayList<>();
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("a", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("b", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("c", run));
+        run.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
+        modelRunDao.save(run);
+        flushAndClear();
+
+        // Act
+        run = modelRunDao.getByName("name");
+
+        // Assert
+        assertThat(run.getEffectCurveCovariateInfluences()).hasSize(3);
     }
 
     @Test
@@ -272,6 +292,17 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         covariateInfluence.setLowerQuantile(2.0);
         covariateInfluence.setUpperQuantile(3.0);
         return covariateInfluence;
+    }
+
+    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String covariateName, ModelRun modelRun) {
+        EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
+        effectCurveCovariateInfluence.setModelRun(modelRun);
+        effectCurveCovariateInfluence.setCovariateName(covariateName);
+        effectCurveCovariateInfluence.setMeanInfluence(1.0);
+        effectCurveCovariateInfluence.setLowerQuantile(2.0);
+        effectCurveCovariateInfluence.setUpperQuantile(3.0);
+        effectCurveCovariateInfluence.setCovariateValue(4.0);
+        return effectCurveCovariateInfluence;
     }
 
     private ModelRun createModelRun(String name) {
