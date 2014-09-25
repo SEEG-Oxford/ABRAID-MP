@@ -36,6 +36,9 @@ define([], function () {
             minHighFrequencyCountries: parseInteger(modelRunParametersViewModel.minHighFrequencyCountries()),
             highFrequencyThreshold: parseInteger(modelRunParametersViewModel.highFrequencyThreshold()),
             occursInAfrica: modelRunParametersViewModel.occursInAfrica(),
+            useMachineLearning: modelRunParametersViewModel.useMachineLearning(),
+            maxEnvironmentalSuitabilityWithoutML:
+                parseNumber(modelRunParametersViewModel.maxEnvironmentalSuitabilityWithoutML()),
             diseaseExtentParameters: {
                 maxMonthsAgoForHigherOccurrenceScore:
                     parseInteger(diseaseExtentParametersViewModel.maxMonthsAgoForHigherOccurrenceScore()),

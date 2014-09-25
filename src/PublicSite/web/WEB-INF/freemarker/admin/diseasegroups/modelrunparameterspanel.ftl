@@ -19,14 +19,27 @@
         <div class="panel-body">
             <div class="col-sm-6">
                 <div class="form-horizontal">
+                    Triggering a Model Run:
+                    <br><br>
                     <@formGroup id="min-new-locations" title="Min. Number of New Locations" bind="formValue: minNewLocations"></@formGroup>
                     <@formGroup id="min-environmental-suitability" title="Min. Environmental Suitability" bind="formValue: minEnvironmentalSuitability"></@formGroup>
                     <@formGroup id="min-distance-from-extent" title="Min. Distance from Disease Extent" bind="formValue: minDistanceFromDiseaseExtent"></@formGroup>
-                    <@formGroup id="min-data-volume" title="Min. Data Volume" bind="formValue: minDataVolume"></@formGroup>
+                    Machine Learning:
+                    <br><br>
+                    <div class="form-group">
+                        <label for="use-machine-learning" class="col-sm-8 control-label">Use Machine Learning</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" id="use-machine-learning" data-bind="formChecked: useMachineLearning">
+                        </div>
+                    </div>
+                    <@formGroup id="max-environmental-suitability-without-ml" title="Max. Environmental Suitability of Points for the Validator If Not Using Machine Learning" bind="formValue: maxEnvironmentalSuitabilityWithoutML"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-horizontal">
+                    Minimum Data Volume and Minimum Data Spread:
+                    <br><br>
+                    <@formGroup id="min-data-volume" title="Min. Data Volume" bind="formValue: minDataVolume"></@formGroup>
                     <@formGroup id="min-distinct-countries" title="Min. Number of Distinct Countries" bind="formValue: minDistinctCountries"></@formGroup>
                     <div class="form-group">
                         <label for="occurs-in-africa" class="col-sm-8 control-label">Occurs in Africa</label>

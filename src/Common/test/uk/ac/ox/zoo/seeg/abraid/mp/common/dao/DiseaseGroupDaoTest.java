@@ -38,6 +38,9 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
         int minNewLocations = 100;
+        double minEnvironmentalSuitability = 0.5;
+        double minDistanceFromDiseaseExtent = 1;
+        double maxEnvironmentalSuitabilityWithoutML = 0.4;
         double weighting = 0.5;
 
         DiseaseGroup diseaseGroup = new DiseaseGroup();
@@ -51,7 +54,11 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         diseaseGroup.setMinNewLocationsTrigger(minNewLocations);
+        diseaseGroup.setMinEnvironmentalSuitability(minEnvironmentalSuitability);
+        diseaseGroup.setMinDistanceFromDiseaseExtent(minDistanceFromDiseaseExtent);
+        diseaseGroup.setMaxEnvironmentalSuitabilityWithoutML(maxEnvironmentalSuitabilityWithoutML);
         diseaseGroup.setWeighting(weighting);
+        diseaseGroup.setUseMachineLearning(false);
         diseaseGroup.setGlobal(true);
         diseaseGroup.setDiseaseExtentParameters(parameters);
 
@@ -73,6 +80,11 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getValidatorDiseaseGroup().getId()).isEqualTo(validatorDiseaseGroupId);
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
         assertThat(diseaseGroup.getMinNewLocationsTrigger()).isEqualTo(minNewLocations);
+        assertThat(diseaseGroup.getMinEnvironmentalSuitability()).isEqualTo(minEnvironmentalSuitability);
+        assertThat(diseaseGroup.getMinDistanceFromDiseaseExtent()).isEqualTo(minDistanceFromDiseaseExtent);
+        assertThat(diseaseGroup.getMaxEnvironmentalSuitabilityWithoutML()).isEqualTo(
+                maxEnvironmentalSuitabilityWithoutML);
+        assertThat(diseaseGroup.useMachineLearning()).isFalse();
         assertThat(diseaseGroup.getWeighting()).isEqualTo(weighting);
         assertThat(diseaseGroup.isGlobal()).isTrue();
         assertThat(diseaseGroup.getParentGroup()).isNull();
@@ -107,6 +119,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getParentGroup()).isNotNull();
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
+        assertThat(diseaseGroup.useMachineLearning()).isTrue();
         assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
     }
 

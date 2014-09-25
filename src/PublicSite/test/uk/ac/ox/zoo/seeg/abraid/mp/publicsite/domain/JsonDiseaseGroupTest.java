@@ -36,6 +36,8 @@ public class JsonDiseaseGroupTest {
         diseaseGroup.setHighFrequencyThreshold(10);
         diseaseGroup.setMinHighFrequencyCountries(20);
         diseaseGroup.setOccursInAfrica(true);
+        diseaseGroup.setUseMachineLearning(true);
+        diseaseGroup.setMaxEnvironmentalSuitabilityWithoutML(0.8);
         diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(diseaseGroup, 0.6, 2, 1, 60, 1, 2));
 
         // Act
@@ -56,6 +58,8 @@ public class JsonDiseaseGroupTest {
         assertThat(jsonDiseaseGroup.getMinDataVolume()).isEqualTo(100);
         assertThat(jsonDiseaseGroup.getMinDistinctCountries()).isEqualTo(5);
         assertThat(jsonDiseaseGroup.getOccursInAfrica()).isTrue();
+        assertThat(jsonDiseaseGroup.getUseMachineLearning()).isTrue();
+        assertThat(jsonDiseaseGroup.getMaxEnvironmentalSuitabilityWithoutML()).isEqualTo(0.8);
 
         JsonParentDiseaseGroup parentDiseaseGroup = jsonDiseaseGroup.getParentDiseaseGroup();
         assertThat(parentDiseaseGroup).isNotNull();

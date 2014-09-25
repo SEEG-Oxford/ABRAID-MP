@@ -29,7 +29,9 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
                 highFrequencyThreshold: wrap(5),
-                occursInAfrica: wrap(true)
+                occursInAfrica: wrap(true),
+                useMachineLearning: wrap(true),
+                maxEnvironmentalSuitabilityWithoutML: wrap(0.5)
             };
             var diseaseExtentParametersViewModel = {
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
@@ -56,6 +58,8 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 minHighFrequencyCountries:  4,
                 highFrequencyThreshold: 5,
                 occursInAfrica: true,
+                useMachineLearning: true,
+                maxEnvironmentalSuitabilityWithoutML: 0.5,
                 diseaseExtentParameters: {
                     maxMonthsAgoForHigherOccurrenceScore: 24,
                     higherOccurrenceScore: 2,
@@ -92,7 +96,9 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
                 highFrequencyThreshold: wrap(""),
-                occursInAfrica: wrap(undefined)
+                occursInAfrica: wrap(undefined),
+                useMachineLearning: wrap(undefined),
+                maxEnvironmentalSuitabilityWithoutML: wrap("")
             };
             var diseaseExtentParametersViewModel = {
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
@@ -119,6 +125,8 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 minHighFrequencyCountries:  undefined,
                 highFrequencyThreshold: undefined,
                 occursInAfrica: undefined,
+                useMachineLearning: undefined,
+                maxEnvironmentalSuitabilityWithoutML: undefined,
                 diseaseExtentParameters: {
                     maxMonthsAgoForHigherOccurrenceScore: undefined,
                     higherOccurrenceScore: undefined,

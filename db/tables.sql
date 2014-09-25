@@ -168,6 +168,8 @@ CREATE TABLE disease_group (
     high_frequency_threshold integer,
     min_high_frequency_countries integer,
     occurs_in_africa boolean,
+    use_machine_learning boolean NOT NULL,
+    max_env_suitability_without_ml double precision,
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 

@@ -52,7 +52,9 @@ define([
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
                 highFrequencyThreshold: wrap(5),
-                occursInAfrica: wrap(true)
+                occursInAfrica: wrap(true),
+                useMachineLearning: wrap(true),
+                maxEnvironmentalSuitabilityWithoutML: wrap(0.8)
             };
             var diseaseExtentParametersViewModel = {
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
@@ -80,6 +82,8 @@ define([
                 "\"minHighFrequencyCountries\":4," +
                 "\"highFrequencyThreshold\":5," +
                 "\"occursInAfrica\":true," +
+                "\"useMachineLearning\":true," +
+                "\"maxEnvironmentalSuitabilityWithoutML\":0.8," +
                 "\"diseaseExtentParameters\":{" +
                     "\"maxMonthsAgoForHigherOccurrenceScore\":24," +
                     "\"lowerOccurrenceScore\":1," +
@@ -212,7 +216,9 @@ define([
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
                 highFrequencyThreshold: wrap(""),
-                occursInAfrica: wrap(undefined)
+                occursInAfrica: wrap(undefined),
+                useMachineLearning: wrap(undefined),
+                maxEnvironmentalSuitabilityWithoutML: wrap(undefined)
             };
             var diseaseExtentParametersViewModel = {
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),

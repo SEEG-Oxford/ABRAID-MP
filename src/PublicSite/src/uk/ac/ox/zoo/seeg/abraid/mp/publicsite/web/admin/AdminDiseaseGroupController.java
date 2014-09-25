@@ -275,6 +275,8 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setMinHighFrequencyCountries(settings.getMinHighFrequencyCountries());
         diseaseGroup.setHighFrequencyThreshold(settings.getHighFrequencyThreshold());
         diseaseGroup.setOccursInAfrica(settings.getOccursInAfrica());
+        diseaseGroup.setUseMachineLearning(settings.getUseMachineLearning());
+        diseaseGroup.setMaxEnvironmentalSuitabilityWithoutML(settings.getMaxEnvironmentalSuitabilityWithoutML());
         setDiseaseExtentParameters(diseaseGroup, settings.getDiseaseExtentParameters());
         if (setParentDiseaseGroup(diseaseGroup, settings) && setValidatorDiseaseGroup(diseaseGroup, settings)) {
             diseaseService.saveDiseaseGroup(diseaseGroup);

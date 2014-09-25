@@ -26,6 +26,8 @@ public class JsonDiseaseGroup {
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
     private Boolean occursInAfrica;
+    private boolean useMachineLearning;
+    private Double maxEnvironmentalSuitabilityWithoutML;
     private JsonDiseaseExtent diseaseExtentParameters;
 
     public JsonDiseaseGroup() {
@@ -58,6 +60,8 @@ public class JsonDiseaseGroup {
         if (diseaseGroup.getDiseaseExtentParameters() != null) {
             setDiseaseExtentParameters(new JsonDiseaseExtent(diseaseGroup.getDiseaseExtentParameters()));
         }
+        setUseMachineLearning(diseaseGroup.useMachineLearning());
+        setMaxEnvironmentalSuitabilityWithoutML(diseaseGroup.getMaxEnvironmentalSuitabilityWithoutML());
     }
 
     public Integer getId() {
@@ -210,6 +214,22 @@ public class JsonDiseaseGroup {
 
     public void setOccursInAfrica(Boolean occursInAfrica) {
         this.occursInAfrica = occursInAfrica;
+    }
+
+    public boolean getUseMachineLearning() {
+        return useMachineLearning;
+    }
+
+    public void setUseMachineLearning(boolean useMachineLearning) {
+        this.useMachineLearning = useMachineLearning;
+    }
+
+    public Double getMaxEnvironmentalSuitabilityWithoutML() {
+        return maxEnvironmentalSuitabilityWithoutML;
+    }
+
+    public void setMaxEnvironmentalSuitabilityWithoutML(Double maxEnvironmentalSuitabilityWithoutML) {
+        this.maxEnvironmentalSuitabilityWithoutML = maxEnvironmentalSuitabilityWithoutML;
     }
 
     public JsonDiseaseExtent getDiseaseExtentParameters() {

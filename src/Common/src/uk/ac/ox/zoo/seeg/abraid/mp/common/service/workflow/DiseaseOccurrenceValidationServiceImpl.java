@@ -70,8 +70,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
         occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
         occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-        occurrence.setMachineWeighting(findMachineWeighting(occurrence));
-        occurrence.setValidated(findIsValidated(occurrence));
+        findAndSetMachineWeightingAndIsValidated(occurrence);
     }
 
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
@@ -90,25 +89,35 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setValidated(true);
     }
 
-    private Double findMachineWeighting(DiseaseOccurrence occurrence) {
-        if (noModelRunsYet(occurrence)) {
-            return null;
+    private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
+        // The default value (the occurrence is ready for sending to the model)
+        occurrence.setValidated(true);
+
+        if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
+            occurrence.setValidated(false);
+        } else {
+            if (!occurrence.getDiseaseGroup().useMachineLearning()) {
+                if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
+                    occurrence.setValidated(false);
+                } else {
+                    occurrence.setMachineWeighting(1.0);
+                }
+            }
         }
-        // For now, all machine weightings are null
-        return null;
     }
 
-    private boolean findIsValidated(DiseaseOccurrence occurrence) {
-        if (noModelRunsYet(occurrence)) {
-            return true;
-        }
-        // For now hardcode to true, but the proper behaviour will be implemented in a future story.
-        return true;
+    private boolean shouldSendToDataValidatorWithoutUsingMachineLearning(DiseaseOccurrence occurrence) {
+        return lowEnvironmentalSuitability(occurrence) || outsideExtent(occurrence);
     }
 
-    private boolean noModelRunsYet(DiseaseOccurrence occurrence) {
-        return (occurrence.getEnvironmentalSuitability() == null) &&
-               (occurrence.getDistanceFromDiseaseExtent() == null);
+    private boolean lowEnvironmentalSuitability(DiseaseOccurrence occurrence) {
+        Double maxEnvironmentalSuitability = occurrence.getDiseaseGroup().getMaxEnvironmentalSuitabilityWithoutML();
+        return (maxEnvironmentalSuitability != null) &&
+               (occurrence.getEnvironmentalSuitability() <= maxEnvironmentalSuitability);
+    }
+
+    private boolean outsideExtent(DiseaseOccurrence occurrence) {
+        return (occurrence.getDistanceFromDiseaseExtent() > 0);
     }
 
     private DiseaseGroup validateAndGetDiseaseGroup(List<DiseaseOccurrence> occurrences) {
