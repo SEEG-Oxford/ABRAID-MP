@@ -26,12 +26,12 @@ before_script:
 script:
   - ./.travis.main.sh
 after_success:
-  - "tar -zcf artifacts.tar.gz artifacts"
+  - tar -zcf ${TRAVIS_TAG:-artifacts}.tar.gz artifacts
 deploy:
   provider: releases
   api_key:
     secure: RJ8zk37A8Ap04ACCI8ij9ktJq5zvwC1yXaNfKlCZWqraHlBIc3AP9COFq7l7D6DVXJGNvCH0XlQpEwa8Ek9Stt7Si4Tyq+U7NPKNX6oOcTmNCH43eVq4PP4IpnPaxqQKM+bPmsMGgApZdk4oUzOBxG/+ntQbhMWq3f3jXCKTV48=
-  file: artifacts.tar.gz
+  file: ${TRAVIS_TAG:-artifacts}.tar.gz
   skip_cleanup: true
   on:
     repo: SEEG-Oxford/ABRAID-MP
