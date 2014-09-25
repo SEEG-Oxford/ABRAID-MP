@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv;
 
 /**
- * CSV DTO which  represents the comon fields associated with the influence of a covariate file on a model run.
+ * CSV DTO which represents the common fields associated with the influence of a covariate file on a model run.
  * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractCsvCovariateInfluence {
@@ -18,7 +18,6 @@ public abstract class AbstractCsvCovariateInfluence {
         return covariateName;
     }
 
-    //@JsonProperty("")
     public void setCovariateName(String covariateName) {
         this.covariateName = covariateName;
     }
@@ -27,7 +26,6 @@ public abstract class AbstractCsvCovariateInfluence {
         return covariateDisplayName;
     }
 
-    //@JsonProperty("display")
     public void setCovariateDisplayName(String covariateDisplayName) {
         this.covariateDisplayName = covariateDisplayName;
     }
@@ -36,7 +34,6 @@ public abstract class AbstractCsvCovariateInfluence {
         return meanInfluence;
     }
 
-    //@JsonProperty("mean")
     public void setMeanInfluence(Double meanInfluence) {
         this.meanInfluence = meanInfluence;
     }
@@ -45,7 +42,6 @@ public abstract class AbstractCsvCovariateInfluence {
         return upperQuantile;
     }
 
-    //@JsonProperty("97.5")
     public void setUpperQuantile(Double upperQuantile) {
         this.upperQuantile = upperQuantile;
     }
@@ -54,7 +50,6 @@ public abstract class AbstractCsvCovariateInfluence {
         return lowerQuantile;
     }
 
-    //@JsonProperty("2.5%")
     public void setLowerQuantile(Double lowerQuantile) {
         this.lowerQuantile = lowerQuantile;
     }

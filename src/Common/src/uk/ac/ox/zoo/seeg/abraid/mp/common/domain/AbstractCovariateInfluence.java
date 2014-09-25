@@ -5,7 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.AbstractCsvCovariateInfluence;
 import javax.persistence.*;
 
 /**
- * Represents the comon fields associated with the influence of a covariate file on a model run.
+ * Represents the common fields associated with the influence of a covariate file on a model run.
  * Copyright (c) 2014 University of Oxford
  */
 @MappedSuperclass
