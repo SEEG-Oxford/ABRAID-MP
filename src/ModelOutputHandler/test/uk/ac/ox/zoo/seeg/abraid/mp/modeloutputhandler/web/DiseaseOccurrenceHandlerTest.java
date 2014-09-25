@@ -91,6 +91,7 @@ public class DiseaseOccurrenceHandlerTest {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
+        modelRun.setBatchEndDate(DateTime.now());
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         DiseaseOccurrence occurrence1 = new DiseaseOccurrence();
@@ -108,8 +109,8 @@ public class DiseaseOccurrenceHandlerTest {
         diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrence1));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrence2));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
         assertThat(occurrence1.getFinalWeighting()).isNull();
         assertThat(occurrence2.getFinalWeightingExcludingSpatial()).isNull();
     }
@@ -119,6 +120,7 @@ public class DiseaseOccurrenceHandlerTest {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
+        modelRun.setBatchEndDate(DateTime.now());
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
@@ -129,7 +131,7 @@ public class DiseaseOccurrenceHandlerTest {
         diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(modelRunService, times(1)).hasBatchingEverCompleted(eq(diseaseGroupId));
+        verify(modelRunService).hasBatchingEverCompleted(eq(diseaseGroupId));
         verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupId(anyInt());
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
@@ -143,12 +145,12 @@ public class DiseaseOccurrenceHandlerTest {
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
 
         // Act
         diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class));
         verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -175,11 +177,11 @@ public class DiseaseOccurrenceHandlerTest {
         diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(diseaseService, times(1)).getDiseaseOccurrencesForBatching(
+        verify(diseaseService).getDiseaseOccurrencesForBatching(
                 eq(diseaseGroupId), eq(batchEndDateWithMaximumTime));
         verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
-        verify(modelRunService, times(1)).saveModelRun(modelRun);
+        verify(modelRunService).saveModelRun(modelRun);
     }
 
     @Test
@@ -206,12 +208,12 @@ public class DiseaseOccurrenceHandlerTest {
         diseaseOccurrenceHandler.handle(modelRun);
 
         // Assert
-        verify(diseaseService, times(1)).getDiseaseOccurrencesForBatching(
+        verify(diseaseService).getDiseaseOccurrencesForBatching(
                 eq(diseaseGroupId), eq(batchEndDateWithMaximumTime));
-        verify(diseaseOccurrenceValidationService, times(1)).addValidationParameters(same(occurrences));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrence1));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrence2));
-        verify(modelRunService, times(1)).saveModelRun(modelRun);
+        verify(diseaseOccurrenceValidationService).addValidationParameters(same(occurrences));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
+        verify(modelRunService).saveModelRun(modelRun);
     }
 
     private ModelRun createModelRun(int diseaseGroupId, ModelRunStatus status) {
