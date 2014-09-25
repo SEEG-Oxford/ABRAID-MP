@@ -90,11 +90,12 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
-        // The default values (the occurrence is ready for sending to the model)
-        occurrence.setMachineWeighting(null);
+        // The default value (the occurrence is ready for sending to the model)
         occurrence.setValidated(true);
 
-        if (modelHasBeenRun(occurrence)) {
+        if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
+            occurrence.setValidated(false);
+        } else {
             if (!occurrence.getDiseaseGroup().useMachineLearning()) {
                 if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
                     occurrence.setValidated(false);
@@ -106,21 +107,17 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private boolean shouldSendToDataValidatorWithoutUsingMachineLearning(DiseaseOccurrence occurrence) {
-        // Send to the validator if environmental suitability does not exceed the maximum threshold
-        Double maxEnvironmentalSuitability = occurrence.getDiseaseGroup().getMaxEnvironmentalSuitabilityWithoutML();
-        if (occurrence.getEnvironmentalSuitability() != null && maxEnvironmentalSuitability != null) {
-            if (occurrence.getEnvironmentalSuitability() <= maxEnvironmentalSuitability) {
-                return true;
-            }
-        }
-
-        // Otherwise, send to the validator if the occurrence is outside of the disease extent
-        return (occurrence.getDistanceFromDiseaseExtent() != null && occurrence.getDistanceFromDiseaseExtent() > 0);
+        return lowEnvironmentalSuitability(occurrence) || outsideExtent(occurrence);
     }
 
-    private boolean modelHasBeenRun(DiseaseOccurrence occurrence) {
-        return (occurrence.getEnvironmentalSuitability() != null) ||
-                (occurrence.getDistanceFromDiseaseExtent() != null);
+    private boolean lowEnvironmentalSuitability(DiseaseOccurrence occurrence) {
+        Double maxEnvironmentalSuitability = occurrence.getDiseaseGroup().getMaxEnvironmentalSuitabilityWithoutML();
+        return (maxEnvironmentalSuitability != null) &&
+               (occurrence.getEnvironmentalSuitability() <= maxEnvironmentalSuitability);
+    }
+
+    private boolean outsideExtent(DiseaseOccurrence occurrence) {
+        return (occurrence.getDistanceFromDiseaseExtent() > 0);
     }
 
     private DiseaseGroup validateAndGetDiseaseGroup(List<DiseaseOccurrence> occurrences) {
