@@ -82,7 +82,7 @@ public class WeightingsCalculator {
                 allReviews.size()));
         for (DiseaseOccurrence occurrence : distinctOccurrences) {
             List<DiseaseOccurrenceReview> reviews = extractReviewsForOccurrence(allReviews, occurrence);
-            double expertWeighting = calculateWeightedAverageResponse(reviews);
+            Double expertWeighting = reviews.isEmpty() ? null : calculateWeightedAverageResponse(reviews);
             occurrence.setExpertWeighting(expertWeighting);
             diseaseService.saveDiseaseOccurrence(occurrence);
         }
