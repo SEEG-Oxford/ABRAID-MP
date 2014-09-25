@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -15,11 +16,9 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
@@ -111,6 +110,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
         assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
         assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
+        assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
     }
 
     @Test
@@ -140,6 +140,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
         assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
         assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
+        assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
     }
 
     @Test
@@ -243,6 +244,19 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     @Test
+    public void handleModelOutputsRejectsMissingEffectCurvesIfStatusIsCompleted() throws Exception {
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("missing_effect_curves.zip");
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Model outputs handler failed with error \"File effect_curves.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+    }
+
+    @Test
     public void handleModelOutputsRejectsMissingRelativeInfluencesIfStatusIsCompleted() throws Exception {
         // Arrange
         insertModelRun(TEST_MODEL_RUN_NAME);
@@ -324,6 +338,38 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         assertThat(extractProperty("covariateName").from(database)).isEqualTo(extractProperty("covariateName").from(file));
         assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
+        assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
+        assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
+    }
+
+    private void assertThatEffectCurvesInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {
+        List<EffectCurveCovariateInfluence> database = run.getEffectCurveCovariateInfluences();
+        List<CsvEffectCurveCovariateInfluence> file = CsvEffectCurveCovariateInfluence.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
+
+        Collections.sort(database, new Comparator<EffectCurveCovariateInfluence>() {
+            @Override
+            public int compare(EffectCurveCovariateInfluence o1, EffectCurveCovariateInfluence o2) {
+                return new CompareToBuilder()
+                        .append(o1.getCovariateName(), o2.getCovariateName())
+                        .append(o1.getCovariateValue(), o2.getCovariateValue())
+                        .toComparison();
+            }
+        });
+
+        Collections.sort(file, new Comparator<CsvEffectCurveCovariateInfluence>() {
+            @Override
+            public int compare(CsvEffectCurveCovariateInfluence o1, CsvEffectCurveCovariateInfluence o2) {
+                return new CompareToBuilder()
+                        .append(o1.getCovariateName(), o2.getCovariateName())
+                        .append(o1.getCovariateValue(), o2.getCovariateValue())
+                        .toComparison();
+            }
+        });
+
+        assertThat(extractProperty("covariateName").from(database)).isEqualTo(extractProperty("covariateName").from(file));
+        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(extractProperty("covariateValue").from(database)).isEqualTo(extractProperty("covariateValue").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
         assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));

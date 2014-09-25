@@ -23,6 +23,7 @@
     <bean id="diseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceReviewDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDaoImpl" autowire="constructor" />
+    <bean id="effectCurveCovariateInfluenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.EffectCurveCovariateInfluenceDaoImpl" autowire="constructor" />
     <bean id="expertDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ExpertDaoImpl" autowire="constructor" />
     <bean id="feedDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDaoImpl" autowire="constructor" />
     <bean id="geoNameDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDaoImpl" autowire="constructor" />

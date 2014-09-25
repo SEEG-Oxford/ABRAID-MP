@@ -9,12 +9,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
@@ -44,10 +43,14 @@ public class MainHandler {
             "Saving validation statistics file (%s bytes) for model run \"%s\"";
     private static final String LOG_RELATIVE_INFLUENCE_FILE =
             "Saving relative influence file (%s bytes) for model run \"%s\"";
+    private static final String LOG_EFFECT_CURVES_FILE =
+            "Saving effect curves file (%s bytes) for model run \"%s\"";
     private static final String COULD_NOT_SAVE_VALIDATION_STATISTICS =
             "Could not save validation statistics csv for model run \"%s\"";
     private static final String COULD_NOT_SAVE_RELATIVE_INFLUENCE =
             "Could not save relative influence csv for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_EFFECT_CURVES =
+            "Could not save effect curves csv for model run \"%s\"";
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private ModelRunService modelRunService;
@@ -83,6 +86,11 @@ public class MainHandler {
         byte[] relativeInfluenceFile =
                 extract(zipFile, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME, areOutputsMandatory);
         handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
+
+        // Handle effect curves influence file
+        byte[] effectCurvesFile =
+                extract(zipFile, ModelOutputConstants.EFFECT_CURVES_FILENAME, areOutputsMandatory);
+        handleEffectCurvesFile(modelRun, effectCurvesFile);
 
         // Handle mean prediction raster
         byte[] meanPredictionRaster =
@@ -150,6 +158,28 @@ public class MainHandler {
                 modelRunService.saveModelRun(modelRun);
             } catch (IOException e) {
                 throw new IOException(String.format(COULD_NOT_SAVE_RELATIVE_INFLUENCE, modelRun.getName()), e);
+            }
+        }
+    }
+
+    private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file) throws IOException {
+        if (file != null) {
+            LOGGER.info(String.format(LOG_EFFECT_CURVES_FILE, file.length, modelRun.getName()));
+            try {
+                List<CsvEffectCurveCovariateInfluence> csvEffectCurveCovariateInfluences =
+                        CsvEffectCurveCovariateInfluence.readFromCSV(new String(file, UTF8));
+                List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences =
+                    with(csvEffectCurveCovariateInfluences)
+                        .convert(new Converter<CsvEffectCurveCovariateInfluence, EffectCurveCovariateInfluence>() {
+                            @Override
+                            public EffectCurveCovariateInfluence convert(CsvEffectCurveCovariateInfluence csv) {
+                                return new EffectCurveCovariateInfluence(csv, modelRun);
+                            }
+                        });
+                modelRun.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
+                modelRunService.saveModelRun(modelRun);
+            } catch (IOException e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_EFFECT_CURVES, modelRun.getName()), e);
             }
         }
     }

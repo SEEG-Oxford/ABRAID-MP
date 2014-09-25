@@ -10,61 +10,7 @@ import java.util.List;
  * CSV DTO which represents the influence of a covariate file on a model run.
  * Copyright (c) 2014 University of Oxford
  */
-public class CsvCovariateInfluence {
-    private String covariateName;
-    private String covariateDisplayName;
-    private Double meanInfluence;
-    private Double upperQuantile;
-    private Double lowerQuantile;
-
-    public CsvCovariateInfluence() {
-    }
-
-    public String getCovariateName() {
-        return covariateName;
-    }
-
-    //@JsonProperty("")
-    public void setCovariateName(String covariateName) {
-        this.covariateName = covariateName;
-    }
-
-    public String getCovariateDisplayName() {
-        return covariateDisplayName;
-    }
-
-    //@JsonProperty("display")
-    public void setCovariateDisplayName(String covariateDisplayName) {
-        this.covariateDisplayName = covariateDisplayName;
-    }
-
-    public Double getMeanInfluence() {
-        return meanInfluence;
-    }
-
-    //@JsonProperty("mean")
-    public void setMeanInfluence(Double meanInfluence) {
-        this.meanInfluence = meanInfluence;
-    }
-
-    public Double getUpperQuantile() {
-        return upperQuantile;
-    }
-
-    //@JsonProperty("97.5")
-    public void setUpperQuantile(Double upperQuantile) {
-        this.upperQuantile = upperQuantile;
-    }
-
-    public Double getLowerQuantile() {
-        return lowerQuantile;
-    }
-
-    //@JsonProperty("2.5%")
-    public void setLowerQuantile(Double lowerQuantile) {
-        this.lowerQuantile = lowerQuantile;
-    }
-
+public class CsvCovariateInfluence extends AbstractCsvCovariateInfluence {
     /**
      * Parses a collection of CsvCovariateInfluence entries from a csv string (header row expected).
      * @param csv The csv string.

@@ -17,7 +17,8 @@
 --                                  smaller islands etc. Eight large subtropical countries have been divided into admin 1 areas.
 -- alert:                           Represents a report of a disease occurrence or occurrences, from a feed.
 -- country:                         Represents a country as defined by SEEG. Imported from the standard SEEG/GAUL admin 0 shapefile, with smaller islands removed.
--- covariate_influence:             Contains information of the covariate used in a model run.
+-- covariate_influence:             Represents the influence of a covariate file on a model run.
+-- effect_curve_covariate_influence:Represents the influence of a covariate file on a model run through its full range of values, for plotting in an effect curve.
 -- disease_group:                   Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
 -- disease_occurrence:              Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- disease_occurrence_review:       Represents an expert's response on the validity of a disease occurrence point.
@@ -113,9 +114,20 @@ CREATE TABLE covariate_influence (
     model_run_id integer NOT NULL,
     covariate_name varchar(255) NOT NULL,
     covariate_display_name varchar(255),
-    mean_influence double precision,
-    upper_quantile double precision,
-    lower_quantile double precision
+    mean_influence double precision NOT NULL,
+    upper_quantile double precision NOT NULL,
+    lower_quantile double precision NOT NULL
+);
+
+CREATE TABLE effect_curve_covariate_influence (
+    id serial NOT NULL,
+    model_run_id integer NOT NULL,
+    covariate_name varchar(255) NOT NULL,
+    covariate_display_name varchar(255),
+    covariate_value double precision NOT NULL,
+    mean_influence double precision NOT NULL,
+    upper_quantile double precision NOT NULL,
+    lower_quantile double precision NOT NULL
 );
 
 CREATE TABLE disease_extent (

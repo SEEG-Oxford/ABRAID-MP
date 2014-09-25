@@ -106,6 +106,11 @@ public class ModelRun {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime batchingCompletedDate;
 
+    // List of effect curve covariate influence data points associated with this model run.
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
+    @Fetch(FetchMode.SELECT)
+    private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
+
     public ModelRun() {
     }
 
@@ -218,6 +223,14 @@ public class ModelRun {
 
     public void setBatchingCompletedDate(DateTime batchingCompletedDate) {
         this.batchingCompletedDate = batchingCompletedDate;
+    }
+
+    public List<EffectCurveCovariateInfluence> getEffectCurveCovariateInfluences() {
+        return effectCurveCovariateInfluences;
+    }
+
+    public void setEffectCurveCovariateInfluences(List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
+        this.effectCurveCovariateInfluences = effectCurveCovariateInfluences;
     }
 
     ///COVERAGE:OFF - generated code
