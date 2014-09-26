@@ -112,8 +112,8 @@ result <- tryCatch({
             close(fileConn)
             fileConn <- file("results/effect_curves.csv")
             writeLines(c(
-            '"","covariate","covariate","mean","2.5%","97.5%"',
-            '"1","upr_u","0","-3","-5","0.3"'
+                '"","covariate","covariate","mean","2.5%","97.5%"',
+                '"1","upr_u","0","-3","-5","0.3"'
             ), fileConn)
             close(fileConn)
         }
