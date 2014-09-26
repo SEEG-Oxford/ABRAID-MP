@@ -1,14 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-
-import java.util.List;
 
 /**
  * Service interface for model run inputs and outputs.
@@ -17,25 +14,14 @@ import java.util.List;
  */
 @Transactional(rollbackFor = Exception.class)
 public class ModelRunServiceImpl implements ModelRunService {
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private ModelRunDao modelRunDao;
     private NativeSQL nativeSQL;
 
-    public ModelRunServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao, ModelRunDao modelRunDao,
-                               NativeSQL nativeSQL) {
-        this.diseaseOccurrenceDao = diseaseOccurrenceDao;
+    private static final int DAYS_BETWEEN_MODEL_RUNS = 7;
+
+    public ModelRunServiceImpl(ModelRunDao modelRunDao, NativeSQL nativeSQL) {
         this.modelRunDao = modelRunDao;
         this.nativeSQL = nativeSQL;
-    }
-
-    /**
-     * Gets disease occurrences for a request to run the model.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for a request to run the model.
-     */
-    @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
     }
 
     /**
@@ -110,5 +96,15 @@ public class ModelRunServiceImpl implements ModelRunService {
     @Override
     public boolean hasBatchingEverCompleted(int diseaseGroupId) {
         return modelRunDao.hasBatchingEverCompleted(diseaseGroupId);
+    }
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    @Override
+    public DateTime subtractDaysBetweenModelRuns(DateTime dateTime) {
+        return dateTime.minusDays(DAYS_BETWEEN_MODEL_RUNS).withTimeAtStartOfDay();
     }
 }

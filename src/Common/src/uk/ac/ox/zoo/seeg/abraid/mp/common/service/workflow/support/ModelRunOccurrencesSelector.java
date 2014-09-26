@@ -52,15 +52,16 @@ public class ModelRunOccurrencesSelector {
     private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
     public ModelRunOccurrencesSelector(DiseaseService diseaseService, LocationService locationService,
-                                       int diseaseGroupId) {
+                                       int diseaseGroupId, boolean useGoldStandardOccurrences) {
         this.diseaseService = diseaseService;
         this.locationService = locationService;
-        initialise(diseaseGroupId);
+        initialise(diseaseGroupId, useGoldStandardOccurrences);
     }
 
     // Set the MDS calculation parameters for the specified disease group.
-    private void initialise(int diseaseGroupId) {
-        allOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+    private void initialise(int diseaseGroupId, boolean useGoldStandardOccurrences) {
+        allOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId,
+                useGoldStandardOccurrences);
         diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         minDataVolume = diseaseGroup.getMinDataVolume();
         minDistinctCountries = diseaseGroup.getMinDistinctCountries();

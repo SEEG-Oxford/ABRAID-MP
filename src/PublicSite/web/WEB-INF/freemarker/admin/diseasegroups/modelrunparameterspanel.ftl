@@ -32,7 +32,7 @@
                             <input type="checkbox" id="use-machine-learning" data-bind="formChecked: useMachineLearning">
                         </div>
                     </div>
-                    <@formGroup id="max-environmental-suitability-without-ml" title="Max. Environmental Suitability of Points for the Validator If Not Using Machine Learning" bind="formValue: maxEnvironmentalSuitabilityWithoutML"></@formGroup>
+                    <@formGroup id="max-environmental-suitability-without-ml" title="Max. Environmental Suitability of Points for the Validator If Not Using Machine Learning" bind="syncValue: maxEnvironmentalSuitabilityWithoutML, bootstrapDisable: find('isSubmitting') || useMachineLearning()"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">

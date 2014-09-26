@@ -70,8 +70,8 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result).isEqualTo("admin/diseasegroups/index");
-        verify(model, times(1)).addAttribute("diseaseGroups", expectedJson);
-        verify(model, times(1)).addAttribute("validatorDiseaseGroups", expectedValidatorJson);
+        verify(model).addAttribute("diseaseGroups", expectedJson);
+        verify(model).addAttribute("validatorDiseaseGroups", expectedValidatorJson);
     }
 
     @Test
@@ -108,10 +108,25 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId);
+        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).generateDiseaseExtent(same(diseaseGroup));
+        verify(modelRunWorkflowService).generateDiseaseExtent(same(diseaseGroup));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void generateDiseaseExtentForGoldStandardOccurrencesCallsWorkflowServiceForValidDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        // Act
+        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, true);
+
+        // Assert
+        verify(modelRunWorkflowService).generateDiseaseExtentUsingGoldStandardOccurrences(same(diseaseGroup));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -121,10 +136,23 @@ public class AdminDiseaseGroupControllerTest {
         int diseaseGroupId = -1;
 
         // Act
-        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId);
+        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
         verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void generateDiseaseExtentForGoldStandardOccurrencesCallsWorkflowServiceReturnsNotFoundForInvalidDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = -1;
+
+        // Act
+        ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
+
+        // Assert
+        verify(modelRunWorkflowService, never()).generateDiseaseExtentUsingGoldStandardOccurrences(any(DiseaseGroup.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -136,11 +164,23 @@ public class AdminDiseaseGroupControllerTest {
         DateTime batchEndDate = DateTime.now().withZone(DateTimeZone.UTC).plusDays(1);
 
         // Act
-        controller.requestModelRun(diseaseGroupId, batchEndDate.toString());
+        controller.requestModelRun(diseaseGroupId, batchEndDate.toString(), false);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestManuallyTriggeredModelRun(
+        verify(modelRunWorkflowService).prepareForAndRequestManuallyTriggeredModelRun(
                 eq(diseaseGroupId), eq(batchEndDate));
+    }
+
+    @Test
+    public void requestModelRunForGoldStandardOccurrences() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        controller.requestModelRun(diseaseGroupId, null, true);
+
+        // Assert
+        verify(modelRunWorkflowService).prepareForAndRequestModelRunUsingGoldStandardOccurrences(eq(diseaseGroupId));
     }
 
     @Test
@@ -154,7 +194,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).enableAutomaticModelRuns(eq(diseaseGroupId));
+        verify(modelRunWorkflowService).enableAutomaticModelRuns(eq(diseaseGroupId));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -185,7 +225,7 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(diseaseService, times(1)).saveDiseaseGroup(diseaseGroup);
+        verify(diseaseService).saveDiseaseGroup(diseaseGroup);
     }
 
     @Test
@@ -285,7 +325,7 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(diseaseService, times(1)).saveDiseaseGroup(any(DiseaseGroup.class));
+        verify(diseaseService).saveDiseaseGroup(any(DiseaseGroup.class));
     }
 
     @Test

@@ -26,6 +26,7 @@ public class DiseaseExtentGeneratorHelper {
     private List<DiseaseOccurrenceForDiseaseExtent> occurrences;
     private List<AdminUnitReview> reviews;
     private boolean hasModelBeenSuccessfullyRun;
+    private boolean useGoldStandardOccurrences;
 
     // Working fields
     private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit;
@@ -37,13 +38,15 @@ public class DiseaseExtentGeneratorHelper {
                                         List<AdminUnitDiseaseExtentClass> currentDiseaseExtent,
                                         List<? extends AdminUnitGlobalOrTropical> adminUnits,
                                         List<DiseaseExtentClass> diseaseExtentClasses,
-                                        boolean hasModelBeenSuccessfullyRun) {
+                                        boolean hasModelBeenSuccessfullyRun,
+                                        boolean useGoldStandardOccurrences) {
         this.diseaseGroup = diseaseGroup;
         this.parameters = diseaseGroup.getDiseaseExtentParameters();
         this.currentDiseaseExtent = currentDiseaseExtent;
         this.adminUnits = adminUnits;
         this.diseaseExtentClasses = diseaseExtentClasses;
         this.hasModelBeenSuccessfullyRun = hasModelBeenSuccessfullyRun;
+        this.useGoldStandardOccurrences = useGoldStandardOccurrences;
     }
 
     public DiseaseGroup getDiseaseGroup() {
@@ -80,6 +83,14 @@ public class DiseaseExtentGeneratorHelper {
      */
     public boolean hasModelBeenSuccessfullyRun() {
         return hasModelBeenSuccessfullyRun;
+    }
+
+    /**
+     * Gets whether only to use gold standard occurrences to generate the disease extent.
+     * @return Whether only to use gold standard occurrences to generate the disease extent.
+     */
+    public boolean useGoldStandardOccurrences() {
+        return useGoldStandardOccurrences;
     }
 
     public void setOccurrences(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {

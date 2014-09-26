@@ -5,6 +5,9 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -215,6 +218,32 @@ public class JsonModelRunInformationBuilderTest {
     public void populateBatchEndDateParametersForFinalBatchWhereLastOccurrenceEndsWithinAWeekBeforeNow() {
         populateBatchEndDateParameters("2011-02-05T13:07:06", "2014-07-25T00:00:00", "2013-12-31",
                 "1 Jan 2014", "22 Jul 2014", "25 Jul 2014");
+    }
+
+    @Test
+    public void populateHasGoldStandardOccurrencesWhenItDoesHave() {
+        // Arrange
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+        List<DiseaseOccurrence> occurrences = Arrays.asList(new DiseaseOccurrence());
+
+        // Act
+        JsonModelRunInformation information = builder.populateHasGoldStandardOccurrences(occurrences).get();
+
+        // Assert
+        assertThat(information.isHasGoldStandardOccurrences()).isTrue();
+    }
+
+    @Test
+    public void populateHasGoldStandardOccurrencesWhenItDoesNotHave() {
+        // Arrange
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+        List<DiseaseOccurrence> occurrences = Arrays.asList();
+
+        // Act
+        JsonModelRunInformation information = builder.populateHasGoldStandardOccurrences(occurrences).get();
+
+        // Assert
+        assertThat(information.isHasGoldStandardOccurrences()).isFalse();
     }
 
     private DiseaseGroup createValidDiseaseGroup() {

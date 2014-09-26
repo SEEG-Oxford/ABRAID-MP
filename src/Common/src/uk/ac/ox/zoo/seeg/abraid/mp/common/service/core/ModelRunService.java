@@ -1,9 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-
-import java.util.List;
 
 /**
  * Service interface for model run inputs and outputs.
@@ -11,13 +9,6 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public interface ModelRunService {
-    /**
-     * Gets disease occurrences for a request to run the model.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return Disease occurrences for a request to run the model.
-     */
-    List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId);
-
     /**
      * Gets a model run by name.
      * @param name The model run name.
@@ -72,4 +63,11 @@ public interface ModelRunService {
      * @return True if batching has completed at least once for this disease group, otherwise false.
      */
     boolean hasBatchingEverCompleted(int diseaseGroupId);
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    DateTime subtractDaysBetweenModelRuns(DateTime dateTime);
 }

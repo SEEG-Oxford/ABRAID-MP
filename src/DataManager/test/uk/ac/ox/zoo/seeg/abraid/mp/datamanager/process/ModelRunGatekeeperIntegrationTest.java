@@ -12,12 +12,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.AbstractDataManagerSpringIntegrat
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests the ModelRunGatekeeper class.
+ * Integration tests for the ModelRunGatekeeper class.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegrationTests {
+public class ModelRunGatekeeperIntegrationTest extends AbstractDataManagerSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
+    @Autowired
+    private ModelRunGatekeeper modelRunGatekeeper;
 
     private static final int DISEASE_GROUP_ID = 87;
     private static DiseaseGroup diseaseGroup;
@@ -39,7 +41,6 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
         weekHasElapsed = DateTime.now().minusDays(7);
         weekHasNotElapsed = DateTime.now().minusDays(1);
     }
-
 
     // Null lastModelRunPrepDate means the model has never run, so should run now.
     @Test
@@ -132,10 +133,9 @@ public class ModelRunGatekeeperTest extends AbstractDataManagerSpringIntegration
         if (hasEnoughLocations) {
             setUpEnoughLocations(Integer.MIN_VALUE);
         }
-        ModelRunGatekeeper target = new ModelRunGatekeeper(diseaseService);
 
         // Act
-        boolean result = target.modelShouldRun(DISEASE_GROUP_ID);
+        boolean result = modelRunGatekeeper.modelShouldRun(DISEASE_GROUP_ID);
 
         // Assert
         assertThat(result).isEqualTo(expectedResult);

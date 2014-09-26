@@ -51,12 +51,6 @@ import javax.persistence.Table;
                         "and (:mustHaveEnvironmentalSuitability = false or d.environmentalSuitability is not null)"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesForModelRunRequest",
-                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = true and d.finalWeighting > 0 " +
-                        "order by d.occurrenceDate desc"
-        ),
-        @NamedQuery(
                 name = "getDiseaseOccurrencesForTriggeringModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated is not null " +
@@ -95,6 +89,11 @@ public class DiseaseOccurrence {
             "inner join fetch d.alert.feed " +
             "inner join fetch d.alert.feed.provenance " +
             "inner join fetch d.diseaseGroup ";
+
+    /**
+     * The final weighting assigned to a "gold standard" disease occurrence.
+     */
+    public static final double GOLD_STANDARD_FINAL_WEIGHTING = 1.0;
 
     // The primary key.
     @Id

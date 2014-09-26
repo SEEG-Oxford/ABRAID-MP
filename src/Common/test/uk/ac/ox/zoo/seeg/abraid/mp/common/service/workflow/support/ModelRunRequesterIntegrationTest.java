@@ -13,7 +13,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -64,8 +63,6 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private ModelRunRequester modelRunRequester;
     @Autowired
     private ModelRunDao modelRunDao;
-    @Autowired
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     private static final String URL = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/model/run";
 
@@ -158,16 +155,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     private List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId);
+                diseaseGroupId, false);
         return selector.selectModelRunDiseaseOccurrences();
-    }
-
-    // Set the final weighting of all occurrences to null so the query will return an empty list - as is desired for this test.
-    private void clearFinalWeightingsFromDatabase(int diseaseGroupId) {
-        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)) {
-            occurrence.setFinalWeighting(null);
-            diseaseOccurrenceDao.save(occurrence);
-        }
     }
 
     private void mockPostRequest(final String responseJson) {

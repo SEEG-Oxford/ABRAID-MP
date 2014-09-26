@@ -117,7 +117,12 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
         // Add files to zip file
         ArrayList filesToAdd = new ArrayList();
         for (String outputFilename : outputFilenames) {
-            filesToAdd.add(getFileInWorkingDirectory(outputFilename));
+            File fileToAdd = getFileInWorkingDirectory(outputFilename);
+            if (fileToAdd.exists()) {
+                filesToAdd.add(fileToAdd);
+            } else {
+                throw new IllegalArgumentException("File does not exist: " + fileToAdd.getAbsolutePath());
+            }
         }
 
         zipFile.createZipFile(filesToAdd, zipParameters);

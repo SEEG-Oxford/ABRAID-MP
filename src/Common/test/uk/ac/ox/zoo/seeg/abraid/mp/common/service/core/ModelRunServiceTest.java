@@ -1,14 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -23,20 +20,6 @@ import static org.mockito.Mockito.when;
 public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
     @Autowired
     private ModelRunService modelRunService;
-
-    @Test
-    public void getDiseaseOccurrencesForModelRunRequest() {
-        // Arrange
-        int diseaseGroupId = 87;
-        List<DiseaseOccurrence> occurrences = Arrays.asList(new DiseaseOccurrence());
-        when(diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId)).thenReturn(occurrences);
-
-        // Act
-        List<DiseaseOccurrence> testOccurrences = modelRunService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
-
-        // Assert
-        assertThat(testOccurrences).isSameAs(occurrences);
-    }
 
     @Test
     public void getModelRunByName() {
@@ -147,5 +130,18 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
 
         // Assert
         assertThat(result).isTrue();
+    }
+
+    @Test
+    public void subtractDaysBetweenModelRuns() {
+        // Arrange
+        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
+        DateTime expectedResult = new DateTime("2014-10-02T00:00:00");
+
+        // Act
+        DateTime actualResult = modelRunService.subtractDaysBetweenModelRuns(inputDateTime);
+
+        // Assert
+        assertThat(actualResult.getMillis()).isEqualTo(expectedResult.getMillis());
     }
 }

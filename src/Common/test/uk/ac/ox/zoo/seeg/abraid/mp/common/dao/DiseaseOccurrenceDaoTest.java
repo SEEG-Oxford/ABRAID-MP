@@ -270,22 +270,27 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, 42);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 45);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithAllParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, 22);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 25);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
-        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), true, 4);
+        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), true, false, 4);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeWeightingsNull() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, 22);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 25);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForDiseaseExtentUsingGoldStandardOccurrences() {
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, true, 2);
     }
 
     @Test
@@ -379,31 +384,42 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesForModelRunRequest() {
         // Arrange
         int diseaseGroupId = 87; // Dengue
+        addUploadedOccurrences();
 
         // Act
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(
+                diseaseGroupId, false);
 
         // Assert
-        assertThat(occurrences).hasSize(27);
+        assertThat(occurrences).hasSize(30);
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
             assertThat(occurrence.isValidated()).isTrue();
-            assertThat(occurrence.getFinalWeighting()).isNotNull();
             assertThat(occurrence.getFinalWeighting()).isGreaterThan(0);
+        }
+
+        for (int i = 0; i < occurrences.size() - 1; i++) {
+            assertThat(isDescendingChronologically(occurrences.get(i), occurrences.get(i + 1))).isTrue();
         }
     }
 
     @Test
-    public void getDiseaseOccurrencesForModelRunRequestOrdersByOccurrenceDateDescending() {
+    public void getDiseaseOccurrencesForModelRunRequestUsingGoldStandardOccurrences() {
         // Arrange
         int diseaseGroupId = 87; // Dengue
+        addUploadedOccurrences();
 
         // Act
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId);
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(
+                diseaseGroupId, true);
 
         // Assert
-        for (int i = 0; i < occurrences.size() - 1; i++) {
-            assertThat(isDescendingChronologically(occurrences.get(i), occurrences.get(i + 1))).isTrue();
+        assertThat(occurrences).hasSize(2);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
+            assertThat(occurrence.isValidated()).isTrue();
+            assertThat(occurrence.getFinalWeighting()).isEqualTo(1);
+            assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.UPLOADED);
         }
     }
 
@@ -488,18 +504,22 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
                                                        DateTime minimumOccurrenceDate, boolean isGlobal,
+                                                       boolean useGoldStandardOccurrences,
                                                        int expectedOccurrenceCount) {
+        // Arrange
+        addUploadedOccurrences();
+
         // Act
         List<DiseaseOccurrenceForDiseaseExtent> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
-                        minimumOccurrenceDate, isGlobal);
+                        minimumOccurrenceDate, isGlobal, useGoldStandardOccurrences);
 
         // Assert
         assertThat(occurrences).hasSize(expectedOccurrenceCount);
     }
 
     private Alert createAlert() {
-        Feed feed = feedDao.getById(1);
+        Feed feed = feedDao.getByProvenanceName(ProvenanceNames.HEALTHMAP).get(0);
         DateTime publicationDate = DateTime.now().minusDays(5);
         int healthMapAlertId = 100;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
@@ -531,5 +551,30 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         review.setResponse(response);
         diseaseOccurrenceReviewDao.save(review);
         return review;
+    }
+
+    private void addUploadedOccurrences() {
+        createUploadedDiseaseOccurrenceForDengue(null);
+        createUploadedDiseaseOccurrenceForDengue(1.0);
+        createUploadedDiseaseOccurrenceForDengue(0.9);
+        createUploadedDiseaseOccurrenceForDengue(1.0);
+    }
+
+    private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        Location location = locationDao.getById(12);
+        Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
+        Alert alert = new Alert();
+        alert.setFeed(feed);
+
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setLocation(location);
+        occurrence.setAlert(alert);
+        occurrence.setFinalWeighting(finalWeighting);
+        occurrence.setFinalWeightingExcludingSpatial(finalWeighting);
+        occurrence.setValidated(true);
+        occurrence.setOccurrenceDate(DateTime.now());
+        diseaseOccurrenceDao.save(occurrence);
     }
 }
