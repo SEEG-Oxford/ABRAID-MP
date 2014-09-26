@@ -54,7 +54,7 @@ service tomcat7 stop
 # Teardown
 rm -rf /var/lib/tomcat7/webapps/*
 rm -rf $ABRAID_SUPPORT_PATH
-dropdb -U $PG_ADMIN_USER "$DB_NAME"
+dropdb --if-exists -U $PG_ADMIN_USER "$DB_NAME"
 
 # Setup support dir
 mkdir $ABRAID_SUPPORT_PATH
@@ -73,7 +73,7 @@ chmod -R 664 $ABRAID_SUPPORT_PATH/*
 find /var/lib/tomcat7/webapps/ -type d -exec chmod +x {} \;
 find $ABRAID_SUPPORT_PATH/ -type d -exec chmod +x {} \;
 chmod ug+x $ABRAID_SUPPORT_PATH/datamanager/datamanager.sh
-chmod -R 644 $ABRAID_SUPPORT_PATH/logs
+chmod -R 644 $ABRAID_SUPPORT_PATH/datamanager/logs
 
 # Clean up psql authentication
 rm $BASE/pg_pass
