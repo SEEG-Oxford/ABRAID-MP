@@ -19,7 +19,7 @@
 
 <script type="text/html" id="automatic-model-runs-alert-template">
     <div class="justify">
-        Enabling model runs to be triggered automatically is a onetime action that <i><strong>cannot be undone</strong></i>.
+        Enabling model runs to be triggered automatically is a one-time action that <i><strong>cannot be undone</strong></i>.
         <br /><br />
         Please ensure that ModelWrapper has been configured fully for this disease group before proceeding.
     </div>
