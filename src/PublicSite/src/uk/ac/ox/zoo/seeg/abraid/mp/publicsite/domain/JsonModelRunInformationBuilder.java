@@ -126,6 +126,11 @@ public class JsonModelRunInformationBuilder {
         return this;
     }
 
+    /**
+     * Populates whether or not the disease group has "gold standard" disease occurrences.
+     * @param goldStandardOccurrences A list of "gold standard" disease occurrences.
+     * @return This builder.
+     */
     public JsonModelRunInformationBuilder populateHasGoldStandardOccurrences(
             List<DiseaseOccurrence> goldStandardOccurrences) {
         information.setHasGoldStandardOccurrences(goldStandardOccurrences.size() > 0);

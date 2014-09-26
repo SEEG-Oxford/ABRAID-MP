@@ -118,6 +118,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Generates a disease extent for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      * @return An error status: 204 for success, 404 if disease group cannot be found in database.
      */
     @Secured({ "ROLE_ADMIN" })
@@ -142,6 +143,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to request the model run.
      * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
+     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      * @return An error message string (empty if no error).
      */
     @Secured({ "ROLE_ADMIN" })
