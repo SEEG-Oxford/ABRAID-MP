@@ -194,7 +194,7 @@ public class ModelStatusReporterTest {
 
         // Assert
         verify(logger, times(1)).fatal(
-                eq("Error sending model outputs for handling: input file does not exist"),
+                startsWith("Error sending model outputs for handling: File does not exist"),
                 any(ZipException.class));
     }
 
@@ -218,5 +218,4 @@ public class ModelStatusReporterTest {
         });
         return destination;
     }
-
 }
