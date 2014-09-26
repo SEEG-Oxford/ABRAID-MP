@@ -4,16 +4,19 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
+import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
@@ -24,10 +27,9 @@ import java.util.List;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,15 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
         "file:PublicSite/web/WEB-INF/applicationContext.xml" })
 public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSiteIntegrationTests {
-    public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
-
-    @ReplaceWithMock
-    @Autowired
-    private WebServiceClient webServiceClient;
-
-    @Autowired
-    private ModelRunService modelRunService;
-
     @Autowired
     private DiseaseService diseaseService;
 
@@ -56,6 +49,10 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @ReplaceWithMock
+    @Autowired
+    private ModelRunWorkflowService modelRunWorkflowService;
 
     @Before
     public void setup() {
@@ -146,23 +143,35 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     public void requestModelRun() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
-        setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
-        mockModelWrapperWebServiceCall();
-        assertThat(modelRunService.getLastRequestedModelRun(diseaseGroupId)).isNull();
+        DateTime batchEndDate = DateTime.now();
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
 
         // Act
-        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
-        DateTime batchEndDate = DateTime.now();
-        this.mockMvc.perform(post(url).param("batchEndDate", batchEndDate.toString()))
-                .andExpect(status().isOk());
+        MockHttpServletRequestBuilder requestBuilder = post(url)
+                .param("batchEndDate", batchEndDate.toString())
+                .param("useGoldStandardOccurrences", "false");
+        this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         // Assert
-        ModelRun modelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
-        assertThat(modelRun).isNotNull();
-        assertThat(modelRun.getName()).isEqualTo("testname");
-        assertThat(modelRun.getStatus()).isEqualTo(ModelRunStatus.IN_PROGRESS);
-        assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
-        assertThat(modelRun.getBatchEndDate().getMillis()).isEqualTo(batchEndDate.getMillis());
+        verify(modelRunWorkflowService).prepareForAndRequestManuallyTriggeredModelRun(eq(diseaseGroupId),
+                argThat(new DateTimeMatcher(batchEndDate)));
+    }
+
+    @Test
+    public void requestModelRunUsingGoldStandardOccurrences() throws Exception {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTime batchEndDate = DateTime.now();
+        String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
+
+        // Act
+        MockHttpServletRequestBuilder requestBuilder = post(url)
+                .param("batchEndDate", batchEndDate.toString())
+                .param("useGoldStandardOccurrences", "true");
+        this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
+
+        // Assert
+        verify(modelRunWorkflowService).prepareForAndRequestModelRunUsingGoldStandardOccurrences(eq(diseaseGroupId));
     }
 
     @Test
@@ -182,19 +191,6 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(
                 patch(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/requestmodelrun"))
                 .andExpect(status().isMethodNotAllowed());
-    }
-
-    private void setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(int diseaseGroupId) {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        diseaseGroup.setMinDataVolume(27);
-        diseaseGroup.setOccursInAfrica(false);
-        diseaseGroup.setMinDistinctCountries(null);
-        diseaseService.saveDiseaseGroup(diseaseGroup);
-    }
-
-    private void mockModelWrapperWebServiceCall() {
-        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
-                .thenReturn("{\"modelRunName\":\"testname\"}");
     }
 
     @Test
@@ -495,5 +491,22 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     private DiseaseGroup getMostRecentlyAddedDiseaseGroup() {
         List<DiseaseGroup> sortedList = sort(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
         return sortedList.get(sortedList.size() - 1);
+    }
+
+    /**
+     * Compares DateTimes for equality by milliseconds (thus avoiding time zone issues).
+     */
+    static class DateTimeMatcher extends ArgumentMatcher<DateTime> {
+        private final DateTime expected;
+
+        public DateTimeMatcher(DateTime expected) {
+            this.expected = expected;
+        }
+
+        @Override
+        public boolean matches(Object actual) {
+            DateTime actualDateTime = (DateTime) actual;
+            return expected.getMillis() == actualDateTime.getMillis();
+        }
     }
 }

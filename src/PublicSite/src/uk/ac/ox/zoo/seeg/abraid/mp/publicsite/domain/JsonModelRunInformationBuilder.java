@@ -2,9 +2,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatistics;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.DiseaseGroupForModelRunValidator;
+
+import java.util.List;
 
 /**
  * Builds a JsonModelRunInformation object.
@@ -120,6 +123,12 @@ public class JsonModelRunInformationBuilder {
         information.setBatchEndDateMinimum(getDateText(minimumDate));
         information.setBatchEndDateDefault(getDateText(defaultDate));
         information.setBatchEndDateMaximum(getDateText(maximumDate));
+        return this;
+    }
+
+    public JsonModelRunInformationBuilder populateHasGoldStandardOccurrences(
+            List<DiseaseOccurrence> goldStandardOccurrences) {
+        information.setHasGoldStandardOccurrences(goldStandardOccurrences.size() > 0);
         return this;
     }
 

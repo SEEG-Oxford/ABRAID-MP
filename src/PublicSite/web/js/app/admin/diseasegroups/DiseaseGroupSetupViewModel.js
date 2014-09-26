@@ -18,10 +18,12 @@ define([
         self.hasModelBeenSuccessfullyRun = ko.observable(false);
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
-        self.canRunModel = ko.observable(false).extend({equal: true});
+        self.canRunModel = ko.observable(false);
         self.batchEndDate = ko.observable("").extend({required: true, date: true});
         self.batchEndDateMinimum = ko.observable("");
         self.batchEndDateMaximum = ko.observable("");
+        self.hasGoldStandardOccurrences = ko.observable(false);
+        self.useGoldStandardOccurrences = ko.observable(false);
 
         self.buildSubmissionUrl = function () {
             return baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
@@ -29,14 +31,23 @@ define([
 
         self.buildSubmissionData = function () {
             var batchEndDateText = moment(self.batchEndDate(), "DD MMM YYYY").format();
-            return { batchEndDate: batchEndDateText };
+            return { batchEndDate: batchEndDateText, useGoldStandardOccurrences: self.useGoldStandardOccurrences() };
         };
+
+        // The Run Model button is disabled if the batch date is invalid, unless we are using gold standard occurrences
+        // as these do not require a batch end date. It is also disabled if the model cannot be run or we are currently
+        // submitting the form.
+        self.disableButtonThatRunsModel = ko.computed(function () {
+            return (!self.useGoldStandardOccurrences() && !self.batchEndDate.isValid()) || !self.canRunModel() ||
+                self.isSubmitting() || self.isEnablingAutomaticModelRuns() || self.isGeneratingDiseaseExtent();
+        });
 
         self.isGeneratingDiseaseExtent = ko.observable(false);
         self.generateDiseaseExtent = function () {
             self.notices.removeAll();
             self.isGeneratingDiseaseExtent(true);
-            $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/generatediseaseextent")
+            var data = { useGoldStandardOccurrences: self.useGoldStandardOccurrences() };
+            $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/generatediseaseextent", data)
                 .done(function () { self.notices.push({ message: "Disease extent generated.", priority: "success"}); })
                 .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
                 .always(function () { self.isGeneratingDiseaseExtent(false); });
@@ -68,6 +79,8 @@ define([
             self.batchEndDateMaximum("");
             self.hasModelBeenSuccessfullyRun(false);
             self.canRunModel(false);
+            self.hasGoldStandardOccurrences(false);
+            self.useGoldStandardOccurrences(false);
         };
 
         self.updateModelRunInfo = function (diseaseGroupId) { // only public for testing
@@ -87,6 +100,7 @@ define([
                         self.batchEndDateMaximum(data.batchEndDateMaximum);
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                         self.canRunModel(data.canRunModel);
+                        self.hasGoldStandardOccurrences(data.hasGoldStandardOccurrences);
                         if (!self.canRunModel()) {
                             var errorMessage = "Cannot run model or generate disease extent because " +
                                 data.cannotRunModelReason;

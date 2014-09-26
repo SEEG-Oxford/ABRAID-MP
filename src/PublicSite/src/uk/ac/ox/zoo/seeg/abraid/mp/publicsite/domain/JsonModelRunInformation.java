@@ -13,6 +13,7 @@ public class JsonModelRunInformation {
     private String batchEndDateMinimum;
     private String batchEndDateMaximum;
     private String batchEndDateDefault;
+    private boolean hasGoldStandardOccurrences;
 
     public String getLastModelRunText() {
         return lastModelRunText;
@@ -78,5 +79,14 @@ public class JsonModelRunInformation {
 
     public void setBatchEndDateDefault(String batchEndDateDefault) {
         this.batchEndDateDefault = batchEndDateDefault;
+    }
+
+    // The strange method name is necessary for JSON serialization to include this field
+    public boolean isHasGoldStandardOccurrences() {
+        return hasGoldStandardOccurrences;
+    }
+
+    public void setHasGoldStandardOccurrences(boolean hasGoldStandardOccurrences) {
+        this.hasGoldStandardOccurrences = hasGoldStandardOccurrences;
     }
 }

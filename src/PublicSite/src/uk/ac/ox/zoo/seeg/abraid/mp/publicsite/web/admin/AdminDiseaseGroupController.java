@@ -100,6 +100,8 @@ public class AdminDiseaseGroupController extends AbstractController {
         ModelRun lastCompletedModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
         DiseaseOccurrenceStatistics statistics = diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId);
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        List<DiseaseOccurrence> goldStandardOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(
+                diseaseGroupId, true);
 
         JsonModelRunInformation info = new JsonModelRunInformationBuilder()
                 .populateLastModelRunText(lastRequestedModelRun)
@@ -107,6 +109,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 .populateDiseaseOccurrencesText(statistics)
                 .populateCanRunModelWithReason(diseaseGroup)
                 .populateBatchEndDateParameters(lastCompletedModelRun, statistics)
+                .populateHasGoldStandardOccurrences(goldStandardOccurrences)
                 .get();
 
         return new ResponseEntity<>(info, HttpStatus.OK);
@@ -121,10 +124,14 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/generatediseaseextent",
             method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId) {
+    public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId, boolean useGoldStandardOccurrences) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup != null) {
-            modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+            if (useGoldStandardOccurrences) {
+                modelRunWorkflowService.generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
+            } else {
+                modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+            }
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -143,10 +150,16 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchEndDate) {
+    public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchEndDate,
+                                                  boolean useGoldStandardOccurrences) {
         try {
-            DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
-            modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, parsedBatchEndDate);
+            if (useGoldStandardOccurrences) {
+                modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
+            } else {
+                DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
+                modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId,
+                        parsedBatchEndDate);
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

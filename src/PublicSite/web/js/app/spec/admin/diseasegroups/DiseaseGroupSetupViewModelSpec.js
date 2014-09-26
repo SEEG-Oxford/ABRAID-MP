@@ -75,10 +75,6 @@ define([
             it("starts false", function () {
                 expect(vm.canRunModel()).toBe(false);
             });
-
-            it("is required to be true for the view model to be valid", function () {
-                expect(vm.canRunModel).toHaveValidationRule({name: "equal", params: true});
-            });
         });
 
         describe("holds the batch end date which", function () {
@@ -113,6 +109,26 @@ define([
 
             it("starts empty", function () {
                 expect(vm.batchEndDateMaximum()).toBe("");
+            });
+        });
+
+        describe("holds whether or not the disease group has 'gold standard' occurrences which", function () {
+            it("is an observable", function () {
+                expect(vm.hasGoldStandardOccurrences).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.hasGoldStandardOccurrences()).toBe(false);
+            });
+        });
+
+        describe("holds whether or not to use a disease group's 'gold standard' occurrences which", function () {
+            it("is an observable", function () {
+                expect(vm.useGoldStandardOccurrences).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.useGoldStandardOccurrences()).toBe(false);
             });
         });
 
@@ -158,6 +174,78 @@ define([
             });
         });
 
+        describe("holds whether to disable the button that runs the model, which", function () {
+            it("enables if not using gold standard occurrences and we should be able to run the model", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchEndDate("10 Jul 2014");
+                vm.canRunModel(true);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(false);
+            });
+
+            it("enables if using gold standard occurrences and we should be able to run the model", function () {
+                vm.useGoldStandardOccurrences(true);
+                vm.batchEndDate("");
+                vm.canRunModel(true);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(false);
+            });
+
+            it("disables if not using gold standard occurrences and the date is invalid", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchEndDate("");
+                vm.canRunModel(true);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(true);
+            });
+
+            it("disables if the model cannot be run", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchEndDate("10 Jul 2014");
+                vm.canRunModel(false);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(true);
+            });
+
+            it("disables if we are submitting", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchEndDate("10 Jul 2014");
+                vm.canRunModel(true);
+                vm.isSubmitting(true);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(true);
+            });
+
+            it("disables if we are enabling automatic model runs", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchEndDate("10 Jul 2014");
+                vm.canRunModel(true);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(true);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(true);
+            });
+
+            it("disables if we are generating the disease extent", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchEndDate("10 Jul 2014");
+                vm.canRunModel(true);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(true);
+                expect(vm.disableButtonThatRunsModel()).toBe(true);
+            });
+        });
+
         describe("has the behaviour of BaseFormView model, but overrides to", function () {
             it("build a submission URL which is correct", function () {
                 // Arrange
@@ -174,6 +262,7 @@ define([
             it("build submission data which is correct", function () {
                 // Arrange
                 vm.batchEndDate("10 Jul 2014");
+                vm.useGoldStandardOccurrences(true);
                 var expectedBatchEndDate = "2014-07-10T00:00:00";
 
                 // Act
@@ -181,6 +270,7 @@ define([
 
                 // Assert
                 expect(actualData.batchEndDate).toContain(expectedBatchEndDate);
+                expect(actualData.useGoldStandardOccurrences).toBe(true);
             });
         });
 
@@ -193,6 +283,8 @@ define([
             vm.batchEndDateMaximum("e");
             vm.hasModelBeenSuccessfullyRun(true);
             vm.canRunModel(true);
+            vm.hasGoldStandardOccurrences(false);
+            vm.useGoldStandardOccurrences(false);
 
             // Act
             vm.resetState(undefined);
@@ -205,6 +297,8 @@ define([
             expect(vm.batchEndDateMaximum()).toBe("");
             expect(vm.hasModelBeenSuccessfullyRun()).toBe(false);
             expect(vm.canRunModel()).toBe(false);
+            expect(vm.hasGoldStandardOccurrences()).toBe(false);
+            expect(vm.useGoldStandardOccurrences()).toBe(false);
         });
 
         describe("has a 'updateModelRunInfo' method, which", function () {
@@ -304,7 +398,8 @@ define([
                         batchEndDateMinimum: "d",
                         batchEndDateMaximum: "e",
                         hasModelBeenSuccessfullyRun: "f",
-                        canRunModel: "g"
+                        canRunModel: "g",
+                        hasGoldStandardOccurrences: "h"
                     };
 
                     // Act
@@ -323,6 +418,7 @@ define([
                     expect(vm.batchEndDateMaximum()).toBe(response.batchEndDateMaximum);
                     expect(vm.hasModelBeenSuccessfullyRun()).toBe(response.hasModelBeenSuccessfullyRun);
                     expect(vm.canRunModel()).toBe(response.canRunModel);
+                    expect(vm.hasGoldStandardOccurrences()).toBe(response.hasGoldStandardOccurrences);
 
                     expect(vm.notices().length).toBe(0);
                 });
@@ -372,7 +468,9 @@ define([
                 // Arrange
                 var id = 1;
                 vm.selectedDiseaseGroupId(id);
+                vm.useGoldStandardOccurrences(true);
                 var expectedUrl = baseUrl + "admin/diseases/" + id + "/generatediseaseextent";
+                var expectedParams = "useGoldStandardOccurrences=true";
 
                 // Act
                 vm.generateDiseaseExtent();
@@ -380,6 +478,7 @@ define([
                 // Assert
                 expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
                 expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+                expect(jasmine.Ajax.requests.mostRecent().params).toBe(expectedParams);
             });
 
             it("when successful, updates the 'notices' with a success message", function () {
