@@ -26,6 +26,7 @@ sed -i "s/DB\_REPLACE/$DB_NAME/g" /var/lib/tomcat7/webapps/geoserver/data/worksp
 sed -i "s/PORT\_REPLACE/$DB_PORT/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
 sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" /var/lib/tomcat7/webapps/geoserver/data/workspaces/abraid/abraid-db/datastore.xml
 cp ../geoserver/logging.xml /var/lib/tomcat7/webapps/geoserver/data/logging.xml
+mkdir /var/lib/tomcat7/webapps/geoserver/data/logs
 cp ../geoserver/ABRAID_LOGGING.properties /var/lib/tomcat7/webapps/geoserver/data/logs/ABRAID_LOGGING.properties
 
 # Set up PublicSite
