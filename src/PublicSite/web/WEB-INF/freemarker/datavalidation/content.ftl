@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:600'  type='text/css'>
-    <link rel="stylesheet" href="<@spring.url "/css/login.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
@@ -48,7 +47,6 @@
     <script>
         var data = {
             wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
-            loggedIn: ${userLoggedIn?c},
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
             diseaseInterests: [

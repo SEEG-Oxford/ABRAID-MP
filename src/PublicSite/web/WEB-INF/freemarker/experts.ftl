@@ -3,7 +3,7 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
-<#import "shared/layout/common.ftl" as c/>
+<#import "layout/common.ftl" as c/>
 <#import "layout/pagination.ftl" as p/>
 <#import "/spring.ftl" as spring />
 <#assign css>
@@ -38,7 +38,7 @@
         }
     </style>
 </#assign>
-<@c.page title="ABRAID MP - Experts" endOfHead=css>
+<@c.page title="ABRAID MP - Experts" endOfHead=css mainjs="/js/kickstart/default">
     <div class="container">
         <div class="experts-list">
             <#list page?chunk(2) as row>

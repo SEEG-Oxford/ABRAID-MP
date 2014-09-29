@@ -10,7 +10,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "jquery",
         "app/user/AccountRegistrationFormViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "login"
     ], function (ko, $, AccountRegistrationFormViewModel, doc) {
             var redirectPage = function (newURL) {
                 doc.location = newURL;

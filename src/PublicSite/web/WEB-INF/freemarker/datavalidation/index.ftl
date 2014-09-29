@@ -3,7 +3,7 @@
     (including header and footer) and all content is displayed in an IFrame for compatibility with TGHN.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../shared/layout/common.ftl" as c/>
+<#import "../layout/common.ftl" as c/>
 <#import "/spring.ftl" as spring />
 <#assign endOfHeadContent>
     <style>
@@ -23,6 +23,6 @@
     </style>
 </#assign>
 
-<@c.page title="ABRAID MP" endOfHead=endOfHeadContent>
+<@c.page title="ABRAID MP" endOfHead=endOfHeadContent mainjs="/js/kickstart/default">
 <iframe src="<@spring.url "/datavalidation/content"/>"></iframe>
 </@c.page>
