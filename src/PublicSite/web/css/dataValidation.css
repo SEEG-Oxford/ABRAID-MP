@@ -65,7 +65,8 @@ html, body, #dataValidation {
     position: relative;
 }
 #sidePanelContent h4 {
-    min-height: 57px;
+    height: 57px;
+    overflow: hidden;
 }
 #sidePanelContent ul {
     list-style-type: none;      /* Remove bullet points */

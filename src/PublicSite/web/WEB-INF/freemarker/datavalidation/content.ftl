@@ -47,6 +47,7 @@
     <script>
         var data = {
             wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
+            loggedIn: ${userLoggedIn?c},
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
             diseaseInterests: [

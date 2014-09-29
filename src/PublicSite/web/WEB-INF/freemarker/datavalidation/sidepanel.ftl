@@ -5,7 +5,6 @@
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
     <div id="sidePanelContent" data-bind="template: { name : templateName() }"></div>
-
 </div>
 
 <script type="text/html" id="admin-units-template">
@@ -98,13 +97,16 @@
             <i class="fa fa-external-link"></i>
             <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
         </li>
-        <li><i class="fa fa-quote-left"></i></li>
-        <li>
-            <div class="sidePanelText" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
-            <a id="translationLink" data-bind="if: selectedPoint().properties.alert.summary,
-                                               attr: {href: translationUrl}" target="_blank">View translation</a>
+        <li style="position: absolute; top: 165px; bottom: 195px; width: 265px;">
+            <ul style="padding: 0px; max-height: 100%; overflow: hidden">
+                <li><i class="fa fa-quote-left"></i></li>
+                <li style="position: absolute; top: 20px; bottom: 20px; width: 100%;">
+                    <div class="sidePanelText" style="max-height: 100%; margin: 0 5px;" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
+                    <div style="margin: 2px 0;"><i class="fa fa-quote-right"></i><a id="translationLink" data-bind="if: selectedPoint().properties.alert.summary, attr: {href: translationUrl}" target="_blank">View translation</a></div>
+                </li>
+
+            </ul>
         </li>
-        <li><i class="fa fa-quote-right"></i></li>
     </ul>
     <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">
