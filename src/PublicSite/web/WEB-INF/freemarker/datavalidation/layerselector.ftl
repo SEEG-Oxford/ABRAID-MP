@@ -30,7 +30,7 @@
         <div class="alert alert-info" style="display: none" data-bind="visible: !noFeaturesToReview()">
             <div data-bind="text: showDiseaseExtentLayer() ?
                 'Log in to start validating regions.' :
-                'Log in to start validating occurences.'">
+                'Log in to start validating occurrences.'">
             </div>
         </div>
     </#if>
