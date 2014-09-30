@@ -10,8 +10,8 @@ html, body, #dataValidation {
 }
 #dataValidation  {
     padding-right: 280px;        /* Side panel width */
-    min-width: 800px;            /* Side panel width + layer selector width */
-    min-height: 775px;
+    min-width: 575px;            /* Side panel width + layer selector width */
+    min-height: 535px;
 }
 #layerSelector {
     position: absolute;
@@ -65,7 +65,8 @@ html, body, #dataValidation {
     position: relative;
 }
 #sidePanelContent h4 {
-    min-height: 57px;
+    height: 57px;
+    overflow: hidden;
 }
 #sidePanelContent ul {
     list-style-type: none;      /* Remove bullet points */
@@ -76,11 +77,17 @@ html, body, #dataValidation {
     display: inline;
 }
 #adminUnitTable tbody {
-    height: 400px;
     width: 100%;
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
+    cursor: pointer;
+    position: absolute;
+    top:26px;
+    bottom: 385px;
+    background-color: #e3e3e3;
+    border-bottom: 2px solid #aaaaaa;
+    border-top: 2px solid #aaaaaa;
 }
 #adminUnitTable thead {
      cursor: default;
@@ -89,13 +96,6 @@ html, body, #dataValidation {
 }
 #adminUnitTable thead th {
     border-bottom: none;
-}
-#adminUnitTable tbody {
-    cursor: pointer;
-    position: relative;
-    background-color: #e3e3e3;
-    border-bottom: 2px solid #aaaaaa;
-    border-top: 2px solid #aaaaaa;
 }
 #adminUnitTable td {
     border-top-color: #aaaaaa !important;
@@ -114,7 +114,7 @@ html, body, #dataValidation {
     text-align: center;
 }
 #adminUnitTable tbody tr td:last-child, #adminUnitTable thead tr th:last-child  {
-    min-width: 180px;
+    width: 178px;
 }
 .sidePanelText {
     margin: 5px;
@@ -138,8 +138,34 @@ html, body, #dataValidation {
     float: right;
     padding-right: 5px;
 }
-#submitReviewSuccess,
-#reviewButtons {
+#remainingCount {
+    position: absolute;
+    width: 100%;
+    bottom: 335px;
+}
+#reportSummary {
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    width: 100%;
+}
+#reportSummary .sidePanelText {
+    max-height: 100%;
+    margin: 0 5px 0 2px;
+
+}
+#summaryPanel {
+    position: absolute;
+    top: 165px;
+    bottom: 195px;
+    width: 265px;
+}
+#summaryPanel > ul {
+    padding: 0;
+    max-height: 100%;
+    overflow: hidden
+}
+#submitReviewSuccess, #reviewButtons {
     width: 100%;
     padding: 10px;
     position: absolute;
@@ -172,11 +198,35 @@ html, body, #dataValidation {
     text-align: center;
 }
 #counter {
+    position: relative;
+    height: 80px;
+    width: 100%;
+    margin-bottom: -2px;
+    margin-top: 3px;
+}
+#counter > div {
+    display: block;
+    position: absolute;
+    width: 340px;
+    bottom:0px;
+    right: 0px;
+    -moz-transform: scale(0.8);
+    -moz-transform-origin: 100% 100%;
+    -webkit-transform: scale(0.8);
+    -webkit-transform-origin: 100% 100%;
+    -o-transform: scale(0.8);
+    -o-transform-origin: 100% 100%;
+    -ms-transform: scale(0.8);
+    -ms-transform-origin: 100% 100%;
+    transform: scale(0.8);
+    transform-origin: 100% 100%;
+    overflow: visible;
+    margin: 0 3px;
+}
+#counter > div > div {
+    margin: 0 auto;
     display: inline-block;
     width: auto;
-    margin: 0 auto;
-    zoom: 0.8;
-    -moz-transform: scale(0.8);
 }
 #counter ul {
     margin: 4px;

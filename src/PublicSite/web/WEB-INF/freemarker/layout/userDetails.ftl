@@ -3,7 +3,7 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#macro userDetails title mainjs buttonStandardText="Save" buttonSubmittingText="Saving ...">
-    <#import "../shared/layout/common.ftl" as c/>
+    <#import "../layout/common.ftl" as c/>
     <#import "../shared/layout/form.ftl" as f/>
     <#import "../shared/layout/table.ftl" as t/>
     <#assign bootstrapData>

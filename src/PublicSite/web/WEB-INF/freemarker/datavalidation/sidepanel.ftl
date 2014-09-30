@@ -5,16 +5,6 @@
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <div id="sidePanel">
     <div id="sidePanelContent" data-bind="template: { name : templateName() }"></div>
-    <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-    <div id="sidePanelLogin">
-        <script type="text/html" id="login-template">
-            <#include "loginform.ftl" />
-        </script>
-        <button class="btn btn-primary" data-bind="popover: {template: 'login-template', placement: 'top', title: 'Log In'}">
-            Log in to start validating
-        </button>
-    </div>
-    </@security.authorize>
 </div>
 
 <script type="text/html" id="admin-units-template">
@@ -37,9 +27,11 @@
                 </tbody>
             </table>
         </div>
-        <span class="sidePanelTextAnnotation" data-bind="visible: adminUnits().length > 0">
-            <span data-bind="text: adminUnits().length + ' region' + (adminUnits().length !== 1 ? 's' : '') + ' remaining'"></span>
-        </span>
+        <div id="remainingCount">
+            <span class="sidePanelTextAnnotation" data-bind="visible: adminUnits().length > 0">
+                <span data-bind="text: adminUnits().length + ' region' + (adminUnits().length !== 1 ? 's' : '') + ' remaining'"></span>
+            </span>
+        </div>
         <div data-bind="if: hasSelectedAdminUnit()">
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="reviewButtons">
@@ -60,9 +52,11 @@
     </div>
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div id="counterDiv" data-bind="with: counter">
-            <span data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></span><br/>
-            <div id="counter" data-bind="counter: count"></div><br/>
-            <span data-bind="text: count() == 1 ? 'region' : 'regions'"></span>
+            <div data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></div>
+            <div id="counter">
+                <div><div data-bind="counter: count"></div></div>
+            </div>
+            <div data-bind="text: count() == 1 ? 'region' : 'regions'"></div>
         </div>
     </@security.authorize>
     <!-- /ko -->
@@ -73,9 +67,11 @@
         <div data-bind="template: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template'"></div>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="counterDiv" data-bind="with: counter">
-                <span data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></span><br/>
-                <div id="counter" data-bind="counter: count"></div><br/>
-                <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
+                <div data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></div>
+                <div id="counter">
+                    <div><div data-bind="counter: count"></div></div>
+                </div>
+                <div data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></div>
             </div>
         </@security.authorize>
     <!-- /ko -->
@@ -96,18 +92,24 @@
         <li><i class="fa fa-medkit"></i>&nbsp;<p data-bind="html: selectedPoint().properties.diseaseGroupPublicName"></p></li>
         <li><i class="fa fa-map-marker"></i>&nbsp;<p data-bind="text: selectedPoint().properties.locationName"></p></li>
         <li><i class="fa fa-calendar"></i>&nbsp;<p data-bind="date: selectedPoint().properties.occurrenceDate"></p></li>
-        <li>
+        <li data-bind="if: selectedPoint().properties.alert.url">
             <i class="fa fa-external-link"></i>
             <a data-bind="text: selectedPoint().properties.alert.feedName,
-                          attr: {href: selectedPoint().properties.alert.url}" target="_blank"></a>
+                          attr: {href: selectedPoint().properties.alert.url || '#'}" target="_blank"></a>
         </li>
-        <li><i class="fa fa-quote-left"></i></li>
-        <li>
-            <div class="sidePanelText" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
-            <a id="translationLink" data-bind="if: selectedPoint().properties.alert.summary,
-                                               attr: {href: translationUrl}" target="_blank">View translation</a>
+        <li data-bind="ifnot: selectedPoint().properties.alert.url">
+            <i class="fa fa-external-link"></i>
+            <span data-bind="text: selectedPoint().properties.alert.feedName"></span>
         </li>
-        <li><i class="fa fa-quote-right"></i></li>
+        <li id="summaryPanel">
+            <ul >
+                <li><i class="fa fa-quote-left"></i></li>
+                <li id="reportSummary">
+                    <div class="sidePanelText" data-bind="html: selectedPoint().properties.alert.summary || '<i>No summary available</i>'"></div>
+                    <div><i class="fa fa-quote-right"></i><a id="translationLink" data-bind="if: selectedPoint().properties.alert.summary, attr: {href: translationUrl}" target="_blank">View translation</a></div>
+                </li>
+            </ul>
+        </li>
     </ul>
     <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">

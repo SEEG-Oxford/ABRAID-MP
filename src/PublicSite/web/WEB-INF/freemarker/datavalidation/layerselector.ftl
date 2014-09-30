@@ -25,4 +25,13 @@
             'This disease is not ready for disease occurrence reviews.'">
         </div>
     </div>
+
+    <#if !userLoggedIn>
+        <div class="alert alert-info" style="display: none" data-bind="visible: !noFeaturesToReview()">
+            <div data-bind="text: showDiseaseExtentLayer() ?
+                'Log in to start validating regions.' :
+                'Log in to start validating occurrences.'">
+            </div>
+        </div>
+    </#if>
 </div>
