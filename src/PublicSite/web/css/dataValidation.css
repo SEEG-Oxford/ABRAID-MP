@@ -176,11 +176,35 @@ html, body, #dataValidation {
     text-align: center;
 }
 #counter {
+    position: relative;
+    height: 80px;
+    width: 100%;
+    margin-bottom: -2px;
+    margin-top: 3px;
+}
+#counter > div {
+    display: block;
+    position: absolute;
+    width: 340px;
+    bottom:0px;
+    right: 0px;
+    -moz-transform: scale(0.8);
+    -moz-transform-origin: 100% 100%;
+    -webkit-transform: scale(0.8);
+    -webkit-transform-origin: 100% 100%;
+    -o-transform: scale(0.8);
+    -o-transform-origin: 100% 100%;
+    -ms-transform: scale(0.8);
+    -ms-transform-origin: 100% 100%;
+    transform: scale(0.8);
+    transform-origin: 100% 100%;
+    overflow: visible;
+    margin: 0 3px;
+}
+#counter > div > div {
+    margin: 0 auto;
     display: inline-block;
     width: auto;
-    margin: 0 auto;
-    zoom: 0.8;
-    -moz-transform: scale(0.8);
 }
 #counter ul {
     margin: 4px;

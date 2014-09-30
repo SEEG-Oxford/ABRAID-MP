@@ -52,9 +52,11 @@
     </div>
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div id="counterDiv" data-bind="with: counter">
-            <span data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></span><br/>
-            <div id="counter" data-bind="counter: count"></div><br/>
-            <span data-bind="text: count() == 1 ? 'region' : 'regions'"></span>
+            <div data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></div>
+            <div id="counter">
+                <div><div data-bind="counter: count"></div></div>
+            </div>
+            <div data-bind="text: count() == 1 ? 'region' : 'regions'"></div>
         </div>
     </@security.authorize>
     <!-- /ko -->
@@ -65,9 +67,11 @@
         <div data-bind="template: hasSelectedPoint() ? 'selected-point-template' : 'no-selected-point-template'"></div>
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="counterDiv" data-bind="with: counter">
-                <span data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></span><br/>
-                <div id="counter" data-bind="counter: count"></div><br/>
-                <span data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></span>
+                <div data-bind="text: count() > 99999 ? 'You have validated more than' : 'You have validated'"></div>
+                <div id="counter">
+                    <div><div data-bind="counter: count"></div></div>
+                </div>
+                <div data-bind="text: count() == 1 ? 'occurrence' : 'occurrences'"></div>
             </div>
         </@security.authorize>
     <!-- /ko -->

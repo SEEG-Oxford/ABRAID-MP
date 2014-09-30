@@ -14,13 +14,14 @@ define([
     // Custom binding to set the value on the flipclock.js counter
     ko.bindingHandlers.counter = {
         init: function (element, valueAccessor) {
-            var counter = $(element).FlipClock(ko.utils.recursiveUnwrap(valueAccessor), { clockFace: "Counter" });
+            var value = Math.min(ko.utils.recursiveUnwrap(valueAccessor), 99999);
+            var counter = $(element).FlipClock(value, { clockFace: "Counter" });
             ko.utils.domData.set(element, "counter", counter);
         },
         update: function (element, valueAccessor) {
             var counter = ko.utils.domData.get(element, "counter");
-            var value = ko.utils.recursiveUnwrap(valueAccessor);
-            counter.setValue(value > 99999 ? 99999 : value);
+            var value = Math.min(ko.utils.recursiveUnwrap(valueAccessor), 99999);
+            counter.setValue(value);
         }
     };
 
