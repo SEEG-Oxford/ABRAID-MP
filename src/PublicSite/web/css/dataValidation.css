@@ -143,6 +143,28 @@ html, body, #dataValidation {
     width: 100%;
     bottom: 335px;
 }
+#reportSummary {
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    width: 100%;
+}
+#reportSummary .sidePanelText {
+    max-height: 100%;
+    margin: 0 5px 0 2px;
+
+}
+#summaryPanel {
+    position: absolute;
+    top: 165px;
+    bottom: 195px;
+    width: 265px;
+}
+#summaryPanel > ul {
+    padding: 0;
+    max-height: 100%;
+    overflow: hidden
+}
 #submitReviewSuccess, #reviewButtons {
     width: 100%;
     padding: 10px;
