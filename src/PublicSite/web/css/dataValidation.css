@@ -114,7 +114,7 @@ html, body, #dataValidation {
     text-align: center;
 }
 #adminUnitTable tbody tr td:last-child, #adminUnitTable thead tr th:last-child  {
-    min-width: 180px;
+    width: 178px;
 }
 .sidePanelText {
     margin: 5px;
