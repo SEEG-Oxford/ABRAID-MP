@@ -2,7 +2,7 @@
  * JS file for the login wiring.
  * Copyright (c) 2014 University of Oxford
  */
-/*global baseUrl:false*/
+/*global baseUrl:false, document:false, window:false*/
 define([
     "ko",
     "jquery",
@@ -10,7 +10,7 @@ define([
     "domReady!"
 ], function (ko, $, LogInFormViewModel, doc) {
     "use strict";
-    if (!document.getElementById("login-nav") !== null) {
+    if (document.getElementById("login-nav") !== null) {
         var refresh = function () {
             // Refresh function may change, according to location of iframe (eg on TGHN site)
             window.top.location.reload();

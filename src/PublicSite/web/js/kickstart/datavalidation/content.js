@@ -1,7 +1,7 @@
 /* Apply KO bindings for the data validation page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, data:false, window:false, alert:false*/
+/*global require:false, baseUrl:false, data:false, alert:false*/
 require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
