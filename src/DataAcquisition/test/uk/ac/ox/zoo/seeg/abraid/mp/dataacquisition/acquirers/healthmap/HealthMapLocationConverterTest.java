@@ -289,8 +289,7 @@ public class HealthMapLocationConverterTest {
         Location location = converter.convert(healthMapLocation);
 
         // Assert
-        assertThat(location.getGeoNameId()).isNull();
-        assertThat(location.getPrecision()).isNull();
+        assertThat(location).isNull();
     }
 
     private HealthMapLocation createDefaultHealthMapLocation() {

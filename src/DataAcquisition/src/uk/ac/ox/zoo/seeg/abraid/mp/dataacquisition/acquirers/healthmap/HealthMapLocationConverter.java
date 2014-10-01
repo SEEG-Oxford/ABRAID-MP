@@ -88,13 +88,16 @@ public class HealthMapLocationConverter {
             location.setHealthMapCountryId(healthMapCountry.getId());
             location.setGeom(healthMapLocation.getLongitude(), healthMapLocation.getLatitude());
             location.setName(healthMapLocation.getPlaceName());
-            addPrecision(healthMapLocation, location);
+            if (!addPrecision(healthMapLocation, location)) {
+                // If precision could not be added, return null (i.e. location could not be converted)
+                return null;
+            }
         }
 
         return location;
     }
 
-    private void addPrecision(HealthMapLocation healthMapLocation, Location location) {
+    private boolean addPrecision(HealthMapLocation healthMapLocation, Location location) {
         Integer geoNameId = healthMapLocation.getGeoNameId();
 
         if (geoNameId != null) {
@@ -106,6 +109,8 @@ public class HealthMapLocationConverter {
             // precision supplied in HealthMap's place_basic_type field.
             addPrecisionUsingHealthMapPlaceBasicType(location, healthMapLocation);
         }
+
+        return (location.getPrecision() != null);
     }
 
     private void addPrecisionUsingGeoNames(Location location, int geoNameId) {
