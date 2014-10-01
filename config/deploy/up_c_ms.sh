@@ -7,7 +7,8 @@ unzip ../../ABRAID-MP_ModelOutputHandler.war -d /var/lib/tomcat7/webapps/modelou
 echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
-echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "model.wrapper.host=$MW_URL" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" /var/lib/tomcat7/webapps/modeloutput/WEB-INF/classes/log4j.properties
 
@@ -35,11 +36,12 @@ unzip ../../ABRAID-MP_PublicSite.war -d /var/lib/tomcat7/webapps/ROOT
 echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
-echo "modelwrapper.rootUrl=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "model.wrapper.host=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, stdout, logfile, email/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/log4j.properties
 # Configure wms path
-sed -i "s/http\:\/\/localhost\:8081\/geoserver\/abraid\/wms/$MAIN_URL\/wms/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
+sed -i "s|http\:\/\/localhost\:8081\/geoserver\/abraid\/wms|http\:\/\/$MAIN_URL\/wms|g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
 
 # Set up DataManager (incomplete)
 cp -r ../../DataManager $ABRAID_SUPPORT_PATH/datamanager
@@ -49,7 +51,8 @@ sed -i "s/jdbc\.username\=.*/jdbc.username=$PG_ABRAID_USER/g" $ABRAID_SUPPORT_PA
 sed -i "s/jdbc\.password\=.*/jdbc.password=$PG_ABRAID_PASS/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/healthmap\.authorizationCode\=.*/healthmap.authorizationCode=$HEALTH_MAP_KEY/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/geonames\.username\=.*/geonames.username=$GEONAMES_USER/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
-sed -i "s/modelwrapper\.rootUrl\=.*/modelwrapper.rootUrl=$MW_URL/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/model\.wrapper\.host\=.*/model.wrapper.host=$MW_URL/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/model\.wrapper\.path\=.*/model.wrapper.path=\//g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
 sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
