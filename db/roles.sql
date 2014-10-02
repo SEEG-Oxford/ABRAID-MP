@@ -21,6 +21,7 @@ GRANT SELECT, INSERT                ON covariate_influence TO :application_usern
 GRANT SELECT, INSERT                ON effect_curve_covariate_influence TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_extent TO :application_username;
 GRANT SELECT                        ON disease_extent_class TO :application_username;
+GRANT SELECT, INSERT,        DELETE ON disease_extent_occurrence TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_group TO :application_username;
 GRANT SELECT, INSERT, UPDATE        ON disease_occurrence TO :application_username;
 GRANT SELECT, INSERT                ON disease_occurrence_review TO :application_username;

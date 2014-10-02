@@ -1,9 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Represents the parameters required to calculate the disease group's current extent.
@@ -19,23 +22,37 @@ public class DiseaseExtent {
                       parameters = @Parameter(name = "property", value = "diseaseGroup"))
     private Integer diseaseGroupId;
 
+    // The minimum value of disease_occurrence.validation_weighting used in generating the disease extent
     @Column(name = "min_validation_weighting")
     private Double minValidationWeighting;
 
+    // The minimum number of occurrences in an admin unit to indicate presence (initial extent generation)
     @Column(name = "min_occurrences_for_presence")
     private Integer minOccurrencesForPresence;
 
+    // The minimum number of occurrences in an admin unit to indicate possible presence (initial extent generation)
     @Column(name = "min_occurrences_for_possible_presence")
     private Integer minOccurrencesForPossiblePresence;
 
+    // Occurrences up to this age are given the higher occurrence score, older ones are given the lower score
     @Column(name = "max_months_ago_for_higher_occurrence_score")
     private Integer maxMonthsAgoForHigherOccurrenceScore;
 
+    // The lower score given to disease occurrences during extent generation
     @Column(name = "lower_occurrence_score")
     private Integer lowerOccurrenceScore;
 
+    // The higher score given to disease occurrences during extent generation
     @Column(name = "higher_occurrence_score")
     private Integer higherOccurrenceScore;
+
+    // List of most recent disease occurrences used in generating the disease extent
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "disease_extent_occurrence",
+            joinColumns = @JoinColumn(name = "disease_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "disease_occurrence_id"))
+    @Fetch(FetchMode.SELECT)
+    private Set<DiseaseOccurrence> diseaseExtentOccurrences;
 
     @OneToOne
     @JoinColumn(name = "disease_group_id")
@@ -113,12 +130,20 @@ public class DiseaseExtent {
         this.higherOccurrenceScore = higherOccurrenceScore;
     }
 
+    public Set<DiseaseOccurrence> getDiseaseExtentOccurrences() {
+        return diseaseExtentOccurrences;
+    }
+
+    public void setDiseaseExtentOccurrences(Set<DiseaseOccurrence> diseaseExtentOccurrences) {
+        this.diseaseExtentOccurrences = diseaseExtentOccurrences;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseExtent)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseExtent that = (DiseaseExtent) o;
 

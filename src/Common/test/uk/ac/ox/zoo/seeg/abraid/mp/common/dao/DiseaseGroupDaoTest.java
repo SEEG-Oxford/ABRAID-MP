@@ -6,12 +6,11 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
+
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Autowired
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
@@ -286,6 +288,61 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         // Assert
         assertThat(diseaseGroup.getId()).isNotNull();
         assertThat(parameters.getDiseaseGroupId()).isEqualTo(diseaseGroup.getId());
+    }
+
+    @Test
+    public void addingDiseaseExtentOccurrencesSavesAndReloadsCorrectly() {
+        // Arrange
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
+        Set<DiseaseOccurrence> occurrencesToAdd = new HashSet<>(occurrences.subList(0, 5));
+        diseaseExtent.setDiseaseExtentOccurrences(occurrencesToAdd);
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(87);
+        Set<DiseaseOccurrence> actualOccurrences = diseaseGroup.getDiseaseExtentParameters().getDiseaseExtentOccurrences();
+        assertThat(actualOccurrences).hasSize(5);
+        assertThat(actualOccurrences).containsAll(occurrencesToAdd);
+    }
+
+    @Test
+    public void changingDiseaseExtentOccurrencesSavesAndReloadsCorrectly() {
+        // Arrange - add disease occurrences
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
+        Set<DiseaseOccurrence> occurrencesToAdd = new HashSet<>(occurrences.subList(0, 5));
+        diseaseExtent.setDiseaseExtentOccurrences(occurrencesToAdd);
+
+        diseaseGroupDao.save(diseaseGroup);
+
+        // Arrange - change disease occurrences
+        Set<DiseaseOccurrence> addedOccurrences = diseaseGroup.getDiseaseExtentParameters().getDiseaseExtentOccurrences();
+        addedOccurrences.remove(occurrences.get(1));
+        addedOccurrences.add(occurrences.get(6));
+        addedOccurrences.add(occurrences.get(7));
+
+        // Act
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(87);
+        Set<DiseaseOccurrence> changedOccurrences = diseaseGroup.getDiseaseExtentParameters().getDiseaseExtentOccurrences();
+        assertThat(changedOccurrences).hasSize(6);
+        assertThat(changedOccurrences).contains(occurrences.get(0));
+        assertThat(changedOccurrences).contains(occurrences.get(2));
+        assertThat(changedOccurrences).contains(occurrences.get(3));
+        assertThat(changedOccurrences).contains(occurrences.get(4));
+        assertThat(changedOccurrences).contains(occurrences.get(6));
+        assertThat(changedOccurrences).contains(occurrences.get(7));
     }
 
     private DiseaseGroup initialiseDiseaseGroup() {

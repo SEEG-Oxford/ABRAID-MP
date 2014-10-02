@@ -37,8 +37,8 @@ public class HealthMapCountry {
     // The corresponding SEEG countries.
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "healthmap_country_country",
-            joinColumns = { @JoinColumn(name = "healthmap_country_id") },
-            inverseJoinColumns = { @JoinColumn(name = "gaul_code") })
+            joinColumns = @JoinColumn(name = "healthmap_country_id"),
+            inverseJoinColumns = @JoinColumn(name = "gaul_code"))
     @Fetch(FetchMode.SELECT)
     private Set<Country> countries;
 

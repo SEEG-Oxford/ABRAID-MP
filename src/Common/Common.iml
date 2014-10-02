@@ -5,7 +5,6 @@
       <configuration>
         <datasource-map>
           <unit-entry name="sessionFactory" value="dataSource" />
-          <unit-entry name="uk:ac:ox:zoo:seeg:abraid:mp:common:config:hibernate.cfg.xml" value="9bc29b30-7c15-4c29-a62f-5afcfa3dece6" />
         </datasource-map>
         <naming-strategy-map />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/hibernate.cfg.xml" />
