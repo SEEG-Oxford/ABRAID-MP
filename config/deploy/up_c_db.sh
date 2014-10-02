@@ -15,7 +15,7 @@ cd $BASE/external/experts
 echo "Importing experts"
 psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f import_into_abraid.sql
 cd $BASE
-psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "INSERT INTO expert (name, email, hashed_password, is_administrator, job_title, institution, is_seeg_member, visibility_requested, visibility_approved, weighting) VALUES ( 'Dr Test', '$ABRAID_USER_EMAIL', '$ABRAID_USER_PASS', true, 'Tester', 'Testland', false, false, false, 0 )"
+psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "INSERT INTO expert (name, email, hashed_password, is_administrator, job_title, institution, is_seeg_member, visibility_requested, visibility_approved, weighting) VALUES ( 'Dr Test', '$ABRAID_USER_EMAIL', '$ABRAID_USER_PASS', true, 'Tester', 'Testland', true, false, false, 0 )"
 
 # Load historic healthmap data
 cd $BASE/external/healthmap
