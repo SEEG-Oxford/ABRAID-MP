@@ -29,6 +29,7 @@ sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" /var/lib/tomcat7/webapps/geoserver/data/w
 cp ../geoserver/logging.xml /var/lib/tomcat7/webapps/geoserver/data/logging.xml
 mkdir /var/lib/tomcat7/webapps/geoserver/data/logs
 cp ../geoserver/ABRAID_LOGGING.properties /var/lib/tomcat7/webapps/geoserver/data/logs/ABRAID_LOGGING.properties
+cp ../geoserver/gwc-gs.xml /var/lib/tomcat7/webapps/geoserver/data/gwc-gs.xml
 
 # Set up PublicSite
 unzip ../../ABRAID-MP_PublicSite.war -d /var/lib/tomcat7/webapps/ROOT
