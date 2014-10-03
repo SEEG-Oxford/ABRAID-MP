@@ -5,6 +5,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
 import net.lingala.zip4j.model.FileHeader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -13,11 +14,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
+import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,10 +54,14 @@ public class MainHandler {
             "Could not save effect curves csv for model run \"%s\"";
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private ModelRunService modelRunService;
+    private final ModelRunService modelRunService;
+    private final GeoserverRestService geoserver;
+    private final File rasterDir;
 
-    public MainHandler(ModelRunService modelRunService) {
+    public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver, File rasterDir) {
         this.modelRunService = modelRunService;
+        this.geoserver = geoserver;
+        this.rasterDir = rasterDir;
     }
 
     /**
@@ -188,6 +193,19 @@ public class MainHandler {
         if (raster != null) {
             LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
             modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+            saveAndPublishRaster(modelRun, raster, "mean");
+        }
+    }
+
+    private void saveAndPublishRaster(ModelRun modelRun, byte[] raster, String type) {
+        try {
+            String basename = modelRun.getName() + "_" + type;
+            final File file = Paths.get(rasterDir.getAbsolutePath(),  basename + ".tif").toFile();
+            file.getParentFile().mkdirs();
+            FileUtils.writeByteArrayToFile(file, raster);
+            geoserver.publishGeoTIFF(file);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -195,6 +213,7 @@ public class MainHandler {
         if (raster != null) {
             LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
             modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+            saveAndPublishRaster(modelRun, raster, "uncertainty");
         }
     }
 
