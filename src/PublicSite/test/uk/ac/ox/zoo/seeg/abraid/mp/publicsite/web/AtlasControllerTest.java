@@ -13,7 +13,7 @@ public class AtlasControllerTest {
     @Test
     public void showPageReturnsAtlasPage() {
         // Arrange
-        AtlasController target = new AtlasController();
+        AtlasController target = new AtlasController(null);
 
         // Act
         String result = target.showPage();
