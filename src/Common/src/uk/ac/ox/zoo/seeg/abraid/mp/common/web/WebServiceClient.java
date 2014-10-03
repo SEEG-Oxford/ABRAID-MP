@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 public class WebServiceClient {
     private static final String GET_WEB_SERVICE_MESSAGE = "Making GET request to web service URL \"%s\"";
     private static final String POST_WEB_SERVICE_MESSAGE = "Making POST request to web service URL \"%s\" (%s %s)";
+    private static final String PUT_WEB_SERVICE_MESSAGE = "Making PUT request to web service URL \"%s\" (%s %s)";
     private static final String CALLED_WEB_SERVICE_MESSAGE =  "Call to web service URL \"%s\" took %d ms";
     private static final String STATUS_UNSUCCESSFUL_MESSAGE =
             "Web service returned status code %d (\"%s\"). Web service URL: \"%s\"";
@@ -91,7 +92,7 @@ public class WebServiceClient {
      * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
      * or if a response status code other than "successful" is returned.
      */
-    public String makePostRequest(String url, final byte[] body) throws WebServiceClientException {
+    public String makePostRequestWithBinary(String url, final byte[] body) throws WebServiceClientException {
         if (body == null) {
             throw new IllegalArgumentException("POST body must be non-null");
         }
@@ -104,6 +105,50 @@ public class WebServiceClient {
             }
         });
     }
+
+
+    public String makePutRequest(String url, final byte[] body) throws WebServiceClientException {
+        if (body == null) {
+            throw new IllegalArgumentException("PUT body must be non-null");
+        }
+
+        LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        return request(url, new SyncInvokerAction() {
+            @Override
+            public Response invoke(SyncInvoker invoker) {
+                return invoker.put(Entity.entity(body, MediaType.TEXT_PLAIN));
+            }
+        });
+    }
+
+    public String makePostRequestWithXml(String url, final byte[] body) throws WebServiceClientException {
+        if (body == null) {
+            throw new IllegalArgumentException("POST body must be non-null");
+        }
+
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        return request(url, new SyncInvokerAction() {
+            @Override
+            public Response invoke(SyncInvoker invoker) {
+                return invoker.post(Entity.entity(body, MediaType.TEXT_XML));
+            }
+        });
+    }
+
+    public String makePutRequestWithXml(String url, final byte[] body) throws WebServiceClientException {
+        if (body == null) {
+            throw new IllegalArgumentException("PUT body must be non-null");
+        }
+
+        LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        return request(url, new SyncInvokerAction() {
+            @Override
+            public Response invoke(SyncInvoker invoker) {
+                return invoker.put(Entity.entity(body, MediaType.TEXT_XML));
+            }
+        });
+    }
+
 
     private String request(String url, SyncInvokerAction action) throws WebServiceClientException {
         try {

@@ -110,7 +110,7 @@ public class WebServiceClientTest {
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        catchException(client).makePostRequest("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", new byte[] {});
+        catchException(client).makePostRequestWithBinary("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", new byte[]{});
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
@@ -122,7 +122,7 @@ public class WebServiceClientTest {
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        catchException(client).makePostRequest("this is malformed", new byte[] {});
+        catchException(client).makePostRequestWithBinary("this is malformed", new byte[]{});
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
@@ -135,7 +135,7 @@ public class WebServiceClientTest {
         String bodyAsString = "Test body";
 
         // Act
-        String response = client.makePostRequest(POST_URL, bodyAsString.getBytes());
+        String response = client.makePostRequestWithBinary(POST_URL, bodyAsString.getBytes());
 
         // Assert
         assertThat(response).containsIgnoringCase("application/octet-stream");
