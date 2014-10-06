@@ -24,9 +24,25 @@
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
+    <style>
+        .legend i {
+            opacity: 1 !important;
+        }
+    </style>
 </head>
 <body>
     <div id="map">
+        <#include "layerselector.ftl"/>
+        <div class="leaflet-bottom leaflet-left">
+            <div class="legend leaflet-control">
+                <i style="padding-top:9px;"><i style="height:9px;  background-color:#a44883;"></i></i><span>High</span><br>
+                <i style="background-color:#a44883; background-image: -webkit-gradient(linear, left top, left bottom, from(#a44883), to(#cf93ba)); background-image: -webkit-linear-gradient(top, #a44883, #cf93ba); background-image: -moz-linear-gradient(top, #a44883, #cf93ba); background-image: -o-linear-gradient(top, #a44883, #cf93ba); background-image: linear-gradient(to bottom, #a44883, #cf93ba);"></i><br>
+                <i style="background-color:#cf93ba; background-image: -webkit-gradient(linear, left top, left bottom, from(#cf93ba), to(#ffffcb)); background-image: -webkit-linear-gradient(top, #cf93ba, #ffffcb); background-image: -moz-linear-gradient(top, #cf93ba, #ffffcb); background-image: -o-linear-gradient(top, #cf93ba, #ffffcb); background-image: linear-gradient(to bottom, #cf93ba, #ffffcb);"></i><br>
+                <i style="background-color:#ffffcb; background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffcb), to(#c3d4bb)); background-image: -webkit-linear-gradient(top, #ffffcb, #c3d4bb); background-image: -moz-linear-gradient(top, #ffffcb, #c3d4bb); background-image: -o-linear-gradient(top, #ffffcb, #c3d4bb); background-image: linear-gradient(to bottom, #ffffcb, #c3d4bb);"></i><br>
+                <i style="background-color:#c3d4bb; background-image: -webkit-gradient(linear, left top, left bottom, from(#c3d4bb), to(#91ab84)); background-image: -webkit-linear-gradient(top, #c3d4bb, #91ab84); background-image: -moz-linear-gradient(top, #c3d4bb, #91ab84); background-image: -o-linear-gradient(top, #c3d4bb, #91ab84); background-image: linear-gradient(to bottom, #c3d4bb, #91ab84);"></i><br>
+                <i style="padding-bottom:9px; opacity: 1;"><i style="height:9px; opacity: 1; background-color:#91ab84;"></i></i><span>Low</span><br>
+            </div>
+        </div>
     </div>
 
     <!-- Base url -->
@@ -37,7 +53,7 @@
     <!-- Bootstrapped JS data for KO view models -->
     <script>
         var data = {
-            wmsUrl: "http://localhost:1234/geoserver/abraid/wms",
+            wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
             layers: ${layers}
         };
     </script>

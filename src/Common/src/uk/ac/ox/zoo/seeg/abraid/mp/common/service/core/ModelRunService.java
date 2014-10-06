@@ -3,6 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
+import java.util.Collection;
+
 /**
  * Service interface for model run inputs and outputs.
  *
@@ -70,4 +72,6 @@ public interface ModelRunService {
      * @return The input date minus the number of days between scheduled model runs.
      */
     DateTime subtractDaysBetweenModelRuns(DateTime dateTime);
+
+    Collection<ModelRun> getCompletedModelRuns();
 }

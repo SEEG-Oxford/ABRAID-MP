@@ -4,6 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -51,6 +52,11 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
         Query query = getParameterisedNamedQuery("hasBatchingEverCompleted", "diseaseGroupId", diseaseGroupId);
         long count = (long) query.uniqueResult();
         return (count > 0);
+    }
+
+    @Override
+    public Collection<ModelRun> getCompletedModelRuns() {
+        return listNamedQuery("getCompletedModelRuns");
     }
 
     private ModelRun firstOrNull(List<ModelRun> modelRuns) {
