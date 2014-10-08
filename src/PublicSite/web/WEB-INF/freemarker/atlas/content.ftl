@@ -28,11 +28,23 @@
         .legend i {
             opacity: 1 !important;
         }
+        #download-links div.leaflet-bar.leaflet-control a {
+            width: auto;
+            padding: 0 5px;
+            min-width: 180px;
+        }
+        #download-links div.leaflet-bar.leaflet-control a i {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
     <div id="map">
         <#include "layerselector.ftl"/>
+        <div class="leaflet-top leaflet-right" id="download-links" style="display: none" data-bind="visible: activeLayer">
+            <div class="leaflet-bar leaflet-control"><a target="_blank" title="PNG" data-bind="attr:{href:png}"><i class="fa fa-lg fa-picture-o"></i> Download as styled PNG</a></div>
+            <div class="leaflet-bar leaflet-control"><a target="_blank" title="GeoTIFF" data-bind="attr:{href:tif}"><i class="fa fa-lg fa-download"></i> Download as raw GeoTIFF</a></div>
+        </div>
         <div class="leaflet-bottom leaflet-left">
             <div class="legend leaflet-control">
                 <i style="padding-top:9px;"><i style="height:9px;  background-color:#a44883;"></i></i><span>High</span><br>

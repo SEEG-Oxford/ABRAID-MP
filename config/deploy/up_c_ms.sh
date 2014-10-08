@@ -16,6 +16,7 @@ echo "geoserver.host=localhost:8080" >> /var/lib/tomcat7/webapps/modeloutput/WEB
 echo "geoserver.path=/geoserver" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "geoserver.root.url=\${geoserver.protocol}://\${geoserver.username}:\${geoserver.password}@\${geoserver.host}\${geoserver.path}" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "abraid.base.dir=$ABRAID_SUPPORT_PATH" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "abraid.raster.dir=\${abraid.base.dir}/results/rasters" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 mkdir -p $ABRAID_SUPPORT_PATH/results
 mkdir -p $ABRAID_SUPPORT_PATH/results/rasters
 # Configure log4j
@@ -51,7 +52,8 @@ echo "model.wrapper.protocol=http" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/comm
 echo "model.wrapper.host=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper.api.key}@\${model.wrapper.host}\${model.wrapper.path}" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
-
+echo "abraid.base.dir=$ABRAID_SUPPORT_PATH" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "abraid.raster.dir=\${abraid.base.dir}/results/rasters" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, stdout, logfile, email/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/log4j.properties
 # Configure wms path
