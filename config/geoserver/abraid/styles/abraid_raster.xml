@@ -1,11 +1,11 @@
 <style>
   <id>StyleInfoImpl--15cbb7fa:148d5a11d8c:-8000</id>
-  <name>raster</name>
+  <name>abraid_raster</name>
   <workspace>
     <id>WorkspaceInfoImpl--5f32640d:1466746c7a9:-7ffb</id>
   </workspace>
   <sldVersion>
     <version>1.0.0</version>
   </sldVersion>
-  <filename>raster.sld</filename>
+  <filename>abraid_raster.sld</filename>
 </style>

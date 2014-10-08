@@ -5,7 +5,7 @@
     <enabled>true</enabled>
     <name>${basename}</name>
     <type>RASTER</type>
-    <defaultStyle>abraid:raster</defaultStyle>
+    <defaultStyle>abraid_raster</defaultStyle>
     <attribution>
         <logoWidth>0</logoWidth>
         <logoHeight>0</logoHeight>
