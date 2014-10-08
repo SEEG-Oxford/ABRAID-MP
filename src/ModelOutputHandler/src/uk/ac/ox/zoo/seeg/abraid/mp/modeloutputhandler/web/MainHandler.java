@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import ch.lambdaj.function.convert.Converter;
+import freemarker.template.TemplateException;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
@@ -52,6 +53,13 @@ public class MainHandler {
             "Could not save relative influence csv for model run \"%s\"";
     private static final String COULD_NOT_SAVE_EFFECT_CURVES =
             "Could not save effect curves csv for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_UNCERTAINTY_RASTER =
+            "Could not save prediction uncertainty for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_PREDICTION_RASTER =
+            "Could not save mean prediction raster for model run \"%s\"";
+    private static final String RASTER_FILE_ALREADY_EXISTS =
+            "Raster file \"%s\" already exists";
+
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private final ModelRunService modelRunService;
@@ -189,32 +197,43 @@ public class MainHandler {
         }
     }
 
-    private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
+    private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) throws IOException {
         if (raster != null) {
-            LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
-            modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
-            saveAndPublishRaster(modelRun, raster, "mean");
+            try {
+                LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
+                File file = saveRaster(modelRun, raster, "mean");
+                geoserver.publishGeoTIFF(file);
+                modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+            } catch (Exception e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_PREDICTION_RASTER, modelRun.getName()), e);
+            }
         }
     }
 
-    private void saveAndPublishRaster(ModelRun modelRun, byte[] raster, String type) {
-        try {
-            String basename = modelRun.getName() + "_" + type;
-            final File file = Paths.get(rasterDir.getAbsolutePath(),  basename + ".tif").toFile();
-            file.getParentFile().mkdirs();
-            FileUtils.writeByteArrayToFile(file, raster);
-            geoserver.publishGeoTIFF(file);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) throws IOException {
+        if (raster != null) {
+            try {
+                LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
+                File file = saveRaster(modelRun, raster, "uncertainty");
+                geoserver.publishGeoTIFF(file);
+                modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+            } catch (Exception e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_UNCERTAINTY_RASTER, modelRun.getName()), e);
+            }
         }
     }
 
-    private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
-        if (raster != null) {
-            LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-            modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
-            saveAndPublishRaster(modelRun, raster, "uncertainty");
+    private File saveRaster(ModelRun modelRun, byte[] raster, String type) throws IOException {
+        String basename = modelRun.getName() + "_" + type;
+        final File file = Paths.get(rasterDir.getAbsolutePath(),  basename + ".tif").toFile();
+
+        if (file.exists()) {
+            throw new IOException(String.format(RASTER_FILE_ALREADY_EXISTS, file));
         }
+
+        file.getParentFile().mkdirs();
+        FileUtils.writeByteArrayToFile(file, raster);
+        return file;
     }
 
     private byte[] extract(ZipFile zipFile, String file, boolean isFileMandatory) throws ZipException, IOException {
