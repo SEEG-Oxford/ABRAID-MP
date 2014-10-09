@@ -172,6 +172,7 @@ CREATE TABLE disease_occurrence (
     id serial NOT NULL,
     disease_group_id integer NOT NULL,
     location_id integer NOT NULL,
+	admin_unit_disease_extent_class_id integer,
     alert_id integer NOT NULL,
     occurrence_date timestamp NOT NULL,
     env_suitability double precision,

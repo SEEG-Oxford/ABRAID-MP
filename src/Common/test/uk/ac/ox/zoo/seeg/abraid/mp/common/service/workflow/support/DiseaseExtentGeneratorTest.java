@@ -537,7 +537,7 @@ public class DiseaseExtentGeneratorTest {
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
             occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1,
-                    adminUnitGaulCode));
+                    adminUnitGaulCode, alert, locationName, adminUnitDiseaseExtentClass));
         }
         return occurrences;
     }

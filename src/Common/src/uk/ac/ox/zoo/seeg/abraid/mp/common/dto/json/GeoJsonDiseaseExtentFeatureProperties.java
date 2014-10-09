@@ -5,8 +5,12 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
@@ -29,13 +33,17 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     @JsonView(DisplayJsonView.class)
     private boolean needsReview;
 
+    @JsonView(DisplayJsonView.class)
+    private List<GeoJsonDiseaseOccurrenceFeature> latestOccurrences;
+
     public GeoJsonDiseaseExtentFeatureProperties(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
                                                  List<AdminUnitReview> reviews)
     {
         setName(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical().getPublicName());
         setDiseaseExtentClass(formatDisplayString(adminUnitDiseaseExtentClass.getDiseaseExtentClass().getName()));
-        setOccurrenceCount(adminUnitDiseaseExtentClass.getOccurrenceCount());
         setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
+        setOccurrenceCount(adminUnitDiseaseExtentClass.getDiseaseOccurrences().size());
+        setLatestOccurrences(findLatestOccurrences(adminUnitDiseaseExtentClass.getDiseaseOccurrences()));
     }
 
     private String formatDisplayString(String s) {
@@ -61,6 +69,22 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return max(reviewsOfAdminUnit, on(AdminUnitReview.class).getCreatedDate());
     }
 
+    private List<GeoJsonDiseaseOccurrenceFeature> findLatestOccurrences(List<DiseaseOccurrence> allOccurrences) {
+        Collections.sort(allOccurrences, new Comparator<DiseaseOccurrence>() {
+            @Override
+            public int compare(DiseaseOccurrence o1, DiseaseOccurrence o2) {
+                return o1.getOccurrenceDate().compareTo(o2.getOccurrenceDate());
+            }
+        });
+
+        List<GeoJsonDiseaseOccurrenceFeature> latestOccurrences = new ArrayList<>();
+        int n = Math.min(allOccurrences.size(), 5);
+        for (DiseaseOccurrence occurrence : allOccurrences.subList(0, n)) {
+            latestOccurrences.add(new GeoJsonDiseaseOccurrenceFeature(occurrence));
+        }
+        return latestOccurrences;
+    }
+
     public String getName() {
         return name;
     }
@@ -83,6 +107,14 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     public void setOccurrenceCount(Integer occurrenceCount) {
         this.occurrenceCount = occurrenceCount;
+    }
+
+    public List<GeoJsonDiseaseOccurrenceFeature> getLatestOccurrences() {
+        return latestOccurrences;
+    }
+
+    public void setLatestOccurrences(List<GeoJsonDiseaseOccurrenceFeature> latestOccurrences) {
+        this.latestOccurrences = latestOccurrences;
     }
 
     /**

@@ -103,13 +103,13 @@ public class DiseaseExtentGeneratorHelperTest {
         // Arrange
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper();
         DiseaseOccurrenceForDiseaseExtent countryPointInCountry = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.COUNTRY, 150);
+                DateTime.now(), LocationPrecision.COUNTRY, 150, alert, locationName, adminUnitDiseaseExtentClass);
         DiseaseOccurrenceForDiseaseExtent countryPointInAdmin1 = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.COUNTRY, 125); // This point should be excluded
+                DateTime.now(), LocationPrecision.COUNTRY, 125, alert, locationName, adminUnitDiseaseExtentClass); // This point should be excluded
         DiseaseOccurrenceForDiseaseExtent admin1PointInCountry = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.ADMIN1, 150);
+                DateTime.now(), LocationPrecision.ADMIN1, 150, alert, locationName, adminUnitDiseaseExtentClass);
         DiseaseOccurrenceForDiseaseExtent admin1PointInAdmin1 = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.ADMIN1, 125);
+                DateTime.now(), LocationPrecision.ADMIN1, 125, alert, locationName, adminUnitDiseaseExtentClass);
 
         List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(countryPointInCountry, countryPointInAdmin1,
                 admin1PointInCountry, admin1PointInAdmin1);
@@ -357,7 +357,7 @@ public class DiseaseExtentGeneratorHelperTest {
 
     private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfMonthsAgo) {
         DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthsAgo);
-        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1, 0);
+        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1, 0, alert, locationName, adminUnitDiseaseExtentClass);
     }
 
     private AdminUnitReview createReview(DiseaseExtentClass extentClass, double expertWeighting) {

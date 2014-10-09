@@ -269,7 +269,12 @@ define([
             style: function (feature) { return diseaseExtentLayerStyle(feature, true); },
             onEachFeature: function (feature, layer) {
                 adminUnitLayerMap[feature.id] = layer;
-                var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
+                var data = {
+                    id: feature.id,
+                    name: feature.properties.name,
+                    count: feature.properties.occurrenceCount,
+                    occurrences: feature.properties.latestOccurrences
+                };
                 layer.on({
                     click: function () { ko.postbox.publish("admin-unit-selected", data); },
                     mouseover: function () {

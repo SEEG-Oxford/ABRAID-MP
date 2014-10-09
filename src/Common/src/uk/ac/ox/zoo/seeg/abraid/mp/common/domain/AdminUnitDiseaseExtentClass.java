@@ -1,9 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Represents the extent class (e.g. presence, absence) of a disease group across an administrative unit.
@@ -52,51 +55,45 @@ public class AdminUnitDiseaseExtentClass {
     @JoinColumn(name = "disease_extent_class", nullable = false)
     private DiseaseExtentClass diseaseExtentClass;
 
-    // The number of disease occurrences giving rise to this extent class.
-    @Column(name = "occurrence_count")
-    private int occurrenceCount;
-
     // The date on which the disease extent class last changed.
     @Column(name = "class_changed_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime classChangedDate;
 
+    // List of disease occurrences used to determine this disease extent class classification.
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "adminUnitDiseaseExtentClass")
+    private List<DiseaseOccurrence> diseaseOccurrences;
+
     public AdminUnitDiseaseExtentClass() {
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount) {
+                                       DiseaseExtentClass diseaseExtentClass) {
         this.adminUnitGlobal = adminUnitGlobal;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
-        this.occurrenceCount = occurrenceCount;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount) {
+                                       DiseaseExtentClass diseaseExtentClass) {
         this.adminUnitTropical = adminUnitTropical;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
-        this.occurrenceCount = occurrenceCount;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       DateTime classChangedDate) {
+                                       DiseaseExtentClass diseaseExtentClass, DateTime classChangedDate) {
         this.adminUnitGlobal = adminUnitGlobal;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
-        this.occurrenceCount = occurrenceCount;
         this.classChangedDate = classChangedDate;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       DateTime classChangedDate) {
+                                       DiseaseExtentClass diseaseExtentClass, DateTime classChangedDate) {
         this.adminUnitTropical = adminUnitTropical;
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
-        this.occurrenceCount = occurrenceCount;
         this.classChangedDate = classChangedDate;
     }
 
@@ -156,20 +153,20 @@ public class AdminUnitDiseaseExtentClass {
         this.diseaseExtentClass = diseaseExtentClass;
     }
 
-    public Integer getOccurrenceCount() {
-        return occurrenceCount;
-    }
-
-    public void setOccurrenceCount(Integer occurrenceCount) {
-        this.occurrenceCount = occurrenceCount;
-    }
-
     public DateTime getClassChangedDate() {
         return classChangedDate;
     }
 
     public void setClassChangedDate(DateTime classChangedDate) {
         this.classChangedDate = classChangedDate;
+    }
+
+    public List<DiseaseOccurrence> getDiseaseOccurrences() {
+        return diseaseOccurrences;
+    }
+
+    public void setDiseaseOccurrences(List<DiseaseOccurrence> occurrences) {
+        this.diseaseOccurrences = occurrences;
     }
 
     ///COVERAGE:OFF - generated code
@@ -181,7 +178,6 @@ public class AdminUnitDiseaseExtentClass {
 
         AdminUnitDiseaseExtentClass that = (AdminUnitDiseaseExtentClass) o;
 
-        if (occurrenceCount != that.occurrenceCount) return false;
         if (adminUnitGlobal != null ? !adminUnitGlobal.equals(that.adminUnitGlobal) : that.adminUnitGlobal != null)
             return false;
         if (adminUnitTropical != null ? !adminUnitTropical.equals(that.adminUnitTropical) : that.adminUnitTropical != null)
@@ -203,7 +199,6 @@ public class AdminUnitDiseaseExtentClass {
         result = 31 * result + (adminUnitTropical != null ? adminUnitTropical.hashCode() : 0);
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (diseaseExtentClass != null ? diseaseExtentClass.hashCode() : 0);
-        result = 31 * result + occurrenceCount;
         result = 31 * result + (classChangedDate != null ? classChangedDate.hashCode() : 0);
         return result;
     }

@@ -21,8 +21,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
         return new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
                 new DiseaseGroup(),
-                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-                0);
+                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE));
     }
 
     public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithReview(
@@ -34,7 +33,6 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             adminUnitGlobal,
             new DiseaseGroup(),
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-            0,
             classChangedLaterThanReview ? review.getCreatedDate().plusDays(1) : review.getCreatedDate().minusDays(1));
     }
 
@@ -51,7 +49,6 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             adminUnitGlobal,
             new DiseaseGroup(),
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-            0,
             classChangedDate
         );
     }

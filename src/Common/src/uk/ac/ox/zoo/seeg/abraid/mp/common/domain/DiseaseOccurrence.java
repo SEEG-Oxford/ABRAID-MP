@@ -112,6 +112,11 @@ public class DiseaseOccurrence {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
+    @JoinColumn(name = "admin_unit_disease_extent_class_id")
+    private AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass;
+
     // The alert containing this occurrence.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
@@ -206,6 +211,14 @@ public class DiseaseOccurrence {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public AdminUnitDiseaseExtentClass getAdminUnitDiseaseExtentClass() {
+        return adminUnitDiseaseExtentClass;
+    }
+
+    public void setAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
+        this.adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClass;
     }
 
     public Alert getAlert() {
