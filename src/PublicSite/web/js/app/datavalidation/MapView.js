@@ -35,7 +35,8 @@ define([
             maxZoom: 7,
             minZoom: 3,
             animate: true,
-            bounceAtZoomLimits: false
+            bounceAtZoomLimits: false,
+            crs: L.CRS.EPSG4326
         }).fitWorld();
 
         // Add the simplified shapefile base layer with WMS GET request
