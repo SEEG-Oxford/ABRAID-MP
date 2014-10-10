@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -63,13 +64,14 @@ public class DiseaseExtent {
 
     public DiseaseExtent(DiseaseGroup diseaseGroup) {
         this.diseaseGroup = diseaseGroup;
+        this.diseaseExtentOccurrences = new HashSet<>();
     }
 
     public DiseaseExtent(DiseaseGroup diseaseGroup, Double minValidationWeighting,
                          Integer minOccurrencesForPresence, Integer minOccurrencesForPossiblePresence,
                          Integer maxMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
-        this.diseaseGroup = diseaseGroup;
+        this(diseaseGroup);
         this.minValidationWeighting = minValidationWeighting;
         this.minOccurrencesForPresence = minOccurrencesForPresence;
         this.minOccurrencesForPossiblePresence = minOccurrencesForPossiblePresence;

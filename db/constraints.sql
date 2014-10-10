@@ -22,9 +22,6 @@ ALTER TABLE covariate_influence
 ALTER TABLE disease_occurrence_review
     ADD CONSTRAINT uq_disease_occurrence_review_expert_id_disease_occurrence_id UNIQUE (expert_id, disease_occurrence_id);
 
-ALTER TABLE effect_curve_covariate_influence
-    ADD CONSTRAINT uq_effect_curve_covariate_influence_model_run_id_covariate_name UNIQUE (model_run_id, covariate_name);
-    
 ALTER TABLE expert
     ADD CONSTRAINT uq_expert_email UNIQUE (email);
 
