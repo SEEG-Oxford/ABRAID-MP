@@ -8,6 +8,4 @@ File: "${filePath}".
 Submitted on: ${submissionDate?string.long}.
 Completed on: ${completionDate?string.long}.
 
-The upload ${succeededOrFailed} with message:
-
 ${message}

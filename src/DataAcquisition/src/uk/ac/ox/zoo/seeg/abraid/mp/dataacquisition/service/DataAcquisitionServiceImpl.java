@@ -1,9 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer;
+
+import java.util.List;
 
 /**
  * Service class for data acquisition.
@@ -41,11 +42,10 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
      * @param isGoldStandard Whether or not this is a "gold standard" data set.
-     * @return A message upon the success of the data acquisition.
-     * @throws DataAcquisitionException Upon failure of the data acquisition.
+     * @return A list of messages resulting from the data acquisition.
      */
     @Override
-    public String acquireCsvData(String csv, boolean isGoldStandard) throws DataAcquisitionException {
+    public List<String> acquireCsvData(String csv, boolean isGoldStandard) {
         return csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
     }
 }

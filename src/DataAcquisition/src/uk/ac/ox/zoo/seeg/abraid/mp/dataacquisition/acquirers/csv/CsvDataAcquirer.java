@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -25,9 +24,10 @@ public class CsvDataAcquirer {
     private static final Logger LOGGER = Logger.getLogger(CsvDataAcquirer.class);
     private static final String INVALID_FORMAT_ERROR_MESSAGE = "CSV file has invalid format: %s.";
     private static final String LINE_ERROR_MESSAGE = "Error in CSV file on line %d: %s.";
-    private static final String CONVERSION_MESSAGE = "Converting %d CSV file line(s).";
-    private static final String SUCCESS_MESSAGE =
+    private static final String CONVERSION_MESSAGE = "Found %d CSV file line(s) to convert.";
+    private static final String SAVED_MESSAGE =
             "Saved %d disease occurrence(s) in %d location(s) (of which %d location(s) passed QC).";
+    private static final String SAVED_NO_OCCURRENCES_MESSAGE = "Did not save any disease occurrences.";
 
     private CsvDiseaseOccurrenceConverter converter;
     private DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;
@@ -44,34 +44,39 @@ public class CsvDataAcquirer {
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
      * @param isGoldStandard Whether or not this is a "gold standard" data set.
-     * @return A message upon the success of the data acquisition.
-     * @throws DataAcquisitionException Upon failure of the data acquisition.
+     * @return A list of messages resulting from the data acquisition.
      */
-    public String acquireDataFromCsv(String csv, boolean isGoldStandard) throws DataAcquisitionException {
-        try {
-            List<CsvDiseaseOccurrence> csvDiseaseOccurrences = retrieveDataFromCsv(csv);
-            List<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard);
-            return createSuccessMessage(convertedOccurrences);
-        } finally {
+    public List<String> acquireDataFromCsv(String csv, boolean isGoldStandard) {
+        List<String> messages = new ArrayList<>();
+
+        List<CsvDiseaseOccurrence> csvDiseaseOccurrences = retrieveDataFromCsv(csv, messages);
+        if (csvDiseaseOccurrences != null) {
+            List<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard, messages);
+            addCountMessage(convertedOccurrences, messages);
             csvLookupData.clearLookups();
         }
+
+        return messages;
     }
 
-    private List<CsvDiseaseOccurrence> retrieveDataFromCsv(String csv) {
+    private List<CsvDiseaseOccurrence> retrieveDataFromCsv(String csv, List<String> messages) {
         try {
             return CsvDiseaseOccurrence.readFromCsv(csv);
         } catch (Exception e) {
             String message = String.format(INVALID_FORMAT_ERROR_MESSAGE, e.getMessage());
             LOGGER.error(message, e);
-            throw new DataAcquisitionException(message, e);
+            messages.add(message);
+            return null;
         }
     }
 
-    private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard) {
+    private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,
+                                            List<String> messages) {
         List<DiseaseOccurrence> convertedOccurrences = new ArrayList<>();
-        LOGGER.info(String.format(CONVERSION_MESSAGE, csvDiseaseOccurrences.size()));
+        String message = String.format(CONVERSION_MESSAGE, csvDiseaseOccurrences.size());
+        LOGGER.info(message);
+        messages.add(message);
 
-        List<String> errorMessages = new ArrayList<>();
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
             CsvDiseaseOccurrence csvDiseaseOccurrence = csvDiseaseOccurrences.get(i);
             try {
@@ -82,31 +87,29 @@ public class CsvDataAcquirer {
                     convertedOccurrences.add(occurrence);
                 }
             } catch (DataAcquisitionException e) {
-                // This CSV disease occurrence could not be acquired. So add the CSV line number to
-                // the exception message and store it for later rethrowing.
-                String message = String.format(LINE_ERROR_MESSAGE, i + 1, e.getMessage());
-                LOGGER.error(message, e);
-                errorMessages.add(message);
+                // This CSV disease occurrence could not be acquired. So add the exception message to the list of
+                // messages that will be returned. The CSV line number includes the header row.
+                message = String.format(LINE_ERROR_MESSAGE, i + 2, e.getMessage());
+                LOGGER.warn(message);
+                messages.add(message);
             }
-        }
-
-        if (errorMessages.size() > 0) {
-            // If there were errors during acquisition, they have already been logged so now rethrow them.
-            // This allows all errors in the file to be reported to the user rather than one error at a time.
-            String message = StringUtils.join(errorMessages, System.lineSeparator());
-            throw new DataAcquisitionException(message);
         }
 
         return convertedOccurrences;
     }
 
-    private String createSuccessMessage(List<DiseaseOccurrence> occurrences) {
+    private void addCountMessage(List<DiseaseOccurrence> occurrences, List<String> messages) {
         Set<Location> uniqueLocations = findUniqueLocations(occurrences);
         List<Location> locationsPassingQc = findLocationsPassingQc(uniqueLocations);
-        String message = String.format(SUCCESS_MESSAGE, occurrences.size(), uniqueLocations.size(),
-                locationsPassingQc.size());
+        String message;
+        if (occurrences.size() > 0) {
+            message = String.format(SAVED_MESSAGE, occurrences.size(), uniqueLocations.size(),
+                    locationsPassingQc.size());
+        } else {
+            message = SAVED_NO_OCCURRENCES_MESSAGE;
+        }
         LOGGER.info(message);
-        return message;
+        messages.add(1, message);
     }
 
     private Set<Location> findUniqueLocations(List<DiseaseOccurrence> occurrences) {
