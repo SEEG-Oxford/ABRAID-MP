@@ -118,5 +118,21 @@ define([
                 expect(leafletMock.tileLayer.wms.calls.first().args[1].reuseTiles).toBe(true);
             });
         });
+
+        describe("removes the wms layer to the map", function () {
+            it("in response to empty 'layer-changed' events ", function () {
+                var view = new AtlasView();
+                ko.postbox.publish("layer-changed", "old layer");
+                expect(view.currentLayer).toBe("wms old layer");
+                view.map.addLayer.calls.reset();
+
+                ko.postbox.publish("layer-changed", undefined);
+                expect(view.map.removeLayer).toHaveBeenCalled();
+                expect(view.map.removeLayer.calls.count()).toBe(1);
+                expect(view.map.removeLayer.calls.first().args[0]).toBe("wms old layer");
+                expect(view.map.addLayer).not.toHaveBeenCalled();
+                expect(view.currentLayer).toBe(undefined);
+            });
+        });
     });
 });

@@ -8,6 +8,10 @@ define(["ko", "underscore"], function (ko, _) {
     return function (availableLayers) {
         var self = this;
 
+        if (availableLayers.length === 0) {
+            availableLayers = [ { disease: "---", runs: [ { id: undefined, date: "---" } ] } ];
+        }
+
         self.types = [
             { display: "disease risk", id: "mean" },
             { display: "risk uncertainty", id: "uncertainty" }
@@ -23,7 +27,7 @@ define(["ko", "underscore"], function (ko, _) {
         self.selectedRun = ko.observable(self.runs()[0]);
 
         self.selectedLayer = ko.computed(function () {
-            return self.selectedRun().id + "_" + self.selectedType().id;
+            return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;
         }, self).publishOn("layer-changed");
     };
 });

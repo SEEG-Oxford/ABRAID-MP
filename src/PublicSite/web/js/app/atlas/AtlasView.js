@@ -32,16 +32,19 @@ define([
         ko.postbox.subscribe("layer-changed", function (payload) {
             if (self.currentLayer) {
                 self.map.removeLayer(self.currentLayer);
+                self.currentLayer = undefined;
             }
 
-            self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
-                layers: [payload],
-                format: "image/png",
-                styles: "abraid_raster",
-                reuseTiles: true
-            });
+            if (payload) {
+                self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
+                    layers: [payload],
+                    format: "image/png",
+                    styles: "abraid_raster",
+                    reuseTiles: true
+                });
 
-            self.map.addLayer(self.currentLayer);
+                self.map.addLayer(self.currentLayer);
+            }
         });
     };
 });

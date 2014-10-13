@@ -73,6 +73,11 @@ define([
             it("defaults to the first disease alphabetically in the available layers", function () {
                 expect(vm.selectedDisease().disease).toBe("Disease Group 1");
             });
+
+            it("defaults to '---' if no available layers are provided", function () {
+                var localVM = new LayerSelectorViewModel([]);
+                expect(localVM.selectedDisease().disease).toBe("---");
+            });
         });
 
         describe("holds a field for the available runs which", function () {
@@ -105,6 +110,11 @@ define([
 
             it("defaults to the first run by date in the available layers for the current disease", function () {
                 expect(vm.selectedRun().id).toBe("Model Run 3");
+            });
+
+            it("defaults to '---' if no available layers are provided", function () {
+                var localVM = new LayerSelectorViewModel([]);
+                expect(localVM.selectedRun().date).toBe("---");
             });
         });
 
@@ -146,6 +156,36 @@ define([
                 vm.selectedRun(vm.runs()[0]);
 
                 expect(eventCount).toBe(3);
+
+                ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
+            });
+
+            it("publishes a 'layer-changed' event on construction", function () {
+                var expectedValue = "";
+                var eventCount = 0;
+                ko.postbox.subscribe("layer-changed", function (payload) {
+                    expect(payload).toEqual(expectedValue);
+                    eventCount = eventCount + 1;
+                });
+
+                expectedValue = "Model Run 3" + "_" + "mean";
+                new LayerSelectorViewModel(availableLayers); // jshint ignore:line
+
+                expect(eventCount).toBe(1);
+
+                ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
+            });
+
+            it("publishes an empty 'layer-changed' event if no available layers are provided", function () {
+                var eventCount = 0;
+                ko.postbox.subscribe("layer-changed", function (payload) {
+                    expect(payload).toBeUndefined();
+                    eventCount = eventCount + 1;
+                });
+
+                new LayerSelectorViewModel([]); // jshint ignore:line
+
+                expect(eventCount).toBe(1);
 
                 ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
             });
