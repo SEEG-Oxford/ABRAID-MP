@@ -91,29 +91,23 @@ public class MainHandler {
 
         boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
 
-        // Handle validation statistics file
+        // Extract outputs
         byte[] validationStatisticsFile =
                 extract(zipFile, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME, areOutputsMandatory);
-        handleValidationStatisticsFile(modelRun, validationStatisticsFile);
-
-        // Handle relative influence file
         byte[] relativeInfluenceFile =
                 extract(zipFile, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME, areOutputsMandatory);
-        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
-
-        // Handle effect curves influence file
         byte[] effectCurvesFile =
                 extract(zipFile, ModelOutputConstants.EFFECT_CURVES_FILENAME, areOutputsMandatory);
-        handleEffectCurvesFile(modelRun, effectCurvesFile);
-
-        // Handle mean prediction raster
         byte[] meanPredictionRaster =
                 extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME, areOutputsMandatory);
-        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
-
-        // Handle prediction uncertainty raster
         byte[] predUncertaintyRaster =
                 extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
+
+        // Handle outputs
+        handleValidationStatisticsFile(modelRun, validationStatisticsFile);
+        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
+        handleEffectCurvesFile(modelRun, effectCurvesFile);
+        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
 
         return modelRun;
@@ -203,7 +197,9 @@ public class MainHandler {
             try {
                 LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
                 File file = saveRaster(modelRun, raster, "mean");
-                geoserver.publishGeoTIFF(file);
+                if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
+                    geoserver.publishGeoTIFF(file);
+                }
                 modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
             } catch (Exception e) {
                 throw new IOException(String.format(COULD_NOT_SAVE_PREDICTION_RASTER, modelRun.getName()), e);
@@ -216,7 +212,9 @@ public class MainHandler {
             try {
                 LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
                 File file = saveRaster(modelRun, raster, "uncertainty");
-                geoserver.publishGeoTIFF(file);
+                if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
+                    geoserver.publishGeoTIFF(file);
+                }
                 modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
             } catch (Exception e) {
                 throw new IOException(String.format(COULD_NOT_SAVE_UNCERTAINTY_RASTER, modelRun.getName()), e);
@@ -232,8 +230,8 @@ public class MainHandler {
             throw new IOException(String.format(RASTER_FILE_ALREADY_EXISTS, file));
         }
 
-        if (!file.getParentFile().mkdirs()) {
-            throw new IOException(RASTER_FILE_ALREADY_EXISTS);
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            throw new IOException(FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS);
         }
 
         FileUtils.writeByteArrayToFile(file, raster);
