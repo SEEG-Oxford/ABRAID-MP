@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -250,6 +251,55 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert
         assertThat(modelRun).isEqualTo(modelRunDengue2);
+    }
+
+    @Test
+    public void getCompletedModelRunsReturnsCorrectCompletedModelRuns() {
+        // Arrange
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3, modelRunMalarias1);
+    }
+
+    @Test
+    public void getCompletedModelRunsExcludesBatchingModelRuns() {
+        // Arrange
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunMalarias1.setBatchingCompletedDate(DateTime.now());
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3);
+    }
+
+    @Test
+    public void getCompletedModelRunsReturnsEmptyIfNoCompletedModelRuns() {
+        // Arrange
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunDengue1);
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+
+        // Assert
+        assertThat(modelRuns).isEmpty();
     }
 
     @Test

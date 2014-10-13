@@ -106,13 +106,20 @@ public class WebServiceClient {
         });
     }
 
-
-    public String makePutRequest(String url, final byte[] body) throws WebServiceClientException {
+    /**
+     * Calls a web service by making a PUT request.
+     * @param url The web service URL to call.
+     * @param body The body of the request.
+     * @return The web service response as a string.
+     * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
+     * or if a response status code other than "successful" (or anything else in the 200 family) is returned.
+     */
+    public String makePutRequest(String url, final String body) throws WebServiceClientException {
         if (body == null) {
             throw new IllegalArgumentException("PUT body must be non-null");
         }
 
-        LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
         return request(url, new SyncInvokerAction() {
             @Override
             public Response invoke(SyncInvoker invoker) {
@@ -121,12 +128,20 @@ public class WebServiceClient {
         });
     }
 
-    public String makePostRequestWithXml(String url, final byte[] body) throws WebServiceClientException {
+    /**
+     * Calls a web service by making a POST request with a "text/xml" "Content-type" header.
+     * @param url The web service URL to call.
+     * @param body The body of the request (should be xml).
+     * @return The web service response as a string.
+     * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
+     * or if a response status code other than "successful" (or anything else in the 200 family) is returned.
+     */
+    public String makePostRequestWithXML(String url, final String body) throws WebServiceClientException {
         if (body == null) {
             throw new IllegalArgumentException("POST body must be non-null");
         }
 
-        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
         return request(url, new SyncInvokerAction() {
             @Override
             public Response invoke(SyncInvoker invoker) {
@@ -135,12 +150,20 @@ public class WebServiceClient {
         });
     }
 
-    public String makePutRequestWithXml(String url, final byte[] body) throws WebServiceClientException {
+    /**
+     * Calls a web service by making a PUT request with a "text/xml" "Content-type" header.
+     * @param url The web service URL to call.
+     * @param body The body of the request (should be xml).
+     * @return The web service response as a string.
+     * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
+     * or if a response status code other than "successful" (or anything else in the 200 family) is returned.
+     */
+    public String makePutRequestWithXML(String url, final String body) throws WebServiceClientException {
         if (body == null) {
             throw new IllegalArgumentException("PUT body must be non-null");
         }
 
-        LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
         return request(url, new SyncInvokerAction() {
             @Override
             public Response invoke(SyncInvoker invoker) {
@@ -148,7 +171,6 @@ public class WebServiceClient {
             }
         });
     }
-
 
     private String request(String url, SyncInvokerAction action) throws WebServiceClientException {
         try {

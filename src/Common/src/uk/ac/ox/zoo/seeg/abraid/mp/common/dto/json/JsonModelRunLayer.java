@@ -5,7 +5,7 @@ import org.joda.time.format.DateTimeFormatter;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 /**
- * foo
+ * A DTO to represent a model run when expressing the available WMS layers for display in the atlas.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunLayer {

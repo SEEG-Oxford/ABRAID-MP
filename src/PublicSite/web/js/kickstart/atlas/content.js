@@ -10,12 +10,11 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/atlas/AtlasView",
         "app/atlas/LayerSelectorViewModel",
         "domReady!"
-    ], function (ko, setupMap, LayerSelectorViewModel, doc) {
-            setupMap(data.wmsUrl);
+    ], function (ko, AtlasView, LayerSelectorViewModel, doc) {
+        var map = new AtlasView(data.wmsUrl); // jshint ignore:line
 
-            ko.applyBindings(
-                new LayerSelectorViewModel(data.layers),
-                doc.getElementById("layerSelector"));
-        }
-    );
+        ko.applyBindings(
+            new LayerSelectorViewModel(data.layers),
+            doc.getElementById("layerSelector"));
+    });
 });

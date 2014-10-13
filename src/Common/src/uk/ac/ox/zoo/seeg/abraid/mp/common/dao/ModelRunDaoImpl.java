@@ -54,6 +54,10 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
         return (count > 0);
     }
 
+    /**
+     * Gets all of the completed model runs, excluding those triggered by the batching system.
+     * @return The completed model runs.
+     */
     @Override
     public Collection<ModelRun> getCompletedModelRuns() {
         return listNamedQuery("getCompletedModelRuns");

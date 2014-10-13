@@ -10,8 +10,12 @@
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"/>
 
+
     <bean id="geoserverRestService" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService" autowire="constructor">
-        <constructor-arg name="geoserverPath" value="${geoserver.root.url}" />
+        <constructor-arg name="geoserverUrl" value="${geoserver.root.url}" />
+        <constructor-arg name="templateConfig">
+            <bean class="freemarker.template.Configuration" />
+        </constructor-arg>
     </bean>
 
     <bean id="mainHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.MainHandler" autowire="constructor">

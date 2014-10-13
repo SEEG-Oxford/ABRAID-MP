@@ -2,7 +2,7 @@
  * AMD defining the view model for the atlas layer selector.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko"], function (ko) {
+define(["ko", "underscore"], function (ko, _) {
     "use strict";
 
     return function (availableLayers) {
@@ -12,13 +12,13 @@ define(["ko"], function (ko) {
             { display: "disease risk", id: "mean" },
             { display: "risk uncertainty", id: "uncertainty" }
         ];
-        self.selectedType = ko.observable(self.types[0])
+        self.selectedType = ko.observable(self.types[0]);
 
-        self.diseases = availableLayers;
+        self.diseases = _(availableLayers).sortBy("disease");
         self.selectedDisease = ko.observable(self.diseases[0]);
 
         self.runs = ko.computed(function () {
-            return self.selectedDisease().runs;
+            return _(self.selectedDisease().runs).sortBy("date").reverse();
         }, self);
         self.selectedRun = ko.observable(self.runs()[0]);
 

@@ -13,7 +13,7 @@ import java.util.TimeZone;
  * A custom Jackson object mapper to ensure the JSON produced is GeoJSON compliant.
  * Copyright (c) 2014 University of Oxford
  */
-public final class AbraidJsonObjectMapper extends ObjectMapper {
+public class AbraidJsonObjectMapper extends ObjectMapper {
     private static final String UTC = "UTC";
 
     public AbraidJsonObjectMapper() {

@@ -17,6 +17,8 @@ public class WebServiceClientTest {
     // This is a POST data echo service
     private static final String POST_URL = "https://eu.httpbin.org/post";
 
+    private static final String PUT_URL = "https://eu.httpbin.org/put";
+
     @Test
     public void makeGetRequestThrowsExceptionIfUnknownHost() {
         // Arrange
@@ -103,6 +105,85 @@ public class WebServiceClientTest {
         assertThat(response).containsIgnoringCase("application/json");
         assertThat(response).containsIgnoringCase(name);
     }
+
+    @Test
+    public void makePostRequestWithXMLThrowsExceptionIfUnknownHost() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+
+        // Act
+        catchException(client).makePostRequestWithXML("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", "");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void makePostRequestWithXMLThrowsExceptionIfMalformedURL() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+
+        // Act
+        catchException(client).makePostRequestWithXML("this is malformed", "");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void makePostRequestWithXMLSuccessfullyPostsToValidURL() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+        String xml = "<test><name>Harry Hill</name></test>";
+
+        // Act
+        String response = client.makePostRequestWithXML(POST_URL, xml);
+
+        // Assert
+        assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
+        assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
+        assertThat(response).containsIgnoringCase("\"url\": \"" + POST_URL + "\"");
+    }
+
+    @Test
+    public void makePutRequestWithXMLThrowsExceptionIfUnknownHost() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+
+        // Act
+        catchException(client).makePutRequestWithXML("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", "");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void makePutRequestWithXMLThrowsExceptionIfMalformedURL() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+
+        // Act
+        catchException(client).makePutRequestWithXML("this is malformed", "");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void makePutRequestWithXMLSuccessfullyPostsToValidURL() {
+        // Arrange
+        WebServiceClient client = new WebServiceClient();
+        String xml = "<test><name>Harry Hill</name></test>";
+
+        // Act
+        String response = client.makePutRequestWithXML(PUT_URL, xml);
+
+        // Assert
+        assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
+        assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
+        assertThat(response).containsIgnoringCase("\"url\": \"" + PUT_URL + "\"");
+    }
+
 
     @Test
     public void makePostRequestWithByteArrayThrowsExceptionIfUnknownHost() {

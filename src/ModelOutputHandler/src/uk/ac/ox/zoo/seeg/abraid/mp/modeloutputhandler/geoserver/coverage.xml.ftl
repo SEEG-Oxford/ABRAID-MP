@@ -84,7 +84,7 @@
     </interpolationMethods>
     <dimensions>
         <coverageDimension>
-            <name>MEAN_RISK</name>
+            <name>VALUE</name>
             <description>GridSampleDimension[0,1]</description>
             <range>
                 <min>0.0</min>

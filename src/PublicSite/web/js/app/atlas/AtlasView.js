@@ -1,5 +1,5 @@
 /**
- * JS file for adding Leaflet map and layers.
+ * AMD for adding Leaflet map and layers for the atlas view.
  * Copyright (c) 2014 University of Oxford
  */
 define([
@@ -9,7 +9,11 @@ define([
     "use strict";
 
     return function (wmsUrl) {
-        var map = L.map("map", {
+        var self = this;
+
+        self.wmsUrl = wmsUrl;
+
+        self.map = L.map("map", {
             attributionControl: false,
             zoomControl: false,
             zoomsliderControl: true,
@@ -19,22 +23,25 @@ define([
             animate: true,
             crs: L.CRS.EPSG4326,
             bounceAtZoomLimits: false
-        }).fitWorld();
+        });
 
-        var currentLayer;
+        self.map.fitWorld();
+
+        self.currentLayer = undefined;
+
         ko.postbox.subscribe("layer-changed", function (payload) {
-            if (currentLayer) {
-                map.removeLayer(currentLayer);
+            if (self.currentLayer) {
+                self.map.removeLayer(self.currentLayer);
             }
 
-            currentLayer = L.tileLayer.wms(wmsUrl, {
+            self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
                 layers: [payload],
                 format: "image/png",
                 styles: "abraid_raster",
                 reuseTiles: true
             });
 
-            map.addLayer(currentLayer);
+            self.map.addLayer(self.currentLayer);
         });
     };
 });

@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import ch.lambdaj.function.convert.Converter;
-import freemarker.template.TemplateException;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
@@ -59,6 +58,8 @@ public class MainHandler {
             "Could not save mean prediction raster for model run \"%s\"";
     private static final String RASTER_FILE_ALREADY_EXISTS =
             "Raster file \"%s\" already exists";
+    private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
+            "Failed to create directory for output rasters";
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -231,7 +232,10 @@ public class MainHandler {
             throw new IOException(String.format(RASTER_FILE_ALREADY_EXISTS, file));
         }
 
-        file.getParentFile().mkdirs();
+        if (!file.getParentFile().mkdirs()) {
+            throw new IOException(RASTER_FILE_ALREADY_EXISTS);
+        }
+
         FileUtils.writeByteArrayToFile(file, raster);
         return file;
     }

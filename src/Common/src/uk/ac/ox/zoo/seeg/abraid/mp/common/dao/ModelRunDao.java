@@ -51,5 +51,9 @@ public interface ModelRunDao {
      */
     boolean hasBatchingEverCompleted(int diseaseGroupId);
 
+    /**
+     * Gets all of the completed model runs, excluding those triggered by the batching system.
+     * @return The completed model runs.
+     */
     Collection<ModelRun> getCompletedModelRuns();
 }
