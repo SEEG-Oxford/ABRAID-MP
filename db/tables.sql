@@ -20,7 +20,6 @@
 -- covariate_influence:             Represents the influence of a covariate file on a model run.
 -- effect_curve_covariate_influence:Represents the influence of a covariate file on a model run through its full range of values, for plotting in an effect curve.
 -- disease_group:                   Represents a group of diseases as defined by SEEG. This can be a disease cluster, disease microcluster, or a disease itself.
--- disease_extent_occurrence:       Represents an occurrence that was used in generating the disease extent.
 -- disease_occurrence:              Represents an occurrence of a disease group, in a location, as reported by an alert.
 -- disease_occurrence_review:       Represents an expert's response on the validity of a disease occurrence point.
 -- expert:                          Represents a user of the PublicSite.
@@ -135,11 +134,6 @@ CREATE TABLE disease_extent_class (
     name varchar(20) NOT NULL,
     weighting integer NOT NULL,
     distance_if_within_extent double precision
-);
-
-CREATE TABLE disease_extent_occurrence (
-    disease_group_id integer NOT NULL,
-    disease_occurrence_id integer NOT NULL
 );
 
 CREATE TABLE disease_group (

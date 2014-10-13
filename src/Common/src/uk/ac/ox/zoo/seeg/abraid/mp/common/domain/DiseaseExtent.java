@@ -47,14 +47,6 @@ public class DiseaseExtent {
     @Column(name = "higher_occurrence_score")
     private Integer higherOccurrenceScore;
 
-    // List of most recent disease occurrences used in generating the disease extent
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "disease_extent_occurrence",
-            joinColumns = @JoinColumn(name = "disease_group_id"),
-            inverseJoinColumns = @JoinColumn(name = "disease_occurrence_id"))
-    @Fetch(FetchMode.SELECT)
-    private Set<DiseaseOccurrence> diseaseExtentOccurrences;
-
     @OneToOne
     @JoinColumn(name = "disease_group_id")
     private DiseaseGroup diseaseGroup;
@@ -64,7 +56,6 @@ public class DiseaseExtent {
 
     public DiseaseExtent(DiseaseGroup diseaseGroup) {
         this.diseaseGroup = diseaseGroup;
-        this.diseaseExtentOccurrences = new HashSet<>();
     }
 
     public DiseaseExtent(DiseaseGroup diseaseGroup, Double minValidationWeighting,
@@ -130,14 +121,6 @@ public class DiseaseExtent {
 
     public void setHigherOccurrenceScore(Integer higherOccurrenceScore) {
         this.higherOccurrenceScore = higherOccurrenceScore;
-    }
-
-    public Set<DiseaseOccurrence> getDiseaseExtentOccurrences() {
-        return diseaseExtentOccurrences;
-    }
-
-    public void setDiseaseExtentOccurrences(Set<DiseaseOccurrence> diseaseExtentOccurrences) {
-        this.diseaseExtentOccurrences = diseaseExtentOccurrences;
     }
 
     ///COVERAGE:OFF - generated code

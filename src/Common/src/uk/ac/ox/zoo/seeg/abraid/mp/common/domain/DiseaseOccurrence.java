@@ -310,10 +310,12 @@ public class DiseaseOccurrence {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseOccurrence)) return false;
 
         DiseaseOccurrence that = (DiseaseOccurrence) o;
 
+        if (adminUnitDiseaseExtentClass != null ? !adminUnitDiseaseExtentClass.equals(that.adminUnitDiseaseExtentClass) : that.adminUnitDiseaseExtentClass != null)
+            return false;
         if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
@@ -345,6 +347,7 @@ public class DiseaseOccurrence {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (adminUnitDiseaseExtentClass != null ? adminUnitDiseaseExtentClass.hashCode() : 0);
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (isValidated != null ? isValidated.hashCode() : 0);

@@ -75,9 +75,6 @@ ALTER TABLE disease_extent ADD CONSTRAINT pk_disease_extent
 ALTER TABLE disease_extent_class ADD CONSTRAINT pk_disease_extent_class
     PRIMARY KEY (name);
 
-ALTER TABLE disease_extent_occurrence ADD CONSTRAINT pk_disease_extent_occurrence
-    PRIMARY KEY (disease_group_id, disease_occurrence_id);
-
 ALTER TABLE disease_group ADD CONSTRAINT pk_disease_group
     PRIMARY KEY (id);
 
@@ -169,12 +166,6 @@ ALTER TABLE covariate_influence ADD CONSTRAINT fk_covariate_influence_model_run
 
 ALTER TABLE disease_extent ADD CONSTRAINT fk_disease_extent_disease_group
     FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
-
-ALTER TABLE disease_extent_occurrence ADD CONSTRAINT fk_disease_extent_occurrence_disease_group
-    FOREIGN KEY (disease_group_id) REFERENCES disease_group (id);
-
-ALTER TABLE disease_extent_occurrence ADD CONSTRAINT fk_disease_extent_occurrence_disease_occurrence
-    FOREIGN KEY (disease_occurrence_id) REFERENCES disease_occurrence (id);
 
 ALTER TABLE disease_group ADD CONSTRAINT fk_disease_group_disease_group
     FOREIGN KEY (parent_id) REFERENCES disease_group (id);

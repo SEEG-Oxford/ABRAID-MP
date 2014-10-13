@@ -73,7 +73,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         Collections.sort(allOccurrences, new Comparator<DiseaseOccurrence>() {
             @Override
             public int compare(DiseaseOccurrence o1, DiseaseOccurrence o2) {
-                return o1.getOccurrenceDate().compareTo(o2.getOccurrenceDate());
+                return o2.getOccurrenceDate().compareTo(o1.getOccurrenceDate());    // descending
             }
         });
 

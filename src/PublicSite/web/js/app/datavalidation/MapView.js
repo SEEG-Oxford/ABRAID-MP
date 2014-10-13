@@ -89,7 +89,6 @@ define([
         function selectPoint(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
             resetDiseaseOccurrenceLayerStyle();
-            marker.openPopup();
             if (loggedIn) {
                 marker.setStyle({
                     stroke: false,
@@ -313,7 +312,7 @@ define([
 
         function publishDiseaseExtentEvents(features) {
             var data = _(features).map(function (f) {
-                return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount };
+                return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount, occurrences: f.properties.latestOccurrences };
             });
             ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
             ko.postbox.publish("no-features-to-review", features.length === 0);
@@ -403,7 +402,6 @@ define([
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
         function resetSelectedPoint() {
             ko.postbox.publish("point-selected", null);
-            map.closePopup();
             resetDiseaseOccurrenceLayerStyle();
         }
 
