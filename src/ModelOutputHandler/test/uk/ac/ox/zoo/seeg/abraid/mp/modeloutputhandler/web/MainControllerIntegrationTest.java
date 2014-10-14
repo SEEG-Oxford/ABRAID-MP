@@ -330,7 +330,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
     }
 
-
     private void assertThatRasterPublishedToGeoserver(ModelRun run, String type) throws IOException, TemplateException {
         verify(geoserverRestService, times(1)).publishGeoTIFF(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
     }

@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.joda.time.LocalDateTime;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.Model;
@@ -86,9 +86,9 @@ public class AtlasControllerTest {
         when(modelRun1.getDiseaseGroupId()).thenReturn(1);
         when(modelRun2.getDiseaseGroupId()).thenReturn(2);
         when(modelRun3.getDiseaseGroupId()).thenReturn(1);
-        when(modelRun1.getRequestDate()).thenReturn(new LocalDateTime(1413196073L * 1000).toDateTime());
-        when(modelRun2.getRequestDate()).thenReturn(new LocalDateTime(813195997L * 1000).toDateTime());
-        when(modelRun3.getRequestDate()).thenReturn(new LocalDateTime(2113195997L * 1000).toDateTime());
+        when(modelRun1.getRequestDate()).thenReturn(new DateTime(2014, 10, 13, 12, 0));
+        when(modelRun2.getRequestDate()).thenReturn(new DateTime(1995, 10, 9, 12, 0));
+        when(modelRun3.getRequestDate()).thenReturn(new DateTime(2036, 12, 18, 12, 0));
         when(modelRun1.getName()).thenReturn("Model Run 1");
         when(modelRun2.getName()).thenReturn("Model Run 2");
         when(modelRun3.getName()).thenReturn("Model Run 3");
