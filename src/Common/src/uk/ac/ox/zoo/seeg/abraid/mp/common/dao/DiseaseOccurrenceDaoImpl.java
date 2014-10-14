@@ -23,11 +23,11 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.isValidated = true " +
-            "and d.finalWeighting is not null " +
             "and d.location.adminUnitGlobalGaulCode is not null " +
             "and d.location.adminUnitTropicalGaulCode is not null ";
 
-    private static final String DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE =
+    private static final String DISEASE_EXTENT_WEIGHTING_CLAUSE =
+            "and d.finalWeighting is not null " +
             "and (d.validationWeighting is null or d.validationWeighting >= :minimumValidationWeighting) ";
 
     private static final String DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE =
@@ -101,7 +101,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
-     * value. If null, the validation weighting is ignored.
+     * value, and must have a final weighting. If null, the validation and final weightings are ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
      * @param isGlobal True if the disease group is global, otherwise false.
@@ -116,7 +116,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         String queryString = DISEASE_EXTENT_QUERY;
 
         if (minimumValidationWeighting != null) {
-            queryString += DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE;
+            queryString += DISEASE_EXTENT_WEIGHTING_CLAUSE;
         }
         if (minimumOccurrenceDate != null) {
             queryString += DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE;

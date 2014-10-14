@@ -71,7 +71,7 @@ public interface DiseaseOccurrenceDao {
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
-     * value. If null, the validation weighting is ignored.
+     * value, and must have a final weighting. If null, the validation and final weightings are ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
      * @param isGlobal True if the disease group is global, otherwise false.
