@@ -21,6 +21,7 @@ public class Main {
     public static final String APPLICATION_CONTEXT_LOCATION =
             "classpath:uk/ac/ox/zoo/seeg/abraid/mp/datamanager/config/beans.xml";
     private static final Logger LOGGER = Logger.getLogger(Main.class);
+    private static final String STARTED_MESSAGE = "Data Manager started";
 
     private DataAcquisitionManager dataAcquisitionManager;
     private ModelRunManager modelRunManager;
@@ -38,6 +39,7 @@ public class Main {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = null;
         try {
+            LOGGER.info(STARTED_MESSAGE);
             context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
             runMain(context, args);
         } catch (Throwable e) {
