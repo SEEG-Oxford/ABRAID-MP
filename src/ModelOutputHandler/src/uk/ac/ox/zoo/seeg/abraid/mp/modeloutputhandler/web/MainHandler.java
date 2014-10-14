@@ -59,7 +59,7 @@ public class MainHandler {
     private static final String RASTER_FILE_ALREADY_EXISTS =
             "Raster file \"%s\" already exists";
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
-            "Failed to create directory for output rasters";
+            "Failed to create directory for output rasters: %s";
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -224,14 +224,15 @@ public class MainHandler {
 
     private File saveRaster(ModelRun modelRun, byte[] raster, String type) throws IOException {
         String basename = modelRun.getName() + "_" + type;
-        final File file = Paths.get(rasterDir.getAbsolutePath(),  basename + ".tif").toFile();
+        final File file = Paths.get(rasterDir.getAbsolutePath(), basename + ".tif").toFile();
 
         if (file.exists()) {
             throw new IOException(String.format(RASTER_FILE_ALREADY_EXISTS, file));
         }
 
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            throw new IOException(FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS);
+            throw new IOException(String.format(
+                    FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS, file.getParentFile().getAbsolutePath()));
         }
 
         FileUtils.writeByteArrayToFile(file, raster);

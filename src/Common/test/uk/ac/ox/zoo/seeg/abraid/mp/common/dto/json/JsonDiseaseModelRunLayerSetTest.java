@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
- * Tests for JsonDiseaseModelRunLayerSetTest.
+ * Tests for JsonDiseaseModelRunLayerSet.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonDiseaseModelRunLayerSetTest {

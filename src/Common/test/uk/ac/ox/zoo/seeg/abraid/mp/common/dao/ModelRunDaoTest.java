@@ -271,24 +271,6 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
-    public void getCompletedModelRunsExcludesBatchingModelRuns() {
-        // Arrange
-        modelRunDao.save(modelRunDengue1);
-        modelRunDao.save(modelRunDengue2);
-        modelRunDao.save(modelRunDengue3);
-        modelRunDao.save(modelRunDengue4);
-        modelRunDao.save(modelRunDengue5);
-        modelRunMalarias1.setBatchingCompletedDate(DateTime.now());
-        modelRunDao.save(modelRunMalarias1);
-
-        // Act
-        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
-
-        // Assert
-        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3);
-    }
-
-    @Test
     public void getCompletedModelRunsReturnsEmptyIfNoCompletedModelRuns() {
         // Arrange
         modelRunDao.save(modelRunDengue4);

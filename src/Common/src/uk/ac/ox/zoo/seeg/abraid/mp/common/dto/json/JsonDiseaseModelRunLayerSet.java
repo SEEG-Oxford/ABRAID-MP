@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import java.util.List;
 
 /**
- * A DTO to represent collection of a model runs grouped by disease, used expressing the available WMS layers for
+ * A DTO to represent a collection of a model runs grouped by disease, used to express the available WMS layers for
  * display in the atlas.
  * Copyright (c) 2014 University of Oxford
  */

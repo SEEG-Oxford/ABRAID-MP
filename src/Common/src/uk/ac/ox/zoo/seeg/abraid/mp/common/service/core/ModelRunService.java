@@ -75,7 +75,7 @@ public interface ModelRunService {
 
 
     /**
-     * Gets all of the completed model runs, excluding those triggered by the batching system.
+     * Gets all of the completed model runs.
      * @return The completed model runs.
      */
     Collection<ModelRun> getCompletedModelRuns();

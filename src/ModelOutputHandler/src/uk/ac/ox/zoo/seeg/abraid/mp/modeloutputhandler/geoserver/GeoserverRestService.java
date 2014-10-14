@@ -52,9 +52,7 @@ public class GeoserverRestService {
         data.put(TEMPLATE_DATA_KEY, basename);
 
         createCoverage(file, basename);
-
         configureCoverage(basename, data);
-
         createLayer(basename, data);
     }
 
