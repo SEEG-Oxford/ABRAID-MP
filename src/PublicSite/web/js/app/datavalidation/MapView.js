@@ -312,7 +312,12 @@ define([
 
         function publishDiseaseExtentEvents(features) {
             var data = _(features).map(function (f) {
-                return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount, occurrences: f.properties.latestOccurrences };
+                return {
+                    id: f.id,
+                    name: f.properties.name,
+                    count: f.properties.occurrenceCount,
+                    occurrences: f.properties.latestOccurrences
+                };
             });
             ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
             ko.postbox.publish("no-features-to-review", features.length === 0);

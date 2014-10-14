@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
+import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
@@ -8,9 +9,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
@@ -42,8 +40,8 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         setName(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical().getPublicName());
         setDiseaseExtentClass(formatDisplayString(adminUnitDiseaseExtentClass.getDiseaseExtentClass().getName()));
         setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
-        setOccurrenceCount(adminUnitDiseaseExtentClass.getDiseaseOccurrences().size());
-        setLatestOccurrences(findLatestOccurrences(adminUnitDiseaseExtentClass.getDiseaseOccurrences()));
+        setOccurrenceCount(adminUnitDiseaseExtentClass.getOccurrenceCount());
+        setLatestOccurrences(convertOccurrences(adminUnitDiseaseExtentClass.getLatestOccurrences()));
     }
 
     private String formatDisplayString(String s) {
@@ -69,20 +67,13 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return max(reviewsOfAdminUnit, on(AdminUnitReview.class).getCreatedDate());
     }
 
-    private List<GeoJsonDiseaseOccurrenceFeature> findLatestOccurrences(List<DiseaseOccurrence> allOccurrences) {
-        Collections.sort(allOccurrences, new Comparator<DiseaseOccurrence>() {
+    private List<GeoJsonDiseaseOccurrenceFeature> convertOccurrences(List<DiseaseOccurrence> occurrences) {
+        return convert(occurrences, new Converter<DiseaseOccurrence, GeoJsonDiseaseOccurrenceFeature>() {
             @Override
-            public int compare(DiseaseOccurrence o1, DiseaseOccurrence o2) {
-                return o2.getOccurrenceDate().compareTo(o1.getOccurrenceDate());    // descending
+            public GeoJsonDiseaseOccurrenceFeature convert(DiseaseOccurrence o) {
+                return new GeoJsonDiseaseOccurrenceFeature(o);
             }
         });
-
-        List<GeoJsonDiseaseOccurrenceFeature> latestOccurrences = new ArrayList<>();
-        int n = Math.min(allOccurrences.size(), 5);
-        for (DiseaseOccurrence occurrence : allOccurrences.subList(0, n)) {
-            latestOccurrences.add(new GeoJsonDiseaseOccurrenceFeature(occurrence));
-        }
-        return latestOccurrences;
     }
 
     public String getName() {

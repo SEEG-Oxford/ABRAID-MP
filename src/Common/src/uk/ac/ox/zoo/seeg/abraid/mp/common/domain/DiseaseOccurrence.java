@@ -112,11 +112,6 @@ public class DiseaseOccurrence {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "admin_unit_disease_extent_class_id")
-    private AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass;
-
     // The alert containing this occurrence.
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
@@ -178,6 +173,13 @@ public class DiseaseOccurrence {
         this.id = id;
     }
 
+    public DiseaseOccurrence(DiseaseGroup diseaseGroup, DateTime occurrenceDate, Location location, Alert alert) {
+        this.diseaseGroup = diseaseGroup;
+        this.occurrenceDate = occurrenceDate;
+        this.location = location;
+        this.alert = alert;
+    }
+
     public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, Boolean isValidated,
                              Double finalWeighting, DateTime occurrenceDate) {
         this.id = id;
@@ -211,14 +213,6 @@ public class DiseaseOccurrence {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public AdminUnitDiseaseExtentClass getAdminUnitDiseaseExtentClass() {
-        return adminUnitDiseaseExtentClass;
-    }
-
-    public void setAdminUnitDiseaseExtentClass(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass) {
-        this.adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClass;
     }
 
     public Alert getAlert() {
@@ -314,8 +308,6 @@ public class DiseaseOccurrence {
 
         DiseaseOccurrence that = (DiseaseOccurrence) o;
 
-        if (adminUnitDiseaseExtentClass != null ? !adminUnitDiseaseExtentClass.equals(that.adminUnitDiseaseExtentClass) : that.adminUnitDiseaseExtentClass != null)
-            return false;
         if (alert != null ? !alert.equals(that.alert) : that.alert != null) return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
         if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
@@ -347,7 +339,6 @@ public class DiseaseOccurrence {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (adminUnitDiseaseExtentClass != null ? adminUnitDiseaseExtentClass.hashCode() : 0);
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (isValidated != null ? isValidated.hashCode() : 0);

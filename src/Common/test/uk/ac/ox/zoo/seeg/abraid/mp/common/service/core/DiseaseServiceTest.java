@@ -527,7 +527,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         double minimumValidationWeighting = 0.7;
         boolean useGoldStandardOccurrences = true;
         DateTime minimumOccurrenceDate = DateTime.now();
-        List<DiseaseOccurrenceForDiseaseExtent> expectedOccurrences = new ArrayList<>();
+        List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setGlobal(isGlobal);
 
@@ -536,7 +536,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
                 minimumOccurrenceDate, isGlobal, useGoldStandardOccurrences)).thenReturn(expectedOccurrences);
 
         // Act
-        List<DiseaseOccurrenceForDiseaseExtent> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+        List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, useGoldStandardOccurrences);
 
         // Assert

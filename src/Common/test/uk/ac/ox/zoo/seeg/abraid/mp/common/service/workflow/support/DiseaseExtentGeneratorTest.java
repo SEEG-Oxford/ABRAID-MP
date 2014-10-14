@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -79,7 +80,7 @@ public class DiseaseExtentGeneratorTest {
         List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent = getInitialDiseaseExtentAllUncertain(DateTime.now());
         standardMocks();
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(diseaseGroup.getDiseaseExtentParameters(),
-                                                         new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
+                                                         new ArrayList<DiseaseOccurrence>());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
         mockGetLastCompletedModelRun(false);
 
@@ -153,7 +154,7 @@ public class DiseaseExtentGeneratorTest {
         // Arrange - mocks
         standardMocks();
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(diseaseGroup.getDiseaseExtentParameters(),
-                new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
+                new ArrayList<DiseaseOccurrence>());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
         mockGetLastCompletedModelRun(true);
@@ -328,19 +329,19 @@ public class DiseaseExtentGeneratorTest {
         ));
     }
 
-    private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+    private void mockGetDiseaseOccurrencesForInitialDiseaseExtent(List<DiseaseOccurrence> occurrences) {
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, false)).thenReturn(
                 occurrences);
     }
 
     private void mockGetDiseaseOccurrencesForInitialDiseaseExtentUsingGoldStandardOccurrences(
-            List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+            List<DiseaseOccurrence> occurrences) {
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, null, null, true)).thenReturn(
                 occurrences);
     }
 
     private void mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(DiseaseExtent parameters,
-                                                                  List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+                                                                  List<DiseaseOccurrence> occurrences) {
         double minimumValidationWeighting = parameters.getMinValidationWeighting();
 
         when(diseaseService.getDiseaseOccurrencesForDiseaseExtent(
@@ -389,7 +390,7 @@ public class DiseaseExtentGeneratorTest {
                 any(AdminUnitDiseaseExtentClass.class));
 
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
-            verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(eq(extentClass));
+            verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(argThat(new AdminUnitDiseaseExtentClassMatcher(extentClass)));
         }
     }
 
@@ -398,7 +399,7 @@ public class DiseaseExtentGeneratorTest {
                 eq(diseaseGroup.isGlobal()));
     }
 
-    private List<DiseaseOccurrenceForDiseaseExtent> getOccurrences() {
+    private List<DiseaseOccurrence> getOccurrences() {
         // 0 occurrences of global GAUL code 100, and 0 occurrences in its parent country (GAUL code 10) too
         // 0 occurrences of tropical GAUL code 125, and 4 occurrences (possibly present) in its parent country (GAUL code 20)
         // 0 occurrences of tropical GAUL code 130, but 10 occurrences (present) in its parent country (GAUL code 30)
@@ -530,14 +531,15 @@ public class DiseaseExtentGeneratorTest {
         return DateTime.now().minusMonths(monthsAgo);
     }
 
-    private List<DiseaseOccurrenceForDiseaseExtent> createOccurrences(int adminUnitGaulCode,
-                                                                      int numberOfMonthsAgo,
-                                                                      int numberOfTimes) {
+    private List<DiseaseOccurrence> createOccurrences(int adminUnitGaulCode,
+                                                      int numberOfMonthsAgo,
+                                                      int numberOfTimes) {
         DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthsAgo);
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences = new ArrayList<>();
+        List<DiseaseOccurrence> occurrences = new ArrayList<>();
         for (int i = 0; i < numberOfTimes; i++) {
-            occurrences.add(new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1,
-                    adminUnitGaulCode, alert, locationName, adminUnitDiseaseExtentClass));
+            Location location = new Location("Location", LocationPrecision.ADMIN1, adminUnitGaulCode);
+            Alert alert = new Alert("Title", "Feed Name");
+            occurrences.add(new DiseaseOccurrence(diseaseGroup, occurrenceDate, location, alert));
         }
         return occurrences;
     }
@@ -583,5 +585,41 @@ public class DiseaseExtentGeneratorTest {
         Expert expert = new Expert(id);
         expert.setWeighting(weighting);
         return expert;
+    }
+
+    /**
+     * Custom matcher to verify the length of the list of latest disease occurrences.
+     */
+    static class AdminUnitDiseaseExtentClassMatcher extends ArgumentMatcher<AdminUnitDiseaseExtentClass> {
+        private final AdminUnitDiseaseExtentClass expected;
+
+        public AdminUnitDiseaseExtentClassMatcher(AdminUnitDiseaseExtentClass expected) {
+            this.expected = expected;
+        }
+
+        ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|NeedBracesCheck
+        @Override
+        public boolean matches(Object actualObject) {
+            AdminUnitDiseaseExtentClass actual = (AdminUnitDiseaseExtentClass) actualObject;
+
+            if (actual.getId() != null ? !actual.getId().equals(expected.getId()) : expected.getId() != null)
+                return false;
+            if (actual.getOccurrenceCount() != expected.getOccurrenceCount())
+                return false;
+            if (actual.getAdminUnitGlobalOrTropical() != null ? !actual.getAdminUnitGlobalOrTropical().getGaulCode().equals(expected.getAdminUnitGlobalOrTropical().getGaulCode()) : expected.getAdminUnitGlobalOrTropical() != null)
+                return false;
+            if (actual.getClassChangedDate() != null ? !actual.getClassChangedDate().equals(expected.getClassChangedDate()) : expected.getClassChangedDate() != null)
+                return false;
+            if (actual.getDiseaseExtentClass() != null ? !actual.getDiseaseExtentClass().getName().equals(expected.getDiseaseExtentClass().getName()) : expected.getDiseaseExtentClass() != null)
+                return false;
+            if (actual.getDiseaseGroup() != null ? !actual.getDiseaseGroup().getName().equals(expected.getDiseaseGroup().getName()) : expected.getDiseaseGroup() != null)
+                return false;
+            int expectedCount = Math.min(expected.getOccurrenceCount(), 5);
+            if (actual.getLatestOccurrences() != null ? !(actual.getLatestOccurrences().size() == expectedCount) : expected.getLatestOccurrences() != null)
+                return false;
+
+            return true;
+        }
+        ///CHECKSTYLE:ON
     }
 }

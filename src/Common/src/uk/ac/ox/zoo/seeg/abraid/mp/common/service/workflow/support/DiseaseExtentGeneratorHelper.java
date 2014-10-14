@@ -16,6 +16,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class DiseaseExtentGeneratorHelper {
     private static final int SCALING_FACTOR = 50;
+    private static final int LATEST_OCCURRENCES_MAX_LIST_SIZE = 5;
 
     // Input fields
     private DiseaseGroup diseaseGroup;
@@ -259,9 +260,8 @@ public class DiseaseExtentGeneratorHelper {
     public List<AdminUnitDiseaseExtentClass> getDiseaseExtentToSave() {
         List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClasses = new ArrayList<>();
 
-        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> occurrenceByAdminUnit :
-                occurrencesByAdminUnit.entrySet()) {
-            AdminUnitGlobalOrTropical adminUnit = occurrenceByAdminUnit.getKey();
+        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> entry : occurrencesByAdminUnit.entrySet()) {
+            AdminUnitGlobalOrTropical adminUnit = entry.getKey();
             AdminUnitDiseaseExtentClass row = findAdminUnitDiseaseExtentClass(adminUnit);
             if (row == null) {
                 row = createAdminUnitDiseaseExtentClass(adminUnit);
@@ -273,13 +273,23 @@ public class DiseaseExtentGeneratorHelper {
                 row.setDiseaseExtentClass(newClass);
                 row.setClassChangedDate(DateTime.now());
             }
-            row.setDiseaseOccurrences(occurrenceByAdminUnit.getValue());
-            for (DiseaseOccurrence occurrence : occurrenceByAdminUnit.getValue()) {
-                occurrence.setAdminUnitDiseaseExtentClass(row);
-            }
+            row.setOccurrenceCount(entry.getValue().size());
+            row.setLatestOccurrences(findLatestOccurrences(entry.getValue()));
             adminUnitDiseaseExtentClasses.add(row);
         }
         return adminUnitDiseaseExtentClasses;
+    }
+
+
+    private List<DiseaseOccurrence> findLatestOccurrences(List<DiseaseOccurrence> allOccurrences) {
+        Collections.sort(allOccurrences, new Comparator<DiseaseOccurrence>() {
+            @Override
+            public int compare(DiseaseOccurrence o1, DiseaseOccurrence o2) {
+                return o2.getOccurrenceDate().compareTo(o1.getOccurrenceDate());    // descending
+            }
+        });
+        int n = Math.min(allOccurrences.size(), LATEST_OCCURRENCES_MAX_LIST_SIZE);
+        return allOccurrences.subList(0, n);
     }
 
     /**

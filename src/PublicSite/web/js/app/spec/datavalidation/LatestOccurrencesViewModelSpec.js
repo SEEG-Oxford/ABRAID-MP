@@ -10,25 +10,19 @@ define([
     describe("The 'latest occurrences' view model", function () {
 
         describe("holds the count which", function () {
+            var vm = new LatestOccurrencesViewModel();
             it("is an observable", function () {
-                var vm = new LatestOccurrencesViewModel();
                 expect(vm.count).toBeObservable();
             });
 
             it("takes the expected initial value", function () {
-                // Arrange
-                var expectedCount = 0;
-                // Act
-                var vm = new LatestOccurrencesViewModel();
-                // Assert
-                expect(vm.count()).toBe(expectedCount);
+                expect(vm.count()).toBe(0);
             });
 
             it("sets its value when the 'admin-unit-selected' event is fired", function () {
                 // Arrange
                 var expectedCount = 3;
                 var data = { count: expectedCount };
-                var vm = new LatestOccurrencesViewModel();
                 // Act
                 ko.postbox.publish("admin-unit-selected", data);
                 // Assert
@@ -43,10 +37,7 @@ define([
             });
 
             it("takes the expected initial value", function () {
-                // Arrange
-                // Act
                 var vm = new LatestOccurrencesViewModel();
-                // Assert
                 expect(vm.occurrences()).toEqual([]);
             });
 
@@ -60,6 +51,35 @@ define([
                 // Assert
                 expect(vm.occurrences().length).toBe(3);
                 expect(vm.occurrences()).toBe(occurrences);
+            });
+        });
+
+        describe("holds a boolean to indicate whether to show the list of occurrences which", function () {
+            var vm = new LatestOccurrencesViewModel();
+            it("is an observable", function () {
+                expect(vm.showOccurrences).toBeObservable();
+            });
+
+            it("defaults to true", function () {
+                expect(vm.showOccurrences()).toBe(true);
+            });
+
+            it("swaps its value to false via the 'toggle' function", function () {
+                // Arrange
+                vm.showOccurrences(true);
+                // Act
+                vm.toggle();
+                // Assert
+                expect(vm.showOccurrences()).toBe(false);
+            });
+
+            it("swaps its value to true via the 'toggle' function", function () {
+                // Arrange
+                vm.showOccurrences(false);
+                // Act
+                vm.toggle();
+                // Assert
+                expect(vm.showOccurrences()).toBe(true);
             });
         });
     });
