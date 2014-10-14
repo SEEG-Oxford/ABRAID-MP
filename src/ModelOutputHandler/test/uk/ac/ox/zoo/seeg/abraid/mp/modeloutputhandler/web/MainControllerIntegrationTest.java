@@ -1,11 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,17 +24,23 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,6 +57,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration("file:ModelOutputHandler/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainControllerIntegrationTest extends AbstractSpringIntegrationTests {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     private static final String OUTPUT_HANDLER_PATH = "/handleoutputs";
     private static final String TEST_DATA_PATH = "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata";
 
@@ -54,6 +67,14 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     private static final int TEST_MODEL_RUN_DISEASE_GROUP_ID = 87;
 
     private MockMvc mockMvc;
+
+    @ReplaceWithMock
+    @Autowired
+    private File rasterDir;
+
+    @ReplaceWithMock
+    @Autowired
+    private GeoserverRestService geoserverRestService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -69,6 +90,8 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @Before
     public void setup() {
+        when(rasterDir.getAbsolutePath()).thenReturn(testFolder.getRoot().getAbsolutePath());
+
         // Set up Spring test in standalone mode
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
@@ -104,13 +127,21 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isEqualTo(expectedOutputText);
         assertThat(run.getErrorText()).isNullOrEmpty();
+        assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
+        assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
+        assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
+
+        assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        assertThatRasterPublishedToGeoserver(run, "mean");
+        assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
+        assertThatRasterPublishedToGeoserver(run, "uncertainty");
+
+        // Dead
         assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.tif",
                 NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
         assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
-        assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
-        assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
-        assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
+
     }
 
     @Test
@@ -134,13 +165,19 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isNullOrEmpty();
         assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
+        assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
+        assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
+        assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
+
+        assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
+        assertThatNoRastersPublishedToGeoserver();
+
+        // Dead
         assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.tif",
                 NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
         assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
                 NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
-        assertThatStatisticsInDatabaseMatchesFile(run, "statistics.csv");
-        assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
-        assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
     }
 
     @Test
@@ -164,6 +201,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getResponseDate()).isEqualTo(expectedResponseDate);
         assertThat(run.getOutputText()).isNullOrEmpty();
         assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
+        assertThatNoRastersPublishedToGeoserver();
     }
 
     @Test
@@ -283,6 +321,20 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         byte[] actualRaster = nativeSQL.getRasterForModelRun(run.getId(), rasterColumnName);
 
         assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
+    }
+
+    private void assertThatRasterWrittenToFile(ModelRun run, String expectedFileName, String type) throws IOException {
+        byte[] expectedRaster = loadTestFile(expectedFileName);
+        byte[] actualRaster = FileUtils.readFileToByteArray(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
+
+        assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
+    }
+
+    private void assertThatRasterPublishedToGeoserver(ModelRun run, String type) throws IOException, TemplateException {
+        verify(geoserverRestService, times(1)).publishGeoTIFF(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
+    }
+    private void assertThatNoRastersPublishedToGeoserver() throws IOException, TemplateException {
+        verify(geoserverRestService, times(0)).publishGeoTIFF(any(File.class));
     }
 
     private void assertThatStatisticsInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {

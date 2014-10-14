@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
+import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +22,7 @@ public class BeanTest implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Test
-    public void canObtainModelRunnerBean() throws Exception {
+    public void canObtainWebServiceClientBean() throws Exception {
         // Arrange
         // Act
         Object result = applicationContext.getBean("webServiceClient");
@@ -29,6 +30,17 @@ public class BeanTest implements ApplicationContextAware {
         // Assert
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(WebServiceClient.class);
+    }
+
+    @Test
+    public void canObtainGeoserverRestServiceBean() throws Exception {
+        // Arrange
+        // Act
+        Object result = applicationContext.getBean("geoserverRestService");
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(GeoserverRestService.class);
     }
 
     @Override

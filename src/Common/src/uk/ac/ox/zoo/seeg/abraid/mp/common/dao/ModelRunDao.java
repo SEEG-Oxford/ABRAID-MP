@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,4 +50,10 @@ public interface ModelRunDao {
      * @return True if batching has completed at least once for this disease group, otherwise false.
      */
     boolean hasBatchingEverCompleted(int diseaseGroupId);
+
+    /**
+     * Gets all of the completed model runs.
+     * @return The completed model runs.
+     */
+    Collection<ModelRun> getCompletedModelRuns();
 }

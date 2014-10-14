@@ -9,6 +9,15 @@ echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/modeloutput/WEB
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "model.wrapper.host=$MW_URL" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "geoserver.protocol=http" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "geoserver.username=admin" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "geoserver.password=$GEOSERVER_ADMIN_PASSWORD_RAW" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "geoserver.host=localhost:8080" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "geoserver.path=/geoserver" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "geoserver.root.url=\${geoserver.protocol}://\${geoserver.username}:\${geoserver.password}@\${geoserver.host}\${geoserver.path}" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "abraid.base.dir=$ABRAID_SUPPORT_PATH" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+mkdir -p $ABRAID_SUPPORT_PATH/results
+mkdir -p $ABRAID_SUPPORT_PATH/results/rasters
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" /var/lib/tomcat7/webapps/modeloutput/WEB-INF/classes/log4j.properties
 
@@ -29,6 +38,7 @@ sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" /var/lib/tomcat7/webapps/geoserver/data/w
 cp ../geoserver/logging.xml /var/lib/tomcat7/webapps/geoserver/data/logging.xml
 mkdir /var/lib/tomcat7/webapps/geoserver/data/logs
 cp ../geoserver/ABRAID_LOGGING.properties /var/lib/tomcat7/webapps/geoserver/data/logs/ABRAID_LOGGING.properties
+cp ../geoserver/gwc-gs.xml /var/lib/tomcat7/webapps/geoserver/data/gwc-gs.xml
 
 # Set up PublicSite
 unzip ../../ABRAID-MP_PublicSite.war -d /var/lib/tomcat7/webapps/ROOT
@@ -46,6 +56,7 @@ echo "model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, stdout, logfile, email/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/log4j.properties
 # Configure wms path
 sed -i "s|http\:\/\/localhost\:8081\/geoserver\/abraid\/wms|http\:\/\/$MAIN_URL\/wms|g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/datavalidation/content.ftl
+sed -i "s|http\:\/\/localhost\:8081\/geoserver\/abraid\/wms|http\:\/\/$MAIN_URL\/wms|g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/freemarker/atlas/content.ftl
 
 # Set up DataManager (incomplete)
 cp -r ../../DataManager $ABRAID_SUPPORT_PATH/datamanager
