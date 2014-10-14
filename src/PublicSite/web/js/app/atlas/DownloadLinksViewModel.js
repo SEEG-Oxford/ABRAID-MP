@@ -1,7 +1,10 @@
 /* AMD defining the download links for the atlas view.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "jquery"], function (ko, $) {
+define([
+    "ko",
+    "jquery"
+], function (ko, $) {
     "use strict";
 
     return function (baseUrl, wmsUrl) {

@@ -41,7 +41,7 @@
 <body>
     <div id="map">
         <#include "layerselector.ftl"/>
-        <div class="leaflet-top leaflet-right" id="download-links" style="display: none" data-bind="visible: activeLayer">
+        <div class="leaflet-top leaflet-right" id="downloadLinks" style="display: none" data-bind="visible: activeLayer">
             <div class="leaflet-bar leaflet-control"><a target="_blank" title="PNG" data-bind="attr:{href:png}"><i class="fa fa-lg fa-picture-o"></i> Download as styled PNG</a></div>
             <div class="leaflet-bar leaflet-control"><a target="_blank" title="GeoTIFF" data-bind="attr:{href:tif}"><i class="fa fa-lg fa-download"></i> Download as raw GeoTIFF</a></div>
         </div>

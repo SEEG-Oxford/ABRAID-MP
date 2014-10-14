@@ -16,7 +16,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
 
         ko.applyBindings(
             new DownloadLinksViewModel(baseUrl, data.wmsUrl),
-            doc.getElementById("download-links"));
+            doc.getElementById("downloadLinks"));
 
         ko.applyBindings(
             new LayerSelectorViewModel(data.layers),
