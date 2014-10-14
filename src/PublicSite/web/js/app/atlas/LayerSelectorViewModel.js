@@ -28,6 +28,6 @@ define(["ko", "underscore"], function (ko, _) {
 
         self.selectedLayer = ko.computed(function () {
             return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;
-        }, self).publishOn("layer-changed");
+        }, self).publishOn("active-atlas-layer");
     };
 });

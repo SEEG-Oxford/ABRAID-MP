@@ -29,7 +29,7 @@ define([
 
         self.currentLayer = undefined;
 
-        ko.postbox.subscribe("layer-changed", function (payload) {
+        ko.postbox.subscribe("active-atlas-layer", function (payload) {
             if (self.currentLayer) {
                 self.map.removeLayer(self.currentLayer);
                 self.currentLayer = undefined;

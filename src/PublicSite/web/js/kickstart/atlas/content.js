@@ -8,10 +8,15 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     require([
         "ko",
         "app/atlas/AtlasView",
+        "app/atlas/DownloadLinksViewModel",
         "app/atlas/LayerSelectorViewModel",
         "domReady!"
-    ], function (ko, AtlasView, LayerSelectorViewModel, doc) {
+    ], function (ko, AtlasView, DownloadLinksViewModel, LayerSelectorViewModel, doc) {
         var map = new AtlasView(data.wmsUrl); // jshint ignore:line
+
+        ko.applyBindings(
+            new DownloadLinksViewModel(baseUrl, data.wmsUrl),
+            doc.getElementById("downloadLinks"));
 
         ko.applyBindings(
             new LayerSelectorViewModel(data.layers),
