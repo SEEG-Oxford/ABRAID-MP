@@ -35,10 +35,10 @@ GRANT SELECT, INSERT, UPDATE         ON healthmap_disease TO :application_userna
 GRANT SELECT                         ON land_sea_border TO :application_username;
 GRANT SELECT, INSERT, UPDATE         ON location TO :application_username;
 GRANT SELECT, INSERT, UPDATE         ON model_run TO :application_username;
+GRANT SELECT, INSERT, UPDATE, DELETE ON persistent_logins TO :application_username;
 GRANT SELECT, INSERT, UPDATE         ON provenance TO :application_username;
 GRANT SELECT, INSERT                 ON submodel_statistic TO :application_username;
 GRANT SELECT, INSERT, UPDATE         ON validator_disease_group TO :application_username;
-GRANT SELECT, INSERT, UPDATE, DELETE ON persistent_logins TO :application_username;
 
 -- Privileges for the ABRAID-MP application: views
 GRANT SELECT ON admin_unit_global_view TO :application_username;

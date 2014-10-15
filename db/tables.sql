@@ -296,6 +296,14 @@ CREATE TABLE model_run (
     batching_completed_date timestamp
 );
 
+-- http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
+CREATE TABLE persistent_logins (
+    series varchar(64) NOT NULL,
+    username varchar(64) NOT NULL,
+    token varchar(64) NOT NULL,
+    last_used timestamp NOT NULL
+);
+
 CREATE TABLE provenance (
     id serial NOT NULL,
     name varchar(100) NOT NULL,
@@ -326,12 +334,4 @@ CREATE TABLE validator_disease_group (
     id serial NOT NULL,
     name varchar(100) NOT NULL,
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
-);
-
--- http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
-CREATE TABLE persistent_logins (
-    username varchar(64) not null,
-    series varchar(64) primary key,
-    token varchar(64) not null,
-    last_used timestamp not null
 );
