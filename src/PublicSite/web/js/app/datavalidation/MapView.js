@@ -378,7 +378,7 @@ define([
         var legend = L.control({position: "bottomleft"});
         legend.onAdd = function () {
             var div = L.DomUtil.create("div", "legend");
-            div.innerHTML = "<span style='text-decoration:underline'>Current classification</span><br>" +
+            div.innerHTML = "<span style='text-align: center'><strong>Current classification</strong></span><br><hr>" +
                 _((_(extentClassColour).pairs()).map(function (pair) {
                     return createLegendRow(pair[0], pair[1][1]);
                 })).join("");
