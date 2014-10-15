@@ -36,7 +36,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void setUp() {
         esHelper = mock(EnvironmentalSuitabilityHelper.class);
         dfdeHelper = mock(DistanceFromDiseaseExtentHelper.class);
-        MachineWeightingPredictor mwPredictor = new MachineWeightingPredictor();
+        MachineWeightingPredictor mwPredictor = mock(MachineWeightingPredictor.class);
         service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper, mwPredictor);
     }
 

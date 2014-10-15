@@ -74,7 +74,7 @@ public class ModelWrapperWebService {
         return new JsonModelRun(jsonModelDisease, jsonOccurrences, diseaseExtent);
     }
 
-    private String createRequestBodyAsJson(Object body) {
+    private String createRequestBodyAsJson(JsonModelRun body) {
         // To create the JSON body for the POST request:
         // - use the AbraidJsonObjectMapper (because the request contains GeoJson)
         // - only serialize properties that are annotated with ModellingJsonView or are not annotated at all
