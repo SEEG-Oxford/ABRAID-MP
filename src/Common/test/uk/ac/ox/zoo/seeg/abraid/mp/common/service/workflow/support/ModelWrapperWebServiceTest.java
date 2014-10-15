@@ -91,8 +91,7 @@ public class ModelWrapperWebServiceTest {
     }
 
     private ModelWrapperWebService getModelWrapperWebService(WebServiceClient client) {
-        ModelWrapperWebService webService = new ModelWrapperWebService(client, new AbraidJsonObjectMapper());
-        webService.setRootUrl(ROOT_URL);
+        ModelWrapperWebService webService = new ModelWrapperWebService(client, new AbraidJsonObjectMapper(), ROOT_URL);
         return webService;
     }
 

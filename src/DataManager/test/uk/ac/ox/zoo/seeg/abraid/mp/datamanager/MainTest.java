@@ -38,6 +38,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
     public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
 
+    public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -63,6 +65,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockHealthMapRequest();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
+        mockMachineWeightingPredictorRequest();
         createAndSaveTestModelRun(diseaseGroupId);
         insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
@@ -200,6 +203,11 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void mockModelWrapperRequest() {
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
                 .thenReturn("{\"modelRunName\":\"testname\"}");
+    }
+
+    private void mockMachineWeightingPredictorRequest() {
+        when(webServiceClient.makePostRequestWithJSON(contains("87/predict"), anyString()))
+                .thenReturn(EXPECTED_PREDICTION_FAILURE_RESPONSE);
     }
 
     private void assertFirstOccurrence(DiseaseOccurrence occurrence) {

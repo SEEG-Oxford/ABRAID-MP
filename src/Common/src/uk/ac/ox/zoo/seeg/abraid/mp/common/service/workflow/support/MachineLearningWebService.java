@@ -19,17 +19,16 @@ import static java.lang.Double.parseDouble;
  * Copyright (c) 2014 University of Oxford
  */
 public class MachineLearningWebService {
+    public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
+
     private WebServiceClient webServiceClient;
     private AbraidJsonObjectMapper objectMapper;
-
     private String rootUrl;
 
-    public MachineLearningWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper) {
+    public MachineLearningWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper,
+                                     String rootUrl) {
         this.webServiceClient = webServiceClient;
         this.objectMapper = objectMapper;
-    }
-
-    public void setRootUrl(String rootUrl) {
         this.rootUrl = rootUrl;
     }
 
@@ -66,7 +65,7 @@ public class MachineLearningWebService {
             JsonDiseaseOccurrenceDataPoint data = new JsonDiseaseOccurrenceDataPoint(occurrence);
             String bodyAsJson = writeRequestBodyAsJson(data);
             String response = webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
-            if (response.equals("No prediction")) {
+            if (response.equals(EXPECTED_PREDICTION_FAILURE_RESPONSE)) {
                 return null;
             } else {
                 return parseDouble(response);

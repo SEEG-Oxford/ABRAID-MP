@@ -31,12 +31,13 @@ public class DiseaseOccurrenceValidationServiceTest {
     private DiseaseOccurrenceValidationService service;
     private EnvironmentalSuitabilityHelper esHelper;
     private DistanceFromDiseaseExtentHelper dfdeHelper;
+    private MachineWeightingPredictor mwPredictor;
 
     @Before
     public void setUp() {
         esHelper = mock(EnvironmentalSuitabilityHelper.class);
         dfdeHelper = mock(DistanceFromDiseaseExtentHelper.class);
-        MachineWeightingPredictor mwPredictor = mock(MachineWeightingPredictor.class);
+        mwPredictor = mock(MachineWeightingPredictor.class);
         service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper, mwPredictor);
     }
 
@@ -87,6 +88,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
         boolean result = service.addValidationParametersWithChecks(occurrence, false);
@@ -207,6 +209,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
         boolean result = service.addValidationParametersWithChecks(occurrence, false);
@@ -431,6 +434,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(esHelper.findEnvironmentalSuitability(same(occurrence2), same(raster))).thenReturn(environmentalSuitability2);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence1))).thenReturn(distanceFromDiseaseExtent1);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence2))).thenReturn(distanceFromDiseaseExtent2);
+        when(mwPredictor.findMachineWeighting(same(occurrence1))).thenReturn(null);
+        when(mwPredictor.findMachineWeighting(same(occurrence2))).thenReturn(null);
 
         // Act
         service.addValidationParameters(occurrences);

@@ -31,12 +31,10 @@ public class ModelWrapperWebService {
     // The ModelWrapper's URL path for the model run (this is hardcoded because it is hardcoded in ModelWrapper).
     private static final String MODEL_RUN_URL_PATH = "/model/run";
 
-    public ModelWrapperWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper) {
+    public ModelWrapperWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper,
+                                  String rootUrl) {
         this.webServiceClient = webServiceClient;
         this.objectMapper = objectMapper;
-    }
-
-    public void setRootUrl(String rootUrl) {
         this.rootUrl = rootUrl;
     }
 

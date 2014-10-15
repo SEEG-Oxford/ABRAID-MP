@@ -32,11 +32,11 @@
 
     <!-- Web services -->
     <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService" autowire="constructor">
-        <property name="rootUrl" value="${model.wrapper.root.url}"/>
+        <constructor-arg name="rootUrl" value="${model.wrapper.root.url}"/>
     </bean>
 
     <bean id="machineLearningWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineLearningWebService" autowire="constructor">
-        <property name="rootUrl" value="${machinelearning.root.url}"/>
+        <constructor-arg name="rootUrl" value="${machinelearning.root.url}"/>
     </bean>
 
 </beans>
