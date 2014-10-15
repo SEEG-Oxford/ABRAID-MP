@@ -131,6 +131,22 @@ define([
         }
     };
 
+    // Prevent click events from bubbling up to higher DOM elements
+    ko.bindingHandlers.preventBubble = {
+        init: function (element, valueAccessor) {
+            ko.applyBindingAccessorsToNode(element, {
+                event: function () {
+                    return {
+                        click: function () { return valueAccessor(); },
+                        dblclick: function () { return valueAccessor(); }
+                    };
+                },
+                clickBubble: function () { return false; },
+                dblclickBubble: function () { return false; }
+            });
+        }
+    };
+
     // Custom binding to apply the bootstrap "disabled" class, while also adding a "disabled" attribute (form elements)
     ko.bindingHandlers.bootstrapDisable = {
         init: function (element, valueAccessor) {
