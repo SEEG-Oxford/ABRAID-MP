@@ -117,6 +117,9 @@ ALTER TABLE location ADD CONSTRAINT pk_location
 ALTER TABLE model_run ADD CONSTRAINT pk_model_run
     PRIMARY KEY (id);
 
+ALTER TABLE persistent_logins ADD CONSTRAINT pk_series
+    PRIMARY KEY (series);
+
 ALTER TABLE provenance ADD CONSTRAINT pk_provenance
     PRIMARY KEY (id);
 

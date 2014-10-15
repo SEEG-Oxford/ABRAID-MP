@@ -36,7 +36,7 @@
 -- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
 -- submodel_statistic:              Contains statistics of a model run.
 -- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
-
+-- persistent_logins:               http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
 
 CREATE TABLE admin_unit_country (
     admin_unit_gaul_code integer NOT NULL,
@@ -294,6 +294,14 @@ CREATE TABLE model_run (
     batch_end_date timestamp,
     batch_occurrence_count integer,
     batching_completed_date timestamp
+);
+
+-- http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
+CREATE TABLE persistent_logins (
+    series varchar(64) NOT NULL,
+    username varchar(64) NOT NULL,
+    token varchar(64) NOT NULL,
+    last_used timestamp NOT NULL
 );
 
 CREATE TABLE provenance (
