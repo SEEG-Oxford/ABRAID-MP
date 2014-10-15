@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -35,7 +34,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             adminUnitGlobal,
             new DiseaseGroup(),
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-            new ArrayList<DiseaseOccurrence>(),
+            0,
             classChangedLaterThanReview ? review.getCreatedDate().plusDays(1) : review.getCreatedDate().minusDays(1));
     }
 

@@ -25,9 +25,6 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     private DiseaseGroupDao diseaseGroupDao;
 
     @Autowired
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
-
-    @Autowired
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     @Test

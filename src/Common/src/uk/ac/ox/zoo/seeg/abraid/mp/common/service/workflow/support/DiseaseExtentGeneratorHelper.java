@@ -160,12 +160,6 @@ public class DiseaseExtentGeneratorHelper {
         return (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) && (adminUnit.getLevel() != '0');
     }
 
-    private int getAdminUnitGaulCode(DiseaseOccurrence occurrence) {
-        return occurrence.getDiseaseGroup().isGlobal() ?
-               occurrence.getLocation().getAdminUnitGlobalGaulCode() :
-               occurrence.getLocation().getAdminUnitTropicalGaulCode();
-    }
-
     /**
      * Groups the occurrences by country (strictly, it groups the number of occurrences by country GAUL code).
      * The country GAUL code is taken from the admin unit global/tropical entity.
@@ -181,6 +175,12 @@ public class DiseaseExtentGeneratorHelper {
                 numberOfOccurrencesByCountry.put(countryGaulCode, nullSafeAdd(numberOfOccurrences, 1));
             }
         }
+    }
+
+    private int getAdminUnitGaulCode(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isGlobal() ?
+                occurrence.getLocation().getAdminUnitGlobalGaulCode() :
+                occurrence.getLocation().getAdminUnitTropicalGaulCode();
     }
 
     /**

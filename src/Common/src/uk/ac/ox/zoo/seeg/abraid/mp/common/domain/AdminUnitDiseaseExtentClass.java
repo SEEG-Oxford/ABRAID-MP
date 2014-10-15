@@ -59,7 +59,7 @@ public class AdminUnitDiseaseExtentClass {
     private DateTime classChangedDate;
 
     // The number of disease occurrences giving rise to this extent class.
-    @Column(name = "occurrence_count")
+    @Column(name = "occurrence_count", nullable = false)
     private int occurrenceCount;
 
     // List of the latest disease occurrences that were used in determining this disease extent class classification.
@@ -107,26 +107,6 @@ public class AdminUnitDiseaseExtentClass {
         this.diseaseGroup = diseaseGroup;
         this.diseaseExtentClass = diseaseExtentClass;
         this.occurrenceCount = occurrenceCount;
-        this.classChangedDate = classChangedDate;
-    }
-
-    public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass,
-                                       List<DiseaseOccurrence> latestOccurrences, DateTime classChangedDate) {
-        this.adminUnitGlobal = adminUnitGlobal;
-        this.diseaseGroup = diseaseGroup;
-        this.diseaseExtentClass = diseaseExtentClass;
-        this.latestOccurrences = latestOccurrences;
-        this.classChangedDate = classChangedDate;
-    }
-
-    public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass,
-                                       List<DiseaseOccurrence> latestOccurrences,  DateTime classChangedDate) {
-        this.adminUnitTropical = adminUnitTropical;
-        this.diseaseGroup = diseaseGroup;
-        this.diseaseExtentClass = diseaseExtentClass;
-        this.latestOccurrences = latestOccurrences;
         this.classChangedDate = classChangedDate;
     }
 
