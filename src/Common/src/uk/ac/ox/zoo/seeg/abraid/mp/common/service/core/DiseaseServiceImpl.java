@@ -180,7 +180,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return A list of disease occurrences.
      */
     @Override
-    public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean useGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(

@@ -101,7 +101,7 @@ public class DiseaseExtentGenerator {
     }
 
     private void setInitialExtentOccurrences(DiseaseExtentGeneratorHelper helper) {
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 null,
                 null,
@@ -123,7 +123,7 @@ public class DiseaseExtentGenerator {
             minimumValidationWeighting = helper.getParameters().getMinValidationWeighting();
         }
 
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
                 helper.getDiseaseGroup().getId(),
                 minimumValidationWeighting,
                 minimumOccurrenceDate,

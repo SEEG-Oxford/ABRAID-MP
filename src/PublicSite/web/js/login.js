@@ -6,7 +6,7 @@
 define([
     "ko",
     "jquery",
-    "app/datavalidation/LogInFormViewModel",
+    "app/LogInFormViewModel",
     "domReady!"
 ], function (ko, $, LogInFormViewModel, doc) {
     "use strict";

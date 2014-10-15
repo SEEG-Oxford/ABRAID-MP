@@ -17,9 +17,6 @@ import java.util.List;
 public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOccurrenceDao {
     // HQL fragments used to build queries to obtain disease occurrences
     private static final String DISEASE_EXTENT_QUERY =
-            "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, d.location.precision, case when :isGlobal = true then" +
-            "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.isValidated = true " +
@@ -110,7 +107,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean isGlobal, boolean useGoldStandardOccurrences) {
         String queryString = DISEASE_EXTENT_QUERY;
@@ -127,7 +124,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
         Query query = currentSession().createQuery(queryString);
         query.setParameter("diseaseGroupId", diseaseGroupId);
-        query.setParameter("isGlobal", isGlobal);
         if (minimumValidationWeighting != null) {
             query.setParameter("minimumValidationWeighting", minimumValidationWeighting);
         }

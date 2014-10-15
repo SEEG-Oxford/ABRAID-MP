@@ -19,21 +19,27 @@ public class DiseaseExtent {
                       parameters = @Parameter(name = "property", value = "diseaseGroup"))
     private Integer diseaseGroupId;
 
+    // The minimum value of disease_occurrence.validation_weighting used in generating the disease extent
     @Column(name = "min_validation_weighting")
     private Double minValidationWeighting;
 
+    // The minimum number of occurrences in an admin unit to indicate presence (initial extent generation)
     @Column(name = "min_occurrences_for_presence")
     private Integer minOccurrencesForPresence;
 
+    // The minimum number of occurrences in an admin unit to indicate possible presence (initial extent generation)
     @Column(name = "min_occurrences_for_possible_presence")
     private Integer minOccurrencesForPossiblePresence;
 
+    // Occurrences up to this age are given the higher occurrence score, older ones are given the lower score
     @Column(name = "max_months_ago_for_higher_occurrence_score")
     private Integer maxMonthsAgoForHigherOccurrenceScore;
 
+    // The lower score given to disease occurrences during extent generation
     @Column(name = "lower_occurrence_score")
     private Integer lowerOccurrenceScore;
 
+    // The higher score given to disease occurrences during extent generation
     @Column(name = "higher_occurrence_score")
     private Integer higherOccurrenceScore;
 
@@ -52,7 +58,7 @@ public class DiseaseExtent {
                          Integer minOccurrencesForPresence, Integer minOccurrencesForPossiblePresence,
                          Integer maxMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
-        this.diseaseGroup = diseaseGroup;
+        this(diseaseGroup);
         this.minValidationWeighting = minValidationWeighting;
         this.minOccurrencesForPresence = minOccurrencesForPresence;
         this.minOccurrencesForPossiblePresence = minOccurrencesForPossiblePresence;
@@ -118,7 +124,7 @@ public class DiseaseExtent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseExtent)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseExtent that = (DiseaseExtent) o;
 

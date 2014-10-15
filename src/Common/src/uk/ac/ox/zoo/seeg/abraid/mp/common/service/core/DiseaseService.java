@@ -83,7 +83,7 @@ public interface DiseaseService {
      * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return A list of disease occurrences.
      */
-    List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+    List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean useGoldStandardOccurrences);
 

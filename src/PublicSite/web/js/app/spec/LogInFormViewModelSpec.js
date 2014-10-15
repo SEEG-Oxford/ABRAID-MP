@@ -1,7 +1,7 @@
 /* A suite of tests for the LogInFormViewModel.
  * Copyright (c) 2014 University of Oxford
  */
-define(["app/datavalidation/LogInFormViewModel"], function (LogInFormViewModel) {
+define(["app/LogInFormViewModel"], function (LogInFormViewModel) {
     "use strict";
 
     describe("The log in view model", function () {
@@ -141,7 +141,7 @@ define(["app/datavalidation/LogInFormViewModel"], function (LogInFormViewModel) 
                 vm.submit();
 
                 // Assert
-                expect(vm.message()).toContain("Attempting  login");
+                expect(vm.message()).toContain("Attempting login");
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
             });
 

@@ -17,7 +17,7 @@ ALTER TABLE alert
     ADD CONSTRAINT uq_alert_healthmap_alert_id UNIQUE (healthmap_alert_id);
 
 ALTER TABLE covariate_influence
-    ADD CONSTRAINT uq_model_run_id_covariate_name UNIQUE (model_run_id, covariate_name);
+    ADD CONSTRAINT uq_covariate_influence_model_run_id_covariate_name UNIQUE (model_run_id, covariate_name);
 
 ALTER TABLE disease_occurrence_review
     ADD CONSTRAINT uq_disease_occurrence_review_expert_id_disease_occurrence_id UNIQUE (expert_id, disease_occurrence_id);
@@ -82,6 +82,9 @@ ALTER TABLE disease_occurrence ADD CONSTRAINT pk_disease_occurrence
     PRIMARY KEY (id);
 
 ALTER TABLE disease_occurrence_review ADD CONSTRAINT pk_disease_occurrence_review
+    PRIMARY KEY (id);
+
+ALTER TABLE effect_curve_covariate_influence ADD CONSTRAINT pk_effect_curve_covariate_influence
     PRIMARY KEY (id);
 
 ALTER TABLE expert ADD CONSTRAINT pk_expert
@@ -187,6 +190,9 @@ ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurence_review
 
 ALTER TABLE disease_occurrence_review ADD CONSTRAINT fk_disease_occurrence_review_disease_occurrence
     FOREIGN KEY (disease_occurrence_id) REFERENCES disease_occurrence (id);
+
+ALTER TABLE effect_curve_covariate_influence ADD CONSTRAINT fk_effect_curve_covariate_influence_model_run
+    FOREIGN KEY (model_run_id) REFERENCES model_run (id);
 
 ALTER TABLE expert_validator_disease_group ADD CONSTRAINT fk_expert_validator_disease_group_validator_disease_group
     FOREIGN KEY (validator_disease_group_id) REFERENCES validator_disease_group (id);

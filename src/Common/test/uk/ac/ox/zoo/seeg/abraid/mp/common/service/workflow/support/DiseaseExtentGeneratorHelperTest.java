@@ -27,7 +27,7 @@ public class DiseaseExtentGeneratorHelperTest {
     private List<? extends AdminUnitGlobalOrTropical> defaultAdminUnits = createDefaultAdminUnits();
 
     private List<AdminUnitDiseaseExtentClass> emptyDiseaseExtent = new ArrayList<>();
-    private List<DiseaseOccurrenceForDiseaseExtent> emptyOccurrences = new ArrayList<>();
+    private List<DiseaseOccurrence> emptyOccurrences = new ArrayList<>();
     private List<AdminUnitReview> emptyReviews = new ArrayList<>();
 
     // Disease extent classes
@@ -68,7 +68,7 @@ public class DiseaseExtentGeneratorHelperTest {
 
         // Assert
         assertThat(helper.getOccurrencesByAdminUnit()).hasSize(defaultAdminUnits.size());
-        for (List<DiseaseOccurrenceForDiseaseExtent> occurrences : helper.getOccurrencesByAdminUnit().values()) {
+        for (List<DiseaseOccurrence> occurrences : helper.getOccurrencesByAdminUnit().values()) {
             assertThat(occurrences).isEmpty();
         }
     }
@@ -98,20 +98,33 @@ public class DiseaseExtentGeneratorHelperTest {
         assertThat(helper.getReviewsByAdminUnit()).isEmpty();
     }
 
+    private DiseaseOccurrence createPoint(Location location) {
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        diseaseGroup.setGlobal(false);
+        Alert alert = new Alert("Title", "Feed Name");
+        return new DiseaseOccurrence(diseaseGroup, DateTime.now(), location, alert);
+    }
+
+    private DiseaseOccurrence createCountryPoint(int gaulCode) {
+        Location country = new Location("Country", LocationPrecision.COUNTRY, gaulCode);
+        return createPoint(country);
+    }
+
+    private DiseaseOccurrence createAdmin1Point(int gaulCode) {
+        Location admin1 = new Location("Admin 1", LocationPrecision.ADMIN1, gaulCode);
+        return createPoint(admin1);
+    }
+
     @Test
     public void groupOccurrencesByAdminUnitExcludesCountryPrecisionPointsInNonCountryAdminUnits() {
         // Arrange
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper();
-        DiseaseOccurrenceForDiseaseExtent countryPointInCountry = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.COUNTRY, 150);
-        DiseaseOccurrenceForDiseaseExtent countryPointInAdmin1 = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.COUNTRY, 125); // This point should be excluded
-        DiseaseOccurrenceForDiseaseExtent admin1PointInCountry = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.ADMIN1, 150);
-        DiseaseOccurrenceForDiseaseExtent admin1PointInAdmin1 = new DiseaseOccurrenceForDiseaseExtent(
-                DateTime.now(), LocationPrecision.ADMIN1, 125);
+        DiseaseOccurrence countryPointInCountry = createCountryPoint(150);
+        DiseaseOccurrence countryPointInAdmin1 = createCountryPoint(125);
+        DiseaseOccurrence admin1PointInCountry = createAdmin1Point(150);
+        DiseaseOccurrence admin1PointInAdmin1 = createAdmin1Point(125);
 
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(countryPointInCountry, countryPointInAdmin1,
+        List<DiseaseOccurrence> occurrences = createList(countryPointInCountry, countryPointInAdmin1,
                 admin1PointInCountry, admin1PointInAdmin1);
         helper.setOccurrences(occurrences);
 
@@ -119,14 +132,14 @@ public class DiseaseExtentGeneratorHelperTest {
         helper.groupOccurrencesByAdminUnit();
 
         // Assert
-        Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit =
+        Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> occurrencesByAdminUnit =
                 helper.getOccurrencesByAdminUnit();
         assertThat(occurrencesByAdminUnit).hasSize(defaultAdminUnits.size());
-        List<DiseaseOccurrenceForDiseaseExtent> admin1Occurrences =
+        List<DiseaseOccurrence> admin1Occurrences =
                 occurrencesByAdminUnit.get(getAdminUnitGlobalOrTropical(125));
 
         assertThat(admin1Occurrences).hasSize(1);
-        assertThat(admin1Occurrences.get(0).getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
+        assertThat(admin1Occurrences.get(0).getLocation().getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
         assertThat(occurrencesByAdminUnit.get(getAdminUnitGlobalOrTropical(150))).hasSize(2);
     }
 
@@ -199,7 +212,7 @@ public class DiseaseExtentGeneratorHelperTest {
         DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 0.6, 5, 1, 36, 10, 20);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
+        List<DiseaseOccurrence> occurrences = createList(
                 createOccurrence(0), createOccurrence(12), createOccurrence(24), createOccurrence(36),
                 createOccurrence(48), createOccurrence(60), createOccurrence(72));
         // Expected score is (20 * 4 + 10 * 3) / 7  (which we calculate ourselves in case of int-to-double issues)
@@ -244,7 +257,7 @@ public class DiseaseExtentGeneratorHelperTest {
         DiseaseExtent parameters = new DiseaseExtent(new DiseaseGroup(), 0.6, 5, 1, 36, 2, 3);
         DiseaseExtentGeneratorHelper helper = createDefaultDiseaseExtentGeneratorHelper(parameters);
 
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences = createList(
+        List<DiseaseOccurrence> occurrences = createList(
                 createOccurrence(0), createOccurrence(12), createOccurrence(24), createOccurrence(36),
                 createOccurrence(48), createOccurrence(60), createOccurrence(72));
 
@@ -355,9 +368,11 @@ public class DiseaseExtentGeneratorHelperTest {
         );
     }
 
-    private DiseaseOccurrenceForDiseaseExtent createOccurrence(int numberOfMonthsAgo) {
+    private DiseaseOccurrence createOccurrence(int numberOfMonthsAgo) {
         DateTime occurrenceDate = DateTime.now().minusMonths(numberOfMonthsAgo);
-        return new DiseaseOccurrenceForDiseaseExtent(occurrenceDate, LocationPrecision.ADMIN1, 0);
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setOccurrenceDate(occurrenceDate);
+        return occurrence;
     }
 
     private AdminUnitReview createReview(DiseaseExtentClass extentClass, double expertWeighting) {

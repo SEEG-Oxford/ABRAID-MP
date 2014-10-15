@@ -173,6 +173,13 @@ public class DiseaseOccurrence {
         this.id = id;
     }
 
+    public DiseaseOccurrence(DiseaseGroup diseaseGroup, DateTime occurrenceDate, Location location, Alert alert) {
+        this.diseaseGroup = diseaseGroup;
+        this.occurrenceDate = occurrenceDate;
+        this.location = location;
+        this.alert = alert;
+    }
+
     public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, Boolean isValidated,
                              Double finalWeighting, DateTime occurrenceDate) {
         this.id = id;
@@ -297,7 +304,7 @@ public class DiseaseOccurrence {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DiseaseOccurrence)) return false;
 
         DiseaseOccurrence that = (DiseaseOccurrence) o;
 

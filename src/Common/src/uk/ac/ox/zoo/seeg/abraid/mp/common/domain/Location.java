@@ -112,6 +112,12 @@ public class Location {
         this.name = name;
     }
 
+    public Location(String name, LocationPrecision precision, int adminUnitTropicalGaulCode) {
+        this.name = name;
+        this.precision = precision;
+        this.adminUnitTropicalGaulCode = adminUnitTropicalGaulCode;
+    }
+
     public Location(String name, double x, double y, LocationPrecision precision, int healthMapCountryId) {
         this(name, x, y, precision);
         this.healthMapCountryId = healthMapCountryId;
