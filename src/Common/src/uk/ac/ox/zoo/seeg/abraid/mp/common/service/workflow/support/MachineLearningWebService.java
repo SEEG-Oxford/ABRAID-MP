@@ -19,6 +19,7 @@ import static java.lang.Double.parseDouble;
  * Copyright (c) 2014 University of Oxford
  */
 public class MachineLearningWebService {
+    /** Server response indicating that a trusted prediction was not returned, and point should be validated manually */
     public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
 
     private WebServiceClient webServiceClient;

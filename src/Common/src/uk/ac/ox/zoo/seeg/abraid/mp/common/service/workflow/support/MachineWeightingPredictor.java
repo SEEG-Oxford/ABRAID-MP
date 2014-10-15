@@ -27,7 +27,7 @@ public class MachineWeightingPredictor {
      * Train the model with the list of occurrences.
      * @param diseaseGroupId The ID of the disease group to which the occurrences belong.
      * @param occurrences The occurrences with which to train the predictor.
-     * @throws MachineWeightingPredictorException
+     * @throws MachineWeightingPredictorException if the json cannot be processed, or the request cannot be made.
      */
     public void train(int diseaseGroupId, List<DiseaseOccurrence> occurrences)
             throws MachineWeightingPredictorException {
@@ -43,7 +43,7 @@ public class MachineWeightingPredictor {
      * Predict the weighting of a new occurrence.
      * @param occurrence The occurrence.
      * @return The predicted value for weighting.
-     * @throws MachineWeightingPredictorException
+     * @throws MachineWeightingPredictorException if the request cannot be made or the response cannot be handled.
      */
     public Double findMachineWeighting(DiseaseOccurrence occurrence) throws MachineWeightingPredictorException {
         try {

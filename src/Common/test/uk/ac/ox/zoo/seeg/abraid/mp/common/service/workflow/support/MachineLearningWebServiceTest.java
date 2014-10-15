@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 public class MachineLearningWebServiceTest {
 
-    String rootUrl = "rootUrl/";
+    private String rootUrl = "rootUrl/";
 
     @Test
     public void sendTrainingDataMakesPOSTRequestWithCorrectArguments() throws Exception {

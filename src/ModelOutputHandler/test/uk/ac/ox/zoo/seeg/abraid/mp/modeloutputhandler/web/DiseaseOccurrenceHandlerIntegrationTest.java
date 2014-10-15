@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
@@ -57,6 +58,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         int diseaseGroupId = 87;
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
         ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
+
+        diseaseService.getDiseaseGroupById(diseaseGroupId).setUseMachineLearning(false);
 
         // Act
         diseaseOccurrenceHandler.handle(modelRun);
