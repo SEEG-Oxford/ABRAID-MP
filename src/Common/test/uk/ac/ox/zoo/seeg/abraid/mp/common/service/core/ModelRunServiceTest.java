@@ -7,10 +7,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the ModelRunService class.
@@ -117,6 +119,19 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
 
         // Assert
         assertThat(actualModelRun).isEqualTo(expectedModelRun);
+    }
+
+    @Test
+    public void getCompletedModelRuns() {
+        // Arrange
+        Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
+        when(modelRunDao.getCompletedModelRuns()).thenReturn(expectedRuns);
+
+        // Act
+        Collection<ModelRun> runs = modelRunService.getCompletedModelRuns();
+
+        // Assert
+        assertThat(runs).isEqualTo(expectedRuns);
     }
 
     @Test

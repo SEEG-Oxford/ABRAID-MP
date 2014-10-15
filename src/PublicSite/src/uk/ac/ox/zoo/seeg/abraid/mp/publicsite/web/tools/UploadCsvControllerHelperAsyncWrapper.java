@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
  */
 public class UploadCsvControllerHelperAsyncWrapper extends AbstractAsynchronousActionHandler {
     private static final Logger LOGGER = Logger.getLogger(UploadCsvController.class);
-    private static final int THREAD_POOL_SIZE = 3;
+    private static final int THREAD_POOL_SIZE = 1;
 
     private UploadCsvControllerHelper uploadCsvControllerHelper;
 

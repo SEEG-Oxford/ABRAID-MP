@@ -96,8 +96,8 @@ result <- tryCatch({
                 library('raster', quietly=TRUE)
             }
             dir.create('results')
-            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/mean_prediction.tif", format="GTiff", options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
-            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/prediction_uncertainty.tif", format="GTiff", options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
+            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/mean_prediction.tif", format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
+            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/prediction_uncertainty.tif", format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
             fileConn <- file("results/statistics.csv")
             writeLines(c(
                 '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',

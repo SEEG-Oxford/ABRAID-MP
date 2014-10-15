@@ -6,15 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -53,13 +50,14 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
         String csv = CSV_HEADER + "Test site 1\n" + CSV_OCCURRENCE1 + "Test site 2, 20.5\n";
 
         // Act
-        catchException(csvDataAcquirer).acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
 
         // Assert
-        String errorLine1 = "Error in CSV file on line 1: Longitude is missing.";
-        String errorLine3 = "Error in CSV file on line 3: Latitude is missing.";
-        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
-        assertThat(caughtException()).hasMessage(errorLine1 + System.lineSeparator() + errorLine3);
+        assertThat(messages).hasSize(4);
+        assertThat(messages.get(0)).isEqualTo("Found 3 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo("Saved 1 disease occurrence(s) in 1 location(s) (of which 1 location(s) passed QC).");
+        assertThat(messages.get(2)).isEqualTo("Error in CSV file on line 2: Longitude is missing.");
+        assertThat(messages.get(3)).isEqualTo("Error in CSV file on line 4: Latitude is missing.");
     }
 
     private void assertNormalValidationParameters(DiseaseOccurrence occurrence) {
@@ -76,8 +74,11 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
     private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {
         String csv = CSV_HEADER + CSV_OCCURRENCE1 + CSV_OCCURRENCE2;
-        String message = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
-        assertThat(message).isEqualTo("Saved 2 disease occurrence(s) in 2 location(s) (of which 2 location(s) passed QC).");
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        assertThat(messages).hasSize(2);
+        assertThat(messages.get(0)).isEqualTo("Found 2 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo(
+                "Saved 2 disease occurrence(s) in 2 location(s) (of which 2 location(s) passed QC).");
 
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
         assertFirstOccurrence(occurrences.get(0));

@@ -5,9 +5,29 @@
 -- Copyright (c) 2014 University of Oxford
 
 
--- The ABRAID-MP application will log in using this username and password
-DROP ROLE IF EXISTS :application_username;
-CREATE ROLE :application_username LOGIN PASSWORD :'application_password';
+-- Set up application role for ABRAID-MP (the application will log in under this username).
+-- We need to create a temporary function because we need IF NOT EXISTS, and it cannot be an anonymous block
+-- because we need to pass in psql variables.
+CREATE OR REPLACE FUNCTION create_or_replace_role(p_username text, p_password text) RETURNS void AS $$
+DECLARE
+    suffix text := p_username || ' LOGIN PASSWORD ''' || quote_ident(p_password) || '''';
+BEGIN
+    IF NOT EXISTS (SELECT * FROM pg_catalog.pg_user WHERE usename = p_username) THEN
+        -- If the role does not exist, create it
+        EXECUTE 'CREATE ROLE ' || suffix;
+    ELSE
+        -- If the role already exists, do not drop it because it may have privileges on other databases.
+        -- Instead ensure its password is correct, then revoke all privileges from the current database only.
+        EXECUTE 'ALTER ROLE ' || suffix;
+        EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA public FROM ' || p_username;
+        EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM ' || p_username;
+    END IF;
+END
+$$ LANGUAGE plpgsql;
+
+\pset footer off
+SELECT create_or_replace_role(:'application_username', :'application_password');
+DROP FUNCTION create_or_replace_role(text, text);
 
 -- Privileges for the ABRAID-MP application: tables
 GRANT SELECT, INSERT, UPDATE        ON admin_unit_disease_extent_class TO :application_username;

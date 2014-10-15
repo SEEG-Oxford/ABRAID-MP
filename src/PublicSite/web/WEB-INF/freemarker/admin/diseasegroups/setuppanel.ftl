@@ -77,11 +77,14 @@
                     <!-- Run Model and Batch End Date -->
                     <div style="overflow: auto; width: 100%" class="form-group">
                         <span data-bind="if: hasModelBeenSuccessfullyRun" class="side-by-side">
-                            <button class="btn btn-primary" data-bind="click: submit, formButton: { submitting: 'Working...', standard: useGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'}"></button>
+                            <button class="btn btn-primary" data-bind="click: submit,
+                                                                       text: isSubmitting() ? 'Working...' : (useGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
+                                                                       bootstrapDisable: disableButtonThatRunsModel()">
+                            </button>
                         </span>
                         <span data-bind="ifnot: hasModelBeenSuccessfullyRun" class="side-by-side">
                             <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'},
-                                                                       formButton: { submitting: 'Working...', standard: useGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences for Validation'},
+                                                                       text: isSubmitting() ? 'Working...' : (useGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
                                                                        bootstrapDisable: disableButtonThatRunsModel()">
                             </button>
                         </span>

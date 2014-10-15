@@ -34,7 +34,7 @@ public class ModelOutputHandlerWebServiceTest {
 
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
         String expectedUrl = rootUrl + "handleoutputs";
-        when(webServiceClient.makePostRequest(expectedUrl, testBody)).thenReturn("expected Result");
+        when(webServiceClient.makePostRequestWithBinary(expectedUrl, testBody)).thenReturn("expected Result");
 
         ModelOutputHandlerWebService target = new ModelOutputHandlerWebService(webServiceClient, configurationService);
 
@@ -43,6 +43,6 @@ public class ModelOutputHandlerWebServiceTest {
 
         // Assert
         assertThat(actualResponse).isEqualTo("expected Result");
-        verify(webServiceClient, times(1)).makePostRequest(expectedUrl, testBody);
+        verify(webServiceClient, times(1)).makePostRequestWithBinary(expectedUrl, testBody);
     }
 }

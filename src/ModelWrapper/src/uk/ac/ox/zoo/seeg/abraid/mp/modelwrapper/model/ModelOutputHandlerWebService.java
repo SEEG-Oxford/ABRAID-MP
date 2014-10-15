@@ -36,7 +36,7 @@ public class ModelOutputHandlerWebService {
     public String handleOutputs(File outputZipFile) throws IOException, WebServiceClientException {
         String url = buildUrl();
         byte[] body = FileUtils.readFileToByteArray(outputZipFile);
-        return webServiceClient.makePostRequest(url, body);
+        return webServiceClient.makePostRequestWithBinary(url, body);
     }
 
     private String buildUrl() {

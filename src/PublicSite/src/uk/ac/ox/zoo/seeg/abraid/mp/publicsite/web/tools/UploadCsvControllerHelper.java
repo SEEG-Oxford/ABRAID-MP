@@ -1,14 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionService;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +20,7 @@ import java.util.Map;
 public class UploadCsvControllerHelper {
     private static final Logger LOGGER = Logger.getLogger(UploadCsvControllerHelper.class);
 
-    private static final String EMAIL_SUBJECT_PREFIX = "CSV upload ";
+    private static final String EMAIL_SUBJECT = "CSV upload results";
     private static final String EMAIL_TEMPLATE = "uploadCsvEmail.ftl";
     private static final String EMAIL_FAILED_MESSAGE = "Failed to send e-mail";
 
@@ -41,35 +42,25 @@ public class UploadCsvControllerHelper {
      * @param filePath The full path to the file to upload (used for information only).
      */
     public void acquireCsvData(String csv, boolean isGoldStandard, String userEmailAddress, String filePath) {
-        boolean success = false;
-        String message;
         Timestamp submissionDate = getNowAsTimestamp();
 
-        try {
-            message = dataAcquisitionService.acquireCsvData(csv, isGoldStandard);
-            success = true;
-        } catch (DataAcquisitionException e) {
-            message = e.getMessage();
-        }
+        List<String> messages = dataAcquisitionService.acquireCsvData(csv, isGoldStandard);
+        String message = StringUtils.join(messages, System.lineSeparator());
 
         Timestamp completionDate = getNowAsTimestamp();
-        sendEmail(userEmailAddress, filePath, submissionDate, completionDate, success, message);
+        sendEmail(userEmailAddress, filePath, submissionDate, completionDate, message);
     }
 
     private void sendEmail(String userEmailAddress, String filePath, Timestamp submissionDate, Timestamp completionDate,
-                           boolean success, String message) {
-        String succeededOrFailed = success ? "succeeded" : "failed";
-
+                           String message) {
         Map<String, Object> templateData = new HashMap<>();
         templateData.put("filePath", filePath);
         templateData.put("submissionDate", submissionDate);
         templateData.put("completionDate", completionDate);
-        templateData.put("succeededOrFailed", succeededOrFailed);
         templateData.put("message", message);
 
         try {
-            String subject = EMAIL_SUBJECT_PREFIX + succeededOrFailed;
-            emailService.sendEmail(userEmailAddress, subject, EMAIL_TEMPLATE, templateData);
+            emailService.sendEmail(userEmailAddress, EMAIL_SUBJECT, EMAIL_TEMPLATE, templateData);
         } catch (Exception e) {
             LOGGER.error(EMAIL_FAILED_MESSAGE, e);
         }

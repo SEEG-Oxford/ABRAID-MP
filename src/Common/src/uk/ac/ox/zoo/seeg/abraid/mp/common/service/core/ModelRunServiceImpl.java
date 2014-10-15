@@ -7,6 +7,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
+import java.util.Collection;
+
 /**
  * Service interface for model run inputs and outputs.
  *
@@ -106,5 +108,14 @@ public class ModelRunServiceImpl implements ModelRunService {
     @Override
     public DateTime subtractDaysBetweenModelRuns(DateTime dateTime) {
         return dateTime.minusDays(DAYS_BETWEEN_MODEL_RUNS).withTimeAtStartOfDay();
+    }
+
+    /**
+     * Gets all of the completed model runs.
+     * @return The completed model runs.
+     */
+    @Override
+    public Collection<ModelRun> getCompletedModelRuns() {
+        return modelRunDao.getCompletedModelRuns();
     }
 }

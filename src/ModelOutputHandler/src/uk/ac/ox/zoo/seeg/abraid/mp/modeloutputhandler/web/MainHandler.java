@@ -5,6 +5,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
 import net.lingala.zip4j.model.FileHeader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -13,11 +14,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
+import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,12 +52,25 @@ public class MainHandler {
             "Could not save relative influence csv for model run \"%s\"";
     private static final String COULD_NOT_SAVE_EFFECT_CURVES =
             "Could not save effect curves csv for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_UNCERTAINTY_RASTER =
+            "Could not save prediction uncertainty for model run \"%s\"";
+    private static final String COULD_NOT_SAVE_PREDICTION_RASTER =
+            "Could not save mean prediction raster for model run \"%s\"";
+    private static final String RASTER_FILE_ALREADY_EXISTS =
+            "Raster file \"%s\" already exists";
+    private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
+            "Failed to create directory for output rasters: %s";
+
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private ModelRunService modelRunService;
+    private final ModelRunService modelRunService;
+    private final GeoserverRestService geoserver;
+    private final File rasterDir;
 
-    public MainHandler(ModelRunService modelRunService) {
+    public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver, File rasterDir) {
         this.modelRunService = modelRunService;
+        this.geoserver = geoserver;
+        this.rasterDir = rasterDir;
     }
 
     /**
@@ -77,29 +91,23 @@ public class MainHandler {
 
         boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
 
-        // Handle validation statistics file
+        // Extract outputs
         byte[] validationStatisticsFile =
                 extract(zipFile, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME, areOutputsMandatory);
-        handleValidationStatisticsFile(modelRun, validationStatisticsFile);
-
-        // Handle relative influence file
         byte[] relativeInfluenceFile =
                 extract(zipFile, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME, areOutputsMandatory);
-        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
-
-        // Handle effect curves influence file
         byte[] effectCurvesFile =
                 extract(zipFile, ModelOutputConstants.EFFECT_CURVES_FILENAME, areOutputsMandatory);
-        handleEffectCurvesFile(modelRun, effectCurvesFile);
-
-        // Handle mean prediction raster
         byte[] meanPredictionRaster =
                 extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME, areOutputsMandatory);
-        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
-
-        // Handle prediction uncertainty raster
         byte[] predUncertaintyRaster =
                 extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
+
+        // Handle outputs
+        handleValidationStatisticsFile(modelRun, validationStatisticsFile);
+        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
+        handleEffectCurvesFile(modelRun, effectCurvesFile);
+        handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
 
         return modelRun;
@@ -184,18 +192,51 @@ public class MainHandler {
         }
     }
 
-    private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) {
+    private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) throws IOException {
         if (raster != null) {
-            LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
-            modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+            try {
+                LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
+                File file = saveRaster(modelRun, raster, "mean");
+                if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
+                    geoserver.publishGeoTIFF(file);
+                }
+                modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
+            } catch (Exception e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_PREDICTION_RASTER, modelRun.getName()), e);
+            }
         }
     }
 
-    private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) {
+    private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) throws IOException {
         if (raster != null) {
-            LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-            modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+            try {
+                LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
+                File file = saveRaster(modelRun, raster, "uncertainty");
+                if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
+                    geoserver.publishGeoTIFF(file);
+                }
+                modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
+            } catch (Exception e) {
+                throw new IOException(String.format(COULD_NOT_SAVE_UNCERTAINTY_RASTER, modelRun.getName()), e);
+            }
         }
+    }
+
+    private File saveRaster(ModelRun modelRun, byte[] raster, String type) throws IOException {
+        String basename = modelRun.getName() + "_" + type;
+        final File file = Paths.get(rasterDir.getAbsolutePath(), basename + ".tif").toFile();
+
+        if (file.exists()) {
+            throw new IOException(String.format(RASTER_FILE_ALREADY_EXISTS, file));
+        }
+
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            throw new IOException(String.format(
+                    FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS, file.getParentFile().getAbsolutePath()));
+        }
+
+        FileUtils.writeByteArrayToFile(file, raster);
+        return file;
     }
 
     private byte[] extract(ZipFile zipFile, String file, boolean isFileMandatory) throws ZipException, IOException {
