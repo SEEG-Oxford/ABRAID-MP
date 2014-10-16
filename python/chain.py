@@ -5,9 +5,8 @@ import numpy as np
 
 class Chain(object):
 
-    def __init__(self, X, y):
+    def __init__(self):
         self.layers = []
-        self.train(X, y)
 
     def train(self, X, y):
         data = X.copy()

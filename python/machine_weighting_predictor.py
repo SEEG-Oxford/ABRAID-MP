@@ -15,19 +15,31 @@ def train(disease_group_id):
 
     try:
         data = request.json['points']
+    except KeyError:
+        return ('Invalid JSON', 400)
+    else:
+        predictor = Chain()
+
+    if (len(data) == 0):
+        save_predictor(disease_group_id, predictor)
+        return ('No training data', 200)
+
+    try:
         X = _convert_json_to_matrix(disease_group_id, data)
         y = np.array(_pluck('expertWeighting', data))
     except KeyError:
         return ('Invalid JSON', 400)
     else:
-        predictor = Chain(X, y)
-        PREDICTORS[disease_group_id] = predictor
-
-        # Backup a pickled version on disk
-        joblib.dump(predictor, _get_pickled_predictor_filename(disease_group_id))
-        joblib.dump(FEED_CLASSES, _get_pickled_feed_classes_filename(disease_group_id))
-
+        predictor.train(X,y)
+        save_predictor(disease_group_id, predictor)
         return ('', 204)
+
+def save_predictor(disease_group_id, predictor):    
+    PREDICTORS[disease_group_id] = predictor
+
+    # Backup a pickled version on disk
+    joblib.dump(predictor, _get_pickled_predictor_filename(disease_group_id))
+    joblib.dump(FEED_CLASSES, _get_pickled_feed_classes_filename(disease_group_id))
 
 @app.route('/<int:disease_group_id>/predict', methods=['POST'])
 def predict(disease_group_id):
@@ -41,7 +53,7 @@ def predict(disease_group_id):
             filename = _get_pickled_predictor_filename(disease_group_id)
             predictor = joblib.load(filename)
         except Exception:
-            return ('No predictor available for disease group', 400)
+            return ('Unable to load predictor for disease group', 400)
 
     # Use the feed classes map in memory, otherwise load from backup pickle version
     if disease_group_id in FEED_CLASSES:
@@ -61,10 +73,12 @@ def predict(disease_group_id):
         x[feed + 2] = 1
     except KeyError:
         return ('Invalid JSON', 400)
-    else:
-        prediction = _get_prediction(predictor, x)
-        return (prediction, 200)
 
+    prediction = predictor.predict(x)
+    if prediction is None:
+        return ('No prediction', 200)
+    else:
+        return (str(prediction), 200)
 
 def _convert_json_to_matrix(disease_group_id, json):
     feeds = [_get_feed_class(disease_group_id, feed_id) for feed_id in _pluck('feedId', json)]
@@ -83,7 +97,7 @@ def _get_feed_class(disease_group_id, feed_id):
     if disease_group_id not in FEED_CLASSES:
         FEED_CLASSES[disease_group_id] = {}        
     if feed_id not in FEED_CLASSES[disease_group_id]:
-        FEED_CLASSES[disease_group_id][feed_id] = len(FEED_CLASSES)
+        FEED_CLASSES[disease_group_id][feed_id] = len(FEED_CLASSES[disease_group_id])
     return FEED_CLASSES[disease_group_id][feed_id]
 
 
@@ -98,14 +112,6 @@ def _get_pickled_predictor_filename(disease_group_id):
 
 def _get_pickled_feed_classes_filename(disease_group_id):
     return 'pickles/' + str(disease_group_id) + '_feed_classes.pkl'
-
-
-def _get_prediction(predictor, x):
-    prediction = predictor.predict(x)
-    if prediction is None:
-        return 'No prediction'
-    else:
-        return str(prediction)
 
 
 if __name__ == '__main__':

@@ -38,7 +38,6 @@ class Layer(object):
 
     def predict(self, x):
         predictions = [p.predict(x)[0] for p in self.predictors]
-        print predictions
         if _coefficient_of_variation(predictions) <= self.cv_threshold:
             return np.mean(predictions)
         else:
