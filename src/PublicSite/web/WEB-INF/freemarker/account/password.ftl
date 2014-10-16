@@ -5,6 +5,11 @@
 <#import "../shared/layout/common.ftl" as c/>
 <#import "../shared/layout/form.ftl" as f/>
 <#import "../shared/layout/panel.ftl" as p/>
+<style>
+    #password-form .fa-lock {
+        padding: 0 3px;
+    }
+</style>
 <@c.page title="ABRAID MP - Change Password" mainjs="/js/kickstart/account/password">
     <div class="container">
         <@p.panel "password-body" "Password">

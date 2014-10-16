@@ -262,18 +262,24 @@ html, body, #dataValidation {
     background-color: white;
     min-width: 200px;
     width: auto;
+    max-width: 300px;
     height: auto;
     text-align: left;
 }
 #latestOccurrencesPanel div.leaflet-bar {
     padding: 3px 5px;
 }
-#latestOccurrencesPanel hr {
+#latestOccurrencesPanel hr, .legend hr {
     margin: 2px 0;
 }
 #latestOccurrencesPanel i {
     width: 14px;
     text-align: center;
+}
+@media (max-width: 1500px) {
+    #latestOccurrencesPanel {
+        display: none !important;
+    }
 }
 .leaflet-popup-content {
     margin: 0;
