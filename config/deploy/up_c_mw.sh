@@ -7,7 +7,7 @@ unzip ../../ABRAID-MP_ModelWrapper.war -d /var/lib/tomcat7/webapps/ROOT
 sed -i "s/auth\.username\=username/auth.username=$MODELWRAPPER_USER/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 sed -i "s/auth\.password\_hash\=.*/auth.password_hash=$MODELWRAPPER_HASH/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 sed -i "s/model\.output\.handler\.host\=.*/model.output.handler.host=$MAIN_URL/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
-sed -i "s/model\.output\.handler\.path\=.*/model.output.handler.path=\/modeloutputhandler/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
+sed -i "s/model\.output\.handler\.path\=.*/model.output.handler.path=\/modeloutput/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 sed -ir "s/(\#\ )?model\.dry\.run\=true/model.dry.run=$MW_DRY_RUN/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 sed -ir "s/(\#\ )?model\.verbose\=true/model.verbose=true/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/modelwrapper.properties
 # Configure log4j
