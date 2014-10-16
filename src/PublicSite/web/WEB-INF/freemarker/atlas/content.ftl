@@ -28,12 +28,12 @@
         .legend i {
             opacity: 1 !important;
         }
-        #download-links div.leaflet-bar.leaflet-control a {
+        #downloadLinks div.leaflet-bar.leaflet-control a {
             width: auto;
             padding: 0 5px;
             min-width: 180px;
         }
-        #download-links div.leaflet-bar.leaflet-control a i {
+        #downloadLinks div.leaflet-bar.leaflet-control a i {
             margin-right: 5px;
         }
     </style>
