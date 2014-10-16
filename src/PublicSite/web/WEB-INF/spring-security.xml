@@ -18,11 +18,6 @@
         <!-- Use custom Authentication Filter (bean below) instead of default, at this position in the Filter Chain -->
         <security:custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
         <security:custom-filter position="REMEMBER_ME_FILTER" ref="rememberMeFilter" />
-
-        <!-- Prevent user from logging in multiple times (old sessions are invalidated by new ones) -->
-        <security:session-management>
-            <security:concurrency-control max-sessions="1" />
-        </security:session-management>
     </security:http>
 
     <!-- The Filter Entry Point bean: failed auths should give 403  -->

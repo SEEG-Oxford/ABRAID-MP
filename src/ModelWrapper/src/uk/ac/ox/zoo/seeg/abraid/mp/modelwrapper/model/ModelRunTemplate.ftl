@@ -91,6 +91,10 @@ result <- tryCatch({
     } else {
         # Create a small fake result set
         if (file.exists(extent_path)) {
+            if (!require('rgdal', quietly=TRUE)) {
+                install.packages('rgdal', quiet=TRUE)
+                library('rgdal', quietly=TRUE)
+            }
             if (!require('raster', quietly=TRUE)) {
                 install.packages('raster', quiet=TRUE)
                 library('raster', quietly=TRUE)
