@@ -262,6 +262,7 @@ html, body, #dataValidation {
     background-color: white;
     min-width: 200px;
     width: auto;
+    max-width: 300px;
     height: auto;
     text-align: left;
 }
@@ -274,6 +275,11 @@ html, body, #dataValidation {
 #latestOccurrencesPanel i {
     width: 14px;
     text-align: center;
+}
+@media (max-width: 1500px) {
+    #latestOccurrencesPanel {
+        display: none !important;
+    }
 }
 .leaflet-popup-content {
     margin: 0;
