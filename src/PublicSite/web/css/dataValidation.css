@@ -253,10 +253,17 @@ html, body, #dataValidation {
     border: none;
     line-height: 18px;
     height: auto;
-    color: #333333;
 }
 #latestOccurrencesPanel a:hover {
     background-color: white;
+}
+/* Match Bootstrap's styling for a link, instead of Leaflet's */
+#latestOccurrencesPanel a span {
+    color: #428bca;
+}
+#latestOccurrencesPanel a:hover span {
+    color: #2a6496;
+    text-decoration: underline;
 }
 #latestOccurrencesPanel div {
     background-color: white;
