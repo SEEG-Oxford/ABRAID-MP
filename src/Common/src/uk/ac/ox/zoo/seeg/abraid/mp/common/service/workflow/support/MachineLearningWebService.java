@@ -52,9 +52,9 @@ public class MachineLearningWebService {
      * Find the predicted weighting of the given disease occurrence.
      * @param occurrence The disease occurrence.
      * @return The predicted weighting.
-     * @throws JsonProcessingException if the JSON is invalid
-     * @throws uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException if the web service client fails to execute request
-     * @throws NumberFormatException if the response string cannot be parsed as double
+     * @throws JsonProcessingException If the JSON is invalid
+     * @throws WebServiceClientException If the web service client fails to execute request
+     * @throws NumberFormatException If the response string cannot be parsed as double
      */
     public Double getPrediction(DiseaseOccurrence occurrence)
             throws JsonProcessingException, WebServiceClientException, NumberFormatException {
