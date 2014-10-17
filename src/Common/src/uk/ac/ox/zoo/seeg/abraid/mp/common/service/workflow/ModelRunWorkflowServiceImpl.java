@@ -157,9 +157,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
             generateDiseaseExtent(diseaseGroup);
         }
+
         machineWeightingPredictor.train(diseaseGroupId,
                                         diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId));
-        // Retrain ensemble chain here with all (recent - 1 month?) occurrences that have an expert weighting
 
         // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
         // they may have changed as a result of updating weightings and isValidated. So retrieve them again before

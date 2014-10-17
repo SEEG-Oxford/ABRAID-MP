@@ -16,6 +16,8 @@ public class MachineWeightingPredictor {
     private MachineLearningWebService webService;
 
     private static final Logger LOGGER = Logger.getLogger(MachineWeightingPredictor.class);
+
+    private static final String TRAINING_MESSAGE = "Training predictor for disease group %d with %d occurrences";
     private static final String TRAINING_FAILURE = "Unable to train predictor for disease group.";
     private static final String PREDICTION_FAILURE = "Unable to get prediction for occurrence.";
 
@@ -32,6 +34,7 @@ public class MachineWeightingPredictor {
     public void train(int diseaseGroupId, List<DiseaseOccurrence> occurrences)
             throws MachineWeightingPredictorException {
         try {
+            LOGGER.info(String.format(TRAINING_MESSAGE, diseaseGroupId, occurrences.size()));
             webService.sendTrainingData(diseaseGroupId, occurrences);
         } catch (WebServiceClientException|JsonProcessingException e) {
             LOGGER.error(e.getMessage());

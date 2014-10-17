@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseOccurrenceDataSet;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
+import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,11 @@ import static java.lang.Double.parseDouble;
  */
 public class MachineLearningWebService {
     /** Server response indicating that a trusted prediction was not returned and point should be validated manually. */
-    public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
+    private static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
+    /** URL component for training method name. */
+    private static final String TRAIN_METHOD = "train";
+    /** URL component for prediction method name. */
+    private static final String PREDICT_METHOD = "predict";
 
     private WebServiceClient webServiceClient;
     private AbraidJsonObjectMapper objectMapper;
@@ -42,7 +47,7 @@ public class MachineLearningWebService {
      */
     public void sendTrainingData(int diseaseGroupId, List<DiseaseOccurrence> occurrences)
             throws JsonProcessingException, WebServiceClientException {
-        String url = rootUrl + diseaseGroupId + "/train";
+        String url = buildUrl(diseaseGroupId, TRAIN_METHOD);
         JsonDiseaseOccurrenceDataSet data = convertToDTO(occurrences);
         String bodyAsJson = writeRequestBodyAsJson(data);
         webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
@@ -61,7 +66,7 @@ public class MachineLearningWebService {
 
         Integer diseaseGroupId = getDiseaseGroupId(occurrence);
         if (diseaseGroupId != null) {
-            String url = rootUrl + diseaseGroupId + "/predict";
+            String url = buildUrl(diseaseGroupId, PREDICT_METHOD);
             JsonDiseaseOccurrenceDataPoint data = new JsonDiseaseOccurrenceDataPoint(occurrence);
             String bodyAsJson = writeRequestBodyAsJson(data);
             String response = webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
@@ -73,6 +78,13 @@ public class MachineLearningWebService {
         } else {
             throw new MachineWeightingPredictorException("No disease group");
         }
+    }
+
+    private String buildUrl(int diseaseGroupId, String action) {
+        UriBuilder builder = UriBuilder.fromUri(rootUrl)
+                .path(Integer.toString(diseaseGroupId))
+                .path(action);
+        return builder.build().toString();
     }
 
     private JsonDiseaseOccurrenceDataSet convertToDTO(List<DiseaseOccurrence> occurrences) {
