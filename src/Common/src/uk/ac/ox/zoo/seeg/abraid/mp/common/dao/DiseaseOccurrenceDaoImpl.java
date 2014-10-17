@@ -47,6 +47,8 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     private static final String MODEL_RUN_REQUEST_ORDER_BY_CLAUSE =
             "order by d.occurrenceDate desc";
 
+    private static final int WEEKS_AGO_FOR_TRAINING_DATA_CUT_OFF_DATE = 4;
+
     public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -231,11 +233,9 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param diseaseGroupId The disease group ID.
      * @return A list of disease occurrences.
      */
-    ///CHECKSTYLE:OFF MagicNumberCheck
     @Override
     public List<DiseaseOccurrence> getDiseaseOccurrencesForTrainingPredictor(int diseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrencesForTrainingPredictor", "diseaseGroupId", diseaseGroupId,
-                "cutOffDate", DateTime.now().minusWeeks(4));
+                "cutOffDate", DateTime.now().minusWeeks(WEEKS_AGO_FOR_TRAINING_DATA_CUT_OFF_DATE));
     }
-    ///CHECKSTYLE:ON
 }

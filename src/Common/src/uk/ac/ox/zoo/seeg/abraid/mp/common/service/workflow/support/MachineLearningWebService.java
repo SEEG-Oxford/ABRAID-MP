@@ -19,7 +19,7 @@ import static java.lang.Double.parseDouble;
  * Copyright (c) 2014 University of Oxford
  */
 public class MachineLearningWebService {
-    /** Server response indicating that a trusted prediction was not returned, and point should be validated manually */
+    /** Server response indicating that a trusted prediction was not returned and point should be validated manually. */
     public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
 
     private WebServiceClient webServiceClient;
@@ -53,9 +53,8 @@ public class MachineLearningWebService {
      * @param occurrence The disease occurrence.
      * @return The predicted weighting.
      * @throws JsonProcessingException if the JSON is invalid
-     * @throws WebServiceClientException if the web service client fails to execute request
+     * @throws uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException if the web service client fails to execute request
      * @throws NumberFormatException if the response string cannot be parsed as double
-     * @throws MachineWeightingPredictorException if the occurrence does not have a disease group
      */
     public Double getPrediction(DiseaseOccurrence occurrence)
             throws JsonProcessingException, WebServiceClientException, NumberFormatException {

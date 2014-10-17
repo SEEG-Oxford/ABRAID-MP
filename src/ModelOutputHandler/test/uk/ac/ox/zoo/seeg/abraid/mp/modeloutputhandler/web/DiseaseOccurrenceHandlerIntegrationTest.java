@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
@@ -23,6 +25,8 @@ import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Integration tests for the DiseaseOccurrenceHandler class.
@@ -48,6 +52,10 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     @Autowired
     private DiseaseService diseaseService;
 
+    @Autowired
+    @ReplaceWithMock
+    private MachineWeightingPredictor machineWeightingPredictor;
+
     @Test
     public void handleFirstBatch() throws Exception {
         // Arrange
@@ -58,7 +66,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
         ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
 
-        diseaseService.getDiseaseGroupById(diseaseGroupId).setUseMachineLearning(false);
+        // As this is the first batch, there was no training data available, so no prediction can be made.
+        when(machineWeightingPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(null);
 
         // Act
         diseaseOccurrenceHandler.handle(modelRun);
@@ -73,10 +82,12 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
             assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         }
 
-        // All occurrences with is validated = true before the batch end date should have an environmental suitability,
-        // and the others should not. Note that the batch end date's time is always 23:59:59.999 i.e. end of day.
-        assertOccurrences(occurrences, true, 42, 27);
-        assertOccurrences(occurrences, false, 3, 0);
+        // 27 occurrences were batched, and all were sent to the Data Validator i.e. they all have is_validated = false
+        // and a non-null environmental suitability. 15 occurrences with is_validated = true, and 3 occurrences with
+        // is_validated null, were not batched. The 30 is because there were 3 occurrences that already had
+        // is_validated = false before batching took place.
+        assertOccurrences(occurrences, true, 15, 0);
+        assertOccurrences(occurrences, false, 30, 27);
         assertOccurrences(occurrences, null, 3, 0);
 
         // And the model run should have been updated correctly

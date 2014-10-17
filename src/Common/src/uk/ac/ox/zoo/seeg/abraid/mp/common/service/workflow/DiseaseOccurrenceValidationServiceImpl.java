@@ -41,12 +41,11 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     @Override
     public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
         if (isEligibleForValidation(occurrence)) {
+            setDefaultParameters(occurrence);
             if (isGoldStandard) {
                 addGoldStandardParameters(occurrence);
             } else if (automaticModelRunsEnabled(occurrence)) {
                 addValidationParameters(occurrence, null);
-            } else {
-                occurrence.setValidated(true);
             }
             return true;
         }
@@ -66,6 +65,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             // to all occurrences
             GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
             for (DiseaseOccurrence occurrence : occurrences) {
+                setDefaultParameters(occurrence);
                 addValidationParameters(occurrence, raster);
             }
         }
@@ -81,6 +81,14 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         return (occurrence != null) && (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
     }
 
+    private void setDefaultParameters(DiseaseOccurrence occurrence) {
+        // By default, the occurrence avoids the validation process altogether
+        occurrence.setEnvironmentalSuitability(null);
+        occurrence.setDistanceFromDiseaseExtent(null);
+        occurrence.setMachineWeighting(null);
+        occurrence.setValidated(true);
+    }
+
     private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
         return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
     }
@@ -94,9 +102,6 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
-        // The default value (the occurrence is ready for sending to the model)
-        occurrence.setValidated(true);
-
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
             occurrence.setValidated(false);
         } else {
