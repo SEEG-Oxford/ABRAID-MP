@@ -1,3 +1,7 @@
+"""
+Entry point for Python service, to which data is POSTed to train the ABRAID Ensemble Chain,
+and from which a prediction for a new datapoint is requested.
+"""
 from chain import Chain
 from flask import Flask, request
 from sklearn.externals import joblib
@@ -12,7 +16,7 @@ PICKLES_SUBFOLDER_PATH = 'pickles/'
 
 @app.route('/<int:disease_group_id>/train', methods=['POST'])
 def train(disease_group_id):
-    """ Use data extracted from request JSON to create structure in a training phase """
+    """ Use data extracted from request JSON to create structure in a training phase. """
 
     try:
         data = request.json['points']
@@ -38,7 +42,7 @@ def train(disease_group_id):
 
 @app.route('/<int:disease_group_id>/predict', methods=['POST'])
 def predict(disease_group_id):
-    """ Return the prediction of the provided disease occurrence point """
+    """ Return the prediction of the provided disease occurrence point. """
 
     # Use the predictor in memory, otherwise load from backup pickle version
     if disease_group_id in PREDICTORS:
@@ -91,7 +95,7 @@ def _convert_json_to_matrix(disease_group_id, json):
 def _get_feed_class(disease_group_id, feed_id):
     """ Map from feed id (which could be any integer and skew the data) to an incremental class number """
     if disease_group_id not in FEED_CLASSES:
-        FEED_CLASSES[disease_group_id] = {}        
+        FEED_CLASSES[disease_group_id] = {}
     if feed_id not in FEED_CLASSES[disease_group_id]:
         FEED_CLASSES[disease_group_id][feed_id] = len(FEED_CLASSES[disease_group_id])
     return FEED_CLASSES[disease_group_id][feed_id]

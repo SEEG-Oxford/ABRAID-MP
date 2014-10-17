@@ -1,3 +1,7 @@
+"""
+Module defining the Layer class of the ABRAID Ensemble Chain
+structure, and its supporting functions.
+"""
 from __future__ import division
 from math import floor
 from random import shuffle
@@ -22,6 +26,7 @@ def _coefficient_of_variation(args):
 
 
 class Layer(object):
+    """ A Layer of predictors, each trained on a random subset of training data. """
 
     num_predictors_in_layer = 6
     subset_size = 0.4
@@ -32,11 +37,13 @@ class Layer(object):
         self.train(X, y)
 
     def train(self, X, y):
+        """ Train each predictor in the Layer on a random subset of the training data. """
         for p in self.predictors:
             (X_subset, y_subset) = _get_random_subset(self.subset_size, X, y)
             p.fit(X_subset, y_subset)
 
     def predict(self, x):
+        """ Return the mean prediction, if the predictors are sufficiently in agreement. """
         predictions = [p.predict(x)[0] for p in self.predictors]
         if _coefficient_of_variation(predictions) <= self.cv_threshold:
             return np.mean(predictions)
