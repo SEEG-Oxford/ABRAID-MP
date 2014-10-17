@@ -13,13 +13,12 @@ class Chain(object):
         labels = y.copy()
         count = 0
         while count < 5:
-            print "Training layer with " + str(len(data)) + " points\n"
             layer = Layer(data, labels)
             self.layers.append(layer)
 
             results = [layer.predict(x) for x in data]
             to_next_layer = [i for (i, r) in enumerate(results) if r is None]
-            
+
             data = np.array(data[to_next_layer])
             labels = np.array(labels[to_next_layer])
             count += 1
