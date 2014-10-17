@@ -31,6 +31,7 @@
 
         <div id="map">
             <#include "layerselector.ftl"/>
+            <#include "latestoccurrencespanel.ftl"/>
             <div id="spinner" data-bind="fadeVisible: { visible: visible() }">
                 <i class="fa fa-3x fa-spinner fa-spin"></i>
                 <div></div>

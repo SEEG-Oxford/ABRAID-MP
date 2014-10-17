@@ -17,17 +17,14 @@ import java.util.List;
 public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOccurrenceDao {
     // HQL fragments used to build queries to obtain disease occurrences
     private static final String DISEASE_EXTENT_QUERY =
-            "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceForDiseaseExtent" +
-            "       (d.occurrenceDate, d.location.precision, case when :isGlobal = true then" +
-            "        d.location.adminUnitGlobalGaulCode else d.location.adminUnitTropicalGaulCode end) " +
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.isValidated = true " +
-            "and d.finalWeighting is not null " +
             "and d.location.adminUnitGlobalGaulCode is not null " +
             "and d.location.adminUnitTropicalGaulCode is not null ";
 
-    private static final String DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE =
+    private static final String DISEASE_EXTENT_WEIGHTING_CLAUSE =
+            "and d.finalWeighting is not null " +
             "and (d.validationWeighting is null or d.validationWeighting >= :minimumValidationWeighting) ";
 
     private static final String DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE =
@@ -101,7 +98,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
-     * value. If null, the validation weighting is ignored.
+     * value, and must have a final weighting. If null, the validation and final weightings are ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
      * @param isGlobal True if the disease group is global, otherwise false.
@@ -110,13 +107,13 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<DiseaseOccurrenceForDiseaseExtent> getDiseaseOccurrencesForDiseaseExtent(
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean isGlobal, boolean useGoldStandardOccurrences) {
         String queryString = DISEASE_EXTENT_QUERY;
 
         if (minimumValidationWeighting != null) {
-            queryString += DISEASE_EXTENT_VALIDATION_WEIGHTING_CLAUSE;
+            queryString += DISEASE_EXTENT_WEIGHTING_CLAUSE;
         }
         if (minimumOccurrenceDate != null) {
             queryString += DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE;
@@ -127,7 +124,6 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
         Query query = currentSession().createQuery(queryString);
         query.setParameter("diseaseGroupId", diseaseGroupId);
-        query.setParameter("isGlobal", isGlobal);
         if (minimumValidationWeighting != null) {
             query.setParameter("minimumValidationWeighting", minimumValidationWeighting);
         }

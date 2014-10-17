@@ -36,7 +36,7 @@
 -- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
 -- submodel_statistic:              Contains statistics of a model run.
 -- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
-
+-- persistent_logins:               http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
 
 CREATE TABLE admin_unit_country (
     admin_unit_gaul_code integer NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE admin_unit_disease_extent_class (
     global_gaul_code integer,
     tropical_gaul_code integer,
     disease_group_id integer NOT NULL,
-    disease_extent_class varchar(20) NOT NULL,
+    disease_extent_class varchar(17) NOT NULL,
     occurrence_count integer NOT NULL,
     class_changed_date timestamp
 );
@@ -78,7 +78,7 @@ CREATE TABLE admin_unit_review (
     disease_group_id integer NOT NULL,
     global_gaul_code integer,
     tropical_gaul_code integer,
-    response varchar(17),
+    response varchar(20),
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
@@ -114,17 +114,6 @@ CREATE TABLE covariate_influence (
     model_run_id integer NOT NULL,
     covariate_name varchar(255) NOT NULL,
     covariate_display_name varchar(255),
-    mean_influence double precision NOT NULL,
-    upper_quantile double precision NOT NULL,
-    lower_quantile double precision NOT NULL
-);
-
-CREATE TABLE effect_curve_covariate_influence (
-    id serial NOT NULL,
-    model_run_id integer NOT NULL,
-    covariate_name varchar(255) NOT NULL,
-    covariate_display_name varchar(255),
-    covariate_value double precision NOT NULL,
     mean_influence double precision NOT NULL,
     upper_quantile double precision NOT NULL,
     lower_quantile double precision NOT NULL
@@ -177,6 +166,7 @@ CREATE TABLE disease_occurrence (
     id serial NOT NULL,
     disease_group_id integer NOT NULL,
     location_id integer NOT NULL,
+    admin_unit_disease_extent_class_id integer,
     alert_id integer NOT NULL,
     occurrence_date timestamp NOT NULL,
     env_suitability double precision,
@@ -196,6 +186,17 @@ CREATE TABLE disease_occurrence_review (
     disease_occurrence_id integer NOT NULL,
     response varchar(6) NOT NULL,
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
+);
+
+CREATE TABLE effect_curve_covariate_influence (
+    id serial NOT NULL,
+    model_run_id integer NOT NULL,
+    covariate_name varchar(255) NOT NULL,
+    covariate_display_name varchar(255),
+    covariate_value double precision NOT NULL,
+    mean_influence double precision NOT NULL,
+    upper_quantile double precision NOT NULL,
+    lower_quantile double precision NOT NULL
 );
 
 CREATE TABLE expert (
@@ -292,6 +293,14 @@ CREATE TABLE model_run (
     batch_end_date timestamp,
     batch_occurrence_count integer,
     batching_completed_date timestamp
+);
+
+-- http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
+CREATE TABLE persistent_logins (
+    series varchar(64) NOT NULL,
+    username varchar(64) NOT NULL,
+    token varchar(64) NOT NULL,
+    last_used timestamp NOT NULL
 );
 
 CREATE TABLE provenance (

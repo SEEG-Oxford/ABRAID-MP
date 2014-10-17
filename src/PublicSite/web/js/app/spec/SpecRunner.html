@@ -8,16 +8,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>PublicSite Spec Runner</title>
 
-    <link rel="shortcut icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine_favicon.png">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine-html.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/console.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
+    <link rel="shortcut icon" type="image/png" href="http://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.css">
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine-html.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/console.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 
     <!-- Add specs here -->
     <script type="text/javascript">
         var specs = [
+            "app/spec/LogInFormViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseExtentParametersViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseGroupAdministrationViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseGroupPayloadSpec",
@@ -27,9 +28,10 @@
             "app/spec/admin/diseasegroups/ModelRunParametersViewModelSpec",
             "app/spec/admin/ExpertAdministrationViewModelSpec",
             "app/spec/atlas/AtlasViewSpec",
+            "app/spec/atlas/DownloadLinksViewModelSpec",
             "app/spec/atlas/LayerSelectorViewModelSpec",
             "app/spec/datavalidation/CounterViewModelSpec",
-            "app/spec/datavalidation/LogInFormViewModelSpec",
+            "app/spec/datavalidation/LatestOccurrencesViewModelSpec",
             "app/spec/datavalidation/MapViewSpec",
             "app/spec/datavalidation/SelectedAdminUnitViewModelSpec",
             "app/spec/datavalidation/SelectedLayerViewModelSpec",
@@ -57,10 +59,10 @@
         }
 
         require([ (commonBaseUrl || baseUrl) + 'js/shared/require.conf.js' ], function() {
-            require(["domReady!", "https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js"], function() {
-                var beforeSpecs = [ "https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/2.0.0/mock-ajax.js" ];
+            require(["domReady!", "http://cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js"], function() {
+                var beforeSpecs = [ "http://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/2.0.0/mock-ajax.js" ];
                 if (includeCoverage) {
-                    beforeSpecs.push("https://cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.js");
+                    beforeSpecs.push("http://cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.js");
                     beforeSpecs.push((commonBaseUrl || baseUrl) + "js/shared/app/spec/util/coverage-reporter.js");
                 }
 

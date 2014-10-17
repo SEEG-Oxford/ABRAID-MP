@@ -13,15 +13,11 @@
     <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
     <security:http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
         <!-- Redirect to home atlas page at "/" on logout, instead of navigating to j_spring_security_logout -->
-        <security:logout logout-success-url="/" />
+        <security:logout logout-success-url="/" delete-cookies="JSESSIONID" />
 
         <!-- Use custom Authentication Filter (bean below) instead of default, at this position in the Filter Chain -->
         <security:custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
-
-        <!-- Prevent user from logging in multiple times -->
-        <security:session-management>
-            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
-        </security:session-management>
+        <security:custom-filter position="REMEMBER_ME_FILTER" ref="rememberMeFilter" />
     </security:http>
 
     <!-- The Filter Entry Point bean: failed auths should give 403  -->
@@ -29,7 +25,12 @@
 
     <!-- The Authentication Manager bean from http ref, and its sub-beans -->
     <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
-        <property name="providers" ref="daoAuthenticationProvider" />
+        <constructor-arg name="providers">
+            <list>
+                <ref bean="daoAuthenticationProvider" />
+                <ref bean="rememberMeAuthenticationProvider" />
+            </list>
+        </constructor-arg>
     </bean>
 
     <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
@@ -46,11 +47,34 @@
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
         <property name="authenticationFailureHandler" ref="failureHandler"/>
         <property name="authenticationSuccessHandler" ref="successHandler"/>
+        <property name="rememberMeServices" ref="rememberMeServices" />
     </bean>
 
     <!-- Define custom handlers to return JSON with status and error message, instead of default redirect -->
     <bean id="successHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationSuccessHandler"/>
 
     <bean id="failureHandler" class=" uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationFailureHandler" />
+
+    <!-- Persistent session remember me service -->
+    <bean id="rememberMeFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+        <constructor-arg name="authenticationManager" ref="authenticationManager" />
+        <constructor-arg name="rememberMeServices" ref="rememberMeServices" />
+    </bean>
+
+    <bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices">
+        <constructor-arg name="userDetailsService" ref="userDetailsService" />
+        <constructor-arg name="tokenRepository" ref="persistentSessionTokenRepository" />
+        <constructor-arg name="key" value="c660ae168" />
+        <property name="alwaysRemember" value="true" />
+        <property name="tokenValiditySeconds" value="1209600" />
+    </bean>
+
+    <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+        <constructor-arg name="key" value="c660ae168" />
+    </bean>
+
+    <bean id="persistentSessionTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
 
 </beans>

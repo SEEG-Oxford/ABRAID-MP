@@ -18,7 +18,7 @@ define([
 
         self.message = ko.computed(function () {
             if (self.isSubmitting()) {
-                return "<i class='fa fa-spinner'></i>&nbsp;Attempting  login ...";
+                return "<i class='fa fa-spinner'></i>&nbsp;Attempting login ...";
             }
 
             if (self.notices().length !== 0) {

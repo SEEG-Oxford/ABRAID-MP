@@ -9,6 +9,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "ko",
         "jquery",
         "app/datavalidation/CounterViewModel",
+        "app/datavalidation/LatestOccurrencesViewModel",
         "app/datavalidation/MapView",
         "app/datavalidation/SelectedPointViewModel",
         "app/datavalidation/SelectedLayerViewModel",
@@ -16,8 +17,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
         "domReady!"
-    ], function (ko, $, CounterViewModel, setupMap, SelectedPointViewModel, SelectedLayerViewModel,
-                 SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
+    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, SelectedPointViewModel,
+                 SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
             ko.applyBindings(
                 new SpinnerViewModel(),
@@ -31,6 +32,10 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                         new CounterViewModel(data.adminUnitReviewCount, "admin-unit-reviewed"))
                     ),
                 doc.getElementById("sidePanelContent")
+            );
+            ko.applyBindings(
+                new LatestOccurrencesViewModel(),
+                doc.getElementById("latestOccurrencesPanel")
             );
             ko.applyBindings(
                 new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),

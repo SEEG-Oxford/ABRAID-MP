@@ -28,7 +28,7 @@ define([
         beforeEach(function (done) {
             // Clear postbox subscriptions (prevents test from bleeding into each other).
             // Might be problematic if we swap to minified.
-            ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
+            ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
 
             // Reset the leaflet spies
             leafletMock.map.calls.reset();
@@ -81,9 +81,9 @@ define([
         });
 
         describe("adds a wms layer to the map", function () {
-            it("in response to 'layer-changed' events ", function () {
+            it("in response to 'active-atlas-layer' events ", function () {
                 var view = new AtlasView();
-                ko.postbox.publish("layer-changed", "new layer");
+                ko.postbox.publish("active-atlas-layer", "new layer");
                 expect(leafletMock.tileLayer.wms).toHaveBeenCalled();
                 expect(leafletMock.tileLayer.wms.calls.count()).toBe(1);
                 expect(leafletMock.tileLayer.wms.calls.first().args[1].layers[0]).toBe("new layer");
@@ -95,11 +95,11 @@ define([
 
             it("replacing existing layers", function () {
                 var view = new AtlasView();
-                ko.postbox.publish("layer-changed", "old layer");
+                ko.postbox.publish("active-atlas-layer", "old layer");
                 expect(view.currentLayer).toBe("wms old layer");
                 view.map.addLayer.calls.reset();
 
-                ko.postbox.publish("layer-changed", "new layer");
+                ko.postbox.publish("active-atlas-layer", "new layer");
                 expect(view.map.removeLayer).toHaveBeenCalled();
                 expect(view.map.removeLayer.calls.count()).toBe(1);
                 expect(view.map.removeLayer.calls.first().args[0]).toBe("wms old layer");
@@ -111,7 +111,7 @@ define([
 
             it("with the standard abraid options", function () {
                 new AtlasView("wms url qwertyuiop"); // jshint ignore:line
-                ko.postbox.publish("layer-changed", "new layer");
+                ko.postbox.publish("active-atlas-layer", "new layer");
                 expect(leafletMock.tileLayer.wms.calls.first().args[0]).toBe("wms url qwertyuiop");
                 expect(leafletMock.tileLayer.wms.calls.first().args[1].format).toBe("image/png");
                 expect(leafletMock.tileLayer.wms.calls.first().args[1].styles).toBe("abraid_raster");
@@ -120,13 +120,13 @@ define([
         });
 
         describe("removes the wms layer to the map", function () {
-            it("in response to empty 'layer-changed' events ", function () {
+            it("in response to empty 'active-atlas-layer' events ", function () {
                 var view = new AtlasView();
-                ko.postbox.publish("layer-changed", "old layer");
+                ko.postbox.publish("active-atlas-layer", "old layer");
                 expect(view.currentLayer).toBe("wms old layer");
                 view.map.addLayer.calls.reset();
 
-                ko.postbox.publish("layer-changed", undefined);
+                ko.postbox.publish("active-atlas-layer", undefined);
                 expect(view.map.removeLayer).toHaveBeenCalled();
                 expect(view.map.removeLayer.calls.count()).toBe(1);
                 expect(view.map.removeLayer.calls.first().args[0]).toBe("wms old layer");

@@ -48,6 +48,9 @@ covariate_names <- c(
 admin1_path <- "${admin1_file}"
 admin2_path <- "${admin2_file}"
 
+# Create a temp dir for intermediate rasters
+dir.create('temp')
+
 # Set CRAN mirror
 local({r <- getOption("repos")
     r["CRAN"] <- "http://cran.r-project.org"
@@ -65,12 +68,14 @@ if (!dry_run && !require('devtools', quietly=TRUE)) {
 if (!dry_run) {
     install_deps('model')
     load_all('model', recompile=TRUE)
+    rasterOptions(tmpdir="temp")
 }
 
 # Define a function that can be used to load the model on cluster nodes
 load_seegSDM <- function () {
     library('devtools', quietly=TRUE)
     load_all('model')
+    rasterOptions(tmpdir="temp")
 }
 
 # Run the model
@@ -91,10 +96,15 @@ result <- tryCatch({
     } else {
         # Create a small fake result set
         if (file.exists(extent_path)) {
+            if (!require('rgdal', quietly=TRUE)) {
+                install.packages('rgdal', quiet=TRUE)
+                library('rgdal', quietly=TRUE)
+            }
             if (!require('raster', quietly=TRUE)) {
                 install.packages('raster', quiet=TRUE)
                 library('raster', quietly=TRUE)
             }
+            rasterOptions(tmpdir="temp")
             dir.create('results')
             writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/mean_prediction.tif", format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
             writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)), filename="results/prediction_uncertainty.tif", format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
@@ -124,6 +134,9 @@ result <- tryCatch({
     print(paste("Error:  ", e))
     return(1)
 })
+
+# Delete temp dir for intermediate rasters
+unlink("temp", TRUE)
 
 # Set exit code
 print(paste("Exit code:  ", result))

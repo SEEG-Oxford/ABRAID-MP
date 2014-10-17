@@ -140,10 +140,10 @@ define([
                 expect(vm.selectedLayer()).toBe("Model Run 3" + "_" + "uncertainty");
             });
 
-            it("publishes changes to it's state changes as 'layer-changed'", function () {
+            it("publishes changes to it's state changes as 'active-atlas-layer'", function () {
                 var expectedValue = "";
                 var eventCount = 0;
-                ko.postbox.subscribe("layer-changed", function (payload) {
+                ko.postbox.subscribe("active-atlas-layer", function (payload) {
                     expect(payload).toEqual(expectedValue);
                     eventCount = eventCount + 1;
                 });
@@ -157,13 +157,13 @@ define([
 
                 expect(eventCount).toBe(3);
 
-                ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
+                ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
             });
 
-            it("publishes a 'layer-changed' event on construction", function () {
+            it("publishes a 'active-atlas-layer' event on construction", function () {
                 var expectedValue = "";
                 var eventCount = 0;
-                ko.postbox.subscribe("layer-changed", function (payload) {
+                ko.postbox.subscribe("active-atlas-layer", function (payload) {
                     expect(payload).toEqual(expectedValue);
                     eventCount = eventCount + 1;
                 });
@@ -173,12 +173,12 @@ define([
 
                 expect(eventCount).toBe(1);
 
-                ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
+                ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
             });
 
-            it("publishes an empty 'layer-changed' event if no available layers are provided", function () {
+            it("publishes an empty 'active-atlas-layer' event if no available layers are provided", function () {
                 var eventCount = 0;
-                ko.postbox.subscribe("layer-changed", function (payload) {
+                ko.postbox.subscribe("active-atlas-layer", function (payload) {
                     expect(payload).toBeUndefined();
                     eventCount = eventCount + 1;
                 });
@@ -187,7 +187,7 @@ define([
 
                 expect(eventCount).toBe(1);
 
-                ko.postbox._subscriptions["layer-changed"] = [];  // jshint ignore:line
+                ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
             });
         });
     });

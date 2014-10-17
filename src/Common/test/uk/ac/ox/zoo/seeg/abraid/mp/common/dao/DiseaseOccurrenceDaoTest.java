@@ -270,7 +270,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 45);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 46);
     }
 
     @Test
@@ -510,7 +510,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         addUploadedOccurrences();
 
         // Act
-        List<DiseaseOccurrenceForDiseaseExtent> occurrences =
+        List<DiseaseOccurrence> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
                         minimumOccurrenceDate, isGlobal, useGoldStandardOccurrences);
 

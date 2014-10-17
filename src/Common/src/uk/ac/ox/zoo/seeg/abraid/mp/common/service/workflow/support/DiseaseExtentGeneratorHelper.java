@@ -16,6 +16,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class DiseaseExtentGeneratorHelper {
     private static final int SCALING_FACTOR = 50;
+    private static final int LATEST_OCCURRENCES_MAX_LIST_SIZE = 5;
 
     // Input fields
     private DiseaseGroup diseaseGroup;
@@ -23,13 +24,13 @@ public class DiseaseExtentGeneratorHelper {
     private List<AdminUnitDiseaseExtentClass> currentDiseaseExtent;
     private List<? extends AdminUnitGlobalOrTropical> adminUnits;
     private List<DiseaseExtentClass> diseaseExtentClasses;
-    private List<DiseaseOccurrenceForDiseaseExtent> occurrences;
+    private List<DiseaseOccurrence> occurrences;
     private List<AdminUnitReview> reviews;
     private boolean hasModelBeenSuccessfullyRun;
     private boolean useGoldStandardOccurrences;
 
     // Working fields
-    private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrencesByAdminUnit;
+    private Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> occurrencesByAdminUnit;
     private Map<AdminUnitGlobalOrTropical, DiseaseExtentClass> classesByAdminUnit;
     private Map<Integer, Integer> numberOfOccurrencesByCountry;
     private Map<Integer, List<AdminUnitReview>> reviewsByAdminUnit;
@@ -61,11 +62,11 @@ public class DiseaseExtentGeneratorHelper {
         return currentDiseaseExtent;
     }
 
-    public List<DiseaseOccurrenceForDiseaseExtent> getOccurrences() {
+    public List<DiseaseOccurrence> getOccurrences() {
         return occurrences;
     }
 
-    public Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> getOccurrencesByAdminUnit() {
+    public Map<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> getOccurrencesByAdminUnit() {
         return occurrencesByAdminUnit;
     }
 
@@ -93,7 +94,7 @@ public class DiseaseExtentGeneratorHelper {
         return useGoldStandardOccurrences;
     }
 
-    public void setOccurrences(List<DiseaseOccurrenceForDiseaseExtent> occurrences) {
+    public void setOccurrences(List<DiseaseOccurrence> occurrences) {
         this.occurrences = occurrences;
     }
 
@@ -139,12 +140,12 @@ public class DiseaseExtentGeneratorHelper {
         // Create empty groups of occurrences by admin unit
         occurrencesByAdminUnit = new HashMap<>();
         for (AdminUnitGlobalOrTropical adminUnit : adminUnits) {
-            occurrencesByAdminUnit.put(adminUnit, new ArrayList<DiseaseOccurrenceForDiseaseExtent>());
+            occurrencesByAdminUnit.put(adminUnit, new ArrayList<DiseaseOccurrence>());
         }
 
         // Add occurrences to the groups
-        for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
-            AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(occurrence.getAdminUnitGaulCode());
+        for (DiseaseOccurrence occurrence : occurrences) {
+            AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(getAdminUnitGaulCode(occurrence));
             // Exclude occurrences that have country precision if the admin unit is not a country. For example, the
             // centroid of the United States is in Kansas, but we should not count a United Status country-level point
             // as being a disease occurrence in Kansas itself.
@@ -154,9 +155,9 @@ public class DiseaseExtentGeneratorHelper {
         }
     }
 
-    private boolean isACountryPointInANonCountryAdminUnit(DiseaseOccurrenceForDiseaseExtent occurrence,
+    private boolean isACountryPointInANonCountryAdminUnit(DiseaseOccurrence occurrence,
                                                           AdminUnitGlobalOrTropical adminUnit) {
-        return (occurrence.getPrecision() == LocationPrecision.COUNTRY) && (adminUnit.getLevel() != '0');
+        return (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) && (adminUnit.getLevel() != '0');
     }
 
     /**
@@ -165,8 +166,8 @@ public class DiseaseExtentGeneratorHelper {
      */
     public void groupOccurrencesByCountry() {
         numberOfOccurrencesByCountry = new HashMap<>();
-        for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrences) {
-            AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(occurrence.getAdminUnitGaulCode());
+        for (DiseaseOccurrence occurrence : occurrences) {
+            AdminUnitGlobalOrTropical adminUnit = getAdminUnitByGaulCode(getAdminUnitGaulCode(occurrence));
             Integer countryGaulCode = adminUnit.getCountryGaulCode();
             if (countryGaulCode != null) {
                 // Country GAUL code found, so add 1 to the number of occurrences for this country
@@ -174,6 +175,12 @@ public class DiseaseExtentGeneratorHelper {
                 numberOfOccurrencesByCountry.put(countryGaulCode, nullSafeAdd(numberOfOccurrences, 1));
             }
         }
+    }
+
+    private int getAdminUnitGaulCode(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isGlobal() ?
+                occurrence.getLocation().getAdminUnitGlobalGaulCode() :
+                occurrence.getLocation().getAdminUnitTropicalGaulCode();
     }
 
     /**
@@ -198,7 +205,7 @@ public class DiseaseExtentGeneratorHelper {
         computeDiseaseExtentClasses(new DiseaseExtentClassComputer() {
             @Override
             public DiseaseExtentClass compute(AdminUnitGlobalOrTropical adminUnit,
-                                              List<DiseaseOccurrenceForDiseaseExtent> occurrencesForAdminUnit) {
+                                              List<DiseaseOccurrence> occurrencesForAdminUnit) {
                 // Computes the initial disease extent class for one admin unit
                 int occurrenceCount = occurrencesForAdminUnit.size();
                 if (occurrenceCount == 0) {
@@ -217,7 +224,7 @@ public class DiseaseExtentGeneratorHelper {
         computeDiseaseExtentClasses(new DiseaseExtentClassComputer() {
             @Override
             public DiseaseExtentClass compute(AdminUnitGlobalOrTropical adminUnit,
-                                              List<DiseaseOccurrenceForDiseaseExtent> occurrencesForAdminUnit) {
+                                              List<DiseaseOccurrence> occurrencesForAdminUnit) {
                 // Computes the updated disease extent class for one admin unit
                 List<AdminUnitReview> reviewsForAdminUnit = getReviewsByGaulCode(adminUnit.getGaulCode());
                 if (occurrencesForAdminUnit.size() == 0 && reviewsForAdminUnit.size() == 0) {
@@ -236,10 +243,10 @@ public class DiseaseExtentGeneratorHelper {
      */
     public void computeDiseaseExtentClasses(DiseaseExtentClassComputer computer) {
         classesByAdminUnit = new HashMap<>();
-        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
+        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> occurrenceByAdminUnit :
                 occurrencesByAdminUnit.entrySet()) {
             AdminUnitGlobalOrTropical adminUnit = occurrenceByAdminUnit.getKey();
-            List<DiseaseOccurrenceForDiseaseExtent> occurrencesForAdminUnit = occurrenceByAdminUnit.getValue();
+            List<DiseaseOccurrence> occurrencesForAdminUnit = occurrenceByAdminUnit.getValue();
             DiseaseExtentClass extentClass = computer.compute(adminUnit, occurrencesForAdminUnit);
             classesByAdminUnit.put(occurrenceByAdminUnit.getKey(), extentClass);
         }
@@ -253,9 +260,8 @@ public class DiseaseExtentGeneratorHelper {
     public List<AdminUnitDiseaseExtentClass> getDiseaseExtentToSave() {
         List<AdminUnitDiseaseExtentClass> adminUnitDiseaseExtentClasses = new ArrayList<>();
 
-        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrenceForDiseaseExtent>> occurrenceByAdminUnit :
-                occurrencesByAdminUnit.entrySet()) {
-            AdminUnitGlobalOrTropical adminUnit = occurrenceByAdminUnit.getKey();
+        for (Map.Entry<AdminUnitGlobalOrTropical, List<DiseaseOccurrence>> entry : occurrencesByAdminUnit.entrySet()) {
+            AdminUnitGlobalOrTropical adminUnit = entry.getKey();
             AdminUnitDiseaseExtentClass row = findAdminUnitDiseaseExtentClass(adminUnit);
             if (row == null) {
                 row = createAdminUnitDiseaseExtentClass(adminUnit);
@@ -267,10 +273,23 @@ public class DiseaseExtentGeneratorHelper {
                 row.setDiseaseExtentClass(newClass);
                 row.setClassChangedDate(DateTime.now());
             }
-            row.setOccurrenceCount(occurrenceByAdminUnit.getValue().size());
+            row.setOccurrenceCount(entry.getValue().size());
+            row.setLatestOccurrences(findLatestOccurrences(entry.getValue()));
             adminUnitDiseaseExtentClasses.add(row);
         }
         return adminUnitDiseaseExtentClasses;
+    }
+
+
+    private List<DiseaseOccurrence> findLatestOccurrences(List<DiseaseOccurrence> allOccurrences) {
+        Collections.sort(allOccurrences, new Comparator<DiseaseOccurrence>() {
+            @Override
+            public int compare(DiseaseOccurrence o1, DiseaseOccurrence o2) {
+                return o2.getOccurrenceDate().compareTo(o1.getOccurrenceDate());    // descending
+            }
+        });
+        int n = Math.min(allOccurrences.size(), LATEST_OCCURRENCES_MAX_LIST_SIZE);
+        return allOccurrences.subList(0, n);
     }
 
     /**
@@ -297,7 +316,7 @@ public class DiseaseExtentGeneratorHelper {
      * @return The computed disease extent class.
      */
     public DiseaseExtentClass computeDiseaseExtentClassUsingOccurrencesAndReviews(
-            List<DiseaseOccurrenceForDiseaseExtent> occurrencesList, List<AdminUnitReview> reviewsList) {
+            List<DiseaseOccurrence> occurrencesList, List<AdminUnitReview> reviewsList) {
         double overallScore = computeScoreForOccurrencesAndReviews(occurrencesList, reviewsList);
 
         if (overallScore > 1) {
@@ -319,7 +338,7 @@ public class DiseaseExtentGeneratorHelper {
      * @param reviewsList The list of reviews.
      * @return The computed disease extent class.
      */
-    public double computeScoreForOccurrencesAndReviews(List<DiseaseOccurrenceForDiseaseExtent> occurrencesList,
+    public double computeScoreForOccurrencesAndReviews(List<DiseaseOccurrence> occurrencesList,
                                                        List<AdminUnitReview> reviewsList) {
         // Compute the score for each occurrence and each review, and take the average
         // Be extra careful with int -> double conversions...
@@ -348,14 +367,14 @@ public class DiseaseExtentGeneratorHelper {
         return findDiseaseExtentClass(DiseaseExtentClass.UNCERTAIN);
     }
 
-    private int computeOccurrencesScore(List<DiseaseOccurrenceForDiseaseExtent> occurrenceList) {
+    private int computeOccurrencesScore(List<DiseaseOccurrence> occurrenceList) {
         DateTime oldestDateForHigherScore =
                 DateTime.now().minusMonths(parameters.getMaxMonthsAgoForHigherOccurrenceScore());
 
         // Unlike computeReviewsScore(), the total is an integer so that we can maintain full accuracy over multiple
         // additions
         int total = 0;
-        for (DiseaseOccurrenceForDiseaseExtent occurrence : occurrenceList) {
+        for (DiseaseOccurrence occurrence : occurrenceList) {
             // The score for each occurrence depends on the occurrence date. It scores the "higher score" unless it
             // is older than the oldest date allowed for the higher score, in which case it scores the "lower score".
             // These values are all defined by the disease extent parameters.
@@ -416,6 +435,6 @@ public class DiseaseExtentGeneratorHelper {
      */
     private interface DiseaseExtentClassComputer {
         DiseaseExtentClass compute(AdminUnitGlobalOrTropical adminUnit,
-                                   List<DiseaseOccurrenceForDiseaseExtent> occurrencesForAdminUnit);
+                                   List<DiseaseOccurrence> occurrencesForAdminUnit);
     }
 }

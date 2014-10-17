@@ -60,16 +60,23 @@ html, body, #dataValidation {
     opacity: 0.8;
     border-left: 2px solid #aaaaaa;
 }
+#sidePanel i {
+    width: 14px;
+    text-align: center;
+}
 #sidePanelContent {
     height: 100%;
     position: relative;
+}
+#sidePanelContent button {
+    font: 14px/16px Arial, Helvetica, sans-serif;
 }
 #sidePanelContent h4 {
     height: 57px;
     overflow: hidden;
 }
 #sidePanelContent ul {
-    list-style-type: none;      /* Remove bullet points */
+    list-style-type: none;
     padding: 10px;
     margin: 0;
 }
@@ -182,15 +189,6 @@ html, body, #dataValidation {
     width: 99%;
     height: 50px;
 }
-#sidePanelLogin {
-    position: relative;
-    width: 100%;
-    top: -34px;
-    margin-bottom: -34px;
-}
-#sidePanelLogin > button {
-    width: 100%;
-}
 #counterDiv {
     position: absolute;
     bottom: 5px;
@@ -208,8 +206,8 @@ html, body, #dataValidation {
     display: block;
     position: absolute;
     width: 340px;
-    bottom:0px;
-    right: 0px;
+    bottom: 0;
+    right: 0;
     -moz-transform: scale(0.8);
     -moz-transform-origin: 100% 100%;
     -webkit-transform: scale(0.8);
@@ -233,13 +231,11 @@ html, body, #dataValidation {
 }
 .legend {
     padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
     background: white;
-    background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
     line-height: 18px;
-    color: #555;
+    color: #333;
 }
 .legend i {
     width: 18px;
@@ -250,13 +246,47 @@ html, body, #dataValidation {
 }
 .legend h4 {
     margin: 0 0 5px;
-    color: #777;
 }
-.fa-map-marker {
-    padding: 3px;
+#latestOccurrencesPanel a {
+    text-align: left;
+    width: auto;
+    border: none;
+    line-height: 18px;
+    height: auto;
 }
-.fa-square-o {
-    padding: 2px;
+#latestOccurrencesPanel a:hover {
+    background-color: white;
+}
+/* Match Bootstrap's styling for a link, instead of Leaflet's */
+#latestOccurrencesPanel a span {
+    color: #428bca;
+}
+#latestOccurrencesPanel a:hover span {
+    color: #2a6496;
+    text-decoration: underline;
+}
+#latestOccurrencesPanel div {
+    background-color: white;
+    min-width: 200px;
+    width: auto;
+    max-width: 300px;
+    height: auto;
+    text-align: left;
+}
+#latestOccurrencesPanel div.leaflet-bar {
+    padding: 3px 5px;
+}
+#latestOccurrencesPanel hr, .legend hr {
+    margin: 2px 0;
+}
+#latestOccurrencesPanel i {
+    width: 14px;
+    text-align: center;
+}
+@media (max-width: 1500px) {
+    #latestOccurrencesPanel {
+        display: none !important;
+    }
 }
 .leaflet-popup-content {
     margin: 0;

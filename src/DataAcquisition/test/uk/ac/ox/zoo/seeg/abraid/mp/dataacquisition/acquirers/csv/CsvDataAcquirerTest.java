@@ -8,8 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionExce
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.domain.CsvDiseaseOccurrence;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -33,20 +33,20 @@ public class CsvDataAcquirerTest {
     }
 
     @Test
-    public void acquireThrowsExceptionIfCannotBeParsed() {
+    public void acquireReturnsErrorMessageIfCannotBeParsed() {
         // Arrange
         String csv = "\nMy site,Invalid double";
 
         // Act
-        catchException(csvDataAcquirer).acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
-        assertThat(caughtException()).hasMessageStartingWith("CSV file has invalid format");
+        assertThat(messages).hasSize(1);
+        assertThat(messages.get(0)).startsWith("CSV file has invalid format");
     }
 
     @Test
-    public void acquireThrowsExceptionIfCannotBeConverted() {
+    public void acquireReturnsErrorMessageIfCannotBeConverted() {
         // Arrange
         DataAcquisitionException exception = new DataAcquisitionException("Test message");
         String csv = "\nMy site\n";
@@ -54,15 +54,17 @@ public class CsvDataAcquirerTest {
         when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
 
         // Act
-        catchException(csvDataAcquirer).acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
-        assertThat(caughtException()).hasMessage("Error in CSV file on line 1: Test message.");
+        assertThat(messages).hasSize(3);
+        assertThat(messages.get(0)).isEqualTo("Found 1 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo("Did not save any disease occurrences.");
+        assertThat(messages.get(2)).isEqualTo("Error in CSV file on line 2: Test message.");
     }
 
     @Test
-    public void acquireThrowsExceptionIfMultipleLinesCannotBeConverted() {
+    public void acquireReturnsErrorMessagesIfMultipleLinesCannotBeConverted() {
         // Arrange
         DataAcquisitionException exception = new DataAcquisitionException("Test message");
         String csv = "\nMy site\nMy second site\n";
@@ -70,16 +72,18 @@ public class CsvDataAcquirerTest {
         when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
 
         // Act
-        catchException(csvDataAcquirer).acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
-        assertThat(caughtException()).hasMessage("Error in CSV file on line 1: Test message." + System.lineSeparator() +
-                "Error in CSV file on line 2: Test message.");
+        assertThat(messages).hasSize(4);
+        assertThat(messages.get(0)).isEqualTo("Found 2 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo("Did not save any disease occurrences.");
+        assertThat(messages.get(2)).isEqualTo("Error in CSV file on line 2: Test message.");
+        assertThat(messages.get(3)).isEqualTo("Error in CSV file on line 3: Test message.");
     }
 
     @Test
-    public void successMessageHasCorrectCountsIfAtLeastOneDiseaseOccurrenceWasAcquired() {
+    public void initialMessageHasCorrectCountsIfAtLeastOneDiseaseOccurrenceWasAcquired() {
         // Disease occurrence 1 has location 1 (passed QC)
         // Disease occurrence 2 has location 2 (failed QC)
         // Disease occurrence 3 has location 3 (passed QC)
@@ -108,26 +112,30 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
 
         // Act
-        String message = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
 
         // Assert
-        assertThat(message).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC).");
+        assertThat(messages).hasSize(2);
+        assertThat(messages.get(0)).isEqualTo("Found 8 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC).");
     }
 
     @Test
-    public void successMessageHasCorrectCountsIfNoDiseaseOccurrencesWereAcquired() {
+    public void initialMessageHasCorrectCountsIfNoDiseaseOccurrencesWereAcquired() {
         // Arrange
         String csv = "\n";
 
         // Act
-        String message = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
 
         // Assert
-        assertThat(message).isEqualTo("Saved 0 disease occurrence(s) in 0 location(s) (of which 0 location(s) passed QC).");
+        assertThat(messages).hasSize(2);
+        assertThat(messages.get(0)).isEqualTo("Found 0 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo("Did not save any disease occurrences.");
     }
 
     @Test
-    public void successMessageHasCorrectCountsForGoldStandardDataSet() {
+    public void initialMessageHasCorrectCountsForGoldStandardDataSet() {
         // Arrange
         boolean isGoldStandard = true;
         Location location1 = createLocation(1, true);
@@ -139,10 +147,12 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n";
 
         // Act
-        String message = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
 
         // Assert
-        assertThat(message).isEqualTo("Saved 2 disease occurrence(s) in 2 location(s) (of which 1 location(s) passed QC).");
+        assertThat(messages).hasSize(2);
+        assertThat(messages.get(0)).isEqualTo("Found 2 CSV file line(s) to convert.");
+        assertThat(messages.get(1)).isEqualTo("Saved 2 disease occurrence(s) in 2 location(s) (of which 1 location(s) passed QC).");
     }
 
     private Location createLocation(int id, boolean hasPassedQc) {

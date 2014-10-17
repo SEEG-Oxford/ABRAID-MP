@@ -89,7 +89,6 @@ define([
         function selectPoint(marker) {
             // First, reset the style of all other points on layer, so only one point is animated as selected at a time
             resetDiseaseOccurrenceLayerStyle();
-            marker.openPopup();
             if (loggedIn) {
                 marker.setStyle({
                     stroke: false,
@@ -269,7 +268,12 @@ define([
             style: function (feature) { return diseaseExtentLayerStyle(feature, true); },
             onEachFeature: function (feature, layer) {
                 adminUnitLayerMap[feature.id] = layer;
-                var data = { id: feature.id, name: feature.properties.name, count: feature.properties.occurrenceCount };
+                var data = {
+                    id: feature.id,
+                    name: feature.properties.name,
+                    count: feature.properties.occurrenceCount,
+                    occurrences: feature.properties.latestOccurrences
+                };
                 layer.on({
                     click: function () { ko.postbox.publish("admin-unit-selected", data); },
                     mouseover: function () {
@@ -308,7 +312,12 @@ define([
 
         function publishDiseaseExtentEvents(features) {
             var data = _(features).map(function (f) {
-                return { id: f.id, name: f.properties.name, count: f.properties.occurrenceCount };
+                return {
+                    id: f.id,
+                    name: f.properties.name,
+                    count: f.properties.occurrenceCount,
+                    occurrences: f.properties.latestOccurrences
+                };
             });
             ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
             ko.postbox.publish("no-features-to-review", features.length === 0);
@@ -369,7 +378,7 @@ define([
         var legend = L.control({position: "bottomleft"});
         legend.onAdd = function () {
             var div = L.DomUtil.create("div", "legend");
-            div.innerHTML = "<span style='text-decoration:underline'>Current classification</span><br>" +
+            div.innerHTML = "<span style='text-align: center'><strong>Current classification</strong></span><br><hr>" +
                 _((_(extentClassColour).pairs()).map(function (pair) {
                     return createLegendRow(pair[0], pair[1][1]);
                 })).join("");
@@ -398,7 +407,6 @@ define([
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
         function resetSelectedPoint() {
             ko.postbox.publish("point-selected", null);
-            map.closePopup();
             resetDiseaseOccurrenceLayerStyle();
         }
 

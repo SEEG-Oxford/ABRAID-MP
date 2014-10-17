@@ -10,10 +10,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactory;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionService;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.mockito.Mockito.*;
@@ -50,48 +51,23 @@ public class UploadCsvControllerHelperTest {
     }
 
     @Test
-    public void acquireCsvDataSendsCorrectEmailWhenAcquisitionSucceeds() throws Exception {
+    public void acquireCsvDataSendsCorrectEmail() throws Exception {
         // Arrange
+        String csv = "Test csv";
         boolean isGoldStandard = false;
-        String csv = "Test csv";
-        String message = "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)";
-        String expectedSubject = "CSV upload succeeded";
-        String expectedEmailEnd =
-                "The upload succeeded with message:\n" +
-                "\n" +
-                "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)\n";
-
-        when(dataAcquisitionService.acquireCsvData(csv, isGoldStandard)).thenReturn(message);
-
-        // Act and assert
-        acquireCsvDataSendsCorrectEmail(isGoldStandard, expectedEmailEnd, expectedSubject);
-    }
-
-    @Test
-    public void acquireCsvDataSendsCorrectEmailWhenAcquisitionFails() throws Exception {
-        // Arrange
-        boolean isGoldStandard = true;
-        String csv = "Test csv";
-        String message = "Some error during data acquisition";
-        String expectedSubject = "CSV upload failed";
-        String expectedEmailEnd =
-                "The upload failed with message:\n" +
-                "\n" +
-                "Some error during data acquisition\n";
-
-        when(dataAcquisitionService.acquireCsvData(csv, isGoldStandard)).thenThrow(new DataAcquisitionException(message));
-
-        // Act and assert
-        acquireCsvDataSendsCorrectEmail(isGoldStandard, expectedEmailEnd, expectedSubject);
-    }
-
-    private void acquireCsvDataSendsCorrectEmail(boolean isGoldStandard, String expectedEmailEnding,
-                                                 String expectedSubject)
-            throws Exception {
-        // Arrange
-        String csv = "Test csv";
         String userEmailAddress = "user@email.com";
         String filePath = "/path/to/test.csv";
+
+        String expectedSubject = "CSV upload results";
+        String expectedEmailEnd =
+                "Found 10 CSV file line(s) to convert.\n" +
+                "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC).\n";
+
+        List<String> messages = Arrays.asList(
+                "Found 10 CSV file line(s) to convert.",
+                "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)."
+        );
+        when(dataAcquisitionService.acquireCsvData(csv, isGoldStandard)).thenReturn(messages);
 
         // Act
         helper.acquireCsvData(csv, isGoldStandard, userEmailAddress, filePath);
@@ -104,7 +80,7 @@ public class UploadCsvControllerHelperTest {
                 "File: \"/path/to/test.csv\".\n" +
                 "Submitted on: " + nowString + ".\n" +
                 "Completed on: " + nowString + ".\n" +
-                "\n" + expectedEmailEnding)));
+                "\n" + expectedEmailEnd)));
         verify(email).setSubject(eq(expectedSubject));
         verify(email).addTo(eq(userEmailAddress));
     }

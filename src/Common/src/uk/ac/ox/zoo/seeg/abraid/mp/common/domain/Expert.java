@@ -89,8 +89,8 @@ public class Expert {
     // List of disease groups an expert has interest in and can validate.
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "expert_validator_disease_group",
-            joinColumns = { @JoinColumn(name = "expert_id") },
-            inverseJoinColumns = { @JoinColumn(name = "validator_disease_group_id") })
+            joinColumns = @JoinColumn(name = "expert_id"),
+            inverseJoinColumns = @JoinColumn(name = "validator_disease_group_id"))
     @Fetch(FetchMode.SELECT)
     private List<ValidatorDiseaseGroup> validatorDiseaseGroups;
 

@@ -67,7 +67,10 @@ define([
                 .always(function () { self.isEnablingAutomaticModelRuns(false); });
         };
         self.disableButtonThatEnablesAutomaticModelRuns = ko.computed(function () {
-            return !self.canRunModel() || self.isSubmitting() || self.isEnablingAutomaticModelRuns();
+            return !self.canRunModel() ||
+                self.isSubmitting() ||
+                self.isEnablingAutomaticModelRuns() ||
+                self.isGeneratingDiseaseExtent();
         });
 
         self.resetState = function () { // only public for testing
