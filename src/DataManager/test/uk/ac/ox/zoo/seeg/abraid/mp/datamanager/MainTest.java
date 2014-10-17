@@ -2,10 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +15,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
 
 import java.io.File;
 import java.util.*;
@@ -28,6 +25,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.same;
 
 /**
  * Tests the Main class.
@@ -38,7 +36,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
     public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
-    public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
+    public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -57,10 +55,6 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
     @Autowired
     private ModelRunService modelRunService;
-
-    @Autowired
-    @ReplaceWithMock
-    private RasterFileBuilder rasterFileBuilder;
 
     @Test
     public void mainMethodAcquiresDataFromWebService() throws Exception {
@@ -386,8 +380,9 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now());
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);
 
         when(rasterFileBuilder.getMeanPredictionRasterFile(same(modelRun)))
