@@ -1,28 +1,35 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
-import org.apache.commons.io.FileUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
+import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
+import static org.mockito.Mockito.same;
+import static org.mockito.Mockito.when;
 
 /**
  * Integration tests for the EnvironmentalSuitabilityHelper class.
  * Copyright (c) 2014 University of Oxford
  */
-public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractCommonSpringIntegrationTests {
+@ContextConfiguration(loader = SpringockitoContextLoader.class,
+        locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
+public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSpringIntegrationTests {
     // Parameters taken from the test raster files
-    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
+    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
     private static final double LARGE_RASTER_COLUMNS = 720;
     private static final double LARGE_RASTER_ROWS = 240;
     private static final double LARGE_RASTER_XLLCORNER = -180;
@@ -40,6 +47,10 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractCommo
     @Autowired
     private ModelRunService modelRunService;
 
+    @Autowired
+    @ReplaceWithMock
+    private RasterFileBuilder rasterFileBuilder;
+
     @Before
     public void setUp() {
         diseaseGroup = diseaseService.getDiseaseGroupById(87);
@@ -47,12 +58,11 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractCommo
 
     @Test
     public void getLatestMeanPredictionRasterReturnsNullIfNoRelevantModelRunsForThisDiseaseGroup() throws Exception {
-        // Arrange - 3 irrelevant model runs
-        ModelRun modelRun1 = createAndSaveModelRun("failed with a raster", diseaseGroup.getId(), ModelRunStatus.FAILED);
-        updateRasterForModelRun(modelRun1);
-        createAndSaveModelRun("completed without a raster (for some reason)", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
+        // Arrange - 2 irrelevant model runs
+        ModelRun modelRun1 = createAndSaveModelRun("failed", diseaseGroup.getId(), ModelRunStatus.FAILED);
+        mockGetRasterFileForModelRun(modelRun1);
         ModelRun modelRun2 = createAndSaveModelRun("different disease group", 1, ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(modelRun2);
+        mockGetRasterFileForModelRun(modelRun2);
 
         // Act
         GridCoverage2D meanPredictionRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
@@ -62,65 +72,37 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractCommo
     }
 
     @Test
-    public void findEnvironmentalSuitabilityLowerLeftCornerUsingGeoTools() throws Exception {
-        findEnvironmentalSuitabilityLowerLeftCorner(true);
+    public void findEnvironmentalSuitabilityLowerLeftCorner() throws Exception {
+        findEnvironmentalSuitability(LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER, 0.89);
     }
 
     @Test
-    public void findEnvironmentalSuitabilityLowerLeftCornerUsingPostGIS() throws Exception {
-        findEnvironmentalSuitabilityLowerLeftCorner(false);
-    }
-
-    private void findEnvironmentalSuitabilityLowerLeftCorner(boolean useRaster) throws Exception {
-        findEnvironmentalSuitability(useRaster, LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER, 0.89);
-    }
-
-    @Test
-    public void findEnvironmentalSuitabilityUpperRightCornerUsingGeoTools() throws Exception {
-        findEnvironmentalSuitabilityUpperRightCorner(true);
-    }
-
-    @Test
-    public void findEnvironmentalSuitabilityUpperRightCornerUsingPostGIS() throws Exception {
-        findEnvironmentalSuitabilityUpperRightCorner(false);
-    }
-
-    private void findEnvironmentalSuitabilityUpperRightCorner(boolean useRaster) throws Exception {
+    public void findEnvironmentalSuitabilityUpperRightCorner() throws Exception {
         double upperRightCornerX = LARGE_RASTER_XLLCORNER + (LARGE_RASTER_COLUMNS - 1) * LARGE_RASTER_CELLSIZE;
         double upperRightCornerY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 1) * LARGE_RASTER_CELLSIZE;
-        findEnvironmentalSuitability(useRaster, upperRightCornerX, upperRightCornerY, 0.79);
+        findEnvironmentalSuitability(upperRightCornerX, upperRightCornerY, 0.79);
     }
 
     @Test
-    public void findEnvironmentalSuitabilityInterpolatedUsingGeoTools() throws Exception {
-        findEnvironmentalSuitabilityInterpolated(true);
-    }
-
-    @Test
-    public void findEnvironmentalSuitabilityInterpolatedUsingPostGIS() throws Exception {
-        findEnvironmentalSuitabilityInterpolated(false);
-    }
-
-    private void findEnvironmentalSuitabilityInterpolated(boolean useRaster) throws Exception {
+    public void findEnvironmentalSuitabilityInterpolated() throws Exception {
         double lowerLeftCornerSlightlyShiftedX = LARGE_RASTER_XLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
         double lowerLeftCornerSlightlyShiftedY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
-        findEnvironmentalSuitability(useRaster, lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY, 0.89);
+        findEnvironmentalSuitability(lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY, 0.89);
     }
 
     @Test
-    public void findEnvironmentalSuitabilityOutOfRasterRangeUsingGeoTools() throws Exception {
-        findEnvironmentalSuitabilityOutOfRasterRange(true);
-    }
-
-    @Test
-    public void findEnvironmentalSuitabilityOutOfRasterRangeUsingPostGIS() throws Exception {
-        findEnvironmentalSuitabilityOutOfRasterRange(false);
-    }
-
-    private void findEnvironmentalSuitabilityOutOfRasterRange(boolean useRaster) throws Exception {
+    public void findEnvironmentalSuitabilityOutOfRasterRange() throws Exception {
         double oneCellBeyondUpperRightCornerX = LARGE_RASTER_XLLCORNER + LARGE_RASTER_COLUMNS * LARGE_RASTER_CELLSIZE;
         double oneCellBeyondUpperRightCornerY = LARGE_RASTER_YLLCORNER + LARGE_RASTER_ROWS * LARGE_RASTER_CELLSIZE;
-        findEnvironmentalSuitability(useRaster, oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY, null);
+        findEnvironmentalSuitability(oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY, null);
+    }
+
+    @Test
+    public void findEnvironmentalSuitabilityNoDataValueWithinRasterRange() throws Exception {
+        // The NODATA value in the raster is in column 6 row 12 (from the top left)
+        double noDataValueX = LARGE_RASTER_XLLCORNER + 5 * LARGE_RASTER_CELLSIZE;
+        double noDataValueY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 12) * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitability(noDataValueX, noDataValueY, null);
     }
 
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {
@@ -131,21 +113,21 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractCommo
         return modelRun;
     }
 
-    private void updateRasterForModelRun(ModelRun modelRun) throws Exception {
-        byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
+    private void mockGetRasterFileForModelRun(ModelRun modelRun) throws Exception {
+        when(rasterFileBuilder.getMeanPredictionRasterFile(same(modelRun)))
+                .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
-    private void findEnvironmentalSuitability(boolean useRaster, double x, double y,
+    private void findEnvironmentalSuitability(double x, double y,
                                               Double expectedEnvironmentalSuitability) throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = createOccurrence(x, y);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
-        updateRasterForModelRun(modelRun);
+        mockGetRasterFileForModelRun(modelRun);
         GridCoverage2D raster = helper.getLatestMeanPredictionRaster(diseaseGroup);
 
         // Act
-        Double suitability = helper.findEnvironmentalSuitability(occurrence, useRaster ? raster : null);
+        Double suitability = helper.findEnvironmentalSuitability(occurrence, raster);
 
         // Assert
         assertThat(raster).isNotNull();

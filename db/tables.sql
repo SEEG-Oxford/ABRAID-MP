@@ -289,8 +289,6 @@ CREATE TABLE model_run (
     response_date timestamp,
     output_text text,
     error_text text,
-    mean_prediction_raster raster,
-    prediction_uncertainty_raster raster,
     batch_end_date timestamp,
     batch_occurrence_count integer,
     batching_completed_date timestamp

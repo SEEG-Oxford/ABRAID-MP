@@ -130,7 +130,6 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         flushAndClear();
 
         byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
         return modelRun;
     }
 

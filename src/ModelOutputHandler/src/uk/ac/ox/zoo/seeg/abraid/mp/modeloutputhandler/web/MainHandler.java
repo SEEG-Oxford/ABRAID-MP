@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 
 import java.io.File;
@@ -65,12 +66,13 @@ public class MainHandler {
 
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
-    private final File rasterDir;
+    private final RasterFileBuilder rasterFileBuilder;
 
-    public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver, File rasterDir) {
+    public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver,
+                       RasterFileBuilder rasterFileBuilder) {
         this.modelRunService = modelRunService;
         this.geoserver = geoserver;
-        this.rasterDir = rasterDir;
+        this.rasterFileBuilder = rasterFileBuilder;
     }
 
     /**
@@ -196,11 +198,11 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
-                File file = saveRaster(modelRun, raster, "mean");
+                File file = rasterFileBuilder.getMeanPredictionRasterFile(modelRun);
+                saveRaster(file, raster);
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(file);
                 }
-                modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), raster);
             } catch (Exception e) {
                 throw new IOException(String.format(COULD_NOT_SAVE_PREDICTION_RASTER, modelRun.getName()), e);
             }
@@ -211,21 +213,18 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-                File file = saveRaster(modelRun, raster, "uncertainty");
+                File file = rasterFileBuilder.getPredictionUncertaintyRasterFile(modelRun);
+                saveRaster(file, raster);
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(file);
                 }
-                modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRun.getId(), raster);
             } catch (Exception e) {
                 throw new IOException(String.format(COULD_NOT_SAVE_UNCERTAINTY_RASTER, modelRun.getName()), e);
             }
         }
     }
 
-    private File saveRaster(ModelRun modelRun, byte[] raster, String type) throws IOException {
-        String basename = modelRun.getName() + "_" + type;
-        final File file = Paths.get(rasterDir.getAbsolutePath(), basename + ".tif").toFile();
-
+    private File saveRaster(File file, byte[] raster) throws IOException {
         if (file.exists()) {
             throw new IOException(String.format(RASTER_FILE_ALREADY_EXISTS, file));
         }

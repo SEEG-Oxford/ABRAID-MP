@@ -5,7 +5,6 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
@@ -35,7 +34,7 @@ public class ModelRunManagerTest {
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), mock(NativeSQL.class));
+        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class));
         ModelRunGatekeeper modelRunGatekeeper = new ModelRunGatekeeper(diseaseService, modelRunService);
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService, diseaseService);

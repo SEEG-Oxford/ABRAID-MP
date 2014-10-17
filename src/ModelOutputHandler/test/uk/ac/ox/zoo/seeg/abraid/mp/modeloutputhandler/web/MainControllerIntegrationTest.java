@@ -18,8 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
@@ -38,9 +36,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,7 +66,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @ReplaceWithMock
     @Autowired
-    private File rasterDir;
+    private File rasterFileDirectory;
 
     @ReplaceWithMock
     @Autowired
@@ -85,12 +81,9 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @Autowired
     private ModelRunDao modelRunDao;
 
-    @Autowired
-    private NativeSQL nativeSQL;
-
     @Before
     public void setup() {
-        when(rasterDir.getAbsolutePath()).thenReturn(testFolder.getRoot().getAbsolutePath());
+        when(rasterFileDirectory.getAbsolutePath()).thenReturn(testFolder.getRoot().getAbsolutePath());
 
         // Set up Spring test in standalone mode
         this.mockMvc = MockMvcBuilders
@@ -135,13 +128,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRasterPublishedToGeoserver(run, "mean");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterPublishedToGeoserver(run, "uncertainty");
-
-        // Dead
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.tif",
-                NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
-                NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
-
     }
 
     @Test
@@ -172,12 +158,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatNoRastersPublishedToGeoserver();
-
-        // Dead
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "mean_prediction.tif",
-                NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-        assertThatRasterInDatabaseMatchesRasterInFile(run, "prediction_uncertainty.tif",
-                NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
     @Test
@@ -314,13 +294,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     private byte[] loadTestFile(String fileName) throws IOException {
         return FileUtils.readFileToByteArray(new File(TEST_DATA_PATH, fileName));
-    }
-
-    private void assertThatRasterInDatabaseMatchesRasterInFile(ModelRun run, String fileName, String rasterColumnName) throws IOException {
-        byte[] expectedRaster = loadTestFile(fileName);
-        byte[] actualRaster = nativeSQL.getRasterForModelRun(run.getId(), rasterColumnName);
-
-        assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
     }
 
     private void assertThatRasterWrittenToFile(ModelRun run, String expectedFileName, String type) throws IOException {

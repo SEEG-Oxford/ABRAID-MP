@@ -17,9 +17,6 @@
         </constructor-arg>
     </bean>
 
-    <bean id="rasterDir" class="java.io.File">
-        <constructor-arg value="${abraid.base.dir}/results/rasters" />
-    </bean>
     <bean id="mainHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.MainHandler" autowire="constructor" />
 
     <bean id="handlersAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.HandlersAsyncWrapper" autowire="constructor" destroy-method="cleanup"/>

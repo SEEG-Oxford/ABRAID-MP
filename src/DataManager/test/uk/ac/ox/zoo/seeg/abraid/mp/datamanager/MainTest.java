@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
 
 import java.io.File;
 import java.util.*;
@@ -55,6 +57,10 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
     @Autowired
     private ModelRunService modelRunService;
+
+    @Autowired
+    @ReplaceWithMock
+    private RasterFileBuilder rasterFileBuilder;
 
     @Test
     public void mainMethodAcquiresDataFromWebService() throws Exception {
@@ -384,8 +390,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRunService.saveModelRun(modelRun);
 
-        byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
+        when(rasterFileBuilder.getMeanPredictionRasterFile(same(modelRun)))
+                .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
     private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {

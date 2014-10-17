@@ -40,7 +40,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             if (isGoldStandard) {
                 addGoldStandardParameters(occurrence);
             } else if (automaticModelRunsEnabled(occurrence)) {
-                addValidationParameters(occurrence, null);
+                addValidationParameters(occurrence);
             } else {
                 occurrence.setValidated(true);
             }
@@ -65,6 +65,11 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
                 addValidationParameters(occurrence, raster);
             }
         }
+    }
+
+    private void addValidationParameters(DiseaseOccurrence occurrence) {
+        GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
+        addValidationParameters(occurrence, raster);
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
