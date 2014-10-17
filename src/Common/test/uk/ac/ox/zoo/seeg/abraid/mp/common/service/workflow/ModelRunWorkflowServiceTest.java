@@ -26,7 +26,6 @@ import static org.mockito.Mockito.*;
 public class ModelRunWorkflowServiceTest {
     private WeightingsCalculator weightingsCalculator;
     private ModelRunRequester modelRunRequester;
-    private ModelRunOccurrencesSelector modelRunOccurrencesSelector;
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
@@ -37,14 +36,14 @@ public class ModelRunWorkflowServiceTest {
     public void setUp() {
         weightingsCalculator = mock(WeightingsCalculator.class);
         modelRunRequester = mock(ModelRunRequester.class);
-        modelRunOccurrencesSelector = mock(ModelRunOccurrencesSelector.class);
         reviewManager = mock(DiseaseOccurrenceReviewManager.class);
         diseaseService = mock(DiseaseService.class);
         LocationService locationService = mock(LocationService.class);
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
         automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
+        MachineWeightingPredictor machineWeightingPredictor = mock(MachineWeightingPredictor.class);
         modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
-                reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler));
+                reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler, machineWeightingPredictor));
     }
 
     @Test

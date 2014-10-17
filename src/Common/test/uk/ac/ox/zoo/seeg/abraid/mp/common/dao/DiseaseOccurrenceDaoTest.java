@@ -496,7 +496,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Act
         List<DiseaseOccurrence> occurrences =
-                diseaseOccurrenceDao.getOccurrencesForBatching(diseaseGroupId, batchEndDate);
+                diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchEndDate);
 
         // Assert
         assertThat(occurrences).hasSize(3);

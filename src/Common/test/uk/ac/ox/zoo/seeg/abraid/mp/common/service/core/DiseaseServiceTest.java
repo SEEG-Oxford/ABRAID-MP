@@ -494,7 +494,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         int diseaseGroupId = 1;
         DateTime batchEndDate = DateTime.now();
         List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
-        when(diseaseOccurrenceDao.getOccurrencesForBatching(diseaseGroupId, batchEndDate)).thenReturn(expectedOccurrences);
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchEndDate)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchEndDate);
