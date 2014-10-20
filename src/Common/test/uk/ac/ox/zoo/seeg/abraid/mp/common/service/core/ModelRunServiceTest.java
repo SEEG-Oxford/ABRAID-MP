@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -108,6 +109,19 @@ public class ModelRunServiceTest {
 
         // Assert
         assertThat(result).isTrue();
+    }
+
+    @Test
+    public void getModelRunRequestServersByUsage() {
+        // Arrange
+        List<String> expected = Arrays.asList("A", "B", "C");
+        when(modelRunDao.getModelRunRequestServersByUsage()).thenReturn(expected);
+
+        // Act
+        List<String> result = modelRunService.getModelRunRequestServersByUsage();
+
+        // Assert
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test

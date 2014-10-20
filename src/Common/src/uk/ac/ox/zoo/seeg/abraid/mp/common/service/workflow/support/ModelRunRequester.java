@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
+import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
@@ -15,12 +16,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.filter;
 
 /**
  * Requests a model run for all relevant diseases.
@@ -36,8 +35,7 @@ public class ModelRunRequester {
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
     private static final String REQUEST_LOG_MESSAGE =
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
-    private Collection<URI> modelWrapperUrlCollection;
-    private URI modelWrapperUrl;
+    private List<URI> modelWrapperUrlCollection;
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
                              ModelRunService modelRunService, String[] modelWrapperUrlCollection) {
@@ -53,7 +51,6 @@ public class ModelRunRequester {
         if (this.modelWrapperUrlCollection.isEmpty()) {
             throw new IllegalArgumentException("At least 1 ModelWrapper URL must be provided.");
         }
-        this.modelWrapperUrl = this.modelWrapperUrlCollection.iterator().next();
     }
 
     /**
@@ -73,6 +70,7 @@ public class ModelRunRequester {
 
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
+                URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
                 JsonModelRunResponse response =
                         modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup, occurrencesForModelRun, diseaseExtent);
                 handleModelRunResponse(response, diseaseGroupId, requestDate, modelWrapperUrl.getHost(), batchEndDate);
@@ -82,6 +80,26 @@ public class ModelRunRequester {
                 throw new ModelRunRequesterException(message, e);
             }
         }
+    }
+
+    private URI selectLeastBusyModelWrapperUrl() {
+        Stack<String> usedHosts = new Stack<>();
+        usedHosts.addAll(modelRunService.getModelRunRequestServersByUsage());
+        Collections.reverse(usedHosts);
+
+        List<URI> availableHosts = modelWrapperUrlCollection;
+
+        while (availableHosts.size() > 1 && usedHosts.size() > 0) {
+            final String busyHost = usedHosts.pop();
+            availableHosts = filter(new LambdaJMatcher<URI> () {
+                @Override
+                public boolean matches(Object host) {
+                    return !((URI)host).getHost().equals(busyHost);
+                }
+            }, availableHosts);
+        }
+
+        return availableHosts.get(0);
     }
 
     private void logRequest(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> diseaseOccurrences) {

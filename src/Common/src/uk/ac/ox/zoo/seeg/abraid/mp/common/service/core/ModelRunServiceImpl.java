@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Service interface for model run inputs and outputs.
@@ -81,5 +82,15 @@ public class ModelRunServiceImpl implements ModelRunService {
     @Override
     public Collection<ModelRun> getCompletedModelRuns() {
         return modelRunDao.getCompletedModelRuns();
+    }
+
+    /**
+     * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,
+     * then sorted by the number of inactive model runs. Sorted by descending usage.
+     * @return The ordered list of servers.
+     */
+    @Override
+    public List<String> getModelRunRequestServersByUsage() {
+        return modelRunDao.getModelRunRequestServersByUsage();
     }
 }

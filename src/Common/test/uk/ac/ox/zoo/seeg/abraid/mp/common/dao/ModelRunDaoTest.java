@@ -30,12 +30,12 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     @Before
     public void setUp() {
-        modelRunDengue1 = createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "localhost", "2014-07-01", null);
-        modelRunDengue2 = createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "localhost", "2014-07-01", "2014-07-04");
-        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "localhost", "2014-07-02", "2014-07-03");
-        modelRunDengue4 = createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "localhost", "2014-07-05", null);
-        modelRunDengue5 = createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "localhost", "2014-07-06", "2014-07-05");
-        modelRunMalarias1 = createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "localhost", "2014-07-07", "2014-07-08");
+        modelRunDengue1 = createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "host1", "2014-07-01", null);
+        modelRunDengue2 = createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "host1", "2014-07-01", "2014-07-04");
+        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "host3", "2014-07-02", "2014-07-03");
+        modelRunDengue4 = createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "host2", "2014-07-05", null);
+        modelRunDengue5 = createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "host3", "2014-07-06", "2014-07-05");
+        modelRunMalarias1 = createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "host3", "2014-07-07", "2014-07-08");
     }
 
     @Test
@@ -310,6 +310,26 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert
         assertThat(result).isTrue();
+    }
+
+    @Test
+    public void getModelRunRequestServersByUsageGetsCorrectlyOrderedServers() {
+        // Arrange
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        List<String> result = modelRunDao.getModelRunRequestServersByUsage();
+
+        // Assert
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0)).isEqualTo("host1");
+        assertThat(result.get(1)).isEqualTo("host2");
+        assertThat(result.get(2)).isEqualTo("host3");
     }
 
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {

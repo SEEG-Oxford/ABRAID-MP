@@ -46,6 +46,14 @@ import java.util.List;
                 query = "select count(*) from ModelRun " +
                         "where diseaseGroupId = :diseaseGroupId " +
                         "and batchingCompletedDate is not null"
+        ),
+        @NamedQuery(
+                name = "getModelRunRequestServersByUsage",
+                query = "select requestServer from ModelRun " +
+                        "group by requestServer " +
+                        "order by " +
+                            "count(case(status) when 'IN_PROGRESS' then 1 else null end) desc, " +
+                            "count(case(status) when 'IN_PROGRESS' then null else 1 end) desc"
         )
 })
 @Entity

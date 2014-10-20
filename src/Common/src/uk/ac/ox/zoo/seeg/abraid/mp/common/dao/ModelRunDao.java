@@ -56,4 +56,11 @@ public interface ModelRunDao {
      * @return The completed model runs.
      */
     Collection<ModelRun> getCompletedModelRuns();
+
+    /**
+     * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,
+     * then sorted by the number of inactive model runs. Sorted by descending usage.
+     * @return The ordered list of servers.
+     */
+    List<String> getModelRunRequestServersByUsage();
 }
