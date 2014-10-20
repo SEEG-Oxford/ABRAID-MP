@@ -5,9 +5,15 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 
 /**
  * Helper class used to determine whether occurrences should come off the DataValidator and update the value of the
@@ -28,7 +34,9 @@ public class DiseaseOccurrenceReviewManager {
 
     /**
      * Update the value of the isValidated flag according to the length of time it has been on the DataValidator for
-     * review by the experts. If we are during disease group set up, the occurrence should be removed from DataValidator
+     * review by the experts. If the occurrence has been on the DataValidator for long enough, so is being removed, and
+     * has not actually received any reviews, set isValidated to null so that it is never sent tot he model or included
+     * in the disease extent. If we are during disease group set up, the occurrence should be removed from DataValidator
      * immediately, irrespective of time spent in review.
      * @param diseaseGroupId The id of the disease group this model run preparation is for.
      * @param modelRunPrepDate The official start time of the model run preparation tasks.
@@ -38,10 +46,22 @@ public class DiseaseOccurrenceReviewManager {
         int numRemovedFromValidator = 0;
 
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
+        Set<DiseaseOccurrence> reviewedOccurrences = getAllReviewedOccurrences(diseaseGroupId);
+
+        Boolean isValidated;
+
         for (DiseaseOccurrence occurrence : occurrences) {
-            if (duringDiseaseSetUp(occurrence.getDiseaseGroup()) ||
-                    occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
-                occurrence.setValidated(true);
+            isValidated = false;
+            if (duringDiseaseSetUp(occurrence.getDiseaseGroup())) {
+                isValidated = true;
+            } else {
+                if (occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
+                    isValidated = reviewedOccurrences.contains(occurrence) ? true : null;
+                }
+            }
+
+            if (isValidated == null || isValidated) {
+                occurrence.setValidated(isValidated);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 numRemovedFromValidator++;
             }
@@ -52,6 +72,11 @@ public class DiseaseOccurrenceReviewManager {
 
     private boolean duringDiseaseSetUp(DiseaseGroup diseaseGroup) {
         return diseaseGroup.getAutomaticModelRunsStartDate() == null;
+    }
+
+    private Set<DiseaseOccurrence> getAllReviewedOccurrences(int diseaseGroupId) {
+        List<DiseaseOccurrenceReview> reviews = diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
+        return new HashSet<>(extract(reviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
     /**
@@ -70,13 +95,14 @@ public class DiseaseOccurrenceReviewManager {
         return !comparisonDate.isAfter(modelRunPrepDate);
     }
 
-    private LocalDate getComparisonDate(DiseaseOccurrence occurrence) {
-        LocalDate createdDate = occurrence.getCreatedDate().toLocalDate();
-        LocalDate automaticModelRunsStartDate =
-                occurrence.getDiseaseGroup().getAutomaticModelRunsStartDate().toLocalDate();
-        LocalDate latest = (automaticModelRunsStartDate.isAfter(createdDate)) ?
-                automaticModelRunsStartDate : createdDate;
-        return latest.plusWeeks(1);
+    private LocalDate getComparisonDate(DiseaseOccurrence o) {
+        LocalDate createdDate = o.getCreatedDate().toLocalDate();
+        LocalDate automaticModelRunsStartDate = o.getDiseaseGroup().getAutomaticModelRunsStartDate().toLocalDate();
+        return getLatest(createdDate, automaticModelRunsStartDate).plusWeeks(1);
+    }
+
+    private LocalDate getLatest(LocalDate createdDate, LocalDate automaticModelRunsStartDate) {
+        return (automaticModelRunsStartDate.isAfter(createdDate)) ? automaticModelRunsStartDate : createdDate;
     }
 
     private void logResults(int numOriginallyInValidation, int numRemovedFromValidator) {
