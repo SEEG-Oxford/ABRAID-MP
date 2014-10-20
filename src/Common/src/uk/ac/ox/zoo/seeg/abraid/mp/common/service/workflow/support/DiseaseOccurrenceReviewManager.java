@@ -75,7 +75,8 @@ public class DiseaseOccurrenceReviewManager {
     }
 
     private Set<DiseaseOccurrence> getAllReviewedOccurrences(int diseaseGroupId) {
-        List<DiseaseOccurrenceReview> reviews = diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
+        List<DiseaseOccurrenceReview> reviews =
+                diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
         return new HashSet<>(extract(reviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
