@@ -328,7 +328,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     @Test
     public void calculateNewFinalWeightingsEnsuresOccurrencesHaveAnEnvironmentalSuitabilityIfACompletedModelRunExists() {
         // Arrange
-        createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "2014-07-01", "2014-07-04");
+        createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "host", "2014-07-01", "2014-07-04");
         int diseaseGroupId = 87;
         double locationResolutionWeighting = 0.3;
         DiseaseOccurrence occ = new DiseaseOccurrence(1,
@@ -540,9 +540,9 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         return expert;
     }
 
-    private void createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestDate,
-                                           String responseDate) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, new DateTime(requestDate));
+    private void createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestSever,
+                                String requestDate, String responseDate) {
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestSever, new DateTime(requestDate));
         modelRun.setStatus(status);
         modelRun.setResponseDate(new DateTime(responseDate));
         modelRunService.saveModelRun(modelRun);

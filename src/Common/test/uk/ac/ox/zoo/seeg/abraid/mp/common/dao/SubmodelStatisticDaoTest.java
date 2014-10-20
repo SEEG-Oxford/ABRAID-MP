@@ -94,7 +94,7 @@ public class SubmodelStatisticDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     private ModelRun createModelRun(String name) {
-        ModelRun run = new ModelRun(name, 87, DateTime.now());
+        ModelRun run = new ModelRun(name, 87, "host", DateTime.now());
         modelRunDao.save(run);
         return run;
     }

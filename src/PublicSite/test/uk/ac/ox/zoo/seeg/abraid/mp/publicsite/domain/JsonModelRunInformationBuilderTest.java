@@ -30,7 +30,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenInProgress() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
+        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
@@ -43,7 +43,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenCompletedWithNoBatching() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
+        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
@@ -58,7 +58,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenCompletedWithBatching() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
+        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
         modelRun.setBatchEndDate(new DateTime("2006-12-31T04:05:06"));
@@ -77,7 +77,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenFailed() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
+        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.FAILED);
         modelRun.setResponseDate(new DateTime("2014-07-02T13:08:07"));
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
@@ -270,7 +270,7 @@ public class JsonModelRunInformationBuilderTest {
 
         ModelRun modelRun = null;
         if (previousBatchEndDate != null) {
-            modelRun = new ModelRun("name", 87, new DateTime("2014-07-01T08:07:06"));
+            modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
             modelRun.setBatchEndDate(getDate(previousBatchEndDate));
             modelRun.setBatchingCompletedDate(now.minusHours(2));
         }

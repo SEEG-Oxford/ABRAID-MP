@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,14 @@ public class ModelRunRequester {
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
     private static final String REQUEST_LOG_MESSAGE =
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
+    private URI modelWrapperUrl;
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
-                             ModelRunService modelRunService) {
+                             ModelRunService modelRunService, URI modelWrapperUrl) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
+        this.modelWrapperUrl = modelWrapperUrl;
     }
 
     /**
@@ -57,8 +60,8 @@ public class ModelRunRequester {
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
                 JsonModelRunResponse response =
-                        modelWrapperWebService.startRun(diseaseGroup, occurrencesForModelRun, diseaseExtent);
-                handleModelRunResponse(response, diseaseGroupId, requestDate, batchEndDate);
+                        modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup, occurrencesForModelRun, diseaseExtent);
+                handleModelRunResponse(response, diseaseGroupId, requestDate, modelWrapperUrl.getHost(), batchEndDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
@@ -73,13 +76,13 @@ public class ModelRunRequester {
     }
 
     private void handleModelRunResponse(JsonModelRunResponse response, int diseaseGroupId, DateTime requestDate,
-                                        DateTime batchEndDate) {
+                                        String requestServer, DateTime batchEndDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
             throw new ModelRunRequesterException(message);
         } else {
-            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
+            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestServer, requestDate);
             modelRun.setBatchEndDate(batchEndDate);
             modelRunService.saveModelRun(modelRun);
         }

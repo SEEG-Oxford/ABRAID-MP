@@ -107,7 +107,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     }
 
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, "host", DateTime.now());
         modelRun.setStatus(status);
         modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);

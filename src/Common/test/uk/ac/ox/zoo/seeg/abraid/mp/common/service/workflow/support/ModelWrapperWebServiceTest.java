@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,23 +28,23 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelWrapperWebServiceTest {
-    private static final String ROOT_URL = "http://localhost:8080/ModelWrapper";
+    private static final URI ROOT_URL = URI.create("http://localhost:8080/ModelWrapper");
 
     @Test
     public void startRunWithTypicalParameters() {
         // Arrange
-        String url = "http://localhost:8080/ModelWrapper/model/run";
+        String expectedUrl = "http://localhost:8080/ModelWrapper/model/run";
         String modelRunName = "foo_2014-04-24-10-50-27_cd0efc75-42d3-4d96-94b4-287e28fbcdac";
         String requestJson = getRequestJson();
         String responseJson = String.format("{\"modelRunName\":\"%s\"}", modelRunName);
-        ModelWrapperWebService webService = getModelWrapperWebService(url, requestJson, responseJson);
+        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, requestJson, responseJson);
         DiseaseGroup diseaseGroup = getDiseaseGroup();
         List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrences(diseaseGroup);
         Map<Integer, Integer> extentWeightings = getExtentWeightings();
         JsonModelRunResponse expectedResponse = new JsonModelRunResponse(modelRunName, null);
 
         // Act
-        JsonModelRunResponse actualResponse = webService.startRun(diseaseGroup, diseaseOccurrences, extentWeightings);
+        JsonModelRunResponse actualResponse = webService.startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings);
 
         // Assert
         assertThat(actualResponse).isEqualTo(expectedResponse);
@@ -60,7 +61,7 @@ public class ModelWrapperWebServiceTest {
         Map<Integer, Integer> extentWeightings = getExtentWeightings();
 
         // Act
-        catchException(webService).startRun(diseaseGroup, diseaseOccurrences, extentWeightings);
+        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
@@ -78,7 +79,7 @@ public class ModelWrapperWebServiceTest {
         Map<Integer, Integer> extentWeightings = getExtentWeightings();
 
         // Act
-        catchException(webService).startRun(diseaseGroup, diseaseOccurrences, extentWeightings);
+        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
@@ -91,7 +92,7 @@ public class ModelWrapperWebServiceTest {
     }
 
     private ModelWrapperWebService getModelWrapperWebService(WebServiceClient client) {
-        ModelWrapperWebService webService = new ModelWrapperWebService(client, new AbraidJsonObjectMapper(), ROOT_URL);
+        ModelWrapperWebService webService = new ModelWrapperWebService(client, new AbraidJsonObjectMapper());
         return webService;
     }
 
