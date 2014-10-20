@@ -36,7 +36,8 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     private static final String MODEL_RUN_REQUEST_QUERY = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
             "where d.diseaseGroup.id = :diseaseGroupId " +
-            "and d.isValidated = true ";
+            "and d.isValidated = true " +
+            "and d.location.precision <> 'COUNTRY' ";
 
     private static final String MODEL_RUN_REQUEST_FINAL_WEIGHTING_ABOVE_ZERO_CLAUSE =
             "and d.finalWeighting > 0 ";

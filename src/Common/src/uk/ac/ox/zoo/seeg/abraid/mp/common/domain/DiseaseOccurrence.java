@@ -78,10 +78,11 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesForTrainingPredictor",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.expertWeighting is not null " +
                         "and d.isValidated = true " +
+                        "and d.location.precision <> 'COUNTRY' " +
                         "and d.distanceFromDiseaseExtent is not null " +
                         "and d.environmentalSuitability is not null " +
+                        "and d.expertWeighting is not null " +
                         "and d.createdDate > :cutOffDate"
         )
 })

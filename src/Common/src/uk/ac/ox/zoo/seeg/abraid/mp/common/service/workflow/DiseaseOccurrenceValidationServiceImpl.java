@@ -4,6 +4,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
@@ -44,7 +45,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             setDefaultParameters(occurrence);
             if (isGoldStandard) {
                 addGoldStandardParameters(occurrence);
-            } else if (automaticModelRunsEnabled(occurrence)) {
+            } else if (automaticModelRunsEnabled(occurrence) && !isCountryPoint(occurrence)) {
                 addValidationParameters(occurrence, null);
             }
             return true;
@@ -71,12 +72,6 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         }
     }
 
-    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
-        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-        findAndSetMachineWeightingAndIsValidated(occurrence);
-    }
-
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
         return (occurrence != null) && (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
     }
@@ -89,10 +84,6 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setValidated(true);
     }
 
-    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
-        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
-    }
-
     private void addGoldStandardParameters(DiseaseOccurrence occurrence) {
         // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
         // final weightings to 1 and isValidated to true.
@@ -100,6 +91,21 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
         occurrence.setValidated(true);
     }
+
+    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
+    }
+
+    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
+        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
+    }
+
+    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
+        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+        findAndSetMachineWeightingAndIsValidated(occurrence);
+    }
+
 
     private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {

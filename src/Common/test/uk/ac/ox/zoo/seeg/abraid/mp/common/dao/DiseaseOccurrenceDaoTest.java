@@ -396,6 +396,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
             assertThat(occurrence.isValidated()).isTrue();
             assertThat(occurrence.getFinalWeighting()).isGreaterThan(0);
+            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
         }
 
         for (int i = 0; i < occurrences.size() - 1; i++) {
