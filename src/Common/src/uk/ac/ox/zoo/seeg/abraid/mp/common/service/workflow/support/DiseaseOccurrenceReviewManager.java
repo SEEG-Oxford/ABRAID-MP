@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
@@ -27,19 +28,19 @@ public class DiseaseOccurrenceReviewManager {
 
     /**
      * Update the value of the isValidated flag according to the length of time it has been on the DataValidator for
-     * review by the experts.
+     * review by the experts. If we are during disease group set up, the occurrence should be removed from DataValidator
+     * immediately, irrespective of time spent in review.
      * @param diseaseGroupId The id of the disease group this model run preparation is for.
      * @param modelRunPrepDate The official start time of the model run preparation tasks.
-     * @param alwaysRemoveFromValidator True if occurrences in validation should always be removed from the
      * DataValidator (instead of ensuring they have been on for a certain period of time), otherwise false.
      */
-    public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate,
-                                                         boolean alwaysRemoveFromValidator) {
+    public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate) {
         int numRemovedFromValidator = 0;
 
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
         for (DiseaseOccurrence occurrence : occurrences) {
-            if (alwaysRemoveFromValidator || occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
+            if (duringDiseaseSetUp(occurrence.getDiseaseGroup()) ||
+                    occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
                 occurrence.setValidated(true);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 numRemovedFromValidator++;
@@ -47,6 +48,10 @@ public class DiseaseOccurrenceReviewManager {
         }
 
         logResults(occurrences.size(), numRemovedFromValidator);
+    }
+
+    private boolean duringDiseaseSetUp(DiseaseGroup diseaseGroup) {
+        return diseaseGroup.getAutomaticModelRunsStartDate() == null;
     }
 
     /**

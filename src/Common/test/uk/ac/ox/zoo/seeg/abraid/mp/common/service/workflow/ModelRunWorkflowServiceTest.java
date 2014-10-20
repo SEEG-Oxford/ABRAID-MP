@@ -69,8 +69,7 @@ public class ModelRunWorkflowServiceTest {
         // Assert
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(lastModelRunPrepDate),
                 eq(diseaseGroupId));
-        verify(reviewManager).updateDiseaseOccurrenceIsValidatedValues(eq(diseaseGroupId), eq(DateTime.now()),
-                eq(true));
+        verify(reviewManager).updateDiseaseOccurrenceIsValidatedValues(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchEndDate));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
@@ -98,8 +97,7 @@ public class ModelRunWorkflowServiceTest {
         // Assert
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(lastModelRunPrepDate),
                 eq(diseaseGroupId));
-        verify(reviewManager).updateDiseaseOccurrenceIsValidatedValues(eq(diseaseGroupId), eq(DateTime.now()),
-                eq(false));
+        verify(reviewManager).updateDiseaseOccurrenceIsValidatedValues(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate),
                 eq(false));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class));
@@ -127,8 +125,7 @@ public class ModelRunWorkflowServiceTest {
 
         // Assert
         verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(any(DateTime.class), anyInt());
-        verify(reviewManager, never()).updateDiseaseOccurrenceIsValidatedValues(anyInt(), any(DateTime.class),
-                anyBoolean());
+        verify(reviewManager, never()).updateDiseaseOccurrenceIsValidatedValues(anyInt(), any(DateTime.class));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(true));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
