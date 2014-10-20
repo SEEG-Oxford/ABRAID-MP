@@ -55,18 +55,28 @@ public class DiseaseOccurrenceReviewManager {
     }
 
     /**
-     * The occurrence's created date signifies when it was first available to be reviewed by experts on the
-     * DataValidator. If this is more than one week ago, comparing dates only, we deem it to be sufficiently reviewed
-     * and set the isValidated flag to true, so that it will no longer be shown on the DataValidator.
-     * @param occ The disease occurrence.
+     * Whichever date is latest out of the occurrence's created date and its disease group's automatic model runs start
+     * date signifies when it was first available to be reviewed by experts on the DataValidator. If this is more than
+     * one week ago, comparing dates only, we deem it to be sufficiently reviewed and set the isValidated flag to true,
+     * so that it will no longer be shown on the DataValidator.
+     * @param occurrence The disease occurrence.
      * @param modelRunPrepDateTime The date (incl. time) of the current model run
      * @return The new value of the isValidated property.
      */
-    private boolean occurrenceHasBeenInReviewForMoreThanAWeek(DiseaseOccurrence occ, DateTime modelRunPrepDateTime) {
-        LocalDate createdDate = occ.getCreatedDate().toLocalDate();
-        LocalDate comparisonDate = createdDate.plusWeeks(1);
+    private boolean occurrenceHasBeenInReviewForMoreThanAWeek(DiseaseOccurrence occurrence,
+                                                              DateTime modelRunPrepDateTime) {
+        LocalDate comparisonDate = getComparisonDate(occurrence);
         LocalDate modelRunPrepDate = modelRunPrepDateTime.toLocalDate();
         return !comparisonDate.isAfter(modelRunPrepDate);
+    }
+
+    private LocalDate getComparisonDate(DiseaseOccurrence occurrence) {
+        LocalDate createdDate = occurrence.getCreatedDate().toLocalDate();
+        LocalDate automaticModelRunsStartDate =
+                occurrence.getDiseaseGroup().getAutomaticModelRunsStartDate().toLocalDate();
+        LocalDate latest = (automaticModelRunsStartDate.isAfter(createdDate)) ?
+                automaticModelRunsStartDate : createdDate;
+        return latest.plusWeeks(1);
     }
 
     private void logResults(int numOriginallyInValidation, int numRemovedFromValidator) {
