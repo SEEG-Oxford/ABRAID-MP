@@ -33,7 +33,6 @@ source $ABRAID_DEPLOYMENT_CONFIG_FILE
 : ${HEALTH_MAP_KEY:?"Variable must be set"}
 : ${MW_DRY_RUN:?"Variable must be set"}
 : ${ABRAID_SUPPORT_PATH:?"Variable must be set"}
-: ${MW_URL:?"Variable must be set"}
 : ${MAIN_URL:?"Variable must be set"}
 : ${SHAPEFILE_SOURCE:?"Variable must be set"}
 : ${RASTER_SOURCE:?"Variable must be set"}

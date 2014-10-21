@@ -7,8 +7,18 @@ unzip ../../ABRAID-MP_ModelOutputHandler.war -d /var/lib/tomcat7/webapps/modelou
 echo "jdbc.url=jdbc:postgresql://$DB_ADDRESS:$DB_PORT/$DB_NAME" > /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
-echo "model.wrapper.host=$MW_URL" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "model.wrapper.api.key=key-to-access-model-wrapper" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "model.wrapper.protocol=http" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+let i=0
+MW_URLS=""
+for URL_VAR in ${!MW_URL_*}; do
+    let i++
+    MW_URLS="$MW_URLS \${host${i}.model.wrapper.root.url}"
+    echo "host${i}.model.wrapper.host=${!URL_VAR}" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+    echo "host${i}.model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper.api.key}@\${host${i}.model.wrapper.host}\${model.wrapper.path}" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+done
+echo "model.wrapper.instance.list=${MW_URLS/ }" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "geoserver.protocol=http" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "geoserver.username=admin" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "geoserver.password=$GEOSERVER_ADMIN_PASSWORD_RAW" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
@@ -53,9 +63,16 @@ echo "jdbc.username=$PG_ABRAID_USER" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/co
 echo "jdbc.password=$PG_ABRAID_PASS" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "model.wrapper.api.key=key-to-access-model-wrapper" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "model.wrapper.protocol=http" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
-echo "model.wrapper.host=$MW_URL" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
-echo "model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper.api.key}@\${model.wrapper.host}\${model.wrapper.path}" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+let i=0
+MW_URLS=""
+for URL_VAR in ${!MW_URL_*}; do
+    let i++
+    MW_URLS="$MW_URLS \${host${i}.model.wrapper.root.url}"
+    echo "host${i}.model.wrapper.host=${!URL_VAR}" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+    echo "host${i}.model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper.api.key}@\${host${i}.model.wrapper.host}\${model.wrapper.path}" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+done
+echo "model.wrapper.instance.list=${MW_URLS/ }" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "abraid.base.dir=$ABRAID_SUPPORT_PATH" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "abraid.raster.dir=\${abraid.base.dir}/results/rasters" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "machinelearning.host=localhost:8000" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
@@ -77,8 +94,16 @@ sed -i "s/healthmap\.authorizationCode\=.*/healthmap.authorizationCode=$HEALTH_M
 sed -i "s/geonames\.username\=.*/geonames.username=$GEONAMES_USER/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/model\.wrapper\.api\.key\=.*/model.wrapper.api.key=key-to-access-model-wrapper/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/model\.wrapper\.protocol\=.*/model.wrapper.protocol=http/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
-sed -i "s/model\.wrapper\.host\=.*/model.wrapper.host=$MW_URL/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/model\.wrapper\.path\=.*/model.wrapper.path=\//g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+let i=0
+MW_URLS=""
+for URL_VAR in ${!MW_URL_*}; do
+    let i++
+    MW_URLS="$MW_URLS \${host${i}.model.wrapper.root.url}"
+    echo "host${i}.model.wrapper.host=${!URL_VAR}" >> $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+    echo "host${i}.model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper.api.key}@\${host${i}.model.wrapper.host}\${model.wrapper.path}" >> $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+done
+sed -i "s/model\.wrapper\.instance\.list=${MW_URLS/ }/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/machinelearning\.host\=.*/machinelearning.host=localhost:8000" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/machinelearning\.path\=.*/machinelearning.path=\//g" >> $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/machinelearning\.root\.url\=.*/machinelearning.root.url=http\:\/\/\$\{machinelearning.host\}\${machinelearning.path}/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
