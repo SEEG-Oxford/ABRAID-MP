@@ -9,10 +9,14 @@ import java.nio.file.Paths;
  * Builds a raster file location.
  * Copyright (c) 2014 University of Oxford
  */
-public class RasterFileBuilder {
+public class RasterFilePathFactory {
+    private static final String MEAN_PREDICTION_RASTER_TYPE = "mean";
+    private static final String PREDICTION_UNCERTAINTY_RASTER_TYPE = "uncertainty";
+    private static final String FILENAME_FORMAT = "%s_%s.tif";
+
     private File rasterFileDirectory;
 
-    public RasterFileBuilder(File rasterFileDirectory) {
+    public RasterFilePathFactory(File rasterFileDirectory) {
         this.rasterFileDirectory = rasterFileDirectory;
     }
 
@@ -22,7 +26,7 @@ public class RasterFileBuilder {
      * @return A mean prediction raster file location.
      */
     public File getMeanPredictionRasterFile(ModelRun modelRun) {
-        return getRasterFile(modelRun, "mean");
+        return getRasterFile(modelRun, MEAN_PREDICTION_RASTER_TYPE);
     }
 
     /**
@@ -31,11 +35,11 @@ public class RasterFileBuilder {
      * @return A prediction uncertainty raster file location.
      */
     public File getPredictionUncertaintyRasterFile(ModelRun modelRun) {
-        return getRasterFile(modelRun, "uncertainty");
+        return getRasterFile(modelRun, PREDICTION_UNCERTAINTY_RASTER_TYPE);
     }
 
     private File getRasterFile(ModelRun modelRun, String type) {
-        String basename = modelRun.getName() + "_" + type;
-        return Paths.get(rasterFileDirectory.getAbsolutePath(), basename + ".tif").toFile();
+        String fileName = String.format(FILENAME_FORMAT, modelRun.getName(), type);
+        return Paths.get(rasterFileDirectory.getAbsolutePath(), fileName).toFile();
     }
 }

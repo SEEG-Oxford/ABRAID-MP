@@ -13,7 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
 import java.io.File;
 
@@ -23,15 +23,15 @@ import java.io.File;
  */
 public class EnvironmentalSuitabilityHelper {
     private ModelRunService modelRunService;
-    private RasterFileBuilder rasterFileBuilder;
+    private RasterFilePathFactory rasterFilePathFactory;
 
     private static final Logger LOGGER = Logger.getLogger(EnvironmentalSuitabilityHelper.class);
     private static final int RASTER_NO_DATA_VALUE = -9999;
     private static final String CANNOT_FIND_FILE_MESSAGE = "Cannot find raster file \"%s\"";
 
-    public EnvironmentalSuitabilityHelper(ModelRunService modelRunService, RasterFileBuilder rasterFileBuilder) {
+    public EnvironmentalSuitabilityHelper(ModelRunService modelRunService, RasterFilePathFactory rasterFilePathFactory) {
         this.modelRunService = modelRunService;
-        this.rasterFileBuilder = rasterFileBuilder;
+        this.rasterFilePathFactory = rasterFilePathFactory;
     }
 
     /**
@@ -45,7 +45,7 @@ public class EnvironmentalSuitabilityHelper {
     public GridCoverage2D getLatestMeanPredictionRaster(DiseaseGroup diseaseGroup) {
         ModelRun modelRun = modelRunService.getLastCompletedModelRun(diseaseGroup.getId());
         if (modelRun != null) {
-            File rasterFile = rasterFileBuilder.getMeanPredictionRasterFile(modelRun);
+            File rasterFile = rasterFilePathFactory.getMeanPredictionRasterFile(modelRun);
             return readRasterFile(rasterFile);
         }
         return null;

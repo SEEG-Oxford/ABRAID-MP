@@ -14,7 +14,7 @@
         <constructor-arg value="${abraid.base.dir}/results/rasters" />
     </bean>
 
-    <bean id="rasterFileBuilder" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder" autowire="constructor"/>
+    <bean id="rasterFilePathFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory" autowire="constructor"/>
 
     <bean id="webServiceClient" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient" autowire="constructor">
         <property name="connectTimeoutMilliseconds" value="${webserviceclient.connectTimeoutMilliseconds}"/>

@@ -10,16 +10,16 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests the RasterFileBuilder class.
+ * Tests the RasterFilePathFactory class.
  * Copyright (c) 2014 University of Oxford
  */
-public class RasterFileBuilderTest {
-    private RasterFileBuilder builder;
+public class RasterFilePathFactoryTest {
+    private RasterFilePathFactory builder;
 
     @Before
     public void setUp() {
         File root = new File(getCurrentDirectory());
-        builder = new RasterFileBuilder(root);
+        builder = new RasterFilePathFactory(root);
     }
 
     @Test

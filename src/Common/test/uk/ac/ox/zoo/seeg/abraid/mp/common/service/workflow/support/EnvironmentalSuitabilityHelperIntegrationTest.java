@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.io.File;
@@ -29,7 +29,8 @@ import static org.mockito.Mockito.when;
         locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
 public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSpringIntegrationTests {
     // Parameters taken from the test raster files
-    private static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
+    private static final String LARGE_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
     private static final double LARGE_RASTER_COLUMNS = 720;
     private static final double LARGE_RASTER_ROWS = 240;
     private static final double LARGE_RASTER_XLLCORNER = -180;
@@ -49,7 +50,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
 
     @Autowired
     @ReplaceWithMock
-    private RasterFileBuilder rasterFileBuilder;
+    private RasterFilePathFactory rasterFilePathFactory;
 
     @Before
     public void setUp() {
@@ -114,7 +115,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     }
 
     private void mockGetRasterFileForModelRun(ModelRun modelRun) throws Exception {
-        when(rasterFileBuilder.getMeanPredictionRasterFile(same(modelRun)))
+        when(rasterFilePathFactory.getMeanPredictionRasterFile(same(modelRun)))
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 

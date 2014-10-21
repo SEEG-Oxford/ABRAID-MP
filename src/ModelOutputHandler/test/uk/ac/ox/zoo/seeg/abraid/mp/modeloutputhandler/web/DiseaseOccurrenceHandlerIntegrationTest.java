@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
@@ -15,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 /**
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.when;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringIntegrationTests {
     private static final String LARGE_RASTER_FILENAME =
-            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
 
     @Autowired
     private ModelRunService modelRunService;
@@ -55,6 +56,10 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     @Autowired
     @ReplaceWithMock
     private MachineWeightingPredictor machineWeightingPredictor;
+
+    @Autowired
+    @ReplaceWithMock
+    private RasterFilePathFactory rasterFilePathFactory;
 
     @Test
     public void handleFirstBatch() throws Exception {
@@ -135,14 +140,16 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchEndDate,
                                                DateTime batchingCompletionDate) throws Exception {
         String name = Double.toString(Math.random());
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setResponseDate(DateTime.now());
         modelRun.setBatchEndDate(batchEndDate);
         modelRun.setBatchingCompletedDate(batchingCompletionDate);
         modelRunService.saveModelRun(modelRun);
         flushAndClear();
 
-        byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
+        when(rasterFilePathFactory.getMeanPredictionRasterFile(eq(modelRun)))
+                .thenReturn(new File(LARGE_RASTER_FILENAME));
         return modelRun;
     }
 

@@ -18,7 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFileBuilder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 
 import java.io.File;
@@ -66,13 +66,13 @@ public class MainHandler {
 
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
-    private final RasterFileBuilder rasterFileBuilder;
+    private final RasterFilePathFactory rasterFilePathFactory;
 
     public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver,
-                       RasterFileBuilder rasterFileBuilder) {
+                       RasterFilePathFactory rasterFilePathFactory) {
         this.modelRunService = modelRunService;
         this.geoserver = geoserver;
-        this.rasterFileBuilder = rasterFileBuilder;
+        this.rasterFilePathFactory = rasterFilePathFactory;
     }
 
     /**
@@ -198,7 +198,7 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
-                File file = rasterFileBuilder.getMeanPredictionRasterFile(modelRun);
+                File file = rasterFilePathFactory.getMeanPredictionRasterFile(modelRun);
                 saveRaster(file, raster);
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(file);
@@ -213,7 +213,7 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-                File file = rasterFileBuilder.getPredictionUncertaintyRasterFile(modelRun);
+                File file = rasterFilePathFactory.getPredictionUncertaintyRasterFile(modelRun);
                 saveRaster(file, raster);
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(file);
