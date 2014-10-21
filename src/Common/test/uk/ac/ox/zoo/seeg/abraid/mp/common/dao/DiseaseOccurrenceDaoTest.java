@@ -87,7 +87,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustOnlyReturnSpecifiedDiseaseGroup() {
         // Arrange
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(274016);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
@@ -150,7 +150,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Boolean isValidated) {
-        Location location = locationDao.getById(6);
+        Location location = locationDao.getById(80);
         Alert alert = alertDao.getById(212855);
         DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, isValidated, 0.7, new DateTime());
         diseaseOccurrenceDao.save(occurrence);
@@ -563,7 +563,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
-        Location location = locationDao.getById(12);
+        Location location = locationDao.getById(80);
         Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
         Alert alert = new Alert();
         alert.setFeed(feed);
