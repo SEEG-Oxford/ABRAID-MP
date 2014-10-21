@@ -19,7 +19,7 @@
 19		Anthrax	SINGLE						1		400				t	t
 20		Arenaviridae	MICROCLUSTER						0.5		400				t	t
 21		Argentine hemorrhagic fever (Junin virus)	SINGLE						1		400				t	t
-22		Ascariasis	SINGLE	ascariasis	ascariasis	ascar	t	1	1		1000	20	10	20	t	t
+22		Ascariasis	SINGLE	ascariasis	ascariasis	ascar	t	1	1	500	1000	20	10	20	t	t
 23		Aspergillosis	SINGLE						1		400				t	t
 24		Astrakhan fever	SINGLE						1		400				t	t
 25		Avian influenza virus subtype H5N1	SINGLE						1		400				t	t
@@ -61,7 +61,7 @@
 61		Chlamydia infections - miscellaneous	SINGLE						1		400				t	t
 62		Chlamydia pneumoniae infection	SINGLE						1		400				t	t
 63		Cholecystitis and cholangitis	SINGLE						1		400				t	t
-64		Cholera	SINGLE	cholera	cholera	chol	t	3	1		500	45	10	20	t	t
+64		Cholera	SINGLE	cholera	cholera	chol	t	3	1	500	500	45	10	20	t	t
 65		Chromomycosis	SINGLE						1		400				t	t
 66		Chronic fatigue syndrome	SINGLE						1		400				t	t
 67		Chronic meningococcemia	SINGLE						1		400				t	t
@@ -76,7 +76,7 @@
 76		Common cold	SINGLE						1		400				t	t
 77		Conjunctiviitis - viral	SINGLE						1		400				t	t
 78		Creutzfeldt-Jakob disease	SINGLE						1		400				t	t
-79		Crimean-Congo hemorrhagic fever	SINGLE	Crimean-Congo haemorrhagic fever	CCHF	cchf	t	2	1		600	10	10	5	t	t
+79		Crimean-Congo hemorrhagic fever	SINGLE	Crimean-Congo haemorrhagic fever	CCHF	cchf	t	2	1	500	600	10	10	5	t	t
 80		Cryptococcosis	SINGLE						1		400				t	t
 81		Cryptosporidosis	SINGLE						1		400				t	t
 82		Cutaneous larva migrans	SINGLE						1		400				t	t
@@ -84,7 +84,7 @@
 84		Cysticercosis	SINGLE						1		400				t	t
 85		Cytomegalovirus infection (Human herpesvirus 5)	SINGLE						1		400				t	t
 86		Deer tick encephalitis	SINGLE						1		400				t	t
-87		Dengue	SINGLE	dengue	dengue	deng	f	4	1	1	500	35	10	15	t	t
+87		Dengue	SINGLE	dengue	dengue	deng	f	4	1	500	500	35	10	15	t	t
 88		Dermatophytosis	SINGLE						1		400				t	t
 89		Dicrocoeliasis	SINGLE						1		400				t	t
 90		Dientamoeba fragilis infection	SINGLE						1		400				t	t
@@ -93,7 +93,7 @@
 93		Diphyllobothriasis	SINGLE						1		400				t	t
 94		Dipylidiasis	SINGLE						1		400				t	t
 95		Dirofilariasis	SINGLE						1		400				t	t
-96		Dracunculiasis (Guinea worm)	SINGLE	Guinea worm	Guinea worm	gwd	f	5	1		1000	10	10	8	t	t
+96		Dracunculiasis (Guinea worm)	SINGLE	Guinea worm	Guinea worm	gwd	f	5	1	500	1000	10	10	8	t	t
 97		Eastern equine encephalitis	SINGLE						1		400				t	t
 98		Ebola	SINGLE						1		400				t	t
 99		Echinococcosis - American polycystic	SINGLE						1		400				t	t
@@ -117,10 +117,10 @@
 117		Escherichia coli diarrhoea	SINGLE						1		400				t	t
 118		Fascioliasis	SINGLE						1		400				t	t
 119		Fasciolopsiasis	SINGLE						1		400				t	t
-120		Filariasis	MICROCLUSTER	lymphatic filariasis	lymphatic filariasis	lf	f	11	0.5		400				t	t
-121		Filariasis - Bancroftian	SINGLE	<i>Wuchereria bancrofti</i>	Wuchereria bancrofti	lf-wb	f	11	1		1000	20	10	10	t	t
-122		Filariasis - Brugia malayi	SINGLE	<i>Bugia major</i>	Bugia major	lf-bm	f	11	1		1000	10			f	t
-123		Filariasis - Brugia timori	SINGLE	<i>Brugia timori</i>	Brugia timori	lf-bt	f	11	1		1000	1			f	t
+120		Filariasis	MICROCLUSTER	lymphatic filariasis	lymphatic filariasis	lf	f	11	0.5	500	400				t	t
+121		Filariasis - Bancroftian	SINGLE	<i>Wuchereria bancrofti</i>	Wuchereria bancrofti	lf-wb	f	11	1	500	1000	20	10	10	t	t
+122		Filariasis - Brugia malayi	SINGLE	<i>Bugia major</i>	Bugia major	lf-bm	f	11	1	500	1000	10			f	t
+123		Filariasis - Brugia timori	SINGLE	<i>Brugia timori</i>	Brugia timori	lf-bt	f	11	1	500	1000	1			f	t
 124		Flinders Island spotted fever	SINGLE						1		400				t	t
 125		Fungal infection - invasive	SINGLE						1		400				t	t
 126		Fungus_environment	CLUSTER						0		400				t	t
@@ -150,8 +150,8 @@
 151		Heterophyid infections	SINGLE						1		400				t	t
 152		Histoplasmosis	SINGLE						1		400				t	t
 153		Histoplasmosis - African	SINGLE						1		400				t	t
-154		HIV	SINGLE	HIV	HIV	HIV	t	6	1		400				t	t
-157		Hookworm	SINGLE	hookworm	hookworm	hkwm	t	7	1		1000				t	t
+154		HIV	SINGLE	HIV	HIV	HIV	t	6	1	500	400				t	t
+157		Hookworm	SINGLE	hookworm	hookworm	hkwm	t	7	1	500	1000				t	t
 158		hospital	CLUSTER						0		400				t	t
 159		Human papillomavirus	SINGLE						1		400				t	t
 160		Hymenolepis diminuta infection	SINGLE						1		400				t	t
@@ -166,7 +166,7 @@
 170		Intracranial venous thrombosis	SINGLE						1		400				t	t
 171		Isosporiasis	SINGLE						1		400				t	t
 172		Israeli spotted fever	SINGLE						1		400				t	t
-173		Japanese encephalitis	SINGLE	Japanese encephalitis	Japanese encephalitis	je	t	8	1		600	20			f	t
+173		Japanese encephalitis	SINGLE	Japanese encephalitis	Japanese encephalitis	je	t	8	1	500	600	20			f	t
 174		Japanese spotted fever	SINGLE						1		400				t	t
 175		Karelian fever (see Sindbis)	SINGLE						1		400				t	t
 176		Kawasaki disease	SINGLE						1		400				t	t
@@ -181,21 +181,21 @@
 185		Laryngotracheobronchitis-related	MICROCLUSTER						0.5		400				t	t
 186		Lassa fever	SINGLE						1		400				t	t
 187		Legionellosis	SINGLE						1		400				t	t
-188		Leishmaniases	MICROCLUSTER	leishmaniases	leishmaniases	leish	t	9	0.5		400				t	t
-189		Leishmaniasis - cutaneous/mucosal, New World	SINGLE	cutaneous leishmaniasis (New World)	cutaneous leishmaniasis (NW)	nwcl	f	9	1		1000	15			t	t
-190		Leishmaniasis - cutaneous/mucosal, Old World	SINGLE	cutaneous leishmaniasis (Old World)	cutaneous leishmaniasis (OW)	owcl	f	9	1		1000	25	10	15	t	t
-191		Leishmaniasis - visceral	SINGLE	visceral leishmaniasis	visceral leishmaniasis	vl	t	9	1		1000				t	t
+188		Leishmaniases	MICROCLUSTER	leishmaniases	leishmaniases	leish	t	9	0.5	500	400				t	t
+189		Leishmaniasis - cutaneous/mucosal, New World	SINGLE	cutaneous leishmaniasis (New World)	cutaneous leishmaniasis (NW)	nwcl	f	9	1	500	1000	15			t	t
+190		Leishmaniasis - cutaneous/mucosal, Old World	SINGLE	cutaneous leishmaniasis (Old World)	cutaneous leishmaniasis (OW)	owcl	f	9	1	500	1000	25	10	15	t	t
+191		Leishmaniasis - visceral	SINGLE	visceral leishmaniasis	visceral leishmaniasis	vl	t	9	1	500	1000				t	t
 192		Leprosy	SINGLE						1		400				t	t
 193		Leptospirosis	SINGLE						1		400				t	t
 194		Listeriosis	SINGLE						1		400				t	t
 195		Liver abscess - bacterial	SINGLE						1		400				t	t
 196		Lobomycosis	SINGLE						1		400				t	t
-197		Loiasis	SINGLE	loa loa	loa loa	loa	f	10	1		1000	10	10	8	t	t
+197		Loiasis	SINGLE	loa loa	loa loa	loa	f	10	1	500	1000	10	10	8	t	t
 198		Louping ill	SINGLE						1		400				t	t
 199		Lyme disease	SINGLE						1		400				t	t
 200		Lymphocytic choriomeningitis	SINGLE						1		400				t	t
 201		Lymphogranuloma venereum	SINGLE						1		400				t	t
-202		Malarias	MICROCLUSTER	malaria (5 species)	malaria (5 species)	mal	f	12	0.5		400				t	t
+202		Malarias	MICROCLUSTER	malaria (5 species)	malaria (5 species)	mal	f	12	0.5	500	400				t	t
 203		Malignant otitis externa	SINGLE						1		400				t	t
 204		Mammomonogamiasis	SINGLE						1		400				t	t
 205		Mansonelliasis - M. ozzardi	SINGLE						1		400				t	t
@@ -204,7 +204,7 @@
 208		Marburg virus disease	SINGLE						1		400				t	t
 209		Mayaro	SINGLE						1		400				t	t
 210		Measles	SINGLE						1		400				t	t
-211		Melioidosis	SINGLE	melioidosis	melioidosis	melio	t	13	1		500	5	10	3	t	t
+211		Melioidosis	SINGLE	melioidosis	melioidosis	melio	t	13	1	500	500	5	10	3	t	t
 212		Meningitis - aseptic (viral)	SINGLE						1		400				t	t
 214		Meningitis - bacterial 	SINGLE						1		400				t	t
 215		Metagonimiasis (see Heterophyids)	SINGLE						1		400				t	t
@@ -232,7 +232,7 @@
 237		Ockelbo disease (see Sindbis)	SINGLE						1		400				t	t
 238		Oesophagostomiasis	SINGLE						1		400				t	t
 239		Omsk hemorrhagic fever	SINGLE						1		400				t	t
-240		Onchocerciasis	SINGLE	onchocerciasis	onchocerciasis	oncho	f	14	1		1000	20	10	10	t	t
+240		Onchocerciasis	SINGLE	onchocerciasis	onchocerciasis	oncho	f	14	1	500	1000	20	10	10	t	t
 241		O'nyong nyong	SINGLE						1		400				t	t
 242		Opisthorchiasis	SINGLE						1		400				t	t
 243		Orbital and eye infections	SINGLE						1		400				t	t
@@ -241,11 +241,11 @@
 246		Oropouche virus	SINGLE						1		400				t	t
 247		Osteomyelitis	SINGLE						1		400				t	t
 248		Otitis media	SINGLE						1		400				t	t
-249		P. falciparum	SINGLE	<i>Plasmodium falciparum</i> malaria	Plasmodium falciparum malaria	malpf	f	12	1		400	40	10	20	t	t
-250		P. knowlesi	SINGLE	<i>Plasmodium knowlesi</i> malaria	Plasmodium knowlesi malaria	malpk	f	12	1		100	8			f	t
-251		P. malariae	SINGLE	<i>Plasmodium malariae</i> malaria	Plasmodium malariae malaria	malpm	f	12	1		500	15	10	10	t	t
-252		P. ovale	SINGLE	<i>Plasmodium ovale</i> malaria	Plasmodium ovale malaria	malpo	f	12	1		500	15	10	10	t	t
-253		P. vivax	SINGLE	<i>Plasmodium vivax</i> malaria	Plasmodium vivax malaria	malpv	f	12	1		1000	15	10	10	t	t
+249		P. falciparum	SINGLE	<i>Plasmodium falciparum</i> malaria	Plasmodium falciparum malaria	malpf	f	12	1	500	400	40	10	20	t	t
+250		P. knowlesi	SINGLE	<i>Plasmodium knowlesi</i> malaria	Plasmodium knowlesi malaria	malpk	f	12	1	500	100	8			f	t
+251		P. malariae	SINGLE	<i>Plasmodium malariae</i> malaria	Plasmodium malariae malaria	malpm	f	12	1	500	500	15	10	10	t	t
+252		P. ovale	SINGLE	<i>Plasmodium ovale</i> malaria	Plasmodium ovale malaria	malpo	f	12	1	500	500	15	10	10	t	t
+253		P. vivax	SINGLE	<i>Plasmodium vivax</i> malaria	Plasmodium vivax malaria	malpv	f	12	1	500	1000	15	10	10	t	t
 254		Paracoccidioidomycosis	SINGLE						1		400				t	t
 255		Paragonimiasis	SINGLE						1		400				t	t
 256		Parainfluenza virus infection	SINGLE						1		400				t	t
@@ -269,7 +269,7 @@
 274		Pneumocystis pneumonia	SINGLE						1		400				t	t
 275		Pneumonia - bacterial	SINGLE						1		400				t	t
 276		Pogosta disease (see Sindbis-like viruses)	SINGLE						1		400				t	t
-277		Poliomyelitis	SINGLE	polio	polio	polio	t	15	1		500	10			f	t
+277		Poliomyelitis	SINGLE	polio	polio	polio	t	15	1	500	500	10			f	t
 278		Powassan	SINGLE						1		400				t	t
 279		Protothecosis and chlorellosis	SINGLE						1		400				t	t
 280		Pseudocowpox	SINGLE						1		400				t	t
@@ -306,10 +306,10 @@
 313		SARS	SINGLE						1		400				t	t
 314		Scabies	SINGLE						1		400				t	t
 315		Scarlet fever	SINGLE						1		400				t	t
-316		Schistosomiasis - haematobium	SINGLE	<i>Schistosoma haematobium</i>	Schistosoma haematobium	sch-h	f	16	1		1000	25	10	10	t	t
+316		Schistosomiasis - haematobium	SINGLE	<i>Schistosoma haematobium</i>	Schistosoma haematobium	sch-h	f	16	1	500	1000	25	10	10	t	t
 317		Schistosomiasis - intercalatum	SINGLE						1		400				t	t
-318		Schistosomiasis - japonicum	SINGLE	<i>Schistosoma japonicum</i>	Schistosoma japonicum	sch-j	f	16	1		1000	6			f	t
-319		Schistosomiasis - mansoni	SINGLE	<i>Schistosoma mansoni</i>	Schistosoma mansoni	sch-m	f	16	1		1000	25	10	10	t	t
+318		Schistosomiasis - japonicum	SINGLE	<i>Schistosoma japonicum</i>	Schistosoma japonicum	sch-j	f	16	1	500	1000	6			f	t
+319		Schistosomiasis - mansoni	SINGLE	<i>Schistosoma mansoni</i>	Schistosoma mansoni	sch-m	f	16	1	500	1000	25	10	10	t	t
 320		Schistosomiasis - mattheei	SINGLE						1		400				t	t
 321		Schistosomiasis - mekongi	SINGLE						1		400				t	t
 322		Sennetsu neorickettsiosis	SINGLE						1		400				t	t
@@ -345,18 +345,18 @@
 353		Trichinosis	SINGLE						1		400				t	t
 354		Trichomoniasis	SINGLE						1		400				t	t
 355		Trichostrongyliasis	SINGLE						1		400				t	t
-356		Trichuriasis	SINGLE	trichuriasis	trichuriasis	trich	t	18	1		1000	20	10	10	t	t
+356		Trichuriasis	SINGLE	trichuriasis	trichuriasis	trich	t	18	1	500	1000	20	10	10	t	t
 357		Tropical phagedenic ulcer	SINGLE						1		400				t	t
-358		Trypanosomiases	MICROCLUSTER	trypanosomiases	trypanosomiases	trypa	f	19	0.5		400				t	t
-359		Trypanosomiasis - African	SINGLE	human African trypanosomiasis	sleeping sickness	hat	f	19	1		1000	20	10	10	t	t
-360		Trypanosomiasis - American	SINGLE	Chagas	Chagas	chag	f	19	1		600	20			f	t
+358		Trypanosomiases	MICROCLUSTER	trypanosomiases	trypanosomiases	trypa	f	19	0.5	500	400				t	t
+359		Trypanosomiasis - African	SINGLE	human African trypanosomiasis	sleeping sickness	hat	f	19	1	500	1000	20	10	10	t	t
+360		Trypanosomiasis - American	SINGLE	Chagas	Chagas	chag	f	19	1	500	600	20			f	t
 361		Tuberculosis	SINGLE						1		400				t	t
 362		Tularemia	SINGLE						1		400				t	t
 363		Tungiasis	SINGLE						1		400				t	t
 364		Typhoid and enteric fever	SINGLE						1		400				t	t
 365		Typhus - endemic/murine (flea-borne)	SINGLE						1		400				t	t
 366		Typhus - epidemic	SINGLE						1		400				t	t
-367		Typhus - scrub (mite-borne)	SINGLE	scrub typhus	scrub typhus	scrubt	t	17	1		1000	20			f	t
+367		Typhus - scrub (mite-borne)	SINGLE	scrub typhus	scrub typhus	scrubt	t	17	1	500	1000	20			f	t
 368		Typhus group	MICROCLUSTER						0.5		400				t	t
 369		Urinary tract infection	SINGLE						1		400				t	t
 370		Vaccinia and cowpox	SINGLE						1		400				t	t
@@ -380,9 +380,9 @@
 388		Whipple's disease	SINGLE						1		400				t	t
 389		Whitewater Arroyo virus infection	SINGLE						1		400				t	t
 390		Yaws	SINGLE						1		400				t	t
-391		Yellow fever	SINGLE	yellow fever	yellow fever	yfvr	f	20	1		500	30	10	20	t	t
+391		Yellow fever	SINGLE	yellow fever	yellow fever	yfvr	f	20	1	500	500	30	10	20	t	t
 392		Yersiniosis	SINGLE						1		400				t	t
 393		Zika	SINGLE						1		400				t	t
 394		Zygomycosis	SINGLE						1		400				t	t
-395		Schistosomiasis	MICROCLUSTER	Schistosomiases	Schistosomiases	schis	f	16	0.5		400				t	t
+395		Schistosomiasis	MICROCLUSTER	Schistosomiases	Schistosomiases	schis	f	16	0.5	500	400				t	t
 396		Prions	MICROCLUSTER						0.5		400				t	t

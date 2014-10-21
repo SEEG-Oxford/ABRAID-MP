@@ -374,15 +374,14 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         insertAdminUnitDiseaseExtentClass(179, diseaseGroupId, DiseaseExtentClass.POSSIBLE_PRESENCE);
         insertAdminUnitDiseaseExtentClass(826, diseaseGroupId, DiseaseExtentClass.PRESENCE);
         flushAndClear();
-        insertDiseaseExtentRow(diseaseGroupId);
     }
 
     private void updateExtentForTropicalDisease(int diseaseGroupId) {
-        List<AdminUnitDiseaseExtentClass> dengueDiseaseExtent =
+        List<AdminUnitDiseaseExtentClass> diseaseExtent =
                 adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
-        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 153, DiseaseExtentClass.ABSENCE);
-        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 179, DiseaseExtentClass.POSSIBLE_PRESENCE);
-        updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 825, DiseaseExtentClass.PRESENCE);
+        updateAdminUnitDiseaseExtentClass(diseaseExtent, 153, DiseaseExtentClass.ABSENCE);
+        updateAdminUnitDiseaseExtentClass(diseaseExtent, 179, DiseaseExtentClass.POSSIBLE_PRESENCE);
+        updateAdminUnitDiseaseExtentClass(diseaseExtent, 825, DiseaseExtentClass.PRESENCE);
         flushAndClear();
     }
 
@@ -431,11 +430,6 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
     private Polygon getFivePointedPolygon() {
         return GeometryUtils.createPolygon(3, 4, 5, 11, 12, 8, 9, 5, 5, 6, 3, 4);
-    }
-
-    private void insertDiseaseExtentRow(int diseaseGroupId) {
-        String queryString = "INSERT INTO disease_extent (disease_group_id) VALUES (" + diseaseGroupId + ")";
-        sessionFactory.getCurrentSession().createSQLQuery(queryString).executeUpdate();
     }
 
     private void insertDiseaseExtent(int diseaseGroupId, Geometry geom) {
