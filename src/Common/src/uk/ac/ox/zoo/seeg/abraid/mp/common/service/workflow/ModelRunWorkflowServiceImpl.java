@@ -57,7 +57,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId, DateTime batchEndDate)
             throws ModelRunRequesterException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
-        prepareForAndRequestModelRun(diseaseGroupId, batchEndDate, true);
+        prepareForAndRequestModelRun(diseaseGroupId, batchEndDate);
         saveExpertsWeightings(newExpertWeightings);
     }
 
@@ -70,7 +70,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     @Override
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunRequesterException {
-        prepareForAndRequestModelRun(diseaseGroupId, null, false);
+        prepareForAndRequestModelRun(diseaseGroupId, null);
     }
 
     /**
@@ -144,17 +144,16 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, null, true);
     }
 
-    private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchEndDate,
-                                              boolean alwaysRemoveFromValidator)
+    private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchEndDate)
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
 
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             generateDiseaseExtent(diseaseGroup);
-            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
+            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
         } else {
-            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate, alwaysRemoveFromValidator);
+            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
             generateDiseaseExtent(diseaseGroup);
         }
 
@@ -167,13 +166,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, batchEndDate, false);
     }
 
-    private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
-                                                boolean alwaysRemoveFromValidator) {
+    private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         int diseaseGroupId = diseaseGroup.getId();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
-        reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate,
-                alwaysRemoveFromValidator);
+        reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
         weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
