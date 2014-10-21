@@ -93,19 +93,21 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
     }
 
-    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
-        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
-    }
-
     private void addValidationParameters(DiseaseOccurrence occurrence) {
         GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
         addValidationParameters(occurrence, raster);
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
-        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-        findAndSetMachineWeightingAndIsValidated(occurrence);
+        if (!isCountryPoint(occurrence)) {
+            occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+            occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+            findAndSetMachineWeightingAndIsValidated(occurrence);
+        }
+    }
+
+    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
+        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
     }
 
     private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
