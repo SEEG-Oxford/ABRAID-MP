@@ -5,6 +5,7 @@
 -->
 <project name="abraid-mp" default="build">
   <property name="code.root" value="${basedir}/src"/>
+  <property name="python.root" value="${basedir}/python"/>
   <property name="db.root" value="${basedir}/db"/>
   <property name="artifacts.dir" value="${basedir}/artifacts" />
 
@@ -62,6 +63,12 @@
     <copy todir="${artifacts.dir}/Database">
       <fileset dir="${db.root}">
         <include name="**/*" />
+      </fileset>
+    </copy>
+    <mkdir dir="${artifacts.dir}/MachineLearning"/>
+    <copy todir="${artifacts.dir}/MachineLearning">
+      <fileset dir="${python.root}">
+        <include name="**/*.py" />
       </fileset>
     </copy>
     <mkdir dir="${artifacts.dir}/config"/>

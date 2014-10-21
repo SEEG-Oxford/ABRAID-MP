@@ -13,3 +13,6 @@ lib-local
 db/database.properties
 artifacts
 db/.database.properties
+python/*.pyc
+*.pkl
+*.npy

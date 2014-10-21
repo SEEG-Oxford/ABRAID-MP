@@ -10,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +31,14 @@ public class DiseaseOccurrenceValidationServiceTest {
     private DiseaseOccurrenceValidationService service;
     private EnvironmentalSuitabilityHelper esHelper;
     private DistanceFromDiseaseExtentHelper dfdeHelper;
+    private MachineWeightingPredictor mwPredictor;
 
     @Before
     public void setUp() {
         esHelper = mock(EnvironmentalSuitabilityHelper.class);
         dfdeHelper = mock(DistanceFromDiseaseExtentHelper.class);
-        service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper);
+        mwPredictor = mock(MachineWeightingPredictor.class);
+        service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper, mwPredictor);
     }
 
     @Test
@@ -85,6 +88,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
         boolean result = service.addValidationParametersWithChecks(occurrence, false);
@@ -93,10 +97,11 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isTrue();
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isFalse();
     }
 
     @Test
@@ -204,6 +209,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
         boolean result = service.addValidationParametersWithChecks(occurrence, false);
@@ -212,10 +218,11 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(result).isTrue();
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
-        assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isTrue();
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isFalse();
     }
 
     @Test
@@ -427,6 +434,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(esHelper.findEnvironmentalSuitability(same(occurrence2), same(raster))).thenReturn(environmentalSuitability2);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence1))).thenReturn(distanceFromDiseaseExtent1);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence2))).thenReturn(distanceFromDiseaseExtent2);
+        when(mwPredictor.findMachineWeighting(same(occurrence1))).thenReturn(null);
+        when(mwPredictor.findMachineWeighting(same(occurrence2))).thenReturn(null);
 
         // Act
         service.addValidationParameters(occurrences);
@@ -434,17 +443,19 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Assert
         assertThat(occurrence1.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability1);
         assertThat(occurrence1.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent1);
-        assertThat(occurrence1.getMachineWeighting()).isNull();
-        assertThat(occurrence1.isValidated()).isTrue();
         assertThat(occurrence1.getFinalWeighting()).isNull();
         assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isNull();
+        // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
+        assertThat(occurrence1.getMachineWeighting()).isNull();
+        assertThat(occurrence1.isValidated()).isFalse();
 
         assertThat(occurrence2.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability2);
         assertThat(occurrence2.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent2);
-        assertThat(occurrence2.getMachineWeighting()).isNull();
-        assertThat(occurrence2.isValidated()).isTrue();
         assertThat(occurrence2.getFinalWeighting()).isNull();
         assertThat(occurrence2.getFinalWeightingExcludingSpatial()).isNull();
+        // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
+        assertThat(occurrence2.getMachineWeighting()).isNull();
+        assertThat(occurrence2.isValidated()).isFalse();
     }
 
     @Test

@@ -17,8 +17,12 @@ echo "geoserver.path=/geoserver" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF
 echo "geoserver.root.url=\${geoserver.protocol}://\${geoserver.username}:\${geoserver.password}@\${geoserver.host}\${geoserver.path}" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "abraid.base.dir=$ABRAID_SUPPORT_PATH" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 echo "abraid.raster.dir=\${abraid.base.dir}/results/rasters" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "machinelearning.host=localhost:8000" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "machinelearning.path=/" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
+echo "machinelearning.root.url=http://\${machinelearning.host}\${machinelearning.path}" >> /var/lib/tomcat7/webapps/modeloutput/WEB-INF/common-override.properties
 mkdir -p $ABRAID_SUPPORT_PATH/results
 mkdir -p $ABRAID_SUPPORT_PATH/results/rasters
+
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" /var/lib/tomcat7/webapps/modeloutput/WEB-INF/classes/log4j.properties
 
@@ -54,6 +58,9 @@ echo "model.wrapper.path=/" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-over
 echo "model.wrapper.root.url=\${model.wrapper.protocol}:\/\/api:\${model.wrapper.api.key}@\${model.wrapper.host}\${model.wrapper.path}" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "abraid.base.dir=$ABRAID_SUPPORT_PATH" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 echo "abraid.raster.dir=\${abraid.base.dir}/results/rasters" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "machinelearning.host=localhost:8000" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "machinelearning.path=/" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
+echo "machinelearning.root.url=http://\${machinelearning.host}\${machinelearning.path}" >> /var/lib/tomcat7/webapps/ROOT/WEB-INF/common-override.properties
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, stdout, logfile, email/g" /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/log4j.properties
 # Configure wms path
@@ -72,7 +79,9 @@ sed -i "s/model\.wrapper\.api\.key\=.*/model.wrapper.api.key=key-to-access-model
 sed -i "s/model\.wrapper\.protocol\=.*/model.wrapper.protocol=http/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/model\.wrapper\.host\=.*/model.wrapper.host=$MW_URL/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 sed -i "s/model\.wrapper\.path\=.*/model.wrapper.path=\//g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
-
+sed -i "s/machinelearning\.host\=.*/machinelearning.host=localhost:8000" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/machinelearning\.path\=.*/machinelearning.path=\//g" >> $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
+sed -i "s/machinelearning\.root\.url\=.*/machinelearning.root.url=http\:\/\/\$\{machinelearning.host\}\${machinelearning.path}/g" $ABRAID_SUPPORT_PATH/datamanager/datamanager.properties
 # Configure log4j
 sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
 sed -i "s|\${user\.home}\/ABRAID\-MP|$ABRAID_SUPPORT_PATH|g" $ABRAID_SUPPORT_PATH/datamanager/log4j.properties
@@ -80,3 +89,6 @@ mkdir -p $ABRAID_SUPPORT_PATH/datamanager/logs
 mkdir -p $ABRAID_SUPPORT_PATH/datamanager/logs/old
 # Cron job
 
+# Set up MachineLearning
+cp -r ../../MachineLearning $ABRAID_SUPPORT_PATH/machinelearning
+mkdir $ABRAID_SUPPORT_PATH/machinelearning/pickles

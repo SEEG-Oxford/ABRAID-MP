@@ -73,6 +73,16 @@ import javax.persistence.Table;
                         "and d.isValidated = true " +
                         "and d.finalWeighting is null " +
                         "and d.occurrenceDate <= :batchEndDate"
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForTrainingPredictor",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.expertWeighting is not null " +
+                        "and d.isValidated = true " +
+                        "and d.distanceFromDiseaseExtent is not null " +
+                        "and d.environmentalSuitability is not null " +
+                        "and d.createdDate > :cutOffDate"
         )
 })
 @Entity

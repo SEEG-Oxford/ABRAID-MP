@@ -50,6 +50,7 @@ chmod 0600 $BASE/pg_pass
 
 # Stop servlet containers
 service tomcat7 stop
+service gunicorn stop
 
 # Teardown
 rm -rf /var/lib/tomcat7/webapps/*
@@ -68,6 +69,7 @@ mkdir $ABRAID_SUPPORT_PATH
 # Permissions
 chown -R tomcat7:tomcat7 /var/lib/tomcat7/webapps/*
 chown -R tomcat7:tomcat7 $ABRAID_SUPPORT_PATH/*
+chown -R www-data:www-data $ABRAID_SUPPORT_PATH/machinelearning
 chmod -R 664 /var/lib/tomcat7/webapps/*
 chmod -R 664 $ABRAID_SUPPORT_PATH/*
 find /var/lib/tomcat7/webapps/ -type d -exec chmod +x {} \;
@@ -79,4 +81,5 @@ chmod -R 644 $ABRAID_SUPPORT_PATH/datamanager/logs
 rm $BASE/pg_pass
 
 # Bring services back up
+service gunicorn start
 service tomcat7 start
