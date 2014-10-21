@@ -5,7 +5,6 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
@@ -31,7 +30,7 @@ public class AutomaticModelRunsEnablerTest {
 
     @Before
     public void setUp() {
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), mock(NativeSQL.class));
+        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class));
         diseaseService = mock(DiseaseService.class);
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
         automaticModelRunsEnabler = new AutomaticModelRunsEnabler(diseaseService, diseaseOccurrenceValidationService,

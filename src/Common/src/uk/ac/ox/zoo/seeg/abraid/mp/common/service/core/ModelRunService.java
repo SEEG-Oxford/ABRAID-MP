@@ -25,27 +25,6 @@ public interface ModelRunService {
     void saveModelRun(ModelRun modelRun);
 
     /**
-     * Gets the mean prediction raster of the specified model run.
-     * @param modelRunId The model run's ID.
-     * @return gdalRaster The mean prediction raster.
-     */
-    byte[] getMeanPredictionRasterForModelRun(int modelRunId);
-
-    /**
-     * Updates the specified model run to include the specified mean prediction raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
-     */
-    void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster);
-
-    /**
-     * Updates the specified model run to include the specified prediction uncertainty raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
-     */
-    void updatePredictionUncertaintyRasterForModelRun(int modelRunId, byte[] gdalRaster);
-
-    /**
      * Gets the latest model run for the specified disease group.
      * @param diseaseGroupId The specified disease group's ID.
      * @return The latest model run, or null if there are no model runs.
@@ -72,7 +51,6 @@ public interface ModelRunService {
      * @return The input date minus the number of days between scheduled model runs.
      */
     DateTime subtractDaysBetweenModelRuns(DateTime dateTime);
-
 
     /**
      * Gets all of the completed model runs.

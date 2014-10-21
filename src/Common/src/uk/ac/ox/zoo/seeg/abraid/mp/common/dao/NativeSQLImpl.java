@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 import com.vividsolutions.jts.geom.Point;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import static uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants.*;
 
@@ -40,30 +39,6 @@ public class NativeSQLImpl implements NativeSQL {
     @Override
     public Integer findCountryThatContainsPoint(Point point) {
         return (Integer) uniqueResult(COUNTRY_CONTAINS_POINT_QUERY, "point", point);
-    }
-
-    /**
-     * Loads the mean prediction raster for a model run.
-     * @param modelRunId The model run's ID.
-     * @param rasterColumnName The column name of the raster in the model_run table.
-     * @return The mean prediction raster.
-     */
-    @Override
-    public byte[] getRasterForModelRun(int modelRunId, String rasterColumnName) {
-        String query = String.format(LOAD_RASTER_QUERY, rasterColumnName);
-        return (byte[]) uniqueResult(query, "gdalFormat", GEOTIFF_RASTER_FORMAT, "id", modelRunId);
-    }
-
-    /**
-     * Updates the specified model run to include the specified mean prediction raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
-     * @param rasterColumnName The column name of the raster in the model_run table.
-     */
-    @Override
-    public void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName) {
-        String query = String.format(UPDATE_RASTER_QUERY, rasterColumnName);
-        executeUpdate(query, "id", modelRunId, "gdalRaster", gdalRaster, "srid", GeometryUtils.SRID_FOR_WGS_84);
     }
 
     /**
