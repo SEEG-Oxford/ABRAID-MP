@@ -66,10 +66,26 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnACountryPoint() {
+        // Arrange
+        Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);    // Occurrence has country location (Mexico)
+
+        // Act
+        Integer expertId = expert.getId();
+        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId,
+                diseaseGroupId);
+
+        // Assert
+        assertThat(list).doesNotContain(occurrence);
+    }
+
+    @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnAReviewedPoint() {
         // Arrange
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(274016);    // Occurrence has precise location (in Sao Paulo, Brazil)
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
@@ -421,6 +437,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
             assertThat(occurrence.isValidated()).isTrue();
             assertThat(occurrence.getFinalWeighting()).isEqualTo(1);
             assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.UPLOADED);
+            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
         }
     }
 
@@ -441,6 +458,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Assert
         assertThat(newOccurrences).hasSize(expectedCount);
+        for (DiseaseOccurrence occurrence : newOccurrences) {
+            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
+        }
     }
 
     private void setUpParameterValues(int diseaseGroupId, int expectedCount) {
@@ -450,6 +470,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         diseaseGroupDao.save(diseaseGroup);
 
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId);
+        // In DiseaseOccurrenceValidationServiceImpl addValidationParametersWithChecks, ES and DFDE are never added to country points
+        occurrences.removeAll(select(occurrences, having(on(DiseaseOccurrence.class).getLocation().getPrecision(), equalTo(LocationPrecision.COUNTRY))));
         for (int i = 0; i < expectedCount; i++) {
             DiseaseOccurrence occurrence = occurrences.get(i);
             occurrence.setEnvironmentalSuitability(0.8);
