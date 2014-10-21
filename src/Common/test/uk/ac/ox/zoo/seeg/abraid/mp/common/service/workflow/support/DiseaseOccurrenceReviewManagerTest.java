@@ -12,10 +12,10 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 /**
- * Integration tests for the DiseaseOccurrenceReviewManager class.
+ * Tests the DiseaseOccurrenceReviewManager class.
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOccurrenceReviewManagerUnitTest {
+public class DiseaseOccurrenceReviewManagerTest {
 
     private static final int DISEASE_GROUP_ID = 1;
 
