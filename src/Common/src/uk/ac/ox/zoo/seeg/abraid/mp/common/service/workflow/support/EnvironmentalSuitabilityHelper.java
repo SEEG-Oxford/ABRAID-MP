@@ -29,7 +29,8 @@ public class EnvironmentalSuitabilityHelper {
     private static final int RASTER_NO_DATA_VALUE = -9999;
     private static final String CANNOT_FIND_FILE_MESSAGE = "Cannot find raster file \"%s\"";
 
-    public EnvironmentalSuitabilityHelper(ModelRunService modelRunService, RasterFilePathFactory rasterFilePathFactory) {
+    public EnvironmentalSuitabilityHelper(ModelRunService modelRunService,
+                                          RasterFilePathFactory rasterFilePathFactory) {
         this.modelRunService = modelRunService;
         this.rasterFilePathFactory = rasterFilePathFactory;
     }
