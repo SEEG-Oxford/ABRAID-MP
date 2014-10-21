@@ -36,6 +36,7 @@ public class ModelWrapperWebService {
 
     /**
      * Starts a model run.
+     * @param modelWrapperUrl The base url path for the model wrapper instance on which to start a run.
      * @param diseaseGroup The disease group for this model run.
      * @param occurrences The disease occurrences for this model run.
      * @param diseaseExtent Ths disease extent for this model run, expressed as a mapping between GAUL codes
@@ -44,8 +45,8 @@ public class ModelWrapperWebService {
      * @throws WebServiceClientException If the web service call fails.
      * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
-    public JsonModelRunResponse startRun(URI modelWrapperUrl, DiseaseGroup diseaseGroup, List<DiseaseOccurrence> occurrences,
-                                         Map<Integer, Integer> diseaseExtent)
+    public JsonModelRunResponse startRun(URI modelWrapperUrl, DiseaseGroup diseaseGroup,
+                                         List<DiseaseOccurrence> occurrences, Map<Integer, Integer> diseaseExtent)
             throws WebServiceClientException, JsonParserException {
         String url = buildUrl(modelWrapperUrl);
         JsonModelRun body = createJsonModelRun(diseaseGroup, occurrences, diseaseExtent);

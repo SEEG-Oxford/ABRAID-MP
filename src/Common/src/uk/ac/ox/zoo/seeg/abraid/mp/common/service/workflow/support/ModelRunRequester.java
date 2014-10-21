@@ -42,7 +42,7 @@ public class ModelRunRequester {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
-        this.modelWrapperUrlCollection = convert(modelWrapperUrlCollection, new Converter<String, URI>(){
+        this.modelWrapperUrlCollection = convert(modelWrapperUrlCollection, new Converter<String, URI>() {
             @Override
             public URI convert(String url) {
                 return URI.create(url);
@@ -71,8 +71,8 @@ public class ModelRunRequester {
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
                 URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
-                JsonModelRunResponse response =
-                        modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup, occurrencesForModelRun, diseaseExtent);
+                JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
+                                                                                occurrencesForModelRun, diseaseExtent);
                 handleModelRunResponse(response, diseaseGroupId, requestDate, modelWrapperUrl.getHost(), batchEndDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
@@ -91,10 +91,10 @@ public class ModelRunRequester {
 
         while (availableHosts.size() > 1 && usedHosts.size() > 0) {
             final String busyHost = usedHosts.pop();
-            availableHosts = filter(new LambdaJMatcher<URI> () {
+            availableHosts = filter(new LambdaJMatcher<URI>() {
                 @Override
                 public boolean matches(Object host) {
-                    return !((URI)host).getHost().equals(busyHost);
+                    return !((URI) host).getHost().equals(busyHost);
                 }
             }, availableHosts);
         }
