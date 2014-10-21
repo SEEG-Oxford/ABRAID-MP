@@ -5,6 +5,12 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.support.SessionStatus;
@@ -37,6 +43,7 @@ public class RegistrationControllerTest {
     private EmailService emailService;
     private PasswordEncoder passwordEncoder;
     private RegistrationControllerValidator validator;
+    private UserDetailsService userDetailService;
 
     private static JsonExpertBasic mockJsonExpertBasic() {
         JsonExpertBasic result = mock(JsonExpertBasic.class);
@@ -58,9 +65,12 @@ public class RegistrationControllerTest {
         passwordEncoder = mock(PasswordEncoder.class);
         AbraidJsonObjectMapper json = new AbraidJsonObjectMapper();
         validator = mock(RegistrationControllerValidator.class);
+        userDetailService = mock(UserDetailsService.class);
+
+        SecurityContextHolder.getContext().setAuthentication(null);
 
         target = new RegistrationController(
-                currentUserService, expertService, diseaseService, emailService, passwordEncoder, json, validator);
+                currentUserService, expertService, diseaseService, emailService, passwordEncoder, json, validator, userDetailService);
     }
 
     @Test
@@ -388,6 +398,7 @@ public class RegistrationControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(result.getBody()).containsOnly("1", "2");
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 
     @Test
@@ -424,6 +435,7 @@ public class RegistrationControllerTest {
         when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
                 .thenReturn(new ArrayList<String>());
         when(passwordEncoder.encode("qwe123Q")).thenReturn("hash");
+        when(userDetailService.loadUserByUsername("a@b.com")).thenReturn(mock(UserDetails.class));
 
         JsonExpertDetails jsonExpert = new JsonExpertDetails();
         jsonExpert.setJobTitle("job");
@@ -463,6 +475,7 @@ public class RegistrationControllerTest {
         when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
                 .thenReturn(new ArrayList<String>());
         when(passwordEncoder.encode("qwe123Q")).thenReturn("hash");
+        when(userDetailService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
 
         // Act
         ResponseEntity<List<String>> result = target.submitDetailsPage(
@@ -477,6 +490,38 @@ public class RegistrationControllerTest {
     }
 
     @Test
+    public void submitDetailsPageLogsUserInForSuccess() throws Exception {
+        // Arrange
+        ModelMap modelMap = new ModelMap();
+        Expert expert = new Expert();
+        expert.setPassword("qwe123Q");
+        modelMap.addAttribute("expert", expert);
+
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+
+        when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
+        when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
+                .thenReturn(new ArrayList<String>());
+        when(passwordEncoder.encode("qwe123Q")).thenReturn("hash");
+        UserDetails expectedUser = mock(UserDetails.class);
+        when(userDetailService.loadUserByUsername(anyString())).thenReturn(expectedUser);
+        Collection<GrantedAuthority> expectedAuthorities = new ArrayList<>();
+        expectedAuthorities.add(new SimpleGrantedAuthority("a"));
+        expectedAuthorities.add(new SimpleGrantedAuthority("b"));
+        doReturn(expectedAuthorities).when(expectedUser).getAuthorities();
+
+        // Act
+        ResponseEntity<List<String>> result = target.submitDetailsPage(
+                modelMap, mock(SessionStatus.class), mock(JsonExpertDetails.class));
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isInstanceOf(UsernamePasswordAuthenticationToken.class);
+        assertThat(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).isEqualTo(expectedUser);
+        assertThat(SecurityContextHolder.getContext().getAuthentication().getAuthorities()).isEqualTo(expectedAuthorities);
+    }
+
+    @Test
     public void submitDetailsPageSendsEmailForNewUserRequiringVisibilityApproval() throws Exception {
         // Arrange
         ModelMap modelMap = new ModelMap();
@@ -487,6 +532,7 @@ public class RegistrationControllerTest {
         when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
         when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
                 .thenReturn(new ArrayList<String>());
+        when(userDetailService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
 
         // Act
         JsonExpertDetails jsonExpertDetails = mock(JsonExpertDetails.class);
@@ -515,6 +561,7 @@ public class RegistrationControllerTest {
         when(validator.validateBasicFields(any(Expert.class))).thenReturn(new ArrayList<String>());
         when(validator.validateTransientFields(any(JsonExpertBasic.class), any(ServletRequest.class)))
                 .thenReturn(new ArrayList<String>());
+        when(userDetailService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
 
         // Act
         JsonExpertDetails jsonExpertDetails = mock(JsonExpertDetails.class);

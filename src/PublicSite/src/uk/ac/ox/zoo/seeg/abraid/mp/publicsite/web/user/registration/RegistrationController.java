@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -67,12 +71,14 @@ public class RegistrationController extends AbstractController {
     private final PasswordEncoder passwordEncoder;
     private final AbraidJsonObjectMapper json;
     private final RegistrationControllerValidator validator;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public RegistrationController(CurrentUserService currentUserService, ExpertService expertService,
                                   DiseaseService diseaseService, EmailService emailService,
                                   PasswordEncoder passwordEncoder, AbraidJsonObjectMapper objectMapper,
-                                  RegistrationControllerValidator expertRegistrationValidator) {
+                                  RegistrationControllerValidator expertRegistrationValidator,
+                                  UserDetailsService userDetailsService) {
         this.currentUserService = currentUserService;
         this.expertService = expertService;
         this.diseaseService = diseaseService;
@@ -80,6 +86,7 @@ public class RegistrationController extends AbstractController {
         this.passwordEncoder = passwordEncoder;
         this.json = objectMapper;
         this.validator = expertRegistrationValidator;
+        this.userDetailsService = userDetailsService;
     }
 
     private static void updateExpert(Expert expert, JsonExpertBasic expertBasic) {
@@ -252,7 +259,16 @@ public class RegistrationController extends AbstractController {
 
         // Return successfully
         status.setComplete();
+
+        automaticLogin(expert);
         return new ResponseEntity<>(HttpStatus.CREATED); // Could add success page
+    }
+
+    private void automaticLogin(Expert expert) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(expert.getEmail());
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(token);
     }
 
     private void emailAdmin(Expert expert) {
