@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
@@ -14,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
  */
 @ContextConfiguration(loader = SpringockitoContextLoader.class,
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class AbstractCommonSpringUnitTests extends AbstractSpringIntegrationTests {
     @ReplaceWithMock
     @Autowired
