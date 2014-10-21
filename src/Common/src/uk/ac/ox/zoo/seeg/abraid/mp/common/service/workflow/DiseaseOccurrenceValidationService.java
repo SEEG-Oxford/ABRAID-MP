@@ -17,9 +17,8 @@ public interface DiseaseOccurrenceValidationService {
      * isValidated is set to true which marks it as ready for an initial model run (when requested).
      * @param occurrence The disease occurrence.
      * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
-     * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
-    boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard);
+    void addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard);
 
     /**
      * Adds validation parameters to a list of disease occurrences (without checks). Each occurrence must belong to

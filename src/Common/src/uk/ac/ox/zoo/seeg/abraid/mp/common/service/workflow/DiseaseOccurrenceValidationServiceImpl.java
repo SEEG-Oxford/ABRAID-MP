@@ -37,20 +37,17 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      * isValidated is set to true which marks it as ready for an initial model run (when requested).
      * @param occurrence The disease occurrence.
      * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
-     * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
     @Override
-    public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
+    public void addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
         if (isEligibleForValidation(occurrence)) {
             setDefaultParameters(occurrence);
             if (isGoldStandard) {
                 addGoldStandardParameters(occurrence);
-            } else if (automaticModelRunsEnabled(occurrence) && !isCountryPoint(occurrence)) {
+            } else if (automaticModelRunsEnabled(occurrence)) {
                 addValidationParameters(occurrence);
             }
-            return true;
         }
-        return false;
     }
 
     /**
