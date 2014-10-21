@@ -249,7 +249,6 @@ public class RegistrationController extends AbstractController {
         }
 
         // Hash password
-        String unhashedPassword = expert.getPassword();
         expert.setPassword(passwordEncoder.encode(expert.getPassword()));
 
         // Save to db

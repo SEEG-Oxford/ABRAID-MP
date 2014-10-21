@@ -68,7 +68,7 @@ public class RegistrationControllerTest {
         userDetailService = mock(UserDetailsService.class);
 
         SecurityContextHolder.getContext().setAuthentication(null);
-        
+
         target = new RegistrationController(
                 currentUserService, expertService, diseaseService, emailService, passwordEncoder, json, validator, userDetailService);
     }
