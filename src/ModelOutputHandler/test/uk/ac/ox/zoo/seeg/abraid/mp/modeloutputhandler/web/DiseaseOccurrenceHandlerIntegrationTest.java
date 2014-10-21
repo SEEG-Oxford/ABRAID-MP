@@ -87,18 +87,17 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
             assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         }
 
-        // 27 occurrences were batched, and all were sent to the Data Validator i.e. they all have is_validated = false
-        // and a non-null environmental suitability. 15 occurrences with is_validated = true, and 3 occurrences with
-        // is_validated null, were not batched. The 30 is because there were 3 occurrences that already had
-        // is_validated = false before batching took place.
-        assertOccurrences(occurrences, true, 15, 0);
-        assertOccurrences(occurrences, false, 30, 27);
+        // 29 occurrences were batched, and all were sent to the Data Validator i.e. they all have is_validated = false
+        // and a non-null environmental suitability. 16 occurrences with is_validated = true, and 3 occurrences with
+        // is_validated null, were not batched.
+        assertOccurrences(occurrences, true, 16, 0);
+        assertOccurrences(occurrences, false, 29, 29);
         assertOccurrences(occurrences, null, 3, 0);
 
         // And the model run should have been updated correctly
         modelRun = modelRunService.getModelRunByName(modelRun.getName());
         assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(now);
-        assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(27);
+        assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(29);
     }
 
     @Test
@@ -127,8 +126,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
 
         // Because the final weightings are all not null, none of them will have been assigned an environmental
         // suitability
-        assertOccurrences(occurrences, true, 42, 0);
-        assertOccurrences(occurrences, false, 3, 0);
+        assertOccurrences(occurrences, true, 45, 0);
+        assertOccurrences(occurrences, false, 0, 0);
         assertOccurrences(occurrences, null, 3, 0);
 
         // And the model run should have been updated correctly

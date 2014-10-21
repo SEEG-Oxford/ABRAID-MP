@@ -286,12 +286,12 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 46);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 49);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithAllParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 25);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 28);
     }
 
     @Test
@@ -301,7 +301,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeWeightingsNull() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 25);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 28);
     }
 
     @Test
