@@ -46,7 +46,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             if (isGoldStandard) {
                 addGoldStandardParameters(occurrence);
             } else if (automaticModelRunsEnabled(occurrence) && !isCountryPoint(occurrence)) {
-                addValidationParameters(occurrence, null);
+                addValidationParameters(occurrence);
             }
             return true;
         }
@@ -54,8 +54,8 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a list of disease occurrences (without checks). Each occurrence must belong to
-     * the same disease group.
+     * Adds validation parameters to a list of disease occurrences (without checks).
+     * Every occurrence must belong to the same disease group.
      * @param occurrences The list of disease occurrences.
      */
     @Override
@@ -100,12 +100,16 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
     }
 
+    private void addValidationParameters(DiseaseOccurrence occurrence) {
+        GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
+        addValidationParameters(occurrence, raster);
+    }
+
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
         occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
         occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
         findAndSetMachineWeightingAndIsValidated(occurrence);
     }
-
 
     private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {

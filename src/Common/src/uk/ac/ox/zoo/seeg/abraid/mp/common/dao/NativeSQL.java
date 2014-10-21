@@ -25,22 +25,6 @@ public interface NativeSQL {
     Integer findCountryThatContainsPoint(Point point);
 
     /**
-     * Gets the mean prediction raster for a model run.
-     * @param modelRunId The model run's ID.
-     * @param rasterColumnName The column name of the raster in the model_run table.
-     * @return The mean prediction raster.
-     */
-    byte[] getRasterForModelRun(int modelRunId, String rasterColumnName);
-
-    /**
-     * Updates the specified model run to include the specified mean prediction raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The raster, in any GDAL format supported by the PostGIS database.
-     * @param rasterColumnName The column name of the raster in the model_run table.
-     */
-    void updateRasterForModelRun(int modelRunId, byte[] gdalRaster, String rasterColumnName);
-
-    /**
      * Updates the disease_extent table for the specified disease. This is done by using the
      * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
      * table.

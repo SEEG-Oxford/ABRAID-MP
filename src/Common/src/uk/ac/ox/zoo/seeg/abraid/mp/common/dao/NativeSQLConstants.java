@@ -21,15 +21,6 @@ public final class NativeSQLConstants {
     public static final String COUNTRY_CONTAINS_POINT_QUERY =
             "SELECT MIN(gaul_code) FROM country WHERE ST_Intersects(geom, :point)";
 
-    private static final String GDAL_OPTIONS = "'COMPRESS=DEFLATE', 'ZLEVEL=9'";
-
-    /** Query: Loads a model run's output raster. Converts to the specified GDAL raster format. */
-    public static final String LOAD_RASTER_QUERY =
-            "SELECT ST_AsGDALRaster(%s, :gdalFormat, ARRAY[" + GDAL_OPTIONS + "]) FROM model_run WHERE id = :id";
-    /** Query: Saves a model run's output raster. Converts from any supported GDAL raster format. */
-    public static final String UPDATE_RASTER_QUERY =
-            "UPDATE model_run SET %s = ST_FromGDALRaster(:gdalRaster, :srid) WHERE id = :id";
-
     /** Clause for selecting relevant disease extent rows in the queries below. */
     private static final String DISEASE_EXTENT_CLAUSE =
             "FROM admin_unit_disease_extent_class c " +
@@ -91,6 +82,4 @@ public final class NativeSQLConstants {
     public static final String GLOBAL = "global";
     /** Other: Tropical. */
     public static final String TROPICAL = "tropical";
-    /** Other: PostGIS's name for the GeoTiff raster format. */
-    public static final String GEOTIFF_RASTER_FORMAT = "GTiff";
 }

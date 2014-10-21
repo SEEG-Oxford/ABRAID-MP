@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Arrays;
@@ -35,50 +34,6 @@ public class ModelRunServiceTest extends AbstractCommonSpringUnitTests {
 
         // Assert
         assertThat(actualRun).isSameAs(expectedRun);
-    }
-
-    @Test
-    public void getMeanPredictionRasterForModelRun() {
-        // Arrange
-        int modelRunId = 1;
-        byte[] expectedRaster = new byte[1];
-
-        when(nativeSQL.getRasterForModelRun(modelRunId, NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME))
-                .thenReturn(expectedRaster);
-
-        // Act
-        byte[] actualRaster = modelRunService.getMeanPredictionRasterForModelRun(modelRunId);
-
-        // Assert
-        assertThat(actualRaster).isSameAs(expectedRaster);
-    }
-
-    @Test
-    public void updateMeanPredictionRasterForModelRun() {
-        // Arrange
-        int modelRunId = 1;
-        byte[] raster = new byte[1];
-
-        // Act
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRunId, raster);
-
-        // Assert
-        verify(nativeSQL).updateRasterForModelRun(eq(modelRunId), eq(raster),
-                eq(NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME));
-    }
-
-    @Test
-    public void updatePredictionUncertaintyRasterForModelRun() {
-        // Arrange
-        int modelRunId = 1;
-        byte[] raster = new byte[1];
-
-        // Act
-        modelRunService.updatePredictionUncertaintyRasterForModelRun(modelRunId, raster);
-
-        // Assert
-        verify(nativeSQL).updateRasterForModelRun(eq(modelRunId), eq(raster),
-                eq(NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME));
     }
 
     @Test

@@ -3,8 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQLConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
@@ -17,13 +15,11 @@ import java.util.Collection;
 @Transactional(rollbackFor = Exception.class)
 public class ModelRunServiceImpl implements ModelRunService {
     private ModelRunDao modelRunDao;
-    private NativeSQL nativeSQL;
 
     private static final int DAYS_BETWEEN_MODEL_RUNS = 7;
 
-    public ModelRunServiceImpl(ModelRunDao modelRunDao, NativeSQL nativeSQL) {
+    public ModelRunServiceImpl(ModelRunDao modelRunDao) {
         this.modelRunDao = modelRunDao;
-        this.nativeSQL = nativeSQL;
     }
 
     /**
@@ -41,38 +37,6 @@ public class ModelRunServiceImpl implements ModelRunService {
      */
     public void saveModelRun(ModelRun modelRun) {
         modelRunDao.save(modelRun);
-    }
-
-    /**
-     * Gets the mean prediction raster of the specified model run, as a GeoTIFF.
-     * @param modelRunId The model run's ID.
-     * @return gdalRaster The mean prediction raster, in GeoTIFF format.
-     */
-    @Override
-    public byte[] getMeanPredictionRasterForModelRun(int modelRunId) {
-        return nativeSQL.getRasterForModelRun(modelRunId, NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-    }
-
-    /**
-     * Updates the specified model run to include the specified mean prediction raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
-     */
-    @Override
-    public void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster) {
-        nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster,
-                NativeSQLConstants.MEAN_PREDICTION_RASTER_COLUMN_NAME);
-    }
-
-    /**
-     * Updates the specified model run to include the specified prediction uncertainty raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
-     */
-    @Override
-    public void updatePredictionUncertaintyRasterForModelRun(int modelRunId, byte[] gdalRaster) {
-        nativeSQL.updateRasterForModelRun(modelRunId, gdalRaster,
-                NativeSQLConstants.PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME);
     }
 
     /**

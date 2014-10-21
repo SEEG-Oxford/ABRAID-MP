@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -26,6 +25,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.same;
 
 /**
  * Tests the Main class.
@@ -36,7 +36,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
     public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
-    public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
+    public static final String LARGE_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
 
     public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
 
@@ -152,8 +153,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
-                                                                           Double environmentalSuitability,
-                                                                           Double distanceFromDiseaseExtent) {
+                                                                           double environmentalSuitability,
+                                                                           double distanceFromDiseaseExtent) {
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability, offset(5e-7));
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent, offset(5e-7));
         // At present, mwPredictor is only set up to return null weighting, which means occurrence must go to validator
@@ -400,12 +401,13 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now());
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);
 
-        byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
+        when(rasterFilePathFactory.getMeanPredictionRasterFile(same(modelRun)))
+                .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
     private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {
