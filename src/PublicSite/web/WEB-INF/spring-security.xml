@@ -12,12 +12,10 @@
 
     <!-- Define Authentication Filter and Entry Point, instead of using form login or basic authentication -->
     <security:http auto-config="false" entry-point-ref="http403EntryPoint" authentication-manager-ref="authenticationManager">
-        <!-- Redirect to home atlas page at "/" on logout, instead of navigating to j_spring_security_logout -->
-        <security:logout logout-success-url="/" delete-cookies="JSESSIONID" />
-
         <!-- Use custom Authentication Filter (bean below) instead of default, at this position in the Filter Chain -->
         <security:custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
         <security:custom-filter position="REMEMBER_ME_FILTER" ref="rememberMeFilter" />
+        <security:custom-filter position="LOGOUT_FILTER" ref="logoutFilter" />
     </security:http>
 
     <!-- The Filter Entry Point bean: failed auths should give 403  -->
@@ -77,4 +75,25 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
+    <!-- Logout handler -->
+    <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg name="logoutSuccessUrl" value="/"/>
+        <constructor-arg name="handlers">
+            <list>
+                <ref bean="rememberMeServices"/>
+                <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
+                    <property name="invalidateHttpSession" value="true" />
+                    <property name="clearAuthentication" value="true" />
+                </bean>
+                <bean class="org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler">
+                    <constructor-arg name="cookiesToClear">
+                        <array>
+                            <value>JSESSIONID</value>
+                            <value>SPRING_SECURITY_REMEMBER_ME_COOKIE</value>
+                        </array>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
 </beans>
