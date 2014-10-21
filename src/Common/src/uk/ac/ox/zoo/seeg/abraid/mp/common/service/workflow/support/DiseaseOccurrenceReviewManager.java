@@ -25,11 +25,13 @@ public class DiseaseOccurrenceReviewManager {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceReviewManager.class);
     private static final String LOG_MESSAGE =
             "Removed %d disease occurrence(s) from validation; %d occurrence(s) now remaining";
+    private final int maxDaysOnValidator;
 
     private DiseaseService diseaseService;
 
-    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService) {
+    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService, int maxDaysOnValidator) {
         this.diseaseService = diseaseService;
+        this.maxDaysOnValidator = maxDaysOnValidator;
     }
 
     /**
@@ -53,7 +55,7 @@ public class DiseaseOccurrenceReviewManager {
             isValidated = false;
             if (duringDiseaseSetUp(occurrence.getDiseaseGroup())) {
                 isValidated = true;
-            } else if (occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
+            } else if (occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence, modelRunPrepDate)) {
                 isValidated = reviewedOccurrences.contains(occurrence) ? true : null;
             }
 
@@ -80,13 +82,13 @@ public class DiseaseOccurrenceReviewManager {
     /**
      * Whichever date is latest out of the occurrence's created date and its disease group's automatic model runs start
      * date signifies when it was first available to be reviewed by experts on the DataValidator. If this is more than
-     * one week ago, comparing dates only, we deem it to be sufficiently reviewed and set the isValidated flag to true,
-     * so that it will no longer be shown on the DataValidator.
+     * the maximum number of days ago, comparing dates only, we deem it to be sufficiently reviewed and set the
+     * isValidated flag to true, so that it will no longer be shown on the DataValidator.
      * @param occurrence The disease occurrence.
      * @param modelRunPrepDateTime The date (incl. time) of the current model run
      * @return The new value of the isValidated property.
      */
-    private boolean occurrenceHasBeenInReviewForMoreThanAWeek(DiseaseOccurrence occurrence,
+    private boolean occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(DiseaseOccurrence occurrence,
                                                               DateTime modelRunPrepDateTime) {
         LocalDate comparisonDate = getComparisonDate(occurrence);
         LocalDate modelRunPrepDate = modelRunPrepDateTime.toLocalDate();
@@ -96,7 +98,7 @@ public class DiseaseOccurrenceReviewManager {
     private LocalDate getComparisonDate(DiseaseOccurrence o) {
         LocalDate createdDate = o.getCreatedDate().toLocalDate();
         LocalDate automaticModelRunsStartDate = o.getDiseaseGroup().getAutomaticModelRunsStartDate().toLocalDate();
-        return getLatest(createdDate, automaticModelRunsStartDate).plusWeeks(1);
+        return getLatest(createdDate, automaticModelRunsStartDate).plusDays(maxDaysOnValidator);
     }
 
     private LocalDate getLatest(LocalDate createdDate, LocalDate automaticModelRunsStartDate) {

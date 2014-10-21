@@ -30,7 +30,7 @@ public class AutomaticModelRunsEnablerTest {
 
     @Before
     public void setUp() {
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class));
+        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), 7);
         diseaseService = mock(DiseaseService.class);
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
         automaticModelRunsEnabler = new AutomaticModelRunsEnabler(diseaseService, diseaseOccurrenceValidationService,
