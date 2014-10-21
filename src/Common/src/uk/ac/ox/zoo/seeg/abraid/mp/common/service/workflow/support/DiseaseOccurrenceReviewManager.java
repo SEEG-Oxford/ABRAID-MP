@@ -35,12 +35,11 @@ public class DiseaseOccurrenceReviewManager {
     /**
      * Update the value of the isValidated flag according to the length of time it has been on the DataValidator for
      * review by the experts. If the occurrence has been on the DataValidator for long enough, so is being removed, and
-     * has not actually received any reviews, set isValidated to null so that it is never sent tot he model or included
+     * has not actually received any reviews, set isValidated to null so that it is never sent to the model or included
      * in the disease extent. If we are during disease group set up, the occurrence should be removed from DataValidator
      * immediately, irrespective of time spent in review.
      * @param diseaseGroupId The id of the disease group this model run preparation is for.
      * @param modelRunPrepDate The official start time of the model run preparation tasks.
-     * DataValidator (instead of ensuring they have been on for a certain period of time), otherwise false.
      */
     public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate) {
         int numRemovedFromValidator = 0;
@@ -54,10 +53,8 @@ public class DiseaseOccurrenceReviewManager {
             isValidated = false;
             if (duringDiseaseSetUp(occurrence.getDiseaseGroup())) {
                 isValidated = true;
-            } else {
-                if (occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
-                    isValidated = reviewedOccurrences.contains(occurrence) ? true : null;
-                }
+            } else if (occurrenceHasBeenInReviewForMoreThanAWeek(occurrence, modelRunPrepDate)) {
+                isValidated = reviewedOccurrences.contains(occurrence) ? true : null;
             }
 
             if (isValidated == null || isValidated) {
