@@ -20,135 +20,135 @@ public class DiseaseOccurrenceReviewManagerTest {
     private static final int DISEASE_GROUP_ID = 1;
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenAWeekHasNotElapsedSinceCreatedDate() {
+    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenMoreThanMaxDaysHasNotElapsedSinceCreatedDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, false);
+        executeTest(occurrence, true, false, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenAWeekHasNotElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenMoreThanMaxDaysHasNotElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, false);
+        executeTest(occurrence, false, false, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenAWeekHasElapsedSinceCreatedDate() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanMaxDaysHasElapsedSinceCreatedDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
-        DateTime createdDate = lastModelRunPrepDate.minusDays(7);
+        DateTime createdDate = lastModelRunPrepDate.minusDays(5);
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, true);
+        executeTest(occurrence, true, true, 5);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenAWeekHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenMoreThanMaxDaysHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
-        DateTime createdDate = lastModelRunPrepDate.minusDays(7);
+        DateTime createdDate = lastModelRunPrepDate.minusDays(6);
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, null);
+        executeTest(occurrence, false, null, 6);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanAWeekHasElapsedSinceCreatedDate() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
-        DateTime createdDate = lastModelRunPrepDate.minusDays(8);
+        DateTime createdDate = lastModelRunPrepDate.minusDays(9);
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, true);
+        executeTest(occurrence, true, true, 8);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenMoreThanAWeekHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
-        DateTime createdDate = lastModelRunPrepDate.minusDays(8);
+        DateTime createdDate = lastModelRunPrepDate.minusDays(21);
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, null);
+        executeTest(occurrence, false, null, 15);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenAWeekHasNotElapsedSinceAutomaticModelRunsStartDate() {
+    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenMoreThanMaxDaysHasNotElapsedSinceAutomaticModelRunsStartDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(0);
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, false);
+        executeTest(occurrence, true, false, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenAWeekHasNotElapsedSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceIsValidatedValuesRemainsFalseWhenMoreThanMaxDaysHasNotElapsedSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(0);
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, false);
+        executeTest(occurrence, false, false, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenAWeekHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(7);
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, true);
+        executeTest(occurrence, true, true, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenAWeekHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(7);
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, null);
+        executeTest(occurrence, false, null, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanAWeekHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsTrueWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(8);
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, true);
+        executeTest(occurrence, true, true, 7);
     }
 
     @Test
-    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenMoreThanAWeekHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceIsValidatedValuesSetsNullWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(8);
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, null);
+        executeTest(occurrence, false, null, 7);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, null, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, true);
+        executeTest(occurrence, true, true, 7);
     }
 
 
@@ -169,7 +169,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, null, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, true);
+        executeTest(occurrence, false, true, 7);
     }
 
     private DiseaseOccurrence arrangeDates(DateTime createdDate, DateTime automaticModelRunsStartDate, DateTime lastModelRunPrepDate) {
@@ -185,10 +185,10 @@ public class DiseaseOccurrenceReviewManagerTest {
         return occurrence;
     }
 
-    private void executeTest(DiseaseOccurrence occurrence, boolean hasBeenReviewed, Boolean expectedIsValidated) {
+    private void executeTest(DiseaseOccurrence occurrence, boolean hasBeenReviewed, Boolean expectedIsValidated, int maxDays) {
         // Arrange
         DiseaseService diseaseService = mockDiseaseService(occurrence, hasBeenReviewed);
-        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService);
+        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService, maxDays);
         DateTime lastModelRunPrepDate = occurrence.getDiseaseGroup().getLastModelRunPrepDate();
 
         // Act

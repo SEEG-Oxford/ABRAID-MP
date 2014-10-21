@@ -14,12 +14,12 @@ import java.util.Collection;
  */
 @Transactional(rollbackFor = Exception.class)
 public class ModelRunServiceImpl implements ModelRunService {
-    private ModelRunDao modelRunDao;
+    private final ModelRunDao modelRunDao;
+    private final int daysBetweenModelRuns;
 
-    private static final int DAYS_BETWEEN_MODEL_RUNS = 7;
-
-    public ModelRunServiceImpl(ModelRunDao modelRunDao) {
+    public ModelRunServiceImpl(ModelRunDao modelRunDao, int daysBetweenModelRuns) {
         this.modelRunDao = modelRunDao;
+        this.daysBetweenModelRuns = daysBetweenModelRuns;
     }
 
     /**
@@ -71,7 +71,7 @@ public class ModelRunServiceImpl implements ModelRunService {
      */
     @Override
     public DateTime subtractDaysBetweenModelRuns(DateTime dateTime) {
-        return dateTime.minusDays(DAYS_BETWEEN_MODEL_RUNS).withTimeAtStartOfDay();
+        return dateTime.minusDays(daysBetweenModelRuns).withTimeAtStartOfDay();
     }
 
     /**
