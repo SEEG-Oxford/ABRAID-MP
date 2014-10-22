@@ -23,8 +23,26 @@ public class ModelRunOccurrencesSelector {
     // Log messages
     private static final String NOT_REQUESTING_LOG_MESSAGE =
             "Not requesting a model run for disease group %d (%s) because ";
-    private static final String MDV_NOT_SATISFIED_LOG_MESSAGE = "minimum data volume (%d) is not satisfied";
-    private static final String MDS_NOT_SATISFIED_LOG_MESSAGE = "minimum data spread is not satisfied";
+    private static final String MDV_SATISFIED_LOG_MESSAGE =
+            "Minimum Data Volume is satisfied: %d occurrences exceeds threshold of %d";
+    private static final String MDV_NOT_SATISFIED_LOG_MESSAGE =
+            "Minimum Data Volume is not satisfied: %d occurrences does not exceed threshold of %d";
+    private static final String MDS_NOT_SATISFIED_LOG_MESSAGE =
+            "Minimum Data Spread not satisfied: No occurrences in any countries of interest";
+    private static final String AFRICAN_COUNTRY_CLAUSE =
+            "at least 1 occurrence in %d countries, and at least %d occurrences in %d countries";
+    private static final String AFRICAN_MDS_NOT_SATISFIED_LOG_MESSAGE =
+            "Minimum Data Spread is not satisfied: " +
+                    "should have " + AFRICAN_COUNTRY_CLAUSE + ", but only has " + AFRICAN_COUNTRY_CLAUSE;
+    private static final String OTHER_COUNTRY_CLAUSE =
+            "at least 1 occurrence in %d distinct countries";
+    private static final String OTHER_MDS_NOT_SATISFIED_LOG_MESSAGE =
+            "Minimum Data Spread is not satisfied: " +
+                    OTHER_COUNTRY_CLAUSE + " does not exceed threshold of %d";
+    private static final String MDS_SATISFIED_LOG_MESSAGE =
+            "Minimum Data Spread is satisfied: ";
+    private static final String SKIPPING_MDS_CALCULATION =
+            "Skipping Minimum Data Spread calculation; at least one parameter is not defined.";
 
     // Exception messages (these are displayed in the user interface via the Bad Request response text)
     private static final String MDV_NOT_SATISFIED_EXCEPTION_MESSAGE =
@@ -81,6 +99,7 @@ public class ModelRunOccurrencesSelector {
 
         // Minimum Data Volume must always be satisfied
         if (minDataVolumeSatisfied()) {
+            LOGGER.info(String.format(MDV_SATISFIED_LOG_MESSAGE, allOccurrences.size(), minDataVolume));
             if (diseaseGroup.isAutomaticModelRunsEnabled()) {
                 // If automatic model runs are enabled, select the subset of occurrences provided by the Minimum
                 // Data Volume, then add occurrences until the Minimum Data Spread is achieved. These are selected
@@ -95,10 +114,9 @@ public class ModelRunOccurrencesSelector {
                 occurrences = allOccurrences;
             }
         } else {
-            handleCannotRunModel(String.format(MDV_NOT_SATISFIED_LOG_MESSAGE, minDataVolume),
+            handleCannotRunModel(String.format(MDV_NOT_SATISFIED_LOG_MESSAGE, allOccurrences.size(), minDataVolume),
                     MDV_NOT_SATISFIED_EXCEPTION_MESSAGE);
         }
-
         return occurrences;
     }
 
@@ -123,12 +141,15 @@ public class ModelRunOccurrencesSelector {
             while (!minDataSpreadCheckForAfricanDiseaseGroup()) {
                 int n = occurrences.size();
                 if (n == allOccurrences.size()) {
-                    handleCannotRunModel(MDS_NOT_SATISFIED_LOG_MESSAGE, MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
+                    handleCannotRunModel(getAfricanLogMessage(), MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
                 }
                 DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
                 occurrences.add(nextOccurrence);
                 addCountryToOccurrenceCountMap(nextOccurrence.getLocation().getCountryGaulCode());
             }
+            handleCanRunModel(true);
+        } else {
+            LOGGER.info(SKIPPING_MDS_CALCULATION);
         }
         return occurrences;
     }
@@ -139,12 +160,15 @@ public class ModelRunOccurrencesSelector {
             while (!minDataSpreadCheckForOtherDiseaseGroup()) {
                 int n = occurrences.size();
                 if (n == allOccurrences.size()) {
-                    handleCannotRunModel(MDS_NOT_SATISFIED_LOG_MESSAGE, MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
+                    handleCannotRunModel(getOtherLogMessage(), MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
                 }
                 DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
                 occurrences.add(nextOccurrence);
                 countriesWithAtLeastOneOccurrence.add(nextOccurrence.getLocation().getCountryGaulCode());
             }
+            handleCanRunModel(false);
+        } else {
+            LOGGER.info(SKIPPING_MDS_CALCULATION);
         }
         return occurrences;
     }
@@ -201,9 +225,33 @@ public class ModelRunOccurrencesSelector {
         return (countriesWithAtLeastOneOccurrence.size() >= minDistinctCountries);
     }
 
+    private String getAfricanLogMessage() {
+        int n = occurrenceCountPerCountry.keySet().size();
+        return (n == 0) ? MDS_NOT_SATISFIED_LOG_MESSAGE : String.format(AFRICAN_MDS_NOT_SATISFIED_LOG_MESSAGE,
+            minDistinctCountries, highFrequencyThreshold, minHighFrequencyCountries,
+            occurrenceCountPerCountry.keySet().size(), highFrequencyThreshold, extractHighFrequencyCountries().size());
+    }
+
+    private String getOtherLogMessage() {
+        int n = countriesWithAtLeastOneOccurrence.size();
+        return (n == 0) ? MDS_NOT_SATISFIED_LOG_MESSAGE : String.format(OTHER_MDS_NOT_SATISFIED_LOG_MESSAGE,
+            countriesWithAtLeastOneOccurrence.size(), minDistinctCountries);
+    }
+
     private void handleCannotRunModel(String logSuffixMessage, String exceptionMessage) {
         LOGGER.warn(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
                 diseaseGroup.getName()));
         throw new ModelRunRequesterException(exceptionMessage);
+    }
+
+    private void handleCanRunModel(boolean occursInAfrica) {
+        String message;
+        if (occursInAfrica) {
+            message = String.format(AFRICAN_COUNTRY_CLAUSE,
+            occurrenceCountPerCountry.keySet().size(), highFrequencyThreshold, extractHighFrequencyCountries().size());
+        } else {
+            message = String.format(OTHER_COUNTRY_CLAUSE, countriesWithAtLeastOneOccurrence.size());
+        }
+        LOGGER.info(MDS_SATISFIED_LOG_MESSAGE + message);
     }
 }
