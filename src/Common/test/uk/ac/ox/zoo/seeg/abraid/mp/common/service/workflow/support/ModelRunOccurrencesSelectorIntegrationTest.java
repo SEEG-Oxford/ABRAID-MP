@@ -255,9 +255,10 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
 
     // Set up so that there is at least 1 occurrence in (minDistinctCountries = 2) countries,
     // and at least (highFrequencyThreshold = 2) occurrences in (minHighFrequencyCountries = 1) country.
+    // NB. Locations must not have LocationPrecision.COUNTRY because they are not included in model run request.
     private void addOccurrences(DiseaseGroup diseaseGroup) {
-        Location location1 = locationDao.getById(52);   // Ghana
-        Location location2 = locationDao.getById(56);   // Zimbabwe
+        Location location1 = locationDao.getById(24204);  // Precise location in Somalia
+        Location location2 = locationDao.getById(1574);   // Admin 1 location in Zimbabwe
 
         Alert alert = alertDao.getById(212855);
 
@@ -309,7 +310,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
 
     private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
-        Location location = locationDao.getById(12);
+        Location location = locationDao.getById(80);
         Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
         Alert alert = new Alert();
         alert.setFeed(feed);

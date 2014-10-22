@@ -66,10 +66,26 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnACountryPoint() {
+        // Arrange
+        Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);    // Occurrence has country location (Mexico)
+
+        // Act
+        Integer expertId = expert.getId();
+        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId,
+                diseaseGroupId);
+
+        // Assert
+        assertThat(list).doesNotContain(occurrence);
+    }
+
+    @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnAReviewedPoint() {
         // Arrange
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(274016);    // Occurrence has precise location (in Sao Paulo, Brazil)
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
@@ -87,7 +103,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustOnlyReturnSpecifiedDiseaseGroup() {
         // Arrange
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(274016);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert, occurrence, response);
 
@@ -150,7 +166,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Boolean isValidated) {
-        Location location = locationDao.getById(6);
+        Location location = locationDao.getById(80);
         Alert alert = alertDao.getById(212855);
         DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, isValidated, 0.7, new DateTime());
         diseaseOccurrenceDao.save(occurrence);
@@ -270,12 +286,12 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 46);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 49);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithAllParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 25);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 28);
     }
 
     @Test
@@ -285,7 +301,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeWeightingsNull() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 25);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 28);
     }
 
     @Test
@@ -396,6 +412,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
             assertThat(occurrence.isValidated()).isTrue();
             assertThat(occurrence.getFinalWeighting()).isGreaterThan(0);
+            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
         }
 
         for (int i = 0; i < occurrences.size() - 1; i++) {
@@ -420,6 +437,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
             assertThat(occurrence.isValidated()).isTrue();
             assertThat(occurrence.getFinalWeighting()).isEqualTo(1);
             assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.UPLOADED);
+            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
         }
     }
 
@@ -440,6 +458,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Assert
         assertThat(newOccurrences).hasSize(expectedCount);
+        for (DiseaseOccurrence occurrence : newOccurrences) {
+            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
+        }
     }
 
     private void setUpParameterValues(int diseaseGroupId, int expectedCount) {
@@ -449,6 +470,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         diseaseGroupDao.save(diseaseGroup);
 
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId);
+        // In DiseaseOccurrenceValidationServiceImpl addValidationParametersWithChecks, ES and DFDE are never added to country points
+        occurrences.removeAll(select(occurrences, having(on(DiseaseOccurrence.class).getLocation().getPrecision(), equalTo(LocationPrecision.COUNTRY))));
         for (int i = 0; i < expectedCount; i++) {
             DiseaseOccurrence occurrence = occurrences.get(i);
             occurrence.setEnvironmentalSuitability(0.8);
@@ -562,7 +585,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
-        Location location = locationDao.getById(12);
+        Location location = locationDao.getById(80);
         Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
         Alert alert = new Alert();
         alert.setFeed(feed);

@@ -1,10 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
-import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
@@ -107,6 +105,8 @@ public class ModelRunOccurrencesSelector {
     }
 
     // Select subset of n most recent occurrences (allOccurrences list is sorted by occurrence date)
+    // N.B. Occurrences must be added to a new list, instead of returning a subList. The latter only provides a view to
+    // allOccurrences, so adding to occurrences also adds to allOccurrences, leading to OutOfMemoryError.
     private List<DiseaseOccurrence> selectSubset() {
         List<DiseaseOccurrence> occurrences = new ArrayList<>();
         for (int i = 0; i < minDataVolume; i++) {
@@ -190,11 +190,9 @@ public class ModelRunOccurrencesSelector {
     }
 
     private void extractDistinctGaulCodes(List<DiseaseOccurrence> occurrences) {
-        Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
-        List<Integer> gaulCodes = convert(locations, new Converter<Location, Integer>() {
-            public Integer convert(Location location) { return location.getCountryGaulCode(); }
-        });
-        countriesWithAtLeastOneOccurrence = new HashSet<>(gaulCodes);
+        countriesWithAtLeastOneOccurrence = new HashSet<>(
+                extract(occurrences, on(DiseaseOccurrence.class).getLocation().getCountryGaulCode())
+        );
     }
 
     private boolean minDataSpreadCheckForOtherDiseaseGroup() {

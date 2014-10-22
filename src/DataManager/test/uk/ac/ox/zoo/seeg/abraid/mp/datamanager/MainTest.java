@@ -145,9 +145,14 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
+        // Only occurrences with non-country locations have validation parameters assigned.
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 8814.186615);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.62, 12524.775729);
+
+        DiseaseOccurrence validatedOccurrence = occurrences.get(0);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, 8814.186615);
+
+        DiseaseOccurrence countryOccurrence = occurrences.get(1);
+        assertThatDiseaseOccurrenceValidationParametersAreDefault(countryOccurrence);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
@@ -157,7 +162,14 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent, offset(5e-7));
         // At present, mwPredictor is only set up to return null weighting, which means occurrence must go to validator
         assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isEqualTo(false);
+        assertThat(occurrence.isValidated()).isFalse();
+    }
+
+    private void assertThatDiseaseOccurrenceValidationParametersAreDefault(DiseaseOccurrence occurrence) {
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
     }
 
     private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
@@ -173,11 +185,11 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
-        List<DiseaseOccurrence> diseaseOccurrences = diseaseOccurrenceDao.getAll();
-        for (DiseaseOccurrence diseaseOccurrence : diseaseOccurrences) {
-            if (diseaseOccurrence.getDiseaseGroup().getId() == 87 &&
-                    diseaseOccurrence.isValidated() != null && diseaseOccurrence.isValidated()) {
-                assertThat(diseaseOccurrence.getFinalWeighting()).isNotNull();
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            if (occurrence.isValidated() != null && occurrence.isValidated() &&
+                    occurrence.getLocation().getPrecision() != LocationPrecision.COUNTRY) {
+                assertThat(occurrence.getFinalWeighting()).isNotNull();
             }
         }
     }

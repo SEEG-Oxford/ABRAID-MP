@@ -24,7 +24,7 @@ import java.util.List;
                         "where diseaseGroupId=:diseaseGroupId " +
                         "and requestDate = " +
                         "   (select max(requestDate) from ModelRun" +
-                        "    where diseaseGroupId = :diseaseGroupId)"
+                        "    where diseaseGroupId=:diseaseGroupId)"
         ),
         @NamedQuery(
                 name = "getLastCompletedModelRun",
@@ -33,7 +33,7 @@ import java.util.List;
                         "and status = 'COMPLETED' " +
                         "and responseDate =" +
                         "   (select max(responseDate) from ModelRun" +
-                        "    where diseaseGroupId = :diseaseGroupId" +
+                        "    where diseaseGroupId=:diseaseGroupId" +
                         "    and status = 'COMPLETED')"
         ),
         @NamedQuery(
@@ -44,7 +44,7 @@ import java.util.List;
         @NamedQuery(
                 name = "hasBatchingEverCompleted",
                 query = "select count(*) from ModelRun " +
-                        "where diseaseGroupId = :diseaseGroupId " +
+                        "where diseaseGroupId=:diseaseGroupId " +
                         "and batchingCompletedDate is not null"
         ),
         @NamedQuery(

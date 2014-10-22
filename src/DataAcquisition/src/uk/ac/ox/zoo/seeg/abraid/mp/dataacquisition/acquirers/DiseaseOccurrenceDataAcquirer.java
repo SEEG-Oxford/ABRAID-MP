@@ -61,8 +61,8 @@ public class DiseaseOccurrenceDataAcquirer {
             occurrence.setLocation(location);
 
             if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
-                // Add validation parameters to the occurrence and save it all. Note that the location is saved with
-                // the disease occurrence.
+                // Add validation parameters to the occurrence and save it all.
+                // Note that the location is saved with the disease occurrence.
                 diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence, isGoldStandard);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 return true;
