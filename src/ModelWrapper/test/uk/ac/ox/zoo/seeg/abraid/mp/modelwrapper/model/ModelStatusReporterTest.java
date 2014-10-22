@@ -163,7 +163,7 @@ public class ModelStatusReporterTest {
     }
 
     @Test
-    public void reportDoesNotDeleteWorkspaceIfExceptionThrow() throws Exception {
+    public void reportDoesNotDeleteWorkspaceIfExceptionThrown() throws Exception {
         // Arrange
         File workingDirectory = testFolder.newFolder();
 
