@@ -19,7 +19,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     private static final String DISEASE_EXTENT_QUERY =
             "from DiseaseOccurrence d " +
             "where d.diseaseGroup.id = :diseaseGroupId " +
-            "and d.isValidated = true " +
+            "and d.status = 'READY' " +
             "and d.location.adminUnitGlobalGaulCode is not null " +
             "and d.location.adminUnitTropicalGaulCode is not null ";
 
@@ -36,7 +36,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     private static final String MODEL_RUN_REQUEST_QUERY = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
             "where d.diseaseGroup.id = :diseaseGroupId " +
-            "and d.isValidated = true " +
+            "and d.status = 'READY' " +
             "and d.location.precision <> 'COUNTRY' ";
 
     private static final String MODEL_RUN_REQUEST_FINAL_WEIGHTING_ABOVE_ZERO_CLAUSE =
@@ -138,7 +138,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * Gets disease occurrences currently in validation, for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrences currently being validated by experts.
      */
@@ -148,18 +148,13 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is true
-     * and finalWeighting is currently null.
+     * Gets disease occurrences for the specified disease group which are yet to have a final weighting assigned.
      * @param diseaseGroupId The ID of the disease group.
-     * @param mustHaveEnvironmentalSuitability True if the occurrence's environmental suitability must be non-null.
-     *                                         False if it doesn't matter either way.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
-            Integer diseaseGroupId, boolean mustHaveEnvironmentalSuitability) {
-        return listNamedQuery("getDiseaseOccurrencesYetToHaveFinalWeightingAssigned", "diseaseGroupId", diseaseGroupId,
-                "mustHaveEnvironmentalSuitability", mustHaveEnvironmentalSuitability);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrencesYetToHaveFinalWeightingAssigned", "diseaseGroupId", diseaseGroupId);
     }
 
     /**
@@ -187,8 +182,8 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     /**
      * Gets the list of new disease occurrences for the specified disease group.
-     * A "new" occurrence has is_validated not null and a created_date that is more than a week ago.
-     * Occurrence must additionally satisfy that environmental suitability and distance from disease extent values are
+     * A "new" occurrence has status READY or IN_REVIEW, and a suitable created_date.
+     * Occurrences must additionally satisfy that environmental suitability and distance from disease extent values are
      * greater than minimum specified for the disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param startDate Occurrences must be newer than this date.

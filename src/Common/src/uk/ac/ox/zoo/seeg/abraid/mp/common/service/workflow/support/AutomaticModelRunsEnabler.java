@@ -80,7 +80,7 @@ public class AutomaticModelRunsEnabler {
     }
 
     private List<DiseaseOccurrence> getOccurrencesWithoutAFinalWeighting(int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false);
+        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
     }
 
     private void addValidationParametersOrWeightings(List<DiseaseOccurrence> occurrences) {

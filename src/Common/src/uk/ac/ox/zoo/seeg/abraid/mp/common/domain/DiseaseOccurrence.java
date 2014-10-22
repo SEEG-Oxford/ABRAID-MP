@@ -33,27 +33,27 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesYetToBeReviewedByExpert",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
-                        "and d.isValidated = false " +
+                        "and d.status = 'IN_REVIEW' " +
                         "and d.id not in " +
                         "(select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesInValidation",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated = false"
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.status = 'IN_REVIEW'"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToHaveFinalWeightingAssigned",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.isValidated = true " +
-                        "and d.finalWeighting is null " +
-                        "and (:mustHaveEnvironmentalSuitability = false or d.environmentalSuitability is not null)"
+                        "and d.status = 'READY' " +
+                        "and d.finalWeighting is null "
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForTriggeringModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId and d.isValidated is not null " +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.status in ('READY', 'IN_REVIEW') " +
                         "and d.createdDate between :startDate and :endDate " +
                         "and d.environmentalSuitability >= d.diseaseGroup.minEnvironmentalSuitability " +
                         "and d.distanceFromDiseaseExtent >= d.diseaseGroup.minDistanceFromDiseaseExtent"
@@ -64,21 +64,20 @@ import javax.persistence.Table;
                         "       (count(*), min(occurrenceDate), max(occurrenceDate)) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
-                        "and isValidated is not null"
+                        "and status in ('READY', 'IN_REVIEW', 'UNBATCHED')"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForBatching",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.isValidated = true " +
-                        "and d.finalWeighting is null " +
+                        "and d.status = 'UNBATCHED' " +
                         "and d.occurrenceDate <= :batchEndDate"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForTrainingPredictor",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.isValidated = true " +
+                        "and d.status = 'READY' " +
                         "and d.location.precision <> 'COUNTRY' " +
                         "and d.distanceFromDiseaseExtent is not null " +
                         "and d.environmentalSuitability is not null " +
@@ -135,9 +134,10 @@ public class DiseaseOccurrence {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDate;
 
-    // Boolean indicating whether the occurrence has been through (system or expert) validation.
-    @Column(name = "is_validated")
-    private Boolean isValidated;
+    // The status of this occurrence.
+    @Column
+    @Enumerated(EnumType.STRING)
+    private DiseaseOccurrenceStatus status;
 
     // The suitability of the environment for this disease group to exist in this location.
     @Column(name = "env_suitability")
@@ -191,13 +191,13 @@ public class DiseaseOccurrence {
         this.alert = alert;
     }
 
-    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert, Boolean isValidated,
-                             Double finalWeighting, DateTime occurrenceDate) {
+    public DiseaseOccurrence(Integer id, DiseaseGroup diseaseGroup, Location location, Alert alert,
+                             DiseaseOccurrenceStatus status, Double finalWeighting, DateTime occurrenceDate) {
         this.id = id;
         this.diseaseGroup = diseaseGroup;
         this.location = location;
         this.alert = alert;
-        this.isValidated = isValidated;
+        this.status = status;
         this.finalWeighting = finalWeighting;
         this.occurrenceDate = occurrenceDate;
     }
@@ -238,12 +238,12 @@ public class DiseaseOccurrence {
         return createdDate;
     }
 
-    public Boolean isValidated() {
-        return isValidated;
+    public DiseaseOccurrenceStatus getStatus() {
+        return status;
     }
 
-    public void setValidated(Boolean isValidated) {
-        this.isValidated = isValidated;
+    public void setStatus(DiseaseOccurrenceStatus status) {
+        this.status = status;
     }
 
     public Double getEnvironmentalSuitability() {
@@ -315,7 +315,7 @@ public class DiseaseOccurrence {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DiseaseOccurrence)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DiseaseOccurrence that = (DiseaseOccurrence) o;
 
@@ -333,12 +333,12 @@ public class DiseaseOccurrence {
         if (finalWeightingExcludingSpatial != null ? !finalWeightingExcludingSpatial.equals(that.finalWeightingExcludingSpatial) : that.finalWeightingExcludingSpatial != null)
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (isValidated != null ? !isValidated.equals(that.isValidated) : that.isValidated != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
         if (machineWeighting != null ? !machineWeighting.equals(that.machineWeighting) : that.machineWeighting != null)
             return false;
         if (occurrenceDate != null ? !occurrenceDate.equals(that.occurrenceDate) : that.occurrenceDate != null)
             return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
         if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
             return false;
 
@@ -352,7 +352,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (location != null ? location.hashCode() : 0);
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
-        result = 31 * result + (isValidated != null ? isValidated.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (environmentalSuitability != null ? environmentalSuitability.hashCode() : 0);
         result = 31 * result + (distanceFromDiseaseExtent != null ? distanceFromDiseaseExtent.hashCode() : 0);
         result = 31 * result + (expertWeighting != null ? expertWeighting.hashCode() : 0);

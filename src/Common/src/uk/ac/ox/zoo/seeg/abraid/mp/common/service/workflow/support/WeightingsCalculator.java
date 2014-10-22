@@ -6,10 +6,8 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.*;
 
@@ -42,13 +40,10 @@ public class WeightingsCalculator {
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
-    private ModelRunService modelRunService;
 
-    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService,
-                                ModelRunService modelRunService) {
+    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService) {
         this.diseaseService = diseaseService;
         this.expertService = expertService;
-        this.modelRunService = modelRunService;
     }
 
     /**
@@ -115,7 +110,7 @@ public class WeightingsCalculator {
     }
 
     /**
-     * For every occurrence of the specified disease group for which is_validated is true, and the final weighting is
+     * For every occurrence of the specified disease group for which the status is READY, and the final weighting is
      * not currently set, set its validation weighting and final weighting for the first and only time.
      * @param diseaseGroupId The id of the disease group.
      */
@@ -130,10 +125,7 @@ public class WeightingsCalculator {
     }
 
     private List<DiseaseOccurrence> getOccurrencesForValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        ModelRun lastCompletedModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
-        boolean mustHaveEnvironmentalSuitability = (lastCompletedModelRun != null);
-        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId,
-                mustHaveEnvironmentalSuitability);
+        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
     }
 
     private void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
@@ -151,8 +143,7 @@ public class WeightingsCalculator {
     }
 
     /**
-     * For every disease occurrence point that has the is_validated flag set to true, set its validation weighting as
-     * the expert weighting if it exists, otherwise the machine weighting.
+     * Set the occurrence's validation weighting as the expert weighting if it exists, otherwise the machine weighting.
      */
     private Double calculateNewValidationWeighting(DiseaseOccurrence occurrence) {
         Double expertWeighting = occurrence.getExpertWeighting();
@@ -181,11 +172,11 @@ public class WeightingsCalculator {
 
     /**
      * As above, but excluding the location resolution weighting.
-     * In this case, if validation weighting is null and environmental suitability is not null, final weighting is 1.0.
+     * In this case, if validation weighting is null, final weighting is 1.0.
      */
     private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
                                                               Double validationWeighting) {
-        if (validationWeighting == null && occurrence.getEnvironmentalSuitability() != null) {
+        if (validationWeighting == null) {
             return 1.0;
         }
         double feedWeighting = occurrence.getAlert().getFeed().getWeighting();

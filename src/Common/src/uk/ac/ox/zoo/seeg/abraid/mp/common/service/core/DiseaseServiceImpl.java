@@ -189,7 +189,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * Gets disease occurrences currently in validation, for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrences currently being validated by experts.
      */
@@ -199,19 +199,13 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is true
-     * and finalWeighting is currently null.
-     *
+     * Gets disease occurrences for the specified disease group which are yet to have a final weighting assigned.
      * @param diseaseGroupId The ID of the disease group.
-     * @param mustHaveEnvironmentalSuitability True if the occurrence's environmental suitability must be non-null.
-     *                                         False if it doesn't matter either way.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
-            Integer diseaseGroupId, boolean mustHaveEnvironmentalSuitability) {
-        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
-                diseaseGroupId, mustHaveEnvironmentalSuitability);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
     }
 
     /**

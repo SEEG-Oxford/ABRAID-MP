@@ -262,9 +262,9 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
 
         Alert alert = alertDao.getById(212855);
 
-        DiseaseOccurrence o1 = new DiseaseOccurrence(1, diseaseGroup, location1, alert, true, 0.1, DateTime.now());
-        DiseaseOccurrence o2 = new DiseaseOccurrence(2, diseaseGroup, location2, alert, true, 0.1, DateTime.now());
-        DiseaseOccurrence o3 = new DiseaseOccurrence(3, diseaseGroup, location2, alert, true, 0.1, DateTime.now());
+        DiseaseOccurrence o1 = new DiseaseOccurrence(1, diseaseGroup, location1, alert, DiseaseOccurrenceStatus.READY, 0.1, DateTime.now());
+        DiseaseOccurrence o2 = new DiseaseOccurrence(2, diseaseGroup, location2, alert, DiseaseOccurrenceStatus.READY, 0.1, DateTime.now());
+        DiseaseOccurrence o3 = new DiseaseOccurrence(3, diseaseGroup, location2, alert, DiseaseOccurrenceStatus.READY, 0.1, DateTime.now());
 
         diseaseOccurrenceDao.save(o1);
         diseaseOccurrenceDao.save(o2);
@@ -321,7 +321,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         occurrence.setAlert(alert);
         occurrence.setFinalWeighting(finalWeighting);
         occurrence.setFinalWeightingExcludingSpatial(finalWeighting);
-        occurrence.setValidated(true);
+        occurrence.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence.setOccurrenceDate(DateTime.now());
         diseaseOccurrenceDao.save(occurrence);
     }

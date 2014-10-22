@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -81,19 +82,20 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
 
         // As this is the first batch, all of them should have final weighting (and final weighting excluding spatial)
-        // set to null
+        // set to null.
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getFinalWeighting()).isNull();
             assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         }
 
-        // 29 occurrences were batched: 16 of them were sent to the Data Validator i.e. they have is_validated = false
-        // and a non-null environmental suitability, but 13 of them were country points so kept default parameters
-        // (is_validated = true). 16 occurrences with is_validated = true, and 3 occurrences with
-        // is_validated null, were not batched.
-        assertOccurrences(occurrences, true, 29, 0);        // 16 not batched + 13 country points batched
-        assertOccurrences(occurrences, false, 16, 16);      // 16 non-country points batched
-        assertOccurrences(occurrences, null, 3, 0);
+        // 29 occurrences were batched: 16 of them were sent to the Data Validator i.e. they have status IN_REVIEW
+        // and a non-null environmental suitability, but 13 of them were country points so are READY without an
+        // environmental suitability. The remaining occurrences are 16 that are UNBATCHED as a result of
+        // the batching initialisation, and 3 that were already DISCARDED_FAILED_QC.
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.IN_REVIEW, 16, 16);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.READY, 13, 0);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.UNBATCHED, 16, 0);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 3, 0);
 
         // And the model run should have been updated correctly
         modelRun = modelRunService.getModelRunByName(modelRun.getName());
@@ -121,20 +123,18 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         // As this is the second batch, the final weighting (and final weighting excluding spatial) will not have
         // been nulled. But, the final weighting will remain null for any occurrence with isValidated is null.
         for (DiseaseOccurrence occurrence : occurrences) {
-            if (occurrence.isValidated() != null) {
+            assertThat(occurrence.getStatus()).isNotEqualTo(DiseaseOccurrenceStatus.UNBATCHED);
+            // In the test data, occurrences without status READY have null weightings already, so ignore them
+            if (occurrence.getStatus().equals(DiseaseOccurrenceStatus.READY)) {
                 assertThat(occurrence.getFinalWeighting()).isNotNull();
                 assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNotNull();
-            } else {
-                assertThat(occurrence.getFinalWeighting()).isNull();
-                assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
             }
         }
 
-        // Because the final weightings are all not null, none of them will have been assigned an environmental
-        // suitability
-        assertOccurrences(occurrences, true, 45, 0);
-        assertOccurrences(occurrences, false, 0, 0);
-        assertOccurrences(occurrences, null, 3, 0);
+        // Because the final weightings are all not null, none of them will have changed status
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.READY, 45, 0);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.IN_REVIEW, 0, 0);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 3, 0);
 
         // And the model run should have been updated correctly
         modelRun2 = modelRunService.getModelRunByName(modelRun2.getName());
@@ -158,18 +158,18 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         return modelRun;
     }
 
-    private void assertOccurrences(List<DiseaseOccurrence> occurrences, Boolean isValidated, int expectedSize,
-                                   int expectedSizeWithEnvironmentalSuitability) {
-        List<DiseaseOccurrence> filteredOccurrences = findOccurrencesWithIsValidatedFlag(occurrences, isValidated);
+    private void assertOccurrences(List<DiseaseOccurrence> occurrences, DiseaseOccurrenceStatus status,
+                                   int expectedSize, int expectedSizeWithEnvironmentalSuitability) {
+        List<DiseaseOccurrence> filteredOccurrences = findOccurrencesByStatus(occurrences, status);
         assertThat(filteredOccurrences).hasSize(expectedSize);
         assertThat(getOccurrencesWithEnvironmentalSuitability(filteredOccurrences))
                 .hasSize(expectedSizeWithEnvironmentalSuitability);
     }
 
-    private List<DiseaseOccurrence> findOccurrencesWithIsValidatedFlag(List<DiseaseOccurrence> occurrences,
-                                                                       Boolean isValidated) {
+    private List<DiseaseOccurrence> findOccurrencesByStatus(List<DiseaseOccurrence> occurrences,
+                                                            DiseaseOccurrenceStatus status) {
         return select(occurrences,
-                having(on(DiseaseOccurrence.class).isValidated(), equalTo(isValidated)));
+                having(on(DiseaseOccurrence.class).getStatus(), equalTo(status)));
     }
 
     private List<DiseaseOccurrence> getOccurrencesWithEnvironmentalSuitability(List<DiseaseOccurrence> occurrences) {
