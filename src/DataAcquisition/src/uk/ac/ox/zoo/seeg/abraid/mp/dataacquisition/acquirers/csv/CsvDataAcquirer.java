@@ -4,10 +4,13 @@ import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.CharacterSetUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.domain.CsvDiseaseOccurrence;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +25,7 @@ import static ch.lambdaj.Lambda.*;
  */
 public class CsvDataAcquirer {
     private static final Logger LOGGER = Logger.getLogger(CsvDataAcquirer.class);
+    private static final String CONVERTING_TO_UTF8_MESSAGE = "Detected character set %s, converting to UTF-8.";
     private static final String INVALID_FORMAT_ERROR_MESSAGE = "CSV file has invalid format: %s.";
     private static final String LINE_ERROR_MESSAGE = "Error in CSV file on line %d: %s.";
     private static final String CONVERSION_MESSAGE = "Found %d CSV file line(s) to convert.";
@@ -46,7 +50,7 @@ public class CsvDataAcquirer {
      * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @return A list of messages resulting from the data acquisition.
      */
-    public List<String> acquireDataFromCsv(String csv, boolean isGoldStandard) {
+    public List<String> acquireDataFromCsv(byte[] csv, boolean isGoldStandard) {
         List<String> messages = new ArrayList<>();
 
         List<CsvDiseaseOccurrence> csvDiseaseOccurrences = retrieveDataFromCsv(csv, messages);
@@ -59,15 +63,31 @@ public class CsvDataAcquirer {
         return messages;
     }
 
-    private List<CsvDiseaseOccurrence> retrieveDataFromCsv(String csv, List<String> messages) {
+    private List<CsvDiseaseOccurrence> retrieveDataFromCsv(byte[] csv, List<String> messages) {
+        String convertedCsv = convertToUTF8IfNecessary(csv, messages);
         try {
-            return CsvDiseaseOccurrence.readFromCsv(csv);
+            return CsvDiseaseOccurrence.readFromCsv(convertedCsv);
         } catch (Exception e) {
             String message = String.format(INVALID_FORMAT_ERROR_MESSAGE, e.getMessage());
             LOGGER.error(message, e);
             messages.add(message);
             return null;
         }
+    }
+
+    private String convertToUTF8IfNecessary(byte[] input, List<String> messages) {
+        byte[] convertedInput;
+        Charset fromCharset = CharacterSetUtils.detectCharacterSet(input);
+        if (fromCharset != null && !fromCharset.equals(StandardCharsets.UTF_8)) {
+            // We have detected that the input is not UTF-8, so convert it to UTF-8
+            String message = String.format(CONVERTING_TO_UTF8_MESSAGE, fromCharset.name());
+            LOGGER.info(message);
+            messages.add(message);
+            convertedInput = CharacterSetUtils.convertToCharacterSet(input, fromCharset, StandardCharsets.UTF_8);
+        } else {
+            convertedInput = input;
+        }
+        return new String(convertedInput, StandardCharsets.UTF_8);
     }
 
     private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,

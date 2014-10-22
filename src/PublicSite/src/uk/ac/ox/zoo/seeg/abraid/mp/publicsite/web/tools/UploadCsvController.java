@@ -15,7 +15,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Controller for uploading a CSV file for data acquisition.
@@ -68,7 +67,7 @@ public class UploadCsvController extends AbstractController {
     }
 
     private void acquireCsvData(MultipartFile file, boolean isGoldStandard) throws IOException {
-        String csvFile = new String(file.getBytes(), StandardCharsets.UTF_8);
+        byte[] csvFile = file.getBytes();
         String filePath = file.getOriginalFilename();
         String userEmailAddress = currentUserService.getCurrentUser().getUsername();
         uploadCsvControllerHelperAsyncWrapper.acquireCsvData(csvFile, isGoldStandard, userEmailAddress, filePath);

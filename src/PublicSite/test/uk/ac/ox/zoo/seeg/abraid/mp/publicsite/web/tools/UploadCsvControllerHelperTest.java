@@ -53,7 +53,7 @@ public class UploadCsvControllerHelperTest {
     @Test
     public void acquireCsvDataSendsCorrectEmail() throws Exception {
         // Arrange
-        String csv = "Test csv";
+        byte[] csv = "Test csv".getBytes();
         boolean isGoldStandard = false;
         String userEmailAddress = "user@email.com";
         String filePath = "/path/to/test.csv";

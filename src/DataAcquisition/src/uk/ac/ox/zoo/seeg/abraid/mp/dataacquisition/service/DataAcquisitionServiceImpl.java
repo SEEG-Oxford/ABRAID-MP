@@ -45,7 +45,7 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
      * @return A list of messages resulting from the data acquisition.
      */
     @Override
-    public List<String> acquireCsvData(String csv, boolean isGoldStandard) {
+    public List<String> acquireCsvData(byte[] csv, boolean isGoldStandard) {
         return csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
     }
 }

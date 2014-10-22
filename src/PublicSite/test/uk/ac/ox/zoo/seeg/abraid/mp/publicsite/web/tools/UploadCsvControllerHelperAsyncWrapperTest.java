@@ -16,7 +16,7 @@ public class UploadCsvControllerHelperAsyncWrapperTest {
         boolean isGoldStandard = false;
         UploadCsvControllerHelper helper = mock(UploadCsvControllerHelper.class);
         UploadCsvControllerHelperAsyncWrapper wrapper = new UploadCsvControllerHelperAsyncWrapper(helper);
-        String csv = "Test csv";
+        byte[] csv = "Test csv".getBytes();
         String emailAddress = "user@test.com";
         String filePath = "/path/to/filename.csv";
 
@@ -33,11 +33,11 @@ public class UploadCsvControllerHelperAsyncWrapperTest {
         boolean isGoldStandard = true;
         UploadCsvControllerHelper helper = mock(UploadCsvControllerHelper.class);
         UploadCsvControllerHelperAsyncWrapper wrapper = new UploadCsvControllerHelperAsyncWrapper(helper);
-        String csv = "Test csv";
+        byte[] csv = "Test csv".getBytes();
         String emailAddress = "user@test.com";
         String filePath = "/path/to/filename.csv";
 
-        doThrow(new RuntimeException("Test")).when(helper).acquireCsvData(anyString(), anyBoolean(), anyString(),
+        doThrow(new RuntimeException("Test")).when(helper).acquireCsvData(any(byte[].class), anyBoolean(), anyString(),
                 anyString());
 
         // Act

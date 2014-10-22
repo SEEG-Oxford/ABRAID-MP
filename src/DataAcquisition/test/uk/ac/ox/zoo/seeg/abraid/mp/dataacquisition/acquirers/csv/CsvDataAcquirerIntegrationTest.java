@@ -47,7 +47,8 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     @Test
     public void acquireFailsOnFirstAndThirdLines() {
         // Arrange
-        String csv = CSV_HEADER + "Test site 1\n" + CSV_OCCURRENCE1 + "Test site 2, 20.5\n";
+        String csvString = CSV_HEADER + "Test site 1\n" + CSV_OCCURRENCE1 + "Test site 2, 20.5\n";
+        byte[] csv = csvString.getBytes();
 
         // Act
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
@@ -73,7 +74,8 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     }
 
     private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {
-        String csv = CSV_HEADER + CSV_OCCURRENCE1 + CSV_OCCURRENCE2;
+        String csvString = CSV_HEADER + CSV_OCCURRENCE1 + CSV_OCCURRENCE2;
+        byte[] csv = csvString.getBytes();
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
         assertThat(messages).hasSize(2);
         assertThat(messages.get(0)).isEqualTo("Found 2 CSV file line(s) to convert.");
