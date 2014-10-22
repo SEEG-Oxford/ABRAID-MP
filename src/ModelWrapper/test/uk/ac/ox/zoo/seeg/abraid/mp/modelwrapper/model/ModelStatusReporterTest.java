@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.filter;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.*;
 import static uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.ZipFileAssert.assertThatZip;
@@ -49,7 +50,7 @@ public class ModelStatusReporterTest {
     @Test
     public void reportSendsCorrectOutputsForCompletedStatus() throws Exception {
         // Arrange
-        File workingDirectory = testFolder.getRoot();
+        File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
         ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
@@ -58,7 +59,7 @@ public class ModelStatusReporterTest {
         String outputText = "test output text";
         String errorText = "test error text";
 
-        addResultsToWorkspace(RESULTS_FILES);
+        addResultsToWorkspace(RESULTS_FILES, workingDirectory);
 
         List<File> expectedFiles = ListUtils.union(RESULTS_FILES, Arrays.asList(COMPLETED_METADATA_JSON_TEST_FILE));
 
@@ -74,9 +75,29 @@ public class ModelStatusReporterTest {
     }
 
     @Test
+    public void reportDeletesWorkspaceIfResultsSent() throws Exception {
+        // Arrange
+        File workingDirectory = testFolder.newFolder();
+
+        ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+
+        String outputText = "test output text";
+        String errorText = "test error text";
+
+        addResultsToWorkspace(RESULTS_FILES, workingDirectory);
+
+        // Act
+        target.report(ModelRunStatus.COMPLETED, outputText, errorText);
+
+        // Assert
+        assertThat(workingDirectory).doesNotExist();
+    }
+
+    @Test
     public void reportSendsCorrectOutputsForFailedStatus() throws Exception {
         // Arrange
-        File workingDirectory = testFolder.getRoot();
+        File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
         ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
@@ -101,13 +122,13 @@ public class ModelStatusReporterTest {
     @Test
     public void reportLogsErrorIfWebServiceReturnsErrorText() throws Exception {
         // Arrange
-        File workingDirectory = testFolder.getRoot();
+        File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
         ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
-        addResultsToWorkspace(RESULTS_FILES);
+        addResultsToWorkspace(RESULTS_FILES, workingDirectory);
 
         String webServiceResponseMessage = "WebService error text";
         when(mockOutputServiceClient.handleOutputs(any(File.class))).thenReturn(webServiceResponseMessage);
@@ -122,13 +143,13 @@ public class ModelStatusReporterTest {
     @Test
     public void reportLogsErrorIfWebServiceThrowsException() throws Exception {
         // Arrange
-        File workingDirectory = testFolder.getRoot();
+        File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
         ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
-        addResultsToWorkspace(RESULTS_FILES);
+        addResultsToWorkspace(RESULTS_FILES, workingDirectory);
 
         String webServiceResponseMessage = "WebService error text";
         IOException ioException = new IOException(webServiceResponseMessage);
@@ -139,6 +160,28 @@ public class ModelStatusReporterTest {
 
         // Assert
         verify(logger, times(1)).fatal("Error sending model outputs for handling: " + webServiceResponseMessage, ioException);
+    }
+
+    @Test
+    public void reportDoesNotDeleteWorkspaceIfExceptionThrown() throws Exception {
+        // Arrange
+        File workingDirectory = testFolder.newFolder();
+
+        ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        Logger logger = GeneralTestUtils.createMockLogger(target);
+
+        addResultsToWorkspace(RESULTS_FILES, workingDirectory);
+
+        String webServiceResponseMessage = "WebService error text";
+        IOException ioException = new IOException(webServiceResponseMessage);
+        when(mockOutputServiceClient.handleOutputs(any(File.class))).thenThrow(ioException);
+
+        // Act
+        target.report(ModelRunStatus.COMPLETED, "", "");
+
+        // Assert
+        assertThat(workingDirectory).exists();
     }
 
     @Test
@@ -181,13 +224,13 @@ public class ModelStatusReporterTest {
 
     private void reportLogsErrorIfResultFileIsMissing(File missingFile) throws Exception {
         // Arrange
-        File workingDirectory = testFolder.getRoot();
+        File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
         ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
-        addResultsToWorkspace(filter(not(missingFile), RESULTS_FILES));
+        addResultsToWorkspace(filter(not(missingFile), RESULTS_FILES), workingDirectory);
 
         // Act
         target.report(ModelRunStatus.COMPLETED, "", "");
@@ -198,9 +241,9 @@ public class ModelStatusReporterTest {
                 any(ZipException.class));
     }
 
-    private void addResultsToWorkspace(List<File> files) throws IOException {
+    private void addResultsToWorkspace(List<File> files, File workspace) throws IOException {
         // Arrange - copy outputs to test folder
-        File resultsDir = new File(testFolder.getRoot(), "results");
+        File resultsDir = new File(workspace, "results");
         resultsDir.mkdir();
         for (File file : files) {
             FileUtils.copyFileToDirectory(file, resultsDir);
