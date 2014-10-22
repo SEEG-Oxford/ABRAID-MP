@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -87,11 +88,12 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
             assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         }
 
-        // 29 occurrences were batched, and all were sent to the Data Validator i.e. they all have is_validated = false
-        // and a non-null environmental suitability. 16 occurrences with is_validated = true, and 3 occurrences with
+        // 29 occurrences were batched: 16 of them were sent to the Data Validator i.e. they have is_validated = false
+        // and a non-null environmental suitability, but 13 of them were country points so kept default parameters
+        // (is_validated = true). 16 occurrences with is_validated = true, and 3 occurrences with
         // is_validated null, were not batched.
-        assertOccurrences(occurrences, true, 16, 0);
-        assertOccurrences(occurrences, false, 29, 29);
+        assertOccurrences(occurrences, true, 29, 0);        // 16 not batched + 13 country points batched
+        assertOccurrences(occurrences, false, 16, 16);      // 16 non-country points batched
         assertOccurrences(occurrences, null, 3, 0);
 
         // And the model run should have been updated correctly
@@ -118,10 +120,15 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
 
         // As this is the second batch, the final weighting (and final weighting excluding spatial) will not have
-        // been nulled
+        // been nulled. But, the final weighting will remain null for any occurrence with isValidated is null.
         for (DiseaseOccurrence occurrence : occurrences) {
-            assertThat(occurrence.getFinalWeighting()).isNotNull();
-            assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNotNull();
+            if (occurrence.isValidated() != null) {
+                assertThat(occurrence.getFinalWeighting()).isNotNull();
+                assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNotNull();
+            } else {
+                assertThat(occurrence.getFinalWeighting()).isNull();
+                assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+            }
         }
 
         // Because the final weightings are all not null, none of them will have been assigned an environmental
