@@ -115,6 +115,8 @@ public class ModelRunServiceTest {
     public void getModelRunRequestServersByUsage() {
         // Arrange
         List<String> expected = Arrays.asList("A", "B", "C");
+        ModelRunDao modelRunDao = mock(ModelRunDao.class);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
         when(modelRunDao.getModelRunRequestServersByUsage()).thenReturn(expected);
 
         // Act

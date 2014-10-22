@@ -327,9 +327,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert
         assertThat(result).hasSize(3);
-        assertThat(result.get(0)).isEqualTo("host1");
+        assertThat(result.get(0)).isEqualTo("host3");
         assertThat(result.get(1)).isEqualTo("host2");
-        assertThat(result.get(2)).isEqualTo("host3");
+        assertThat(result.get(2)).isEqualTo("host1");
     }
 
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {

@@ -38,7 +38,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null);
 
         // Assert
-        verify(webService).startRun(eq(URI.create("http://api:key@b:1245/path")), any(DiseaseGroup.class), anyListOf(DiseaseOccurrence.class), anyMapOf(Integer.class, Integer.class));
+        verify(webService).startRun(eq(URI.create("http://api:key@a:1245/path")), any(DiseaseGroup.class), anyListOf(DiseaseOccurrence.class), anyMapOf(Integer.class, Integer.class));
     }
 
     @Test

@@ -83,23 +83,25 @@ public class ModelRunRequester {
     }
 
     private URI selectLeastBusyModelWrapperUrl() {
-        Stack<String> usedHosts = new Stack<>();
-        usedHosts.addAll(modelRunService.getModelRunRequestServersByUsage());
-        Collections.reverse(usedHosts);
+        Stack<String> usedHostsWithBusiestAtTop = new Stack<>();
+        usedHostsWithBusiestAtTop.addAll(modelRunService.getModelRunRequestServersByUsage());
 
-        List<URI> availableHosts = modelWrapperUrlCollection;
+        List<URI> availableHostsInPreferenceOrder = modelWrapperUrlCollection;
 
-        while (availableHosts.size() > 1 && usedHosts.size() > 0) {
-            final String busyHost = usedHosts.pop();
-            availableHosts = filter(new LambdaJMatcher<URI>() {
+        // Until only 1 available host remains, or there are no more used hosts remaining
+        while (availableHostsInPreferenceOrder.size() > 1 && usedHostsWithBusiestAtTop.size() > 0) {
+            // Remove the busiest of the used hosts from the list of available hosts (assuming it's present)
+            final String busiestHost = usedHostsWithBusiestAtTop.pop();
+            availableHostsInPreferenceOrder = filter(new LambdaJMatcher<URI>() {
                 @Override
                 public boolean matches(Object host) {
-                    return !((URI) host).getHost().equals(busyHost);
+                    return !((URI) host).getHost().equals(busiestHost);
                 }
-            }, availableHosts);
+            }, availableHostsInPreferenceOrder);
         }
 
-        return availableHosts.get(0);
+        // If only 1 host remains use that one, if multiple hosts remain just use the first (preferred) one.
+        return availableHostsInPreferenceOrder.get(0);
     }
 
     private void logRequest(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> diseaseOccurrences) {
