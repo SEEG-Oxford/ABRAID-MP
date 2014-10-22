@@ -93,10 +93,9 @@ public class AutomaticModelRunsEnablerTest {
         automaticModelRunsEnabler.enable(diseaseGroupId);
 
         // Assert
-        assertThat(occurrence1.getFinalWeighting()).isEqualTo(0);
-        assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isEqualTo(0);
-        assertThat(occurrence2.getFinalWeighting()).isNull();
-        assertThat(occurrence2.getFinalWeightingExcludingSpatial()).isNull();
+        assertThat(occurrence1.isValidated()).isNull();
+        assertThat(occurrence1.getFinalWeighting()).isNull();
+        assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isNull();
 
         verify(diseaseOccurrenceValidationService).addValidationParameters(Arrays.asList(occurrence2));
         verify(diseaseService).saveDiseaseOccurrence(occurrence1);

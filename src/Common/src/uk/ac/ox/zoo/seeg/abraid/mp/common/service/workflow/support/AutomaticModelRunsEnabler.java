@@ -73,14 +73,19 @@ public class AutomaticModelRunsEnabler {
 
         for (DiseaseOccurrence occurrence : occurrences) {
             if (occurrence.getOccurrenceDate().isBefore(earliestDateForValidationParameters)) {
-                occurrence.setFinalWeighting(0.0);
-                occurrence.setFinalWeightingExcludingSpatial(0.0);
+                clearParameters(occurrence);
             } else {
                 occurrencesForValidationParameters.add(occurrence);
             }
         }
 
         diseaseOccurrenceValidationService.addValidationParameters(occurrencesForValidationParameters);
+    }
+
+    private void clearParameters(DiseaseOccurrence occurrence) {
+        occurrence.setValidated(null);
+        occurrence.setFinalWeighting(null);
+        occurrence.setFinalWeightingExcludingSpatial(null);
     }
 
     private void saveOccurrences(List<DiseaseOccurrence> occurrences) {
