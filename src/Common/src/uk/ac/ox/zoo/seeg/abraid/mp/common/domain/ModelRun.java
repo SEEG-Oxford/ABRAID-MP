@@ -46,6 +46,14 @@ import java.util.List;
                 query = "select count(*) from ModelRun " +
                         "where diseaseGroupId = :diseaseGroupId " +
                         "and batchingCompletedDate is not null"
+        ),
+        @NamedQuery(
+                name = "getModelRunRequestServersByUsage",
+                query = "select requestServer from ModelRun " +
+                        "group by requestServer " +
+                        "order by " +
+                            "sum(case(status) when 'IN_PROGRESS' then 1 else 0 end) asc, " +
+                            "sum(case(status) when 'IN_PROGRESS' then 0 else 1 end) asc"
         )
 })
 @Entity
@@ -68,6 +76,10 @@ public class ModelRun {
     // The ID of the disease group for the model run.
     @Column(name = "disease_group_id")
     private int diseaseGroupId;
+
+    // Request server.
+    @Column(name = "request_server")
+    private String requestServer;
 
     // The date that the model run was requested.
     @Column(name = "request_date")
@@ -123,9 +135,10 @@ public class ModelRun {
         this.id = id;
     }
 
-    public ModelRun(String name, int diseaseGroupId, DateTime requestDate) {
+    public ModelRun(String name, int diseaseGroupId, String requestServer, DateTime requestDate) {
         this.name = name;
         this.status = ModelRunStatus.IN_PROGRESS;
+        this.requestServer = requestServer;
         this.requestDate = requestDate;
         this.diseaseGroupId = diseaseGroupId;
     }
@@ -156,6 +169,10 @@ public class ModelRun {
 
     public void setDiseaseGroupId(int diseaseGroupId) {
         this.diseaseGroupId = diseaseGroupId;
+    }
+
+    public String getRequestServer() {
+        return requestServer;
     }
 
     public DateTime getRequestDate() {
@@ -260,6 +277,8 @@ public class ModelRun {
         if (outputText != null ? !outputText.equals(modelRun.outputText) : modelRun.outputText != null) return false;
         if (requestDate != null ? !requestDate.equals(modelRun.requestDate) : modelRun.requestDate != null)
             return false;
+        if (requestServer != null ? !requestServer.equals(modelRun.requestServer) : modelRun.requestServer != null)
+            return false;
         if (responseDate != null ? !responseDate.equals(modelRun.responseDate) : modelRun.responseDate != null)
             return false;
         if (status != modelRun.status) return false;
@@ -273,13 +292,14 @@ public class ModelRun {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + diseaseGroupId;
+        result = 31 * result + (requestServer != null ? requestServer.hashCode() : 0);
         result = 31 * result + (requestDate != null ? requestDate.hashCode() : 0);
         result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
         result = 31 * result + (outputText != null ? outputText.hashCode() : 0);
         result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
         result = 31 * result + (batchEndDate != null ? batchEndDate.hashCode() : 0);
-        result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);
         result = 31 * result + (batchOccurrenceCount != null ? batchOccurrenceCount.hashCode() : 0);
+        result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

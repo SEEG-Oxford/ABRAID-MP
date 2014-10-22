@@ -30,12 +30,12 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     @Before
     public void setUp() {
-        modelRunDengue1 = createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "2014-07-01", null);
-        modelRunDengue2 = createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "2014-07-01", "2014-07-04");
-        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "2014-07-02", "2014-07-03");
-        modelRunDengue4 = createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "2014-07-05", null);
-        modelRunDengue5 = createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "2014-07-06", "2014-07-05");
-        modelRunMalarias1 = createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "2014-07-07", "2014-07-08");
+        modelRunDengue1 = createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "host1", "2014-07-01", null);
+        modelRunDengue2 = createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "host1", "2014-07-01", "2014-07-04");
+        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "host3", "2014-07-02", "2014-07-03");
+        modelRunDengue4 = createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "host2", "2014-07-05", null);
+        modelRunDengue5 = createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "host3", "2014-07-06", "2014-07-05");
+        modelRunMalarias1 = createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "host3", "2014-07-07", "2014-07-08");
     }
 
     @Test
@@ -43,6 +43,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         String name = "test name";
         int diseaseGroupId = 87;
+        String requestServer = "requestServer";
         DateTime requestDate = DateTime.now().minusHours(4);
         DateTime responseDate = DateTime.now();
         String outputText = "output text";
@@ -51,7 +52,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime batchingCompletionDate = DateTime.now().plusHours(2);
         int batchedOccurrenceCount = 1000;
 
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestDate);
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, requestDate);
         modelRun.setResponseDate(responseDate);
         modelRun.setOutputText(outputText);
         modelRun.setErrorText(errorText);
@@ -69,6 +70,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getName()).isEqualTo(name);
         assertThat(modelRun.getStatus()).isEqualTo(ModelRunStatus.IN_PROGRESS);
         assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+        assertThat(modelRun.getRequestServer()).isEqualTo(requestServer);
         assertThat(modelRun.getRequestDate()).isEqualTo(requestDate);
         assertThat(modelRun.getOutputText()).isEqualTo(outputText);
         assertThat(modelRun.getErrorText()).isEqualTo(errorText);
@@ -310,6 +312,26 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(result).isTrue();
     }
 
+    @Test
+    public void getModelRunRequestServersByUsageGetsCorrectlyOrderedServers() {
+        // Arrange
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        List<String> result = modelRunDao.getModelRunRequestServersByUsage();
+
+        // Assert
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0)).isEqualTo("host3");
+        assertThat(result.get(1)).isEqualTo("host2");
+        assertThat(result.get(2)).isEqualTo("host1");
+    }
+
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {
         SubmodelStatistic submodelStatistic = new SubmodelStatistic();
         submodelStatistic.setModelRun(modelRun);
@@ -338,12 +360,12 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     private ModelRun createModelRun(String name) {
-        return new ModelRun(name, 87, DateTime.now());
+        return new ModelRun(name, 87, "host", DateTime.now());
     }
 
-    private static ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestDate,
-                                    String responseDate) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, new DateTime(requestDate));
+    private static ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestServer,
+                                           String requestDate, String responseDate) {
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, new DateTime(requestDate));
         modelRun.setStatus(status);
         modelRun.setResponseDate(new DateTime(responseDate));
         return modelRun;

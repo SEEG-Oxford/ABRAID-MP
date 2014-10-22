@@ -23,6 +23,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,6 +97,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         ModelRun modelRun = modelRuns.get(0);
         assertThat(modelRun.getName()).isEqualTo(modelName);
         assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+        assertThat(modelRun.getRequestServer()).isEqualTo(URI.create(URL).getHost());
         assertThat(modelRun.getRequestDate()).isEqualTo(now);
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
     }

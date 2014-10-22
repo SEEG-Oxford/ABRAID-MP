@@ -29,15 +29,20 @@
     <bean id="diseaseOccurrenceReviewManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseOccurrenceReviewManager" autowire="constructor">
         <constructor-arg name="maxDaysOnValidator" value="${max.days.for.occurrences.on.validator}" />
     </bean>
-    <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequester" autowire="constructor"/>
+    <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequester" autowire="constructor">
+        <constructor-arg name="modelWrapperUrlCollection">
+            <bean class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
+                <constructor-arg type="java.lang.String" value="${model.wrapper.instance.list}"/>
+                <constructor-arg type="java.lang.String" value=" "/>
+            </bean>
+        </constructor-arg>
+    </bean>
     <bean id="environmentalSuitabilityHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper" autowire="constructor"/>
     <bean id="distanceFromDiseaseExtentHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper" autowire="constructor"/>
     <bean id="machineWeightingPredictor" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor" autowire="constructor"/>
 
     <!-- Web services -->
-    <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService" autowire="constructor">
-        <constructor-arg name="rootUrl" value="${model.wrapper.root.url}"/>
-    </bean>
+    <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService" autowire="constructor" />
 
     <bean id="machineLearningWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineLearningWebService" autowire="constructor">
         <constructor-arg name="rootUrl" value="${machinelearning.root.url}"/>

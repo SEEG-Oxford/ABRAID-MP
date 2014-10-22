@@ -17,6 +17,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunReque
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
+import java.net.URI;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +26,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.contains;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.same;
 
 /**
@@ -161,6 +164,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         // Assert that the model wrapper web service has been called once for dengue (disease group 87), with
         // the specified number of occurrence points and disease extent classes
         verify(modelWrapperWebService, atLeastOnce()).startRun(
+                eq(URI.create(MODELWRAPPER_URL_PREFIX)),
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
                 argThat(new MapSizeMatcher<Integer, Integer>(460)));
@@ -389,7 +393,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now().minusDays(1));
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, "localhost", DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);

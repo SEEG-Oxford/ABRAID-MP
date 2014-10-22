@@ -140,7 +140,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchEndDate,
                                                DateTime batchingCompletionDate) throws Exception {
         String name = Double.toString(Math.random());
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, DateTime.now().minusDays(1));
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, "host", DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRun.setBatchEndDate(batchEndDate);

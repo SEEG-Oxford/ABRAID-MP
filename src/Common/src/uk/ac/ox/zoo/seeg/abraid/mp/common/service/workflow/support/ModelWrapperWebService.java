@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -25,21 +26,17 @@ public class ModelWrapperWebService {
     private WebServiceClient webServiceClient;
     private final AbraidJsonObjectMapper objectMapper;
 
-    // The root URL for the ModelWrapper web service (i.e. the non-parameterised part).
-    private String rootUrl;
-
     // The ModelWrapper's URL path for the model run (this is hardcoded because it is hardcoded in ModelWrapper).
     private static final String MODEL_RUN_URL_PATH = "/model/run";
 
-    public ModelWrapperWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper,
-                                  String rootUrl) {
+    public ModelWrapperWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper) {
         this.webServiceClient = webServiceClient;
         this.objectMapper = objectMapper;
-        this.rootUrl = rootUrl;
     }
 
     /**
      * Starts a model run.
+     * @param modelWrapperUrl The base url path for the model wrapper instance on which to start a run.
      * @param diseaseGroup The disease group for this model run.
      * @param occurrences The disease occurrences for this model run.
      * @param diseaseExtent Ths disease extent for this model run, expressed as a mapping between GAUL codes
@@ -48,17 +45,17 @@ public class ModelWrapperWebService {
      * @throws WebServiceClientException If the web service call fails.
      * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
-    public JsonModelRunResponse startRun(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> occurrences,
-                                         Map<Integer, Integer> diseaseExtent)
+    public JsonModelRunResponse startRun(URI modelWrapperUrl, DiseaseGroup diseaseGroup,
+                                         List<DiseaseOccurrence> occurrences, Map<Integer, Integer> diseaseExtent)
             throws WebServiceClientException, JsonParserException {
-        String url = buildUrl();
+        String url = buildUrl(modelWrapperUrl);
         JsonModelRun body = createJsonModelRun(diseaseGroup, occurrences, diseaseExtent);
         String bodyAsJson = createRequestBodyAsJson(body);
         String response = webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
         return parseResponseJson(response);
     }
 
-    private String buildUrl() {
+    private String buildUrl(URI rootUrl) {
         return UriBuilder.fromUri(rootUrl)
                 .path(MODEL_RUN_URL_PATH)
                 .build().toString();

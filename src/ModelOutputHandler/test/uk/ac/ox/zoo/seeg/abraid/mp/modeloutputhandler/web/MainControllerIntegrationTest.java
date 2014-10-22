@@ -288,7 +288,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void insertModelRun(String name) {
-        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, DateTime.now());
+        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, "host", DateTime.now());
         modelRunDao.save(modelRun);
     }
 

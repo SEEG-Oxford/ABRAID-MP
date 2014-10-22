@@ -63,6 +63,18 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
         return listNamedQuery("getCompletedModelRuns");
     }
 
+    /**
+     * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,
+     * then sorted by the number of inactive model runs. Sorted by ascending usage.
+     * @return The ordered list of servers.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getModelRunRequestServersByUsage() {
+        Query query = namedQuery("getModelRunRequestServersByUsage");
+        return query.list();
+    }
+
     private ModelRun firstOrNull(List<ModelRun> modelRuns) {
         return (modelRuns != null && modelRuns.size() > 0) ? modelRuns.get(0) : null;
     }
