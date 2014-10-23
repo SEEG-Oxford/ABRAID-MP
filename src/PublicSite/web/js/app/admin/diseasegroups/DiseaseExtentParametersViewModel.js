@@ -7,19 +7,17 @@ define(["ko"], function (ko) {
     return function (diseaseGroupSelectedEventName) {
         var self = this;
 
-        self.maxMonthsAgoForHigherOccurrenceScore = ko.observable()
-            .extend({ digit: true, min: 0 });
-        self.higherOccurrenceScore = ko.observable()
-            .extend({ digit: true, min: 0 });
-        self.lowerOccurrenceScore = ko.observable()
-            .extend({ digit: true, min: 0, max: self.higherOccurrenceScore });
+        self.maxMonthsAgoForHigherOccurrenceScore = ko.observable().extend({ digit: true, min: 0 });
+        self.higherOccurrenceScore = ko.observable();
+        self.lowerOccurrenceScore = ko.observable();
+        self.higherOccurrenceScore.extend({ digit: true, customMin: self.lowerOccurrenceScore });
+        self.lowerOccurrenceScore.extend({ digit: true, customMax: self.higherOccurrenceScore, min: 0 });
 
-        self.minValidationWeighting = ko.observable()
-            .extend({ number: true, min: 0, max: 1 });
-        self.minOccurrencesForPresence = ko.observable()
-            .extend({ digit: true, min: 0 });
-        self.minOccurrencesForPossiblePresence = ko.observable()
-            .extend({ digit: true, min: 0, max: self.minOccurrencesForPresence });
+        self.minValidationWeighting = ko.observable().extend({ number: true, min: 0, max: 1 });
+        self.minOccurrencesForPresence = ko.observable();
+        self.minOccurrencesForPossiblePresence = ko.observable();
+        self.minOccurrencesForPresence.extend({ digit: true, customMin: self.minOccurrencesForPossiblePresence });
+        self.minOccurrencesForPossiblePresence.extend({digit: true, min: 0, customMax: self.minOccurrencesForPresence});
 
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {

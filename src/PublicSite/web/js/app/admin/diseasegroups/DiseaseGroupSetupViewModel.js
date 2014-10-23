@@ -23,8 +23,10 @@ define([
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
         self.canRunModel = ko.observable(false);
-        self.batchStartDate = ko.observable("").extend({ required: true, date: true });
-        self.batchEndDate = ko.observable("").extend({ required: true, date: true, min: self.batchStartDate });
+        self.batchStartDate = ko.observable("");
+        self.batchEndDate = ko.observable("");
+        self.batchStartDate.extend({ required: true, date: true, max: self.batchEndDate });
+        self.batchEndDate.extend({ required: true, date: true, min: self.batchStartDate });
         self.batchDateMinimum = ko.observable("");
         self.batchDateMaximum = ko.observable("");
         self.hasGoldStandardOccurrences = ko.observable(false);

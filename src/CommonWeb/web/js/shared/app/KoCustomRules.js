@@ -9,6 +9,28 @@ define([
 ], function (_, ko) {
     "use strict";
 
+    // Value must be strictly greater than (not equal to) the threshold, but the values are not required. The comparison
+    // will only be performed if both values are defined, so 'required: true' must be explicitly used in the extend on
+    // the observable field if desired.
+    ko.validation.rules.customMin = {
+        validator: function (valueAccessor, thresholdAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var threshold = ko.utils.recursiveUnwrap(thresholdAccessor);
+            return (value === "" || threshold === "") || (value > threshold);
+        },
+        message: "Please enter a number greater than {0}."
+    };
+
+    // Value must be strictly less than the threshold, but the values are not required.
+    ko.validation.rules.customMax = {
+        validator: function (valueAccessor, thresholdAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var threshold = ko.utils.recursiveUnwrap(thresholdAccessor);
+            return (value === "" || threshold === "") || (value < threshold);
+        },
+        message: "Please enter a number less than {0}."
+    };
+
     // Adapted from:
     // https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#are-same
     ko.validation.rules.areSame = {
