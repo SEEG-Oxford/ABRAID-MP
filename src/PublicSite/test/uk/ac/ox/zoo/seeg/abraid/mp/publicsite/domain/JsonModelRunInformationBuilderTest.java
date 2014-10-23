@@ -278,12 +278,12 @@ public class JsonModelRunInformationBuilderTest {
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
-        JsonModelRunInformation information = builder.populateBatchEndDateParameters(modelRun, statistics).get();
+        JsonModelRunInformation information = builder.populateBatchDateParameters(modelRun, statistics).get();
 
         // Assert
-        assertThat(information.getBatchEndDateMinimum()).isEqualTo(expectedBatchEndDateMinimum);
+        assertThat(information.getBatchDateMinimum()).isEqualTo(expectedBatchEndDateMinimum);
         assertThat(information.getBatchEndDateDefault()).isEqualTo(expectedBatchEndDateDefault);
-        assertThat(information.getBatchEndDateMaximum()).isEqualTo(expectedBatchEndDateMaximum);
+        assertThat(information.getBatchDateMaximum()).isEqualTo(expectedBatchEndDateMaximum);
     }
 
     private DateTime getDate(String dateText) {

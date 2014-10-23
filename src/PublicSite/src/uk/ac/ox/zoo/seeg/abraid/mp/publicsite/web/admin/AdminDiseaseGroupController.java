@@ -108,7 +108,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 .populateHasModelBeenSuccessfullyRun(lastCompletedModelRun)
                 .populateDiseaseOccurrencesText(statistics)
                 .populateCanRunModelWithReason(diseaseGroup)
-                .populateBatchEndDateParameters(lastCompletedModelRun, statistics)
+                .populateBatchDateParameters(lastCompletedModelRun, statistics)
                 .populateHasGoldStandardOccurrences(goldStandardOccurrences)
                 .get();
 
@@ -142,6 +142,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to request the model run.
+     * @param batchStartDate The start date of the occurrences batch. Must be in ISOE 8601 format for correct parsing.
      * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
      * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      * @return An error message string (empty if no error).
@@ -152,15 +153,16 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchEndDate,
-                                                  boolean useGoldStandardOccurrences) {
+    public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
+                                                  String batchEndDate, boolean useGoldStandardOccurrences) {
         try {
             if (useGoldStandardOccurrences) {
                 modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
             } else {
+                DateTime parsedBatchStartDate = DateTime.parse(batchStartDate);
                 DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
                 modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId,
-                        parsedBatchEndDate);
+                        parsedBatchStartDate, parsedBatchEndDate);
             }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ModelRunRequesterException e) {

@@ -35,7 +35,7 @@ public class ModelRunRequesterTest {
                 new String[]{"http://api:key@a:1245/path", "http://api:key@b:1245/path", "http://api:key@c:1245/path"});
 
         // Act
-        target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null);
+        target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null, null);
 
         // Assert
         verify(webService).startRun(eq(URI.create("http://api:key@a:1245/path")), any(DiseaseGroup.class), anyListOf(DiseaseOccurrence.class), anyMapOf(Integer.class, Integer.class));
@@ -55,7 +55,7 @@ public class ModelRunRequesterTest {
                 new String[]{"http://api:key@a:1245/path", "http://api:key@b:1245/path", "http://api:key@c:1245/path", "http://api:key@d:1245/path"});
 
         // Act
-        target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null);
+        target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null, null);
 
         // Assert
         verify(webService).startRun(eq(URI.create("http://api:key@a:1245/path")), any(DiseaseGroup.class), anyListOf(DiseaseOccurrence.class), anyMapOf(Integer.class, Integer.class));

@@ -69,15 +69,15 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Test
     public void requestModelRunSucceedsWithBatching() {
-        requestModelRunSucceeds(DateTime.now().plusDays(2));
+        requestModelRunSucceeds(DateTime.now(), DateTime.now().plusDays(2));
     }
 
     @Test
     public void requestModelRunSucceedsWithoutBatching() {
-        requestModelRunSucceeds(null);
+        requestModelRunSucceeds(null, null);
     }
 
-    private void requestModelRunSucceeds(DateTime batchEndDate) {
+    private void requestModelRunSucceeds(DateTime batchStartDate, DateTime batchEndDate) {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -89,7 +89,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
         // Act
         List<DiseaseOccurrence> occurrences = selectOccurrencesForModelRun(diseaseGroupId);
-        modelRunRequester.requestModelRun(diseaseGroupId, occurrences, batchEndDate);
+        modelRunRequester.requestModelRun(diseaseGroupId, occurrences, batchStartDate, batchEndDate);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();
@@ -118,7 +118,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
         // Act
         List<DiseaseOccurrence> occurrences = selectOccurrencesForModelRun(diseaseGroupId);
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -135,7 +135,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
         // Act
         List<DiseaseOccurrence> occurrences = selectOccurrencesForModelRun(diseaseGroupId);
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
@@ -148,7 +148,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
         // Act
         List<DiseaseOccurrence> occurrences = new ArrayList<>();
-        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null);
+        catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
         List<ModelRun> modelRuns = modelRunDao.getAll();

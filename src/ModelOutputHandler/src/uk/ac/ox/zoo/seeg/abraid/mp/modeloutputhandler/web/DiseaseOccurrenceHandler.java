@@ -84,12 +84,14 @@ public class DiseaseOccurrenceHandler {
     }
 
     private void handleBatch(ModelRun modelRun, DiseaseGroup diseaseGroup) {
+        // Ensure that the batch start date is at the very start of the day
+        DateTime batchStartDateWithMinimumTime = getBatchStartDateWithMinimumTime(modelRun.getBatchStartDate());
         // Ensure that the batch end date is at the very end of the day
         DateTime batchEndDateWithMaximumTime = getBatchEndDateWithMaximumTime(modelRun.getBatchEndDate());
 
         // Get the occurrences that we want to batch, and then set their validation parameters
-        List<DiseaseOccurrence> occurrences =
-                diseaseService.getDiseaseOccurrencesForBatching(diseaseGroup.getId(), batchEndDateWithMaximumTime);
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesForBatching(diseaseGroup.getId(),
+                batchStartDateWithMinimumTime, batchEndDateWithMaximumTime);
         LOGGER.info(String.format(VALIDATION_LOG_MESSAGE, modelRun.getId(), occurrences.size(),
                 diseaseGroup.getId(), diseaseGroup.getName(),
                 batchEndDateWithMaximumTime.toString(LOG_DATE_FORMAT)));
@@ -101,6 +103,10 @@ public class DiseaseOccurrenceHandler {
     private List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(DiseaseGroup diseaseGroup) {
         return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroup.getId(),
                 DiseaseOccurrenceStatus.READY);
+    }
+
+    private DateTime getBatchStartDateWithMinimumTime(DateTime batchStartDate) {
+        return batchStartDate.withTimeAtStartOfDay();
     }
 
     private DateTime getBatchEndDateWithMaximumTime(DateTime batchEndDate) {
