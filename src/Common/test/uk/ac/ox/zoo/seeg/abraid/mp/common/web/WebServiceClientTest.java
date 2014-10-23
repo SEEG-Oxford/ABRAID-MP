@@ -16,7 +16,6 @@ public class WebServiceClientTest {
 
     // This is a POST data echo service
     private static final String POST_URL = "https://httpbin.org/post";
-
     private static final String PUT_URL = "https://httpbin.org/put";
 
     @Test
