@@ -30,7 +30,7 @@ public class DiseaseExtentGenerationHandlerTest {
 
         DiseaseExtentGenerationHandler handler =
                 new DiseaseExtentGenerationHandler(modelRunWorkflowService, diseaseService);
-        ModelRun modelRun = new ModelRun(TEST_MODEL_RUN_NAME, DISEASE_GROUP_ID, DateTime.now());
+        ModelRun modelRun = new ModelRun(TEST_MODEL_RUN_NAME, DISEASE_GROUP_ID, "host", DateTime.now());
 
         // Act
         handler.handle(modelRun);
@@ -56,7 +56,7 @@ public class DiseaseExtentGenerationHandlerTest {
 
         DiseaseExtentGenerationHandler handler =
                 new DiseaseExtentGenerationHandler(modelRunWorkflowService, diseaseService);
-        ModelRun modelRun = new ModelRun(TEST_MODEL_RUN_NAME, DISEASE_GROUP_ID, DateTime.now());
+        ModelRun modelRun = new ModelRun(TEST_MODEL_RUN_NAME, DISEASE_GROUP_ID, "host", DateTime.now());
 
         // Act
         handler.handle(modelRun);

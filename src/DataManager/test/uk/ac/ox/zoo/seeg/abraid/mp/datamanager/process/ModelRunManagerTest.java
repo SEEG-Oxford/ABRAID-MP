@@ -5,7 +5,6 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
@@ -35,7 +34,7 @@ public class ModelRunManagerTest {
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), mock(NativeSQL.class));
+        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), 7);
         ModelRunGatekeeper modelRunGatekeeper = new ModelRunGatekeeper(diseaseService, modelRunService);
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunManager = new ModelRunManager(modelRunGatekeeper, modelRunWorkflowService, diseaseService);
@@ -77,34 +76,34 @@ public class ModelRunManagerTest {
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewLocationsIsOverThreshold() throws Exception {
+    public void modelPrepShouldRunWhenEnoughDaysHaveElapsedAndNewLocationsIsOverThreshold() throws Exception {
         expectModelPrepToRun(true, true);
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasElapsedAndNewLocationsIsUnderThreshold() throws Exception {
+    public void modelPrepShouldRunWhenEnoughDaysHaveElapsedAndNewLocationsIsUnderThreshold() throws Exception {
         expectModelPrepToRun(true, false);
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasElapsedAndThresholdIsNull() throws Exception {
+    public void modelPrepShouldRunWhenEnoughDaysHaveElapsedAndThresholdIsNull() throws Exception {
         expectModelPrepToRun(true, null);
     }
 
     @Test
-    public void modelPrepShouldRunWhenAWeekHasNotElapsedAndNewLocationsIsOverThreshold() throws Exception {
+    public void modelPrepShouldRunWhenEnoughDaysHaveNotElapsedAndNewLocationsIsOverThreshold() throws Exception {
         validationParametersThresholdsDefined();
         expectModelPrepToRun(false, true);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndNewLocationsIsUnderThreshold() throws Exception {
+    public void modelPrepShouldNotRunWhenEnoughDaysHaveNotPassedAndNewLocationsIsUnderThreshold() throws Exception {
         validationParametersThresholdsDefined();
         expectModelPrepNotToRun(false, false);
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotPassedAndLocationsThresholdIsNull() throws Exception {
+    public void modelPrepShouldNotRunWhenEnoughDaysHaveNotPassedAndLocationsThresholdIsNull() throws Exception {
         validationParametersThresholdsDefined();
         expectModelPrepNotToRun(false, null);
     }
@@ -115,7 +114,7 @@ public class ModelRunManagerTest {
     }
 
     @Test
-    public void modelPrepShouldNotRunWhenAWeekHasNotElapsedAndMinEnvSuitabilityOrMinDistanceFromExtentNotDefined() throws Exception {
+    public void modelPrepShouldNotRunWhenEnoughDaysHaveNotElapsedAndMinEnvSuitabilityOrMinDistanceFromExtentNotDefined() throws Exception {
         expectModelPrepNotToRun(false, true);
     }
 

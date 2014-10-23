@@ -4,6 +4,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
@@ -36,25 +37,22 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
      * isValidated is set to true which marks it as ready for an initial model run (when requested).
      * @param occurrence The disease occurrence.
      * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
-     * @return True if the disease occurrence is eligible for validation, otherwise false.
      */
     @Override
-    public boolean addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
+    public void addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
         if (isEligibleForValidation(occurrence)) {
             setDefaultParameters(occurrence);
             if (isGoldStandard) {
                 addGoldStandardParameters(occurrence);
             } else if (automaticModelRunsEnabled(occurrence)) {
-                addValidationParameters(occurrence, null);
+                addValidationParameters(occurrence);
             }
-            return true;
         }
-        return false;
     }
 
     /**
-     * Adds validation parameters to a list of disease occurrences (without checks). Each occurrence must belong to
-     * the same disease group.
+     * Adds validation parameters to a list of disease occurrences (without checks).
+     * Every occurrence must belong to the same disease group.
      * @param occurrences The list of disease occurrences.
      */
     @Override
@@ -71,12 +69,6 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         }
     }
 
-    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
-        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-        findAndSetMachineWeightingAndIsValidated(occurrence);
-    }
-
     private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
         return (occurrence != null) && (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
     }
@@ -89,16 +81,33 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setValidated(true);
     }
 
-    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
-        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
-    }
-
     private void addGoldStandardParameters(DiseaseOccurrence occurrence) {
         // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
         // final weightings to 1 and isValidated to true.
         occurrence.setFinalWeighting(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
         occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
         occurrence.setValidated(true);
+    }
+
+    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
+    }
+
+    private void addValidationParameters(DiseaseOccurrence occurrence) {
+        GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
+        addValidationParameters(occurrence, raster);
+    }
+
+    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
+        if (!isCountryPoint(occurrence)) {
+            occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+            occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+            findAndSetMachineWeightingAndIsValidated(occurrence);
+        }
+    }
+
+    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
+        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
     }
 
     private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {

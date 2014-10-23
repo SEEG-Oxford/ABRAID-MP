@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -18,6 +17,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunReque
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
+import java.net.URI;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +26,9 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.contains;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.same;
 
 /**
  * Tests the Main class.
@@ -36,7 +39,8 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
     public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
     public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper";
-    public static final String LARGE_RASTER_FILENAME = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/dao/test_raster_large_double.tif";
+    public static final String LARGE_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
 
     public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
 
@@ -141,9 +145,14 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
+        // Only occurrences with non-country locations have validation parameters assigned.
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(0), 0.46, 8814.186615);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(occurrences.get(1), 0.62, 12524.775729);
+
+        DiseaseOccurrence validatedOccurrence = occurrences.get(0);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, 8814.186615);
+
+        DiseaseOccurrence countryOccurrence = occurrences.get(1);
+        assertThatDiseaseOccurrenceValidationParametersAreDefault(countryOccurrence);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
@@ -153,13 +162,21 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent, offset(5e-7));
         // At present, mwPredictor is only set up to return null weighting, which means occurrence must go to validator
         assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isEqualTo(false);
+        assertThat(occurrence.isValidated()).isFalse();
+    }
+
+    private void assertThatDiseaseOccurrenceValidationParametersAreDefault(DiseaseOccurrence occurrence) {
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.isValidated()).isTrue();
     }
 
     private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
         // Assert that the model wrapper web service has been called once for dengue (disease group 87), with
         // the specified number of occurrence points and disease extent classes
         verify(modelWrapperWebService, atLeastOnce()).startRun(
+                eq(URI.create(MODELWRAPPER_URL_PREFIX)),
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
                 argThat(new MapSizeMatcher<Integer, Integer>(460)));
@@ -168,11 +185,11 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
-        List<DiseaseOccurrence> diseaseOccurrences = diseaseOccurrenceDao.getAll();
-        for (DiseaseOccurrence diseaseOccurrence : diseaseOccurrences) {
-            if (diseaseOccurrence.getDiseaseGroup().getId() == 87 &&
-                    diseaseOccurrence.isValidated() != null && diseaseOccurrence.isValidated()) {
-                assertThat(diseaseOccurrence.getFinalWeighting()).isNotNull();
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            if (occurrence.isValidated() != null && occurrence.isValidated() &&
+                    occurrence.getLocation().getPrecision() != LocationPrecision.COUNTRY) {
+                assertThat(occurrence.getFinalWeighting()).isNotNull();
             }
         }
     }
@@ -388,12 +405,13 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     }
 
     private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, DateTime.now());
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, "localhost", DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);
 
-        byte[] gdalRaster = FileUtils.readFileToByteArray(new File(LARGE_RASTER_FILENAME));
-        modelRunService.updateMeanPredictionRasterForModelRun(modelRun.getId(), gdalRaster);
+        when(rasterFilePathFactory.getMeanPredictionRasterFile(same(modelRun)))
+                .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
     private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {

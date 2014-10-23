@@ -31,6 +31,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private static final String LOG_HANDLER_RESPONSE_ERROR = "Error received from model output handler: %s";
     private static final String LOG_HANDLER_SUCCESSFUL = "Successfully sent model outputs to model output handler.";
     private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
+    private static final String LOG_COULD_NOT_DELETE_WORKSPACE_DIR = "Could not delete workspace directory \"%s\"";
 
     private final String runName;
     private final Path workingDirectoryPath;
@@ -59,6 +60,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
             createMetadataAndSaveToFile(status, outputText, errorText);
             zipFile = createZipFile(pickOutputFiles(status));
             sendOutputsToModelOutputHandler(zipFile);
+            deleteWorkingDirectory();
         } catch (Exception e) {
             logger.fatal(String.format(LOG_HANDLER_REQUEST_ERROR, e.getMessage()), e);
         } finally {
@@ -144,6 +146,14 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private void deleteZipFile(File zipFile) {
         if (!zipFile.delete()) {
             logger.error(String.format(LOG_COULD_NOT_DELETE_TEMP_FILE, zipFile.getAbsolutePath()));
+        }
+    }
+
+    private void deleteWorkingDirectory() {
+        try {
+            FileUtils.deleteDirectory(workingDirectoryPath.toFile());
+        } catch (IOException e) {
+            logger.error(String.format(LOG_COULD_NOT_DELETE_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
         }
     }
 

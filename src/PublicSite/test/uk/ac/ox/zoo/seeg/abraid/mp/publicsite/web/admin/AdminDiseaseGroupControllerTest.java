@@ -78,7 +78,7 @@ public class AdminDiseaseGroupControllerTest {
     public void getModelRunInformation() {
         // Arrange
         int diseaseGroupId = 87;
-        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", 87, new DateTime("2014-07-02T14:15:16"));
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", 87, "host", new DateTime("2014-07-02T14:15:16"));
         ModelRun lastCompletedModelRun = new ModelRun();
         DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, null, null);
         DiseaseGroup diseaseGroup = new DiseaseGroup(87);

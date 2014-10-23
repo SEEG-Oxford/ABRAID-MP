@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import ch.lambdaj.function.convert.Converter;
+import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
@@ -13,9 +15,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
+import java.util.*;
+
+import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.filter;
 
 /**
  * Requests a model run for all relevant diseases.
@@ -31,12 +35,22 @@ public class ModelRunRequester {
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
     private static final String REQUEST_LOG_MESSAGE =
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
+    private List<URI> modelWrapperUrlCollection;
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
-                             ModelRunService modelRunService) {
+                             ModelRunService modelRunService, String[] modelWrapperUrlCollection) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
+        this.modelWrapperUrlCollection = convert(modelWrapperUrlCollection, new Converter<String, URI>() {
+            @Override
+            public URI convert(String url) {
+                return URI.create(url);
+            }
+        });
+        if (this.modelWrapperUrlCollection.isEmpty()) {
+            throw new IllegalArgumentException("At least 1 ModelWrapper URL must be provided.");
+        }
     }
 
     /**
@@ -56,9 +70,10 @@ public class ModelRunRequester {
 
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
-                JsonModelRunResponse response =
-                        modelWrapperWebService.startRun(diseaseGroup, occurrencesForModelRun, diseaseExtent);
-                handleModelRunResponse(response, diseaseGroupId, requestDate, batchEndDate);
+                URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
+                JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
+                                                                                occurrencesForModelRun, diseaseExtent);
+                handleModelRunResponse(response, diseaseGroupId, requestDate, modelWrapperUrl.getHost(), batchEndDate);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
@@ -67,19 +82,41 @@ public class ModelRunRequester {
         }
     }
 
+    private URI selectLeastBusyModelWrapperUrl() {
+        Stack<String> usedHostsWithBusiestAtTop = new Stack<>();
+        usedHostsWithBusiestAtTop.addAll(modelRunService.getModelRunRequestServersByUsage());
+
+        List<URI> availableHostsInPreferenceOrder = modelWrapperUrlCollection;
+
+        // Until only 1 available host remains, or there are no more used hosts remaining
+        while (availableHostsInPreferenceOrder.size() > 1 && usedHostsWithBusiestAtTop.size() > 0) {
+            // Remove the busiest of the used hosts from the list of available hosts (assuming it's present)
+            final String busiestHost = usedHostsWithBusiestAtTop.pop();
+            availableHostsInPreferenceOrder = filter(new LambdaJMatcher<URI>() {
+                @Override
+                public boolean matches(Object host) {
+                    return !((URI) host).getHost().equals(busiestHost);
+                }
+            }, availableHostsInPreferenceOrder);
+        }
+
+        // If only 1 host remains use that one, if multiple hosts remain just use the first (preferred) one.
+        return availableHostsInPreferenceOrder.get(0);
+    }
+
     private void logRequest(DiseaseGroup diseaseGroup, List<DiseaseOccurrence> diseaseOccurrences) {
         LOGGER.info(String.format(REQUEST_LOG_MESSAGE, diseaseGroup.getId(), diseaseGroup.getName(),
                 diseaseOccurrences.size()));
     }
 
     private void handleModelRunResponse(JsonModelRunResponse response, int diseaseGroupId, DateTime requestDate,
-                                        DateTime batchEndDate) {
+                                        String requestServer, DateTime batchEndDate) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
             throw new ModelRunRequesterException(message);
         } else {
-            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestDate);
+            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestServer, requestDate);
             modelRun.setBatchEndDate(batchEndDate);
             modelRunService.saveModelRun(modelRun);
         }

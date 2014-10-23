@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Service interface for model run inputs and outputs.
@@ -23,27 +24,6 @@ public interface ModelRunService {
      * @param modelRun The model run to save.
      */
     void saveModelRun(ModelRun modelRun);
-
-    /**
-     * Gets the mean prediction raster of the specified model run.
-     * @param modelRunId The model run's ID.
-     * @return gdalRaster The mean prediction raster.
-     */
-    byte[] getMeanPredictionRasterForModelRun(int modelRunId);
-
-    /**
-     * Updates the specified model run to include the specified mean prediction raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The mean prediction raster, in any GDAL format supported by the PostGIS database.
-     */
-    void updateMeanPredictionRasterForModelRun(int modelRunId, byte[] gdalRaster);
-
-    /**
-     * Updates the specified model run to include the specified prediction uncertainty raster.
-     * @param modelRunId The model run's ID.
-     * @param gdalRaster The prediction uncertainty raster, in any GDAL format supported by the PostGIS database.
-     */
-    void updatePredictionUncertaintyRasterForModelRun(int modelRunId, byte[] gdalRaster);
 
     /**
      * Gets the latest model run for the specified disease group.
@@ -73,10 +53,16 @@ public interface ModelRunService {
      */
     DateTime subtractDaysBetweenModelRuns(DateTime dateTime);
 
-
     /**
      * Gets all of the completed model runs.
      * @return The completed model runs.
      */
     Collection<ModelRun> getCompletedModelRuns();
+
+    /**
+     * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,
+     * then sorted by the number of inactive model runs. Sorted by ascending usage.
+     * @return The ordered list of servers.
+     */
+    List<String> getModelRunRequestServersByUsage();
 }

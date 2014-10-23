@@ -26,7 +26,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
 
             ko.applyBindings(
                 ko.validatedObservable(accountDetailsFormViewModel),
-                doc.getElementById("account-body"));
+                doc.getElementById("details-form"));
         }
     );
 });

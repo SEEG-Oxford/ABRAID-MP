@@ -286,12 +286,11 @@ CREATE TABLE model_run (
     name varchar(300) NOT NULL,
     status varchar(15) NOT NULL,
     disease_group_id integer NOT NULL,
+    request_server varchar(60) NOT NULL,
     request_date timestamp NOT NULL,
     response_date timestamp,
     output_text text,
     error_text text,
-    mean_prediction_raster raster,
-    prediction_uncertainty_raster raster,
     batch_end_date timestamp,
     batch_occurrence_count integer,
     batching_completed_date timestamp

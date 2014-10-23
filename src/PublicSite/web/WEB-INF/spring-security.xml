@@ -36,9 +36,6 @@
         <property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in applicationContext -->
     </bean>
 
-    <bean id="userDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.UserDetailsServiceImpl"
-                autowire="constructor"/>
-
     <!-- The Authentication Filter bean from http custom-filter tag -->
     <bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
