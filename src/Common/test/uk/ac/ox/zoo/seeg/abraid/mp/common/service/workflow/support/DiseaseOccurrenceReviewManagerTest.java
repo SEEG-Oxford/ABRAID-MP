@@ -169,7 +169,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, null, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.READY, 7);
+        executeTest(occurrence, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
     }
 
     private DiseaseOccurrence arrangeDates(DateTime createdDate, DateTime automaticModelRunsStartDate, DateTime lastModelRunPrepDate) {

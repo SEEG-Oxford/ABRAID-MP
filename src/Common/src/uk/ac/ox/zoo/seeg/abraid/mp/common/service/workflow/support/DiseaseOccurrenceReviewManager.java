@@ -25,7 +25,7 @@ import static ch.lambdaj.Lambda.on;
 public class DiseaseOccurrenceReviewManager {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceReviewManager.class);
     private static final String LOG_MESSAGE =
-            "Removed %d disease occurrence(s) from validation; %d occurrence(s) now remaining";
+            "Removed %d disease occurrence(s) from validation (of which %d discarded); %d occurrence(s) now remaining";
     private final int maxDaysOnValidator;
 
     private DiseaseService diseaseService;
@@ -46,19 +46,20 @@ public class DiseaseOccurrenceReviewManager {
      */
     public void updateDiseaseOccurrenceStatus(int diseaseGroupId, DateTime modelRunPrepDate) {
         int numRemovedFromValidator = 0;
+        int numDiscarded = 0;
 
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
         Set<DiseaseOccurrence> reviewedOccurrences = getAllReviewedOccurrences(diseaseGroupId);
 
         for (DiseaseOccurrence occurrence : occurrences) {
             DiseaseOccurrenceStatus newStatus = occurrence.getStatus();
-            if (duringDiseaseSetUp(occurrence.getDiseaseGroup())) {
-                newStatus = DiseaseOccurrenceStatus.READY;
-            } else if (occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence, modelRunPrepDate)) {
+            if (duringDiseaseSetUp(occurrence.getDiseaseGroup()) ||
+                    occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence, modelRunPrepDate)) {
                 if (reviewedOccurrences.contains(occurrence)) {
                     newStatus = DiseaseOccurrenceStatus.READY;
                 } else {
                     newStatus = DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED;
+                    numDiscarded++;
                 }
             }
 
@@ -69,7 +70,7 @@ public class DiseaseOccurrenceReviewManager {
             }
         }
 
-        logResults(occurrences.size(), numRemovedFromValidator);
+        logResults(occurrences.size(), numRemovedFromValidator, numDiscarded);
     }
 
     private boolean duringDiseaseSetUp(DiseaseGroup diseaseGroup) {
@@ -108,8 +109,8 @@ public class DiseaseOccurrenceReviewManager {
         return (automaticModelRunsStartDate.isAfter(createdDate)) ? automaticModelRunsStartDate : createdDate;
     }
 
-    private void logResults(int numOriginallyInValidation, int numRemovedFromValidator) {
+    private void logResults(int numOriginallyInValidation, int numRemovedFromValidator, int numDiscarded) {
         int numRemaining = numOriginallyInValidation - numRemovedFromValidator;
-        LOGGER.info(String.format(LOG_MESSAGE, numRemovedFromValidator, numRemaining));
+        LOGGER.info(String.format(LOG_MESSAGE, numRemovedFromValidator, numDiscarded, numRemaining));
     }
 }
