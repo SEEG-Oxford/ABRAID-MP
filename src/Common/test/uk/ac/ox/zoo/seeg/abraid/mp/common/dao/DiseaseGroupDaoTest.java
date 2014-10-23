@@ -257,7 +257,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void addDiseaseExtentToDiseaseGroupSavesWithSameDiseaseGroupId() {
         // Arrange
-        int diseaseGroupId = 22;
+        int diseaseGroupId = 1;
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         DiseaseExtent diseaseExtent = new DiseaseExtent(diseaseGroup);
         diseaseGroup.setDiseaseExtentParameters(diseaseExtent);

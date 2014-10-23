@@ -53,8 +53,13 @@ mkdir geonames
 scp -C $GEONAMES_SOURCE/import_geoname.sh geonames/
 scp -C $GEONAMES_SOURCE/geoname.txt geonames/
 
-# Expert
+# Experts
 mkdir experts
-scp -C $EXPERT_SOURCE/import_into_abraid.sql experts/
-scp -C $EXPERT_SOURCE/expert.txt experts/
+scp -C $EXPERTS_SOURCE/import_into_abraid.sql experts/
+scp -C $EXPERTS_SOURCE/expert.txt experts/
 
+# Reviews
+mkdir reviews
+scp -C $REVIEWS_SOURCE/import_into_abraid.sql reviews/
+scp -C $REVIEWS_SOURCE/admin_unit_review_staging.txt reviews/
+scp -C $REVIEWS_SOURCE/expert_staging.txt reviews/
