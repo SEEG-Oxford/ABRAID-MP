@@ -42,7 +42,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsReadyWhenMoreThanMaxDaysHasElapsedSinceCreatedDate() {
+    public void updateDiseaseOccurrenceStatusSetsReadyWhenMaxDaysHasElapsedSinceCreatedDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(5);
@@ -53,7 +53,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMoreThanMaxDaysHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMaxDaysHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(6);
@@ -64,7 +64,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsReadyWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDate() {
+    public void updateDiseaseOccurrenceStatusSetsReadyWhenMoreThanMaxDaysHasElapsedSinceCreatedDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(9);
@@ -75,7 +75,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMoreThanMaxDaysHasElapsedSinceCreatedDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(21);
@@ -108,7 +108,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsReadyWhenMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
+    public void updateDiseaseOccurrenceStatusSetsReadyWhenMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(7);
@@ -119,7 +119,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(7);
@@ -130,7 +130,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsReadyWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
+    public void updateDiseaseOccurrenceStatusSetsReadyWhenMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDate() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(8);
@@ -141,7 +141,7 @@ public class DiseaseOccurrenceReviewManagerTest {
     }
 
     @Test
-    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMoreThanMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenMoreThanMaxDaysHasElapsedSinceCreatedDateSinceAutomaticModelRunsStartDateAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime automaticModelRunsStartDate = lastModelRunPrepDate.minusDays(8);
@@ -161,9 +161,8 @@ public class DiseaseOccurrenceReviewManagerTest {
         executeTest(occurrence, true, DiseaseOccurrenceStatus.READY, 7);
     }
 
-
     @Test
-    public void updateDiseaseOccurrenceStatusSetsReadyWhenAutomaticModelRunsNotEnabledAndOccurrenceNotReviewed() {
+    public void updateDiseaseOccurrenceStatusSetsDiscardedWhenAutomaticModelRunsNotEnabledAndOccurrenceNotReviewed() {
         // Arrange
         DateTime lastModelRunPrepDate = DateTime.now();
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
