@@ -63,3 +63,6 @@ rm -f /etc/nginx/sites-enabled/proxy
 rm -f /etc/nginx/sites-enabled/maintenance
 ln -s /etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy
 service nginx restart > /dev/null
+
+echo "[[ Done ]]"
+echo "You may now delete the artifacts directory"
