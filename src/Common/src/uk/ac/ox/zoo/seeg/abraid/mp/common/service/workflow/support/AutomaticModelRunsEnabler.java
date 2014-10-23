@@ -52,7 +52,7 @@ public class AutomaticModelRunsEnabler {
         DateTime now = DateTime.now();
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         LOGGER.info(String.format(ENABLING_AUTOMATIC_MODEL_RUNS, diseaseGroupId, diseaseGroup.getName()));
-        
+
         saveAutomaticModelRunsStartDate(diseaseGroup, now);
         setAdminUnitDiseaseExtentClassChangedDate(diseaseGroupId, now);
 
