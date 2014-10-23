@@ -26,10 +26,9 @@ public class AutomaticModelRunsEnabler {
     private static final String SETTING_CLASS_CHANGED_DATE =
             "Setting class changed date on all admin unit disease extent classes for disease group %d to %s";
     private static final String ADDING_VALIDATION_PARAMETERS =
-            "Adding validation parameters to %d occurrence(s) currently without final weighting.";
+            "Adding validation parameters to %d occurrence(s) currently without final weighting";
     private static final String ADDING_DEFAULT_PARAMETERS =
-            "%d occurrence(s) occurring before %s will be ignored in future.";
-
+            "%d occurrence(s) occurring before %s will be ignored in future";
 
     private static final Logger LOGGER = Logger.getLogger(AutomaticModelRunsEnabler.class);
 
