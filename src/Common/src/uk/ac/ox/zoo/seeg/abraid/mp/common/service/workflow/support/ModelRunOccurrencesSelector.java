@@ -24,13 +24,13 @@ public class ModelRunOccurrencesSelector {
     private static final String NOT_REQUESTING_LOG_MESSAGE =
             "Not requesting a model run for disease group %d (%s) because ";
     private static final String MDV_SATISFIED_LOG_MESSAGE =
-            "Minimum Data Volume is satisfied: %d occurrences exceeds threshold of %d";
+            "Minimum Data Volume is satisfied: %d occurrence(s) exceeds threshold of %d";
     private static final String MDV_NOT_SATISFIED_LOG_MESSAGE =
-            "Minimum Data Volume is not satisfied: %d occurrences does not exceed threshold of %d";
+            "Minimum Data Volume is not satisfied: %d occurrence(s) does not exceed threshold of %d";
     private static final String MDS_NOT_SATISFIED_LOG_MESSAGE =
-            "Minimum Data Spread not satisfied: No occurrences in any countries of interest";
+            "Minimum Data Spread is not satisfied: no occurrences in any countries of interest";
     private static final String AFRICAN_COUNTRY_CLAUSE =
-            "at least 1 occurrence in %d countries, and at least %d occurrences in %d countries";
+            "at least 1 occurrence in %d countries, and at least %d occurrence(s) in %d countries";
     private static final String AFRICAN_MDS_NOT_SATISFIED_LOG_MESSAGE =
             "Minimum Data Spread is not satisfied: " +
                     "should have " + AFRICAN_COUNTRY_CLAUSE + ", but only has " + AFRICAN_COUNTRY_CLAUSE;
@@ -38,7 +38,7 @@ public class ModelRunOccurrencesSelector {
             "at least 1 occurrence in %d distinct countries";
     private static final String OTHER_MDS_NOT_SATISFIED_LOG_MESSAGE =
             "Minimum Data Spread is not satisfied: " +
-                    OTHER_COUNTRY_CLAUSE + " does not exceed threshold of %d";
+                    OTHER_COUNTRY_CLAUSE + " does not exceed threshold of %d countries";
     private static final String MDS_SATISFIED_LOG_MESSAGE =
             "Minimum Data Spread is satisfied: ";
     private static final String SKIPPING_MDS_CALCULATION =
@@ -147,7 +147,7 @@ public class ModelRunOccurrencesSelector {
                 occurrences.add(nextOccurrence);
                 addCountryToOccurrenceCountMap(nextOccurrence.getLocation().getCountryGaulCode());
             }
-            handleCanRunModel(true);
+            handleCanRunModel();
         } else {
             LOGGER.info(SKIPPING_MDS_CALCULATION);
         }
@@ -166,7 +166,7 @@ public class ModelRunOccurrencesSelector {
                 occurrences.add(nextOccurrence);
                 countriesWithAtLeastOneOccurrence.add(nextOccurrence.getLocation().getCountryGaulCode());
             }
-            handleCanRunModel(false);
+            handleCanRunModel();
         } else {
             LOGGER.info(SKIPPING_MDS_CALCULATION);
         }
@@ -244,7 +244,7 @@ public class ModelRunOccurrencesSelector {
         throw new ModelRunRequesterException(exceptionMessage);
     }
 
-    private void handleCanRunModel(boolean occursInAfrica) {
+    private void handleCanRunModel() {
         String message;
         if (occursInAfrica) {
             message = String.format(AFRICAN_COUNTRY_CLAUSE,
