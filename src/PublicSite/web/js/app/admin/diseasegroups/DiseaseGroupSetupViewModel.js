@@ -9,6 +9,10 @@ define([
 ], function (ko, $, moment, BaseFormViewModel) {
     "use strict";
 
+    function formatDate(date) {
+        return moment(date, "DD MMM YYYY").format();
+    }
+
     return function (baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
         var self = this;
         BaseFormViewModel.call(self, false, true, undefined, undefined, { success: "Model run requested." }, true);
@@ -19,9 +23,10 @@ define([
         self.lastModelRunText = ko.observable("");
         self.diseaseOccurrencesText = ko.observable("");
         self.canRunModel = ko.observable(false);
-        self.batchEndDate = ko.observable("").extend({required: true, date: true});
-        self.batchEndDateMinimum = ko.observable("");
-        self.batchEndDateMaximum = ko.observable("");
+        self.batchStartDate = ko.observable("").extend({ required: true, date: true });
+        self.batchEndDate = ko.observable("").extend({ required: true, date: true, min: self.batchStartDate });
+        self.batchDateMinimum = ko.observable("");
+        self.batchDateMaximum = ko.observable("");
         self.hasGoldStandardOccurrences = ko.observable(false);
         self.useGoldStandardOccurrences = ko.observable(false);
 
@@ -30,16 +35,25 @@ define([
         };
 
         self.buildSubmissionData = function () {
-            var batchEndDateText = moment(self.batchEndDate(), "DD MMM YYYY").format();
-            return { batchEndDate: batchEndDateText, useGoldStandardOccurrences: self.useGoldStandardOccurrences() };
+            return {
+                batchStartDate: formatDate(self.batchStartDate()),
+                batchEndDate: formatDate(self.batchEndDate()),
+                useGoldStandardOccurrences: self.useGoldStandardOccurrences()
+            };
         };
 
-        // The Run Model button is disabled if the batch date is invalid, unless we are using gold standard occurrences
-        // as these do not require a batch end date. It is also disabled if the model cannot be run or we are currently
-        // submitting the form.
+        // The Run Model button is disabled if:
+        // (1) either of the batch dates are invalid
+        // (unless we are using gold standard occurrences as these do not require a batch end date); or
+        // (2) the model cannot be run; or
+        // (3) the form is being submitted (requesting model run, enabling automatic model runs, or generating extent)
         self.disableButtonThatRunsModel = ko.computed(function () {
-            return (!self.useGoldStandardOccurrences() && !self.batchEndDate.isValid()) || !self.canRunModel() ||
-                self.isSubmitting() || self.isEnablingAutomaticModelRuns() || self.isGeneratingDiseaseExtent();
+            var datesValid = self.batchStartDate.isValid() && self.batchEndDate.isValid();
+            return (!self.useGoldStandardOccurrences() && !datesValid) ||
+                !self.canRunModel() ||
+                self.isSubmitting() ||
+                self.isEnablingAutomaticModelRuns() ||
+                self.isGeneratingDiseaseExtent();
         });
 
         self.isGeneratingDiseaseExtent = ko.observable(false);
@@ -53,8 +67,11 @@ define([
                 .always(function () { self.isGeneratingDiseaseExtent(false); });
         };
         self.disableButtonThatGeneratesDiseaseExtent = ko.computed(function () {
-            return !self.canRunModel() || self.hasModelBeenSuccessfullyRun() || self.isSubmitting() ||
-                   self.isGeneratingDiseaseExtent();
+            return !self.canRunModel() ||
+                self.hasModelBeenSuccessfullyRun() ||
+                self.isSubmitting() ||
+                self.isGeneratingDiseaseExtent() ||
+                self.isEnablingAutomaticModelRuns();
         });
 
         self.isEnablingAutomaticModelRuns = ko.observable(false);
@@ -77,9 +94,10 @@ define([
             self.notices.removeAll();
             self.lastModelRunText("");
             self.diseaseOccurrencesText("");
+            self.batchStartDate("");
             self.batchEndDate("");
-            self.batchEndDateMinimum("");
-            self.batchEndDateMaximum("");
+            self.batchDateMinimum("");
+            self.batchDateMaximum("");
             self.hasModelBeenSuccessfullyRun(false);
             self.canRunModel(false);
             self.hasGoldStandardOccurrences(false);
@@ -98,9 +116,10 @@ define([
                     .done(function (data) {
                         self.lastModelRunText(data.lastModelRunText);
                         self.diseaseOccurrencesText(data.diseaseOccurrencesText);
+                        self.batchStartDate(data.batchDateMinimum);
                         self.batchEndDate(data.batchEndDateDefault);
-                        self.batchEndDateMinimum(data.batchEndDateMinimum);
-                        self.batchEndDateMaximum(data.batchEndDateMaximum);
+                        self.batchDateMinimum(data.batchDateMinimum);
+                        self.batchDateMaximum(data.batchDateMaximum);
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                         self.canRunModel(data.canRunModel);
                         self.hasGoldStandardOccurrences(data.hasGoldStandardOccurrences);

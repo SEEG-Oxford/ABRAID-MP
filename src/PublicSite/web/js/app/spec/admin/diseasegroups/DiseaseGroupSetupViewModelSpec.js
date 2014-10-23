@@ -77,6 +77,21 @@ define([
             });
         });
 
+        describe("holds the batch start date which", function () {
+            it("is an observable", function () {
+                expect(vm.batchStartDate).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.batchStartDate()).toBe("");
+            });
+
+            it("has appropriate validation rules", function () {
+                expect(vm.batchStartDate).toHaveValidationRule({name: "required", params: true});
+                expect(vm.batchStartDate).toHaveValidationRule({name: "date", params: true});
+            });
+        });
+
         describe("holds the batch end date which", function () {
             it("is an observable", function () {
                 expect(vm.batchEndDate).toBeObservable();
@@ -92,23 +107,23 @@ define([
             });
         });
 
-        describe("holds the batch end date minimum which", function () {
+        describe("holds the batch date minimum which", function () {
             it("is an observable", function () {
-                expect(vm.batchEndDateMinimum).toBeObservable();
+                expect(vm.batchDateMinimum).toBeObservable();
             });
 
             it("starts empty", function () {
-                expect(vm.batchEndDateMinimum()).toBe("");
+                expect(vm.batchDateMinimum()).toBe("");
             });
         });
 
-        describe("holds the batch end date maximum which", function () {
+        describe("holds the batch date maximum which", function () {
             it("is an observable", function () {
-                expect(vm.batchEndDateMaximum).toBeObservable();
+                expect(vm.batchDateMaximum).toBeObservable();
             });
 
             it("starts empty", function () {
-                expect(vm.batchEndDateMaximum()).toBe("");
+                expect(vm.batchDateMaximum()).toBe("");
             });
         });
 
@@ -177,6 +192,7 @@ define([
         describe("holds whether to disable the button that runs the model, which", function () {
             it("enables if not using gold standard occurrences and we should be able to run the model", function () {
                 vm.useGoldStandardOccurrences(false);
+                vm.batchStartDate("9 Jul 2014");
                 vm.batchEndDate("10 Jul 2014");
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
@@ -187,6 +203,7 @@ define([
 
             it("enables if using gold standard occurrences and we should be able to run the model", function () {
                 vm.useGoldStandardOccurrences(true);
+                vm.batchStartDate("");
                 vm.batchEndDate("");
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
@@ -195,8 +212,20 @@ define([
                 expect(vm.disableButtonThatRunsModel()).toBe(false);
             });
 
-            it("disables if not using gold standard occurrences and the date is invalid", function () {
+            it("disables if not using gold standard occurrences and the start date is invalid", function () {
                 vm.useGoldStandardOccurrences(false);
+                vm.batchStartDate("");
+                vm.batchEndDate("10 Jul 2014");
+                vm.canRunModel(true);
+                vm.isSubmitting(false);
+                vm.isEnablingAutomaticModelRuns(false);
+                vm.isGeneratingDiseaseExtent(false);
+                expect(vm.disableButtonThatRunsModel()).toBe(true);
+            });
+
+            it("disables if not using gold standard occurrences and the end date is invalid", function () {
+                vm.useGoldStandardOccurrences(false);
+                vm.batchStartDate("9 Jul 2014");
                 vm.batchEndDate("");
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
@@ -279,8 +308,8 @@ define([
             vm.lastModelRunText("a");
             vm.diseaseOccurrencesText("b");
             vm.batchEndDate("c");
-            vm.batchEndDateMinimum("d");
-            vm.batchEndDateMaximum("e");
+            vm.batchDateMinimum("d");
+            vm.batchDateMaximum("e");
             vm.hasModelBeenSuccessfullyRun(true);
             vm.canRunModel(true);
             vm.hasGoldStandardOccurrences(false);
@@ -293,8 +322,8 @@ define([
             expect(vm.lastModelRunText()).toBe("");
             expect(vm.diseaseOccurrencesText()).toBe("");
             expect(vm.batchEndDate()).toBe("");
-            expect(vm.batchEndDateMinimum()).toBe("");
-            expect(vm.batchEndDateMaximum()).toBe("");
+            expect(vm.batchDateMinimum()).toBe("");
+            expect(vm.batchDateMaximum()).toBe("");
             expect(vm.hasModelBeenSuccessfullyRun()).toBe(false);
             expect(vm.canRunModel()).toBe(false);
             expect(vm.hasGoldStandardOccurrences()).toBe(false);
@@ -395,8 +424,8 @@ define([
                         lastModelRunText: "a",
                         diseaseOccurrencesText: "b",
                         batchEndDateDefault: "c",
-                        batchEndDateMinimum: "d",
-                        batchEndDateMaximum: "e",
+                        batchDateMinimum: "d",
+                        batchDateMaximum: "e",
                         hasModelBeenSuccessfullyRun: "f",
                         canRunModel: "g",
                         hasGoldStandardOccurrences: "h"
@@ -414,8 +443,8 @@ define([
                     expect(vm.lastModelRunText()).toBe(response.lastModelRunText);
                     expect(vm.diseaseOccurrencesText()).toBe(response.diseaseOccurrencesText);
                     expect(vm.batchEndDate()).toBe(response.batchEndDateDefault);
-                    expect(vm.batchEndDateMinimum()).toBe(response.batchEndDateMinimum);
-                    expect(vm.batchEndDateMaximum()).toBe(response.batchEndDateMaximum);
+                    expect(vm.batchDateMinimum()).toBe(response.batchDateMinimum);
+                    expect(vm.batchDateMaximum()).toBe(response.batchDateMaximum);
                     expect(vm.hasModelBeenSuccessfullyRun()).toBe(response.hasModelBeenSuccessfullyRun);
                     expect(vm.canRunModel()).toBe(response.canRunModel);
                     expect(vm.hasGoldStandardOccurrences()).toBe(response.hasGoldStandardOccurrences);

@@ -58,6 +58,6 @@
             </@f.form>
         </div>
     </div>
-    <#include "setuppanel.ftl"/>
+    <#include "modelrunssetuppanel.ftl"/>
 </div>
 </@c.page>
