@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
@@ -93,7 +94,7 @@ public class AutomaticModelRunsEnablerTest {
         automaticModelRunsEnabler.enable(diseaseGroupId);
 
         // Assert
-        assertThat(occurrence1.isValidated()).isNull();
+        assertThat(occurrence1.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_UNUSED);
         assertThat(occurrence1.getFinalWeighting()).isNull();
         assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isNull();
 

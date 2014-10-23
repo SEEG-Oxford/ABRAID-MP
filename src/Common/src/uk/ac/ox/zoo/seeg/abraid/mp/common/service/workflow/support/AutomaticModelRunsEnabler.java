@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
@@ -92,7 +93,7 @@ public class AutomaticModelRunsEnabler {
 
         for (DiseaseOccurrence occurrence : occurrences) {
             if (occurrence.getOccurrenceDate().isBefore(earliestDateForValidationParameters)) {
-                clearParameters(occurrence);
+                discardOccurrence(occurrence);
             } else {
                 occurrencesForValidationParameters.add(occurrence);
             }
@@ -102,8 +103,8 @@ public class AutomaticModelRunsEnabler {
         diseaseOccurrenceValidationService.addValidationParameters(occurrencesForValidationParameters);
     }
 
-    private void clearParameters(DiseaseOccurrence occurrence) {
-        occurrence.setValidated(null);
+    private void discardOccurrence(DiseaseOccurrence occurrence) {
+        occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_UNUSED);
         occurrence.setFinalWeighting(null);
         occurrence.setFinalWeightingExcludingSpatial(null);
     }
