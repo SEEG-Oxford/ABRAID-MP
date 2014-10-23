@@ -99,16 +99,13 @@ public class DiseaseOccurrenceHandlerTest {
         occurrence2.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence2.setFinalWeightingExcludingSpatial(0.7);
 
-        DiseaseOccurrence occurrence3 = new DiseaseOccurrence();
-        occurrence3.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
-        occurrence3.setFinalWeighting(0.5);
-
-        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2, occurrence3);
+        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2);
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
-        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId)).thenReturn(occurrences);
+        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
 
         // Act
         diseaseOccurrenceHandler.handle(modelRun);
@@ -116,7 +113,6 @@ public class DiseaseOccurrenceHandlerTest {
         // Assert
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
-        verify(diseaseService, never()).saveDiseaseOccurrence(same(occurrence3));
         assertThat(occurrence1.getFinalWeighting()).isNull();
         assertThat(occurrence2.getFinalWeightingExcludingSpatial()).isNull();
     }
