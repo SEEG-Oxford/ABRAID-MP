@@ -25,6 +25,10 @@ import javax.persistence.Table;
                 query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId"
         ),
         @NamedQuery(
+                name = "getDiseaseOccurrencesByDiseaseGroupIdAndStatus",
+                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId and status=:status"
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
                 query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
                         "and alert=:alert and occurrenceDate=:occurrenceDate"

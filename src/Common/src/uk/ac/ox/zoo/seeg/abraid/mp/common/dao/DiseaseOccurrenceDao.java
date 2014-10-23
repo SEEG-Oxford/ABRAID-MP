@@ -34,9 +34,17 @@ public interface DiseaseOccurrenceDao {
     /**
      * Gets all disease occurrences for the specified disease group.
      * @param diseaseGroupId The disease group's ID.
-     * @return all disease occurrences for the specified disease group.
+     * @return All disease occurrences for the specified disease group.
      */
     List<DiseaseOccurrence> getByDiseaseGroupId(int diseaseGroupId);
+
+    /**
+     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * @param diseaseGroupId The disease group's ID.
+     * @param status The disease occurrence's status.
+     * @return All disease occurrences for the specified disease group and status.
+     */
+    List<DiseaseOccurrence> getByDiseaseGroupIdAndStatus(int diseaseGroupId, DiseaseOccurrenceStatus status);
 
     /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet

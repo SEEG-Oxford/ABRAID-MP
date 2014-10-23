@@ -61,9 +61,25 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         return listNamedQuery("getDiseaseOccurrencesByIds", "diseaseOccurrenceIds", diseaseOccurrenceIds);
     }
 
+    /**
+     * Gets all disease occurrences for the specified disease group.
+     * @param diseaseGroupId The disease group's ID.
+     * @return All disease occurrences for the specified disease group.
+     */
     @Override
     public List<DiseaseOccurrence> getByDiseaseGroupId(int diseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrencesByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
+     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * @param diseaseGroupId The disease group's ID.
+     * @param status The disease occurrence's status.
+     * @return All disease occurrences for the specified disease group and status.
+     */
+    public List<DiseaseOccurrence> getByDiseaseGroupIdAndStatus(int diseaseGroupId, DiseaseOccurrenceStatus status) {
+        return listNamedQuery("getDiseaseOccurrencesByDiseaseGroupIdAndStatus", "diseaseGroupId", diseaseGroupId,
+                "status", status);
     }
 
     /**

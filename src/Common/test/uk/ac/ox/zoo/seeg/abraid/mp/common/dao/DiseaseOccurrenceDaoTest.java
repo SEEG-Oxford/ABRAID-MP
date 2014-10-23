@@ -66,6 +66,45 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getByDiseaseGroupIdAndStatusReady() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY);
+
+        // Assert
+        assertThat(occurrences).hasSize(45);
+    }
+
+    @Test
+    public void getByDiseaseGroupIdAndStatusDiscardedFailedQc() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+
+        // Assert
+        assertThat(occurrences).hasSize(3);
+    }
+
+    @Test
+    public void getByDiseaseGroupIdAndStatusUnbatched() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.UNBATCHED);
+
+        // Assert
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnACountryPoint() {
         // Arrange
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");

@@ -10,9 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceVali
 
 import java.util.List;
 
-import static ch.lambdaj.Lambda.*;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Handles disease occurrences. Specifically, if a batch end date is specified in the model run, it sets the
  * "validation parameters" (e.g. environmental suitability, distance from disease extent) for the disease occurrences up
@@ -102,10 +99,8 @@ public class DiseaseOccurrenceHandler {
     }
 
     private List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(DiseaseGroup diseaseGroup) {
-        List<DiseaseOccurrence> occurrences =
-                diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroup.getId());
-        return select(occurrences, having(
-                on(DiseaseOccurrence.class).getStatus(), equalTo(DiseaseOccurrenceStatus.READY)));
+        return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroup.getId(),
+                DiseaseOccurrenceStatus.READY);
     }
 
     private DateTime getBatchEndDateWithMaximumTime(DateTime batchEndDate) {

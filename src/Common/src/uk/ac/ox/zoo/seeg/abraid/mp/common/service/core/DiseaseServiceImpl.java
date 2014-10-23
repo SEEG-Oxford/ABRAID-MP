@@ -170,6 +170,18 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * @param diseaseGroupId The disease group's ID.
+     * @param status The disease occurrence's status.
+     * @return All disease occurrences for the specified disease group and status.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupIdAndStatus(int diseaseGroupId,
+                                                                                  DiseaseOccurrenceStatus status) {
+        return diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId, status);
+    }
+
+    /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
