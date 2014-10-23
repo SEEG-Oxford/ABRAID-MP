@@ -34,9 +34,17 @@ public interface DiseaseOccurrenceDao {
     /**
      * Gets all disease occurrences for the specified disease group.
      * @param diseaseGroupId The disease group's ID.
-     * @return all disease occurrences for the specified disease group.
+     * @return All disease occurrences for the specified disease group.
      */
     List<DiseaseOccurrence> getByDiseaseGroupId(int diseaseGroupId);
+
+    /**
+     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * @param diseaseGroupId The disease group's ID.
+     * @param status The disease occurrence's status.
+     * @return All disease occurrences for the specified disease group and status.
+     */
+    List<DiseaseOccurrence> getByDiseaseGroupIdAndStatus(int diseaseGroupId, DiseaseOccurrenceStatus status);
 
     /**
      * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
@@ -83,22 +91,18 @@ public interface DiseaseOccurrenceDao {
            boolean useGoldStandardOccurrences);
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * Gets disease occurrences currently in validation, for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrences currently being validated by experts.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesInValidation(Integer diseaseGroupId);
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is true
-     * and finalWeighting is currently null.
+     * Gets disease occurrences for the specified disease group which are yet to have a final weighting assigned.
      * @param diseaseGroupId The ID of the disease group.
-     * @param mustHaveEnvironmentalSuitability True if the occurrence's environmental suitability must be non-null.
-     *                                         False if it doesn't matter either way.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
-            Integer diseaseGroupId, boolean mustHaveEnvironmentalSuitability);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId);
 
     /**
      * Gets disease occurrences for a request to run the model.
@@ -111,8 +115,8 @@ public interface DiseaseOccurrenceDao {
 
     /**
      * Gets the list of new disease occurrences for the specified disease group.
-     * A "new" occurrence has is_validated not null and a created_date that is more than a week ago.
-     * Occurrence must additionally satisfy that environmental suitability and distance from disease extent values are
+     * A "new" occurrence has status READY or IN_REVIEW, and a suitable created_date.
+     * Occurrences must additionally satisfy that environmental suitability and distance from disease extent values are
      * greater than minimum specified for the disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param startDate Occurrences must be newer than this date.

@@ -35,9 +35,6 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     @Autowired
     private LocationDao locationDao;
 
-    @Autowired
-    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
-
     @Test
     public void getCountByExpertId() {
         // Arrange - no reviews in the database
@@ -112,6 +109,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         diseaseOccurrence.setDiseaseGroup(createDiseaseGroup());
         diseaseOccurrence.setLocation(createLocation());
         diseaseOccurrence.setOccurrenceDate(DateTime.now());
+        diseaseOccurrence.setStatus(DiseaseOccurrenceStatus.READY);
         diseaseOccurrenceDao.save(diseaseOccurrence);
         return diseaseOccurrence;
     }

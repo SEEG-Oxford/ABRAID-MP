@@ -3,10 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
@@ -24,7 +21,7 @@ public class DiseaseOccurrenceHandler {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceHandler.class);
     private static final String STARTING_HANDLING_LOG_MESSAGE = "Model run %d: starting disease occurrence handling";
     private static final String INITIAL_BATCH_LOG_MESSAGE = "Model run %d: this is the initial batch, so setting " +
-            "final weighting to null for %d occurrence(s) of disease group %d (%s)";
+            "status to UNBATCHED and final weighting to null for %d occurrence(s) of disease group %d (%s)";
     private static final String VALIDATION_LOG_MESSAGE =
             "Model run %d: setting validation parameters for %d occurrence(s) of disease group %d (%s) " +
             "(batch end date %s)";
@@ -71,14 +68,14 @@ public class DiseaseOccurrenceHandler {
 
     private void initialiseBatchingIfNecessary(ModelRun modelRun, DiseaseGroup diseaseGroup) {
         // If no batch of disease occurrences has completed for this disease group, initialise the batching process by
-        // setting the final weightings of all disease occurrences to null
+        // changing the status of all READY occurrences to UNBATCHED and setting their final weightings to null
         if (!modelRunService.hasBatchingEverCompleted(diseaseGroup.getId())) {
-            List<DiseaseOccurrence> diseaseOccurrences =
-                    diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroup.getId());
+            List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrencesForBatchingInitialisation(diseaseGroup);
             LOGGER.info(String.format(INITIAL_BATCH_LOG_MESSAGE, modelRun.getId(), diseaseOccurrences.size(),
                     diseaseGroup.getId(), diseaseGroup.getName()));
 
             for (DiseaseOccurrence occurrence : diseaseOccurrences) {
+                occurrence.setStatus(DiseaseOccurrenceStatus.UNBATCHED);
                 occurrence.setFinalWeighting(null);
                 occurrence.setFinalWeightingExcludingSpatial(null);
                 diseaseService.saveDiseaseOccurrence(occurrence);
@@ -99,6 +96,11 @@ public class DiseaseOccurrenceHandler {
         setValidationParametersForOccurrencesBatch(occurrences);
         setModelRunBatchingParameters(modelRun, occurrences.size());
         LOGGER.info(String.format(VALIDATION_COMPLETED_LOG_MESSAGE, modelRun.getId()));
+    }
+
+    private List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(DiseaseGroup diseaseGroup) {
+        return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroup.getId(),
+                DiseaseOccurrenceStatus.READY);
     }
 
     private DateTime getBatchEndDateWithMaximumTime(DateTime batchEndDate) {

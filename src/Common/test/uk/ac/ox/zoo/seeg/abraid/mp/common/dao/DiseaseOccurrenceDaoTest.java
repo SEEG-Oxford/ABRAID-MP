@@ -66,6 +66,45 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getByDiseaseGroupIdAndStatusReady() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY);
+
+        // Assert
+        assertThat(occurrences).hasSize(45);
+    }
+
+    @Test
+    public void getByDiseaseGroupIdAndStatusDiscardedFailedQc() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+
+        // Assert
+        assertThat(occurrences).hasSize(3);
+    }
+
+    @Test
+    public void getByDiseaseGroupIdAndStatusUnbatched() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.UNBATCHED);
+
+        // Assert
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnACountryPoint() {
         // Arrange
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
@@ -125,13 +164,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Two experts save reviews for different disease occurrences of the same disease group
         Expert expert0 = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence0 = diseaseOccurrenceDao.getById(272829);
-        occurrence0.setValidated(false);
+        occurrence0.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
         DiseaseOccurrenceReviewResponse response0 = DiseaseOccurrenceReviewResponse.YES;
         createAndSaveDiseaseOccurrenceReview(expert0, occurrence0, response0);
 
         Expert expert1 = expertDao.getByEmail("edward.wiles@zoo.ox.ac.uk");
         DiseaseOccurrence occurrence1 = diseaseOccurrenceDao.getById(272830);
-        occurrence1.setValidated(false);
+        occurrence1.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
         DiseaseOccurrenceReviewResponse response1 = DiseaseOccurrenceReviewResponse.NO;
         createAndSaveDiseaseOccurrenceReview(expert1, occurrence1, response1);
 
@@ -147,14 +186,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnValidatedOrNullOccurrences() {
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustNotReturnReadyOrDiscardedOccurrences() {
         // Arrange
         int diseaseGroupId = 87;
         int validatorDiseaseGroupId = 4;
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        DiseaseOccurrence occ1 = createDiseaseOccurrence(1, diseaseGroup, false);
-        DiseaseOccurrence occ2 = createDiseaseOccurrence(2, diseaseGroup, true);
-        DiseaseOccurrence occ3 = createDiseaseOccurrence(3, diseaseGroup, null);
+        DiseaseOccurrence occ1 = createDiseaseOccurrence(1, diseaseGroup, DiseaseOccurrenceStatus.IN_REVIEW);
+        DiseaseOccurrence occ2 = createDiseaseOccurrence(2, diseaseGroup, DiseaseOccurrenceStatus.READY);
+        DiseaseOccurrence occ3 = createDiseaseOccurrence(3, diseaseGroup, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
 
         // Act
         List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(1, validatorDiseaseGroupId);
@@ -165,10 +204,10 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(list).doesNotContain(occ3);
     }
 
-    private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Boolean isValidated) {
+    private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, DiseaseOccurrenceStatus status) {
         Location location = locationDao.getById(80);
         Alert alert = alertDao.getById(212855);
-        DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, isValidated, 0.7, new DateTime());
+        DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, status, 0.7, new DateTime());
         diseaseOccurrenceDao.save(occurrence);
         return occurrence;
     }
@@ -180,6 +219,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         Location location = new Location("Karachi", 25.0111455, 67.0647043, LocationPrecision.PRECISE);
         location.setResolutionWeighting(1.0);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
+        DiseaseOccurrenceStatus status = DiseaseOccurrenceStatus.READY;
         DateTime occurrenceDate = DateTime.now().minusDays(5);
         double expertWeighting = 0.1;
         double machineWeighting = 0.2;
@@ -193,6 +233,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         occurrence.setAlert(alert);
         occurrence.setLocation(location);
         occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setStatus(status);
         occurrence.setOccurrenceDate(occurrenceDate);
         occurrence.setEnvironmentalSuitability(environmentalSuitability);
         occurrence.setDistanceFromDiseaseExtent(distanceFromDiseaseExtent);
@@ -223,6 +264,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrence.getCreatedDate()).isNotNull();
         assertThat(occurrence.getLocation()).isNotNull();
         assertThat(occurrence.getLocation().getId()).isNotNull();
+        assertThat(occurrence.getStatus()).isEqualTo(status);
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getExpertWeighting()).isEqualTo(expertWeighting);
@@ -310,10 +352,10 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesInValidationReturnsOnlyIsValidatedFalse() {
+    public void getDiseaseOccurrencesInValidationReturnsCorrectOccurrences() {
         // Arrange
         int diseaseGroupId = 87;
-        int n = setValidatedFlagForAllOccurrencesOfDiseaseGroup(diseaseGroupId, false);
+        int n = setStatusForAllOccurrencesOfDiseaseGroup(diseaseGroupId, DiseaseOccurrenceStatus.IN_REVIEW);
 
         // Act
         List<DiseaseOccurrence> result = diseaseOccurrenceDao.getDiseaseOccurrencesInValidation(diseaseGroupId);
@@ -321,16 +363,16 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Assert
         assertThat(result.size()).isEqualTo(n);
         for (DiseaseOccurrence occurrence : result) {
-            assertThat(occurrence.isValidated()).isFalse();
+            assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
         }
     }
 
     @Test
-    public void getDiseaseOccurrencesInValidationReturnsNoIsValidated() {
+    public void getDiseaseOccurrencesInValidationDoesNotReturnAnyReadyOccurrences() {
         // Arrange
         int diseaseGroupId = 87;
-        setValidatedFlagForAllOccurrencesOfDiseaseGroup(diseaseGroupId, true);
+        setStatusForAllOccurrencesOfDiseaseGroup(diseaseGroupId, DiseaseOccurrenceStatus.READY);
 
         // Act
         List<DiseaseOccurrence> result = diseaseOccurrenceDao.getDiseaseOccurrencesInValidation(diseaseGroupId);
@@ -339,38 +381,33 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(result).isEmpty();
     }
 
-    private int setValidatedFlagForAllOccurrencesOfDiseaseGroup(int diseaseGroupId, boolean validated) {
+    private int setStatusForAllOccurrencesOfDiseaseGroup(int diseaseGroupId, DiseaseOccurrenceStatus status) {
         List<DiseaseOccurrence> occurrences = select(diseaseOccurrenceDao.getAll(),
                 having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(), equalTo(diseaseGroupId)));
         for (DiseaseOccurrence occurrence : occurrences) {
-            occurrence.setValidated(validated);
+            occurrence.setStatus(status);
             diseaseOccurrenceDao.save(occurrence);
         }
         return occurrences.size();
     }
 
     @Test
-    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssignedWithAnyEnvironmentalSuitability() {
-        getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(false, 25);
+    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned() {
+        getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(25);
     }
 
-    @Test
-    public void getDiseaseOccurrencesYetToHaveFinalWeightingAssignedWithNonNullEnvironmentalSuitability() {
-        getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(true, 10);
-    }
-
-    private void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(boolean mustHaveEnvironmentalSuitability,
-                                                                      int expectedSize) {
+    private void getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(int expectedSize) {
         // Arrange
         int diseaseGroupId = 87;
         int numberOfOccurrencesWithFinalWeightingNull = 25;
         int numberOfOccurrencesWithEnvironmentalSuitabilityNotNull = 10;
 
-        // Arrange - get a random list of all dengue occurrences with isValidated = true
+        // Arrange - get a random list of all dengue occurrences with status READY
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getAll();
         occurrences = select(occurrences, having(on(DiseaseOccurrence.class).getDiseaseGroup().getId(),
                 equalTo(diseaseGroupId)));
-        occurrences = select(occurrences, having(on(DiseaseOccurrence.class).isValidated(), equalTo(true)));
+        occurrences = select(occurrences, having(on(DiseaseOccurrence.class).getStatus(),
+                equalTo(DiseaseOccurrenceStatus.READY)));
         Collections.shuffle(occurrences);
 
         // Arrange - set the final weightings to null
@@ -389,8 +426,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Act
         List<DiseaseOccurrence> actualOccurrences =
-                diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId,
-                        mustHaveEnvironmentalSuitability);
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
 
         // Assert
         assertThat(actualOccurrences).hasSize(expectedSize);
@@ -410,7 +446,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrences).hasSize(30);
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
-            assertThat(occurrence.isValidated()).isTrue();
+            assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
             assertThat(occurrence.getFinalWeighting()).isGreaterThan(0);
             assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
         }
@@ -434,7 +470,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(occurrences).hasSize(2);
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
-            assertThat(occurrence.isValidated()).isTrue();
+            assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
             assertThat(occurrence.getFinalWeighting()).isEqualTo(1);
             assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.UPLOADED);
             assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
@@ -511,9 +547,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getOccurrencesForBatching() {
-        // Arrange - the first 4 of these occurrences are before or on the batch end date, the others are after
-        // or do not have isValidated = true
-        setFinalWeightingOfSelectedOccurrencesToNull(274656, 273401, 275758, 275714, 275107, 274779);
+        // Arrange - the first 3 of these occurrences are before or on the batch end date, the others are after.
+        // There is also an occurrence (275714) with status DISCARDED_FAILED_QC which is before the batch end date.
+        setOccurrencesToStatusUnbatched(274656, 273401, 275758, 275107, 274779);
         int diseaseGroupId = 87;
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
 
@@ -559,9 +595,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return alert;
     }
 
-    private void setFinalWeightingOfSelectedOccurrencesToNull(Integer... ids) {
+    private void setOccurrencesToStatusUnbatched(Integer... ids) {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
-            occurrence.setFinalWeighting(null);
+            occurrence.setStatus(DiseaseOccurrenceStatus.UNBATCHED);
             diseaseOccurrenceDao.save(occurrence);
         }
     }
@@ -596,7 +632,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         occurrence.setAlert(alert);
         occurrence.setFinalWeighting(finalWeighting);
         occurrence.setFinalWeightingExcludingSpatial(finalWeighting);
-        occurrence.setValidated(true);
+        occurrence.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence.setOccurrenceDate(DateTime.now());
         diseaseOccurrenceDao.save(occurrence);
     }

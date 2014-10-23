@@ -33,10 +33,10 @@
 -- land_sea_border:                 Represents a land-sea border to a 5km resolution as used by the model.
 -- location:                        Represents the location of a disease occurrence.
 -- model_run:                       Represents a run of the SEEG model.
+-- persistent_logins:               http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
 -- provenance:                      Represents a provenance, i.e. the source of a group of feeds.
 -- submodel_statistic:              Contains statistics of a model run.
 -- validator_disease_group:         Represents a grouping of diseases for use by the Data Validator.
--- persistent_logins:               http://docs.spring.io/spring-security/site/docs/3.0.x/reference/remember-me.html#remember-me-persistent-token
 
 CREATE TABLE admin_unit_country (
     admin_unit_gaul_code integer NOT NULL,
@@ -166,8 +166,9 @@ CREATE TABLE disease_occurrence (
     id serial NOT NULL,
     disease_group_id integer NOT NULL,
     location_id integer NOT NULL,
-    admin_unit_disease_extent_class_id integer,
     alert_id integer NOT NULL,
+    admin_unit_disease_extent_class_id integer,
+    status varchar(20) NOT NULL,
     occurrence_date timestamp NOT NULL,
     env_suitability double precision,
     distance_from_extent double precision,
@@ -176,7 +177,6 @@ CREATE TABLE disease_occurrence (
     validation_weighting double precision,
     final_weighting double precision,
     final_weighting_excl_spatial double precision,
-    is_validated boolean,
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 

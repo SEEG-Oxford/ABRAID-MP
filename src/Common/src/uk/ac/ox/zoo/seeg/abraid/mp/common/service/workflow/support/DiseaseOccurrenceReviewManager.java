@@ -6,6 +6,7 @@ import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 import java.util.HashSet;
@@ -16,15 +17,15 @@ import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
 
 /**
- * Helper class used to determine whether occurrences should come off the DataValidator and update the value of the
- * isValidated flag accordingly.
+ * Helper class used to determine whether occurrences should come off the DataValidator and update their status
+ * accordingly.
  *
  * Copyright (c) 2014 University of Oxford
  */
 public class DiseaseOccurrenceReviewManager {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceReviewManager.class);
     private static final String LOG_MESSAGE =
-            "Removed %d disease occurrence(s) from validation; %d occurrence(s) now remaining";
+            "Removed %d disease occurrence(s) from validation (of which %d discarded); %d occurrence(s) now remaining";
     private final int maxDaysOnValidator;
 
     private DiseaseService diseaseService;
@@ -35,38 +36,41 @@ public class DiseaseOccurrenceReviewManager {
     }
 
     /**
-     * Update the value of the isValidated flag according to the length of time it has been on the DataValidator for
+     * Update the disease occurrence's status according to the length of time it has been on the DataValidator for
      * review by the experts. If the occurrence has been on the DataValidator for long enough, so is being removed, and
-     * has not actually received any reviews, set isValidated to null so that it is never sent to the model or included
-     * in the disease extent. If we are during disease group set up, the occurrence should be removed from DataValidator
-     * immediately, irrespective of time spent in review.
+     * has not actually received any reviews, set the status to DISCARDED_UNREVIEWED so that it is never sent to the
+     * model or included in the disease extent. If we are during disease group set up, the occurrence should be removed
+     * from DataValidator immediately, irrespective of time spent in review.
      * @param diseaseGroupId The id of the disease group this model run preparation is for.
      * @param modelRunPrepDate The official start time of the model run preparation tasks.
      */
-    public void updateDiseaseOccurrenceIsValidatedValues(int diseaseGroupId, DateTime modelRunPrepDate) {
+    public void updateDiseaseOccurrenceStatus(int diseaseGroupId, DateTime modelRunPrepDate) {
         int numRemovedFromValidator = 0;
+        int numDiscarded = 0;
 
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
         Set<DiseaseOccurrence> reviewedOccurrences = getAllReviewedOccurrences(diseaseGroupId);
 
-        Boolean isValidated;
-
         for (DiseaseOccurrence occurrence : occurrences) {
-            isValidated = false;
-            if (duringDiseaseSetUp(occurrence.getDiseaseGroup())) {
-                isValidated = true;
-            } else if (occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence, modelRunPrepDate)) {
-                isValidated = reviewedOccurrences.contains(occurrence) ? true : null;
+            DiseaseOccurrenceStatus newStatus = occurrence.getStatus();
+            if (duringDiseaseSetUp(occurrence.getDiseaseGroup()) ||
+                    occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence, modelRunPrepDate)) {
+                if (reviewedOccurrences.contains(occurrence)) {
+                    newStatus = DiseaseOccurrenceStatus.READY;
+                } else {
+                    newStatus = DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED;
+                    numDiscarded++;
+                }
             }
 
-            if (isValidated == null || isValidated) {
-                occurrence.setValidated(isValidated);
+            if (!newStatus.equals(occurrence.getStatus())) {
+                occurrence.setStatus(newStatus);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 numRemovedFromValidator++;
             }
         }
 
-        logResults(occurrences.size(), numRemovedFromValidator);
+        logResults(occurrences.size(), numRemovedFromValidator, numDiscarded);
     }
 
     private boolean duringDiseaseSetUp(DiseaseGroup diseaseGroup) {
@@ -83,7 +87,7 @@ public class DiseaseOccurrenceReviewManager {
      * Whichever date is latest out of the occurrence's created date and its disease group's automatic model runs start
      * date signifies when it was first available to be reviewed by experts on the DataValidator. If this is more than
      * the maximum number of days ago, comparing dates only, we deem it to be sufficiently reviewed and set the
-     * isValidated flag to true, so that it will no longer be shown on the DataValidator.
+     * status accordingly, so that it will no longer be shown on the DataValidator.
      * @param occurrence The disease occurrence.
      * @param modelRunPrepDateTime The date (incl. time) of the current model run
      * @return The new value of the isValidated property.
@@ -105,8 +109,8 @@ public class DiseaseOccurrenceReviewManager {
         return (automaticModelRunsStartDate.isAfter(createdDate)) ? automaticModelRunsStartDate : createdDate;
     }
 
-    private void logResults(int numOriginallyInValidation, int numRemovedFromValidator) {
+    private void logResults(int numOriginallyInValidation, int numRemovedFromValidator, int numDiscarded) {
         int numRemaining = numOriginallyInValidation - numRemovedFromValidator;
-        LOGGER.info(String.format(LOG_MESSAGE, numRemovedFromValidator, numRemaining));
+        LOGGER.info(String.format(LOG_MESSAGE, numRemovedFromValidator, numDiscarded, numRemaining));
     }
 }

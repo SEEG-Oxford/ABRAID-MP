@@ -92,8 +92,7 @@ public class ModelWrapperWebServiceTest {
     }
 
     private ModelWrapperWebService getModelWrapperWebService(WebServiceClient client) {
-        ModelWrapperWebService webService = new ModelWrapperWebService(client, new AbraidJsonObjectMapper());
-        return webService;
+        return new ModelWrapperWebService(client, new AbraidJsonObjectMapper());
     }
 
     private DiseaseGroup getDiseaseGroup() {
@@ -110,11 +109,11 @@ public class ModelWrapperWebServiceTest {
         Location location2 = new Location("Bauru, São Paulo, Brazil", -49.06055, -22.31472, LocationPrecision.PRECISE);
 
         DiseaseOccurrence occurrence1 = new DiseaseOccurrence(1, diseaseGroup, location1,
-                new Alert("occurrence1 title", "feed1"), false, 0.2, new DateTime("2014-03-01"));
+                new Alert("occurrence1 title", "feed1"), DiseaseOccurrenceStatus.READY, 0.2, new DateTime("2014-03-01"));
         DiseaseOccurrence occurrence2 = new DiseaseOccurrence(2, diseaseGroup, location1,
-                new Alert("occurrence2 title", "feed2"), false, 0.5, new DateTime("2014-03-02"));
+                new Alert("occurrence2 title", "feed2"), DiseaseOccurrenceStatus.READY, 0.5, new DateTime("2014-03-02"));
         DiseaseOccurrence occurrence3 = new DiseaseOccurrence(3, diseaseGroup, location2,
-                new Alert("occurrence3 title", "feed3"), false, 0.8, new DateTime("2014-03-03"));
+                new Alert("occurrence3 title", "feed3"), DiseaseOccurrenceStatus.READY, 0.8, new DateTime("2014-03-03"));
 
         return Arrays.asList(occurrence1, occurrence2, occurrence3);
     }

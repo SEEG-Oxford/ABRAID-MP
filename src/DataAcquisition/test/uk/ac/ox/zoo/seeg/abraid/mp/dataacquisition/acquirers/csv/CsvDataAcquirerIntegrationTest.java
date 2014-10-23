@@ -61,15 +61,15 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     }
 
     private void assertNormalValidationParameters(DiseaseOccurrence occurrence) {
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         assertThat(occurrence.getFinalWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isTrue();
     }
 
     private void assertGoldStandardValidationParameters(DiseaseOccurrence occurrence) {
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
         assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
-        assertThat(occurrence.isValidated()).isTrue();
     }
 
     private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {

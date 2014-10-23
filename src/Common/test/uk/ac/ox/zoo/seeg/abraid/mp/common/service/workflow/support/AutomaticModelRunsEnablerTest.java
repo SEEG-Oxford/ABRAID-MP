@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
@@ -86,14 +87,14 @@ public class AutomaticModelRunsEnablerTest {
         DiseaseOccurrence occurrence2 = new DiseaseOccurrence();
         occurrence1.setOccurrenceDate(DateTime.now().minusDays(21));
         occurrence2.setOccurrenceDate(DateTime.now().minusDays(1));
-        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, false)).thenReturn(
+        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId)).thenReturn(
                 Arrays.asList(occurrence1, occurrence2));
 
         // Act
         automaticModelRunsEnabler.enable(diseaseGroupId);
 
         // Assert
-        assertThat(occurrence1.isValidated()).isNull();
+        assertThat(occurrence1.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_UNUSED);
         assertThat(occurrence1.getFinalWeighting()).isNull();
         assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isNull();
 

@@ -162,14 +162,14 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent, offset(5e-7));
         // At present, mwPredictor is only set up to return null weighting, which means occurrence must go to validator
         assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isFalse();
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreDefault(DiseaseOccurrence occurrence) {
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
         assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.isValidated()).isTrue();
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
     }
 
     private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
@@ -187,7 +187,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
         for (DiseaseOccurrence occurrence : occurrences) {
-            if (occurrence.isValidated() != null && occurrence.isValidated() &&
+            if (occurrence.getStatus().equals(DiseaseOccurrenceStatus.READY) &&
                     occurrence.getLocation().getPrecision() != LocationPrecision.COUNTRY) {
                 assertThat(occurrence.getFinalWeighting()).isNotNull();
             }

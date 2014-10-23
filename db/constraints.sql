@@ -244,6 +244,9 @@ ALTER TABLE disease_group ADD CONSTRAINT ck_disease_group_group_type
 ALTER TABLE disease_occurrence_review ADD CONSTRAINT ck_disease_occurrence_review_response
     CHECK (response IN ('YES', 'NO', 'UNSURE'));
 
+ALTER TABLE disease_occurrence ADD CONSTRAINT ck_disease_occurrence_status
+    CHECK (status IN ('DISCARDED_FAILED_QC', 'DISCARDED_UNREVIEWED', 'DISCARDED_UNUSED', 'IN_REVIEW', 'READY', 'UNBATCHED'));
+    
 ALTER TABLE location ADD CONSTRAINT ck_location_precision
     CHECK (precision IN ('COUNTRY', 'ADMIN1', 'ADMIN2', 'PRECISE'));
 

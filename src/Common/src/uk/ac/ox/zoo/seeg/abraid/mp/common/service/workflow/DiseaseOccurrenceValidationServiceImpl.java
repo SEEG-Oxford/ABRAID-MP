@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
@@ -32,21 +33,27 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a disease occurrence, if the occurrence is eligible for validation.
-     * If automatic model runs are enabled, all validation parameters are set. If they are disabled, then only
-     * isValidated is set to true which marks it as ready for an initial model run (when requested).
+     * Adds validation parameters to a disease occurrence, including various checks.
      * @param occurrence The disease occurrence.
      * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
      */
     @Override
     public void addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
-        if (isEligibleForValidation(occurrence)) {
-            setDefaultParameters(occurrence);
+        // By default, set the occurrence to status READY
+        clearAndSetToReady(occurrence);
+        if (hasPassedQc(occurrence)) {
             if (isGoldStandard) {
+                // Passed QC and is a gold standard occurrence
                 addGoldStandardParameters(occurrence);
             } else if (automaticModelRunsEnabled(occurrence)) {
+                // Passed QC and automatic model runs are enabled, so add validation parameters. If automatic model
+                // runs are disabled, leave the status at READY so that it can be used in an initial model run and
+                // disease extent generation.
                 addValidationParameters(occurrence);
             }
+        } else {
+            // Failed QC, so set the status accordingly
+            setToFailedQc(occurrence);
         }
     }
 
@@ -63,30 +70,34 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             // to all occurrences
             GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
             for (DiseaseOccurrence occurrence : occurrences) {
-                setDefaultParameters(occurrence);
+                clearAndSetToReady(occurrence);
                 addValidationParameters(occurrence, raster);
             }
         }
     }
 
-    private boolean isEligibleForValidation(DiseaseOccurrence occurrence) {
-        return (occurrence != null) && (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    private boolean hasPassedQc(DiseaseOccurrence occurrence) {
+        return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
     }
 
-    private void setDefaultParameters(DiseaseOccurrence occurrence) {
-        // By default, the occurrence avoids the validation process altogether
+    private void clearAndSetToReady(DiseaseOccurrence occurrence) {
+        // By default, the occurrence avoids the validation process altogether (i.e. marked READY with no validation
+        // parameters
         occurrence.setEnvironmentalSuitability(null);
         occurrence.setDistanceFromDiseaseExtent(null);
         occurrence.setMachineWeighting(null);
-        occurrence.setValidated(true);
+        occurrence.setStatus(DiseaseOccurrenceStatus.READY);
+    }
+
+    private void setToFailedQc(DiseaseOccurrence occurrence) {
+        occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
     }
 
     private void addGoldStandardParameters(DiseaseOccurrence occurrence) {
         // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
-        // final weightings to 1 and isValidated to true.
+        // final weightings to 1.
         occurrence.setFinalWeighting(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
         occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
-        occurrence.setValidated(true);
     }
 
     private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
@@ -102,7 +113,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (!isCountryPoint(occurrence)) {
             occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
             occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-            findAndSetMachineWeightingAndIsValidated(occurrence);
+            findAndSetMachineWeightingAndInReview(occurrence);
         }
     }
 
@@ -110,20 +121,20 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
     }
 
-    private void findAndSetMachineWeightingAndIsValidated(DiseaseOccurrence occurrence) {
+    private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
-            occurrence.setValidated(false);
+            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
         } else {
             if (occurrence.getDiseaseGroup().useMachineLearning()) {
                 Double machineWeighting = mwPredictor.findMachineWeighting(occurrence);
                 if (machineWeighting == null) {
-                    occurrence.setValidated(false);
+                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
                 } else {
                     occurrence.setMachineWeighting(machineWeighting);
                 }
             } else {
                 if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
-                    occurrence.setValidated(false);
+                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
                 } else {
                     occurrence.setMachineWeighting(1.0);
                 }

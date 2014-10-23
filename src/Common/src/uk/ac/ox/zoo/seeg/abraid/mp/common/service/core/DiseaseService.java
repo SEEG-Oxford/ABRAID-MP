@@ -74,6 +74,15 @@ public interface DiseaseService {
     List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(int diseaseGroupId);
 
     /**
+     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * @param diseaseGroupId The disease group's ID.
+     * @param status The disease occurrence's status.
+     * @return All disease occurrences for the specified disease group and status.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupIdAndStatus(int diseaseGroupId,
+                                                                           DiseaseOccurrenceStatus status);
+
+    /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param minimumValidationWeighting All disease occurrences must have a validation weighting greater than this
@@ -88,23 +97,18 @@ public interface DiseaseService {
             boolean useGoldStandardOccurrences);
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is false.
+     * Gets disease occurrences currently in validation, for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrences currently being validated by experts.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesInValidation(Integer diseaseGroupId);
 
     /**
-     * Gets disease occurrences for the specified disease group whose isValidated flag is true
-     * and finalWeighting is currently null.
-     *
+     * Gets disease occurrences for the specified disease group which are yet to have a final weighting assigned.
      * @param diseaseGroupId The ID of the disease group.
-     * @param mustHaveEnvironmentalSuitability True if the occurrence's environmental suitability must be non-null.
-     *                                         False if it doesn't matter either way.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
-            Integer diseaseGroupId, boolean mustHaveEnvironmentalSuitability);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId);
 
     /**
      * Gets disease occurrences for a request to run the model.

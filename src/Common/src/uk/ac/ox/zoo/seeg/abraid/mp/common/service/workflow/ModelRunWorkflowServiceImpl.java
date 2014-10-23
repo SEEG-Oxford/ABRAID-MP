@@ -151,9 +151,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             generateDiseaseExtent(diseaseGroup);
-            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
+            updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
         } else {
-            updateWeightingsAndIsValidated(diseaseGroup, modelRunPrepDate);
+            updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
             generateDiseaseExtent(diseaseGroup);
         }
 
@@ -161,16 +161,16 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
                                         diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId));
 
         // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
-        // they may have changed as a result of updating weightings and isValidated. So retrieve them again before
-        // running the model.
+        // they may have changed as a result of updating weightings and status. So retrieve them again before running
+        // the model.
         requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, batchEndDate, false);
     }
 
-    private void updateWeightingsAndIsValidated(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
+    private void updateWeightingsAndStatus(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         int diseaseGroupId = diseaseGroup.getId();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
-        reviewManager.updateDiseaseOccurrenceIsValidatedValues(diseaseGroupId, modelRunPrepDate);
+        reviewManager.updateDiseaseOccurrenceStatus(diseaseGroupId, modelRunPrepDate);
         weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 

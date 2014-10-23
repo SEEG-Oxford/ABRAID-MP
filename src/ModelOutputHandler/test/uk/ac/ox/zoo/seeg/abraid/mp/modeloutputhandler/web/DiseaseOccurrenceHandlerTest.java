@@ -4,10 +4,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
@@ -95,15 +92,20 @@ public class DiseaseOccurrenceHandlerTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         DiseaseOccurrence occurrence1 = new DiseaseOccurrence();
-        DiseaseOccurrence occurrence2 = new DiseaseOccurrence();
+        occurrence1.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence1.setFinalWeighting(0.5);
+
+        DiseaseOccurrence occurrence2 = new DiseaseOccurrence();
+        occurrence2.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence2.setFinalWeightingExcludingSpatial(0.7);
+
         List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2);
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
-        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId)).thenReturn(occurrences);
+        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
 
         // Act
         diseaseOccurrenceHandler.handle(modelRun);

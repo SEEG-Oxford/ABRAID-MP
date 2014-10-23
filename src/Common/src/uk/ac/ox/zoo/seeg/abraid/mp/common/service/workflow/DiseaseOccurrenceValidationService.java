@@ -12,9 +12,7 @@ import java.util.List;
  */
 public interface DiseaseOccurrenceValidationService {
     /**
-     * Adds validation parameters to a disease occurrence, if the occurrence is eligible for validation.
-     * If automatic model runs are enabled, all validation parameters are set. If they are disabled, then only
-     * isValidated is set to true which marks it as ready for an initial model run (when requested).
+     * Adds validation parameters to a disease occurrence, including various checks.
      * @param occurrence The disease occurrence.
      * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
      */
