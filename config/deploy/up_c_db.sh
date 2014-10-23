@@ -31,11 +31,11 @@ cd $BASE
 
 # Load historical reviews
 cd $BASE/external/reviews
-echo "Importing historic reviews"
+echo "Importing historical reviews"
 psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f import_into_abraid.sql
 cd $BASE
 
-# Make a 500 most recent dengue points show in the validator
+# Make the 500 most recent dengue points show in the validator
 #psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "update disease_occurrence set is_validated=false where id in (select id from disease_occurrence where disease_group_id=87 order by occurrence_date desc limit 500)"
 
 # Set last_retrieval_end_date ready for cron process
