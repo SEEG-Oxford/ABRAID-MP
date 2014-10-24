@@ -10,7 +10,7 @@
 -- because we need to pass in psql variables.
 CREATE OR REPLACE FUNCTION create_or_replace_role(p_username text, p_password text) RETURNS void AS $$
 DECLARE
-    suffix text := p_username || ' LOGIN PASSWORD ''' || quote_ident(p_password) || '''';
+    suffix text := p_username || ' LOGIN PASSWORD ' || quote_literal(p_password);
 BEGIN
     IF NOT EXISTS (SELECT * FROM pg_catalog.pg_user WHERE usename = p_username) THEN
         -- If the role does not exist, create it
