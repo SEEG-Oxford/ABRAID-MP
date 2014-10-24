@@ -136,10 +136,12 @@ public interface DiseaseOccurrenceDao {
     /**
      * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
+     * @param batchStartDate The start date of the batch.
      * @param batchEndDate The end date of the batch.
      * @return A list of disease occurrences.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesForBatching(int diseaseGroupId, DateTime batchEndDate);
+    List<DiseaseOccurrence> getDiseaseOccurrencesForBatching(int diseaseGroupId,
+                                                             DateTime batchStartDate, DateTime batchEndDate);
 
     /**
      * Gets a list of recent disease occurrences that have been validated (they have a target expert weighting).

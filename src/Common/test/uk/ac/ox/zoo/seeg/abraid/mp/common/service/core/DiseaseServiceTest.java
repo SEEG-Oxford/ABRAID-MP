@@ -508,12 +508,13 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     public void getDiseaseOccurrenceIDsForBatching() {
         // Arrange
         int diseaseGroupId = 1;
-        DateTime batchEndDate = DateTime.now();
+        DateTime batchStartDate = DateTime.now();
+        DateTime batchEndDate = DateTime.now().plusDays(1);
         List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
-        when(diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchEndDate)).thenReturn(expectedOccurrences);
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDate, batchEndDate)).thenReturn(expectedOccurrences);
 
         // Act
-        List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchEndDate);
+        List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
         assertThat(actualOccurrences).isSameAs(expectedOccurrences);

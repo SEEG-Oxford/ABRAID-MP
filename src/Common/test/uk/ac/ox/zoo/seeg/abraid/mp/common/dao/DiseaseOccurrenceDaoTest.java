@@ -551,11 +551,12 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // There is also an occurrence (275714) with status DISCARDED_FAILED_QC which is before the batch end date.
         setOccurrencesToStatusUnbatched(274656, 273401, 275758, 275107, 274779);
         int diseaseGroupId = 87;
+        DateTime batchStartDate = new DateTime("2014-02-24T02:45:35");
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
 
         // Act
         List<DiseaseOccurrence> occurrences =
-                diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchEndDate);
+                diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
         assertThat(occurrences).hasSize(3);

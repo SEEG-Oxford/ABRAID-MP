@@ -72,7 +72,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(
                 get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/modelruninformation"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"lastModelRunText\":\"never\",\"diseaseOccurrencesText\":\"total 45, occurring between 24 Feb 2014 and 27 Feb 2014\",\"hasModelBeenSuccessfullyRun\":false,\"canRunModel\":true,\"batchEndDateMinimum\":\"24 Feb 2014\",\"batchEndDateMaximum\":\"27 Feb 2014\",\"batchEndDateDefault\":\"27 Feb 2014\",\"hasGoldStandardOccurrences\":false}"));
+                .andExpect(content().string("{\"lastModelRunText\":\"never\",\"diseaseOccurrencesText\":\"total 45, occurring between 24 Feb 2014 and 27 Feb 2014\",\"hasModelBeenSuccessfullyRun\":false,\"canRunModel\":true,\"batchDateMinimum\":\"24 Feb 2014\",\"batchDateMaximum\":\"27 Feb 2014\",\"batchEndDateDefault\":\"27 Feb 2014\",\"hasGoldStandardOccurrences\":false}"));
     }
 
     @Test
@@ -143,29 +143,33 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     public void requestModelRun() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
-        DateTime batchEndDate = DateTime.now();
+        DateTime batchStartDate = DateTime.now();
+        DateTime batchEndDate = DateTime.now().plusDays(1);
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
 
         // Act
         MockHttpServletRequestBuilder requestBuilder = post(url)
+                .param("batchStartDate", batchStartDate.toString())
                 .param("batchEndDate", batchEndDate.toString())
                 .param("useGoldStandardOccurrences", "false");
         this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         // Assert
         verify(modelRunWorkflowService).prepareForAndRequestManuallyTriggeredModelRun(eq(diseaseGroupId),
-                argThat(new DateTimeMatcher(batchEndDate)));
+                argThat(new DateTimeMatcher(batchStartDate)), argThat(new DateTimeMatcher(batchEndDate)));
     }
 
     @Test
     public void requestModelRunUsingGoldStandardOccurrences() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
-        DateTime batchEndDate = DateTime.now();
+        DateTime batchStartDate = DateTime.now();
+        DateTime batchEndDate = DateTime.now().plusDays(1);
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
 
         // Act
         MockHttpServletRequestBuilder requestBuilder = post(url)
+                .param("batchStartDate", batchStartDate.toString())
                 .param("batchEndDate", batchEndDate.toString())
                 .param("useGoldStandardOccurrences", "true");
         this.mockMvc.perform(requestBuilder).andExpect(status().isOk());

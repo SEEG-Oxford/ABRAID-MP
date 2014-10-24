@@ -49,15 +49,17 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * Prepares for and requests a model run, for the specified disease group.
      * This method is designed for use when manually triggering a model run.
      * @param diseaseGroupId The disease group ID.
-     * @param batchEndDate If validator parameter batching should happen after the model run is completed,
-     * this is the end date for batching.
+     * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
+     * run is completed), otherwise null.
+     * @param batchEndDate The end date for batching (if it should happen), otherwise null.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId, DateTime batchEndDate)
+    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,
+                                                              DateTime batchStartDate, DateTime batchEndDate)
             throws ModelRunRequesterException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
-        prepareForAndRequestModelRun(diseaseGroupId, batchEndDate);
+        prepareForAndRequestModelRun(diseaseGroupId, batchStartDate, batchEndDate);
         saveExpertsWeightings(newExpertWeightings);
     }
 
@@ -70,7 +72,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     @Override
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunRequesterException {
-        prepareForAndRequestModelRun(diseaseGroupId, null);
+        prepareForAndRequestModelRun(diseaseGroupId, null, null);
     }
 
     /**
@@ -87,7 +89,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
         generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
-        requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, null, true);
+        requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, null, null, true);
         saveExpertsWeightings(newExpertWeightings);
     }
 
@@ -144,7 +146,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, null, true);
     }
 
-    private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchEndDate)
+    private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate)
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
@@ -163,7 +165,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
         // they may have changed as a result of updating weightings and status. So retrieve them again before running
         // the model.
-        requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, batchEndDate, false);
+        requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, batchStartDate, batchEndDate, false);
     }
 
     private void updateWeightingsAndStatus(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
@@ -174,11 +176,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }
 
-    private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate, DateTime batchEndDate,
+    private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
+                                            DateTime batchStartDate, DateTime batchEndDate,
                                             boolean useGoldStandardOccurrences) {
         List<DiseaseOccurrence> occurrencesForModelRun =
                 selectOccurrencesForModelRun(diseaseGroup.getId(), useGoldStandardOccurrences);
-        modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchEndDate);
+        modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchStartDate, batchEndDate);
         diseaseGroup.setLastModelRunPrepDate(modelRunPrepDate);
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }

@@ -19,11 +19,13 @@ define([
         self.maxEnvironmentalSuitabilityWithoutMLValue = ko.observable();
         self.maxEnvironmentalSuitabilityWithoutML = ko.computed({
             read: function () {
-                return self.useMachineLearning() ? self.maxEnvironmentalSuitabilityWithoutMLValue() : null;
+                return self.useMachineLearning() ? null : self.maxEnvironmentalSuitabilityWithoutMLValue();
             },
             write: function (value) { self.maxEnvironmentalSuitabilityWithoutMLValue(value); },
             owner: self
-        }).extend({ number: true, min: 0, max: 1 });
+        }).extend({ number: true, min: 0, max: 1,
+            required: ko.computed(function () { return !self.useMachineLearning(); })
+        });
 
         // Minimum Data Volume and Minimum Data Spread
         self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 0 });

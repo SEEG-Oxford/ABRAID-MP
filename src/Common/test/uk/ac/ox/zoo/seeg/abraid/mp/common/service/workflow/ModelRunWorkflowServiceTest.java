@@ -55,6 +55,7 @@ public class ModelRunWorkflowServiceTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         Map<Integer, Double> newWeightings = new HashMap<>();
+        DateTime batchStartDate = DateTime.now();
         DateTime batchEndDate = DateTime.now().plusDays(1);
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
@@ -64,14 +65,14 @@ public class ModelRunWorkflowServiceTest {
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
 
         // Act
-        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchEndDate);
+        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(lastModelRunPrepDate),
                 eq(diseaseGroupId));
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchEndDate));
+        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchStartDate), eq(batchEndDate));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator).saveExpertsWeightings(same(newWeightings));
     }
@@ -100,7 +101,7 @@ public class ModelRunWorkflowServiceTest {
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate),
                 eq(false));
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class));
+        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
     }
 
@@ -127,7 +128,7 @@ public class ModelRunWorkflowServiceTest {
         verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(any(DateTime.class), anyInt());
         verify(reviewManager, never()).updateDiseaseOccurrenceStatus(anyInt(), any(DateTime.class));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(true));
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class));
+        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator).saveExpertsWeightings(same(newWeightings));
     }

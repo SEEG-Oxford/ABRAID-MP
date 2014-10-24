@@ -291,6 +291,7 @@ CREATE TABLE model_run (
     response_date timestamp,
     output_text text,
     error_text text,
+    batch_start_date timestamp,
     batch_end_date timestamp,
     batch_occurrence_count integer,
     batching_completed_date timestamp

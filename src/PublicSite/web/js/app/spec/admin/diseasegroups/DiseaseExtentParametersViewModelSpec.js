@@ -51,22 +51,22 @@ define([
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "min", 0);
 
                 expectRule(vm.higherOccurrenceScore, "digit", true);
-                expectRule(vm.higherOccurrenceScore, "min", 0);
+                expectRule(vm.higherOccurrenceScore, "customMin", vm.lowerOccurrenceScore);
 
                 expectRule(vm.lowerOccurrenceScore, "digit", true);
                 expectRule(vm.lowerOccurrenceScore, "min", 0);
-                expectRule(vm.lowerOccurrenceScore, "max", vm.higherOccurrenceScore);
+                expectRule(vm.lowerOccurrenceScore, "customMax", vm.higherOccurrenceScore);
 
                 expectRule(vm.minValidationWeighting, "number", true);
                 expectRule(vm.minValidationWeighting, "min", 0);
                 expectRule(vm.minValidationWeighting, "max", 1);
 
                 expectRule(vm.minOccurrencesForPresence, "digit", true);
-                expectRule(vm.minOccurrencesForPresence, "min", 0);
+                expectRule(vm.minOccurrencesForPresence, "customMin", vm.minOccurrencesForPossiblePresence);
 
                 expectRule(vm.minOccurrencesForPossiblePresence, "digit", true);
                 expectRule(vm.minOccurrencesForPossiblePresence, "min", 0);
-                expectRule(vm.minOccurrencesForPossiblePresence, "max", vm.minOccurrencesForPresence);
+                expectRule(vm.minOccurrencesForPossiblePresence, "customMax", vm.minOccurrencesForPresence);
             });
         });
 

@@ -1,7 +1,7 @@
 <#macro formGroup id title bind placeholder>
 <div class="form-group">
-    <label for="${id}" class="col-sm-4 control-label">${title}</label>
-    <div class="input-group col-sm-8">
+    <label for="${id}" class="col-sm-3 control-label">${title}</label>
+    <div class="input-group col-sm-9">
         <input type="text" class="form-control" id="${id}" data-bind="formValue: ${bind}" placeholder="${placeholder}">
     </div>
 </div>
