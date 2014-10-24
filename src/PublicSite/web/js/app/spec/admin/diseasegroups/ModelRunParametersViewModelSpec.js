@@ -80,7 +80,9 @@ define([
             expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
             expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
             expect(vm.useMachineLearning()).toBe(diseaseGroup.useMachineLearning);
-            expect(vm.maxEnvironmentalSuitabilityWithoutML()).toBe(diseaseGroup.maxEnvironmentalSuitabilityWithoutML);
+            expect(vm.maxEnvironmentalSuitabilityWithoutML()).toBe(
+                vm.useMachineLearning() ? null : diseaseGroup.maxEnvironmentalSuitabilityWithoutML
+            );
         });
 
         describe("holds the computed 'high frequency threshold' which", function () {
