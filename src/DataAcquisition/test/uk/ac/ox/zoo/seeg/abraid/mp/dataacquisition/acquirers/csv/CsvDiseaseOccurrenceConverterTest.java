@@ -99,10 +99,36 @@ public class CsvDiseaseOccurrenceConverterTest {
     }
 
     @Test
-    public void convertSucceedsForMonthYearOccurrenceDate() {
+    public void convertSucceedsFor2DigitMonthYearOccurrenceDate() {
         // Arrange
         CsvDiseaseOccurrence csvDiseaseOccurrence = createCsvDiseaseOccurrence();
         csvDiseaseOccurrence.setOccurrenceDate("05/2013");
+
+        // Act
+        DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence);
+
+        // Assert
+        assertEqual(occurrence.getOccurrenceDate(), "2013-05-01T00:00:00Z");
+    }
+
+    @Test
+    public void convertSucceedsFor3CharacterMonth2DigitYearOccurrenceDate() {
+        // Arrange
+        CsvDiseaseOccurrence csvDiseaseOccurrence = createCsvDiseaseOccurrence();
+        csvDiseaseOccurrence.setOccurrenceDate("May-13");
+
+        // Act
+        DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence);
+
+        // Assert
+        assertEqual(occurrence.getOccurrenceDate(), "2013-05-01T00:00:00Z");
+    }
+
+    @Test
+    public void convertSucceedsFor3CharacterMonth4DigitYearOccurrenceDate() {
+        // Arrange
+        CsvDiseaseOccurrence csvDiseaseOccurrence = createCsvDiseaseOccurrence();
+        csvDiseaseOccurrence.setOccurrenceDate("May-2013");
 
         // Act
         DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence);
@@ -131,8 +157,8 @@ public class CsvDiseaseOccurrenceConverterTest {
         csvDiseaseOccurrence.setOccurrenceDate("01/13/2013");
 
         // Act and assert
-        expectFailure(csvDiseaseOccurrence,
-                "Occurrence date \"01/13/2013\" is invalid (valid formats are dd/MM/YYYY, MM/YYYY, YYYY)");
+        expectFailure(csvDiseaseOccurrence, "Occurrence date \"01/13/2013\" is invalid (valid formats are " +
+                "dd/MM/YYYY, MM/YYYY, YYYY, MMM-YY, MMM-YYYY)");
     }
 
     @Test

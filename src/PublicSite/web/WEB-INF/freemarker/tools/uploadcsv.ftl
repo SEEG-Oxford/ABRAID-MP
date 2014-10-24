@@ -74,7 +74,7 @@
                 <tr>
                     <td>Occurrence Date</td>
                     <td>Yes</td>
-                    <td>Must be in the format DD/MM/YYYY, MM/YYYY or YYYY</td>
+                    <td>Must be in the format DD/MM/YYYY, MM/YYYY, YYYY, MMM-YY or MMM-YYYY</td>
                 </tr>
                 <tr>
                     <td>Title</td>
