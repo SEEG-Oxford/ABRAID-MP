@@ -20,6 +20,7 @@ public class CharacterSetUtilsTest {
     private static final String TEST_FILE1_ISO_8859_1 = "test_file1_iso-8859-1.txt";
     private static final String TEST_FILE2_UTF_8 = "test_file2_utf-8.txt";
     private static final String TEST_FILE2_WINDOWS_1252 = "test_file2_windows-1252.txt";
+    private static final Charset WINDOWS_1252_CHARSET = Charset.forName("windows-1252");
 
     @Test
     public void detectCharacterSetReturnsNullForNullInput() {
@@ -41,12 +42,6 @@ public class CharacterSetUtilsTest {
     }
 
     @Test
-    public void detectCharacterSetReturnsUTF8ForShortUTF8Input() {
-        String text = "The price is €100";
-        testDetectCharacterSet(text.getBytes(), StandardCharsets.UTF_8);
-    }
-
-    @Test
     public void detectCharacterSetReturnsUTF8ForTestUTF8File1() throws IOException {
         testDetectCharacterSet(TEST_FILE1_UTF_8, StandardCharsets.UTF_8);
     }
@@ -59,28 +54,49 @@ public class CharacterSetUtilsTest {
     @Test
     public void detectCharacterSetReturnsWindows1252ForTestISO88591File() throws IOException {
         // Windows-1252 is a superset of ISO-8859-1
-        testDetectCharacterSet(TEST_FILE1_ISO_8859_1, Charset.forName("windows-1252"));
+        testDetectCharacterSet(TEST_FILE1_ISO_8859_1, WINDOWS_1252_CHARSET);
     }
 
     @Test
     public void detectCharacterSetReturnsWindows1252ForTestWindows1252File() throws IOException {
         // Windows-1252 is a superset of ISO-8859-1
-        testDetectCharacterSet(TEST_FILE2_WINDOWS_1252, Charset.forName("windows-1252"));
+        testDetectCharacterSet(TEST_FILE2_WINDOWS_1252, WINDOWS_1252_CHARSET);
     }
 
     @Test
     public void convertToCharacterSetReturnsNullForNullInput() {
-        testConvertToCharacterSet(null, null);
+        testConvertToCharacterSet((byte[]) null, null, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
     }
 
     @Test
     public void convertToCharacterSetReturnsEmptyOutputForEmptyInput() {
         byte[] empty = new byte[] {};
-        testConvertToCharacterSet(empty, empty);
+        testConvertToCharacterSet(empty, empty, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
     }
 
-    public void convertToCharacterSetConvertsISO88591ToUTF8Correctly() {
+    @Test
+    public void convertToCharacterSetMakesNoChangeIfSourceAndDestinationCharacterSetsAreTheSame() throws IOException {
+        testConvertToCharacterSet(TEST_FILE1_UTF_8, TEST_FILE1_UTF_8, StandardCharsets.UTF_8, StandardCharsets.UTF_8);
+    }
 
+    @Test
+    public void convertToCharacterSetConvertsISO88591ToUTF8Correctly() throws IOException {
+        testConvertToCharacterSet(TEST_FILE1_ISO_8859_1, TEST_FILE1_UTF_8, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
+    }
+
+    @Test
+    public void convertToCharacterSetConvertsUTF8ToISO88591Correctly() throws IOException {
+        testConvertToCharacterSet(TEST_FILE1_UTF_8, TEST_FILE1_ISO_8859_1, StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1);
+    }
+
+    @Test
+    public void convertToCharacterSetConvertsWindows1252ToUTF8Correctly() throws IOException {
+        testConvertToCharacterSet(TEST_FILE2_WINDOWS_1252, TEST_FILE2_UTF_8, WINDOWS_1252_CHARSET, StandardCharsets.UTF_8);
+    }
+
+    @Test
+    public void convertToCharacterSetConvertsUTF8ToWindows1252Correctly() throws IOException {
+        testConvertToCharacterSet(TEST_FILE2_UTF_8, TEST_FILE2_WINDOWS_1252, StandardCharsets.UTF_8, WINDOWS_1252_CHARSET);
     }
 
     private void testDetectCharacterSet(String inputFilename, Charset expectedCharset) throws IOException {
@@ -93,8 +109,15 @@ public class CharacterSetUtilsTest {
         assertThat(charset).isEqualTo(expectedCharset);
     }
 
-    private void testConvertToCharacterSet(byte[] input, byte[] expectedOutput) {
-        byte[] output = CharacterSetUtils.convertToCharacterSet(input, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
+    private void testConvertToCharacterSet(String inputFilename, String expectedOutputFilename, Charset fromCharset,
+                                           Charset toCharset) throws IOException {
+        byte[] input = FileUtils.readFileToByteArray(new File(TEST_FOLDER, inputFilename));
+        byte[] expectedOutput = FileUtils.readFileToByteArray(new File(TEST_FOLDER, expectedOutputFilename));
+        testConvertToCharacterSet(input, expectedOutput, fromCharset, toCharset);
+    }
+
+    private void testConvertToCharacterSet(byte[] input, byte[] expectedOutput, Charset fromCharset, Charset toCharset) {
+        byte[] output = CharacterSetUtils.convertToCharacterSet(input, fromCharset, toCharset);
         assertThat(output).isEqualTo(expectedOutput);
     }
 }

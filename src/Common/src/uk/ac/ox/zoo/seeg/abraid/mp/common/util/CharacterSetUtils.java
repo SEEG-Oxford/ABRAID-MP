@@ -7,12 +7,16 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Arrays;
 
 /**
  * Contains utilities relating to character sets.
  * Copyright (c) 2014 University of Oxford
  */
-public class CharacterSetUtils {
+public final class CharacterSetUtils {
+    private CharacterSetUtils() {
+    }
+
     /**
      * Detects the character set of the input text.
      * @param input The input text as a byte array.
@@ -32,8 +36,8 @@ public class CharacterSetUtils {
         if (StringUtils.hasText(detectedCharset)) {
             try {
                 charset = Charset.forName(detectedCharset);
-            } catch(UnsupportedCharsetException e) {
-                // Intentionally blank
+            } catch (UnsupportedCharsetException e) {
+                throw new RuntimeException("Detected unsupported character set " + detectedCharset);
             }
         }
         return charset;
@@ -51,7 +55,8 @@ public class CharacterSetUtils {
             return null;
         }
 
-        CharBuffer data = fromCharset.decode(ByteBuffer.wrap(input));
-        return toCharSet.encode(data).array();
+        CharBuffer decodedData = fromCharset.decode(ByteBuffer.wrap(input));
+        ByteBuffer encodedData = toCharSet.encode(decodedData);
+        return Arrays.copyOf(encodedData.array(), encodedData.limit());
     }
 }

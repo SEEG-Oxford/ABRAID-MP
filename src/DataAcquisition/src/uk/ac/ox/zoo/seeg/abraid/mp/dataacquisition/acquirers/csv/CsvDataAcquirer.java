@@ -55,8 +55,10 @@ public class CsvDataAcquirer {
 
         List<CsvDiseaseOccurrence> csvDiseaseOccurrences = retrieveDataFromCsv(csv, messages);
         if (csvDiseaseOccurrences != null) {
+            addConversionMessage(csvDiseaseOccurrences, messages);
+            int initialMessageCount = messages.size();
             List<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard, messages);
-            addCountMessage(convertedOccurrences, messages);
+            addCountMessage(convertedOccurrences, messages, initialMessageCount);
             csvLookupData.clearLookups();
         }
 
@@ -64,8 +66,8 @@ public class CsvDataAcquirer {
     }
 
     private List<CsvDiseaseOccurrence> retrieveDataFromCsv(byte[] csv, List<String> messages) {
-        String convertedCsv = convertToUTF8IfNecessary(csv, messages);
         try {
+            String convertedCsv = convertToUTF8IfNecessary(csv, messages);
             return CsvDiseaseOccurrence.readFromCsv(convertedCsv);
         } catch (Exception e) {
             String message = String.format(INVALID_FORMAT_ERROR_MESSAGE, e.getMessage());
@@ -78,6 +80,7 @@ public class CsvDataAcquirer {
     private String convertToUTF8IfNecessary(byte[] input, List<String> messages) {
         byte[] convertedInput;
         Charset fromCharset = CharacterSetUtils.detectCharacterSet(input);
+
         if (fromCharset != null && !fromCharset.equals(StandardCharsets.UTF_8)) {
             // We have detected that the input is not UTF-8, so convert it to UTF-8
             String message = String.format(CONVERTING_TO_UTF8_MESSAGE, fromCharset.name());
@@ -87,15 +90,13 @@ public class CsvDataAcquirer {
         } else {
             convertedInput = input;
         }
+
         return new String(convertedInput, StandardCharsets.UTF_8);
     }
 
     private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,
                                             List<String> messages) {
         List<DiseaseOccurrence> convertedOccurrences = new ArrayList<>();
-        String message = String.format(CONVERSION_MESSAGE, csvDiseaseOccurrences.size());
-        LOGGER.info(message);
-        messages.add(message);
 
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
             CsvDiseaseOccurrence csvDiseaseOccurrence = csvDiseaseOccurrences.get(i);
@@ -109,7 +110,7 @@ public class CsvDataAcquirer {
             } catch (DataAcquisitionException e) {
                 // This CSV disease occurrence could not be acquired. So add the exception message to the list of
                 // messages that will be returned. The CSV line number includes the header row.
-                message = String.format(LINE_ERROR_MESSAGE, i + 2, e.getMessage());
+                String message = String.format(LINE_ERROR_MESSAGE, i + 2, e.getMessage());
                 LOGGER.warn(message);
                 messages.add(message);
             }
@@ -118,7 +119,13 @@ public class CsvDataAcquirer {
         return convertedOccurrences;
     }
 
-    private void addCountMessage(List<DiseaseOccurrence> occurrences, List<String> messages) {
+    private void addConversionMessage(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, List<String> messages) {
+        String message = String.format(CONVERSION_MESSAGE, csvDiseaseOccurrences.size());
+        LOGGER.info(message);
+        messages.add(message);
+    }
+
+    private void addCountMessage(List<DiseaseOccurrence> occurrences, List<String> messages, int initialMessageCount) {
         Set<Location> uniqueLocations = findUniqueLocations(occurrences);
         List<Location> locationsPassingQc = findLocationsPassingQc(uniqueLocations);
         String message;
@@ -129,7 +136,8 @@ public class CsvDataAcquirer {
             message = SAVED_NO_OCCURRENCES_MESSAGE;
         }
         LOGGER.info(message);
-        messages.add(1, message);
+        // Use initialMessageCount to ensure that the count message comes immediately after the initial messages
+        messages.add(initialMessageCount, message);
     }
 
     private Set<Location> findUniqueLocations(List<DiseaseOccurrence> occurrences) {
