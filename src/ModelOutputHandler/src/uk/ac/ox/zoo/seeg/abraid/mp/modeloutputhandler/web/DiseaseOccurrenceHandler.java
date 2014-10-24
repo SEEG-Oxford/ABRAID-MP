@@ -62,7 +62,8 @@ public class DiseaseOccurrenceHandler {
     }
 
     private boolean isBatchingRequired(ModelRun modelRun, DiseaseGroup diseaseGroup) {
-        return (modelRun.getStatus() == ModelRunStatus.COMPLETED) && (modelRun.getBatchEndDate() != null) &&
+        return (modelRun.getStatus() == ModelRunStatus.COMPLETED) &&
+               (modelRun.getBatchStartDate() != null) && (modelRun.getBatchEndDate() != null) &&
                 !diseaseGroup.isAutomaticModelRunsEnabled();
     }
 

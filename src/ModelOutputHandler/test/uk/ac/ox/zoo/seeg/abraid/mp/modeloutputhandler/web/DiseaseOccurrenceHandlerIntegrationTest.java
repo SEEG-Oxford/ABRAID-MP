@@ -69,8 +69,9 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
+        DateTime batchStartDate = new DateTime("2014-02-24T17:35:29"); // Occurrence date for earliest READY occurrence
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
-        ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
+        ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 
         // As this is the first batch, there was no training data available, so no prediction can be made.
         when(machineWeightingPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(null);
@@ -110,9 +111,10 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
+        DateTime batchStartDate = new DateTime("2014-02-24T17:35:29");
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
-        createAndSaveTestModelRun(diseaseGroupId, batchEndDate, DateTime.now().minusWeeks(1));
-        ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchEndDate, null);
+        createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, DateTime.now().minusWeeks(1));
+        ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 
         // Act
         diseaseOccurrenceHandler.handle(modelRun2);
@@ -142,12 +144,13 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         assertThat(modelRun2.getBatchOccurrenceCount()).isEqualTo(0);
     }
 
-    private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchEndDate,
+    private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate,
                                                DateTime batchingCompletionDate) throws Exception {
         String name = Double.toString(Math.random());
         ModelRun modelRun = new ModelRun(name, diseaseGroupId, "host", DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
+        modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
         modelRun.setBatchingCompletedDate(batchingCompletionDate);
         modelRunService.saveModelRun(modelRun);

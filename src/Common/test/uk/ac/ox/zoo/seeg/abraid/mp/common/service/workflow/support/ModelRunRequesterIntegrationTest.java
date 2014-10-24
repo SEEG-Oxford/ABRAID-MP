@@ -99,6 +99,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
         assertThat(modelRun.getRequestServer()).isEqualTo(URI.create(URL).getHost());
         assertThat(modelRun.getRequestDate()).isEqualTo(now);
+        assertThat(modelRun.getBatchStartDate()).isEqualTo(batchStartDate);
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
     }
 
