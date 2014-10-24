@@ -22,9 +22,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class WeightingsCalculator {
     private static Logger logger = Logger.getLogger(WeightingsCalculator.class);
     private static final String NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS =
-            "No new reviews have been submitted - expert weightings of disease occurrences will not be updated";
+            "No new occurrence reviews have been submitted - expert weightings of disease occurrences will not be " +
+            "updated";
     private static final String NOT_UPDATING_WEIGHTINGS_OF_EXPERTS =
-            "No reviews have been submitted - weightings of experts will not be updated";
+            "No occurrence reviews have been submitted - weightings of experts will not be updated";
     private static final String RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS =
             "Recalculating expert weightings for %d disease occurrence(s) given %d new review(s)";
     private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
