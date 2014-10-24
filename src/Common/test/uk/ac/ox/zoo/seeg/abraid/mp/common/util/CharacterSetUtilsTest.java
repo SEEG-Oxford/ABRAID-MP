@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class CharacterSetUtilsTest {
     private static final String TEST_FOLDER = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/util";
-    private static final String TEST_FILE1_UTF_8 = "test_file1_utf-8.txt";
-    private static final String TEST_FILE1_ISO_8859_1 = "test_file1_iso-8859-1.txt";
-    private static final String TEST_FILE2_UTF_8 = "test_file2_utf-8.txt";
-    private static final String TEST_FILE2_WINDOWS_1252 = "test_file2_windows-1252.txt";
+    private static final String TEST_FILE1_UTF_8 = "file1_utf-8.txt";
+    private static final String TEST_FILE1_ISO_8859_1 = "file1_iso-8859-1.txt";
+    private static final String TEST_FILE2_UTF_8 = "file2_utf-8.txt";
+    private static final String TEST_FILE2_WINDOWS_1252 = "file2_windows-1252.txt";
     private static final Charset WINDOWS_1252_CHARSET = Charset.forName("windows-1252");
 
     @Test
