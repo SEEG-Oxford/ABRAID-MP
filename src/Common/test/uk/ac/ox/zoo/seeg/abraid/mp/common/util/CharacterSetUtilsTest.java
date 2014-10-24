@@ -59,7 +59,6 @@ public class CharacterSetUtilsTest {
 
     @Test
     public void detectCharacterSetReturnsWindows1252ForTestWindows1252File() throws IOException {
-        // Windows-1252 is a superset of ISO-8859-1
         testDetectCharacterSet(TEST_FILE2_WINDOWS_1252, WINDOWS_1252_CHARSET);
     }
 
