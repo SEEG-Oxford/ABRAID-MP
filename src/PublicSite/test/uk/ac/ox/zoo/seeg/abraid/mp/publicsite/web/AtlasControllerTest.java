@@ -93,8 +93,8 @@ public class AtlasControllerTest {
         when(modelRun2.getName()).thenReturn("Model Run 2");
         when(modelRun3.getName()).thenReturn("Model Run 3");
 
-        when(diseaseGroup1.getPublicName()).thenReturn("Disease Group 1");
-        when(diseaseGroup2.getPublicName()).thenReturn("Disease Group 2");
+        when(diseaseGroup1.getShortNameForDisplay()).thenReturn("Disease Group 1");
+        when(diseaseGroup2.getShortNameForDisplay()).thenReturn("Disease Group 2");
 
         when(modelRunService.getCompletedModelRuns()).thenReturn(Arrays.asList(modelRun1, modelRun2, modelRun3));
 
