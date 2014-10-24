@@ -17,7 +17,7 @@ public interface ModelRunWorkflowService {
      * @param diseaseGroupId The disease group ID.
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
      * run is completed), otherwise null.
-     * @param batchEndDate The end date for batching(if it should happen), otherwise null.
+     * @param batchEndDate The end date for batching (if it should happen), otherwise null.
      * @throws ModelRunRequesterException if the model run could not be requested.
      */
     void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,

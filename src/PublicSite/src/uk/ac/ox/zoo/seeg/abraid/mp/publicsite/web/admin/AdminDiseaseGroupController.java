@@ -142,7 +142,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Requests a model run for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to request the model run.
-     * @param batchStartDate The start date of the occurrences batch. Must be in ISOE 8601 format for correct parsing.
+     * @param batchStartDate The start date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
      * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
      * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      * @return An error message string (empty if no error).

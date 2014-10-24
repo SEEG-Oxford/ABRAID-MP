@@ -88,14 +88,14 @@ public class JsonModelRunInformationBuilder {
     }
 
     /**
-     * Populates the parameters relating to "batch date".
+     * Populates the parameters relating to batch date.
      * @param lastCompletedModelRun The last completed model run (or null if never completed).
      * @param statistics Statistics that describe the disease occurrences.
      * @return This builder.
      */
     public JsonModelRunInformationBuilder populateBatchDateParameters(ModelRun lastCompletedModelRun,
                                                                       DiseaseOccurrenceStatistics statistics) {
-        // The minimum value of "batch start date" is the minimum occurrence date if this is the first batch, otherwise
+        // The minimum batch date is the minimum occurrence date if this is the first batch, otherwise
         // it is the day after the latest batch end date.
         DateTime minimumDate = statistics.getMinimumOccurrenceDate();
         if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
@@ -103,7 +103,7 @@ public class JsonModelRunInformationBuilder {
             minimumDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
         }
 
-        // The maximum value of "batch end date" is simply the maximum occurrence date
+        // The maximum batch date is simply the maximum occurrence date
         DateTime maximumDate = statistics.getMaximumOccurrenceDate();
 
         // The default value of "batch end date" is the last day of the minimum date's year, limited to:
