@@ -24,7 +24,7 @@ public class DiseaseOccurrenceHandler {
             "status to UNBATCHED and final weighting to null for %d occurrence(s) of disease group %d (%s)";
     private static final String VALIDATION_LOG_MESSAGE =
             "Model run %d: setting validation parameters for %d occurrence(s) of disease group %d (%s) " +
-            "(batch end date %s)";
+            "(batch start date %s, batch end date %s)";
     private static final String VALIDATION_COMPLETED_LOG_MESSAGE =
             "Model run %d: setting validation parameters completed";
     private static final String LOG_DATE_FORMAT = "dd MMM yyyy";
@@ -94,6 +94,7 @@ public class DiseaseOccurrenceHandler {
                 batchStartDateWithMinimumTime, batchEndDateWithMaximumTime);
         LOGGER.info(String.format(VALIDATION_LOG_MESSAGE, modelRun.getId(), occurrences.size(),
                 diseaseGroup.getId(), diseaseGroup.getName(),
+                batchStartDateWithMinimumTime.toString(LOG_DATE_FORMAT),
                 batchEndDateWithMaximumTime.toString(LOG_DATE_FORMAT)));
         setValidationParametersForOccurrencesBatch(occurrences);
         setModelRunBatchingParameters(modelRun, occurrences.size());
