@@ -1,9 +1,7 @@
 /* An AMD defining the view-model for the model run parameters of the selected disease group.
  * Copyright (c) 2014 University of Oxford
  */
-define([
-    "ko"
-], function (ko) {
+define(["ko"], function (ko) {
     "use strict";
 
     return function (diseaseGroupSelectedEventName) {

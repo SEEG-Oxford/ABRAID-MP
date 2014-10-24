@@ -2,7 +2,10 @@
  * AMD defining the view model for the atlas layer selector.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "underscore"], function (ko, _) {
+define([
+    "ko",
+    "underscore"
+], function (ko, _) {
     "use strict";
 
     return function (availableLayers) {
