@@ -190,10 +190,11 @@ define([
         });
 
         describe("holds whether to disable the button that runs the model, which", function () {
+            // NB. Dates must be numbers, not date string, to allow for comparison in min/max rule and be valid.
             it("enables if not using gold standard occurrences and we should be able to run the model", function () {
                 vm.useGoldStandardOccurrences(false);
-                vm.batchStartDate("9 Jul 2014");
-                vm.batchEndDate("10 Jul 2014");
+                vm.batchStartDate(9);
+                vm.batchEndDate(10);
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
                 vm.isEnablingAutomaticModelRuns(false);
@@ -203,8 +204,8 @@ define([
 
             it("enables if using gold standard occurrences and we should be able to run the model", function () {
                 vm.useGoldStandardOccurrences(true);
-                vm.batchStartDate("");
-                vm.batchEndDate("");
+                vm.batchStartDate(9);
+                vm.batchEndDate(10);
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
                 vm.isEnablingAutomaticModelRuns(false);
@@ -214,8 +215,8 @@ define([
 
             it("disables if not using gold standard occurrences and the start date is invalid", function () {
                 vm.useGoldStandardOccurrences(false);
-                vm.batchStartDate("");
-                vm.batchEndDate("10 Jul 2014");
+                vm.batchStartDate(10);
+                vm.batchEndDate(9);
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
                 vm.isEnablingAutomaticModelRuns(false);
@@ -225,7 +226,7 @@ define([
 
             it("disables if not using gold standard occurrences and the end date is invalid", function () {
                 vm.useGoldStandardOccurrences(false);
-                vm.batchStartDate("9 Jul 2014");
+                vm.batchStartDate(9);
                 vm.batchEndDate("");
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
