@@ -95,7 +95,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         target.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
 
         // Assert
-        verify(logger, times(1)).info(eq("No new reviews have been submitted - expert weightings of disease occurrences will not be updated"));
+        verify(logger, times(1)).info(eq("No new occurrence reviews have been submitted - expert weightings of disease occurrences will not be updated"));
     }
 
     // One expert (who has a weighting of 0.9) has reviewed YES (value of 1) to an occurrence. The total weighting
