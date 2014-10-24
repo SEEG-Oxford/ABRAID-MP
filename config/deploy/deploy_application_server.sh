@@ -10,6 +10,11 @@ if [ "$(whoami)" != "root" ]; then
   exit 1
 fi
 
+# SSH KEYS
+echo "[[ Enabling passwordless remote access ]]"
+eval $(ssh-agent) > /dev/null
+ssh-add "$HOME/.ssh/id_rsa" > /dev/null
+
 # Fix bash files
 find ../.. -name "*.sh" ! -name "deploy_application_server.sh" -exec dos2unix -q {} \;
 find ../.. -name "*.sh" ! -name "deploy_application_server.sh" -exec chmod +x {} \;
@@ -18,8 +23,10 @@ echo "[[ Loading config ]]"
 # Export useful constants
 export ABRAID_SUPPORT_PATH='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
+export WEBAPP_PATH='/var/lib/tomcat7/webapps'
+declare -r WEBAPP_PATH
 # Source site specific variables
-source "site.conf.sh"
+source "site.conf.sh" # Todo, make this an arg
 # Source useful functions
 source "functions.sh"
 
@@ -35,6 +42,12 @@ echo "[[ Stopping services ]]"
 service tomcat7 stop > /dev/null
 service gunicorn stop > /dev/null
 echo -e "#\x21/bin/sh\n\n:" > "/etc/cron.hourly/abraid"
+
+# Checking for dir
+if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
+  echo "[[ Creating support directory ]]"
+  mkdir -p "$ABRAID_SUPPORT_PATH"
+fi
 
 # Upgrading database
 echo "[[ Upgrading database ]]"

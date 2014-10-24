@@ -12,7 +12,7 @@ echo "[[ DB | Performing prechecks ]]"
 : "${PG_ABRAID_USER:?"Variable must be set"}"
 
 
-echo "[[ DB | Setting up tempory database authentication ]]"
+echo "[[ DB | Setting up temporary database authentication ]]"
 echo "$DB_ADDRESS:$DB_PORT:postgres:$PG_ADMIN_USER:$PG_ADMIN_PASS" > "pg_pass"
 echo "$DB_ADDRESS:$DB_PORT:$DB_NAME:$PG_ADMIN_USER:$PG_ADMIN_PASS" >> "pg_pass"
 echo "$DB_ADDRESS:$DB_PORT:$DB_NAME:$PG_ABRAID_USER:$PG_ABRAID_PASS" >> "pg_pass"
@@ -27,8 +27,8 @@ echo "database.name=$DB_NAME" >> "database.properties"
 
 if [[ 1 -eq 0 && $(psql -U postgres -l | grep "$DB_NAME" | wc -l) -eq 1 ]]; then
   # Temp bypass
-  echo "[[ DB | Performing database upgrade ]]"
-  ant "create.database"
+  echo "[[ DB | Performing database upgrade (db.log) ]]"
+  ant "create.database" > "../config/deploy/db.log"
 else
   echo "[[ DB | Performing database creation checks ]]"
   : "${ABRAID_USER_EMAIL:?"Variable must be set"}"
@@ -43,47 +43,46 @@ else
   echo "shapefiles.path=$PWD/external/admin_units" >> "database.properties"
 
   echo "[[ DB | Collating files for new database creation ]]"
-  echo "Createing cache dir"
+  echo "Creating cache dir"
   mkdir -p "external"
   cd "external"
     echo "Getting admin unit data"
-    rsync -crm "$SHAPEFILE_SOURCE" "./admin_units/" --include="*.shp" --include="*.dbf" --include="*.prj" --include="*.shx" --include="*.sbx" --include="*/" --exclude="*"
-    echo "Getting intial healthmap data"
-    rsync -crm "$HEALTHMAP_SOURCE" "./healthmap/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
-    echo "[[ DB | Collate | Getting intial geonames data ]]"
-    rsync -crm "$GEONAMES_SOURCE" "./geonames/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
-    echo "[[ DB | Collate | Getting intial user data ]]"
-    rsync -crm "$EXPERTS_SOURCE" "./experts/"
-    echo "[[ DB | Collate | Getting intial review data ]]"
-    rsync -crm "$REVIEWS_SOURCE" "./geonames/" --exclude="export_from_abraid.sql"
+    rsync -crm "$SHAPEFILE_SOURCE/*" "./admin_units/" --include="*.shp" --include="*.dbf" --include="*.prj" --include="*.shx" --include="*.sbx" --include="*/" --exclude="*"
+    echo "Getting initial healthmap data"
+    rsync -crm "$HEALTHMAP_SOURCE/*" "./healthmap/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
+    echo "Getting initial geonames data"
+    rsync -crm "$GEONAMES_SOURCE/*" "./geonames/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
+    echo "Getting initial user data"
+    rsync -crm "$EXPERTS_SOURCE/*" "./experts/"
+    echo "Getting initial review data"
+    rsync -crm "$REVIEWS_SOURCE/*" "./reviews/" --exclude="export_from_abraid.sql"
   cd ..
 
-  echo "[[ DB | Createing database ]]"
-  ant "create.database"
+  echo "[[ DB | Creating database (db.log) ]]"
+  ant "create.database" > "../config/deploy/db.log"
 
-  echo "[[ DB | Importing intial data ]]"
+  echo "[[ DB | Importing initial data ]]"
   cd "external"
     cd "experts"
       echo "Importing experts"
-      psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f "import_into_abraid.sql"
-      psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "INSERT INTO expert (name, email, hashed_password, is_administrator, job_title, institution, is_seeg_member, visibility_requested, visibility_approved, weighting) VALUES ( 'Dr Test', '$ABRAID_USER_EMAIL', '$ABRAID_USER_PASS', true, 'Tester', 'Testland', true, false, false, 0 )"
+      psql -wq -v "ON_ERROR_STOP=1" -U "$PG_ADMIN_USER" -d "$DB_NAME" -f "import_into_abraid.sql" > /dev/null
     cd ".."
     cd "healthmap"
       echo "Importing historic healthmap data"
-      psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f "import_into_abraid.sql"
+      psql -wq -v "ON_ERROR_STOP=1" -U "$PG_ADMIN_USER" -d "$DB_NAME" -f "import_into_abraid.sql" > /dev/null
     cd ".."
     cd "geonames"
       echo "Importing geonames data"
-      psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f "import_into_abraid.sql"
+      psql -wq -v "ON_ERROR_STOP=1" -U "$PG_ADMIN_USER" -d "$DB_NAME" -f "import_into_abraid.sql" > /dev/null
     cd ..
     cd "reviews"
       echo "Importing historical reviews"
-      psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" -f "import_into_abraid.sql"
+      psql -wq -v "ON_ERROR_STOP=1" -U "$PG_ADMIN_USER" -d "$DB_NAME" -f "import_into_abraid.sql" > /dev/null
     cd ".."
   cd ".."
 
-  echo "[[ DB | Setting intial retrieval date ready for daily process ]]"
-  psql -wq -U "$PG_ABRAID_USER" -d "$DB_NAME" --command "UPDATE provenance SET last_retrieval_end_date = (select max(occurrence_date) from disease_occurrence) WHERE name = 'HealthMap';"
+  echo "[[ DB | Setting initial retrieval date ready for daily process ]]"
+  psql -wq -v "ON_ERROR_STOP=1" -U "$PG_ADMIN_USER" -d "$DB_NAME" --command "UPDATE provenance SET last_retrieval_end_date = (select max(occurrence_date) from disease_occurrence) WHERE name = 'HealthMap';" > /dev/null
 fi
 
 echo "[[ DB | Performing cleanup ]]"
@@ -91,3 +90,4 @@ rm -f "pg_pass"
 rm -f "database.properties"
 
 echo "[[ DB | Done ]]"
+cd "../config/deploy/"
