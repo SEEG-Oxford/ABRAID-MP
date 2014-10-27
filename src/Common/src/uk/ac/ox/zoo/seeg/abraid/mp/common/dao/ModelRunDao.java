@@ -52,10 +52,10 @@ public interface ModelRunDao {
     boolean hasBatchingEverCompleted(int diseaseGroupId);
 
     /**
-     * Gets all of the completed model runs.
-     * @return The completed model runs.
+     * Gets all of the completed model runs. Model runs that occurred during disease group setup are excluded.
+     * @return The completed model runs that were requested after the disease group's automaticModelRunsStartDate.
      */
-    Collection<ModelRun> getCompletedModelRuns();
+    List<ModelRun> getCompletedModelRuns();
 
     /**
      * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,

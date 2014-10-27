@@ -55,11 +55,11 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
     }
 
     /**
-     * Gets all of the completed model runs.
-     * @return The completed model runs.
+     * Gets all of the completed model runs. Model runs that occurred during disease group setup are excluded.
+     * @return The completed model runs that were requested after the disease group's automaticModelRunsStartDate.
      */
     @Override
-    public Collection<ModelRun> getCompletedModelRuns() {
+    public List<ModelRun> getCompletedModelRuns() {
         return listNamedQuery("getCompletedModelRuns");
     }
 

@@ -84,7 +84,7 @@ public class ModelRunServiceTest {
     @Test
     public void getCompletedModelRuns() {
         // Arrange
-        Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
+        List<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getCompletedModelRuns()).thenReturn(expectedRuns);
         ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
