@@ -11,6 +11,14 @@ define([
 ], function ($, moment, ko) {
     "use strict";
 
+    ko.bindingHandlers.numericText = {
+        update: function (element, valueAccessor, allBindings) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var precision = allBindings().precision || 2;
+            ko.bindingHandlers.text.update(element, function () { return value ? value.toFixed(precision) : ""; });
+        }
+    };
+
     // Custom binding to set the value on the flipclock.js counter
     ko.bindingHandlers.counter = {
         init: function (element, valueAccessor) {

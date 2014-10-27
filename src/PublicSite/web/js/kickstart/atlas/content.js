@@ -8,11 +8,13 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     require([
         "ko",
         "app/atlas/AtlasView",
+        "app/atlas/CovariateInfluencesViewModel",
         "app/atlas/DownloadLinksViewModel",
         "app/atlas/LayerSelectorViewModel",
-        "app/atlas/ModelRunPredictorsViewModel",
+        "app/atlas/SubmodelStatisticsViewModel",
         "domReady!"
-    ], function (ko, AtlasView, DownloadLinksViewModel, LayerSelectorViewModel, ModelRunPredictorsViewModel, doc) {
+    ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
+                 SubmodelStatisticsViewModel, doc) {
         var map = new AtlasView(data.wmsUrl); // jshint ignore:line
 
         ko.applyBindings(
@@ -21,8 +23,13 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         );
 
         ko.applyBindings(
-            new ModelRunPredictorsViewModel(data.layers),
+            new CovariateInfluencesViewModel(),
             doc.getElementById("covariates")
+        );
+
+        ko.applyBindings(
+            new SubmodelStatisticsViewModel(),
+            doc.getElementById("statistics")
         );
 
         // NB. ViewModels subscribing to events published by LayerSelector must be defined first.

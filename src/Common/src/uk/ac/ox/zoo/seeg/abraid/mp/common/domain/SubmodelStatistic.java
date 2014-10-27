@@ -25,39 +25,52 @@ public class SubmodelStatistic {
     @JoinColumn(name = "model_run_id", nullable = false)
     private ModelRun modelRun;
 
-    private Double deviance; // "deviance"
+    // "deviance"
+    private Double deviance;
 
+    // "rmse"
     @Column(name = "root_mean_square_error")
-    private Double rootMeanSquareError; // "rmse"
+    private Double rootMeanSquareError;
 
-    private Double kappa; // "kappa"
+    // "kappa"
+    private Double kappa;
 
+    // "auc"
     @Column(name = "area_under_curve")
-    private Double areaUnderCurve; // "auc"
+    private Double areaUnderCurve;
 
-    private Double sensitivity; // "sens"
+    // "sens"
+    private Double sensitivity;
 
-    private Double specificity; // "spec"
+    // "spec"
+    private Double specificity;
 
+    // "pcc"
     @Column(name = "proportion_correctly_classified")
-    private Double proportionCorrectlyClassified; // "pcc"
+    private Double proportionCorrectlyClassified;
 
+    // "kappa_sd"
     @Column(name = "kappa_sd")
-    private Double kappaStandardDeviation; // "kappa_sd"
+    private Double kappaStandardDeviation;
 
+    // "auc_sd"
     @Column(name = "area_under_curve_sd")
-    private Double areaUnderCurveStandardDeviation; // "auc_sd"
+    private Double areaUnderCurveStandardDeviation;
 
+    // "sens_sd"
     @Column(name = "sensitivity_sd")
-    private Double sensitivityStandardDeviation; // "sens_sd"
+    private Double sensitivityStandardDeviation;
 
+    // "spec_sd"
     @Column(name = "specificity_sd")
-    private Double specificityStandardDeviation; // "spec_sd"
+    private Double specificityStandardDeviation;
 
+    // "pcc_sd"
     @Column(name = "proportion_correctly_classified_sd")
-    private Double proportionCorrectlyClassifiedStandardDeviation; // "pcc_sd"
+    private Double proportionCorrectlyClassifiedStandardDeviation;
 
-    private Double threshold; //"thresh"
+    //"thresh"
+    private Double threshold;
 
     public SubmodelStatistic() {
     }

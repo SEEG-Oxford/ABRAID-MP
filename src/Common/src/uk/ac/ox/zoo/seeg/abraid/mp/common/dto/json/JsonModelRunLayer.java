@@ -5,7 +5,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,15 +22,18 @@ public class JsonModelRunLayer {
     private String date;
     private String id;
     private List<JsonCovariateInfluence> covariates;
+    private List<JsonSubmodelStatisticSet> statistics;
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     public JsonModelRunLayer(ModelRun modelRun) {
         this.date = DATE_FORMAT.print(modelRun.getRequestDate());
         this.id = modelRun.getName();
-        setCovariateInfluences(modelRun.getCovariateInfluences());
+        setCovariates(modelRun.getCovariateInfluences());
+        setStatistics(modelRun.getSubmodelStatistics());
     }
 
-    private void setCovariateInfluences(List<CovariateInfluence> covariateInfluences) {
+    private void setCovariates(List<CovariateInfluence> covariateInfluences) {
         Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
             @Override
             public int compare(CovariateInfluence o1, CovariateInfluence o2) {
@@ -43,6 +48,13 @@ public class JsonModelRunLayer {
         });
     }
 
+    private void setStatistics(List<SubmodelStatistic> submodelStatisticsSet) {
+        this.statistics = new ArrayList<>();
+        for (SubmodelStatistic submodelStatistics : submodelStatisticsSet) {
+            this.statistics.add(new JsonSubmodelStatisticSet(submodelStatistics));
+        }
+    }
+
     public String getDate() {
         return date;
     }
@@ -54,4 +66,8 @@ public class JsonModelRunLayer {
     public List<JsonCovariateInfluence> getCovariates() {
         return covariates;
     };
+
+    public List<JsonSubmodelStatisticSet> getStatistics() {
+        return statistics;
+    }
 }

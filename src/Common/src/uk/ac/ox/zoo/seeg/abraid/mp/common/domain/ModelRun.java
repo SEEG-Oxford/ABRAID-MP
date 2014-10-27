@@ -1,7 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -39,7 +37,8 @@ import java.util.List;
         @NamedQuery(
                 name = "getCompletedModelRuns",
                 query = "select distinct m from ModelRun as m " +
-                        "left join fetch m.covariateInfluences " +
+//                        "left join fetch m.covariateInfluences " +
+//                        "left join fetch m.submodelStatistics " +
                         "where status = 'COMPLETED'"
         ),
         @NamedQuery(
@@ -101,12 +100,11 @@ public class ModelRun {
     private String errorText;
 
     // List of submodel statistics associated with the model run.
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
-    @Fetch(FetchMode.SELECT)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun", fetch = FetchType.EAGER)
     private List<SubmodelStatistic> submodelStatistics;
 
     // List of covariate influences associated with the model run.
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun", fetch = FetchType.EAGER)
     private List<CovariateInfluence> covariateInfluences;
 
     // The end date of this batch of disease occurrences (if relevant).

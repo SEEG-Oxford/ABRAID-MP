@@ -231,11 +231,8 @@ html, body, #dataValidation {
 }
 .legend {
     padding: 6px 8px;
-    background: white;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
     line-height: 18px;
-    color: #333;
+    font-size: 12px;
 }
 .legend i {
     width: 18px;
@@ -243,9 +240,6 @@ html, body, #dataValidation {
     float: left;
     margin-right: 8px;
     opacity: 0.7;
-}
-.legend h4 {
-    margin: 0 0 5px;
 }
 #latestOccurrencesPanel a {
     text-align: left;
@@ -266,7 +260,7 @@ html, body, #dataValidation {
     text-decoration: underline;
 }
 #latestOccurrencesPanel div {
-    background-color: white;
+    /*background-color: white;*/
     min-width: 200px;
     width: auto;
     max-width: 300px;
@@ -281,6 +275,29 @@ html, body, #dataValidation {
 }
 #latestOccurrencesPanel i {
     width: 14px;
+    text-align: center;
+}
+#covariatesAndStatistics table {
+    margin: 0;
+}
+#covariates td:first-child {
+    text-align: center;
+}
+#covariates td:nth-child(2) {
+    min-width: 120px;
+}
+#covariates td:nth-child(3),
+#covariates th:nth-child(3) {
+    min-width: 120px;
+    text-align: center;
+}
+#statistics td:nth-child(2),
+#statistics th:nth-child(2) {
+    min-width: 80px;
+    text-align: center;
+}
+#statistics td:nth-child(3) {
+    min-width: 120px;
     text-align: center;
 }
 @media (max-width: 1500px) {

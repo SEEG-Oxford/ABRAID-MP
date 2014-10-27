@@ -3,7 +3,6 @@
  * Copyright (c) 2014 University of Oxford
  * - Events published:
  * -- 'active-atlas-layer'
- * -- 'selected-run-covariates'
  */
 define([
     "ko",
@@ -32,12 +31,12 @@ define([
         }, self);
         self.selectedRun = ko.observable(self.runs()[0]);
 
-        self.selectedRunCovariates = ko.computed(function () {
-            return self.selectedRun().covariates;
-        }, self).publishOn("selected-run-covariates");
-
         self.selectedLayer = ko.computed(function () {
-            return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;
+            return {
+                name: self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined,
+                covariates: self.selectedRun().covariates,
+                statistics: self.selectedRun().statistics[0]
+            };
         }, self).publishOn("active-atlas-layer");
     };
 });

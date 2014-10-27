@@ -31,15 +31,15 @@ define([
 
         self.currentLayer = undefined;
 
-        ko.postbox.subscribe("active-atlas-layer", function (payload) {
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
             if (self.currentLayer) {
                 self.map.removeLayer(self.currentLayer);
                 self.currentLayer = undefined;
             }
 
-            if (payload) {
+            if (layer.name) {
                 self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
-                    layers: [payload],
+                    layers: [layer.name],
                     format: "image/png",
                     styles: "abraid_raster",
                     reuseTiles: true
