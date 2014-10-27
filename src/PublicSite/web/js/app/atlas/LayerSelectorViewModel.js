@@ -1,6 +1,9 @@
 /*
  * AMD defining the view model for the atlas layer selector.
  * Copyright (c) 2014 University of Oxford
+ * - Events published:
+ * -- 'active-atlas-layer'
+ * -- 'selected-run-covariates'
  */
 define([
     "ko",
@@ -28,6 +31,10 @@ define([
             return _(self.selectedDisease().runs).sortBy("date").reverse();
         }, self);
         self.selectedRun = ko.observable(self.runs()[0]);
+
+        self.selectedRunCovariates = ko.computed(function () {
+            return self.selectedRun().covariates;
+        }, self).publishOn("selected-run-covariates");
 
         self.selectedLayer = ko.computed(function () {
             return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;

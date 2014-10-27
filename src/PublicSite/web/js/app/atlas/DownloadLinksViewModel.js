@@ -1,5 +1,7 @@
 /* AMD defining the download links for the atlas view.
  * Copyright (c) 2014 University of Oxford
+ * - Events subscribed to:
+ * -- 'active-atlas-layer' - published by LayerSelectorViewModel
  */
 define([
     "ko",

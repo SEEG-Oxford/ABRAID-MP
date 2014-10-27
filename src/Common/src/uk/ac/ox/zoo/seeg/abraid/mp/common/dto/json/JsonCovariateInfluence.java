@@ -12,7 +12,7 @@ public class JsonCovariateInfluence {
 
     public JsonCovariateInfluence(CovariateInfluence covariateInfluence) {
         // NB. Should use CovariateDisplayName when it is returned from the R model.
-        this.name = covariateInfluence.getCovariateDisplayName();
+        this.name = covariateInfluence.getCovariateName();
         this.meanInfluence = covariateInfluence.getMeanInfluence();
     }
 

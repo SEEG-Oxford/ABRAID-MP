@@ -17,14 +17,18 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
 
         ko.applyBindings(
             new DownloadLinksViewModel(baseUrl, data.wmsUrl),
-            doc.getElementById("downloadLinks"));
-
-        ko.applyBindings(
-            new LayerSelectorViewModel(data.layers),
-            doc.getElementById("layerSelector"));
+            doc.getElementById("downloadLinks")
+        );
 
         ko.applyBindings(
             new ModelRunPredictorsViewModel(data.layers),
-            doc.getElementById());
+            doc.getElementById("covariates")
+        );
+
+        // NB. ViewModels subscribing to events published by LayerSelector must be defined first.
+        ko.applyBindings(
+            new LayerSelectorViewModel(data.layers),
+            doc.getElementById("layerSelector")
+        );
     });
 });

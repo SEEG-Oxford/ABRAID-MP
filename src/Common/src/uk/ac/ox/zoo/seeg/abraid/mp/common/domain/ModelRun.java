@@ -38,7 +38,8 @@ import java.util.List;
         ),
         @NamedQuery(
                 name = "getCompletedModelRuns",
-                query = "from ModelRun " +
+                query = "select distinct m from ModelRun as m " +
+                        "left join fetch m.covariateInfluences " +
                         "where status = 'COMPLETED'"
         ),
         @NamedQuery(
@@ -106,7 +107,6 @@ public class ModelRun {
 
     // List of covariate influences associated with the model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
-    @Fetch(FetchMode.SELECT)
     private List<CovariateInfluence> covariateInfluences;
 
     // The end date of this batch of disease occurrences (if relevant).
@@ -125,7 +125,6 @@ public class ModelRun {
 
     // List of effect curve covariate influence data points associated with this model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
-    @Fetch(FetchMode.SELECT)
     private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
 
     public ModelRun() {
