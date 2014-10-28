@@ -45,6 +45,12 @@ public class AbstractCovariateInfluence {
         setLowerQuantile(dto.getLowerQuantile());
     }
 
+    public AbstractCovariateInfluence(String name, Double meanInfluence) {
+        // NB. Should be changed to covariateDisplayName
+        this.covariateName = name;
+        this.meanInfluence = meanInfluence;
+    }
+
     public Integer getId() {
         return id;
     }

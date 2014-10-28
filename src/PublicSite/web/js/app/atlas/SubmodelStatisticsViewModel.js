@@ -11,8 +11,8 @@ define(["ko"], function (ko) {
 
         self.statistics = ko.observable({});
 
-        ko.postbox.subscribe("active-atlas-layer", function (layer) {
-            self.statistics(layer.statistics);
+        ko.postbox.subscribe("selected-run", function (run) {
+            self.statistics(run.statistics || {});
         });
     };
 });

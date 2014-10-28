@@ -26,7 +26,7 @@ public class JsonSubmodelStatisticSet {
     private double pcc;
     private double pccSd;
 
-    private double thresh;
+    private double threshold;
 
     public JsonSubmodelStatisticSet(SubmodelStatistic submodelStatistic) {
         this.deviance = submodelStatistic.getDeviance();
@@ -41,7 +41,7 @@ public class JsonSubmodelStatisticSet {
         this.specSd = submodelStatistic.getSpecificityStandardDeviation();
         this.pcc = submodelStatistic.getProportionCorrectlyClassified();
         this.pccSd = submodelStatistic.getProportionCorrectlyClassifiedStandardDeviation();
-        this.thresh = submodelStatistic.getThreshold();
+        this.threshold = submodelStatistic.getThreshold();
     }
 
     public double getDeviance() {
@@ -92,7 +92,7 @@ public class JsonSubmodelStatisticSet {
         return pccSd;
     }
 
-    public double getThresh() {
-        return thresh;
+    public double getThreshold() {
+        return threshold;
     }
 }

@@ -37,9 +37,9 @@ define([
                 self.currentLayer = undefined;
             }
 
-            if (layer.name) {
+            if (layer) {
                 self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
-                    layers: [layer.name],
+                    layers: [layer],
                     format: "image/png",
                     styles: "abraid_raster",
                     reuseTiles: true

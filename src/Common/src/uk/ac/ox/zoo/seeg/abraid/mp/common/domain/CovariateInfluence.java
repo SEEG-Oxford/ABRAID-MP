@@ -24,4 +24,8 @@ public class CovariateInfluence extends AbstractCovariateInfluence {
     public CovariateInfluence(CsvCovariateInfluence dto, ModelRun parentRun) {
         super(dto, parentRun);
     }
+
+    public CovariateInfluence(String name, Double meanInfluence) {
+        super(name, meanInfluence);
+    }
 }
