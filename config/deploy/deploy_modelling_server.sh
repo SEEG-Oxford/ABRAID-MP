@@ -57,6 +57,10 @@ echo "[[ Updating ABRAID configuration ]]"
 echo "[[ Upgrading modelwrapper ]]"
 . up_mw.sh
 
+# TEMP
+echo "[[ Dealing with log4j ]]"
+sed -i "s/^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email/g" "$ABRAID_SUPPORT_PATH/modelwrapper/WEB-INF/classes/log4j.properties"
+
 # Bring services back up
 echo "[[ Restarting services ]]"
 service tomcat7 start > /dev/null
