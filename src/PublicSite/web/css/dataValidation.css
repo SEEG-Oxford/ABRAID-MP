@@ -280,12 +280,12 @@ html, body, #dataValidation {
         display: none !important;
     }
 }
-#infoButtons div.leaflet-bar.leaflet-control a {
+#atlasInformation div.leaflet-bar.leaflet-control a {
     width: auto;
     padding: 0 5px;
     min-width: 215px;
 }
-#infoButtons div.leaflet-bar.leaflet-control a i {
+#atlasInformation div.leaflet-bar.leaflet-control a i {
     margin-right: 5px;
 }
 #covariatesAndStatistics table {

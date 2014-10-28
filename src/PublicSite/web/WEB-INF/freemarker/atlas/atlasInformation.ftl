@@ -1,4 +1,4 @@
-<div class="leaflet-top leaflet-right" id="infoButtons" style="display: none" data-bind="visible: activeLayer">
+<div class="leaflet-top leaflet-right" id="atlasInformation" style="display: none" data-bind="visible: activeLayer">
     <!-- ko with:downloadLinksViewModel -->
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">
@@ -15,7 +15,7 @@
         <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; padding: 0 5px; width: auto; height: auto;">
             <i class="fa fa-lg fa-bar-chart"></i> Model Run Covariates and Statistics
         </a>
-        <div></div>
+        <div><hr /></div>
         <div class="panel-collapse collapse" style="background-color: white" id="covariatesAndStatistics">
             <div class="panel-body">
                 <div class="col-sm-6" style="border-right: 1px solid #CCCCCC">
