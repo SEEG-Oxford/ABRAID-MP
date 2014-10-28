@@ -44,18 +44,21 @@ define(["ko"], function (ko) {
             owner: self
         }).extend({ digit: true, min: 0 });
 
+        function normalise(s) {
+            return (s === 0) ? s : (s || "");
+        }
+
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            self.minNewLocations((diseaseGroup.minNewLocations || "").toString());
-            self.minEnvironmentalSuitability((diseaseGroup.minEnvironmentalSuitability || "").toString());
-            self.minDistanceFromDiseaseExtent((diseaseGroup.minDistanceFromDiseaseExtent || "").toString());
-            self.minDataVolume((diseaseGroup.minDataVolume || "").toString());
-            self.minDistinctCountries((diseaseGroup.minDistinctCountries || "").toString());
-            self.minHighFrequencyCountries((diseaseGroup.minHighFrequencyCountries || "").toString());
-            self.highFrequencyThreshold((diseaseGroup.highFrequencyThreshold || "").toString());
+            self.minNewLocations(normalise(diseaseGroup.minNewLocations));
+            self.minEnvironmentalSuitability(normalise(diseaseGroup.minEnvironmentalSuitability));
+            self.minDistanceFromDiseaseExtent(normalise(diseaseGroup.minDistanceFromDiseaseExtent));
+            self.minDataVolume(normalise(diseaseGroup.minDataVolume));
+            self.minDistinctCountries(normalise(diseaseGroup.minDistinctCountries));
+            self.minHighFrequencyCountries(normalise(diseaseGroup.minHighFrequencyCountries));
+            self.highFrequencyThreshold(normalise(diseaseGroup.highFrequencyThreshold));
             self.occursInAfrica(diseaseGroup.occursInAfrica);
             self.useMachineLearning(diseaseGroup.useMachineLearning);
-            self.maxEnvironmentalSuitabilityWithoutML(
-                (diseaseGroup.maxEnvironmentalSuitabilityWithoutML || "").toString());
+            self.maxEnvironmentalSuitabilityWithoutML(normalise(diseaseGroup.maxEnvironmentalSuitabilityWithoutML));
         });
     };
 });

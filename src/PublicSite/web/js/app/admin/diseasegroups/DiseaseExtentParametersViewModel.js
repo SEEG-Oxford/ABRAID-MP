@@ -19,6 +19,9 @@ define(["ko"], function (ko) {
         self.minOccurrencesForPresence.extend({ digit: true, customMin: self.minOccurrencesForPossiblePresence });
         self.minOccurrencesForPossiblePresence.extend({digit: true, min: 0, customMax: self.minOccurrencesForPresence});
 
+        function normalise(s) {
+            return (s === 0) ? s : (s || "");
+        }
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             var parameters = diseaseGroup.diseaseExtentParameters;
@@ -30,12 +33,12 @@ define(["ko"], function (ko) {
                 self.minOccurrencesForPresence("");
                 self.minOccurrencesForPossiblePresence("");
             } else {
-                self.maxMonthsAgoForHigherOccurrenceScore(parameters.maxMonthsAgoForHigherOccurrenceScore || "");
-                self.higherOccurrenceScore(parameters.higherOccurrenceScore || "");
-                self.lowerOccurrenceScore(parameters.lowerOccurrenceScore || "");
-                self.minValidationWeighting(parameters.minValidationWeighting || "");
-                self.minOccurrencesForPresence(parameters.minOccurrencesForPresence || "");
-                self.minOccurrencesForPossiblePresence(parameters.minOccurrencesForPossiblePresence || "");
+                self.maxMonthsAgoForHigherOccurrenceScore(normalise(parameters.maxMonthsAgoForHigherOccurrenceScore));
+                self.higherOccurrenceScore(normalise(parameters.higherOccurrenceScore));
+                self.lowerOccurrenceScore(normalise(parameters.lowerOccurrenceScore));
+                self.minValidationWeighting(normalise(parameters.minValidationWeighting));
+                self.minOccurrencesForPresence(normalise(parameters.minOccurrencesForPresence));
+                self.minOccurrencesForPossiblePresence(normalise(parameters.minOccurrencesForPossiblePresence));
             }
         });
     };

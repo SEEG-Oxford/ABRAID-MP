@@ -51,38 +51,72 @@ define([
             });
         });
 
-        it("updates the disease group property fields, when the specified event is fired", function () {
-            // Arrange
-            var diseaseGroup = {
-                minNewLocations: "1",
-                minEnvironmentalSuitability: "0.2",
-                minDistanceFromDiseaseExtent: "-300",
-                minDataVolume: "2",
-                minDistinctCountries: "3",
-                minHighFrequencyCountries: "4",
-                highFrequencyThreshold: "5",
-                occursInAfrica: true,
-                useMachineLearning: true,
-                maxEnvironmentalSuitabilityWithoutML: "0.7"
-            };
-            var vm = new ModelRunParametersViewModel(eventName);
+        describe("when the specified event is fired", function () {
+            it("updates the disease group property fields", function () {
+                // Arrange
+                var diseaseGroup = {
+                    minNewLocations: "1",
+                    minEnvironmentalSuitability: "0.2",
+                    minDistanceFromDiseaseExtent: "-300",
+                    minDataVolume: "2",
+                    minDistinctCountries: "3",
+                    minHighFrequencyCountries: "4",
+                    highFrequencyThreshold: "5",
+                    occursInAfrica: true,
+                    useMachineLearning: true,
+                    maxEnvironmentalSuitabilityWithoutML: "0.7"
+                };
+                var vm = new ModelRunParametersViewModel(eventName);
 
-            // Act
-            ko.postbox.publish(eventName, diseaseGroup);
+                // Act
+                ko.postbox.publish(eventName, diseaseGroup);
 
-            // Assert
-            expect(vm.minNewLocations()).toBe(diseaseGroup.minNewLocations);
-            expect(vm.minEnvironmentalSuitability()).toBe(diseaseGroup.minEnvironmentalSuitability);
-            expect(vm.minDistanceFromDiseaseExtent()).toBe(diseaseGroup.minDistanceFromDiseaseExtent);
-            expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
-            expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
-            expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
-            expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
-            expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
-            expect(vm.useMachineLearning()).toBe(diseaseGroup.useMachineLearning);
-            expect(vm.maxEnvironmentalSuitabilityWithoutML()).toBe(
-                vm.useMachineLearning() ? null : diseaseGroup.maxEnvironmentalSuitabilityWithoutML
-            );
+                // Assert
+                expect(vm.minNewLocations()).toBe(diseaseGroup.minNewLocations);
+                expect(vm.minEnvironmentalSuitability()).toBe(diseaseGroup.minEnvironmentalSuitability);
+                expect(vm.minDistanceFromDiseaseExtent()).toBe(diseaseGroup.minDistanceFromDiseaseExtent);
+                expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
+                expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
+                expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
+                expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
+                expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
+                expect(vm.useMachineLearning()).toBe(diseaseGroup.useMachineLearning);
+                expect(vm.maxEnvironmentalSuitabilityWithoutML()).toBe(
+                    vm.useMachineLearning() ? null : diseaseGroup.maxEnvironmentalSuitabilityWithoutML
+                );
+            });
+
+            it("updates the disease group property fields, handling undefined/null/0 etc. appropriately", function () {
+                // Arrange
+                var diseaseGroup = {
+                    minNewLocations: null,
+                    minEnvironmentalSuitability: undefined,
+                    minDistanceFromDiseaseExtent: 0,
+                    minDataVolume: "",
+                    minDistinctCountries: NaN,
+                    minHighFrequencyCountries: undefined,
+                    highFrequencyThreshold: 0,
+                    occursInAfrica: true,
+                    useMachineLearning: false,
+                    maxEnvironmentalSuitabilityWithoutML: ""
+                };
+                var vm = new ModelRunParametersViewModel(eventName);
+
+                // Act
+                ko.postbox.publish(eventName, diseaseGroup);
+
+                // Assert
+                expect(vm.minNewLocations()).toBe("");
+                expect(vm.minEnvironmentalSuitability()).toBe("");
+                expect(vm.minDistanceFromDiseaseExtent()).toBe(0);
+                expect(vm.minDataVolume()).toBe("");
+                expect(vm.minDistinctCountries()).toBe("");
+                expect(vm.minHighFrequencyCountries()).toBe("");
+                expect(vm.highFrequencyThreshold()).toBe(0);
+                expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
+                expect(vm.useMachineLearning()).toBe(diseaseGroup.useMachineLearning);
+                expect(vm.maxEnvironmentalSuitabilityWithoutML()).toBe("");
+            });
         });
 
         describe("holds the computed 'high frequency threshold' which", function () {
