@@ -12,7 +12,7 @@ define([
     return function (baseUrl, wmsUrl) {
         var self = this;
 
-        self.activeLayer = ko.observable().subscribeTo("active-atlas-layer");
+        self.activeLayerName = ko.observable();
 
         self.png = ko.computed(function () {
             var wmsParams = {
@@ -25,14 +25,18 @@ define([
                 height: 667,
                 srs: "EPSG:4326",
                 format: "image/png",
-                layers: "abraid:" + self.activeLayer()
+                layers: "abraid:" + self.activeLayerName()
             };
 
-            return self.activeLayer() ? wmsUrl + "?" + $.param(wmsParams) : "#";
+            return self.activeLayerName() ? wmsUrl + "?" + $.param(wmsParams) : "#";
         }, self);
 
         self.tif = ko.computed(function () {
-            return self.activeLayer() ? baseUrl + "atlas/results/" + self.activeLayer() + ".tif" : "#";
+            return self.activeLayerName() ? baseUrl + "atlas/results/" + self.activeLayerName() + ".tif" : "#";
         }, self);
+
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
+            self.activeLayerName(layer.name);
+        });
     };
 });

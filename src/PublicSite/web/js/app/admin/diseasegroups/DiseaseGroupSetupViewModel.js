@@ -40,7 +40,7 @@ define([
         self.disableButtonThatRunsModel = ko.computed(function () {
             return (!self.useGoldStandardOccurrences() && !self.batchEndDate.isValid()) || !self.canRunModel() ||
                 self.isSubmitting() || self.isEnablingAutomaticModelRuns() || self.isGeneratingDiseaseExtent();
-        });
+        }, self);
 
         self.isGeneratingDiseaseExtent = ko.observable(false);
         self.generateDiseaseExtent = function () {
@@ -55,7 +55,7 @@ define([
         self.disableButtonThatGeneratesDiseaseExtent = ko.computed(function () {
             return !self.canRunModel() || self.hasModelBeenSuccessfullyRun() || self.isSubmitting() ||
                    self.isGeneratingDiseaseExtent();
-        });
+        }, self);
 
         self.isEnablingAutomaticModelRuns = ko.observable(false);
         self.enableAutomaticModelRuns = function () {
@@ -71,7 +71,7 @@ define([
                 self.isSubmitting() ||
                 self.isEnablingAutomaticModelRuns() ||
                 self.isGeneratingDiseaseExtent();
-        });
+        }, self);
 
         self.resetState = function () { // only public for testing
             self.notices.removeAll();

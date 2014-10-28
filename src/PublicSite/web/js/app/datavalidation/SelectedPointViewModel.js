@@ -42,14 +42,14 @@ define([
         self.selectedPoint = ko.observable(null).syncWith("point-selected");
         self.hasSelectedPoint = ko.computed(function () {
             return self.selectedPoint() !== null;
-        });
+        }, self);
         self.translationUrl = ko.computed(function () {
             if (self.hasSelectedPoint()) {
                 var langPair = (self.selectedPoint().properties.alert.feedLanguage || "auto") + "|auto";
                 var summary = self.selectedPoint().properties.alert.summary;
                 return createTranslationUrlWithCorrectLength(langPair, summary);
             }
-        });
+        }, self);
         self.submitReview = function (review) {
             var occurrenceId = self.selectedPoint().id;
             var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +

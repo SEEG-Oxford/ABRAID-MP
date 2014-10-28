@@ -28,7 +28,9 @@ define([
         self.counter = counter;
         self.adminUnits = ko.observableArray();
         self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected");
-        self.hasSelectedAdminUnit = ko.computed(function () { return self.selectedAdminUnit() !== null; });
+        self.hasSelectedAdminUnit = ko.computed(function () {
+            return self.selectedAdminUnit() !== null;
+        }, self);
 
         self.submitReview = function (review) {
             var gaulCode = self.selectedAdminUnit().id;
