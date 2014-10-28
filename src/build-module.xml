@@ -455,7 +455,9 @@
 
   <target name="build.jar" depends="compile.production, create.dist.dir, create.jar.manifest">
     <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar" manifest="${dist.out.dir}/MANIFEST.MF">
-      <fileset dir="${module.out.dir}" />
+      <fileset dir="${module.out.dir}">
+        <exclude name="**/*-testing.properties" />
+      </fileset>
     </jar>
     <delete file="${dist.out.dir}/MANIFEST.MF"/>
   </target>
@@ -478,7 +480,8 @@
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
-        <!--exclude name="js/app/spec/**" / -->
+        <exclude name="**/*-testing.properties" />
+        <exclude name="js/app/spec/**" />
       </fileset>
       <lib dir="${lib.dir}/build">
         <exclude name="**/javax.servlet-api-*-jar.jar" />
@@ -499,6 +502,7 @@
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
+        <exclude name="**/*-testing.properties" />
         <exclude name="js/app/spec/*" />
       </fileset>
       <fileset dir="${project.root.dir}/src/CommonWeb/web" />
