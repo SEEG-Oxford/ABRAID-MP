@@ -1,6 +1,6 @@
 <div id="latestOccurrencesPanel" class="leaflet-top leaflet-right" style="display: none" data-bind="visible: occurrences().length > 0, preventBubble: true">
     <div class="leaflet-bar leaflet-control" >
-        <div data-bind="click: toggle" style="text-align: center; cursor: pointer; ">
+        <div data-bind="click: toggle" style="cursor: pointer;">
             <a><span data-bind="text: showOccurrences() ? 'Hide' : 'Show'"></span> recent occurrences</a>
         </div>
 

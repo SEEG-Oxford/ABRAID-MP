@@ -240,14 +240,16 @@ html, body, #dataValidation {
     opacity: 0.7;
 }
 #latestOccurrencesPanel a {
-    text-align: left;
     width: auto;
     border: none;
     line-height: 18px;
     height: auto;
 }
+#latestOccurrencesPanel .link {
+    text-align: left;
+}
 /* Match Bootstrap's styling for a link, instead of Leaflet's */
-#latestOccurrencesPanel .link:hover {
+#latestOccurrencesPanel a:hover {
     background-color: white;
 }
 #latestOccurrencesPanel .link span {
