@@ -4,19 +4,44 @@ GS_TEMP_DIR="$(mktemp -d)"
 GS_UPDATE_CMD="fileAsk"
 
 setupTempConfigFiles() {
-  echo "$GEOSERVER_ROOT_PASSWORD" > "$GS_TEMP_DIR/passwd"
+  echo "${deploy_props[geoserver.root.password.hash]}" > "$GS_TEMP_DIR/passwd"
   cp "$WEBAPP_PATH/geoserver/data/security/usergroup/default/users.xml" "$GS_TEMP_DIR/users.xml"
-  sed -i "s|password=\".*\"|password=\"$GEOSERVER_ADMIN_PASSWORD\"|g" "$GS_TEMP_DIR/users.xml"
+  sed -i "s|password=\".*\"|password=\"${deploy_props[geoserver.admin.password.hash]}\"|g" "$GS_TEMP_DIR/users.xml"
 }
 
 setupTempWorkspaceFiles() {
   cp -r "../geoserver/abraid" "$GS_TEMP_DIR/workspace"
-  sed -i "s/USER\_REPLACE/$PG_ABRAID_USER/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
-  sed -i "s/PW\_REPLACE/$PG_ABRAID_PASS/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
-  sed -i "s/DB\_REPLACE/$DB_NAME/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
-  sed -i "s/PORT\_REPLACE/$DB_PORT/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
-  sed -i "s/HOST\_REPLACE/$DB_ADDRESS/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
+  sed -i "s/USER\_REPLACE/${db_props[jdbc.username]}/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
+  sed -i "s/PW\_REPLACE/${db_props[jdbc.password]}/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
+  sed -i "s/DB\_REPLACE/${db_props[jdbc.database.name]}/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
+  sed -i "s/PORT\_REPLACE/${db_props[jdbc.database.port]}/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
+  sed -i "s/HOST\_REPLACE/${db_props[jdbc.database.host]}/g" "$GS_TEMP_DIR/workspace/abraid-db/datastore.xml"
 }
+
+echo "[[ GS | Loading configuration ]]"
+TEMP_FILE=$(mktemp)
+declare -A db_props
+cat "$ABRAID_SUPPORT_PATH/conf/application/database.properties" | grep -v "^#" | grep -v '^[[:space:]]*$' > "$TEMP_FILE"
+while read -r line; do
+  [[ $line = *=* ]] || continue
+  db_props[${line%%=*}]=${line#*=}
+done < "$TEMP_FILE"
+declare -A deploy_props
+cat "$ABRAID_SUPPORT_PATH/conf/application/deployment.properties" | grep -v "^#" | grep -v '^[[:space:]]*$' > "$TEMP_FILE"
+while read -r line; do
+  [[ $line = *=* ]] || continue
+  deploy_props[${line%%=*}]=${line#*=}
+done < "$TEMP_FILE"
+rm -f "$TEMP_FILE"
+
+echo "[[ GS | Performing prechecks ]]"
+: "${db_props[jdbc.database.name]:?"Variable must be set"}"
+: "${db_props[jdbc.database.host]:?"Variable must be set"}"
+: "${db_props[jdbc.database.port]:?"Variable must be set"}"
+: "${db_props[jdbc.username]:?"Variable must be set"}"
+: "${db_props[jdbc.password]:?"Variable must be set"}"
+: "${deploy_props[geoserver.root.password.hash]:?"Variable must be set"}"
+: "${deploy_props[geoserver.admin.password.hash]:?"Variable must be set"}"
 
 echo "[[ GS | Checking for existing GeoServer installation ]]"
 if [[ ! -d "$WEBAPP_PATH/geoserver" ]]; then

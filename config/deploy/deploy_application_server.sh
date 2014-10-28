@@ -5,8 +5,13 @@ set -e
 BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$BASE"
 
-if [ "$(whoami)" != "root" ]; then
+if [[ ! "$(whoami)" -eq "root" ]]; then
   echo "This script requires root permissions (sudo)"
+  exit 1
+fi
+
+if [[ ! $# -eq 2 ]]; then
+  echo "Usage: deploy.sh 'remote_user_name' 'remote_config_repo_path'"
   exit 1
 fi
 
@@ -20,10 +25,14 @@ find ../.. -name "*.sh" ! -name "deploy_*.sh" -exec dos2unix -q {} \;
 find ../.. -name "*.sh" ! -name "deploy_*.sh" -exec chmod +x {} \;
 
 # Export useful constants
-export ='/var/lib/abraid'
+export ABRAID_SUPPORT_PATH='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
 export WEBAPP_PATH='/var/lib/tomcat7/webapps'
 declare -r WEBAPP_PATH
+export REMOTE_USER="$1"
+declare -r REMOTE_USER
+export CONFIG_PATH="$2"
+declare -r CONFIG_PATH
 
 # Apply under-construction page
 echo "[[ Applying under-construction page ]]"
@@ -45,39 +54,36 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
 
-# Getting config
-echo "[[ Updating ABRAID configuration ]]"
-#. up_config.sh "shared" "application"
-
-echo "[[ Loading config ]]"
-# Source site specific variables
-source "$ABRAID_SUPPORT_PATH/conf/shared/db.conf.sh"
 # Source useful functions
 source "functions.sh"
 
+# Getting config
+echo "[[ Updating ABRAID configuration ]]"
+. up_config.sh "shared" "application"
+
 # Upgrading database
 echo "[[ Upgrading database ]]"
-#. up_db.sh
+. up_db.sh
 
 # Upgrading machinelearning
 echo "[[ Upgrading machinelearning ]]"
-#. up_ml.sh
+. up_ml.sh
 
 # Upgrading geoserver
 echo "[[ Upgrading geoserver ]]"
-#. up_gs.sh
+. up_gs.sh
 
 # Upgrading modeloutput
 echo "[[ Upgrading modeloutput ]]"
-#installWar "MO" "../../ABRAID-MP_ModelOutputHandler.war" "modeloutput"
+. up_mo.sh
 
 # Upgrading publicsite
 echo "[[ Upgrading publicsite ]]"
-#installWar "PS" "../../ABRAID-MP_PublicSite.war" "ROOT"
+. up_ps.sh
 
 # Upgrading datamanager
 echo "[[ Upgrading datamanager ]]"
-#. up_dm.sh
+. up_dm.sh
 
 # Waiting
 echo "[[ Main updates complete ]]"

@@ -56,6 +56,30 @@ ask() {
 }
 export -f ask
 
+askString() {
+  local QUESTION_ARG="$1"
+  declare -r QUESTION_ARG # final
+  local PREFIX="[Input needed!]"
+
+  while true; do
+    local REPLY=""
+    local PROMPT=""
+    local DEFAULT=""
+
+    # Ask the question
+    read -p "$PREFIX $QUESTION_ARG?: " REPLY
+
+    # Check if the reply is valid
+    if [ ! -z "$REPLY"  ]; then
+      eval "$2=$REPLY"
+      return 0
+    else
+      PREFIX="[Invalid input]"
+    fi
+  done
+}
+export -f askString
+
 fileAsk() {
   local SOURCE_FILE_NAME_ARG="$1"
   local TARGET_FILE_NAME_ARG="$2"
@@ -222,7 +246,7 @@ installWar() {
   echo "[[ $WAR_ID | Ensuring correct file permissions ]]"
   permissionFix "tomcat7:tomcat7" "$WEBAPP_PATH/$WAR_PATH"
 
-  echo "[[ $WAR_ID | Done ]]"
+  echo "[[ $WAR_ID | War Done ]]"
   rm -rf "$WAR_TEMP_DIR"
 }
 export -f installWar

@@ -10,6 +10,11 @@ if [ "$(whoami)" != "root" ]; then
   exit 1
 fi
 
+if [[ ! $# -eq 2 ]]; then
+  echo "Usage: deploy.sh 'remote_user_name' 'remote_config_repo_path'"
+  exit 1
+fi
+
 # SSH keys
 echo "[[ Enabling passwordless remote access ]]"
 eval $(ssh-agent) > /dev/null
@@ -24,6 +29,10 @@ export ='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
 export WEBAPP_PATH='/var/lib/tomcat7/webapps'
 declare -r WEBAPP_PATH
+export REMOTE_USER="$1"
+declare -r REMOTE_USER
+export CONFIG_PATH="$2"
+declare -r CONFIG_PATH
 
 # Stop servlet containers
 echo "[[ Stopping services ]]"
@@ -37,19 +46,16 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
 
-# Getting config
-echo "[[ Updating ABRAID configuration ]]"
-#. up_config.sh "shared" "modelling"
-
-echo "[[ Loading config ]]"
-# Source site specific variables
-source "$ABRAID_SUPPORT_PATH/conf/shared/db.conf.sh"
 # Source useful functions
 source "functions.sh"
 
+# Getting config
+echo "[[ Updating ABRAID configuration ]]"
+. up_config.sh "shared" "modelling"
+
 # Upgrading modelwrapper
 echo "[[ Upgrading modelwrapper ]]"
-installWar "MW" "../../ABRAID-MP_ModelWrapper.war" "ROOT"
+. up_mw.sh
 
 # Bring services back up
 echo "[[ Restarting services ]]"
