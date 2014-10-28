@@ -10,11 +10,12 @@
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common-properties.xml" />
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-web.xml" />
+    <import resource="modelwrapper-properties.xml" />
 
     <bean id="osChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl" />
 
     <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationServiceImpl">
-        <constructor-arg name="basicProperties" value="WEB-INF/modelwrapper.properties" />
+        <constructor-arg name="basicProperties" value="${modelwrapper.managed.properties.file}" />
         <constructor-arg name="defaultCovariateConfig" value="WEB-INF/defaultCovariateConfig.json" />
         <constructor-arg name="osChecker" ref="osChecker" />
     </bean>

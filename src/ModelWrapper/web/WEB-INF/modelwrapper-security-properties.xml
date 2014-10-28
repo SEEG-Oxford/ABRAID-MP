@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+      Loads the model wrapper security properties file.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:/var/lib/abraid/modelling/security.properties" />
+    <context:property-placeholder order="1" ignore-unresolvable="true" ignore-resource-not-found="true" location="WEB-INF/security-testing.properties" />
+
+
+</beans>
