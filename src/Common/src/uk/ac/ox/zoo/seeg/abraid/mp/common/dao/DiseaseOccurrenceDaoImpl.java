@@ -226,14 +226,16 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     /**
      * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
+     * @param batchStartDate The start date of the batch.
      * @param batchEndDate The end date of the batch.
      * @return A list of disease occurrences.
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForBatching(int diseaseGroupId, DateTime batchEndDate) {
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForBatching(int diseaseGroupId,
+                                                                    DateTime batchStartDate, DateTime batchEndDate) {
         return listNamedQuery("getDiseaseOccurrencesForBatching", "diseaseGroupId", diseaseGroupId,
-                "batchEndDate", batchEndDate);
+                "batchStartDate", batchStartDate, "batchEndDate", batchEndDate);
     }
 
     /**

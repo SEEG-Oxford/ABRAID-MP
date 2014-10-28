@@ -69,7 +69,7 @@ public class AtlasController extends AbstractController {
 
         List<JsonDiseaseModelRunLayerSet> layers = new ArrayList<>();
         for (Map.Entry<Integer, List<JsonModelRunLayer>> diseasePair : layersByDiseaseId.entrySet()) {
-            String name = diseaseService.getDiseaseGroupById(diseasePair.getKey()).getPublicName();
+            String name = diseaseService.getDiseaseGroupById(diseasePair.getKey()).getShortNameForDisplay();
             layers.add(new JsonDiseaseModelRunLayerSet(name, diseasePair.getValue()));
         }
 

@@ -107,6 +107,11 @@ public class ModelRun {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun", fetch = FetchType.EAGER)
     private List<CovariateInfluence> covariateInfluences;
 
+    // The start date of this batch of disease occurrences (if relevant).
+    @Column(name = "batch_start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime batchStartDate;
+
     // The end date of this batch of disease occurrences (if relevant).
     @Column(name = "batch_end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -220,6 +225,14 @@ public class ModelRun {
         this.covariateInfluences = covariateInfluences;
     }
 
+    public DateTime getBatchStartDate() {
+        return batchStartDate;
+    }
+
+    public void setBatchStartDate(DateTime batchStartDate) {
+        this.batchStartDate = batchStartDate;
+    }
+
     public DateTime getBatchEndDate() {
         return batchEndDate;
     }
@@ -266,6 +279,8 @@ public class ModelRun {
             return false;
         if (batchOccurrenceCount != null ? !batchOccurrenceCount.equals(modelRun.batchOccurrenceCount) : modelRun.batchOccurrenceCount != null)
             return false;
+        if (batchStartDate != null ? !batchStartDate.equals(modelRun.batchStartDate) : modelRun.batchStartDate != null)
+            return false;
         if (batchingCompletedDate != null ? !batchingCompletedDate.equals(modelRun.batchingCompletedDate) : modelRun.batchingCompletedDate != null)
             return false;
         if (errorText != null ? !errorText.equals(modelRun.errorText) : modelRun.errorText != null) return false;
@@ -294,6 +309,7 @@ public class ModelRun {
         result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
         result = 31 * result + (outputText != null ? outputText.hashCode() : 0);
         result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
+        result = 31 * result + (batchStartDate != null ? batchStartDate.hashCode() : 0);
         result = 31 * result + (batchEndDate != null ? batchEndDate.hashCode() : 0);
         result = 31 * result + (batchOccurrenceCount != null ? batchOccurrenceCount.hashCode() : 0);
         result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);

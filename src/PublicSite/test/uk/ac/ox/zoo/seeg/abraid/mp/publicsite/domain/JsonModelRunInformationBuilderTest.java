@@ -61,6 +61,7 @@ public class JsonModelRunInformationBuilderTest {
         ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
+        modelRun.setBatchStartDate(new DateTime("2006-12-30T04:05:06"));
         modelRun.setBatchEndDate(new DateTime("2006-12-31T04:05:06"));
         modelRun.setBatchingCompletedDate(new DateTime("2014-07-02T19:18:17"));
         modelRun.setBatchOccurrenceCount(1500);
@@ -71,7 +72,7 @@ public class JsonModelRunInformationBuilderTest {
 
         // Assert
         assertThat(information.getLastModelRunText()).isEqualTo(
-                "completed on 2 Jul 2014 19:18:17 (including batching of 1500 occurrences for validation, end date 31 Dec 2006)");
+                "completed on 2 Jul 2014 19:18:17 (including batching of 1500 occurrences for validation, start date 30 Dec 2006, end date 31 Dec 2006)");
     }
 
     @Test
@@ -278,12 +279,12 @@ public class JsonModelRunInformationBuilderTest {
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
-        JsonModelRunInformation information = builder.populateBatchEndDateParameters(modelRun, statistics).get();
+        JsonModelRunInformation information = builder.populateBatchDateParameters(modelRun, statistics).get();
 
         // Assert
-        assertThat(information.getBatchEndDateMinimum()).isEqualTo(expectedBatchEndDateMinimum);
+        assertThat(information.getBatchDateMinimum()).isEqualTo(expectedBatchEndDateMinimum);
         assertThat(information.getBatchEndDateDefault()).isEqualTo(expectedBatchEndDateDefault);
-        assertThat(information.getBatchEndDateMaximum()).isEqualTo(expectedBatchEndDateMaximum);
+        assertThat(information.getBatchDateMaximum()).isEqualTo(expectedBatchEndDateMaximum);
     }
 
     private DateTime getDate(String dateText) {

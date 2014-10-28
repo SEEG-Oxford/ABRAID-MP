@@ -75,7 +75,7 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
                         "and d.status = 'UNBATCHED' " +
-                        "and d.occurrenceDate <= :batchEndDate"
+                        "and d.occurrenceDate between :batchStartDate and :batchEndDate "
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForTrainingPredictor",

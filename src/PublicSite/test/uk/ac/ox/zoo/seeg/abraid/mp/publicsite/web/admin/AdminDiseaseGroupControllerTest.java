@@ -161,14 +161,15 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int diseaseGroupId = 87;
         // Set the time zone to UTC, to allow the dates to be compared for equality after converting to/from string
+        DateTime batchStartDate = DateTime.now().withZone(DateTimeZone.UTC);
         DateTime batchEndDate = DateTime.now().withZone(DateTimeZone.UTC).plusDays(1);
 
         // Act
-        controller.requestModelRun(diseaseGroupId, batchEndDate.toString(), false);
+        controller.requestModelRun(diseaseGroupId, batchStartDate.toString(), batchEndDate.toString(), false);
 
         // Assert
         verify(modelRunWorkflowService).prepareForAndRequestManuallyTriggeredModelRun(
-                eq(diseaseGroupId), eq(batchEndDate));
+                eq(diseaseGroupId), eq(batchStartDate), eq(batchEndDate));
     }
 
     @Test
@@ -177,7 +178,7 @@ public class AdminDiseaseGroupControllerTest {
         int diseaseGroupId = 87;
 
         // Act
-        controller.requestModelRun(diseaseGroupId, null, true);
+        controller.requestModelRun(diseaseGroupId, null, null, true);
 
         // Assert
         verify(modelRunWorkflowService).prepareForAndRequestModelRunUsingGoldStandardOccurrences(eq(diseaseGroupId));

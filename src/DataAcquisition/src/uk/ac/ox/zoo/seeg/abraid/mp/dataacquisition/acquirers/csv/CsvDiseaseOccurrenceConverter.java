@@ -24,7 +24,7 @@ public class CsvDiseaseOccurrenceConverter {
     private static final String OCCURRENCE_DATE_INVALID_MESSAGE = "Occurrence date \"%s\" is invalid " +
             "(valid formats are %s)";
 
-    private static final String[] OCCURRENCE_DATE_FORMATS = {"dd/MM/YYYY", "MM/YYYY", "YYYY"};
+    private static final String[] OCCURRENCE_DATE_FORMATS = {"dd/MM/YYYY", "MM/YYYY", "YYYY", "MMM-YY", "MMM-YYYY"};
 
     private CsvLookupData csvLookupData;
     private List<DateTimeFormatter> occurrenceDateTimeFormatters;

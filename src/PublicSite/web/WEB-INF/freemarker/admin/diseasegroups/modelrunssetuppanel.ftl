@@ -74,7 +74,7 @@
                                                                    bootstrapDisable: disableButtonThatGeneratesDiseaseExtent()">
                         </button>
                     </div>
-                    <!-- Run Model and Batch End Date -->
+                    <!-- Run Model, Batch Start Date and Batch End Date -->
                     <div style="overflow: auto; width: 100%" class="form-group">
                         <span data-bind="if: hasModelBeenSuccessfullyRun" class="side-by-side">
                             <button class="btn btn-primary" data-bind="click: submit,
@@ -89,10 +89,15 @@
                             </button>
                         </span>
                         <span data-bind="ifnot: useGoldStandardOccurrences" class="side-by-side">
+                            <label for="batch-start-date" style="margin-left: 20px" class="side-by-side">Batch Start Date:</label>
+                            <span class="input-group date side-by-side">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input id="batch-start-date" type="text" class="form-control" data-bind="formDate: { date: batchStartDate, startDate: batchDateMinimum, endDate: batchDateMaximum }">
+                            </span>
                             <label for="batch-end-date" style="margin-left: 20px" class="side-by-side">Batch End Date:</label>
                             <span class="input-group date side-by-side">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                <input id="batch-end-date" type="text" class="form-control" data-bind="formDate: { date: batchEndDate, startDate: batchEndDateMinimum, endDate: batchEndDateMaximum }">
+                                <input id="batch-end-date" type="text" class="form-control" data-bind="formDate: { date: batchEndDate, startDate: batchDateMinimum, endDate: batchDateMaximum }">
                             </span>
                         </span>
                     </div>

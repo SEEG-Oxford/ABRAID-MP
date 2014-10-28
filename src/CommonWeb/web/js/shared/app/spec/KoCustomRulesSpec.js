@@ -23,6 +23,60 @@ define([
             }
         });
 
+        describe("the 'customMin' rule which", function () {
+            it("checks the second value is strictly less than the first", function () {
+                expect(ko.validation.rules.customMin.validator(1, 0)).toBe(true);
+                expect(ko.validation.rules.customMin.validator(1, 1)).toBe(false);
+                expect(ko.validation.rules.customMin.validator(0, 1)).toBe(false);
+            });
+
+            it("skips the check if either value is undefined", function () {
+                expect(ko.validation.rules.customMin.validator("", 1)).toBe(true);
+                expect(ko.validation.rules.customMin.validator(1, "")).toBe(true);
+                expect(ko.validation.rules.customMin.validator("", "")).toBe(true);
+                expect(ko.validation.rules.customMin.validator(0, 0)).toBe(false);
+            });
+
+            it("can validate wrapped values", function () {
+                var wrap = function (value) { return function () { return value; }; };
+
+                expect(ko.validation.rules.customMin.validator(wrap(2), wrap(1))).toBe(true);
+                expect(ko.validation.rules.customMin.validator(wrap(1), wrap(1))).toBe(false);
+                expect(ko.validation.rules.customMin.validator(wrap(1), wrap(2))).toBe(false);
+            });
+
+            it("has a suitable failure message", function () {
+                expect(ko.validation.rules.customMin.message).toBe("Please enter a number greater than {0}.");
+            });
+        });
+
+        describe("the 'customMax' rule which", function () {
+            it("checks the second value is strictly greater than the first", function () {
+                expect(ko.validation.rules.customMax.validator(0, 1)).toBe(true);
+                expect(ko.validation.rules.customMax.validator(1, 1)).toBe(false);
+                expect(ko.validation.rules.customMax.validator(1, 0)).toBe(false);
+            });
+
+            it("skips the check if either value is undefined", function () {
+                expect(ko.validation.rules.customMax.validator("", 1)).toBe(true);
+                expect(ko.validation.rules.customMax.validator(1, "")).toBe(true);
+                expect(ko.validation.rules.customMax.validator("", "")).toBe(true);
+                expect(ko.validation.rules.customMax.validator(0, 0)).toBe(false);
+            });
+
+            it("can validate wrapped values", function () {
+                var wrap = function (value) { return function () { return value; }; };
+
+                expect(ko.validation.rules.customMax.validator(wrap(1), wrap(2))).toBe(true);
+                expect(ko.validation.rules.customMax.validator(wrap(1), wrap(1))).toBe(false);
+                expect(ko.validation.rules.customMax.validator(wrap(2), wrap(1))).toBe(false);
+            });
+
+            it("has a suitable failure message", function () {
+                expect(ko.validation.rules.customMax.message).toBe("Please enter a number less than {0}.");
+            });
+        });
+
         describe("the 'areSame' rule which", function () {
             it("checks the two values are the same", function () {
                 expect(ko.validation.rules.areSame.validator(1, 1)).toBe(true);
