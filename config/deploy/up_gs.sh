@@ -22,20 +22,26 @@ echo "[[ GS | Checking for existing GeoServer installation ]]"
 if [[ ! -d "$WEBAPP_PATH/geoserver" ]]; then
   echo "No GeoServer install found"
   echo "[[ GS | Downloading GeoServer 2.5.1 ]]"
-  curl -L "http://sourceforge.net/projects/geoserver/files/GeoServer/2.5.1/geoserver-2.5.1-war.zip" > "$GS_TEMP_DIR/geoserver-2.5.1-war.zip"
-  unzip -p "geoserver-2.5.1-war.zip" "geoserver.war" > "$GS_TEMP_DIR/geoserver.war"
-  rm -f "geoserver-2.5.1-war.zip"
+  curl -# -L "http://sourceforge.net/projects/geoserver/files/GeoServer/2.5.1/geoserver-2.5.1-war.zip" -o "$GS_TEMP_DIR/geoserver-2.5.1-war.zip"
+  unzip -p "$GS_TEMP_DIR/geoserver-2.5.1-war.zip" "geoserver.war" > "$GS_TEMP_DIR/geoserver.war"
+  rm -f "$GS_TEMP_DIR/geoserver-2.5.1-war.zip"
 
   echo "[[ GS | Installing GeoServer 2.5.1 ]]"
-  unzip "$GS_TEMP_DIR/geoserver.war" -d "$WEBAPP_PATH/geoserver"
+  unzip -q "$GS_TEMP_DIR/geoserver.war" -d "$WEBAPP_PATH/geoserver"
 
   echo "[[ GS | Removing default setup ]]"
-  rm -rf "$WEBAPP_PATH/geoserver/data/workspaces/*"
-  rm -rf "$WEBAPP_PATH/geoserver/data/styles/*"
-  rm -rf "$WEBAPP_PATH/geoserver/data/palettes/*"
-  rm -rf "$WEBAPP_PATH/geoserver/data/layergroups/*"
-  rm -rf "$WEBAPP_PATH/geoserver/data/data/*"
-  rm -rf "$WEBAPP_PATH/geoserver/data/coverages/*"
+  rm -rf "$WEBAPP_PATH/geoserver/data/workspaces/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/workspaces/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/styles/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/styles/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/palettes/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/palettes/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/layergroups/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/layergroups/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/data/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/data/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/coverages/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/coverages/"
 
   GS_UPDATE_CMD="fileCopy"
 else
@@ -54,13 +60,13 @@ $GS_UPDATE_CMD "../geoserver/gwc-gs.xml" "$WEBAPP_PATH/geoserver/data/gwc-gs.xml
 
 echo "[[ GS | Adding/checking the abraid workspace ]]"
 setupTempWorkspaceFiles
-{ cd "$GS_TEMP_DIR/workspace" && find . -type "f" -exec "$GS_UPDATE_CMD" "$GS_TEMP_DIR/workspace" "$WEBAPP_PATH/geoserver/data/workspaces/abraid/{}" \; ; }
+export GS_UPDATE_CMD
+export GS_TEMP_DIR
+export WEBAPP_PATH
+( cd "$GS_TEMP_DIR/workspace" && find . -type "f" -exec bash -c '"$GS_UPDATE_CMD" "$GS_TEMP_DIR/workspace/$0" "$WEBAPP_PATH/geoserver/data/workspaces/abraid/$0"' {} \; )
 
 echo "[[ GS | Ensuring correct file permissions ]]"
-chown -R tomcat7:tomcat7 "$WEBAPP_PATH/geoserver/"
-chmod -R 664 "$WEBAPP_PATH/geoserver/"
-find "$WEBAPP_PATH/geoserver/" -type d -exec chmod +x {} \;
+permissionFix "tomcat7:tomcat7" "$WEBAPP_PATH/geoserver/"
 
 echo "[[ GS | Done ]]"
 rm -rf "$GS_TEMP_DIR"
-cd "../config/deploy/"

@@ -10,25 +10,20 @@ if [ "$(whoami)" != "root" ]; then
   exit 1
 fi
 
-# SSH KEYS
+# SSH keys
 echo "[[ Enabling passwordless remote access ]]"
 eval $(ssh-agent) > /dev/null
 ssh-add "$HOME/.ssh/id_rsa" > /dev/null
 
 # Fix bash files
-find ../.. -name "*.sh" ! -name "deploy_application_server.sh" -exec dos2unix -q {} \;
-find ../.. -name "*.sh" ! -name "deploy_application_server.sh" -exec chmod +x {} \;
+find ../.. -name "*.sh" ! -name "deploy_*.sh" -exec dos2unix -q {} \;
+find ../.. -name "*.sh" ! -name "deploy_*.sh" -exec chmod +x {} \;
 
-echo "[[ Loading config ]]"
 # Export useful constants
-export ABRAID_SUPPORT_PATH='/var/lib/abraid'
+export ='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
 export WEBAPP_PATH='/var/lib/tomcat7/webapps'
 declare -r WEBAPP_PATH
-# Source site specific variables
-source "site.conf.sh" # Todo, make this an arg
-# Source useful functions
-source "functions.sh"
 
 # Apply under-construction page
 echo "[[ Applying under-construction page ]]"
@@ -47,15 +42,26 @@ echo -e "#\x21/bin/sh\n\n:" > "/etc/cron.hourly/abraid"
 if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   echo "[[ Creating support directory ]]"
   mkdir -p "$ABRAID_SUPPORT_PATH"
+  permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
+
+# Getting config
+echo "[[ Updating ABRAID configuration ]]"
+#. up_config.sh "shared" "application"
+
+echo "[[ Loading config ]]"
+# Source site specific variables
+source "$ABRAID_SUPPORT_PATH/conf/shared/db.conf.sh"
+# Source useful functions
+source "functions.sh"
 
 # Upgrading database
 echo "[[ Upgrading database ]]"
-. up_db.sh
+#. up_db.sh
 
 # Upgrading machinelearning
 echo "[[ Upgrading machinelearning ]]"
-. up_ml.sh
+#. up_ml.sh
 
 # Upgrading geoserver
 echo "[[ Upgrading geoserver ]]"
@@ -63,11 +69,19 @@ echo "[[ Upgrading geoserver ]]"
 
 # Upgrading modeloutput
 echo "[[ Upgrading modeloutput ]]"
-# . up_mo.sh
+#installWar "MO" "../../ABRAID-MP_ModelOutputHandler.war" "modeloutput"
 
 # Upgrading publicsite
 echo "[[ Upgrading publicsite ]]"
-# . up_ps.sh
+#installWar "PS" "../../ABRAID-MP_PublicSite.war" "ROOT"
+
+# Upgrading datamanager
+echo "[[ Upgrading datamanager ]]"
+#. up_dm.sh
+
+# Waiting
+echo "[[ Main updates complete ]]"
+read -p "You should now update all modelling servers before continuing. Press [enter] to continue ..."
 
 # Bring services back up
 echo "[[ Restarting services ]]"
@@ -79,7 +93,7 @@ echo -e "#\x21/bin/sh\n\n/var/lib/abraid/datamanager/datamanager.sh" > "/etc/cro
 echo "[[ Removing under-construction page ]]"
 rm -f "/etc/nginx/sites-enabled/proxy"
 rm -f "/etc/nginx/sites-enabled/maintenance"
-ln -s "/etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy"
+ln -s "/etc/nginx/sites-available/proxy" "/etc/nginx/sites-enabled/proxy"
 service nginx restart > /dev/null
 
 echo "[[ Done ]]"
