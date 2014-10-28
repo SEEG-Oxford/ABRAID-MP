@@ -15,7 +15,7 @@
         <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; padding: 0 5px; width: auto; height: auto;">
             <i class="fa fa-lg fa-bar-chart"></i> Model Run Covariates and Statistics
         </a>
-        <div><hr /></div>
+        <div></div>
         <div class="panel-collapse collapse" style="background-color: white" id="covariatesAndStatistics">
             <div class="panel-body">
                 <div class="col-sm-6" style="border-right: 1px solid #CCCCCC">
@@ -33,7 +33,7 @@
                         <tr>
                             <td data-bind="text: $index() + 1"></td>
                             <td data-bind="text: name"></td>
-                            <td data-bind="numericText: meanInfluence, precision: 3"></td>
+                            <td data-bind="numericText: meanInfluence"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -54,12 +54,12 @@
                         <tr>
                             <td>Deviance</td>
                             <td data-bind="numericText: statistics().deviance"></td>
-                            <td></td>
+                            <td data-bind="numericText: statistics().devianceSd"></td>
                         </tr>
                         <tr>
                             <td><abbr title="Root Mean Squared Error">RMSE</abbr></td>
                             <td data-bind="numericText: statistics().rmse"></td>
-                            <td></td>
+                            <td data-bind="numericText: statistics().rmseSd"></td>
                         </tr>
                         <tr>
                             <td>Kappa</td>
@@ -89,7 +89,7 @@
                         <tr>
                             <td>Threshold</td>
                             <td data-bind="numericText: statistics().threshold"></td>
-                            <td></td>
+                            <td data-bind="numericText: statistics().thresholdSd"></td>
                         </tr>
                         </tbody>
                     </table>

@@ -72,6 +72,8 @@
         <dependency org="org.jdom" name="jdom" rev="1.1.3" conf="external->default"/>
         <dependency org="net.java.dev.jsr-275" name="jsr-275" rev="1.0-beta-2" conf="external->default"/>
 
+        <dependency org="org.apache.commons" name="commons-math3" rev="3.3"/>
+
         <!-- JUnit should only be in the testing configuration, also the version usertype depends on clashes with the more recent version we use -->
         <exclude org="junit" module="junit" conf="external" />
         &ivy-excludes;

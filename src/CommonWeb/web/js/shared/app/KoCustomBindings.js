@@ -14,7 +14,7 @@ define([
     ko.bindingHandlers.numericText = {
         update: function (element, valueAccessor, allBindings) {
             var value = ko.utils.recursiveUnwrap(valueAccessor);
-            var precision = allBindings().precision || 2;
+            var precision = allBindings().precision || 3;
             ko.bindingHandlers.text.update(element, function () { return value ? value.toFixed(precision) : ""; });
         }
     };

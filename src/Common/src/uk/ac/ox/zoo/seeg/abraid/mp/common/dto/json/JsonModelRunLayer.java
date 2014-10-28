@@ -7,7 +7,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +21,7 @@ public class JsonModelRunLayer {
     private String date;
     private String id;
     private List<JsonCovariateInfluence> covariates;
-    private List<JsonSubmodelStatisticSet> statistics;
+    private JsonModelRunStatistics statistics;
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
@@ -48,11 +47,8 @@ public class JsonModelRunLayer {
         });
     }
 
-    private void setStatistics(List<SubmodelStatistic> submodelStatisticsSet) {
-        this.statistics = new ArrayList<>();
-        for (SubmodelStatistic submodelStatistics : submodelStatisticsSet) {
-            this.statistics.add(new JsonSubmodelStatisticSet(submodelStatistics));
-        }
+    private void setStatistics(List<SubmodelStatistic> submodelStatistics) {
+        this.statistics = new JsonModelRunStatistics(submodelStatistics);
     }
 
     public String getDate() {
@@ -67,7 +63,7 @@ public class JsonModelRunLayer {
         return covariates;
     };
 
-    public List<JsonSubmodelStatisticSet> getStatistics() {
+    public JsonModelRunStatistics getStatistics() {
         return statistics;
     }
 }

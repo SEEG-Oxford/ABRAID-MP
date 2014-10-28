@@ -75,6 +75,18 @@ public class SubmodelStatistic {
     public SubmodelStatistic() {
     }
 
+    public SubmodelStatistic(double deviance, double rootMeanSquareError, double kappa, double areaUnderCurve,
+                             double sensitivity, double specificity, double proportionCorrectlyClassified, double threshold) {
+        setDeviance(deviance);
+        setRootMeanSquareError(rootMeanSquareError);
+        setKappa(kappa);
+        setAreaUnderCurve(areaUnderCurve);
+        setSensitivity(sensitivity);
+        setSpecificity(specificity);
+        setProportionCorrectlyClassified(proportionCorrectlyClassified);
+        setThreshold(threshold);
+    }
+
     public SubmodelStatistic(CsvSubmodelStatistic dto, ModelRun parentRun) {
         setModelRun(parentRun);
         setDeviance(dto.getDeviance());
