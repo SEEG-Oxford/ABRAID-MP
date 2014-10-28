@@ -17,7 +17,7 @@ fi
 
 # SSH keys
 echo "[[ Enabling passwordless remote access ]]"
-eval $(ssh-agent) > /dev/null
+eval "$(ssh-agent)" > /dev/null
 ssh-add "$HOME/.ssh/id_rsa" > /dev/null
 
 # Fix bash files
@@ -25,7 +25,7 @@ find ../.. -name "*.sh" ! -name "deploy_*.sh" -exec dos2unix -q {} \;
 find ../.. -name "*.sh" ! -name "deploy_*.sh" -exec chmod +x {} \;
 
 # Export useful constants
-export ='/var/lib/abraid'
+export ABRAID_SUPPORT_PATH='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
 export WEBAPP_PATH='/var/lib/tomcat7/webapps'
 declare -r WEBAPP_PATH

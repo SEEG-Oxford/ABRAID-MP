@@ -236,7 +236,7 @@ installWar() {
   declare -r WAR_PATH # final
   local WAR_TEMP_DIR="$(mktemp -d)"
 
-  echo "[[ $WAR_ID | Preparing update ]]"n
+  echo "[[ $WAR_ID | Preparing update ]]"
   mkdir -p "$WAR_TEMP_DIR/$WAR_PATH"
   unzip -q "$WAR_FILE" -d "$WAR_TEMP_DIR/$WAR_PATH"
 

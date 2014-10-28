@@ -5,7 +5,7 @@ set -e
 BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$BASE"
 
-if [[ ! "$(whoami)" -eq "root" ]]; then
+if [[ "$(whoami)" != "root" ]]; then
   echo "This script requires root permissions (sudo)"
   exit 1
 fi
@@ -17,7 +17,7 @@ fi
 
 # SSH keys
 echo "[[ Enabling passwordless remote access ]]"
-eval $(ssh-agent) > /dev/null
+eval "$(ssh-agent)" > /dev/null
 ssh-add "$HOME/.ssh/id_rsa" > /dev/null
 
 # Fix bash files
