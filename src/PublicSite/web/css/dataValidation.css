@@ -28,14 +28,7 @@ html, body, #dataValidation {
 #map {
     height: 100%;
     width: 100%;
-    float: left;
     background-color: white;
-}
-.highlight {
-    border-top: 2px solid #aaaaaa;
-    border-bottom: 2px solid #aaaaaa;
-    font-weight: bold;
-    background-color: #f5f5f5;
 }
 #spinner > div {
     z-index:10;
@@ -108,13 +101,13 @@ html, body, #dataValidation {
     border-top-color: #aaaaaa !important;
 }
 #adminUnitTable tbody tr:first-child td {
-    border-top-width: 0px;
+    border-top-width: 0;
 }
 #adminUnitTable tbody tr:first-child {
-    border-top-width: 0px !important;
+    border-top-width: 0 !important;
 }
 #adminUnitTable tbody tr:last-child {
-    border-bottom-width: 0px !important;
+    border-bottom-width: 0 !important;
 }
 #adminUnitTable tbody tr td:first-child, #adminUnitTable thead tr th:first-child {
     width: 100px;
@@ -122,6 +115,12 @@ html, body, #dataValidation {
 }
 #adminUnitTable tbody tr td:last-child, #adminUnitTable thead tr th:last-child  {
     width: 178px;
+}
+.highlight {
+    border-top: 2px solid #aaaaaa;
+    border-bottom: 2px solid #aaaaaa;
+    font-weight: bold;
+    background-color: #f5f5f5;
 }
 .sidePanelText {
     margin: 5px;
@@ -140,7 +139,6 @@ html, body, #dataValidation {
     display: table;
     margin: -10px auto 10px auto;
 }
-
 #translationLink {
     float: right;
     padding-right: 5px;
@@ -239,7 +237,7 @@ html, body, #dataValidation {
     height: 18px;
     float: left;
     margin-right: 8px;
-    opacity: 0.7;
+    /*opacity: 0.7 1;*/
 }
 #latestOccurrencesPanel a {
     text-align: left;
@@ -248,14 +246,14 @@ html, body, #dataValidation {
     line-height: 18px;
     height: auto;
 }
-#latestOccurrencesPanel a:hover {
+/* Match Bootstrap's styling for a link, instead of Leaflet's */
+#latestOccurrencesPanel .link:hover {
     background-color: white;
 }
-/* Match Bootstrap's styling for a link, instead of Leaflet's */
-#latestOccurrencesPanel a span {
+#latestOccurrencesPanel .link span {
     color: #428bca;
 }
-#latestOccurrencesPanel a:hover span {
+#latestOccurrencesPanel .link:hover span {
     color: #2a6496;
     text-decoration: underline;
 }
@@ -277,9 +275,26 @@ html, body, #dataValidation {
     width: 14px;
     text-align: center;
 }
+@media (max-width: 1500px) {
+    #latestOccurrencesPanel {
+        display: none !important;
+    }
+}
+#infoButtons div.leaflet-bar.leaflet-control a {
+    width: auto;
+    padding: 0 5px;
+    min-width: 215px;
+}
+#infoButtons div.leaflet-bar.leaflet-control a i {
+    margin-right: 5px;
+}
 #covariatesAndStatistics table {
     margin: 0;
 }
+#covariatesAndStatistics .panel-body {
+    padding: 5px 0;
+}
+#covariatesAndStatistics h5,
 #covariates td:first-child {
     text-align: center;
 }
@@ -299,11 +314,6 @@ html, body, #dataValidation {
 #statistics td:nth-child(3) {
     min-width: 120px;
     text-align: center;
-}
-@media (max-width: 1500px) {
-    #latestOccurrencesPanel {
-        display: none !important;
-    }
 }
 .leaflet-popup-content {
     margin: 0;

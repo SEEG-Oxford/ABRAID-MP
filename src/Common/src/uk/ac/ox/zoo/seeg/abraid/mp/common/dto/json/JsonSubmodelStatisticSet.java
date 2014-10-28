@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
 
 /**
+ * The JSON DTO used to represent a set of statistics for one submodel of a model run.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonSubmodelStatisticSet {

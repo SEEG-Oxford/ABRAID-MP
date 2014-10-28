@@ -24,27 +24,11 @@
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
-    <style>
-        .legend i {
-            opacity: 1 !important;
-        }
-        #downloadLinks div.leaflet-bar.leaflet-control a {
-            width: auto;
-            padding: 0 5px;
-            min-width: 180px;
-        }
-        #downloadLinks div.leaflet-bar.leaflet-control a i {
-            margin-right: 5px;
-        }
-    </style>
 </head>
 <body>
     <div id="map">
         <#include "layerselector.ftl"/>
-        <div class="leaflet-top leaflet-right" id="downloadLinks" style="display: none" data-bind="visible: activeLayer">
-            <div class="leaflet-bar leaflet-control"><a target="_blank" title="PNG" data-bind="attr:{href:png}"><i class="fa fa-lg fa-picture-o"></i> Download as styled PNG</a></div>
-            <div class="leaflet-bar leaflet-control"><a target="_blank" title="GeoTIFF" data-bind="attr:{href:tif}"><i class="fa fa-lg fa-download"></i> Download as raw GeoTIFF</a></div>
-        </div>
+        <#include "infobuttons.ftl"/>
         <div class="leaflet-bottom leaflet-left">
             <div class="legend leaflet-bar leaflet-control">
                 <i style="background-color:#a44883;"></i><span>1</span><br>
@@ -54,9 +38,6 @@
                 <i style="background-color:#c3d4bb; background-image: -webkit-gradient(linear, left top, left bottom, from(#c3d4bb), to(#91ab84)); background-image: -webkit-linear-gradient(top, #c3d4bb, #91ab84); background-image: -moz-linear-gradient(top, #c3d4bb, #91ab84); background-image: -o-linear-gradient(top, #c3d4bb, #91ab84); background-image: linear-gradient(to bottom, #c3d4bb, #91ab84);"></i><br>
                 <i style="background-color:#91ab84;"></i><span>0</span><br>
             </div>
-        </div>
-        <div class="leaflet-bottom leaflet-right">
-            <#include "covariatesandstatistics.ftl"/>
         </div>
     </div>
 

@@ -1,42 +1,56 @@
-<div class="leaflet-bar leaflet-control">
-    <div>
-        <div>
-            <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; padding: 0 5px; width: auto; height: auto;">
-                Model Run Covariates and Statistics
-            </a>
-            <div></div>
-        </div>
+<div class="leaflet-top leaflet-right" id="infoButtons" style="display: none" data-bind="visible: activeLayer">
+    <!-- ko with:downloadLinksViewModel -->
+    <div class="leaflet-bar leaflet-control">
+        <a target="_blank" title="PNG" data-bind="attr: { href: png }">
+            <i class="fa fa-lg fa-picture-o"></i> Download as styled PNG
+        </a>
     </div>
-    <div class="panel-collapse collapse" style="background-color: white" id="covariatesAndStatistics">
-        <div class="panel-body">
-            <div class="col-sm-6">
-                <table class="table table-condensed" id="covariates">
-                    <thead>
+    <div class="leaflet-bar leaflet-control">
+        <a target="_blank" title="GeoTIFF" data-bind="attr: { href: tif }">
+            <i class="fa fa-lg fa-download"></i> Download as raw GeoTIFF
+        </a>
+    </div>
+    <!-- /ko -->
+    <div class="leaflet-bar leaflet-control">
+        <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; padding: 0 5px; width: auto; height: auto;">
+            <i class="fa fa-lg fa-bar-chart"></i> Model Run Covariates and Statistics
+        </a>
+        <div></div>
+        <div class="panel-collapse collapse" style="background-color: white" id="covariatesAndStatistics">
+            <div class="panel-body">
+                <div class="col-sm-6" style="border-right: 1px solid #CCCCCC">
+                    <!-- ko with:covariateInfluencesViewModel -->
+                    <h5>Covariate Influences</h5>
+                    <table class="table table-condensed" id="covariates">
+                        <thead>
                         <tr>
                             <th>Rank</th>
-                            <th>Covariate Name</th>
+                            <th>Name</th>
                             <th>Mean Influence</th>
                         </tr>
-                    </thead>
-                    <tbody data-bind="foreach: covariateInfluences">
+                        </thead>
+                        <tbody data-bind="foreach: covariateInfluences">
                         <tr>
                             <td data-bind="text: $index() + 1"></td>
                             <td data-bind="text: name"></td>
                             <td data-bind="numericText: meanInfluence, precision: 3"></td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-sm-6">
-                <table class="table table-condensed" id="statistics">
-                    <thead>
+                        </tbody>
+                    </table>
+                    <!-- /ko -->
+                </div>
+                <div class="col-sm-6" style="border-left: 1px solid #CCCCCC">
+                    <!-- ko with:submodelStatisticsViewModel -->
+                    <h5>Submodel Statistics</h5>
+                    <table class="table table-condensed" id="statistics">
+                        <thead>
                         <tr>
                             <th>Name</th>
                             <th>Mean</th>
                             <th>Standard Deviation</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr>
                             <td>Deviance</td>
                             <td data-bind="numericText: statistics().deviance"></td>
@@ -77,8 +91,10 @@
                             <td data-bind="numericText: statistics().threshold"></td>
                             <td></td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    <!-- /ko -->
+                </div>
             </div>
         </div>
     </div>
