@@ -11,8 +11,8 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/datamanager/logs/" ]]; then
   mkdir -p "$ABRAID_SUPPORT_PATH/datamanager/logs/"
 fi
 
-if [[ ! -d "$ABRAID_SUPPORT_PATH/datamanager/old/" ]]; then
-  mkdir -p "$ABRAID_SUPPORT_PATH/datamanager/old/"
+if [[ ! -d "$ABRAID_SUPPORT_PATH/datamanager/logs/old/" ]]; then
+  mkdir -p "$ABRAID_SUPPORT_PATH/datamanager/logs/old/"
 fi
 
 echo "[[ DM | Checking if update required ]]"
