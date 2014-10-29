@@ -10,7 +10,7 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:/var/lib/abraid/modelling/modelwrapper-security.properties" />
+    <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:/var/lib/abraid/conf/modelling/modelwrapper-security.properties" />
     <context:property-placeholder order="1" ignore-unresolvable="true" ignore-resource-not-found="true" location="modelwrapper-security-testing.properties" />
 
 
