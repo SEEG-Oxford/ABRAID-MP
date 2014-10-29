@@ -41,10 +41,12 @@ echo "application.password=${db_props[jdbc.password]}" >> "database.properties"
 echo "database.name=${db_props[jdbc.database.name]}" >> "database.properties"
 
 if [[ 1 -eq 0 && $(psql -U postgres -l | grep "${db_props[jdbc.database.name]}" | wc -l) -eq 1 ]]; then
-  # Temp bypass
+  # If a database exists with the correct name - upgrade it
+  # This is currently bypassed by "1 -eq 0" as 1 != 0, so the database creation branch will always run. A tempory solution until "ant upgrade.database" is implemented.
   echo "[[ DB | Performing database upgrade (db.log) ]]"
-  ant "create.database" > "../config/deploy/db.log"
+  ant "upgrade.database" > "../config/deploy/db.log"
 else
+  # If no database exists with the correct name - create it
   echo "[[ DB | Performing database creation checks ]]"
   : "${deploy_props[shapefile.source]:?"Variable must be set"}"
   : "${deploy_props[healthmap.source]:?"Variable must be set"}"

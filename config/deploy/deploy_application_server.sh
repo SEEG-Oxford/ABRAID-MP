@@ -11,7 +11,7 @@ if [[ "$(whoami)" != "root" ]]; then
 fi
 
 if [[ ! $# -eq 2 ]]; then
-  echo "Usage: deploy.sh 'remote_user_name' 'remote_config_repo_path'"
+  echo "Usage: deploy_application_server.sh 'remote_user_name' 'remote_config_repo_path'"
   exit 1
 fi
 

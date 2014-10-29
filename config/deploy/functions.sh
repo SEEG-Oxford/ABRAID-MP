@@ -211,7 +211,7 @@ dirAsk() {
         esac
       done
     else
-      echo "Not updating the dir, as no changes where detected [$TARGET_DIR_NAME_ARG]"
+      echo "Not updating the dir, as no changes were detected [$TARGET_DIR_NAME_ARG]"
     fi
   else
     echo "Writing first copy of the dir [$TARGET_DIR_NAME_ARG]"
