@@ -228,6 +228,7 @@ html, body, #dataValidation {
     margin: 4px;
 }
 .legend {
+    background-color: white;
     padding: 6px 8px;
     line-height: 18px;
     font-size: 12px;
@@ -294,7 +295,9 @@ html, body, #dataValidation {
     margin: 0;
 }
 #covariatesAndStatistics .panel-body {
+    background-color: white;
     padding: 5px 0;
+    min-width: 575px;
 }
 #covariatesAndStatistics h5,
 #covariates td:first-child {

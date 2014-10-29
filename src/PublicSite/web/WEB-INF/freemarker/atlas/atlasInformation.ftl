@@ -16,9 +16,9 @@
             <i class="fa fa-lg fa-bar-chart"></i> Model Run Covariates and Statistics
         </a>
         <div></div>
-        <div class="panel-collapse collapse" style="background-color: white" id="covariatesAndStatistics">
+        <div class="panel-collapse collapse" id="covariatesAndStatistics">
             <div class="panel-body">
-                <div class="col-sm-6" style="border-right: 1px solid #CCCCCC">
+                <div class="col-sm-6">
                     <!-- ko with:covariateInfluencesViewModel -->
                     <h5>Covariate Influences</h5>
                     <table class="table table-condensed" id="covariates">
