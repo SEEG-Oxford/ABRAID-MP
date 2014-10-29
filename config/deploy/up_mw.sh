@@ -36,7 +36,7 @@ echo "[[ MW | Checking covariate input files ]]"
 if [[ -d "$ABRAID_SUPPORT_PATH/modelwrapper/covariates/" ]]; then
   fileAsk "$REMOTE_USER@${deploy_props[covariate.source]}/abraid.json" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates/abraid.json" "covariate configuration"
 fi
-dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates" "covariate file"
+dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates" "covariate file"
 
 
 echo "[[ MW | Ensuring correct file permissions ]]"

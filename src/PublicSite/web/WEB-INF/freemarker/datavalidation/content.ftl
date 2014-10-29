@@ -47,7 +47,7 @@
     <!-- Bootstrapped JS data for KO view models -->
     <script>
         var data = {
-            wmsUrl: "http://localhost:8081/geoserver/abraid/wms",
+            wmsUrl: "${baseWmsUrl}",
             loggedIn: ${userLoggedIn?c},
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
