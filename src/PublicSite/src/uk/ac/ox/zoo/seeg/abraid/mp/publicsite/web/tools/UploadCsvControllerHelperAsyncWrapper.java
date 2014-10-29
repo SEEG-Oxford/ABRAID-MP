@@ -33,7 +33,7 @@ public class UploadCsvControllerHelperAsyncWrapper extends AbstractAsynchronousA
      * @param filePath The full path to the file to upload (used for information only).
      * @return A future for the background operation.
      */
-    public Future acquireCsvData(final String csv, final boolean isGoldStandard, final String userEmailAddress,
+    public Future acquireCsvData(final byte[] csv, final boolean isGoldStandard, final String userEmailAddress,
                                  final String filePath) {
         return submitAsynchronousTask(new Callable<Void>() {
             @Override

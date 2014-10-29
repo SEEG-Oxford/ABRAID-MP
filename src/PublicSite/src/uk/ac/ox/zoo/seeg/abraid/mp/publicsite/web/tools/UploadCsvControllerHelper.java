@@ -41,7 +41,7 @@ public class UploadCsvControllerHelper {
      * @param userEmailAddress The e-mail address of the user that submitted the upload.
      * @param filePath The full path to the file to upload (used for information only).
      */
-    public void acquireCsvData(String csv, boolean isGoldStandard, String userEmailAddress, String filePath) {
+    public void acquireCsvData(byte[] csv, boolean isGoldStandard, String userEmailAddress, String filePath) {
         Timestamp submissionDate = getNowAsTimestamp();
 
         List<String> messages = dataAcquisitionService.acquireCsvData(csv, isGoldStandard);

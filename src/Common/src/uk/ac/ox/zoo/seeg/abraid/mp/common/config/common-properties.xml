@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-      Loads the common properties file and override file.
+      Loads the common properties files.
       Copyright (c) 2014 University of Oxford
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -10,8 +10,15 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="WEB-INF/common-override.properties" />
+    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="
+        file:/var/lib/abraid/conf/application/database.properties,
+        file:/var/lib/abraid/conf/shared/email.properties,
+        file:/var/lib/abraid/conf/application/misc.properties,
+        file:/var/lib/abraid/conf/application/webservice.properties" />
 
-    <context:property-placeholder order="3" ignore-unresolvable="false" ignore-resource-not-found="false" location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties" />
-
+    <context:property-placeholder order="3" ignore-unresolvable="false" ignore-resource-not-found="true" location="
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/database-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/email-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/misc-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/webservice-testing.properties" />
 </beans>

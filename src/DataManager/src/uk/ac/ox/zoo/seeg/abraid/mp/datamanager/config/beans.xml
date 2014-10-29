@@ -10,10 +10,6 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- This ensures that if a file named dataacquisition.properties exists in the current directory, it will
-         override the default properties specified in the classpath files -->
-    <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:datamanager.properties"/>
-
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml"/>
 
     <!-- Process beans -->

@@ -25,5 +25,5 @@ public interface DataAcquisitionService {
      * @param isGoldStandard Whether or not this is a "gold standard" data set.
      * @return A list of messages resulting from the data acquisition.
      */
-    List<String> acquireCsvData(String csv, boolean isGoldStandard);
+    List<String> acquireCsvData(byte[] csv, boolean isGoldStandard);
 }

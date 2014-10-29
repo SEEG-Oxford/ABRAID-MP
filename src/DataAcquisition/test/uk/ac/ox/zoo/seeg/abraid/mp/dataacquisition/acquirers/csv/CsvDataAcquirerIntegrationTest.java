@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +26,8 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     private static final String CSV_HEADER = "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Title,Summary,URL\n";
     private static final String CSV_OCCURRENCE1 = "\"Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia\",101.7,3.16667,precise,Malaysia,dengue,10/3/2014,\"Dengue -- Kuala Lumpur, Malaysia\",,onm.php?id=XX_ALERT_ID_XX\n";
     private static final String CSV_OCCURRENCE2 = "New Zealand,176.61475,-38.53923,Country,New Zealand,dengue,13/01/2014,Regional dengue outbreak unprecedented - SPC - Radio New Zealand,\"SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...\",\n";
+    private static final String TEST_FOLDER = "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/acquirers/csv";
+    private static final String TEST_ISO_8859_1_FILE = "dengue_iso-8859-1.csv";
 
     @Autowired
     private CsvDataAcquirer csvDataAcquirer;
@@ -45,9 +50,28 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     }
 
     @Test
+    public void acquireISO88591FileIsSuccessful() throws IOException {
+        // Arrange
+        byte[] csv = FileUtils.readFileToByteArray(new File(TEST_FOLDER, TEST_ISO_8859_1_FILE));
+
+        // Act
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+
+        // Assert
+        assertThat(messages).hasSize(3);
+        // Windows-1252 is a superset of ISO-8859-1
+        assertThat(messages.get(0)).isEqualTo("Detected character set windows-1252, converting to UTF-8.");
+        assertThat(messages.get(1)).isEqualTo("Found 1 CSV file line(s) to convert.");
+        // If the CSV file was saved without error, the special character in Côte d'Ivoire was interpreted correctly.
+        // We don't check location.country_gaul_code as it will be null if shapefile geometries are not in the database.
+        assertThat(messages.get(2)).contains("Saved 1 disease occurrence(s) in 1 location(s)");
+    }
+
+    @Test
     public void acquireFailsOnFirstAndThirdLines() {
         // Arrange
-        String csv = CSV_HEADER + "Test site 1\n" + CSV_OCCURRENCE1 + "Test site 2, 20.5\n";
+        String csvString = CSV_HEADER + "Test site 1\n" + CSV_OCCURRENCE1 + "Test site 2, 20.5\n";
+        byte[] csv = csvString.getBytes();
 
         // Act
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
@@ -73,7 +97,8 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     }
 
     private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {
-        String csv = CSV_HEADER + CSV_OCCURRENCE1 + CSV_OCCURRENCE2;
+        String csvString = CSV_HEADER + CSV_OCCURRENCE1 + CSV_OCCURRENCE2;
+        byte[] csv = csvString.getBytes();
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
         assertThat(messages).hasSize(2);
         assertThat(messages.get(0)).isEqualTo("Found 2 CSV file line(s) to convert.");

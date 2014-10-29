@@ -16,17 +16,17 @@ public abstract class BaseWebIntegrationTests {
     @Before
     public void makeConfigBackup() throws IOException {
         Files.copy(
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper-managed-testing.properties"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper-managed-testing.properties.old"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
     @After
     public void rollbackConfig() throws IOException {
         Files.copy(
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"),
-                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper-managed-testing.properties.old"),
+                Paths.get("ModelWrapper/web/WEB-INF/modelwrapper-managed-testing.properties"),
                 StandardCopyOption.REPLACE_EXISTING);
-        Files.delete(Paths.get("ModelWrapper/web/WEB-INF/modelwrapper.properties.old"));
+        Files.delete(Paths.get("ModelWrapper/web/WEB-INF/modelwrapper-managed-testing.properties.old"));
     }
 }

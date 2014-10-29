@@ -38,7 +38,7 @@ public class DataAcquisitionServiceTest {
 
     @Test
     public void acquireCsvData() {
-        String csv = "1, 2, 3";
+        byte[] csv = "1, 2, 3".getBytes();
         service.acquireCsvData(csv, true);
         verify(csvDataAcquirer, times(1)).acquireDataFromCsv(eq(csv), eq(true));
     }
