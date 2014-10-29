@@ -1,8 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Represents the validation statistics for a submodel in a model run.
@@ -280,6 +283,51 @@ public class SubmodelStatistic {
         result = 31 * result + (proportionCorrectlyClassifiedStandardDeviation != null ? proportionCorrectlyClassifiedStandardDeviation.hashCode() : 0);
         result = 31 * result + (threshold != null ? threshold.hashCode() : 0);
         return result;
+    }
+
+    public static JsonModelRunStatistics summarise(List<SubmodelStatistic> submodelStatistics) {
+        JsonModelRunStatistics json = new JsonModelRunStatistics();
+
+        if (!submodelStatistics.isEmpty()) {
+            DescriptiveStatistics devianceStats = new DescriptiveStatistics();
+            DescriptiveStatistics rmseStats = new DescriptiveStatistics();
+            DescriptiveStatistics kappaStats = new DescriptiveStatistics();
+            DescriptiveStatistics aucStats = new DescriptiveStatistics();
+            DescriptiveStatistics sensStats = new DescriptiveStatistics();
+            DescriptiveStatistics specStats = new DescriptiveStatistics();
+            DescriptiveStatistics pccStats = new DescriptiveStatistics();
+            DescriptiveStatistics thresholdStats = new DescriptiveStatistics();
+
+            for (SubmodelStatistic submodelStatistic : submodelStatistics) {
+                devianceStats.addValue(submodelStatistic.getDeviance());
+                rmseStats.addValue(submodelStatistic.getRootMeanSquareError());
+                kappaStats.addValue(submodelStatistic.getKappa());
+                aucStats.addValue(submodelStatistic.getAreaUnderCurve());
+                sensStats.addValue(submodelStatistic.getSensitivity());
+                specStats.addValue(submodelStatistic.getSpecificity());
+                pccStats.addValue(submodelStatistic.getProportionCorrectlyClassified());
+                thresholdStats.addValue(submodelStatistic.getThreshold());
+            }
+
+            json.setDeviance(devianceStats.getMean());
+            json.setDevianceSd(devianceStats.getStandardDeviation());
+            json.setRmse(rmseStats.getMean());
+            json.setRmseSd(rmseStats.getStandardDeviation());
+            json.setKappa(kappaStats.getMean());
+            json.setKappaSd(kappaStats.getStandardDeviation());
+            json.setAuc(aucStats.getMean());
+            json.setAucSd(aucStats.getStandardDeviation());
+            json.setSens(sensStats.getMean());
+            json.setSensSd(sensStats.getStandardDeviation());
+            json.setSpec(specStats.getMean());
+            json.setSpecSd(specStats.getStandardDeviation());
+            json.setPcc(pccStats.getMean());
+            json.setPccSd(pccStats.getStandardDeviation());
+            json.setThreshold(thresholdStats.getMean());
+            json.setThresholdSd(thresholdStats.getStandardDeviation());
+        }
+
+        return json;
     }
     ///CHECKSTYLE:ON
     ///COVERAGE:ON

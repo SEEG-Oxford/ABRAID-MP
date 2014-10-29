@@ -1,10 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
-
-import java.util.List;
-
 /**
  * The JSON DTO used to represent a set of summarising statistics across all submodels of a model run.
  * Copyright (c) 2014 University of Oxford
@@ -34,43 +29,71 @@ public class JsonModelRunStatistics {
     private Double threshold;
     private Double thresholdSd;
 
-    public JsonModelRunStatistics(List<SubmodelStatistic> submodelStatistics) {
-        DescriptiveStatistics devianceStats = new DescriptiveStatistics();
-        DescriptiveStatistics rmseStats = new DescriptiveStatistics();
-        DescriptiveStatistics kappaStats = new DescriptiveStatistics();
-        DescriptiveStatistics aucStats = new DescriptiveStatistics();
-        DescriptiveStatistics sensStats = new DescriptiveStatistics();
-        DescriptiveStatistics specStats = new DescriptiveStatistics();
-        DescriptiveStatistics pccStats = new DescriptiveStatistics();
-        DescriptiveStatistics thresholdStats = new DescriptiveStatistics();
+    public JsonModelRunStatistics() {
+    }
 
-        for (SubmodelStatistic submodelStatistic : submodelStatistics) {
-            devianceStats.addValue(submodelStatistic.getDeviance());
-            rmseStats.addValue(submodelStatistic.getRootMeanSquareError());
-            kappaStats.addValue(submodelStatistic.getKappa());
-            aucStats.addValue(submodelStatistic.getAreaUnderCurve());
-            sensStats.addValue(submodelStatistic.getSensitivity());
-            specStats.addValue(submodelStatistic.getSpecificity());
-            pccStats.addValue(submodelStatistic.getProportionCorrectlyClassified());
-            thresholdStats.addValue(submodelStatistic.getThreshold());
-        }
+    public void setDeviance(Double deviance) {
+        this.deviance = deviance;
+    }
 
-        this.deviance = devianceStats.getMean();
-        this.devianceSd = devianceStats.getStandardDeviation();
-        this.rmse = rmseStats.getMean();
-        this.rmseSd = rmseStats.getStandardDeviation();
-        this.kappa = kappaStats.getMean();
-        this.kappaSd = kappaStats.getStandardDeviation();
-        this.auc = aucStats.getMean();
-        this.aucSd = aucStats.getStandardDeviation();
-        this.sens = sensStats.getMean();
-        this.sensSd = sensStats.getStandardDeviation();
-        this.spec = specStats.getMean();
-        this.specSd = specStats.getStandardDeviation();
-        this.pcc = pccStats.getMean();
-        this.pccSd = pccStats.getStandardDeviation();
-        this.threshold = thresholdStats.getMean();
-        this.thresholdSd = thresholdStats.getStandardDeviation();
+    public void setDevianceSd(Double devianceSd) {
+        this.devianceSd = devianceSd;
+    }
+
+    public void setRmse(Double rmse) {
+        this.rmse = rmse;
+    }
+
+    public void setRmseSd(Double rmseSd) {
+        this.rmseSd = rmseSd;
+    }
+
+    public void setKappa(Double kappa) {
+        this.kappa = kappa;
+    }
+
+    public void setKappaSd(Double kappaSd) {
+        this.kappaSd = kappaSd;
+    }
+
+    public void setAuc(Double auc) {
+        this.auc = auc;
+    }
+
+    public void setAucSd(Double aucSd) {
+        this.aucSd = aucSd;
+    }
+
+    public void setSens(Double sens) {
+        this.sens = sens;
+    }
+
+    public void setSensSd(Double sensSd) {
+        this.sensSd = sensSd;
+    }
+
+    public void setSpec(Double spec) {
+        this.spec = spec;
+    }
+
+    public void setSpecSd(Double specSd) {
+        this.specSd = specSd;
+    }
+
+    public void setPcc(Double pcc) {
+        this.pcc = pcc;
+    }
+
+    public void setPccSd(Double pccSd) {
+        this.pccSd = pccSd;
+    }
+
+    public void setThreshold(Double threshold) {
+        this.threshold = threshold;
+    }
+
+    public void setThresholdSd(Double thresholdSd) {
+        this.thresholdSd = thresholdSd;
     }
 
     public Double getDeviance() {

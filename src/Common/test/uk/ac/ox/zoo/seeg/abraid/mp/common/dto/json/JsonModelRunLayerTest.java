@@ -38,11 +38,5 @@ public class JsonModelRunLayerTest {
         // Assert
         assertThat(result.getId()).isEqualTo("expectedName");
         assertThat(result.getDate()).isEqualTo("2014-10-13");
-        assertThat(result.getCovariates()).hasSize(1);
-        assertThat(result.getStatistics()).isNotNull();
-
-        JsonCovariateInfluence jsonCovariateInfluence = result.getCovariates().get(0);
-        assertThat(jsonCovariateInfluence.getName()).isEqualTo(covariateName);
-        assertThat(jsonCovariateInfluence.getMeanInfluence()).isEqualTo(meanInfluence);
     }
 }

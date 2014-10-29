@@ -18,9 +18,9 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                  LayerSelectorViewModel, SubmodelStatisticsViewModel, doc) {
         ko.applyBindings(
             new AtlasInformationViewModel(
-                new CovariateInfluencesViewModel(),
+                new CovariateInfluencesViewModel(baseUrl),
                 new DownloadLinksViewModel(baseUrl, data.wmsUrl),
-                new SubmodelStatisticsViewModel()
+                new SubmodelStatisticsViewModel(baseUrl)
             ),
             doc.getElementById("atlasInformation")
         );

@@ -37,8 +37,6 @@ import java.util.List;
         @NamedQuery(
                 name = "getCompletedModelRuns",
                 query = "select distinct m from ModelRun as m " +
-//                        "left join fetch m.covariateInfluences " +
-//                        "left join fetch m.submodelStatistics " +
                         "where status = 'COMPLETED'"
         ),
         @NamedQuery(
@@ -100,11 +98,11 @@ public class ModelRun {
     private String errorText;
 
     // List of submodel statistics associated with the model run.
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     private List<SubmodelStatistic> submodelStatistics;
 
     // List of covariate influences associated with the model run.
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     private List<CovariateInfluence> covariateInfluences;
 
     // The start date of this batch of disease occurrences (if relevant).

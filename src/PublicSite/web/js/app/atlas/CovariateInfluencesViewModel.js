@@ -3,16 +3,26 @@
  * - Events subscribed to:
  * -- 'selected-run' - published by LayerSelectorViewModel
  */
-define(["ko"], function (ko) {
+define([
+    "ko",
+    "jquery"
+], function (ko, $) {
     "use strict";
 
-    return function () {
+    return function (baseUrl) {
         var self = this;
 
         self.covariateInfluences = ko.observable([]);
 
         ko.postbox.subscribe("selected-run", function (run) {
-            self.covariateInfluences(run.covariates || []);
+            if (run.id) {
+                $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/covariates")
+                    .done(function (covariates) {
+                        self.covariateInfluences(covariates);
+                    }).fail(function () {
+                        self.covariateInfluences();
+                    });
+            }
         });
     };
 });

@@ -20,39 +20,12 @@ import static ch.lambdaj.Lambda.convert;
 public class JsonModelRunLayer {
     private String date;
     private String id;
-    private List<JsonCovariateInfluence> covariates;
-    private JsonModelRunStatistics statistics;
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     public JsonModelRunLayer(ModelRun modelRun) {
         this.date = DATE_FORMAT.print(modelRun.getRequestDate());
         this.id = modelRun.getName();
-        setCovariates(modelRun.getCovariateInfluences());
-        setStatistics(modelRun.getSubmodelStatistics());
-    }
-
-    private void setCovariates(List<CovariateInfluence> covariateInfluences) {
-        if (!covariateInfluences.isEmpty()) {
-            Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
-                @Override
-                public int compare(CovariateInfluence o1, CovariateInfluence o2) {
-                    return o2.getMeanInfluence().compareTo(o1.getMeanInfluence());  // desc
-                }
-            });
-            this.covariates = convert(covariateInfluences, new Converter<CovariateInfluence, JsonCovariateInfluence>() {
-                @Override
-                public JsonCovariateInfluence convert(CovariateInfluence covariateInfluence) {
-                    return new JsonCovariateInfluence(covariateInfluence);
-                }
-            });
-        }
-    }
-
-    private void setStatistics(List<SubmodelStatistic> submodelStatistics) {
-        if (!submodelStatistics.isEmpty()) {
-            this.statistics = new JsonModelRunStatistics(submodelStatistics);
-        }
     }
 
     public String getDate() {
@@ -61,13 +34,5 @@ public class JsonModelRunLayer {
 
     public String getId() {
         return id;
-    }
-
-    public List<JsonCovariateInfluence> getCovariates() {
-        return covariates;
-    };
-
-    public JsonModelRunStatistics getStatistics() {
-        return statistics;
     }
 }

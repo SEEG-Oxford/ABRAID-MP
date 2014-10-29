@@ -1,18 +1,28 @@
 /* AMD defining the statistics table on the atlas view.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
- * -- 'active-atlas-layer' - published by LayerSelectorViewModel
+ * -- 'selected-run' - published by LayerSelectorViewModel
  */
-define(["ko"], function (ko) {
+define([
+    "ko",
+    "jquery"
+], function (ko, $) {
     "use strict";
 
-    return function () {
+    return function (baseUrl) {
         var self = this;
 
         self.statistics = ko.observable({});
 
         ko.postbox.subscribe("selected-run", function (run) {
-            self.statistics(run.statistics || {});
+            if (run.id) {
+                $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/statistics")
+                    .done(function (statistics) {
+                        self.statistics(statistics);
+                    }).fail(function () {
+                        self.statistics();
+                    });
+            }
         });
     };
 });
