@@ -4,6 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -54,11 +55,11 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
     }
 
     /**
-     * Gets all of the completed model runs. Model runs that occurred during disease group setup are excluded.
-     * @return The completed model runs that were requested after the disease group's automaticModelRunsStartDate.
+     * Gets all of the completed model runs.
+     * @return The completed model runs.
      */
     @Override
-    public List<ModelRun> getCompletedModelRuns() {
+    public Collection<ModelRun> getCompletedModelRuns() {
         return listNamedQuery("getCompletedModelRuns");
     }
 

@@ -10,8 +10,6 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-        <link rel="shortcut icon" href="<@spring.url '/favicon.ico'/>">
-
         <title>${title?html}</title>
 
         <meta name="description" content="">
