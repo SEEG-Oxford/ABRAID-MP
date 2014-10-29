@@ -285,6 +285,11 @@ public class SubmodelStatistic {
         return result;
     }
 
+    /**
+     * Gets the set of summarising statistics across all submodels of a model run.
+     * @param submodelStatistics The list of submodel statistics.
+     * @return The DTO representing the set of summarising statistics.
+     */
     public static JsonModelRunStatistics summarise(List<SubmodelStatistic> submodelStatistics) {
         JsonModelRunStatistics json = new JsonModelRunStatistics();
 

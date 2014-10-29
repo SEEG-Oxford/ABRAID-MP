@@ -32,7 +32,7 @@ import java.util.List;
 @Controller
 public class ModelRunDetailsController extends AbstractController {
 
-    /** Base URL for Atlas model run details */
+    /** Base URL for Atlas model run details. */
     private static final String ATLAS_MODEL_RUN_DETAILS_URL = "/atlas/details/modelrun";
     private final ModelRunService modelRunService;
 

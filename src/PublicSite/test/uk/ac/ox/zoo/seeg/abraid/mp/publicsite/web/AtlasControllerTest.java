@@ -68,23 +68,8 @@ public class AtlasControllerTest {
         String expectation =
             "[" +
                 "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                    "{" +
-                        "\"date\":\"2014-10-13\"," +
-                        "\"id\":\"Model Run 1\"," +
-                        "\"covariates\":[" +
-                            "{" +
-                                "\"name\":\"Name\"," +
-                                "\"meanInfluence\":20.2" +
-                            "}" +
-                        "]," +
-                        "\"statistics\":{" +
-                            "\"deviance\":0.1,\"devianceSd\":0.0,\"rmse\":0.2,\"rmseSd\":0.0,\"kappa\":0.3,\"kappaSd\":0.0,\"auc\":0.4,\"aucSd\":0.0,\"sens\":0.5,\"sensSd\":0.0,\"spec\":0.6,\"specSd\":0.0,\"pcc\":0.7,\"pccSd\":0.0,\"threshold\":0.8,\"thresholdSd\":0.0" +
-                        "}" +
-                    "}," +
-                    "{" +
-                        "\"date\":\"2036-12-18\"," +
-                        "\"id\":\"Model Run 3\"" +
-                    "}" +
+                    "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
+                    "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
                 "]}," +
                 "{\"disease\":\"Disease Group 2\",\"runs\":[" +
                     "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\"}" +

@@ -1,17 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
-import ch.lambdaj.function.convert.Converter;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import static ch.lambdaj.Lambda.convert;
 
 /**
  * A DTO to represent a model run when expressing the available WMS layers for display in the atlas.
