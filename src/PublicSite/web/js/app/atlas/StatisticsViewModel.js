@@ -17,10 +17,10 @@ define([
         ko.postbox.subscribe("selected-run", function (run) {
             if (run.id) {
                 $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/statistics")
-                    .done(function (statistics) {
-                        self.statistics(statistics);
+                    .done(function (data) {
+                        self.statistics(data);
                     }).fail(function () {
-                        self.statistics();
+                        self.statistics({});
                     });
             }
         });
