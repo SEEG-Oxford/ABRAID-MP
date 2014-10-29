@@ -33,22 +33,26 @@ public class JsonModelRunLayer {
     }
 
     private void setCovariates(List<CovariateInfluence> covariateInfluences) {
-        Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
-            @Override
-            public int compare(CovariateInfluence o1, CovariateInfluence o2) {
-                return o2.getMeanInfluence().compareTo(o1.getMeanInfluence());  // desc
-            }
-        });
-        this.covariates = convert(covariateInfluences, new Converter<CovariateInfluence, JsonCovariateInfluence>() {
-            @Override
-            public JsonCovariateInfluence convert(CovariateInfluence covariateInfluence) {
-                return new JsonCovariateInfluence(covariateInfluence);
-            }
-        });
+        if (!covariateInfluences.isEmpty()) {
+            Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
+                @Override
+                public int compare(CovariateInfluence o1, CovariateInfluence o2) {
+                    return o2.getMeanInfluence().compareTo(o1.getMeanInfluence());  // desc
+                }
+            });
+            this.covariates = convert(covariateInfluences, new Converter<CovariateInfluence, JsonCovariateInfluence>() {
+                @Override
+                public JsonCovariateInfluence convert(CovariateInfluence covariateInfluence) {
+                    return new JsonCovariateInfluence(covariateInfluence);
+                }
+            });
+        }
     }
 
     private void setStatistics(List<SubmodelStatistic> submodelStatistics) {
-        this.statistics = new JsonModelRunStatistics(submodelStatistics);
+        if (!submodelStatistics.isEmpty()) {
+            this.statistics = new JsonModelRunStatistics(submodelStatistics);
+        }
     }
 
     public String getDate() {

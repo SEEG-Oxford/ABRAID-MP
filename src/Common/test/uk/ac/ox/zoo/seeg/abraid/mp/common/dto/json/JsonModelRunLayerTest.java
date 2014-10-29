@@ -25,7 +25,7 @@ public class JsonModelRunLayerTest {
         String covariateName = "Name";
         double meanInfluence = 20.2;
         CovariateInfluence covariateInfluence = new CovariateInfluence(covariateName, meanInfluence);
-        SubmodelStatistic submodelStatistic = new SubmodelStatistic();
+        SubmodelStatistic submodelStatistic = mock(SubmodelStatistic.class);
 
         when(modelRun.getName()).thenReturn("expectedName");
         when(modelRun.getRequestDate()).thenReturn(new DateTime(1413210069L * 1000));
@@ -44,6 +44,5 @@ public class JsonModelRunLayerTest {
         JsonCovariateInfluence jsonCovariateInfluence = result.getCovariates().get(0);
         assertThat(jsonCovariateInfluence.getName()).isEqualTo(covariateName);
         assertThat(jsonCovariateInfluence.getMeanInfluence()).isEqualTo(meanInfluence);
-
     }
 }

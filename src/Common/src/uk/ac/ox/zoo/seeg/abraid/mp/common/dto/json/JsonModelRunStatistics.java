@@ -10,29 +10,29 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunStatistics {
-    private double deviance;
-    private double devianceSd;
+    private Double deviance;
+    private Double devianceSd;
 
-    private double rmse;
-    private double rmseSd;
+    private Double rmse;
+    private Double rmseSd;
 
-    private double kappa;
-    private double kappaSd;
+    private Double kappa;
+    private Double kappaSd;
 
-    private double auc;
-    private double aucSd;
+    private Double auc;
+    private Double aucSd;
 
-    private double sens;
-    private double sensSd;
+    private Double sens;
+    private Double sensSd;
 
-    private double spec;
-    private double specSd;
+    private Double spec;
+    private Double specSd;
 
-    private double pcc;
-    private double pccSd;
+    private Double pcc;
+    private Double pccSd;
 
-    private double threshold;
-    private double thresholdSd;
+    private Double threshold;
+    private Double thresholdSd;
 
     public JsonModelRunStatistics(List<SubmodelStatistic> submodelStatistics) {
         DescriptiveStatistics devianceStats = new DescriptiveStatistics();
@@ -73,67 +73,67 @@ public class JsonModelRunStatistics {
         this.thresholdSd = thresholdStats.getStandardDeviation();
     }
 
-    public double getDeviance() {
+    public Double getDeviance() {
         return deviance;
     }
 
-    public double getRmse() {
+    public Double getRmse() {
         return rmse;
     }
 
-    public double getKappa() {
+    public Double getKappa() {
         return kappa;
     }
 
-    public double getAuc() {
+    public Double getAuc() {
         return auc;
     }
 
-    public double getSens() {
+    public Double getSens() {
         return sens;
     }
 
-    public double getSpec() {
+    public Double getSpec() {
         return spec;
     }
 
-    public double getPcc() {
+    public Double getPcc() {
         return pcc;
     }
 
-    public double getThreshold() {
+    public Double getThreshold() {
         return threshold;
     }
 
-    public double getDevianceSd() {
+    public Double getDevianceSd() {
         return devianceSd;
     }
 
-    public double getRmseSd() {
+    public Double getRmseSd() {
         return rmseSd;
     }
 
-    public double getKappaSd() {
+    public Double getKappaSd() {
         return kappaSd;
     }
 
-    public double getAucSd() {
+    public Double getAucSd() {
         return aucSd;
     }
 
-    public double getSensSd() {
+    public Double getSensSd() {
         return sensSd;
     }
 
-    public double getSpecSd() {
+    public Double getSpecSd() {
         return specSd;
     }
 
-    public double getPccSd() {
+    public Double getPccSd() {
         return pccSd;
     }
 
-    public double getThresholdSd() {
+    public Double getThresholdSd() {
         return thresholdSd;
     }
 }

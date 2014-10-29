@@ -76,7 +76,8 @@ public class SubmodelStatistic {
     }
 
     public SubmodelStatistic(double deviance, double rootMeanSquareError, double kappa, double areaUnderCurve,
-                             double sensitivity, double specificity, double proportionCorrectlyClassified, double threshold) {
+                             double sensitivity, double specificity, double proportionCorrectlyClassified,
+                             double threshold) {
         setDeviance(deviance);
         setRootMeanSquareError(rootMeanSquareError);
         setKappa(kappa);
