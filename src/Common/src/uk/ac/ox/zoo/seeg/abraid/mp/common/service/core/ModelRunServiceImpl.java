@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

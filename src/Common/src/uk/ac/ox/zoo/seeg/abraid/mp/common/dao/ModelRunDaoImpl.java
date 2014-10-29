@@ -4,7 +4,6 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
