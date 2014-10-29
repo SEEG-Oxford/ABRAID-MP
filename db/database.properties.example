@@ -5,6 +5,9 @@
 # NB: The superuser's password must be either empty or specified in file ~/.pgpass (Linux) or %APPDATA%\postgresql\pgpass.conf (Windows)
 superuser.name=postgres
 
+# The password for the database superuser
+superuser.password=tessella
+
 # The name of the ABRAID-MP database
 database.name=abraid_mp
 
