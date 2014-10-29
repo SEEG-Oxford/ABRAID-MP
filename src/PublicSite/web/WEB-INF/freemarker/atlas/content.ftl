@@ -28,7 +28,7 @@
 <body>
     <div id="map">
         <#include "layerselector.ftl"/>
-        <#include "atlasInformation.ftl"/>
+        <#include "modelrundetails.ftl"/>
         <div class="leaflet-bottom leaflet-left">
             <div class="legend leaflet-bar leaflet-control">
                 <i style="background-color:#a44883;"></i><span>1</span><br>

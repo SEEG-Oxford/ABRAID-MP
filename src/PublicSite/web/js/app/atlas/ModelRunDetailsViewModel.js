@@ -1,4 +1,4 @@
-/* AMD defining the view models containing additional information on the map.
+/* AMD defining the view models containing additional information about the active layer on the map.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
  * -- 'active-atlas-layer' - published by LayerSelectorViewModel

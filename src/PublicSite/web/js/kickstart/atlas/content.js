@@ -8,21 +8,21 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     require([
         "ko",
         "app/atlas/AtlasView",
-        "app/atlas/AtlasInformationViewModel",
         "app/atlas/CovariateInfluencesViewModel",
         "app/atlas/DownloadLinksViewModel",
         "app/atlas/LayerSelectorViewModel",
+        "app/atlas/ModelRunDetailsViewModel",
         "app/atlas/SubmodelStatisticsViewModel",
         "domReady!"
-    ], function (ko, AtlasView, AtlasInformationViewModel, CovariateInfluencesViewModel, DownloadLinksViewModel,
-                 LayerSelectorViewModel, SubmodelStatisticsViewModel, doc) {
+    ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
+                 ModelRunDetailsViewModel, SubmodelStatisticsViewModel, doc) {
         ko.applyBindings(
-            new AtlasInformationViewModel(
+            new ModelRunDetailsViewModel(
                 new CovariateInfluencesViewModel(baseUrl),
                 new DownloadLinksViewModel(baseUrl, data.wmsUrl),
                 new SubmodelStatisticsViewModel(baseUrl)
             ),
-            doc.getElementById("atlasInformation")
+            doc.getElementById("modelRunDetails")
         );
 
         var map = new AtlasView(data.wmsUrl); // jshint ignore:line

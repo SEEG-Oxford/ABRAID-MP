@@ -1,16 +1,16 @@
-/* A suite of tests for the AtlasInformationViewModel AMD.
+/* A suite of tests for the ModelRunDetailsViewModel AMD.
  * Copyright (c) 2014 University of Oxford
  */
 define([
     "ko",
-    "app/atlas/AtlasInformationViewModel"
-], function (ko, AtlasInformationViewModel) {
+    "app/atlas/ModelRunDetailsViewModel"
+], function (ko, ModelRunDetailsViewModel) {
     "use strict";
 
-    describe("The 'AtlasInformationViewModel", function () {
+    describe("The 'ModelRunDetailsViewModel", function () {
         it("holds the three sub-view-models", function () {
             // Act
-            var vm = new AtlasInformationViewModel("covariateInfluences", "downloadLinks", "submodelStatistics");
+            var vm = new ModelRunDetailsViewModel("covariateInfluences", "downloadLinks", "submodelStatistics");
             // Assert
             expect(vm.covariateInfluencesViewModel).toBe("covariateInfluences");
             expect(vm.downloadLinksViewModel).toBe("downloadLinks");
@@ -19,7 +19,7 @@ define([
 
         describe("holds the current layer, which", function () {
             // Arrange
-            var vm = new AtlasInformationViewModel({}, {}, {});
+            var vm = new ModelRunDetailsViewModel({}, {}, {});
 
             it("is observable", function () {
                 expect(vm.activeLayer).toBeObservable();

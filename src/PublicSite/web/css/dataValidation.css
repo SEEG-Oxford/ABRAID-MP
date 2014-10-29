@@ -283,12 +283,12 @@ html, body, #dataValidation {
         display: none !important;
     }
 }
-#atlasInformation div.leaflet-bar.leaflet-control a {
+#modelRunDetails div.leaflet-bar.leaflet-control a {
     width: auto;
     padding: 0 5px;
     min-width: 215px;
 }
-#atlasInformation div.leaflet-bar.leaflet-control a i {
+#modelRunDetails div.leaflet-bar.leaflet-control a i {
     margin-right: 5px;
 }
 #covariatesAndStatistics table {

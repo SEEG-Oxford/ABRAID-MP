@@ -1,4 +1,4 @@
-<div class="leaflet-top leaflet-right" id="atlasInformation" style="display: none" data-bind="visible: activeLayer">
+<div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: activeLayer">
     <!-- ko with:downloadLinksViewModel -->
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">

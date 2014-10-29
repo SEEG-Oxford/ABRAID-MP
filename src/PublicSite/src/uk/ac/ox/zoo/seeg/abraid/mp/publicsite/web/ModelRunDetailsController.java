@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Controller
+ * Controller for accessing additional information about model runs.
  * Copyright (c) 2014 University of Oxford
  */
 @Controller
