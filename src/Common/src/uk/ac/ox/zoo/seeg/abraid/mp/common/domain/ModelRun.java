@@ -38,8 +38,11 @@ import java.util.List;
         ),
         @NamedQuery(
                 name = "getCompletedModelRuns",
-                query = "from ModelRun " +
-                        "where status = 'COMPLETED'"
+                query = "from ModelRun m " +
+                        "where status = 'COMPLETED' " +
+                        "and requestDate >=" +
+                        "    (select automaticModelRunsStartDate from DiseaseGroup" +
+                        "     where id = m.diseaseGroupId)"
         ),
         @NamedQuery(
                 name = "hasBatchingEverCompleted",

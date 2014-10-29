@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -54,10 +53,10 @@ public interface ModelRunService {
     DateTime subtractDaysBetweenModelRuns(DateTime dateTime);
 
     /**
-     * Gets all of the completed model runs.
-     * @return The completed model runs.
+     * Gets all of the completed model runs. Model runs that occurred during disease group setup are excluded.
+     * @return The completed model runs that were requested after the disease group's automaticModelRunsStartDate.
      */
-    Collection<ModelRun> getCompletedModelRuns();
+    List<ModelRun> getCompletedModelRuns();
 
     /**
      * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,
