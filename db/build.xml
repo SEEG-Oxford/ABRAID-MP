@@ -36,38 +36,31 @@
   <target name="import.shapefiles" if="shapefiles.path">
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="admin_unit_global.shp"/>
-      <param name="shapefile.import.options" value="-a"/>
-      <!-- Append to table that was created in tables.sql -->
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
     </antcall>
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="admin_unit_qc.shp"/>
-      <param name="shapefile.import.options" value="-a"/>
-      <!-- Append to table that was created in tables.sql -->
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
     </antcall>
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="admin_unit_simplified_global.shp"/>
-      <param name="shapefile.import.options" value="-c"/>
-      <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
+      <param name="shapefile.import.options" value="-c"/> <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
     </antcall>
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="admin_unit_simplified_tropical.shp"/>
-      <param name="shapefile.import.options" value="-c"/>
-      <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
+      <param name="shapefile.import.options" value="-c"/> <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
     </antcall>
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="admin_unit_tropical.shp"/>
-      <param name="shapefile.import.options" value="-a"/>
-      <!-- Append to table that was created in tables.sql -->
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
     </antcall>
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="country.shp"/>
-      <param name="shapefile.import.options" value="-a"/>
-      <!-- Append to table that was created in tables.sql -->
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
     </antcall>
     <antcall target="import.shapefile">
       <param name="shapefile.name" value="land_sea_border.shp"/>
-      <param name="shapefile.import.options" value="-a"/>
-      <!-- Append to table that was created in tables.sql -->
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
     </antcall>
     <antcall target="run.database.script">
       <param name="database.script.name" value="migrate_shapefiles.sql"/>
