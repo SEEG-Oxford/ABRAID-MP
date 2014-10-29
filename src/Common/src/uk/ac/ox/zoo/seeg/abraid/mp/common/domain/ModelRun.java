@@ -36,7 +36,7 @@ import java.util.List;
         ),
         @NamedQuery(
                 name = "getCompletedModelRuns",
-                query = "select distinct m from ModelRun as m " +
+                query = "select from ModelRun " +
                         "where status = 'COMPLETED'"
         ),
         @NamedQuery(
