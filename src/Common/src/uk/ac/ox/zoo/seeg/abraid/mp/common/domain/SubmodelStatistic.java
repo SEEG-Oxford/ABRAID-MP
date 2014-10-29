@@ -284,6 +284,8 @@ public class SubmodelStatistic {
         result = 31 * result + (threshold != null ? threshold.hashCode() : 0);
         return result;
     }
+    ///CHECKSTYLE:ON
+    ///COVERAGE:ON
 
     /**
      * Gets the set of summarising statistics across all submodels of a model run.
@@ -334,6 +336,4 @@ public class SubmodelStatistic {
 
         return json;
     }
-    ///CHECKSTYLE:ON
-    ///COVERAGE:ON
 }
