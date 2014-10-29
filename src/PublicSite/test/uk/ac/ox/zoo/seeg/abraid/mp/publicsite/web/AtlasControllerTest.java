@@ -5,16 +5,19 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.Model;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -29,7 +32,7 @@ public class AtlasControllerTest {
     @Test
     public void showPageReturnsAtlasPage() {
         // Arrange
-        AtlasController target = new AtlasController(null, null, null);
+        AtlasController target = new AtlasController(null, null, null, null, null);
 
         // Act
         String result = target.showPage();
@@ -41,7 +44,8 @@ public class AtlasControllerTest {
     @Test
     public void showAtlasReturnsAtlasContent() throws JsonProcessingException {
         // Arrange
-        AtlasController target = new AtlasController(mock(ModelRunService.class), mock(DiseaseService.class), mock(AbraidJsonObjectMapper.class));
+        AtlasController target = new AtlasController(mock(ModelRunService.class), mock(DiseaseService.class),
+                mock(CurrentUserService.class), mock(ExpertService.class), mock(AbraidJsonObjectMapper.class));
 
         // Act
         String result = target.showAtlas(mock(Model.class));
@@ -55,8 +59,11 @@ public class AtlasControllerTest {
         // Arrange
         ModelRunService modelRunService = mock(ModelRunService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
+        CurrentUserService currentUserService = mock(CurrentUserService.class);
+        ExpertService expertService = mock(ExpertService.class);
         stubLayerRelatedServices(modelRunService, diseaseService);
-        AtlasController target = new AtlasController(modelRunService, diseaseService, new AbraidJsonObjectMapper());
+        AtlasController target = new AtlasController(
+                modelRunService, diseaseService, currentUserService, expertService, new AbraidJsonObjectMapper());
 
         // Act
         Model model = mock(Model.class);
@@ -77,6 +84,66 @@ public class AtlasControllerTest {
             "]";
         String value = argumentCaptor.getValue();
         assertThat(value).contains(expectation);
+    }
+
+    @Test
+    public void showAtlasAddsAllDiseaseGroupsToMapIfUserIsSeeg() throws Exception {
+        String expectation = "[" +
+                "{\"disease\":\"Disease Group 1\",\"runs\":[" +
+                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
+                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
+                "]}," +
+                "{\"disease\":\"Disease Group 2\",\"runs\":[" +
+                "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\"}" +
+                "]}" +
+                "]";
+        showAtlasTest(true, expectation);
+    }
+
+    @Test
+    public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsIfUserIsNotSeeg() throws Exception {
+        String expectation =
+                "[" +
+                    "{\"disease\":\"Disease Group 1\",\"runs\":[" +
+                        "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
+                        "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
+                        "]" +
+                    "}" +
+                "]";
+        showAtlasTest(false, expectation);
+    }
+
+    private void showAtlasTest(boolean isSeegMember, String expectation) throws Exception {
+        // Arrange
+        CurrentUserService currentUserService = mock(CurrentUserService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        mockSeegExpert(currentUserService, expertService, isSeegMember);
+
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ModelRunService modelRunService = mock(ModelRunService.class);
+        stubLayerRelatedServices(modelRunService, diseaseService);
+        when(diseaseService.getDiseaseGroupIdsForAutomaticModelRuns()).thenReturn(Arrays.asList(1));
+
+        AtlasController target = new AtlasController(
+                modelRunService, diseaseService, currentUserService, expertService, new AbraidJsonObjectMapper());
+
+        // Act
+        Model model = mock(Model.class);
+        target.showAtlas(model);
+
+        // Assert
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(model).addAttribute(eq("layers"), argumentCaptor.capture());
+        String value = argumentCaptor.getValue();
+        assertThat(value).contains(expectation);
+    }
+
+    private void mockSeegExpert(CurrentUserService currentUserService, ExpertService expertService, boolean isSeegMember) {
+        Expert expert = mock(Expert.class);
+        when(expert.isSeegMember()).thenReturn(isSeegMember);
+
+        when(currentUserService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        when(expertService.getExpertById(anyInt())).thenReturn(expert);
     }
 
     private void stubLayerRelatedServices(ModelRunService modelRunService, DiseaseService diseaseService) {
@@ -105,7 +172,7 @@ public class AtlasControllerTest {
         when(diseaseGroup1.getShortNameForDisplay()).thenReturn("Disease Group 1");
         when(diseaseGroup2.getShortNameForDisplay()).thenReturn("Disease Group 2");
 
-        when(modelRunService.getCompletedModelRuns()).thenReturn(Arrays.asList(modelRun1, modelRun2, modelRun3));
+        when(modelRunService.getCompletedModelRunsForDisplay()).thenReturn(Arrays.asList(modelRun1, modelRun2, modelRun3));
 
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup1);
         when(diseaseService.getDiseaseGroupById(2)).thenReturn(diseaseGroup2);

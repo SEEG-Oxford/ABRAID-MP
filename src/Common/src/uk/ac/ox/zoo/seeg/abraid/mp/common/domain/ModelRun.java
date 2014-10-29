@@ -35,9 +35,11 @@ import java.util.List;
                         "    and status = 'COMPLETED')"
         ),
         @NamedQuery(
-                name = "getCompletedModelRuns",
-                query = "from ModelRun " +
-                        "where status = 'COMPLETED'"
+                name = "getCompletedModelRunsForDisplay",
+                query = "select m from ModelRun m, DiseaseGroup d " +
+                        "where m.diseaseGroupId = d.id " +
+                        "and m.status = 'COMPLETED' " +
+                        "and (d.automaticModelRunsStartDate is null or m.requestDate >= d.automaticModelRunsStartDate)"
         ),
         @NamedQuery(
                 name = "hasBatchingEverCompleted",

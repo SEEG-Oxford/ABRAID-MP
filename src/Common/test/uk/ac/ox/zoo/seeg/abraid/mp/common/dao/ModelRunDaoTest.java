@@ -259,7 +259,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
-    public void getCompletedModelRunsReturnsCorrectCompletedModelRuns() {
+    public void getCompletedModelRunsForDisplayReturnsCorrectCompletedModelRuns() {
         // Arrange
         modelRunDao.save(modelRunDengue1);
         modelRunDao.save(modelRunDengue2);
@@ -269,21 +269,21 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         modelRunDao.save(modelRunMalarias1);
 
         // Act
-        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRunsForDisplay();
 
         // Assert
         assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3, modelRunMalarias1);
     }
 
     @Test
-    public void getCompletedModelRunsReturnsEmptyIfNoCompletedModelRuns() {
+    public void getCompletedModelRunsForDisplayReturnsEmptyIfNoCompletedModelRuns() {
         // Arrange
         modelRunDao.save(modelRunDengue4);
         modelRunDao.save(modelRunDengue5);
         modelRunDao.save(modelRunDengue1);
 
         // Act
-        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRunsForDisplay();
 
         // Assert
         assertThat(modelRuns).isEmpty();
