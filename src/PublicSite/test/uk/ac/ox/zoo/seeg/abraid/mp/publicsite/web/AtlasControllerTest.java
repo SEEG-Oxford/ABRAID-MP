@@ -5,12 +5,15 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.Model;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,6 +95,12 @@ public class AtlasControllerTest {
         when(modelRun1.getName()).thenReturn("Model Run 1");
         when(modelRun2.getName()).thenReturn("Model Run 2");
         when(modelRun3.getName()).thenReturn("Model Run 3");
+        when(modelRun1.getCovariateInfluences()).thenReturn(Arrays.asList(new CovariateInfluence("Name", 20.2)));
+        when(modelRun2.getCovariateInfluences()).thenReturn(new ArrayList<CovariateInfluence>());
+        when(modelRun3.getCovariateInfluences()).thenReturn(new ArrayList<CovariateInfluence>());
+        when(modelRun1.getSubmodelStatistics()).thenReturn(Arrays.asList(new SubmodelStatistic(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)));
+        when(modelRun2.getSubmodelStatistics()).thenReturn(new ArrayList<SubmodelStatistic>());
+        when(modelRun3.getSubmodelStatistics()).thenReturn(new ArrayList<SubmodelStatistic>());
 
         when(diseaseGroup1.getShortNameForDisplay()).thenReturn("Disease Group 1");
         when(diseaseGroup2.getShortNameForDisplay()).thenReturn("Disease Group 2");

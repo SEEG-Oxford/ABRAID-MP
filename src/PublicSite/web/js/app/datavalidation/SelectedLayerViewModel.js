@@ -41,7 +41,7 @@ define(["ko"], function (ko) {
         // View State
         self.showDiseaseExtentLayer = ko.computed(function () {
             return (self.selectedType() === DISEASE_EXTENT);
-        });
+        }, self);
         self.noFeaturesToReview = ko.observable(false).subscribeTo("no-features-to-review"); // Published by MapView
         self.notReadyForReview = ko.observable(false).subscribeTo("disease-not-ready-for-review");
 
@@ -53,6 +53,6 @@ define(["ko"], function (ko) {
                                                                            self.selectedDisease().id,
                 occurrenceOnly: self.selectedDisease().occurrenceOnly
             };
-        }).publishOn("layers-changed");
+        }, self).publishOn("layers-changed");
     };
 });

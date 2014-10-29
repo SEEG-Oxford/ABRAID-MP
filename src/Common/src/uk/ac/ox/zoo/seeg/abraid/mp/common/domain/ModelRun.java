@@ -1,7 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -101,12 +99,10 @@ public class ModelRun {
 
     // List of submodel statistics associated with the model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
-    @Fetch(FetchMode.SELECT)
     private List<SubmodelStatistic> submodelStatistics;
 
     // List of covariate influences associated with the model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
-    @Fetch(FetchMode.SELECT)
     private List<CovariateInfluence> covariateInfluences;
 
     // The start date of this batch of disease occurrences (if relevant).
@@ -130,7 +126,6 @@ public class ModelRun {
 
     // List of effect curve covariate influence data points associated with this model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
-    @Fetch(FetchMode.SELECT)
     private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
 
     public ModelRun() {

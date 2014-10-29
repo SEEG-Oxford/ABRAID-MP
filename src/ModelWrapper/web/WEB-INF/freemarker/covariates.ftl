@@ -1,5 +1,5 @@
 <#--
-    ModelWrapper's index landing page, to display model outputs.
+    ModelWrapper's covariate list page, to add and edit covariate files.
     Copyright (c) 2014 University of Oxford
 -->
 <#import "shared/layout/common.ftl" as c/>

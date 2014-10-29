@@ -19,14 +19,7 @@ define([
     return function (baseUrl, alert, counter) {
         var self = this;
 
-        ko.postbox.subscribe("admin-units-to-be-reviewed", function (event) {
-            self.adminUnits(_(event.data).sortBy(function (adminUnit) { return adminUnit.name; }));
-        });
-
         var diseaseId = null;
-        ko.postbox.subscribe("layers-changed", function (value) {
-            diseaseId = value.diseaseId;
-        });
 
         function removefromSelfAdminUnits(gaulCode) {
             self.adminUnits(_(self.adminUnits()).reject(function (f) { return f.id === gaulCode; }));
@@ -37,7 +30,8 @@ define([
         self.selectedAdminUnit = ko.observable(null).syncWith("admin-unit-selected");
         self.hasSelectedAdminUnit = ko.computed(function () {
             return self.selectedAdminUnit() !== null;
-        });
+        }, self);
+
         self.submitReview = function (review) {
             var gaulCode = self.selectedAdminUnit().id;
             var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits/" + gaulCode + "/validate";
@@ -54,5 +48,14 @@ define([
                     alert("Something went wrong. Please try again.");
                 });
         };
+
+        ko.postbox.subscribe("admin-units-to-be-reviewed", function (event) {
+            self.adminUnits(_(event.data).sortBy(function (adminUnit) { return adminUnit.name; }));
+        });
+
+        ko.postbox.subscribe("layers-changed", function (value) {
+            diseaseId = value.diseaseId;
+        });
+
     };
 });

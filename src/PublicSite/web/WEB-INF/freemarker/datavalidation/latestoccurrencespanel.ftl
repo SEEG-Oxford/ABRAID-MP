@@ -1,7 +1,7 @@
 <div id="latestOccurrencesPanel" class="leaflet-top leaflet-right" style="display: none" data-bind="visible: occurrences().length > 0, preventBubble: true">
     <div class="leaflet-bar leaflet-control" >
-        <div data-bind="click: toggle" style="text-align: center; cursor: pointer">
-            <strong><span data-bind="text: showOccurrences() ? 'Hide' : 'Show'"></span> recent occurrences</strong>
+        <div data-bind="click: toggle" style="cursor: pointer;">
+            <a><span data-bind="text: showOccurrences() ? 'Hide' : 'Show'"></span> recent occurrences</a>
         </div>
 
         <div data-bind="if: showOccurrences">
@@ -9,7 +9,7 @@
             <div data-bind="foreach: occurrences">
                 <div><i class="fa fa-map-marker"></i>&nbsp;<span data-bind="text: properties.locationName"></span></div>
                 <div><i class="fa fa-calendar"></i>&nbsp;<span data-bind="date: properties.occurrenceDate"></span></div>
-                <a data-bind="attr: { href: properties.alert.url || '#' }" target="_blank">
+                <a class="link" data-bind="attr: { href: properties.alert.url || '#' }" target="_blank">
                     <i class="fa fa-external-link"></i>&nbsp;<span data-bind="text: properties.alert.feedName"></span>
                 </a>
                 <div data-bind="ifnot: ($index() + 1) === $parent.occurrences().length"><hr /></div>

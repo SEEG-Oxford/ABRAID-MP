@@ -1,8 +1,14 @@
 /*
  * AMD defining the view model for the atlas layer selector.
  * Copyright (c) 2014 University of Oxford
+ * - Events published:
+ * -- 'active-atlas-layer'
+ * -- 'selected-run'
  */
-define(["ko", "underscore"], function (ko, _) {
+define([
+    "ko",
+    "underscore"
+], function (ko, _) {
     "use strict";
 
     return function (availableLayers) {
@@ -24,7 +30,7 @@ define(["ko", "underscore"], function (ko, _) {
         self.runs = ko.computed(function () {
             return _(self.selectedDisease().runs).sortBy("date").reverse();
         }, self);
-        self.selectedRun = ko.observable(self.runs()[0]);
+        self.selectedRun = ko.observable(self.runs()[0]).publishOn("selected-run");
 
         self.selectedLayer = ko.computed(function () {
             return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;

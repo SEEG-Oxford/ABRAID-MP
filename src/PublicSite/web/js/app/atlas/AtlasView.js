@@ -1,6 +1,8 @@
 /**
  * AMD for adding Leaflet map and layers for the atlas view.
  * Copyright (c) 2014 University of Oxford
+ * - Events subscribed to:
+ * -- 'active-atlas-layer' - published by LayerSelectorViewModel
  */
 define([
     "L",
@@ -29,15 +31,15 @@ define([
 
         self.currentLayer = undefined;
 
-        ko.postbox.subscribe("active-atlas-layer", function (payload) {
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
             if (self.currentLayer) {
                 self.map.removeLayer(self.currentLayer);
                 self.currentLayer = undefined;
             }
 
-            if (payload) {
+            if (layer) {
                 self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
-                    layers: [payload],
+                    layers: [layer],
                     format: "image/png",
                     styles: "abraid_raster",
                     reuseTiles: true

@@ -12,7 +12,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     ], function (ko, PasswordChangeFormViewModel, doc) {
             ko.applyBindings(
                 ko.validatedObservable(new PasswordChangeFormViewModel(baseUrl)),
-                doc.getElementById("password-body"));
+                doc.getElementById("password-body")
+            );
         }
     );
 });

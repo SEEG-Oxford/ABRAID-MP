@@ -24,6 +24,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                 new SpinnerViewModel(),
                 doc.getElementById("spinner")
             );
+
             ko.applyBindings(
                 new SidePanelViewModel(
                     new SelectedPointViewModel(baseUrl, alert,
@@ -33,10 +34,12 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                     ),
                 doc.getElementById("sidePanelContent")
             );
+
             ko.applyBindings(
                 new LatestOccurrencesViewModel(),
                 doc.getElementById("latestOccurrencesPanel")
             );
+
             ko.applyBindings(
                 new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),
                 doc.getElementById("layerSelector")

@@ -28,14 +28,7 @@ html, body, #dataValidation {
 #map {
     height: 100%;
     width: 100%;
-    float: left;
     background-color: white;
-}
-.highlight {
-    border-top: 2px solid #aaaaaa;
-    border-bottom: 2px solid #aaaaaa;
-    font-weight: bold;
-    background-color: #f5f5f5;
 }
 #spinner > div {
     z-index:10;
@@ -108,13 +101,13 @@ html, body, #dataValidation {
     border-top-color: #aaaaaa !important;
 }
 #adminUnitTable tbody tr:first-child td {
-    border-top-width: 0px;
+    border-top-width: 0;
 }
 #adminUnitTable tbody tr:first-child {
-    border-top-width: 0px !important;
+    border-top-width: 0 !important;
 }
 #adminUnitTable tbody tr:last-child {
-    border-bottom-width: 0px !important;
+    border-bottom-width: 0 !important;
 }
 #adminUnitTable tbody tr td:first-child, #adminUnitTable thead tr th:first-child {
     width: 100px;
@@ -122,6 +115,12 @@ html, body, #dataValidation {
 }
 #adminUnitTable tbody tr td:last-child, #adminUnitTable thead tr th:last-child  {
     width: 178px;
+}
+.highlight {
+    border-top: 2px solid #aaaaaa;
+    border-bottom: 2px solid #aaaaaa;
+    font-weight: bold;
+    background-color: #f5f5f5;
 }
 .sidePanelText {
     margin: 5px;
@@ -140,7 +139,6 @@ html, body, #dataValidation {
     display: table;
     margin: -10px auto 10px auto;
 }
-
 #translationLink {
     float: right;
     padding-right: 5px;
@@ -230,12 +228,10 @@ html, body, #dataValidation {
     margin: 4px;
 }
 .legend {
+    background-color: white;
     padding: 6px 8px;
-    background: white;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
     line-height: 18px;
-    color: #333;
+    font-size: 12px;
 }
 .legend i {
     width: 18px;
@@ -244,24 +240,23 @@ html, body, #dataValidation {
     margin-right: 8px;
     opacity: 0.7;
 }
-.legend h4 {
-    margin: 0 0 5px;
-}
 #latestOccurrencesPanel a {
-    text-align: left;
     width: auto;
     border: none;
     line-height: 18px;
     height: auto;
 }
+#latestOccurrencesPanel .link {
+    text-align: left;
+}
+/* Match Bootstrap's styling for a link, instead of Leaflet's */
 #latestOccurrencesPanel a:hover {
     background-color: white;
 }
-/* Match Bootstrap's styling for a link, instead of Leaflet's */
-#latestOccurrencesPanel a span {
+#latestOccurrencesPanel .link span {
     color: #428bca;
 }
-#latestOccurrencesPanel a:hover span {
+#latestOccurrencesPanel .link:hover span {
     color: #2a6496;
     text-decoration: underline;
 }
@@ -287,6 +282,43 @@ html, body, #dataValidation {
     #latestOccurrencesPanel {
         display: none !important;
     }
+}
+#modelRunDetails div.leaflet-bar.leaflet-control a {
+    width: auto;
+    padding: 0 5px;
+    min-width: 215px;
+}
+#modelRunDetails div.leaflet-bar.leaflet-control a i {
+    margin-right: 5px;
+}
+#covariatesAndStatistics table {
+    margin: 0;
+}
+#covariatesAndStatistics .panel-body {
+    background-color: white;
+    padding: 5px 0;
+    min-width: 575px;
+}
+#covariatesAndStatistics h5,
+#covariates td:first-child {
+    text-align: center;
+}
+#covariates td:nth-child(2) {
+    min-width: 120px;
+}
+#covariates td:nth-child(3),
+#covariates th:nth-child(3) {
+    min-width: 120px;
+    text-align: center;
+}
+#statistics td:nth-child(2),
+#statistics th:nth-child(2) {
+    min-width: 80px;
+    text-align: center;
+}
+#statistics td:nth-child(3) {
+    min-width: 120px;
+    text-align: center;
 }
 .leaflet-popup-content {
     margin: 0;

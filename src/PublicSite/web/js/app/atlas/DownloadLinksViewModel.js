@@ -1,5 +1,7 @@
 /* AMD defining the download links for the atlas view.
  * Copyright (c) 2014 University of Oxford
+ * - Events subscribed to:
+ * -- 'active-atlas-layer' - published by LayerSelectorViewModel
  */
 define([
     "ko",
@@ -10,7 +12,7 @@ define([
     return function (baseUrl, wmsUrl) {
         var self = this;
 
-        self.activeLayer = ko.observable().subscribeTo("active-atlas-layer");
+        self.activeLayer = ko.observable();
 
         self.png = ko.computed(function () {
             var wmsParams = {
@@ -32,5 +34,9 @@ define([
         self.tif = ko.computed(function () {
             return self.activeLayer() ? baseUrl + "atlas/results/" + self.activeLayer() + ".tif" : "#";
         }, self);
+
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
+            self.activeLayer(layer);
+        });
     };
 });

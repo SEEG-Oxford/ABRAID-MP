@@ -56,7 +56,7 @@ define([
                 self.isSubmitting() ||
                 self.isEnablingAutomaticModelRuns() ||
                 self.isGeneratingDiseaseExtent();
-        });
+        }, self);
 
         self.isGeneratingDiseaseExtent = ko.observable(false);
         self.generateDiseaseExtent = function () {
@@ -74,7 +74,7 @@ define([
                 self.isSubmitting() ||
                 self.isGeneratingDiseaseExtent() ||
                 self.isEnablingAutomaticModelRuns();
-        });
+        }, self);
 
         self.isEnablingAutomaticModelRuns = ko.observable(false);
         self.enableAutomaticModelRuns = function () {
@@ -90,7 +90,7 @@ define([
                 self.isSubmitting() ||
                 self.isEnablingAutomaticModelRuns() ||
                 self.isGeneratingDiseaseExtent();
-        });
+        }, self);
 
         self.resetState = function () { // only public for testing
             self.notices.removeAll();

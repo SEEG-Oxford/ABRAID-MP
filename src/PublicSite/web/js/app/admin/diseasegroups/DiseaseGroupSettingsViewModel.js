@@ -71,9 +71,13 @@ define([
         self.groupTypes = groupTypes;
         self.selectedType = ko.observable();
         self.isGlobal = ko.observable();
-        self.parentDiseaseGroups = ko.computed(function () { return getParentDiseaseGroups(self.selectedType()); });
+        self.parentDiseaseGroups = ko.computed(function () {
+            return getParentDiseaseGroups(self.selectedType());
+        }, self);
         self.selectedParentDiseaseGroup = ko.observable();
-        self.enableParentDiseaseGroups = ko.computed(function () { return self.selectedType() !== CLUSTER; });
+        self.enableParentDiseaseGroups = ko.computed(function () {
+            return self.selectedType() !== CLUSTER;
+        }, self);
         self.validatorDiseaseGroups = validatorDiseaseGroups;
         self.selectedValidatorDiseaseGroup = ko.observable();
 

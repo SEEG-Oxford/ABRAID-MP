@@ -1,5 +1,5 @@
 <#--
-    Macro for including consistant bootstrap tables. For use with BaseFormViewModel.
+    Macro for including consistent bootstrap tables. For use with BaseFormViewModel.
     Copyright (c) 2014 University of Oxford
 -->
 <#macro tableTemplates numberOfColumns plural="entries" subpath="">

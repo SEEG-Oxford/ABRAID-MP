@@ -9,18 +9,16 @@ define([
     "use strict";
 
     describe("The atlas 'layer selector' view model", function () {
+        var run2 = { date: "1995-10-09", id: "Model Run 2", covariates: "covariates2", statistics: "statistics2" };
+        var run1 = { date: "2014-10-13", id: "Model Run 1", covariates: "covariates1", statistics: "statistics1" };
+        var run3 = { date: "2036-12-18", id: "Model Run 3", covariates: "covariates3", statistics: "statistics3" };
         var availableLayers = [
             {
                 disease: "Disease Group 2",
-                runs: [
-                    { date: "1995-10-09", id: "Model Run 2" }
-                ]
+                runs: [ run2 ]
             }, {
                 disease: "Disease Group 1",
-                runs: [
-                    { date: "2014-10-13", id: "Model Run 1" },
-                    { date: "2036-12-18", id: "Model Run 3" }
-                ]
+                runs: [ run1, run3 ]
             }
         ];
         var vm = {};
@@ -105,16 +103,28 @@ define([
 
         describe("holds a field for the selected run which", function () {
             it("is observable", function () {
-                expect(vm.selectedDisease).toBeObservable();
+                expect(vm.selectedRun).toBeObservable();
             });
 
             it("defaults to the first run by date in the available layers for the current disease", function () {
                 expect(vm.selectedRun().id).toBe("Model Run 3");
+                expect(vm.selectedRun().covariates).toBe("covariates3");
+                expect(vm.selectedRun().statistics).toBe("statistics3");
             });
 
             it("defaults to '---' if no available layers are provided", function () {
                 var localVM = new LayerSelectorViewModel([]);
                 expect(localVM.selectedRun().date).toBe("---");
+            });
+
+            it("publishes changes to its state as 'selected-run' event", function () {
+                ko.postbox.subscribe("selected-run", function (payload) {
+                    expect(payload).toEqual(run1);
+                });
+
+                vm.selectedRun(vm.runs()[1]);
+
+                ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
             });
         });
 
@@ -123,7 +133,7 @@ define([
                 expect(vm.selectedLayer).toBeObservable();
             });
 
-            it("combines the selected run and layer type", function () {
+            it("combines the selected run and layer type, with covariates and statistics", function () {
                 expect(vm.selectedLayer()).toBe(vm.selectedRun().id + "_" + vm.selectedType().id);
                 expect(vm.selectedLayer()).toBe("Model Run 3" + "_" + "mean");
             });
@@ -140,7 +150,7 @@ define([
                 expect(vm.selectedLayer()).toBe("Model Run 3" + "_" + "uncertainty");
             });
 
-            it("publishes changes to it's state changes as 'active-atlas-layer'", function () {
+            it("publishes changes to its state as 'active-atlas-layer'", function () {
                 var expectedValue = "";
                 var eventCount = 0;
                 ko.postbox.subscribe("active-atlas-layer", function (payload) {

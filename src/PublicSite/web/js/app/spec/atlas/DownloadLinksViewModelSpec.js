@@ -27,7 +27,7 @@ define([
                 expect(vm.activeLayer()).toBeUndefined();
             });
 
-            it("subscribes to the 'active-atlas-layer' event", function() {
+            it("subscribes to the 'active-atlas-layer' event", function () {
                 expect(vm.activeLayer()).toBeUndefined();
                 ko.postbox.publish("active-atlas-layer", "asdf");
                 expect(vm.activeLayer()).toBe("asdf");

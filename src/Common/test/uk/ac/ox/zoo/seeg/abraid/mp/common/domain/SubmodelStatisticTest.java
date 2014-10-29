@@ -2,6 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -49,5 +53,63 @@ public class SubmodelStatisticTest {
         assertThat(result.getProportionCorrectlyClassifiedStandardDeviation()).isEqualTo(dtoExpectation.getProportionCorrectlyClassifiedStandardDeviation());
         assertThat(result.getThreshold()).isEqualTo(dtoExpectation.getThreshold());
         assertThat(result.getId()).isNull();
+    }
+
+    @Test
+    public void summariseReturnsExpectedJson() {
+        // Arrange
+        SubmodelStatistic stat1 = new SubmodelStatistic(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat2 = new SubmodelStatistic(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
+
+        // Act
+        JsonModelRunStatistics result = SubmodelStatistic.summarise(Arrays.asList(stat1, stat2));
+
+        // Assert
+        assertThat(result.getDeviance()).isEqualTo(2.0);
+        assertThat(result.getRmse()).isEqualTo(3.0);
+        assertThat(result.getKappa()).isEqualTo(4.0);
+        assertThat(result.getAuc()).isEqualTo(5.0);
+        assertThat(result.getSens()).isEqualTo(6.0);
+        assertThat(result.getSpec()).isEqualTo(7.0);
+        assertThat(result.getPcc()).isEqualTo(8.0);
+        assertThat(result.getThreshold()).isEqualTo(9.0);
+
+        assertSd(result.getDevianceSd());
+        assertSd(result.getRmseSd());
+        assertSd(result.getKappaSd());
+        assertSd(result.getAucSd());
+        assertSd(result.getSensSd());
+        assertSd(result.getSpecSd());
+        assertSd(result.getPccSd());
+        assertSd(result.getThresholdSd());
+    }
+
+    private void assertSd(double sd) {
+        assertThat(sd).isEqualTo(Math.sqrt(2));
+    }
+
+    @Test
+    public void summariseReturnsExpectedJsonFromEmptyList() {
+        // Act
+        JsonModelRunStatistics result = SubmodelStatistic.summarise(new ArrayList<SubmodelStatistic>());
+
+        // Assert
+        assertThat(result.getDeviance()).isNull();
+        assertThat(result.getRmse()).isNull();
+        assertThat(result.getKappa()).isNull();
+        assertThat(result.getAuc()).isNull();
+        assertThat(result.getSens()).isNull();
+        assertThat(result.getSpec()).isNull();
+        assertThat(result.getPcc()).isNull();
+        assertThat(result.getThreshold()).isNull();
+
+        assertThat(result.getDevianceSd()).isNull();
+        assertThat(result.getRmseSd()).isNull();
+        assertThat(result.getKappaSd()).isNull();
+        assertThat(result.getAucSd()).isNull();
+        assertThat(result.getSensSd()).isNull();
+        assertThat(result.getSpecSd()).isNull();
+        assertThat(result.getPccSd()).isNull();
+        assertThat(result.getThresholdSd()).isNull();
     }
 }

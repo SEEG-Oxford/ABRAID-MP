@@ -11,6 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 public class JsonModelRunLayer {
     private String date;
     private String id;
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     public JsonModelRunLayer(ModelRun modelRun) {
