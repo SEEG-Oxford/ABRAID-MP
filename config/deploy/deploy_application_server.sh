@@ -90,7 +90,6 @@ echo "[[ Dealing with log4j ]]"
 sed -i "s|^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email|g" "$WEBAPP_PATH/modeloutput/WEB-INF/classes/log4j.properties"
 sed -i "s|^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email|g" "$WEBAPP_PATH/ROOT/WEB-INF/classes/log4j.properties"
 sed -i "s|^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email|g" "$ABRAID_SUPPORT_PATH/datamanager/log4j.properties"
-sed -i "s|^log4j\.rootLogger\=.*$/log4j.rootLogger=ERROR, logfile, email|g" "$ABRAID_SUPPORT_PATH/datamanager/log4j.properties"
 sed -i "s|^log4j\.appender\.logfile\.file\=.*$|log4j.appender.logfile.file=$ABRAID_SUPPORT_PATH/datamanager/logs/datamanager.log|g" "$ABRAID_SUPPORT_PATH/datamanager/log4j.properties"
 
 # Waiting
