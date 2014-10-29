@@ -40,7 +40,7 @@
                     <!-- /ko -->
                 </div>
                 <div class="col-sm-6" style="border-left: 1px solid #CCCCCC">
-                    <!-- ko with:submodelStatisticsViewModel -->
+                    <!-- ko with:statisticsViewModel -->
                     <h5>Submodel Statistics</h5>
                     <table class="table table-condensed" id="statistics">
                         <thead>

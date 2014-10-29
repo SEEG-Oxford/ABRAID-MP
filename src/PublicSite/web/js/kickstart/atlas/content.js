@@ -12,15 +12,15 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/atlas/DownloadLinksViewModel",
         "app/atlas/LayerSelectorViewModel",
         "app/atlas/ModelRunDetailsViewModel",
-        "app/atlas/SubmodelStatisticsViewModel",
+        "app/atlas/StatisticsViewModel",
         "domReady!"
     ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
-                 ModelRunDetailsViewModel, SubmodelStatisticsViewModel, doc) {
+                 ModelRunDetailsViewModel, StatisticsViewModel, doc) {
         ko.applyBindings(
             new ModelRunDetailsViewModel(
                 new CovariateInfluencesViewModel(baseUrl),
                 new DownloadLinksViewModel(baseUrl, data.wmsUrl),
-                new SubmodelStatisticsViewModel(baseUrl)
+                new StatisticsViewModel(baseUrl)
             ),
             doc.getElementById("modelRunDetails")
         );

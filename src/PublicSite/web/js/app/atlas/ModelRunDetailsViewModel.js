@@ -6,13 +6,13 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (covariateInfluencesViewModel, downloadLinksViewModel, submodelStatisticsViewModel) {
+    return function (covariateInfluencesViewModel, downloadLinksViewModel, statisticsViewModel) {
         var self = this;
 
         self.activeLayer = ko.observable().subscribeTo("active-atlas-layer");
 
         self.covariateInfluencesViewModel = covariateInfluencesViewModel;
         self.downloadLinksViewModel = downloadLinksViewModel;
-        self.submodelStatisticsViewModel = submodelStatisticsViewModel;
+        self.statisticsViewModel = statisticsViewModel;
     };
 });

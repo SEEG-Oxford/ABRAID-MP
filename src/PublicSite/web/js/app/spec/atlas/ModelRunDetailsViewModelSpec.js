@@ -10,11 +10,11 @@ define([
     describe("The 'ModelRunDetailsViewModel", function () {
         it("holds the three sub-view-models", function () {
             // Act
-            var vm = new ModelRunDetailsViewModel("covariateInfluences", "downloadLinks", "submodelStatistics");
+            var vm = new ModelRunDetailsViewModel("covariateInfluences", "downloadLinks", "statistics");
             // Assert
             expect(vm.covariateInfluencesViewModel).toBe("covariateInfluences");
             expect(vm.downloadLinksViewModel).toBe("downloadLinks");
-            expect(vm.submodelStatisticsViewModel).toBe("submodelStatistics");
+            expect(vm.statisticsViewModel).toBe("statistics");
         });
 
         describe("holds the current layer, which", function () {
