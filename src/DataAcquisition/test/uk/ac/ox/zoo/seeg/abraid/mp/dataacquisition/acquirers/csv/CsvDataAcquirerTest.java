@@ -38,7 +38,7 @@ public class CsvDataAcquirerTest {
         String csv = "\nMy site,Invalid double";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
 
         // Assert
         assertThat(messages).hasSize(1);
@@ -54,7 +54,7 @@ public class CsvDataAcquirerTest {
         when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
 
         // Assert
         assertThat(messages).hasSize(3);
@@ -72,7 +72,7 @@ public class CsvDataAcquirerTest {
         when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
 
         // Assert
         assertThat(messages).hasSize(4);
@@ -112,7 +112,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
 
         // Assert
         assertThat(messages).hasSize(2);
@@ -126,7 +126,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
 
         // Assert
         assertThat(messages).hasSize(2);
@@ -147,7 +147,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
 
         // Assert
         assertThat(messages).hasSize(2);

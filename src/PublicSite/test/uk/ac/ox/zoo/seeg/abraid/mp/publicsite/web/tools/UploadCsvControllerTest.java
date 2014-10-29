@@ -79,11 +79,10 @@ public class UploadCsvControllerTest {
 
     private void uploadCsvFileSuccessful(boolean isGoldStandard) throws Exception {
         // Arrange
-        String csv = "Test CSV";
+        byte[] csv = "Test CSV".getBytes();
         String filename = "filename.csv";
         String filePath = "/path/to/filename.csv";
-        MultipartFile file = new MockMultipartFile(filename, filePath, MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                csv.getBytes());
+        MultipartFile file = new MockMultipartFile(filename, filePath, MediaType.APPLICATION_OCTET_STREAM_VALUE, csv);
 
         // Act
         ResponseEntity<JsonFileUploadResponse> responseEntity = controller.uploadCsvFile(file, isGoldStandard);
