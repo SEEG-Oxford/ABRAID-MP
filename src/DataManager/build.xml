@@ -18,14 +18,6 @@
       <path refid="build.classpath"/>
     </copy>
 
-    <!-- Main properties file (formed by concatenating the default properties files) -->
-    <concat destfile="${artifacts.out.dir}/datamanager.properties">
-      <filelist>
-        <file name="${project.root.dir}/src/Common/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/common.properties"/>
-        <file name="${project.root.dir}/src/DataAcquisition/src/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition.properties"/>
-      </filelist>
-    </concat>
-
     <copy todir="${artifacts.out.dir}" flatten="true">
       <fileset dir="${src.dir}/uk/ac/ox/zoo/seeg/abraid/mp/datamanager">
         <!-- log4j.properties -->
