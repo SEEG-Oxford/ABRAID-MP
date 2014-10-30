@@ -197,9 +197,11 @@
     <fileset dir="${lib.dir}/default" includes="*.jar"/>
   </path>
 
-  <taskdef uri="antlib:org.flywaydb.ant" resource="org/flywaydb/ant/antlib.xml" classpathref="flyway.lib.path"/>
+  <target name="get.flyway" depends="retrieve.libs">
+    <taskdef uri="antlib:org.flywaydb.ant" resource="org/flywaydb/ant/antlib.xml" classpathref="flyway.lib.path"/>
+  </target>
 
-  <target name="upgrade.schema" depends="retrieve.libs">
+  <target name="upgrade.schema" depends="get.flyway">
     <flyway:migrate url="jdbc:postgresql://localhost:5432/${database.name}" user="${superuser.name}" password="${superuser.password}" outOfOrder="true" initOnMigrate="true" sqlMigrationPrefix="" validateOnMigrate="false">
        <locations>
         <location path="filesystem:${basedir}/migrations"/>
@@ -207,7 +209,7 @@
     </flyway:migrate>
   </target>
 
-  <target name="check.schema" depends="retrieve.libs">
+  <target name="check.schema" depends="get.flyway">
     <flyway:info url="jdbc:postgresql://localhost:5432/${database.name}" user="${superuser.name}" password="${superuser.password}" outOfOrder="true" initOnMigrate="true" sqlMigrationPrefix="" validateOnMigrate="false">
        <locations>
         <location path="filesystem:${basedir}/migrations"/>
@@ -215,7 +217,7 @@
     </flyway:info>
   </target>
 
-  <target name="validate.schema" depends="retrieve.libs">
+  <target name="validate.schema" depends="get.flyway">
     <flyway:validate url="jdbc:postgresql://localhost:5432/${database.name}" user="${superuser.name}" password="${superuser.password}" outOfOrder="true" initOnMigrate="true" sqlMigrationPrefix="" validateOnMigrate="false">
        <locations>
         <location path="filesystem:${basedir}/migrations"/>
