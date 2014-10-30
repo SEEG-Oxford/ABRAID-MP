@@ -13,5 +13,4 @@
     <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:/var/lib/abraid/conf/modelling/modelwrapper-security.properties" />
     <context:property-placeholder order="1" ignore-unresolvable="true" ignore-resource-not-found="true" location="modelwrapper-security-testing.properties" />
 
-
 </beans>
