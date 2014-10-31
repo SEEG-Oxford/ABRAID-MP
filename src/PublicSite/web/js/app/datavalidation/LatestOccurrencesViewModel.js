@@ -32,7 +32,6 @@ define([
 
             if (adminUnit && adminUnit.count > 0) {
                 self.count(adminUnit.count);
-
                 if (ajax) {
                     ajax.abort();
                 }

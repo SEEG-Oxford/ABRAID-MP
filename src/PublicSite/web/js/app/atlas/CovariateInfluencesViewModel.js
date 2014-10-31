@@ -14,13 +14,18 @@ define([
 
         self.covariateInfluences = ko.observable([]);
 
+        var ajax;
+
         ko.postbox.subscribe("selected-run", function (run) {
+            self.covariateInfluences([]);
+
             if (run.id) {
-                $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/covariates")
+                if (ajax) {
+                    ajax.abort();
+                }
+                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/covariates")
                     .done(function (data) {
                         self.covariateInfluences(data);
-                    }).fail(function () {
-                        self.covariateInfluences([]);
                     });
             }
         });
