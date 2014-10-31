@@ -150,7 +150,7 @@ fileAsk() {
         esac
       done
     else
-      echo "Not updating the file, as no changes where detected [$TARGET_FILE_NAME_ARG]"
+      echo "Not updating the file, as no changes were detected [$TARGET_FILE_NAME_ARG]"
     fi
   else
     echo "Writing first copy of the file [$TARGET_FILE_NAME_ARG]"
