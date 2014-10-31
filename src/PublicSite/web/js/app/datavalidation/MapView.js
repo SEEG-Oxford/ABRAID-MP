@@ -271,8 +271,7 @@ define([
                 var data = {
                     id: feature.id,
                     name: feature.properties.name,
-                    count: feature.properties.occurrenceCount,
-                    occurrences: feature.properties.latestOccurrences
+                    count: feature.properties.occurrenceCount
                 };
                 layer.on({
                     click: function () { ko.postbox.publish("admin-unit-selected", data); },
@@ -315,8 +314,7 @@ define([
                 return {
                     id: f.id,
                     name: f.properties.name,
-                    count: f.properties.occurrenceCount,
-                    occurrences: f.properties.latestOccurrences
+                    count: f.properties.occurrenceCount
                 };
             });
             ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });

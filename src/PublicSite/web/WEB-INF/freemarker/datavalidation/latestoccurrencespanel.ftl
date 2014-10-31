@@ -7,10 +7,10 @@
         <div data-bind="if: showOccurrences">
             <div><hr /></div>
             <div data-bind="foreach: occurrences">
-                <div><i class="fa fa-map-marker"></i>&nbsp;<span data-bind="text: properties.locationName"></span></div>
-                <div><i class="fa fa-calendar"></i>&nbsp;<span data-bind="date: properties.occurrenceDate"></span></div>
-                <a class="link" data-bind="attr: { href: properties.alert.url || '#' }" target="_blank">
-                    <i class="fa fa-external-link"></i>&nbsp;<span data-bind="text: properties.alert.feedName"></span>
+                <div><i class="fa fa-map-marker"></i>&nbsp;<span data-bind="text: locationName"></span></div>
+                <div><i class="fa fa-calendar"></i>&nbsp;<span data-bind="date: occurrenceDate"></span></div>
+                <a class="link" data-bind="attr: { href: alert.url || '#' }" target="_blank">
+                    <i class="fa fa-external-link"></i>&nbsp;<span data-bind="text: alert.feedName"></span>
                 </a>
                 <div data-bind="ifnot: ($index() + 1) === $parent.occurrences().length"><hr /></div>
             </div>
