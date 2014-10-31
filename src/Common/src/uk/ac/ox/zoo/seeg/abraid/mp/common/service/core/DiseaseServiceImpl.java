@@ -196,8 +196,7 @@ public class DiseaseServiceImpl implements DiseaseService {
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean useGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId),
-            useGoldStandardOccurrences);
+            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, useGoldStandardOccurrences);
     }
 
     /**
