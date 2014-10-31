@@ -32,6 +32,8 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private static final String LOG_HANDLER_SUCCESSFUL = "Successfully sent model outputs to model output handler.";
     private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
     private static final String LOG_COULD_NOT_DELETE_WORKSPACE_DIR = "Could not delete workspace directory \"%s\"";
+    private static final String LOG_NOT_DELETED_WORKSPACE_DIR =
+            "Did not delete workspace directory \"%s\", as the model run did not complete successfully";
 
     private final String runName;
     private final Path workingDirectoryPath;
@@ -60,7 +62,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
             createMetadataAndSaveToFile(status, outputText, errorText);
             zipFile = createZipFile(pickOutputFiles(status));
             sendOutputsToModelOutputHandler(zipFile);
-            deleteWorkingDirectory();
+            deleteWorkingDirectory(status);
         } catch (Exception e) {
             logger.fatal(String.format(LOG_HANDLER_REQUEST_ERROR, e.getMessage()), e);
         } finally {
@@ -149,11 +151,15 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
         }
     }
 
-    private void deleteWorkingDirectory() {
-        try {
-            FileUtils.deleteDirectory(workingDirectoryPath.toFile());
-        } catch (IOException e) {
-            logger.error(String.format(LOG_COULD_NOT_DELETE_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
+    private void deleteWorkingDirectory(ModelRunStatus modelRunStatus) {
+        if (modelRunStatus.equals(ModelRunStatus.COMPLETED)) {
+            try {
+                FileUtils.deleteDirectory(workingDirectoryPath.toFile());
+            } catch (IOException e) {
+                logger.error(String.format(LOG_COULD_NOT_DELETE_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
+            }
+        } else {
+            logger.warn(String.format(LOG_NOT_DELETED_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
         }
     }
 
