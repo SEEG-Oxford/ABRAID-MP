@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,12 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
@@ -86,6 +86,23 @@ public class ModelRunDetailsController extends AbstractController {
         }
     }
 
+
+    @RequestMapping(value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/effectcurves",
+            method = RequestMethod.GET)
+    @Transactional
+    @ResponseBody
+    public ResponseEntity<WrappedList<JsonEffectCurveCovariateInfluence>> getEffectCurveCovariateInfluences(@PathVariable String modelRunName)
+            throws JsonProcessingException {
+        ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
+        if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            List<EffectCurveCovariateInfluence> covariateInfluences = modelRun.getEffectCurveCovariateInfluences();
+            return new ResponseEntity<>(convertToDto(covariateInfluences), HttpStatus.OK);
+        }
+    }
+
+
     private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences) {
         List<JsonCovariateInfluence> json = new ArrayList<>();
         if (!covariateInfluences.isEmpty()) {
@@ -100,5 +117,24 @@ public class ModelRunDetailsController extends AbstractController {
             }
         }
         return json;
+    }
+
+    private WrappedList<JsonEffectCurveCovariateInfluence> convertToDto(List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
+        List<JsonEffectCurveCovariateInfluence> dtos = new ArrayList<>();
+        if (!effectCurveCovariateInfluences.isEmpty()) {
+            for (EffectCurveCovariateInfluence covariateInfluence : effectCurveCovariateInfluences) {
+                dtos.add(new JsonEffectCurveCovariateInfluence(covariateInfluence));
+            }
+            Collections.sort(dtos, new Comparator<JsonEffectCurveCovariateInfluence>() {
+                @Override
+                public int compare(JsonEffectCurveCovariateInfluence o1, JsonEffectCurveCovariateInfluence o2) {
+                    return new CompareToBuilder()
+                            .append(o1.getName(), o2.getName())
+                            .append(o1.getCovariateValue(), o2.getCovariateValue())
+                            .toComparison();
+                }
+            });
+        }
+        return new WrappedList<>(dtos);
     }
 }
