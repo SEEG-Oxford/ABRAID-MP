@@ -50,6 +50,7 @@
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ViewAwareJsonMessageConverter">
                 <property name="objectMapper" ref="objectMapper" />
             </bean>
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.CSVMessageConverter" />
         </mvc:message-converters>
     </mvc:annotation-driven>
     <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.JsonViewSupportFactoryBean" />
