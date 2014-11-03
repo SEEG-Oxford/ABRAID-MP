@@ -332,3 +332,14 @@ html, body, #dataValidation {
 .leaflet-popup-tip-container {
     display: none;
 }
+.leaflet-panel-button {
+    display: inline-block !important;
+    min-width: 0 !important;
+    height: auto !important;
+    background-image: none;
+    margin: 4px 0 0 0;
+    padding: 4px 8px !important;
+    line-height: 12px !important;
+    font-size: 12px;
+    border: 1px solid #cccccc !important;
+}
