@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
 
 /**
- * A DTO to represent the covariate associated with a model run.
+ * A DTO to represent the influence of a covariate file on a model run through its full range of values,
+ * for plotting in an effect curve.
  * Copyright (c) 2014 University of Oxford
  */
 @JsonPropertyOrder({"name", "covariateValue", "meanInfluence", "lowerQuantile", "upperQuantile"})

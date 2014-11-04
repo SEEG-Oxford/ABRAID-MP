@@ -86,13 +86,16 @@ public class ModelRunDetailsController extends AbstractController {
         }
     }
 
-
-    @RequestMapping(value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/effectcurves",
-            method = RequestMethod.GET)
+    /**
+     * Gets the list of effect curve covariate influences associated with a model run.
+     * @param modelRunName The unique name of the model run.
+     * @return The DTO of effect curve covariate influences.
+     */
+    @RequestMapping(value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/effectcurves", method = RequestMethod.GET)
     @Transactional
     @ResponseBody
-    public ResponseEntity<WrappedList<JsonEffectCurveCovariateInfluence>> getEffectCurveCovariateInfluences(@PathVariable String modelRunName)
-            throws JsonProcessingException {
+    public ResponseEntity<WrappedList<JsonEffectCurveCovariateInfluence>> getEffectCurveCovariateInfluences(
+            @PathVariable String modelRunName) {
         ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
         if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -119,7 +122,8 @@ public class ModelRunDetailsController extends AbstractController {
         return json;
     }
 
-    private WrappedList<JsonEffectCurveCovariateInfluence> convertToDto(List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
+    private WrappedList<JsonEffectCurveCovariateInfluence> convertToDto(
+            List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
         List<JsonEffectCurveCovariateInfluence> dtos = new ArrayList<>();
         if (!effectCurveCovariateInfluences.isEmpty()) {
             for (EffectCurveCovariateInfluence covariateInfluence : effectCurveCovariateInfluences) {

@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AbstractCovariateInfluence;
 
 /**
- * A DTO to represent the covariate associated with a model run.
+ * A DTO to represent common fields associated with the influence of a covariate file on a model run.
  * Copyright (c) 2014 University of Oxford
  */
 public abstract class AbstractJsonCovariateInfluence {
