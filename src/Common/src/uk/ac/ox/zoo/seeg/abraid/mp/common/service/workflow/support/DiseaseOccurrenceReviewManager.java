@@ -49,7 +49,7 @@ public class DiseaseOccurrenceReviewManager {
         int numDiscarded = 0;
 
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesInValidation(diseaseGroupId);
-        Set<DiseaseOccurrence> reviewedOccurrences = getAllReviewedOccurrences(diseaseGroupId);
+        Set<DiseaseOccurrence> reviewedOccurrences = getDiseaseOccurrencesInValidationWithReviews(diseaseGroupId);
 
         for (DiseaseOccurrence occurrence : occurrences) {
             DiseaseOccurrenceStatus newStatus = occurrence.getStatus();
@@ -77,9 +77,9 @@ public class DiseaseOccurrenceReviewManager {
         return diseaseGroup.getAutomaticModelRunsStartDate() == null;
     }
 
-    private Set<DiseaseOccurrence> getAllReviewedOccurrences(int diseaseGroupId) {
+    private Set<DiseaseOccurrence> getDiseaseOccurrencesInValidationWithReviews(int diseaseGroupId) {
         List<DiseaseOccurrenceReview> reviews =
-                diseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
+                diseaseService.getDiseaseOccurrenceReviewsForModelRunPrep(null, diseaseGroupId);
         return new HashSet<>(extract(reviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 

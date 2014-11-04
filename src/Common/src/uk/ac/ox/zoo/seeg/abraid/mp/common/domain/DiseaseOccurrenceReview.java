@@ -26,12 +26,6 @@ import javax.persistence.*;
         name = "getAllDiseaseOccurrenceReviewsByDiseaseGroupId",
         query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
     ),
-    @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsForModelRunPrep",
-        query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
-                "and diseaseOccurrence in " +
-                "(select diseaseOccurrence from DiseaseOccurrenceReview where createdDate > :lastModelRunPrepDate)"
-    )
 })
 @Entity
 @Table(name = "disease_occurrence_review")
