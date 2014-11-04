@@ -17,42 +17,95 @@ import java.util.Iterator;
 public class CSVMessageConverter
         extends AbstractHttpMessageConverter<WrappedList<?>> {
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    private CsvMapper csvMapper = new CsvMapper();
+    private static final String CAN_NOT_WRITE_NULL = "Can not write collection containing null";
+    private static final String CAN_NOT_WRITE_MIXED_TYPES = "Can not write collection containing mixed types";
+    private final CsvMapper csvMapper;
 
-    public CSVMessageConverter() {
+    public CSVMessageConverter(CsvMapper csvMapper) {
         super(
                 new MediaType("application", "csv", DEFAULT_CHARSET),
                 new MediaType("application", "*+csv", DEFAULT_CHARSET));
+        this.csvMapper = csvMapper;
     }
 
+    /**
+     * Checks if the given class is supported for reading, and if the the given media type is supported.
+     * @param clazz the class to test for support
+     * @param mediaType the media type to test for support
+     * @return {@code true} if supported; {@code false} otherwise
+     */
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {
+        // Don't support any csv parsing
         return false;
     }
 
+    /**
+     * Checks if the given class is supported for writing, and if the the given media type is supported.
+     * @param clazz the class to test for support
+     * @param mediaType the media type to test for support
+     * @return {@code true} if supported; {@code false} otherwise
+     */
     @Override
     public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-        return WrappedList.class.isAssignableFrom(clazz) && this.csvMapper.canSerialize(clazz) && canWrite(mediaType);
+        return WrappedList.class.isAssignableFrom(clazz) && canWrite(mediaType);
     }
 
+    /**
+     * Indicates whether the given class is supported by this converter.
+     * @param clazz the class to test for support
+     * @return {@code true} if supported; {@code false} otherwise
+     */
     @Override
     protected boolean supports(Class<?> clazz) {
-        // should not be called, since we override canRead/Write instead
+        // Should not be called, since we override canRead/Write instead\
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Implements the abstract template method that reads the actual object. Invoked from {@link #read}.
+     * @param clazz the type of object to return
+     * @param inputMessage the HTTP input message to read from
+     * @return the converted object
+     * @throws IOException in case of I/O errors
+     * @throws HttpMessageNotReadableException in case of conversion errors
+     */
     @Override
-    protected WrappedList<?> readInternal(Class<? extends WrappedList<?>> aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
-        // should not be called, since we return false for all canReads
+    protected WrappedList<?> readInternal(Class<? extends WrappedList<?>> clazz, HttpInputMessage inputMessage)
+            throws IOException, HttpMessageNotReadableException {
+        // Should not be called, since we return false for all canRead
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Implements the abstract template method that writes the actual body. Invoked from {@link #write}.
+     * @param t the object to write to the output message
+     * @param outputMessage the HTTP output message to write to
+     * @throws IOException in case of I/O errors
+     * @throws HttpMessageNotWritableException in case of conversion errors
+     */
     @Override
-    protected void writeInternal(WrappedList<?> collection, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
-        Iterator it = collection.getList().iterator();
-        if (it.hasNext()){
-            CsvSchema schema = csvMapper.schemaFor(it.next().getClass()).withHeader();
-            csvMapper.writer(schema).writeValue(httpOutputMessage.getBody(), collection.getList());
+    protected void writeInternal(WrappedList<?> t, HttpOutputMessage outputMessage)
+            throws IOException, HttpMessageNotWritableException {
+        Iterator it = t.getList().iterator();
+        Class<?> listType = null;
+        while (it.hasNext()){
+            Object entry = it.next();
+            if (entry == null) {
+                throw new HttpMessageNotWritableException(CAN_NOT_WRITE_NULL);
+            }
+
+            Class<?> entryType = entry.getClass();
+            if (listType == null) {
+                listType = entryType;
+            } else if (!entryType.equals(listType)) {
+                throw new HttpMessageNotWritableException(CAN_NOT_WRITE_MIXED_TYPES);
+            }
+        }
+
+        if (listType != null) {
+            CsvSchema schema = csvMapper.schemaFor(listType).withHeader();
+            csvMapper.writer(schema).writeValue(outputMessage.getBody(), t.getList());
         }
     }
 }
