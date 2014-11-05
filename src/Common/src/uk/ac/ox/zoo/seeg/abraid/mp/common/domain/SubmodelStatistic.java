@@ -298,7 +298,7 @@ public class SubmodelStatistic {
     public static JsonModelRunStatistics summarise(List<SubmodelStatistic> submodelStatistics) {
         JsonModelRunStatistics json = new JsonModelRunStatistics();
 
-        List<SubmodelStatistic> completeSubmodels =  filter(
+        List<SubmodelStatistic> completeSubmodels = filter(
                 having(on(SubmodelStatistic.class).containsAllRequiredPropertiesForSummarising()),
                 filter(notNullValue(), submodelStatistics));
 
@@ -346,7 +346,7 @@ public class SubmodelStatistic {
 
     /**
      * Checks that the submodel statistic contains a value for each of the main field (excludes standard deviations).
-     * @return true is all required fields present, otherwise false.
+     * @return true if all required fields present, otherwise false.
      */
     protected boolean containsAllRequiredPropertiesForSummarising() {
         return
