@@ -40,4 +40,33 @@ public class CsvSubmodelStatisticTest {
         assertThat(result.get(0).getThreshold()).isEqualTo(0.46605);
         assertThat(result.get(1).getDeviance()).isEqualTo(323.763698135803);
     }
+
+    @Test
+    public void readFromCSVReturnsCorrectResultWhenTextContainsEmptyEntries() throws IOException {
+        // Arrange
+        String csv =
+                "\"deviance\",\"rmse\",\"kappa\",\"auc\",\"sens\",\"spec\",\"pcc\",\"kappa_sd\",\"auc_sd\",\"sens_sd\",\"spec_sd\",\"pcc_sd\",\"thresh\"\n" +
+                        ",,,,,,,,,,,,\n" +
+                        "323.763698135803,0.560711287878735,0.32148423332026,0.671910419911593,0.471226939266407,0.850257294053853,0.66074211666013,0.0657379847027787,0.0419017277242429,0.0536652567379385,0.0353024197450659,0.0366859590096509,0.1435\n";
+
+        // Act
+        List<CsvSubmodelStatistic> result = CsvSubmodelStatistic.readFromCSV(csv);
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getDeviance()).isNull();
+        assertThat(result.get(0).getRootMeanSquareError()).isNull();
+        assertThat(result.get(0).getKappa()).isNull();
+        assertThat(result.get(0).getAreaUnderCurve()).isNull();
+        assertThat(result.get(0).getSensitivity()).isNull();
+        assertThat(result.get(0).getSpecificity()).isNull();
+        assertThat(result.get(0).getProportionCorrectlyClassified()).isNull();
+        assertThat(result.get(0).getKappaStandardDeviation()).isNull();
+        assertThat(result.get(0).getAreaUnderCurveStandardDeviation()).isNull();
+        assertThat(result.get(0).getSensitivityStandardDeviation()).isNull();
+        assertThat(result.get(0).getSpecificityStandardDeviation()).isNull();
+        assertThat(result.get(0).getProportionCorrectlyClassifiedStandardDeviation()).isNull();
+        assertThat(result.get(0).getThreshold()).isNull();
+        assertThat(result.get(1).getDeviance()).isEqualTo(323.763698135803);
+    }
 }

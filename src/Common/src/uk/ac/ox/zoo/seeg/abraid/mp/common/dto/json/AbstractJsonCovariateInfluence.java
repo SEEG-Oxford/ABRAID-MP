@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AbstractCovariateInfluence;
  */
 public abstract class AbstractJsonCovariateInfluence {
     private String name;
-    private double meanInfluence;
+    private Double meanInfluence;
 
     public AbstractJsonCovariateInfluence(AbstractCovariateInfluence covariateInfluence) {
         // NB. Should use CovariateDisplayName when it is returned from the R model.
@@ -20,7 +20,7 @@ public abstract class AbstractJsonCovariateInfluence {
         return name;
     }
 
-    public double getMeanInfluence() {
+    public Double getMeanInfluence() {
         return meanInfluence;
     }
 }

@@ -7,6 +7,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
 import javax.persistence.*;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsNull.notNullValue;
+
 /**
  * Represents the validation statistics for a submodel in a model run.
  * Copyright (c) 2014 University of Oxford
@@ -78,9 +81,9 @@ public class SubmodelStatistic {
     public SubmodelStatistic() {
     }
 
-    public SubmodelStatistic(double deviance, double rootMeanSquareError, double kappa, double areaUnderCurve,
-                             double sensitivity, double specificity, double proportionCorrectlyClassified,
-                             double threshold) {
+    public SubmodelStatistic(Double deviance, Double rootMeanSquareError, Double kappa, Double areaUnderCurve,
+                             Double sensitivity, Double specificity, Double proportionCorrectlyClassified,
+                             Double threshold) {
         setDeviance(deviance);
         setRootMeanSquareError(rootMeanSquareError);
         setKappa(kappa);
@@ -295,7 +298,11 @@ public class SubmodelStatistic {
     public static JsonModelRunStatistics summarise(List<SubmodelStatistic> submodelStatistics) {
         JsonModelRunStatistics json = new JsonModelRunStatistics();
 
-        if (!submodelStatistics.isEmpty()) {
+        List<SubmodelStatistic> completeSubmodels = filter(
+                having(on(SubmodelStatistic.class).containsAllRequiredPropertiesForSummarising()),
+                filter(notNullValue(), submodelStatistics));
+
+        if (!completeSubmodels.isEmpty()) {
             DescriptiveStatistics devianceStats = new DescriptiveStatistics();
             DescriptiveStatistics rmseStats = new DescriptiveStatistics();
             DescriptiveStatistics kappaStats = new DescriptiveStatistics();
@@ -305,7 +312,7 @@ public class SubmodelStatistic {
             DescriptiveStatistics pccStats = new DescriptiveStatistics();
             DescriptiveStatistics thresholdStats = new DescriptiveStatistics();
 
-            for (SubmodelStatistic submodelStatistic : submodelStatistics) {
+            for (SubmodelStatistic submodelStatistic : completeSubmodels) {
                 devianceStats.addValue(submodelStatistic.getDeviance());
                 rmseStats.addValue(submodelStatistic.getRootMeanSquareError());
                 kappaStats.addValue(submodelStatistic.getKappa());
@@ -335,5 +342,21 @@ public class SubmodelStatistic {
         }
 
         return json;
+    }
+
+    /**
+     * Checks that the submodel statistic contains a value for each of the main field (excludes standard deviations).
+     * @return true if all required fields present, otherwise false.
+     */
+    protected boolean containsAllRequiredPropertiesForSummarising() {
+        return
+                deviance != null &&
+                rootMeanSquareError != null &&
+                kappa != null &&
+                areaUnderCurve != null &&
+                sensitivity != null &&
+                specificity != null &&
+                proportionCorrectlyClassified != null &&
+                threshold != null;
     }
 }

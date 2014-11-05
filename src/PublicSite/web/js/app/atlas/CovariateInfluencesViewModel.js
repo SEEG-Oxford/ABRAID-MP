@@ -12,21 +12,21 @@ define([
     return function (baseUrl) {
         var self = this;
 
-        self.activeRun =  ko.observable();
-        self.covariateInfluences = ko.observable([]);
+        var activeRun =  ko.observable();
+        self.covariateInfluences = ko.observable();
         self.effectCurvesLink = ko.computed(function () {
-            return self.activeRun() ?
-                baseUrl + "atlas/details/modelrun/" + self.activeRun() + "/effectcurves.csv" :
+            return activeRun() ?
+                baseUrl + "atlas/details/modelrun/" + activeRun() + "/effectcurves.csv" :
                 "#";
         }, self);
 
         var ajax;
-
         ko.postbox.subscribe("selected-run", function (run) {
-            self.covariateInfluences([]);
+            activeRun(undefined);
+            self.covariateInfluences(undefined);
 
-            if (run.id) {
-                self.activeRun(run.id);
+            if (run && run.id) {
+                activeRun(run.id);
                 if (ajax) {
                     ajax.abort();
                 }
