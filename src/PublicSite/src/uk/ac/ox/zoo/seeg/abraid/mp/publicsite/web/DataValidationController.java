@@ -120,7 +120,7 @@ public class DataValidationController extends AbstractController {
      * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
@@ -149,7 +149,7 @@ public class DataValidationController extends AbstractController {
      * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
      * @return A HTTP status code response entity.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
@@ -186,7 +186,7 @@ public class DataValidationController extends AbstractController {
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
      * @return A GeoJSON DTO containing the admin units.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
@@ -222,7 +222,7 @@ public class DataValidationController extends AbstractController {
      * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
      * @return A GeoJSON DTO containing the admin units.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
@@ -250,7 +250,7 @@ public class DataValidationController extends AbstractController {
      *               PRESENCE, POSSIBLE_PRESENCE, UNCERTAIN, POSSIBLE_ABSENCE, or ABSENCE.
      * @return A HTTP status code response entity.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
             method = RequestMethod.POST)
