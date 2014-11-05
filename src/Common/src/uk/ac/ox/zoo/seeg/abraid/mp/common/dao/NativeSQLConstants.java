@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 
 /**
  * Contains constants (e.g. queries, table/column names) for use with native SQL routines.
@@ -39,19 +38,6 @@ public final class NativeSQLConstants {
                     "(SELECT (ST_DUMP(a.geom)).geom " + DISEASE_EXTENT_CLAUSE + ") x) " +
             "WHERE disease_group_id = :diseaseGroupId";
 
-    /** Query: Finds the environmental suitability for a disease group to exist at a point. This is taken from the
-        mean prediction raster of the latest successful model run for the disease group. */
-    public static final String ENV_SUITABILITY_QUERY =
-            "SELECT ST_Value(mean_prediction_raster, :geom) " +
-            "FROM model_run " +
-            "WHERE id IN" +
-            "    (SELECT DISTINCT ON (disease_group_id) id" +
-            "    FROM model_run" +
-            "    WHERE disease_group_id = :diseaseGroupId" +
-            "    AND status = '" + ModelRunStatus.COMPLETED + "'" +
-            "    AND mean_prediction_raster IS NOT NULL" +
-            "    ORDER BY disease_group_id, response_date DESC)";
-
     /** Query: Calculates the distance between the specified point and the disease extent of the specified disease
                group, as follows:
                1. ST_ClosestPoint: Find the closest point on the disease extent to the specified point. If the point
@@ -72,11 +58,6 @@ public final class NativeSQLConstants {
             "WHERE name IN" +
             "    (SELECT c.disease_extent_class " + DISEASE_EXTENT_CLAUSE +
             "     AND ST_Intersects(a.geom, :geom))";
-
-    /** Column name: model_run.mean_prediction_raster. */
-    public static final String MEAN_PREDICTION_RASTER_COLUMN_NAME = "mean_prediction_raster";
-    /** Column name: model_run.prediction_uncertainty_raster. */
-    public static final String PREDICTION_UNCERTAINTY_RASTER_COLUMN_NAME = "prediction_uncertainty_raster";
 
     /** Other: Global. */
     public static final String GLOBAL = "global";

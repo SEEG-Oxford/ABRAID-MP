@@ -58,18 +58,6 @@ public class NativeSQLImpl implements NativeSQL {
     }
 
     /**
-     * Finds the suitability of the environment for the specified disease group to exist in the specified location.
-     * This is taken from the mean prediction raster of the latest model run for the disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @param point The location.
-     * @return The environmental suitability, or null if not found.
-     */
-    @Override
-    public Double findEnvironmentalSuitability(int diseaseGroupId, Point point) {
-        return (Double) uniqueResult(ENV_SUITABILITY_QUERY, "diseaseGroupId", diseaseGroupId, "geom", point);
-    }
-
-    /**
      * Calculates the distance between the specified point and the boundaries of the disease extent of the specified
      * disease group. If the specified point is within the disease extent, it returns zero.
      * @param diseaseGroupId The ID of the disease group.
