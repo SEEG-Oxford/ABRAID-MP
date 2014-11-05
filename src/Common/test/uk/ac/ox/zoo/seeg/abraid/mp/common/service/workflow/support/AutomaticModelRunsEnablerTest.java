@@ -59,23 +59,6 @@ public class AutomaticModelRunsEnablerTest {
     }
 
     @Test
-    public void enableAutomaticModelRunsSavesClassChangedDateOnAdminUnitDiseaseExtentClasses() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        AdminUnitDiseaseExtentClass extentClass = new AdminUnitDiseaseExtentClass();
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(Arrays.asList(extentClass));
-
-        // Act
-        automaticModelRunsEnabler.enable(diseaseGroupId);
-
-        // Assert
-        verify(diseaseService).saveAdminUnitDiseaseExtentClass(extentClass);
-        assertThat(extentClass.getClassChangedDate()).isEqualTo(DateTime.now());
-    }
-
-    @Test
     public void enableAutomaticModelRunsAddsValidationParametersToDiseaseOccurrence() throws Exception {
         // Arrange
         int diseaseGroupId = 87;

@@ -55,7 +55,6 @@ public class AutomaticModelRunsEnabler {
         LOGGER.info(String.format(ENABLING_AUTOMATIC_MODEL_RUNS, diseaseGroupId, diseaseGroup.getName()));
 
         saveAutomaticModelRunsStartDate(diseaseGroup, now);
-        setAdminUnitDiseaseExtentClassChangedDate(diseaseGroupId, now);
 
         List<DiseaseOccurrence> occurrences = getOccurrencesWithoutAFinalWeighting(diseaseGroupId);
         addValidationParametersOrWeightings(occurrences);
@@ -66,18 +65,6 @@ public class AutomaticModelRunsEnabler {
         LOGGER.info(String.format(SAVING_AUTOMATIC_MODEL_RUNS_START_DATE, diseaseGroup.getId(), now));
         diseaseGroup.setAutomaticModelRunsStartDate(now);
         diseaseService.saveDiseaseGroup(diseaseGroup);
-    }
-
-    private void setAdminUnitDiseaseExtentClassChangedDate(int diseaseGroupId, DateTime now) {
-        // Update the ClassChangedDate of all AdminUnitDiseaseExtentClasses for this DiseaseGroup
-        // so that all polygons are available for review on DataValidator.
-        LOGGER.info(String.format(SETTING_CLASS_CHANGED_DATE, diseaseGroupId, now));
-        List<AdminUnitDiseaseExtentClass> extentClasses =
-                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-        for (AdminUnitDiseaseExtentClass extentClass : extentClasses) {
-            extentClass.setClassChangedDate(now);
-            diseaseService.saveAdminUnitDiseaseExtentClass(extentClass);
-        }
     }
 
     private List<DiseaseOccurrence> getOccurrencesWithoutAFinalWeighting(int diseaseGroupId) {
