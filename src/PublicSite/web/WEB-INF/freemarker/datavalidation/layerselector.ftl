@@ -19,13 +19,6 @@
         </div>
     </div>
 
-    <div class="alert alert-info" style="display: none" data-bind="visible: notReadyForReview()">
-        <div data-bind="text: showDiseaseExtentLayer() ?
-            'This disease is not ready for disease extent reviews.' :
-            'This disease is not ready for disease occurrence reviews.'">
-        </div>
-    </div>
-
     <#if !userLoggedIn>
         <div class="alert alert-info" style="display: none" data-bind="visible: !noFeaturesToReview()">
             <div data-bind="text: showDiseaseExtentLayer() ?
