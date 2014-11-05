@@ -21,8 +21,8 @@ import java.util.Iterator;
 public class CSVMessageConverter
         extends AbstractHttpMessageConverter<WrappedList<?>> {
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    private static final String CAN_NOT_WRITE_NULL = "Can not write collection containing null";
-    private static final String CAN_NOT_WRITE_MIXED_TYPES = "Can not write collection containing mixed types";
+    private static final String CANNOT_WRITE_NULL = "Cannot write collection containing null";
+    private static final String CANNOT_WRITE_MIXED_TYPES = "Cannot write collection containing mixed types";
     private final CsvMapper csvMapper;
 
     public CSVMessageConverter(CsvMapper csvMapper) {
@@ -33,7 +33,7 @@ public class CSVMessageConverter
     }
 
     /**
-     * Checks if the given class is supported for reading, and if the the given media type is supported.
+     * Checks if the given class is supported for reading, and if the given media type is supported.
      * @param clazz the class to test for support
      * @param mediaType the media type to test for support
      * @return {@code true} if supported; {@code false} otherwise
@@ -45,7 +45,7 @@ public class CSVMessageConverter
     }
 
     /**
-     * Checks if the given class is supported for writing, and if the the given media type is supported.
+     * Checks if the given class is supported for writing, and if the given media type is supported.
      * @param clazz the class to test for support
      * @param mediaType the media type to test for support
      * @return {@code true} if supported; {@code false} otherwise
@@ -62,7 +62,7 @@ public class CSVMessageConverter
      */
     @Override
     protected boolean supports(Class<?> clazz) {
-        // Should not be called, since we override canRead/Write instead\
+        // Should not be called, since we override canRead/canWrite instead
         throw new UnsupportedOperationException();
     }
 
@@ -96,14 +96,14 @@ public class CSVMessageConverter
         while (it.hasNext()) {
             Object entry = it.next();
             if (entry == null) {
-                throw new HttpMessageNotWritableException(CAN_NOT_WRITE_NULL);
+                throw new HttpMessageNotWritableException(CANNOT_WRITE_NULL);
             }
 
             Class<?> entryType = entry.getClass();
             if (listType == null) {
                 listType = entryType;
             } else if (!entryType.equals(listType)) {
-                throw new HttpMessageNotWritableException(CAN_NOT_WRITE_MIXED_TYPES);
+                throw new HttpMessageNotWritableException(CANNOT_WRITE_MIXED_TYPES);
             }
         }
 
