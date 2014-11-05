@@ -74,24 +74,88 @@ public class SubmodelStatisticTest {
         assertThat(result.getPcc()).isEqualTo(8.0);
         assertThat(result.getThreshold()).isEqualTo(9.0);
 
-        assertSd(result.getDevianceSd());
-        assertSd(result.getRmseSd());
-        assertSd(result.getKappaSd());
-        assertSd(result.getAucSd());
-        assertSd(result.getSensSd());
-        assertSd(result.getSpecSd());
-        assertSd(result.getPccSd());
-        assertSd(result.getThresholdSd());
+        assertSd(result.getDevianceSd(), 2);
+        assertSd(result.getRmseSd(), 2);
+        assertSd(result.getKappaSd(), 2);
+        assertSd(result.getAucSd(), 2);
+        assertSd(result.getSensSd(), 2);
+        assertSd(result.getSpecSd(), 2);
+        assertSd(result.getPccSd(), 2);
+        assertSd(result.getThresholdSd(), 2);
     }
 
-    private void assertSd(double sd) {
-        assertThat(sd).isEqualTo(Math.sqrt(2));
+    private void assertSd(double sd, int count) {
+        assertThat(sd).isEqualTo(Math.sqrt(count));
     }
 
     @Test
     public void summariseReturnsExpectedJsonFromEmptyList() {
         // Act
         JsonModelRunStatistics result = SubmodelStatistic.summarise(new ArrayList<SubmodelStatistic>());
+
+        // Assert
+        assertThat(result.getDeviance()).isNull();
+        assertThat(result.getRmse()).isNull();
+        assertThat(result.getKappa()).isNull();
+        assertThat(result.getAuc()).isNull();
+        assertThat(result.getSens()).isNull();
+        assertThat(result.getSpec()).isNull();
+        assertThat(result.getPcc()).isNull();
+        assertThat(result.getThreshold()).isNull();
+
+        assertThat(result.getDevianceSd()).isNull();
+        assertThat(result.getRmseSd()).isNull();
+        assertThat(result.getKappaSd()).isNull();
+        assertThat(result.getAucSd()).isNull();
+        assertThat(result.getSensSd()).isNull();
+        assertThat(result.getSpecSd()).isNull();
+        assertThat(result.getPccSd()).isNull();
+        assertThat(result.getThresholdSd()).isNull();
+    }
+
+    @Test
+    public void summariseReturnsExpectedJsonWhenNullsPresent() {
+        // Arrange
+        SubmodelStatistic stat1 = new SubmodelStatistic(1.0, 2.0, null, 4.0, 5.0, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat2 = new SubmodelStatistic(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
+
+        // Act
+        JsonModelRunStatistics result = SubmodelStatistic.summarise(Arrays.asList(stat1, stat2));
+
+        // Assert - the whole first submodel should be excluded, so results just equal the 2nd model
+        assertThat(result.getDeviance()).isEqualTo(stat2.getDeviance());
+        assertThat(result.getRmse()).isEqualTo(stat2.getRootMeanSquareError());
+        assertThat(result.getKappa()).isEqualTo(stat2.getKappa());
+        assertThat(result.getAuc()).isEqualTo(stat2.getAreaUnderCurve());
+        assertThat(result.getSens()).isEqualTo(stat2.getSensitivity());
+        assertThat(result.getSpec()).isEqualTo(stat2.getSpecificity());
+        assertThat(result.getPcc()).isEqualTo(stat2.getProportionCorrectlyClassified());
+        assertThat(result.getThreshold()).isEqualTo(stat2.getThreshold());
+
+        assertThat(result.getDevianceSd()).isEqualTo(0);
+        assertThat(result.getRmseSd()).isEqualTo(0);
+        assertThat(result.getKappaSd()).isEqualTo(0);
+        assertThat(result.getAucSd()).isEqualTo(0);
+        assertThat(result.getSensSd()).isEqualTo(0);
+        assertThat(result.getSpecSd()).isEqualTo(0);
+        assertThat(result.getPccSd()).isEqualTo(0);
+        assertThat(result.getThresholdSd()).isEqualTo(0);
+    }
+
+    @Test
+    public void summariseReturnsExpectedJsonWhenNoCompleteSubmodelsPresent() {
+        // Arrange
+        SubmodelStatistic stat1 = new SubmodelStatistic(null, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat2 = new SubmodelStatistic(1.0, null, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat3 = new SubmodelStatistic(1.0, 2.0, null, 4.0, 5.0, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat4 = new SubmodelStatistic(1.0, 2.0, 3.0, null, 5.0, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat5 = new SubmodelStatistic(1.0, 2.0, 3.0, 4.0, null, 6.0, 7.0, 8.0);
+        SubmodelStatistic stat6 = new SubmodelStatistic(1.0, 2.0, 3.0, 4.0, 5.0, null, 7.0, 8.0);
+        SubmodelStatistic stat7 = new SubmodelStatistic(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, null, 8.0);
+        SubmodelStatistic stat8 = new SubmodelStatistic(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, null);
+
+        // Act
+        JsonModelRunStatistics result = SubmodelStatistic.summarise(Arrays.asList(stat1, stat2, stat3, stat4, stat5, stat6, stat7, stat8, null));
 
         // Assert
         assertThat(result.getDeviance()).isNull();
