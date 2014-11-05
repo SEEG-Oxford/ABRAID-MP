@@ -63,7 +63,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockDiseaseOccurrence(1, defaultDiseaseGroup(), defaultLocation(), (new DateTime(0)).withZone(DateTimeZone.UTC), defaultAlert(), 0.5);
     }
 
-    private static DiseaseGroup defaultDiseaseGroup() {
+    public static DiseaseGroup defaultDiseaseGroup() {
         return mockDiseaseGroup("diseaseGroupPublicName", true);
     }
 

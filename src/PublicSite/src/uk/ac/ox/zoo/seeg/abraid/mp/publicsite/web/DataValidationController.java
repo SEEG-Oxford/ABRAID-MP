@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
+
 /**
  * Controller for the expert data validation map page.
  * Copyright (c) 2014 University of Oxford
@@ -69,14 +71,16 @@ public class DataValidationController extends AbstractController {
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);
-        boolean userIsSEEG = userLoggedIn && checkIfSeegMember(user);
+
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
+
         if (userLoggedIn) {
             int expertId = user.getId();
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
             List<ValidatorDiseaseGroup> diseaseInterests = getSortedDiseaseInterests(expertId);
+
             model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
                     getSortedValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
@@ -85,10 +89,12 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
+
         model.addAttribute("userLoggedIn", userLoggedIn);
-        model.addAttribute("userSeeg", userIsSEEG);
+        model.addAttribute("userSeeg", userIsSeegMember(user));
         model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
+
         return "datavalidation/content";
     }
 
@@ -130,16 +136,27 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<DiseaseOccurrence> occurrences;
+        boolean userIsSEEG = userIsSeegMember(user);
 
         try {
-            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(user.getId(),
-                    validatorDiseaseGroupId);
+            List<DiseaseOccurrence> occurrences = getOccurrences(user.getId(), userIsSEEG, validatorDiseaseGroupId);
+            return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
 
-        return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
+    // Only SEEG users may view occurrences of disease groups during setup phase.
+    // Other external users may only view occurrences of disease groups with automatic model runs enabled.
+    private List<DiseaseOccurrence> getOccurrences(Integer userId, boolean userIsSEEG, Integer validatorDiseaseGroupId) {
+        List<DiseaseOccurrence> occurrences =
+                expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(userId, validatorDiseaseGroupId);
+        if (userIsSEEG) {
+            return occurrences;
+        } else {
+            return filter(having(on(DiseaseOccurrence.class).getDiseaseGroup().isAutomaticModelRunsEnabled()),
+                   occurrences);
+        }
     }
 
     /**
@@ -196,24 +213,29 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        boolean userIsSEEG = checkIfSeegMember(user);
+        boolean userIsSEEG = userIsSeegMember(user);
 
-        // Only SEEG members may view disease extent for disease groups still in setup phase
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        if (diseaseGroup == null || (!diseaseGroup.isAutomaticModelRunsEnabled() && !userIsSEEG)) {
+        if (diseaseGroup == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<AdminUnitDiseaseExtentClass> diseaseExtent;
-        List<AdminUnitReview> reviews;
-        try {
-            diseaseExtent = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-            reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        GeoJsonDiseaseExtentFeatureCollection featureCollection = new GeoJsonDiseaseExtentFeatureCollection();
 
-        return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews), HttpStatus.OK);
+        // Only SEEG members may view disease extent for disease groups still in setup phase.
+        // Other users see an empty extent.
+        if (diseaseGroup.isAutomaticModelRunsEnabled() || userIsSEEG) {
+            List<AdminUnitDiseaseExtentClass> diseaseExtent;
+            List<AdminUnitReview> reviews;
+            try {
+                diseaseExtent = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+                reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
+                featureCollection = new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(featureCollection, HttpStatus.OK);
     }
 
     /**
@@ -258,7 +280,7 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
                                                 String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        boolean userIsSEEG = checkIfSeegMember(user);
+        boolean userIsSEEG = userIsSeegMember(user);
         Integer expertId = user.getId();
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -266,6 +288,7 @@ public class DataValidationController extends AbstractController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
+        // Only SEEG members may submit disease extent reviews for disease groups still in setup phase.
         if (!userIsSEEG && !diseaseGroup.isAutomaticModelRunsEnabled()) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
@@ -284,7 +307,7 @@ public class DataValidationController extends AbstractController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    private boolean checkIfSeegMember(PublicSiteUser user) {
+    private boolean userIsSeegMember(PublicSiteUser user) {
         if (user == null) {
             return false;
         } else {

@@ -166,13 +166,15 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void getDiseaseOccurrencesForReviewByCurrentUserReturnsCorrectData() throws Exception {
+    public void getDiseaseOccurrencesForReviewByCurrentUserReturnsAllOccurrencesForSeegUser() throws Exception {
         // Arrange
+        boolean userIsSEEG = true;
+
         List<DiseaseOccurrence> occurrences = new ArrayList<>();
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
 
-        ExpertService expertService = createExpertService();
+        ExpertService expertService = createExpertService(userIsSEEG);
         when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenReturn(occurrences);
 
         DataValidationController target = createTarget(null, null, expertService);
@@ -184,6 +186,44 @@ public class DataValidationControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSameSizeAs(occurrences);
+    }
+
+
+    @Test
+    public void getDiseaseOccurrencesForReviewByCurrentUserReturnsCorrectOccurrenceForExternalUser() throws Exception {
+        // Arrange
+        boolean userIsSEEG = false;
+
+        // Occurrence of disease group where automatic model runs are not enabled.
+        DiseaseOccurrence o1 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
+        when(o1.getId()).thenReturn(1);
+
+        DiseaseOccurrence o2 = mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled();
+        when(o2.getId()).thenReturn(2);
+
+        ExpertService expertService = createExpertService(userIsSEEG);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenReturn(Arrays.asList(o1, o2));
+
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
+                target.getDiseaseOccurrencesForReviewByCurrentUser(1);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getFeatures()).hasSize(1);
+        assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(2);
+    }
+
+    private DiseaseOccurrence mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled() {
+        DiseaseOccurrence occurrence = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
+
+        DiseaseGroup diseaseGroup = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseGroup();
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        when(occurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
+
+        return occurrence;
     }
 
     @Test
@@ -435,8 +475,13 @@ public class DataValidationControllerTest {
     }
 
     private ExpertService createExpertService() {
+        return createExpertService(false);
+    }
+
+    private ExpertService createExpertService(boolean userIsSeeg) {
         ExpertService returnedExpertService = mock(ExpertService.class);
         Expert returnedExpert = mock(Expert.class);
+        when(returnedExpert.isSeegMember()).thenReturn(userIsSeeg);
         when(returnedExpertService.getExpertById(1)).thenReturn(returnedExpert);
         return returnedExpertService;
     }
