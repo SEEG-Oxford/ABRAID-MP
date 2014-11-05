@@ -35,7 +35,8 @@ define([
                 if (ajax) {
                     ajax.abort();
                 }
-                ajax = $.getJSON(baseUrl + "datavalidation/diseases/" + diseaseGroupId + "/adminunits/" + adminUnit.id + "/occurrences")
+                ajax = $.getJSON(
+                baseUrl + "datavalidation/diseases/" + diseaseGroupId + "/adminunits/" + adminUnit.id + "/occurrences")
                     .done(function (data) {
                         var properties = _(data.features).pluck("properties");
                         var sortedProperties = _(properties).sortBy("occurrenceDate").reverse();
