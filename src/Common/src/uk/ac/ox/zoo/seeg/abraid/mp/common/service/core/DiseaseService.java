@@ -130,6 +130,16 @@ public interface DiseaseService {
                                                                        DateTime startDate, DateTime endDate);
 
     /**
+     * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by the disease
+     * group and admin unit gaul code pair).
+     * @param diseaseGroup The disease group the admin unit disease extent class represents.
+     * @param gaulCode The gaul code the admin unit disease extent class represents.
+     * @return The list of latest disease occurrences for the specified admin unit disease extent class.
+     */
+    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
+                                                                               Integer gaulCode);
+
+    /**
      * Gets the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease extent.

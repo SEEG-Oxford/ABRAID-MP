@@ -120,7 +120,7 @@ public class DataValidationController extends AbstractController {
      * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
@@ -149,7 +149,7 @@ public class DataValidationController extends AbstractController {
      * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
      * @return A HTTP status code response entity.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
@@ -186,7 +186,7 @@ public class DataValidationController extends AbstractController {
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
      * @return A GeoJSON DTO containing the admin units.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
@@ -217,6 +217,32 @@ public class DataValidationController extends AbstractController {
     }
 
     /**
+     * Returns the latest disease occurrences corresponding to an admin unit.
+     * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
+    @ResponseBody
+    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
+        getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(@PathVariable Integer diseaseGroupId,
+                                                                  @PathVariable Integer gaulCode) {
+        try {
+            DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+            return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(
+                    diseaseService.getLatestOccurrencesForAdminUnitDiseaseExtentClass(diseaseGroup, gaulCode)
+            ), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
      * Saves the expert's review to the database.
      * @param diseaseGroupId The id of the disease group.
      * @param gaulCode The gaulCode of the admin unit being reviewed.
@@ -224,7 +250,7 @@ public class DataValidationController extends AbstractController {
      *               PRESENCE, POSSIBLE_PRESENCE, UNCERTAIN, POSSIBLE_ABSENCE, or ABSENCE.
      * @return A HTTP status code response entity.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
             method = RequestMethod.POST)
@@ -260,14 +286,14 @@ public class DataValidationController extends AbstractController {
 
     private boolean checkIfSeegMember(PublicSiteUser user) {
         if (user == null) {
-            throw new IllegalArgumentException("No logged in user");
+            return false;
+        } else {
+            Expert expert = expertService.getExpertById(user.getId());
+            if (expert == null) {
+                throw new IllegalArgumentException("Logged in user does not have an associated expert.");
+            } else {
+                return expert.isSeegMember();
+            }
         }
-
-        Expert expert = expertService.getExpertById(user.getId());
-        if (expert == null) {
-            throw new IllegalArgumentException("Logged in user does not have an associated expert.");
-        }
-
-        return expert.isSeegMember();
     }
 }

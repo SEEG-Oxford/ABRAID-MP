@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
 import java.util.List;
 
@@ -9,6 +10,18 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public interface AdminUnitDiseaseExtentClassDao {
+
+    /**
+     * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by disease group
+     * id and admin unit gaul code).
+     * @param diseaseGroupId The id of the disease group the admin unit disease extent class represents.
+     * @param isGlobal True if the disease group is considered global, false if considered tropical.
+     * @param gaulCode The gaul code the admin unit disease extent class represents.
+     * @return The list of latest disease occurrences for the given admin unit disease extent class.
+     */
+    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+            Integer diseaseGroupId, boolean isGlobal, Integer gaulCode);
+
     /**
      * Gets all global AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.
      * @param diseaseGroupId The id of the disease group.

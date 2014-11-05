@@ -41,16 +41,36 @@ define([
                 expect(vm.occurrences()).toEqual([]);
             });
 
-            it("sets its value when the 'admin-unit-selected' event is fired", function () {
+            it("sets its value via an ajax call when the 'admin-unit-selected' event is fired", function () {
                 // Arrange
-                var occurrences = [1, 2, 3];
-                var data = { occurrences: occurrences };
                 var vm = new LatestOccurrencesViewModel();
+
+                var adminUnit = { id: 123, count: 4 };
+
+                // JSON format is a feature collection, with up to 5 occurrences.
+                var json = { features: [
+                    { properties: { id: 1, occurrenceDate: "01-10-2014" } },
+                    { properties: { id: 2, occurrenceDate: "03-11-2014" } },
+                    { properties: { id: 3, occurrenceDate: "05-12-2014" } }
+                ]};
+                // The properties are extracted from each feature, and the list sorted by occurrence date.
+                var expectedOccurrences = [
+                    { id: 3, occurrenceDate: "05-12-2014" },
+                    { id: 2, occurrenceDate: "03-11-2014" },
+                    { id: 1, occurrenceDate: "01-10-2014" }
+                ];
+
                 // Act
-                ko.postbox.publish("admin-unit-selected", data);
+                ko.postbox.publish("admin-unit-selected", adminUnit);
+                jasmine.Ajax.requests.mostRecent().response({
+                    "status": 200,
+                    "contentType": "application/json",
+                    "responseText": JSON.stringify(json)
+                });
+
                 // Assert
                 expect(vm.occurrences().length).toBe(3);
-                expect(vm.occurrences()).toBe(occurrences);
+                expect(vm.occurrences()).toEqual(expectedOccurrences);
             });
         });
 

@@ -284,12 +284,9 @@ html, body, #dataValidation {
     }
 }
 #modelRunDetails div.leaflet-bar.leaflet-control a {
-    width: auto;
+    min-width: 195px;
     padding: 0 5px;
-    min-width: 215px;
-}
-#modelRunDetails div.leaflet-bar.leaflet-control a i {
-    margin-right: 5px;
+    text-align: left;
 }
 #covariatesAndStatistics table {
     margin: 0;

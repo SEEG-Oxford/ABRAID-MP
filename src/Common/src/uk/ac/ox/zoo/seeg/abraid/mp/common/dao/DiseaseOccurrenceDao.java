@@ -82,12 +82,11 @@ public interface DiseaseOccurrenceDao {
      * value, and must have a final weighting. If null, the validation and final weightings are ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
-     * @param isGlobal True if the disease group is global, otherwise false.
      * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
-           Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate, boolean isGlobal,
+           Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
            boolean useGoldStandardOccurrences);
 
     /**

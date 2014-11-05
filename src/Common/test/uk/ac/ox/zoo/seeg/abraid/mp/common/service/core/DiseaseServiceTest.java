@@ -550,7 +550,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
 
         when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
-                minimumOccurrenceDate, isGlobal, useGoldStandardOccurrences)).thenReturn(expectedOccurrences);
+                minimumOccurrenceDate, useGoldStandardOccurrences)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(

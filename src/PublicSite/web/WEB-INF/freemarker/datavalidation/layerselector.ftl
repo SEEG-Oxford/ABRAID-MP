@@ -1,14 +1,14 @@
 <div id="layerSelector">
     <h4 class="hidden" data-bind="css: { 'hidden': false }">You are validating
-        <select data-bind="options: validationTypes, value: selectedType"></select>
+        <select data-bind="options: validationTypes, value: selectedType, preventBubble: true"></select>
         of
-        <select data-bind="foreach: groups, value: selectedDiseaseSet">
+        <select data-bind="foreach: groups, value: selectedDiseaseSet, preventBubble: true">
             <optgroup data-bind="attr: {label: groupLabel}, foreach: children">
                 <option data-bind="html: name, option: $data"></option>
             </optgroup>
         </select>
         <span data-bind="if: showDiseaseExtentLayer">
-            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease"></select>
+            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease, preventBubble: true"></select>
         </span>
     </h4>
 

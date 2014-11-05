@@ -12,8 +12,8 @@
     </div>
     <!-- /ko -->
     <div class="leaflet-bar leaflet-control">
-        <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; padding: 0 5px; width: auto; height: auto;">
-            <i class="fa fa-lg fa-bar-chart"></i> Model Run Covariates and Statistics
+        <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; width: auto; height: auto;">
+            <i class="fa fa-lg fa-bar-chart-o"></i> View Covariates and Statistics
         </a>
         <div></div>
         <div class="panel-collapse collapse" id="covariatesAndStatistics">

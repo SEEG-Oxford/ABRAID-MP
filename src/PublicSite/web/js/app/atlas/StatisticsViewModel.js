@@ -14,13 +14,18 @@ define([
 
         self.statistics = ko.observable({});
 
+        var ajax;
+
         ko.postbox.subscribe("selected-run", function (run) {
+            self.statistics({});
+
             if (run.id) {
-                $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/statistics")
+                if (ajax) {
+                    ajax.abort();
+                }
+                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/statistics")
                     .done(function (data) {
                         self.statistics(data);
-                    }).fail(function () {
-                        self.statistics({});
                     });
             }
         });

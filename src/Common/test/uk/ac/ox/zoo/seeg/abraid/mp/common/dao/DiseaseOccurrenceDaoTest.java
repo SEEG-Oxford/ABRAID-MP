@@ -328,27 +328,27 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, false, 49);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, 49);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithAllParameters() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 28);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, 28);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithGlobalDisease() {
-        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), true, false, 4);
+        getDiseaseOccurrencesForDiseaseExtent(277, 0.6, new DateTime("2014-02-27"), false, 4);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithSomeWeightingsNull() {
-        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, false, 28);
+        getDiseaseOccurrencesForDiseaseExtent(87, 0.6, new DateTime("2014-02-25"), false, 28);
     }
 
     @Test
     public void getDiseaseOccurrencesForDiseaseExtentUsingGoldStandardOccurrences() {
-        getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, true, 2);
+        getDiseaseOccurrencesForDiseaseExtent(87, null, null, true, 2);
     }
 
     @Test
@@ -563,7 +563,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
-                                                       DateTime minimumOccurrenceDate, boolean isGlobal,
+                                                       DateTime minimumOccurrenceDate,
                                                        boolean useGoldStandardOccurrences,
                                                        int expectedOccurrenceCount) {
         // Arrange
@@ -572,7 +572,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Act
         List<DiseaseOccurrence> occurrences =
                 diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeight,
-                        minimumOccurrenceDate, isGlobal, useGoldStandardOccurrences);
+                        minimumOccurrenceDate, useGoldStandardOccurrences);
 
         // Assert
         assertThat(occurrences).hasSize(expectedOccurrenceCount);

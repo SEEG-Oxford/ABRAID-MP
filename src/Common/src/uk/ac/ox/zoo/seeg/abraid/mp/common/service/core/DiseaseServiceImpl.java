@@ -196,8 +196,7 @@ public class DiseaseServiceImpl implements DiseaseService {
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean useGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId),
-            useGoldStandardOccurrences);
+            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, useGoldStandardOccurrences);
     }
 
     /**
@@ -243,6 +242,20 @@ public class DiseaseServiceImpl implements DiseaseService {
     public List<DiseaseOccurrence> getDiseaseOccurrencesForTriggeringModelRun(int diseaseGroupId,
                                                                               DateTime startDate, DateTime endDate) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
+    }
+
+    /**
+     * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by the disease
+     * group and admin unit gaul code pair).
+     * @param diseaseGroup The disease group the admin unit disease extent class represents.
+     * @param gaulCode The gaul code the admin unit disease extent class represents.
+     * @return The list of latest disease occurrences for the specified admin unit disease extent class.
+     */
+    @Override
+    public List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
+                                                                                      Integer gaulCode) {
+        return adminUnitDiseaseExtentClassDao.getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+                diseaseGroup.getId(), diseaseGroup.isGlobal(), gaulCode);
     }
 
     /**

@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonNamedCrs;
 import java.util.List;
 
 /**
- * A DTO to express an AdminUnit, with properties referring to the DIseaseGroup, as a "Feature".
+ * A DTO to express an AdminUnit, with properties referring to the DiseaseGroup, as a "Feature".
  * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseExtentFeature extends GeoJsonFeature

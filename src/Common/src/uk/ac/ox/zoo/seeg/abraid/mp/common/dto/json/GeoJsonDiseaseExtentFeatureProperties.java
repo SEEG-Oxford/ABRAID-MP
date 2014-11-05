@@ -1,12 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
-import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
 import java.util.List;
@@ -31,9 +29,6 @@ public class GeoJsonDiseaseExtentFeatureProperties {
     @JsonView(DisplayJsonView.class)
     private boolean needsReview;
 
-    @JsonView(DisplayJsonView.class)
-    private List<GeoJsonDiseaseOccurrenceFeature> latestOccurrences;
-
     public GeoJsonDiseaseExtentFeatureProperties(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
                                                  List<AdminUnitReview> reviews)
     {
@@ -41,7 +36,6 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         setDiseaseExtentClass(formatDisplayString(adminUnitDiseaseExtentClass.getDiseaseExtentClass().getName()));
         setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
         setOccurrenceCount(adminUnitDiseaseExtentClass.getOccurrenceCount());
-        setLatestOccurrences(convertOccurrences(adminUnitDiseaseExtentClass.getLatestOccurrences()));
     }
 
     private String formatDisplayString(String s) {
@@ -67,15 +61,6 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return max(reviewsOfAdminUnit, on(AdminUnitReview.class).getCreatedDate());
     }
 
-    private List<GeoJsonDiseaseOccurrenceFeature> convertOccurrences(List<DiseaseOccurrence> occurrences) {
-        return convert(occurrences, new Converter<DiseaseOccurrence, GeoJsonDiseaseOccurrenceFeature>() {
-            @Override
-            public GeoJsonDiseaseOccurrenceFeature convert(DiseaseOccurrence o) {
-                return new GeoJsonDiseaseOccurrenceFeature(o);
-            }
-        });
-    }
-
     public String getName() {
         return name;
     }
@@ -98,14 +83,6 @@ public class GeoJsonDiseaseExtentFeatureProperties {
 
     public void setOccurrenceCount(Integer occurrenceCount) {
         this.occurrenceCount = occurrenceCount;
-    }
-
-    public List<GeoJsonDiseaseOccurrenceFeature> getLatestOccurrences() {
-        return latestOccurrences;
-    }
-
-    public void setLatestOccurrences(List<GeoJsonDiseaseOccurrenceFeature> latestOccurrences) {
-        this.latestOccurrences = latestOccurrences;
     }
 
     /**
