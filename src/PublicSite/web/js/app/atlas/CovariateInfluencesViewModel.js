@@ -12,7 +12,13 @@ define([
     return function (baseUrl) {
         var self = this;
 
+        self.activeRun =  ko.observable();
         self.covariateInfluences = ko.observable([]);
+        self.effectCurvesLink = ko.computed(function () {
+            return self.activeRun() ?
+                baseUrl + "atlas/details/modelrun/" + self.activeRun() + "/effectcurves.csv" :
+                "#";
+        }, self);
 
         var ajax;
 
@@ -20,6 +26,7 @@ define([
             self.covariateInfluences([]);
 
             if (run.id) {
+                self.activeRun(run.id);
                 if (ajax) {
                     ajax.abort();
                 }

@@ -4,6 +4,8 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for JsonCovariateInfluence.
@@ -16,7 +18,9 @@ public class JsonCovariateInfluenceTest {
         String name = "upr_p";
         double meanInfluence = 45.94;
 
-        CovariateInfluence covariateInfluence = new CovariateInfluence(name, meanInfluence);
+        CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
+        when(covariateInfluence.getCovariateName()).thenReturn(name);
+        when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
 
         // Act
         JsonCovariateInfluence result = new JsonCovariateInfluence(covariateInfluence);

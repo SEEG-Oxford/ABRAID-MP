@@ -95,6 +95,11 @@
                     </table>
                     <!-- /ko -->
                 </div>
+                <!-- ko with:covariateInfluencesViewModel -->
+                <div style="text-align: center;">
+                    <a class="leaflet-panel-button" data-bind="attr: { href: effectCurvesLink }" target="_blank" title="Curves">Download effect curve data</a>
+                </div>
+                <!-- /ko -->
             </div>
         </div>
     </div>

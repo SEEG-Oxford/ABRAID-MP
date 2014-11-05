@@ -3,12 +3,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.ArrayList;
@@ -163,6 +162,84 @@ public class ModelRunDetailsControllerTest {
 
     }
 
+    @Test
+    public void getEffectCurveCovariateInfluencesReturnsBadRequestIfModelDoesNotExist() throws Exception {
+        // Arrange
+        String name = "modelRun5";
+        ModelRunService modelRunService = mockModelRunService(name, null);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getEffectCurveCovariateInfluencesReturnsBadRequestIfModelIsNotComplete() throws Exception {
+        // Arrange
+        String name = "modelRun6";
+
+        ModelRun modelRun = mock(ModelRun.class);
+        when(modelRun.getStatus()).thenReturn(ModelRunStatus.IN_PROGRESS);
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getEffectCurveCovariateInfluencesReturnsEmptyDTOIfNoEffectCurveCovariateInfluences() throws Exception {
+        // Arrange
+        String name = "modelRun7";
+        ModelRun modelRun = mockCompletedModelRunWithEffectCurve(new ArrayList<EffectCurveCovariateInfluence>());
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        WrappedList<JsonEffectCurveCovariateInfluence> body =
+                (WrappedList<JsonEffectCurveCovariateInfluence>) response.getBody();
+        assertThat(body.getList()).isEmpty();
+    }
+
+    @Test
+    public void getEffectCurveCovariateInfluencesReturnsExpectedDTOs() throws Exception {
+        // Arrange
+        String name = "modelRun7";
+        EffectCurveCovariateInfluence covariateInfluence = new EffectCurveCovariateInfluence();
+        covariateInfluence.setCovariateName("Name");
+        covariateInfluence.setCovariateValue(1.23);
+        covariateInfluence.setLowerQuantile(2.3);
+        covariateInfluence.setUpperQuantile(3.2);
+        covariateInfluence.setMeanInfluence(3.21);
+        ModelRun modelRun = mockCompletedModelRunWithEffectCurve(Arrays.asList(covariateInfluence));
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        WrappedList<JsonEffectCurveCovariateInfluence> body =
+                (WrappedList<JsonEffectCurveCovariateInfluence>) response.getBody();
+        assertThat(body.getList()).hasSize(1);
+        assertThat(body.getList().get(0).getName()).isEqualTo("Name");
+        assertThat(body.getList().get(0).getMeanInfluence()).isEqualTo(3.21);
+        assertThat(body.getList().get(0).getLowerQuantile()).isEqualTo(2.3);
+        assertThat(body.getList().get(0).getUpperQuantile()).isEqualTo(3.2);
+        assertThat(body.getList().get(0).getCovariateValue()).isEqualTo(1.23);
+    }
+
     private ModelRun mockCompletedModelRunWithStatistics(List<SubmodelStatistic> submodelStatistics) {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
@@ -174,6 +251,14 @@ public class ModelRunDetailsControllerTest {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
         when(modelRun.getCovariateInfluences()).thenReturn(covariateInfluences);
+        return modelRun;
+    }
+
+    private ModelRun mockCompletedModelRunWithEffectCurve(
+            List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
+        ModelRun modelRun = mock(ModelRun.class);
+        when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
+        when(modelRun.getEffectCurveCovariateInfluences()).thenReturn(effectCurveCovariateInfluences);
         return modelRun;
     }
 
