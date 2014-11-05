@@ -139,7 +139,7 @@ public class CSVMessageConverterTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(HttpMessageNotWritableException.class);
-        assertThat(caughtException()).hasMessage("Can not write collection containing mixed types");
+        assertThat(caughtException()).hasMessage("Cannot write collection containing mixed types");
     }
 
     @Test
@@ -155,7 +155,7 @@ public class CSVMessageConverterTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(HttpMessageNotWritableException.class);
-        assertThat(caughtException()).hasMessage("Can not write collection containing null");
+        assertThat(caughtException()).hasMessage("Cannot write collection containing null");
     }
 
     ///CHECKSTYLE:OFF VisibilityModifier|JavadocType|FinalClass
