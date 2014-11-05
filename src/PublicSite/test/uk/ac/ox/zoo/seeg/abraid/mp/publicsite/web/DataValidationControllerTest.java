@@ -279,13 +279,30 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitReviewReturnsHttpNoContentForValidInputs() {
+    public void submitDiseaseOccurrenceReviewReturnsForbiddenForNonSeegUserIfDuringDiseaseSetUp() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
+
+        ExpertService expertService = createExpertService();
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void submitReviewReturnsHttpNoContentForValidInputsForSeegUser() {
         // Arrange
         DiseaseService diseaseService = createDiseaseService();
         when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
                 .thenReturn(true);
 
-        ExpertService expertService = createExpertService();
+        ExpertService expertService = createExpertService(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         DataValidationController target = createTarget(null, diseaseService, expertService);
@@ -472,6 +489,19 @@ public class DataValidationControllerTest {
 
     private DiseaseService createDiseaseService() {
         return mock(DiseaseService.class);
+    }
+
+    private DiseaseService createDiseaseServiceWithOccurrence() {
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
+
+        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(false);
+        when(occurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
+        when(diseaseService.getDiseaseOccurrenceById(anyInt())).thenReturn(occurrence);
+        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
+                .thenReturn(true);
+        return diseaseService;
     }
 
     private ExpertService createExpertService() {

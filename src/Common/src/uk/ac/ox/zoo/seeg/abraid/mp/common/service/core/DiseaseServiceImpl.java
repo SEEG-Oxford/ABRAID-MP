@@ -150,6 +150,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the disease occurrence with the specified ID.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @return The disease occurrence.
+     */
+    @Override
+    public DiseaseOccurrence getDiseaseOccurrenceById(Integer diseaseOccurrenceId) {
+        return diseaseOccurrenceDao.getById(diseaseOccurrenceId);
+    }
+
+    /**
      * Gets disease occurrences with the specified IDs.
      * @param diseaseOccurrenceIds The disease occurrence IDs.
      * @return The disease occurrences with the specified IDs.

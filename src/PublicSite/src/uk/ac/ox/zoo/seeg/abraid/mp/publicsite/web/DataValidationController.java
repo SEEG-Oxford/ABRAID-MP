@@ -136,10 +136,9 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        boolean userIsSEEG = userIsSeegMember(user);
 
         try {
-            List<DiseaseOccurrence> occurrences = getOccurrences(user.getId(), userIsSEEG, validatorDiseaseGroupId);
+            List<DiseaseOccurrence> occurrences = getOccurrences(user, validatorDiseaseGroupId);
             return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -148,10 +147,10 @@ public class DataValidationController extends AbstractController {
 
     // Only SEEG users may view occurrences of disease groups during setup phase.
     // Other external users may only view occurrences of disease groups with automatic model runs enabled.
-    private List<DiseaseOccurrence> getOccurrences(Integer userId, boolean userIsSEEG, Integer validatorDiseaseGroupId) {
+    private List<DiseaseOccurrence> getOccurrences(PublicSiteUser user, Integer validatorDiseaseGroupId) {
         List<DiseaseOccurrence> occurrences =
-                expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(userId, validatorDiseaseGroupId);
-        if (userIsSEEG) {
+                expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(user.getId(), validatorDiseaseGroupId);
+        if (userIsSeegMember(user)) {
             return occurrences;
         } else {
             return filter(having(on(DiseaseOccurrence.class).getDiseaseGroup().isAutomaticModelRunsEnabled()),
@@ -176,6 +175,12 @@ public class DataValidationController extends AbstractController {
                                                         String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Integer expertId = user.getId();
+
+        // Only SEEG members may submit disease occurrence reviews for disease groups still in setup phase.
+        DiseaseOccurrence occurrence = diseaseService.getDiseaseOccurrenceById(occurrenceId);
+        if (!userIsSeegMember(user) && !occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
 
         // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
         // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
