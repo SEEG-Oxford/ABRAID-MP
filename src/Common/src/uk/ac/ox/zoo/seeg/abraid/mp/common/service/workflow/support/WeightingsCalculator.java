@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
@@ -51,11 +50,10 @@ public class WeightingsCalculator {
      * Get every disease occurrence point that has had new reviews submitted since the last recalculation.
      * Calculate its new weighting, by taking the weighted average of every expert review in the database (not just the
      * new reviews) and shifting it to be between 0 and 1.
-     * @param lastModelRunPrepDate The date on which the model was last run for the disease group.
      * @param diseaseGroupId The id of the disease group.
      */
-    public void updateDiseaseOccurrenceExpertWeightings(DateTime lastModelRunPrepDate, int diseaseGroupId) {
-        List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(lastModelRunPrepDate, diseaseGroupId);
+    public void updateDiseaseOccurrenceExpertWeightings(int diseaseGroupId) {
+        List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(diseaseGroupId);
         if (allReviews.isEmpty()) {
             logger.info(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS);
         } else {
@@ -63,9 +61,8 @@ public class WeightingsCalculator {
         }
     }
 
-    private List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroup(DateTime lastModelRunPrepDate,
-                                                                       int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate, diseaseGroupId);
+    private List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroup(int diseaseGroupId) {
+        return diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
     }
 
     private void calculateNewDiseaseOccurrenceExpertWeightings(List<DiseaseOccurrenceReview> allReviews) {

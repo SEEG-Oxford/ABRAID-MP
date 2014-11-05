@@ -166,14 +166,11 @@ public interface DiseaseService {
     List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
 
     /**
-     * Gets all reviews (for all time) for the disease occurrences which are in review and have new reviews.
-     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved, or null to
-     *                             retrieve all reviews.
+     * Gets all reviews (for all time) for the disease occurrences which are in review.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                             Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an

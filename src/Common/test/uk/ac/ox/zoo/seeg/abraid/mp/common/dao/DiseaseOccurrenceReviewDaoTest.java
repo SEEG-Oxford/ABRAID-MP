@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         // Arrange
         Expert expert = createExpert("expert@test.com");
         DiseaseOccurrence occurrence = createDiseaseOccurrence(DiseaseOccurrenceStatus.READY, createDiseaseGroup());
-        createDiseaseOccurrenceReview(expert, occurrence, DateTime.now());
+        createDiseaseOccurrenceReview(expert, occurrence);
 
         // Act
         boolean result = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expert.getId(), occurrence.getId());
@@ -81,31 +80,13 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     @Test
-    public void getDiseaseOccurrenceReviewsForModelRunPrepWithLastModelRunPrepDateNull() {
+    public void getDiseaseOccurrenceReviewsForOccurrencesInValidationReturnsExpectedResult() {
         // Arrange
-        List<DiseaseOccurrenceReview> testReviews = createTestReviews(DateTime.now());
+        List<DiseaseOccurrenceReview> testReviews = createTestReviews();
 
         // Act
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForModelRunPrep(
-                null, DISEASE_GROUP_ID_1);
-
-        // Assert
-        assertThat(reviews).hasSize(4);
-        assertThat(containsById(reviews, testReviews.get(2))).isTrue();
-        assertThat(containsById(reviews, testReviews.get(3))).isTrue();
-        assertThat(containsById(reviews, testReviews.get(4))).isTrue();
-        assertThat(containsById(reviews, testReviews.get(5))).isTrue();
-    }
-
-    @Test
-    public void getDiseaseOccurrenceReviewsForModelRunPrepWithLastModelRunPrepDateNotNull() {
-        // Arrange
-        DateTime lastModelRunPrepDate = DateTime.now();
-        List<DiseaseOccurrenceReview> testReviews = createTestReviews(lastModelRunPrepDate);
-
-        // Act
-        List<DiseaseOccurrenceReview> reviews = diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForModelRunPrep(
-                lastModelRunPrepDate, DISEASE_GROUP_ID_1);
+        List<DiseaseOccurrenceReview> reviews =
+                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID_1);
 
         // Assert
         assertThat(reviews).hasSize(2);
@@ -113,33 +94,26 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         assertThat(containsById(reviews, testReviews.get(3))).isTrue();
     }
 
-    private List<DiseaseOccurrenceReview> createTestReviews(DateTime now) {
+    private List<DiseaseOccurrenceReview> createTestReviews() {
         Expert expert1 = createExpert("expert1@test.com");
         Expert expert2 = createExpert("expert2@test.com");
 
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(DISEASE_GROUP_ID_1);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(DISEASE_GROUP_ID_2);
 
-        DateTime future = now.plusDays(1);
-        DateTime past = now.minusDays(1);
-
         DiseaseOccurrence occurrence1 = createDiseaseOccurrence(DiseaseOccurrenceStatus.READY, diseaseGroup1);
         DiseaseOccurrence occurrence2 = createDiseaseOccurrence(DiseaseOccurrenceStatus.IN_REVIEW, diseaseGroup1);
-        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(DiseaseOccurrenceStatus.IN_REVIEW, diseaseGroup1);
-        DiseaseOccurrence occurrence4 = createDiseaseOccurrence(DiseaseOccurrenceStatus.IN_REVIEW, diseaseGroup2);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(DiseaseOccurrenceStatus.IN_REVIEW, diseaseGroup2);
 
-        DiseaseOccurrenceReview occurrence1Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence1, future);
-        DiseaseOccurrenceReview occurrence1Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence1, future);
-        DiseaseOccurrenceReview occurrence2Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence2, future);
-        DiseaseOccurrenceReview occurrence2Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence2, past);
-        DiseaseOccurrenceReview occurrence3Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence3, past);
-        DiseaseOccurrenceReview occurrence3Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence3, past);
-        DiseaseOccurrenceReview occurrence4Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence4, future);
-        DiseaseOccurrenceReview occurrence4Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence4, future);
+        DiseaseOccurrenceReview occurrence1Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence1);
+        DiseaseOccurrenceReview occurrence1Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence1);
+        DiseaseOccurrenceReview occurrence2Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence2);
+        DiseaseOccurrenceReview occurrence2Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence2);
+        DiseaseOccurrenceReview occurrence3Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence3);
+        DiseaseOccurrenceReview occurrence3Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence3);
 
         return Arrays.asList(occurrence1Expert1Review, occurrence1Expert2Review, occurrence2Expert1Review,
-                occurrence2Expert2Review, occurrence3Expert1Review, occurrence3Expert2Review,
-                occurrence4Expert1Review, occurrence4Expert2Review);
+                occurrence2Expert2Review, occurrence3Expert1Review, occurrence3Expert2Review);
     }
 
     private boolean containsById(List<DiseaseOccurrenceReview> reviews, DiseaseOccurrenceReview expectedReview) {
@@ -151,17 +125,12 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         return false;
     }
 
-    private DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence,
-                                                                  DateTime createdDate) {
+    private DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence) {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(expert);
         review.setDiseaseOccurrence(occurrence);
         review.setResponse(DiseaseOccurrenceReviewResponse.YES);
         diseaseOccurrenceReviewDao.save(review);
-        flushAndClear();
-        Timestamp timestamp = new Timestamp(createdDate.getMillis());
-        executeSQLUpdate("UPDATE disease_occurrence_review SET created_date = :createdDate WHERE id = :id",
-                "createdDate", timestamp, "id", review.getId());
         return review;
     }
 

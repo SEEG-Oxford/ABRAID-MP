@@ -2,10 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 
 import java.util.List;
 
@@ -17,46 +15,18 @@ import java.util.List;
 @Repository
 public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenceReview, Integer>
         implements DiseaseOccurrenceReviewDao {
-    // HQL fragments used to build queries to obtain disease occurrence reviews
-    private static final String REVIEWS_FOR_MODEL_RUN_PREP_QUERY =
-            "from DiseaseOccurrenceReview " +
-            "where diseaseOccurrence.diseaseGroup.id = :diseaseGroupId " +
-            "and diseaseOccurrence.status = '" + DiseaseOccurrenceStatus.IN_REVIEW + "' ";
-
-    private static final String OCCURRENCES_WITH_NEW_REVIEWS_CLAUSE =
-            "and diseaseOccurrence.id in " +
-            "   (select r.diseaseOccurrence.id" +
-            "    from DiseaseOccurrenceReview r" +
-            "    where r.createdDate > :lastModelRunPrepDate)";
-
     public DiseaseOccurrenceReviewDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
 
     /**
-     * Gets all reviews (for all time) for the disease occurrences which are in review and have new reviews.
-     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved, or null to
-     *                             retrieve all reviews.
+     * Gets all reviews (for all time) for the disease occurrences which are in review.
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrence reviews.
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                                    Integer diseaseGroupId) {
-        String queryString = REVIEWS_FOR_MODEL_RUN_PREP_QUERY;
-
-        if (lastModelRunPrepDate != null) {
-            queryString += OCCURRENCES_WITH_NEW_REVIEWS_CLAUSE;
-        }
-
-        Query query = currentSession().createQuery(queryString);
-        query.setParameter("diseaseGroupId", diseaseGroupId);
-        if (lastModelRunPrepDate != null) {
-            query.setParameter("lastModelRunPrepDate", lastModelRunPrepDate);
-        }
-
-        return query.list();
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrenceReviewsForOccurrencesInValidation", "diseaseGroupId",
+                diseaseGroupId);
     }
 
     /**

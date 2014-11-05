@@ -68,7 +68,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
-        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(lastModelRunPrepDate),
+        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(
                 eq(diseaseGroupId));
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
@@ -96,7 +96,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
 
         // Assert
-        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(lastModelRunPrepDate),
+        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(
                 eq(diseaseGroupId));
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate),
@@ -125,7 +125,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
 
         // Assert
-        verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(any(DateTime.class), anyInt());
+        verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(anyInt());
         verify(reviewManager, never()).updateDiseaseOccurrenceStatus(anyInt(), any(DateTime.class));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(true));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));

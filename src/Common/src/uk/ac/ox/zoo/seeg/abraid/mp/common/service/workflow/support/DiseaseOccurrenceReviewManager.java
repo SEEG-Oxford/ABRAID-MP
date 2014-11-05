@@ -79,7 +79,7 @@ public class DiseaseOccurrenceReviewManager {
 
     private Set<DiseaseOccurrence> getDiseaseOccurrencesInValidationWithReviews(int diseaseGroupId) {
         List<DiseaseOccurrenceReview> reviews =
-                diseaseService.getDiseaseOccurrenceReviewsForModelRunPrep(null, diseaseGroupId);
+                diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
         return new HashSet<>(extract(reviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 
