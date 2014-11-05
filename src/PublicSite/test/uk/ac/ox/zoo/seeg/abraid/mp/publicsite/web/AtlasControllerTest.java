@@ -10,14 +10,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -44,8 +41,11 @@ public class AtlasControllerTest {
     @Test
     public void showAtlasReturnsAtlasContent() throws JsonProcessingException {
         // Arrange
+        CurrentUserService currentUserService = mock(CurrentUserService.class);
+        ExpertService expertService = mock(ExpertService.class);
+        mockSeegExpert(currentUserService, expertService, false);
         AtlasController target = new AtlasController(mock(ModelRunService.class), mock(DiseaseService.class),
-                mock(CurrentUserService.class), mock(ExpertService.class), mock(AbraidJsonObjectMapper.class));
+                currentUserService, expertService, mock(AbraidJsonObjectMapper.class));
 
         // Act
         String result = target.showAtlas(mock(Model.class));
@@ -55,65 +55,31 @@ public class AtlasControllerTest {
     }
 
     @Test
-    public void showAtlasTemplatesTheCorrectData() throws JsonProcessingException {
-        // Arrange
-        ModelRunService modelRunService = mock(ModelRunService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        CurrentUserService currentUserService = mock(CurrentUserService.class);
-        ExpertService expertService = mock(ExpertService.class);
-        stubLayerRelatedServices(modelRunService, diseaseService);
-        AtlasController target = new AtlasController(
-                modelRunService, diseaseService, currentUserService, expertService, new AbraidJsonObjectMapper());
-
-        // Act
-        Model model = mock(Model.class);
-        target.showAtlas(model);
-
-        // Assert
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(model).addAttribute(eq("layers"), argumentCaptor.capture());
-        String expectation =
-            "[" +
-                "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                    "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
-                    "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
-                "]}," +
-                "{\"disease\":\"Disease Group 2\",\"runs\":[" +
-                    "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\"}" +
-                "]}" +
-            "]";
-        String value = argumentCaptor.getValue();
-        assertThat(value).contains(expectation);
-    }
-
-    @Test
     public void showAtlasAddsAllDiseaseGroupsToMapIfUserIsSeeg() throws Exception {
         String expectation = "[" +
-                "{\"disease\":\"Disease Group 1\",\"runs\":[" +
+            "{\"disease\":\"Disease Group 1\",\"runs\":[" +
                 "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
                 "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
-                "]}," +
+            "]}," +
                 "{\"disease\":\"Disease Group 2\",\"runs\":[" +
                 "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\"}" +
-                "]}" +
-                "]";
-        showAtlasTest(true, expectation);
+            "]}" +
+        "]";
+        showAtlasTemplatesTheCorrectData(true, expectation);
     }
 
     @Test
     public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsIfUserIsNotSeeg() throws Exception {
-        String expectation =
-                "[" +
-                    "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                        "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
-                        "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
-                        "]" +
-                    "}" +
-                "]";
-        showAtlasTest(false, expectation);
+        String expectation = "[" +
+            "{\"disease\":\"Disease Group 1\",\"runs\":[" +
+                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
+                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
+            "]}" +
+        "]";
+        showAtlasTemplatesTheCorrectData(false, expectation);
     }
 
-    private void showAtlasTest(boolean isSeegMember, String expectation) throws Exception {
+    private void showAtlasTemplatesTheCorrectData(boolean isSeegMember, String expectation) throws Exception {
         // Arrange
         CurrentUserService currentUserService = mock(CurrentUserService.class);
         ExpertService expertService = mock(ExpertService.class);
