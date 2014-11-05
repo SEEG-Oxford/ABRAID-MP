@@ -66,6 +66,11 @@ public class DiseaseGroup {
     @Column
     private Double weighting;
 
+    // The date on which the disease extent was last generation, whether one-off action or preparation for a model run.
+    @Column(name = "last_extent_generation_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastExtentGenerationDate;
+
     // The date on which the weightings were last updated, in preparation for a model run.
     @Column(name = "last_model_run_prep_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -255,6 +260,14 @@ public class DiseaseGroup {
         this.weighting = weighting;
     }
 
+    public DateTime getLastExtentGenerationDate() {
+        return lastExtentGenerationDate;
+    }
+
+    public void setLastExtentGenerationDate(DateTime lastExtentGenerationDate) {
+        this.lastExtentGenerationDate = lastExtentGenerationDate;
+    }
+
     public DateTime getLastModelRunPrepDate() {
         return lastModelRunPrepDate;
     }
@@ -397,6 +410,8 @@ public class DiseaseGroup {
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isGlobal != null ? !isGlobal.equals(that.isGlobal) : that.isGlobal != null) return false;
+        if (lastExtentGenerationDate != null ? !lastExtentGenerationDate.equals(that.lastExtentGenerationDate) : that.lastExtentGenerationDate != null)
+            return false;
         if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
             return false;
         if (maxEnvironmentalSuitabilityWithoutML != null ? !maxEnvironmentalSuitabilityWithoutML.equals(that.maxEnvironmentalSuitabilityWithoutML) : that.maxEnvironmentalSuitabilityWithoutML != null)
@@ -436,6 +451,7 @@ public class DiseaseGroup {
         result = 31 * result + (isGlobal != null ? isGlobal.hashCode() : 0);
         result = 31 * result + (validatorDiseaseGroup != null ? validatorDiseaseGroup.hashCode() : 0);
         result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
+        result = 31 * result + (lastExtentGenerationDate != null ? lastExtentGenerationDate.hashCode() : 0);
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (automaticModelRunsStartDate != null ? automaticModelRunsStartDate.hashCode() : 0);
         result = 31 * result + (minNewLocationsTrigger != null ? minNewLocationsTrigger.hashCode() : 0);
