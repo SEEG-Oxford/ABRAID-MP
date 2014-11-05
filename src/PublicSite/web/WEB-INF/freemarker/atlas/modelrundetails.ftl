@@ -7,7 +7,7 @@
     </div>
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="GeoTIFF" data-bind="attr: { href: tif }">
-            <i class="fa fa-lg fa-download"></i> Download as raw GeoTIFF
+            <i class="fa fa-lg fa-download"></i>Download as raw GeoTIFF
         </a>
     </div>
     <!-- /ko -->
