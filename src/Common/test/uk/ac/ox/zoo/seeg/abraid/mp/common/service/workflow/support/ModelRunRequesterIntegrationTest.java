@@ -247,7 +247,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     ///CHECKSTYLE:OFF MethodLength - contains test data
     private void assertSplitExtent(List<String> splitExtent) {
-        assertThat(splitExtent).hasSize(460);
+        assertThat(splitExtent).hasSize(451);
         assertThat(splitExtent).contains(
                 "\"2\":0",
                 "\"3\":0",
@@ -328,7 +328,6 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"92\":0",
                 "\"93\":0",
                 "\"94\":0",
-                "\"95\":0",
                 "\"97\":0",
                 "\"98\":0",
                 "\"99\":0",
@@ -414,7 +413,6 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"203\":0",
                 "\"205\":0",
                 "\"206\":0",
-                "\"207\":0",
                 "\"208\":0",
                 "\"209\":0",
                 "\"210\":0",
@@ -464,7 +462,6 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"270\":0",
                 "\"271\":0",
                 "\"429\":0",
-                "\"430\":0",
                 "\"431\":0",
                 "\"432\":0",
                 "\"433\":0",
@@ -487,10 +484,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"450\":0",
                 "\"451\":0",
                 "\"452\":0",
-                "\"468\":0",
                 "\"470\":0",
                 "\"471\":0",
-                "\"472\":0",
                 "\"473\":0",
                 "\"474\":0",
                 "\"475\":0",
@@ -556,6 +551,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"927\":0",
                 "\"928\":0",
                 "\"929\":0",
+                "\"930\":0",
                 "\"1143\":0",
                 "\"1484\":0",
                 "\"1485\":0",
@@ -604,7 +600,6 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"3219\":0",
                 "\"3220\":0",
                 "\"3221\":0",
-                "\"3222\":0",
                 "\"3223\":0",
                 "\"3224\":0",
                 "\"3225\":0",
@@ -653,13 +648,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 "\"40765\":0",
                 "\"61013\":0",
                 "\"70073\":0",
-                "\"70074\":0",
                 "\"70075\":0",
-                "\"70076\":0",
-                "\"70077\":0",
                 "\"70078\":0",
                 "\"70079\":0",
-                "\"70080\":0",
                 "\"70081\":0",
                 "\"70082\":0",
                 "\"74578\":0",

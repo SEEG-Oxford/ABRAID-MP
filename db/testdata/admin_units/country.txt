@@ -172,7 +172,6 @@
 204	Russian Federation	f	
 205	Rwanda	t	
 206	Réunion	f	
-207	Saint Helena	f	
 208	Saint Kitts and Nevis	f	
 209	Saint Lucia	f	
 210	Saint Pierre et Miquelon	f	
