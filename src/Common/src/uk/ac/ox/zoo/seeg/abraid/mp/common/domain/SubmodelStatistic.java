@@ -344,6 +344,10 @@ public class SubmodelStatistic {
         return json;
     }
 
+    /**
+     * Checks that the submodel statistic contains a value for each of the main field (excludes standard deviations).
+     * @return true is all required fields present, otherwise false.
+     */
     protected boolean containsAllRequiredPropertiesForSummarising() {
         return
                 deviance != null &&
