@@ -18,6 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Tests for CSVMessageConverter.
+ * Copyright (c) 2014 University of Oxford
+ */
 public class CSVMessageConverterTest {
     @Test
     public void canWriteReturnsFalseForUnsuitableJavaTypes() throws Exception {
@@ -154,6 +158,7 @@ public class CSVMessageConverterTest {
         assertThat(caughtException()).hasMessage("Can not write collection containing null");
     }
 
+    ///CHECKSTYLE:OFF VisibilityModifier|JavadocType|FinalClass
     private class Animal {
         public Boolean isMale;
         public String name;
@@ -172,4 +177,5 @@ public class CSVMessageConverterTest {
             this.breed = breed;
         }
     }
+    ///CHECKSTYLE:ON
 }

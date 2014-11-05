@@ -16,7 +16,9 @@ define([
         self.covariateInfluences = ko.observable([]);
 
         self.effectCurvesLink = ko.computed(function () {
-            return self.activeRun() ? baseUrl + "atlas/details/modelrun/" + self.activeRun() + "/effectcurves.csv" : "#";
+            return self.activeRun() ?
+                baseUrl + "atlas/details/modelrun/" + self.activeRun() + "/effectcurves.csv" :
+                "#";
         }, self);
 
 

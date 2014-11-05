@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
+/**
+ * A spring message converter for producing CSV text from DTO objects.
+ * Copyright (c) 2014 University of Oxford
+ */
 public class CSVMessageConverter
         extends AbstractHttpMessageConverter<WrappedList<?>> {
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
@@ -89,7 +93,7 @@ public class CSVMessageConverter
             throws IOException, HttpMessageNotWritableException {
         Iterator it = t.getList().iterator();
         Class<?> listType = null;
-        while (it.hasNext()){
+        while (it.hasNext()) {
             Object entry = it.next();
             if (entry == null) {
                 throw new HttpMessageNotWritableException(CAN_NOT_WRITE_NULL);

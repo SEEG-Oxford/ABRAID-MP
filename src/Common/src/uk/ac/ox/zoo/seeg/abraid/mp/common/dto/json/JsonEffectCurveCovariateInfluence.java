@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
  * for plotting in an effect curve.
  * Copyright (c) 2014 University of Oxford
  */
-@JsonPropertyOrder({"name", "covariateValue", "meanInfluence", "lowerQuantile", "upperQuantile"})
+@JsonPropertyOrder({ "name", "covariateValue", "meanInfluence", "lowerQuantile", "upperQuantile" })
 public class JsonEffectCurveCovariateInfluence extends AbstractJsonCovariateInfluence {
     private Double covariateValue;
     private Double lowerQuantile;

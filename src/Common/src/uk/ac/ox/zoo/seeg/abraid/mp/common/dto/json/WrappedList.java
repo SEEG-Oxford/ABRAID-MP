@@ -7,6 +7,9 @@ import java.util.List;
  * CSVMessageConverter when using CSV. This also helps avoid JSON hijacking when using JSON
  * and allows for more seamless extension of the DTO in the future.
  * http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx
+ *
+ * @param <T> The type of the list elements.
+ *
  * Copyright (c) 2014 University of Oxford
  */
 public class WrappedList<T> {
