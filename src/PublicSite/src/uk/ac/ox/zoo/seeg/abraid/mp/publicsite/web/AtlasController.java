@@ -66,7 +66,6 @@ public class AtlasController extends AbstractController {
     }
 
     private List<JsonDiseaseModelRunLayerSet> prepareJsonDiseaseModelRunSets() {
-        boolean userIsSEEG = checkIfSeegMember();
         final List<Integer> diseaseGroupsInAutomaticModelRuns =
                 diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
         final Collection<ModelRun> modelRuns = modelRunService.getCompletedModelRunsForDisplay();
@@ -74,7 +73,7 @@ public class AtlasController extends AbstractController {
         Map<Integer, List<JsonModelRunLayer>> layersByDiseaseId = new HashMap<>();
         for (ModelRun modelRun : modelRuns) {
             int diseaseGroupId = modelRun.getDiseaseGroupId();
-            if (userIsSEEG || diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId)) {
+            if (userIsSeegMember() || diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId)) {
                 if (!layersByDiseaseId.containsKey(diseaseGroupId)) {
                     layersByDiseaseId.put(diseaseGroupId, new ArrayList<JsonModelRunLayer>());
                 }
@@ -91,17 +90,17 @@ public class AtlasController extends AbstractController {
         return layers;
     }
 
-    private boolean checkIfSeegMember() {
+    private boolean userIsSeegMember() {
         PublicSiteUser user = currentUserService.getCurrentUser();
         if (user == null) {
-            throw new IllegalArgumentException("No logged in user");
+            return false;
+        } else {
+            Expert expert = expertService.getExpertById(user.getId());
+            if (expert == null) {
+                throw new IllegalArgumentException("Logged in user does not have an associated expert.");
+            } else {
+                return expert.isSeegMember();
+            }
         }
-
-        Expert expert = expertService.getExpertById(user.getId());
-        if (expert == null) {
-            throw new IllegalArgumentException("Logged in user does not have an associated expert.");
-        }
-
-        return expert.isSeegMember();
     }
 }

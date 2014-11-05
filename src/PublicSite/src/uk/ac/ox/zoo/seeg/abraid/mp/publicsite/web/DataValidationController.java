@@ -286,14 +286,14 @@ public class DataValidationController extends AbstractController {
 
     private boolean checkIfSeegMember(PublicSiteUser user) {
         if (user == null) {
-            throw new IllegalArgumentException("No logged in user");
+            return false;
+        } else {
+            Expert expert = expertService.getExpertById(user.getId());
+            if (expert == null) {
+                throw new IllegalArgumentException("Logged in user does not have an associated expert.");
+            } else {
+                return expert.isSeegMember();
+            }
         }
-
-        Expert expert = expertService.getExpertById(user.getId());
-        if (expert == null) {
-            throw new IllegalArgumentException("Logged in user does not have an associated expert.");
-        }
-
-        return expert.isSeegMember();
     }
 }
