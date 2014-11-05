@@ -45,10 +45,30 @@
         <property name="suffix" value=".ftl"/>
     </bean>
 
-    <mvc:annotation-driven>
+    <bean id="contentNegotiationManager"
+          class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="defaultContentType" value="application/json" />
+        <property name="favorPathExtension" value="true"/>
+        <property name="ignoreAcceptHeader" value="false" />
+        <property name="useJaf" value="false"/>
+        <property name="favorParameter" value="false" />
+        <property name="mediaTypes">
+            <map>
+                <entry key="json" value="application/json" />
+                <entry key="csv" value="application/csv" />
+            </map>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager">
         <mvc:message-converters register-defaults="true" >
             <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ViewAwareJsonMessageConverter">
                 <property name="objectMapper" ref="objectMapper" />
+            </bean>
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.CSVMessageConverter">
+                <constructor-arg name="csvMapper">
+                    <bean class="com.fasterxml.jackson.dataformat.csv.CsvMapper" />
+                </constructor-arg>
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
