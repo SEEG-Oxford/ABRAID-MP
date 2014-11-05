@@ -19,7 +19,8 @@ public interface AdminUnitDiseaseExtentClassDao {
      * @param gaulCode The gaul code the admin unit disease extent class represents.
      * @return The list of latest disease occurrences for the given admin unit disease extent class.
      */
-    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(Integer diseaseGroupId, boolean isGlobal, Integer gaulCode);
+    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+            Integer diseaseGroupId, boolean isGlobal, Integer gaulCode);
 
     /**
      * Gets all global AdminUnitDiseaseExtentClass objects for the specified DiseaseGroup.

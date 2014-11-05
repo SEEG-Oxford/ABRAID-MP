@@ -219,6 +219,7 @@ public class DataValidationController extends AbstractController {
     /**
      * Returns the latest disease occurrences corresponding to an admin unit.
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
      * @return A GeoJSON DTO containing the admin units.
      */
     @Secured({ "ROLE_USER", "ROLE_ADMIN" })
@@ -228,8 +229,9 @@ public class DataValidationController extends AbstractController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
     @ResponseBody
-    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(
-            @PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode) {
+    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
+        getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(@PathVariable Integer diseaseGroupId,
+                                                                  @PathVariable Integer gaulCode) {
         try {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(
