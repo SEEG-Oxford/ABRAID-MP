@@ -12,14 +12,12 @@ define([
     return function (baseUrl) {
         var self = this;
 
-        self.statistics = ko.observable({});
+        self.statistics = ko.observable(undefined);
 
         var ajax;
-
         ko.postbox.subscribe("selected-run", function (run) {
-            self.statistics({});
-
-            if (run.id) {
+            self.statistics(undefined);
+            if (run && run.id) {
                 if (ajax) {
                     ajax.abort();
                 }

@@ -16,7 +16,7 @@ define([
 
             it("starts empty", function () {
                 var vm = new StatisticsViewModel("");
-                expect(vm.statistics()).toEqual({});
+                expect(vm.statistics()).toBeUndefined();
             });
 
             describe("is updated", function () {
@@ -54,12 +54,12 @@ define([
                     expect(vm.statistics()).toEqual(expectation);
                 });
 
-                it("when unsuccessful", function () {
+                it("when unsuccessful, to empty", function () {
                     // Act
                     ko.postbox.publish("selected-run", { id: modelRunId });
                     jasmine.Ajax.requests.mostRecent().response({ status: 400 });
                     // Assert
-                    expect(vm.statistics()).toEqual({});
+                    expect(vm.statistics()).toBeUndefined();
                 });
             });
         });

@@ -340,3 +340,16 @@ html, body, #dataValidation {
     font-size: 12px;
     border: 1px solid #cccccc !important;
 }
+/* columns of same height styles */
+.container-xs-height {
+    display:table;
+    padding-left:0px;
+    padding-right:0px;
+}
+.row-xs-height {
+    display:table-row;
+}
+.col-xs-height {
+    display:table-cell;
+    float:none;
+}
