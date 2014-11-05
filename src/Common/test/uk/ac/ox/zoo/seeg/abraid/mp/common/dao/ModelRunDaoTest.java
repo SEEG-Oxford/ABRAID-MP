@@ -21,6 +21,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private ModelRunDao modelRunDao;
 
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
     private ModelRun modelRunDengue1;
     private ModelRun modelRunDengue2;
     private ModelRun modelRunDengue3;
@@ -32,7 +35,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     public void setUp() {
         modelRunDengue1 = createModelRun("dengue 1", 87, ModelRunStatus.IN_PROGRESS, "host1", "2014-07-01", null);
         modelRunDengue2 = createModelRun("dengue 2", 87, ModelRunStatus.COMPLETED, "host1", "2014-07-01", "2014-07-04");
-        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "host3", "2014-07-02", "2014-07-03");
+        modelRunDengue3 = createModelRun("dengue 3", 87, ModelRunStatus.COMPLETED, "host3", "2014-07-03", "2014-07-03");
         modelRunDengue4 = createModelRun("dengue 4", 87, ModelRunStatus.IN_PROGRESS, "host2", "2014-07-05", null);
         modelRunDengue5 = createModelRun("dengue 5", 87, ModelRunStatus.FAILED, "host3", "2014-07-06", "2014-07-05");
         modelRunMalarias1 = createModelRun("malarias 1", 202, ModelRunStatus.COMPLETED, "host3", "2014-07-07", "2014-07-08");
@@ -259,31 +262,35 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
-    public void getCompletedModelRunsReturnsCorrectCompletedModelRuns() {
+    public void getCompletedModelRunsForDisplayReturnsCorrectCompletedModelRuns() {
         // Arrange
-        modelRunDao.save(modelRunDengue1);
-        modelRunDao.save(modelRunDengue2);
-        modelRunDao.save(modelRunDengue3);
-        modelRunDao.save(modelRunDengue4);
-        modelRunDao.save(modelRunDengue5);
-        modelRunDao.save(modelRunMalarias1);
+        DiseaseGroup dengue = diseaseGroupDao.getById(87);
+        dengue.setAutomaticModelRunsStartDate(new DateTime(2014, 7, 2, 0, 0)); // Chosen to be between 2 model runs
+        diseaseGroupDao.save(dengue);
+
+        modelRunDao.save(modelRunDengue1);      // Not for display: IN_PROGRESS
+        modelRunDao.save(modelRunDengue2);      // Not for display: Requested before automaticModelRunsStartDate
+        modelRunDao.save(modelRunDengue3);      // For display: Requested after automaticModelRunsStartDate
+        modelRunDao.save(modelRunDengue4);      // Not for display: IN_PROGRESS
+        modelRunDao.save(modelRunDengue5);      // Not for display: FAILED
+        modelRunDao.save(modelRunMalarias1);    // For display: COMPLETED and automaticModelRunsStartDate is null
 
         // Act
-        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRunsForDisplay();
 
         // Assert
-        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3, modelRunMalarias1);
+        assertThat(modelRuns).containsOnly(modelRunDengue3, modelRunMalarias1);
     }
 
     @Test
-    public void getCompletedModelRunsReturnsEmptyIfNoCompletedModelRuns() {
+    public void getCompletedModelRunsForDisplayReturnsEmptyIfNoCompletedModelRuns() {
         // Arrange
         modelRunDao.save(modelRunDengue4);
         modelRunDao.save(modelRunDengue5);
         modelRunDao.save(modelRunDengue1);
 
         // Act
-        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRuns();
+        Collection<ModelRun> modelRuns = modelRunDao.getCompletedModelRunsForDisplay();
 
         // Assert
         assertThat(modelRuns).isEmpty();

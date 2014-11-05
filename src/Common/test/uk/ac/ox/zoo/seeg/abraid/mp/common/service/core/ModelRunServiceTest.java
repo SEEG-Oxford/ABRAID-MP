@@ -82,15 +82,15 @@ public class ModelRunServiceTest {
     }
 
     @Test
-    public void getCompletedModelRuns() {
+    public void getCompletedModelRunsForDisplay() {
         // Arrange
         Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
-        when(modelRunDao.getCompletedModelRuns()).thenReturn(expectedRuns);
+        when(modelRunDao.getCompletedModelRunsForDisplay()).thenReturn(expectedRuns);
         ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
 
         // Act
-        Collection<ModelRun> runs = modelRunService.getCompletedModelRuns();
+        Collection<ModelRun> runs = modelRunService.getCompletedModelRunsForDisplay();
 
         // Assert
         assertThat(runs).isEqualTo(expectedRuns);
