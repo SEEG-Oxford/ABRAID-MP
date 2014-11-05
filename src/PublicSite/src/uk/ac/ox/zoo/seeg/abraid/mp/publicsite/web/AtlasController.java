@@ -67,7 +67,8 @@ public class AtlasController extends AbstractController {
 
     private List<JsonDiseaseModelRunLayerSet> prepareJsonDiseaseModelRunSets() {
         boolean userIsSEEG = checkIfSeegMember();
-        final List<Integer> diseaseGroupsInAutomaticModelRuns = diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
+        final List<Integer> diseaseGroupsInAutomaticModelRuns =
+                diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
         final Collection<ModelRun> modelRuns = modelRunService.getCompletedModelRunsForDisplay();
 
         Map<Integer, List<JsonModelRunLayer>> layersByDiseaseId = new HashMap<>();
