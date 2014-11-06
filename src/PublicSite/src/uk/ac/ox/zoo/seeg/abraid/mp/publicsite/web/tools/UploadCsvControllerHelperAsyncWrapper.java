@@ -20,7 +20,7 @@ public class UploadCsvControllerHelperAsyncWrapper extends AbstractAsynchronousA
 
     @Autowired
     public UploadCsvControllerHelperAsyncWrapper(UploadCsvControllerHelper uploadCsvControllerHelper) {
-        super(THREAD_POOL_SIZE);
+        super(THREAD_POOL_SIZE, LOGGER);
         this.uploadCsvControllerHelper = uploadCsvControllerHelper;
     }
 

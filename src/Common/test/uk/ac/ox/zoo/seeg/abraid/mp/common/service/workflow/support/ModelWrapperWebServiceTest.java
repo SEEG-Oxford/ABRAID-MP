@@ -127,7 +127,7 @@ public class ModelWrapperWebServiceTest {
     }
 
     private String getRequestJson() {
-        String disease = "\"id\":188,\"name\":\"Leishmaniases\",\"abbreviation\":\"leish\",\"global\":true";
+        String disease = "\"id\":188,\"global\":true,\"name\":\"Leishmaniases\",\"abbreviation\":\"leish\"";
         String occurrencesType = "\"type\":\"FeatureCollection\"";
         String occurrencesCrs = "\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}}";
         String occurrence1 = "\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-119.7503,37.2502]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.2,\"gaulCode\":100}";

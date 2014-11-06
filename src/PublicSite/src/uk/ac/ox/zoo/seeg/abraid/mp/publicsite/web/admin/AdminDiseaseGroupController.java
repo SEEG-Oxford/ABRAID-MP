@@ -201,7 +201,6 @@ public class AdminDiseaseGroupController extends AbstractController {
                     consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity save(@PathVariable int diseaseGroupId, @RequestBody JsonDiseaseGroup settings) {
-
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if ((diseaseGroup != null) && validInputs(settings)) {
             if (saveProperties(diseaseGroup, settings)) {
@@ -224,7 +223,6 @@ public class AdminDiseaseGroupController extends AbstractController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity add(@RequestBody JsonDiseaseGroup settings) {
-
         if (validInputs(settings)) {
             DiseaseGroup diseaseGroup = new DiseaseGroup();
             if (saveProperties(diseaseGroup, settings)) {
