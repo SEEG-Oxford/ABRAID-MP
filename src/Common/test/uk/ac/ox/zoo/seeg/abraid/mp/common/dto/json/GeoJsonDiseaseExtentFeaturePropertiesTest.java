@@ -37,7 +37,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         assertThat(result.getName()).isEqualTo(adminUnitName);
         assertThat(result.getDiseaseExtentClass()).isEqualTo(diseaseExtentClassName);
         assertThat(result.getOccurrenceCount()).isEqualTo(0);
-        assertThat(result.needsReview()).isTrue(); // since the admin unit has never been reviewed, and the
+        assertThat(result.needsReview()).isTrue();  // since the admin unit has never been reviewed
     }
 
     @Test

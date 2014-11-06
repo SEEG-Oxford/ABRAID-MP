@@ -47,6 +47,8 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return s.charAt(0) + s.substring(1).toLowerCase();
     }
 
+    // An AdminUnitDiseaseExtentClass needs reviewing if it has never been reviewed before,
+    // or if the disease extent has been generated since the most recent review.
     private boolean computeNeedsReview(AdminUnitDiseaseExtentClass extentClass, List<AdminUnitReview> reviews) {
         DateTime comparisonDate = getComparisonDate(extentClass.getDiseaseGroup());
         DateTime reviewedDate = extractReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());

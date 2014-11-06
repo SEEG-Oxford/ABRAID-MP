@@ -66,7 +66,7 @@ public class DiseaseGroup {
     @Column
     private Double weighting;
 
-    // The date on which the disease extent was last generation, whether one-off action or preparation for a model run.
+    // The date on which the disease extent was last generated, whether a one-off action or preparation for a model run.
     @Column(name = "last_extent_generation_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastExtentGenerationDate;
