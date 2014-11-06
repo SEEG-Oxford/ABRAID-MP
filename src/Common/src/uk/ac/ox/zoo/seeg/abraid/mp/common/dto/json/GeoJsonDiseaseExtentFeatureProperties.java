@@ -8,10 +8,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
+
 
 /**
  * A DTO for the properties of an AdminUnit, with reference to a DiseaseGroup.
@@ -50,17 +53,18 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return reviewedDate == null || comparisonDate != null && comparisonDate.isAfter(reviewedDate);
     }
 
-    private DateTime getComparisonDate(DiseaseGroup diseaseGroup) {
+    public DateTime getComparisonDate(DiseaseGroup diseaseGroup) {
         DateTime lastExtentGenerationDate = diseaseGroup.getLastExtentGenerationDate();
         DateTime automaticModelRunsStartDate = diseaseGroup.getAutomaticModelRunsStartDate();
-        if (lastExtentGenerationDate == null) {
-            return automaticModelRunsStartDate;
+
+        List<DateTime> notNullDates = filter(notNullValue(),
+                                             Arrays.asList(lastExtentGenerationDate, automaticModelRunsStartDate));
+        if (notNullDates.isEmpty()) {
+            return null;
+        } else if (notNullDates.size() == 1) {
+            return notNullDates.get(0);
         } else {
-            if (automaticModelRunsStartDate == null) {
-                return lastExtentGenerationDate;
-            } else {
-                return getLatest(lastExtentGenerationDate, automaticModelRunsStartDate);
-            }
+            return getLatest(notNullDates.get(0), notNullDates.get(1));
         }
     }
 

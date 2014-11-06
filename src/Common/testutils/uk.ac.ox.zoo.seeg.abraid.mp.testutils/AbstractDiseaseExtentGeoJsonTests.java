@@ -19,41 +19,36 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
 
     public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithoutReview() {
         return new AdminUnitDiseaseExtentClass(
-                defaultAdminUnitGlobal(),
-                new DiseaseGroup(),
-                new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-                0);
+            defaultAdminUnitGlobal(),
+            new DiseaseGroup(),
+            new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
+            0
+        );
     }
 
     public static AdminUnitDiseaseExtentClass defaultAdminUnitDiseaseExtentClassWithReview(
-            List<AdminUnitReview> reviews, boolean classChangedLaterThanReview) {
+            List<AdminUnitReview> reviews, Boolean reviewedDateBeforeComparisonDate) {
         AdminUnitGlobal adminUnitGlobal = defaultAdminUnitGlobal();
+        DiseaseGroup diseaseGroup = mockDiseaseGroupWithComparisonDate(reviewedDateBeforeComparisonDate);
         AdminUnitReview review = mockAdminUnitReview(adminUnitGlobal);
         reviews.add(review);
         return new AdminUnitDiseaseExtentClass(
             adminUnitGlobal,
-            new DiseaseGroup(),
+            diseaseGroup,
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-            0,
-            classChangedLaterThanReview ? review.getCreatedDate().plusDays(1) : review.getCreatedDate().minusDays(1));
+            0
+        );
     }
 
-    public static AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClassWithTwoReviews(List<AdminUnitReview> reviews) {
-        AdminUnitGlobal adminUnitGlobal = defaultAdminUnitGlobal();
-        AdminUnitReview review1 = mockAdminUnitReviewWithDate(adminUnitGlobal, DateTime.now().minusDays(1));
-        DateTime classChangedDate = DateTime.now();
-        AdminUnitReview review2 = mockAdminUnitReviewWithDate(adminUnitGlobal, DateTime.now().plusDays(1));
-
-        reviews.add(review1);
-        reviews.add(review2);
-
-        return new AdminUnitDiseaseExtentClass(
-            adminUnitGlobal,
-            new DiseaseGroup(),
-            new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
-            0,
-            classChangedDate
-        );
+    private static DiseaseGroup mockDiseaseGroupWithComparisonDate(Boolean reviewedDateBeforeComparisonDate) {
+        DateTime comparisonDate = null;
+        if (reviewedDateBeforeComparisonDate != null) {
+            comparisonDate = reviewedDateBeforeComparisonDate ? DateTime.now().plusDays(1) : DateTime.now().minusDays(1);
+        }
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getAutomaticModelRunsStartDate()).thenReturn(comparisonDate);
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(null);
+        return diseaseGroup;
     }
 
     public static AdminUnitGlobal defaultAdminUnitGlobal() {
