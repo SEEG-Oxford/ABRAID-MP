@@ -51,11 +51,11 @@ define([
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "min", 0);
 
                 expectRule(vm.higherOccurrenceScore, "digit", true);
-                expectRule(vm.higherOccurrenceScore, "customMin", vm.lowerOccurrenceScore);
+                expectRule(vm.higherOccurrenceScore, "min", 0);
 
                 expectRule(vm.lowerOccurrenceScore, "digit", true);
                 expectRule(vm.lowerOccurrenceScore, "min", 0);
-                expectRule(vm.lowerOccurrenceScore, "customMax", vm.higherOccurrenceScore);
+                expectRule(vm.lowerOccurrenceScore, "max", vm.higherOccurrenceScore);
 
                 expectRule(vm.minValidationWeighting, "number", true);
                 expectRule(vm.minValidationWeighting, "min", 0);

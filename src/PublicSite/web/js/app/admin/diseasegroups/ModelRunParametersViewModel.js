@@ -44,21 +44,18 @@ define(["ko"], function (ko) {
             owner: self
         }).extend({ digit: true, min: 0 });
 
-        function normalise(s) {
-            return (s === 0) ? s : (s || "");
-        }
-
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
-            self.minNewLocations(normalise(diseaseGroup.minNewLocations));
-            self.minEnvironmentalSuitability(normalise(diseaseGroup.minEnvironmentalSuitability));
-            self.minDistanceFromDiseaseExtent(normalise(diseaseGroup.minDistanceFromDiseaseExtent));
-            self.minDataVolume(normalise(diseaseGroup.minDataVolume));
-            self.minDistinctCountries(normalise(diseaseGroup.minDistinctCountries));
-            self.minHighFrequencyCountries(normalise(diseaseGroup.minHighFrequencyCountries));
-            self.highFrequencyThreshold(normalise(diseaseGroup.highFrequencyThreshold));
+            self.minNewLocations(ko.utils.normaliseInput(diseaseGroup.minNewLocations));
+            self.minEnvironmentalSuitability(ko.utils.normaliseInput(diseaseGroup.minEnvironmentalSuitability));
+            self.minDistanceFromDiseaseExtent(ko.utils.normaliseInput(diseaseGroup.minDistanceFromDiseaseExtent));
+            self.minDataVolume(ko.utils.normaliseInput(diseaseGroup.minDataVolume));
+            self.minDistinctCountries(ko.utils.normaliseInput(diseaseGroup.minDistinctCountries));
+            self.minHighFrequencyCountries(ko.utils.normaliseInput(diseaseGroup.minHighFrequencyCountries));
+            self.highFrequencyThreshold(ko.utils.normaliseInput(diseaseGroup.highFrequencyThreshold));
             self.occursInAfrica(diseaseGroup.occursInAfrica);
             self.useMachineLearning(diseaseGroup.useMachineLearning);
-            self.maxEnvironmentalSuitabilityWithoutML(normalise(diseaseGroup.maxEnvironmentalSuitabilityWithoutML));
+            self.maxEnvironmentalSuitabilityWithoutML(ko.utils.normaliseInput(
+                diseaseGroup.maxEnvironmentalSuitabilityWithoutML));
         });
     };
 });
