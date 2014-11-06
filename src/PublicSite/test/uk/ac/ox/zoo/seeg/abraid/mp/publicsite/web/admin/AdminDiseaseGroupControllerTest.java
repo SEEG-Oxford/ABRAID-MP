@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonParentDiseaseGroup;
@@ -34,6 +35,7 @@ public class AdminDiseaseGroupControllerTest {
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
     private AdminDiseaseGroupController controller;
+    private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
 
     @Before
     public void setUp() {
@@ -41,8 +43,9 @@ public class AdminDiseaseGroupControllerTest {
         objectMapper = new AbraidJsonObjectMapper();
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunService = mock(ModelRunService.class);
+        modelWrapperWebServiceAsyncWrapper = mock(ModelWrapperWebServiceAsyncWrapper.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService);
+                modelRunService, modelWrapperWebServiceAsyncWrapper);
     }
 
     @Test

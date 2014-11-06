@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
+import ch.lambdaj.function.matcher.LambdaJMatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -18,14 +19,17 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sort;
+import static ch.lambdaj.Lambda.*;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -40,6 +44,8 @@ public class AdminDiseaseGroupController extends AbstractController {
     private static final String SAVE_DISEASE_GROUP_ERROR = "Error saving changes to disease group %d (%s)";
     private static final String ADD_DISEASE_GROUP_SUCCESS = "Successfully added new disease group %d (%s)";
     private static final String ADD_DISEASE_GROUP_ERROR = "Error adding new disease group (%s)";
+    private static final String FAILED_TO_SYNCHRONISE_DISEASE_GROUPS =
+            "Failed to synchronise the disease groups with all model wrapper instances";
 
     /** The base URL for the system administration disease group controller methods. */
     public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseases";
@@ -48,15 +54,18 @@ public class AdminDiseaseGroupController extends AbstractController {
     private AbraidJsonObjectMapper objectMapper;
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
+    private final ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
 
     @Autowired
     public AdminDiseaseGroupController(DiseaseService diseaseService, AbraidJsonObjectMapper objectMapper,
                                        ModelRunWorkflowService modelRunWorkflowService,
-                                       ModelRunService modelRunService) {
+                                       ModelRunService modelRunService,
+                                       ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper) {
         this.diseaseService = diseaseService;
         this.objectMapper = objectMapper;
         this.modelRunWorkflowService = modelRunWorkflowService;
         this.modelRunService = modelRunService;
+        this.modelWrapperWebServiceAsyncWrapper = modelWrapperWebServiceAsyncWrapper;
     }
 
     /**
@@ -205,11 +214,47 @@ public class AdminDiseaseGroupController extends AbstractController {
         if ((diseaseGroup != null) && validInputs(settings)) {
             if (saveProperties(diseaseGroup, settings)) {
                 LOGGER.info(String.format(SAVE_DISEASE_GROUP_SUCCESS, diseaseGroupId, settings.getName()));
+                syncDiseaseGroupWithModelWrapper(diseaseGroup);
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
         LOGGER.info(String.format(SAVE_DISEASE_GROUP_ERROR, diseaseGroupId, settings.getName()));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/sync", method = RequestMethod.POST)
+    public ResponseEntity syncAllDiseasesWithModelWrapper() throws ExecutionException, InterruptedException {
+        Collection<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
+        filter(new LambdaJMatcher<DiseaseGroup>() {
+            @Override
+            public boolean matches(Object o) {
+                return checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper((DiseaseGroup) o);
+            }
+        }, diseaseGroups);
+
+        Future<Boolean> result = modelWrapperWebServiceAsyncWrapper.publishAllDiseases(diseaseGroups);
+
+        if (!result.get()) {
+            LOGGER.warn(FAILED_TO_SYNCHRONISE_DISEASE_GROUPS);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    private void syncDiseaseGroupWithModelWrapper(DiseaseGroup diseaseGroup) {
+        if (checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper(diseaseGroup)) {
+            modelWrapperWebServiceAsyncWrapper.publishSingleDisease(diseaseGroup);
+        }
+    }
+
+    private boolean checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper(DiseaseGroup diseaseGroup) {
+        return
+            diseaseGroup.getPublicName() != null &&
+            diseaseGroup.getShortName() != null &&
+            diseaseGroup.getAbbreviation() != null &&
+            diseaseGroup.isGlobal() != null &&
+            diseaseGroup.getGroupType() != null;
     }
 
     /**
@@ -227,6 +272,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             DiseaseGroup diseaseGroup = new DiseaseGroup();
             if (saveProperties(diseaseGroup, settings)) {
                 LOGGER.info(String.format(ADD_DISEASE_GROUP_SUCCESS, diseaseGroup.getId(), settings.getName()));
+                syncDiseaseGroupWithModelWrapper(diseaseGroup);
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
