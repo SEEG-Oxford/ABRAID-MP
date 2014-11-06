@@ -230,11 +230,11 @@ public class DataValidationController extends AbstractController {
         // Only SEEG members may view disease extent for disease groups still in setup phase.
         // Other users see an empty extent.
         if (diseaseGroup.isAutomaticModelRunsEnabled() || userIsSEEG) {
-            List<AdminUnitDiseaseExtentClass> diseaseExtent;
-            List<AdminUnitReview> reviews;
             try {
-                diseaseExtent = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-                reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
+                List<AdminUnitDiseaseExtentClass> diseaseExtent =
+                        diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+                List<AdminUnitReview> reviews =
+                        expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
                 featureCollection = new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews);
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
