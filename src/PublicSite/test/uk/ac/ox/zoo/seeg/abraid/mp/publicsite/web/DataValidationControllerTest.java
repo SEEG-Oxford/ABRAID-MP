@@ -170,7 +170,7 @@ public class DataValidationControllerTest {
         // Arrange
         ExpertService expertService = createExpertService(true);
         List<DiseaseOccurrence> occurrences = mockOccurrences();
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenReturn(occurrences);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, true, 1)).thenReturn(occurrences);
 
         DataValidationController target = createTarget(null, null, expertService);
 
@@ -188,7 +188,7 @@ public class DataValidationControllerTest {
         // Arrange
         ExpertService expertService = createExpertService(false);
         List<DiseaseOccurrence> occurrences = mockOccurrences();
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenReturn(occurrences);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, false, 1)).thenReturn(occurrences);
 
         DataValidationController target = createTarget(null, null, expertService);
 
@@ -227,7 +227,7 @@ public class DataValidationControllerTest {
     public void getDiseaseOccurrencesForReviewByCurrentUserFailsForInvalidDisease() throws Exception {
         // Arrange
         ExpertService expertService = createExpertService();
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, 1)).thenThrow(new IllegalArgumentException());
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, true, 1)).thenThrow(new IllegalArgumentException());
 
         DataValidationController target = createTarget(null, null, expertService);
 

@@ -83,18 +83,19 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets a list of occurrence points, for the specified disease group, for which the specified expert has not yet
-     * submitted a review.
+     * Gets a list of occurrence points, for the specified validator disease group, for which the specified expert has
+     * not yet submitted a review. Only SEEG users may view occurrences of disease groups during setup phase.
+     * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param expertId The id of the specified expert.
+     * @param userIsSeeg Whether the expert is a member of SEEG, and therefore should review more occurrences.
      * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      */
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId, boolean userIsSeeg,
                                                                         Integer validatorDiseaseGroupId) {
         return listNamedQuery("getDiseaseOccurrencesYetToBeReviewedByExpert",
-                "expertId", expertId, "validatorDiseaseGroupId", validatorDiseaseGroupId);
+                "expertId", expertId, "userIsSeeg", userIsSeeg, "validatorDiseaseGroupId", validatorDiseaseGroupId);
     }
-
 
     /**
      * Get disease occurrences that match the specified disease group, location, alert and occurrence start date.

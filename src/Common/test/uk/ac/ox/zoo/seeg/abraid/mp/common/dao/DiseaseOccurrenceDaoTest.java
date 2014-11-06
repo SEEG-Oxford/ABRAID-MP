@@ -41,6 +41,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Autowired
     private LocationDao locationDao;
 
+    @Autowired
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+
     @Test
     public void getByIds() {
         // Arrange
@@ -113,7 +116,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Act
         Integer expertId = expert.getId();
         Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
-        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId,
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, true,
                 diseaseGroupId);
 
         // Assert
@@ -131,7 +134,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Act
         Integer expertId = expert.getId();
         Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
-        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId,
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, true,
                 diseaseGroupId);
 
         // Assert
@@ -149,7 +152,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // Act
         Integer expertId = expert.getId();
         Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
-        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId,
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, true,
                 diseaseGroupId);
 
         // Assert
@@ -178,11 +181,78 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         Integer expertId = expert0.getId();
         Integer validatorDiseaseGroupId = occurrence0.getValidatorDiseaseGroup().getId();
         List<DiseaseOccurrence> occurrencesYetToBeReviewedByExpert =
-                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, validatorDiseaseGroupId);
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, true, validatorDiseaseGroupId);
 
         // Assert
         assertThat(occurrencesYetToBeReviewedByExpert).contains(occurrence1);
         assertThat(occurrencesYetToBeReviewedByExpert).doesNotContain(occurrence0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnCorrectOccurrencesForSeegUser() {
+        // Arrange
+        int validatorDiseaseGroupId = 1;
+        ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
+
+        Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
+
+        DiseaseOccurrence occurrenceInDiseaseGroupSetup = saveOccurrenceInDiseaseGroupSetup(validatorDiseaseGroup);
+        DiseaseOccurrence occurrenceInAutomaticModelRuns = saveOccurrenceInAutomaticModelRuns(validatorDiseaseGroup);
+
+        // Act
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expert.getId(), expert.isSeegMember(), validatorDiseaseGroupId);
+
+        // Assert
+        assertThat(list).hasSize(2);
+        assertThat(list).containsOnly(occurrenceInAutomaticModelRuns, occurrenceInDiseaseGroupSetup);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnCorrectOccurrencesForNonSeegUser() {
+        // Arrange
+        int validatorDiseaseGroupId = 1;
+        ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
+
+        Expert expert = expertDao.getByEmail("edward.wiles@zoo.ox.ac.uk");
+
+        DiseaseOccurrence occurrenceInAutomaticModelRuns = saveOccurrenceInAutomaticModelRuns(validatorDiseaseGroup);
+        DiseaseOccurrence occurrenceInDiseaseGroupSetup = saveOccurrenceInDiseaseGroupSetup(validatorDiseaseGroup);
+
+        // Act
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expert.getId(), expert.isSeegMember(), validatorDiseaseGroupId);
+
+        // Assert
+        assertThat(list).hasSize(1);
+        assertThat(list).contains(occurrenceInAutomaticModelRuns);
+        assertThat(list).doesNotContain(occurrenceInDiseaseGroupSetup);
+    }
+
+    private DiseaseOccurrence saveOccurrenceInDiseaseGroupSetup(ValidatorDiseaseGroup validatorDiseaseGroup) {
+        DiseaseGroup diseaseGroupInSetup = diseaseGroupDao.getById(1);
+        diseaseGroupInSetup.setAutomaticModelRunsStartDate(null);
+        diseaseGroupInSetup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        diseaseGroupDao.save(diseaseGroupInSetup);
+
+        DiseaseOccurrence occurrenceInDiseaseGroupSetup = diseaseOccurrenceDao.getById(272407);
+        occurrenceInDiseaseGroupSetup.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+        occurrenceInDiseaseGroupSetup.setDiseaseGroup(diseaseGroupInSetup);
+        diseaseOccurrenceDao.save(occurrenceInDiseaseGroupSetup);
+
+        return occurrenceInDiseaseGroupSetup;
+    }
+
+    private DiseaseOccurrence saveOccurrenceInAutomaticModelRuns(ValidatorDiseaseGroup validatorDiseaseGroup) {
+        DiseaseGroup diseaseGroupInAutomaticModelRuns = diseaseGroupDao.getById(2);
+        diseaseGroupInAutomaticModelRuns.setAutomaticModelRunsStartDate(DateTime.now());
+        diseaseGroupInAutomaticModelRuns.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        diseaseGroupDao.save(diseaseGroupInAutomaticModelRuns);
+
+        DiseaseOccurrence occurrenceInAutomaticModelRuns = diseaseOccurrenceDao.getById(273401);
+        occurrenceInAutomaticModelRuns.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+        occurrenceInAutomaticModelRuns.setDiseaseGroup(diseaseGroupInAutomaticModelRuns);
+        diseaseOccurrenceDao.save(occurrenceInAutomaticModelRuns);
+
+        return occurrenceInAutomaticModelRuns;
     }
 
     @Test
@@ -196,7 +266,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         DiseaseOccurrence occ3 = createDiseaseOccurrence(3, diseaseGroup, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
 
         // Act
-        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(1, validatorDiseaseGroupId);
+        List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(1, true, validatorDiseaseGroupId);
 
         // Assert
         assertThat(list).contains(occ1);

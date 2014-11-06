@@ -42,14 +42,16 @@ public interface ExpertService {
 
     /**
      * Gets a list of occurrence points, for the specified validator disease group, for which the specified expert has
-     * not yet submitted a review.
+     * not yet submitted a review. Only SEEG users may view occurrences of disease groups during setup phase.
+     * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param expertId The id of the specified expert.
+     * @param userIsSeeg Whether the expert is a member of SEEG, and therefore should review more occurrences.
      * @param validatorDiseaseGroupId The id of the validatorDiseaseGroup of interest.
      * @return The list of disease occurrence points to be displayed to the expert on the map.
      * @throws java.lang.IllegalArgumentException if the expertId or validatorDiseaseGroupId cannot be found in the
      * database.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId,
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToBeReviewedByExpert(Integer expertId, boolean userIsSeeg,
                                                                          Integer validatorDiseaseGroupId)
             throws IllegalArgumentException;
 

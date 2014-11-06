@@ -76,7 +76,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
 
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(eq(1), anyInt())).thenReturn(occurrences);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(eq(1), true, anyInt())).thenReturn(occurrences);
 
         this.mockMvc.perform(
                 get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
@@ -87,7 +87,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
 
     @Test
     public void occurrenceResourceRejectsInvalidNumericId() throws Exception {
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), anyInt()))
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), true, anyInt()))
                 .thenThrow(new IllegalArgumentException());
 
         this.mockMvc.perform(

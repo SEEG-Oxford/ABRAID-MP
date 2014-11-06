@@ -123,6 +123,8 @@ public class DataValidationController extends AbstractController {
 
     /**
      * Returns the disease occurrence points in need of review by the current user for a given disease id.
+     * Only SEEG users may view occurrences of disease groups during setup phase.
+     * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
      */
@@ -136,25 +138,14 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
+        boolean userIsSeeg = userIsSeegMember(user);
 
         try {
-            List<DiseaseOccurrence> occurrences = getOccurrences(user, validatorDiseaseGroupId);
+            List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(
+                user.getId(), userIsSeeg, validatorDiseaseGroupId);
             return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // Only SEEG users may view occurrences of disease groups during setup phase.
-    // Other external users may only view occurrences of disease groups with automatic model runs enabled.
-    private List<DiseaseOccurrence> getOccurrences(PublicSiteUser user, Integer validatorDiseaseGroupId) {
-        List<DiseaseOccurrence> occurrences =
-                expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(user.getId(), validatorDiseaseGroupId);
-        if (userIsSeegMember(user)) {
-            return occurrences;
-        } else {
-            return filter(having(on(DiseaseOccurrence.class).getDiseaseGroup().isAutomaticModelRunsEnabled()),
-                   occurrences);
         }
     }
 
