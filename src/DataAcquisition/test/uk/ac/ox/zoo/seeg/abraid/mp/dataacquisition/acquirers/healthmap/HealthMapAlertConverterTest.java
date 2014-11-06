@@ -229,6 +229,31 @@ public class HealthMapAlertConverterTest {
     }
 
     @Test
+    public void invalidUrlIsNotSavedOnConvertedAlert() {
+        // Arrange
+        int feedId = 1;
+
+        HealthMapAlert healthMapAlert = mock(HealthMapAlert.class);
+        when(healthMapAlert.getFeedId()).thenReturn(feedId);
+        when(healthMapAlert.getOriginalUrl()).thenReturn("invalid/url.com");
+
+        HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
+        HashMap<Integer, Feed> feedMap = new HashMap<>();
+        feedMap.put(feedId, new Feed("Test feed", null, 0, "zh", 1));
+        when(lookupData.getFeedMap()).thenReturn(feedMap);
+
+        // Act
+        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(
+            mock(AlertService.class), mock(DiseaseService.class), mock(EmailService.class), lookupData);
+        DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, mock(Location.class));
+
+        // Assert
+        Alert newAlert = occurrence.getAlert();
+        assertThat(newAlert).isNotNull();
+        assertThat(newAlert.getUrl()).isNull();
+    }
+
+    @Test
     public void healthMapDiseaseNameChanged() {
         // Arrange
         String feedName = "Test feed";

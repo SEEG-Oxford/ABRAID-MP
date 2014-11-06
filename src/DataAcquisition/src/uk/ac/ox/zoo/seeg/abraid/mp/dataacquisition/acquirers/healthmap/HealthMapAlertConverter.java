@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.apache.commons.validator.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -36,6 +37,8 @@ public class HealthMapAlertConverter {
     private final DiseaseService diseaseService;
     private final EmailService emailService;
     private final HealthMapLookupData lookupData;
+
+    private UrlValidator urlValidator = new UrlValidator();
 
     public HealthMapAlertConverter(AlertService alertService, DiseaseService diseaseService,
                                    EmailService emailService, HealthMapLookupData lookupData) {
@@ -90,7 +93,9 @@ public class HealthMapAlertConverter {
         alert.setFeed(retrieveFeed(healthMapAlert));
         alert.setTitle(healthMapAlert.getSummary());
         alert.setPublicationDate(healthMapAlert.getDate());
-        alert.setUrl(healthMapAlert.getOriginalUrl());
+        if (urlValidator.isValid(healthMapAlert.getOriginalUrl())) {
+            alert.setUrl(healthMapAlert.getOriginalUrl());
+        }
         alert.setSummary(healthMapAlert.getDescription());
         alert.setHealthMapAlertId(alertId);
 
