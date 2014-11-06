@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
@@ -24,8 +23,6 @@ public class AutomaticModelRunsEnabler {
             "Enabling automatic model runs for disease group %d (%s)";
     private static final String SAVING_AUTOMATIC_MODEL_RUNS_START_DATE =
             "Saving automatic model runs start date on disease group %d as %s";
-    private static final String SETTING_CLASS_CHANGED_DATE =
-            "Setting class changed date on all admin unit disease extent classes for disease group %d to %s";
     private static final String ADDING_VALIDATION_PARAMETERS =
             "Adding validation parameters to %d occurrence(s) currently without final weighting";
     private static final String ADDING_DEFAULT_PARAMETERS =

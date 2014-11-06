@@ -53,12 +53,14 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return reviewedDate == null || comparisonDate != null && comparisonDate.isAfter(reviewedDate);
     }
 
+    /**
+     * Return the latest date (that is not null) between lastExtentGenerationDate and automaticModelRunsStartDate.
+     * @param diseaseGroup The disease group holding the two dates.
+     * @return The date against which to compare reviewed date.
+     */
     public DateTime getComparisonDate(DiseaseGroup diseaseGroup) {
-        DateTime lastExtentGenerationDate = diseaseGroup.getLastExtentGenerationDate();
-        DateTime automaticModelRunsStartDate = diseaseGroup.getAutomaticModelRunsStartDate();
-
-        List<DateTime> notNullDates = filter(notNullValue(),
-                                             Arrays.asList(lastExtentGenerationDate, automaticModelRunsStartDate));
+        List<DateTime> notNullDates = filter(notNullValue(), Arrays.asList(
+            diseaseGroup.getLastExtentGenerationDate(), diseaseGroup.getAutomaticModelRunsStartDate()));
         if (notNullDates.isEmpty()) {
             return null;
         } else if (notNullDates.size() == 1) {
