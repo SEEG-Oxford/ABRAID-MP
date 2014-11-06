@@ -26,7 +26,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static ch.lambdaj.Lambda.*;
@@ -222,9 +221,14 @@ public class AdminDiseaseGroupController extends AbstractController {
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Synchronises all sufficiently configured diseases with each known ModelWrapper instance.
+     * @return 204 for success, otherwise 500.
+     * @throws java.lang.Exception if a problem is encountered communicating with the ModelWrapper instances.
+     */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/sync", method = RequestMethod.POST)
-    public ResponseEntity syncAllDiseasesWithModelWrapper() throws ExecutionException, InterruptedException {
+    public ResponseEntity syncAllDiseasesWithModelWrapper() throws Exception {
         Collection<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
         filter(new LambdaJMatcher<DiseaseGroup>() {
             @Override

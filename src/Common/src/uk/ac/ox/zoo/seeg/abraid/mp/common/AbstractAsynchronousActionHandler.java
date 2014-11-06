@@ -39,39 +39,52 @@ public abstract class AbstractAsynchronousActionHandler {
      * Submits a value-returning task for execution and returns a Future representing the pending results of the task.
      * @param task The task to submit.
      * @param <T> The return type of the task.
-     * @return A Future representing pending completion of the task
+     * @return A Future representing pending completion of the task.
      */
     protected <T> Future<T> submitAsynchronousTask(Callable<T> task) {
         return pool.submit(task);
     }
 
+    /**
+     * Submits a collection of boolean-returning tasks and returns a single Future representing the pending results of
+     * all of the task aggregated to a single result (and).
+     * @param tasks The tasks to submit.
+     * @return A Future representing pending completion of the tasks.
+     */
     protected Future<Boolean> submitConcurrentAsynchronousTasksWithAggregateResult(
-            final Collection<Callable<Boolean>> taskCollection) {
+            final Collection<Callable<Boolean>> tasks) {
         return submitAsynchronousTask(new Callable<Boolean>() {
             @Override
             public Boolean call() {
                 // Start each task in parallel then wait for them to complete
-                Collection<Boolean> taskResults = submitConcurrentTasksAndCollateResults(taskCollection);
+                Collection<Boolean> results = submitConcurrentTasksAndCollateResults(tasks);
 
                 // Ensure they are all true
-                return !(taskResults.contains(false) || taskResults.contains(null));
+                return !(results.contains(false) || results.contains(null));
             }
         });
     }
 
+    /**
+     * Submits a collection of value-returning tasks and returns a single Future representing the pending results of
+     * all of the task.
+     * @param tasks The tasks to submit.
+     * @param <T> The type of value the tasks return.
+     * @return A Future representing pending completion of the tasks.
+     */
     protected <T> Future<Collection<T>> submitConcurrentAsynchronousTasks(
-            final Collection<Callable<T>> taskCollection) {
+            final Collection<Callable<T>> tasks) {
         return submitAsynchronousTask(new Callable<Collection<T>>() {
             @Override
             public Collection<T> call() {
-                return submitConcurrentTasksAndCollateResults(taskCollection);
+                return submitConcurrentTasksAndCollateResults(tasks);
             }
         });
     }
 
-    private <T> Collection<T> submitConcurrentTasksAndCollateResults(final Collection<Callable<T>> taskCollection) {
+    private <T> Collection<T> submitConcurrentTasksAndCollateResults(final Collection<Callable<T>> tasks) {
         // Start each task
-        Collection<Future<T>> taskFutures = convert(taskCollection, new Converter<Callable<T>, Future<T>>() {
+        Collection<Future<T>> futures = convert(tasks, new Converter<Callable<T>, Future<T>>() {
             @Override
             public Future<T> convert(Callable<T> task) {
                 return submitAsynchronousTask(task);
@@ -79,11 +92,11 @@ public abstract class AbstractAsynchronousActionHandler {
         });
 
         // Wait for them all to finish
-        return convert(taskFutures, new Converter<Future<T>, T>() {
+        return convert(futures, new Converter<Future<T>, T>() {
             @Override
-            public T convert(Future<T> taskFuture) {
+            public T convert(Future<T> future) {
                 try {
-                    return taskFuture.get();
+                    return future.get();
                 } catch (Exception e) {
                     logger.error(ERROR_BACKGROUND_PROCESS, e);
                     return null;

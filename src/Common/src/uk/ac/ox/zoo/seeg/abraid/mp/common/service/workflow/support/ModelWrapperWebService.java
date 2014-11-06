@@ -80,11 +80,11 @@ public class ModelWrapperWebService {
     }
 
     /**
-     *
+     * Publish a given disease group to a given model wrapper instance.
      * @param modelWrapperUrl The base url path for the model wrapper instance to which the disease should be published.
      * @param diseaseGroup The disease group to publish.
-     * @throws WebServiceClientException
-     * @throws JsonParserException
+     * @throws WebServiceClientException If the web service call fails.
+     * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
     public void publishSingleDisease(URI modelWrapperUrl, DiseaseGroup diseaseGroup)
             throws WebServiceClientException, JsonParserException {
@@ -107,11 +107,11 @@ public class ModelWrapperWebService {
     }
 
     /**
-     *
+     * Publish a given collection of disease groups to a given model wrapper instance.
      * @param modelWrapperUrl The base url path for the model wrapper instance to which the diseases should be published
      * @param diseaseGroups The disease groups to publish.
-     * @throws WebServiceClientException
-     * @throws JsonParserException
+     * @throws WebServiceClientException If the web service call fails.
+     * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
     public void publishAllDiseases(URI modelWrapperUrl, Collection<DiseaseGroup> diseaseGroups)
             throws WebServiceClientException, JsonParserException {

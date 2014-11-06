@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import static ch.lambdaj.Lambda.convert;
 
 /**
- * foo
+ * Provides a means for interacting with ModelWrapper on all known instances, in a non-blocking fashion.
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelWrapperWebServiceAsyncWrapper extends AbstractAsynchronousActionHandler {
@@ -34,6 +34,12 @@ public class ModelWrapperWebServiceAsyncWrapper extends AbstractAsynchronousActi
         });
     }
 
+    /**
+     * Publish a given disease group to all known model wrapper instances, as a background process.
+     * @param diseaseGroup The disease group to publish.
+     * @return A Future representing pending completion of the background process, with the value 'true' if the
+     * background process succeed for all model wrapper instances.
+     */
     public Future<Boolean> publishSingleDisease(final DiseaseGroup diseaseGroup) {
         return submitConcurrentAsynchronousTasksWithAggregateResult(
             convert(modelWrapperUrls, new Converter<URI, Callable<Boolean>>() {
@@ -56,6 +62,12 @@ public class ModelWrapperWebServiceAsyncWrapper extends AbstractAsynchronousActi
         );
     }
 
+    /**
+     * Publish a collection of disease groups to all known model wrapper instances, as a background process.
+     * @param diseaseGroups The disease groups to publish.
+     * @return A Future representing pending completion of the background process, with the value 'true' if the
+     * background process succeed for all model wrapper instances.
+     */
     public Future<Boolean> publishAllDiseases(final Collection<DiseaseGroup> diseaseGroups) {
         return submitConcurrentAsynchronousTasksWithAggregateResult(
             convert(modelWrapperUrls, new Converter<URI, Callable<Boolean>>() {

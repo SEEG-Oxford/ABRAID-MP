@@ -180,7 +180,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
         assertThat(matcher.find()).isTrue();
         assertThat(matcher.groupCount()).isEqualTo(4);
-        assertThat(matcher.group(1).split(",")).containsOnly("\"id\":87","\"name\":\"Dengue\"","\"abbreviation\":\"deng\"","\"global\":false");
+        assertThat(matcher.group(1).split(",")).containsOnly("\"id\":87", "\"name\":\"Dengue\"", "\"abbreviation\":\"deng\"", "\"global\":false");
         assertThat(matcher.group(2)).isEqualTo("\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}}");
 
         List<String> splitFeatures = getSplitFeatures(matcher.group(3));
