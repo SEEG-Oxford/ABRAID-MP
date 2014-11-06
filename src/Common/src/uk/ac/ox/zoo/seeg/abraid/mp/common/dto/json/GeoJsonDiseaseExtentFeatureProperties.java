@@ -61,19 +61,17 @@ public class GeoJsonDiseaseExtentFeatureProperties {
      * @return The date against which to compare reviewed date.
      */
     public DateTime getComparisonDate(DiseaseGroup diseaseGroup) {
-        List<DateTime> notNullDates = filter(notNullValue(), Arrays.asList(
-            diseaseGroup.getLastExtentGenerationDate(), diseaseGroup.getAutomaticModelRunsStartDate()));
-        if (notNullDates.isEmpty()) {
-            return null;
-        } else if (notNullDates.size() == 1) {
-            return notNullDates.get(0);
-        } else {
-            return getLatest(notNullDates.get(0), notNullDates.get(1));
-        }
+        return getLatest(diseaseGroup.getLastExtentGenerationDate(), diseaseGroup.getAutomaticModelRunsStartDate());
     }
 
     private DateTime getLatest(DateTime date1, DateTime date2) {
-        return date1.isAfter(date2) ? date1 : date2;
+        if (date1 == null) {
+            return date2;
+        } else if (date2 == null) {
+            return date1;
+        } else {
+            return date1.isAfter(date2) ? date1 : date2;
+        }
     }
 
     private DateTime extractReviewedDate(List<AdminUnitReview> reviews, AdminUnitGlobalOrTropical adminUnit) {
