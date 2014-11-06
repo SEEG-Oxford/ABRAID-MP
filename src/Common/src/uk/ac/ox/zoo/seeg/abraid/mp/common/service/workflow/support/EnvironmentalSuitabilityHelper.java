@@ -29,7 +29,9 @@ public class EnvironmentalSuitabilityHelper {
     private static final Logger LOGGER = Logger.getLogger(EnvironmentalSuitabilityHelper.class);
     private static final String ES_FOUND_MESSAGE =
             "Environmental suitability at position (%f,%f) is %f";
-    private static final String ES_NOT_FOUND_MESSAGE =
+    private static final String ES_NOT_FOUND_NO_DATA_MESSAGE =
+            "Environmental suitability at position (%f,%f) is not defined (value \"no data\")";
+    private static final String ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE =
             "Environmental suitability at position (%f,%f) is outside of the raster area";
     private static final String READING_RASTER_FILE_MESSAGE =
             "Reading raster file %s for environmental suitability calculation";
@@ -80,10 +82,12 @@ public class EnvironmentalSuitabilityHelper {
                 if (resultArray[0] != RASTER_NO_DATA_VALUE) {
                     result = resultArray[0];
                     LOGGER.debug(String.format(ES_FOUND_MESSAGE, point.getX(), point.getY(), result));
+                } else {
+                    LOGGER.debug(String.format(ES_NOT_FOUND_NO_DATA_MESSAGE, point.getX(), point.getY()));
                 }
             } catch (PointOutsideCoverageException e) {
                 // Ignore the exception - if the point is outside of the raster area, the result is null
-                LOGGER.debug(String.format(ES_NOT_FOUND_MESSAGE, point.getX(), point.getY()));
+                LOGGER.debug(String.format(ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE, point.getX(), point.getY()));
             }
         }
 
