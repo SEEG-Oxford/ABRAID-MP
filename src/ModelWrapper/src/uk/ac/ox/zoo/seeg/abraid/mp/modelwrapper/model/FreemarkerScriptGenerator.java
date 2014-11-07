@@ -95,20 +95,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("extent_file", "data/extent.tif");
         data.put("admin1_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()));
         data.put("admin2_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
-
-        final String covariatePathPrefix = runConfiguration.getCovariateConfig().getCovariateDirectory();
-        Map<String, String> covariateFiles = runConfiguration.getCovariateConfig().getCovariateFiles();
-
-        Collection<String> covariatePaths =
-                convert(covariateFiles.keySet(), new Converter<String, String>() {
-                    public String convert(String subpath) {
-                        return escapeFilePathForR(Paths.get(covariatePathPrefix, subpath).toString());
-                    }
-                });
-        data.put("covariate_files", covariatePaths);
-
-        Collection<String> covariateNames = covariateFiles.values();
-        data.put("covariate_names", covariateNames);
+        data.put("covariate_files",  runConfiguration.getCovariateConfig().getCovariateFiles().keySet());
 
         return data;
     }
