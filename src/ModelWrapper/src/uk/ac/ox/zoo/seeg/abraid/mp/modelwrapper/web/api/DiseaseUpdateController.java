@@ -45,7 +45,7 @@ public class DiseaseUpdateController extends AbstractController {
     @ResponseBody
     public ResponseEntity updateDisease(@PathVariable Integer diseaseId, @RequestBody JsonDisease requestDisease)
             throws Exception {
-        if (requestDisease.getId() != diseaseId || requestDisease.isValid()) {
+        if (requestDisease.getId() != diseaseId || !requestDisease.isValid()) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 

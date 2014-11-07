@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DiseaseSynchronisationJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
@@ -32,7 +33,7 @@ public class ModelWrapperWebService {
 
     // The ModelWrapper's URL path for the model run (this is hardcoded because it is hardcoded in ModelWrapper).
     private static final String MODEL_RUN_URL_PATH = "/model/run";
-    private static final String MODEL_DISEASE_UPDATE_URL_PATH = "/disease";
+    private static final String MODEL_DISEASE_UPDATE_URL_PATH = "/diseases";
 
     public ModelWrapperWebService(WebServiceClient webServiceClient, AbraidJsonObjectMapper objectMapper) {
         this.webServiceClient = webServiceClient;
@@ -91,7 +92,7 @@ public class ModelWrapperWebService {
         String url = buildPublishSingleDiseaseUrl(modelWrapperUrl, diseaseGroup.getId());
         JsonModelDisease body = createJsonDisease(diseaseGroup);
         // Don't serialize properties that are annotated with ModellingJsonView
-        String bodyAsJson = createRequestBodyAsJson(body, null);
+        String bodyAsJson = createRequestBodyAsJson(body, DiseaseSynchronisationJsonView.class);
         webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
     }
 
@@ -118,7 +119,7 @@ public class ModelWrapperWebService {
         String url = buildPublishAllDiseasesUrl(modelWrapperUrl);
         WrappedList<JsonModelDisease> body = createJsonDiseases(diseaseGroups);
         // Don't serialize properties that are annotated with ModellingJsonView
-        String bodyAsJson = createRequestBodyAsJson(body, null);
+        String bodyAsJson = createRequestBodyAsJson(body, DiseaseSynchronisationJsonView.class);
         webServiceClient.makePostRequestWithJSON(url, bodyAsJson);
     }
 

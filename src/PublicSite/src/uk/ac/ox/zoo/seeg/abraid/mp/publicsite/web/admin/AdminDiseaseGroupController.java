@@ -230,7 +230,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/sync", method = RequestMethod.POST)
     public ResponseEntity syncAllDiseasesWithModelWrapper() throws Exception {
         Collection<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
-        filter(new LambdaJMatcher<DiseaseGroup>() {
+        diseaseGroups = filter(new LambdaJMatcher<DiseaseGroup>() {
             @Override
             public boolean matches(Object o) {
                 return checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper((DiseaseGroup) o);
