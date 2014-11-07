@@ -88,9 +88,8 @@ public class RunConfigurationFactoryTest {
     }
 
     private void assertCorrectCovariateConfiguration(CovariateRunConfiguration result) {
-        assertThat(result.getCovariateDirectory()).isEqualTo("covariateDir");
         assertThat(result.getCovariateFiles()).hasSize(1);
-        assertThat(result.getCovariateFiles()).containsKey("covariateFile");
+        assertThat(result.getCovariateFiles()).containsKey("covariateDir/covariateFile");
         assertThat(result.getCovariateFiles()).containsValue("covariateFileName");
     }
 
@@ -142,14 +141,15 @@ public class RunConfigurationFactoryTest {
                         new JsonCovariateFile("path4", "", "", false, Arrays.asList(1))
                 ));
         when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariates);
+        when(configurationService.getCovariateDirectory()).thenReturn("dir");
         RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
 
         // Act
         RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
 
         // Assert
-        assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("path1");
-        assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("path4");
+        assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("dir/path1");
+        assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("dir/path4");
     }
 
     private void setupMinimumConfig(ConfigurationService configurationService) throws ConfigurationException, IOException {
