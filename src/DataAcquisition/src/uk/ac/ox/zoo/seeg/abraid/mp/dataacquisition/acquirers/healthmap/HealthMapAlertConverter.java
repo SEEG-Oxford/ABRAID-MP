@@ -40,7 +40,7 @@ public class HealthMapAlertConverter {
     private final EmailService emailService;
     private final HealthMapLookupData lookupData;
 
-    private UrlValidator urlValidator = new UrlValidator(new String[] { "http", "https" });
+    private UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
 
     public HealthMapAlertConverter(AlertService alertService, DiseaseService diseaseService,
                                    EmailService emailService, HealthMapLookupData lookupData) {
