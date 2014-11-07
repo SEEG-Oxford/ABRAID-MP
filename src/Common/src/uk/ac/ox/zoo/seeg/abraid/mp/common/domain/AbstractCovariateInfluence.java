@@ -18,10 +18,10 @@ public class AbstractCovariateInfluence {
     @JoinColumn(name = "model_run_id", nullable = false)
     private ModelRun modelRun;
 
-    @Column(name = "covariate_name")
+    @Column(name = "covariate_name", nullable = false)
     private String covariateName;
 
-    @Column(name = "covariate_display_name")
+    @Column(name = "covariate_display_name", nullable = false)
     private String covariateDisplayName;
 
     @Column(name = "mean_influence")

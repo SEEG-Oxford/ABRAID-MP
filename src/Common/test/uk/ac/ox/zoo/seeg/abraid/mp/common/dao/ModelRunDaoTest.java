@@ -117,9 +117,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         run = modelRunDao.getByName("name");
 
         List<CovariateInfluence> covariateInfluences = new ArrayList<>();
-        covariateInfluences.add(createCovariateInfluence("a", run));
-        covariateInfluences.add(createCovariateInfluence("b", run));
-        covariateInfluences.add(createCovariateInfluence("c", run));
+        covariateInfluences.add(createCovariateInfluence("a", "A", run));
+        covariateInfluences.add(createCovariateInfluence("b", "B", run));
+        covariateInfluences.add(createCovariateInfluence("c", "C", run));
         run.setCovariateInfluences(covariateInfluences);
         modelRunDao.save(run);
         flushAndClear();
@@ -140,9 +140,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         run = modelRunDao.getByName("name");
 
         List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences = new ArrayList<>();
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("a", run));
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("b", run));
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("c", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("a", "A", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("b", "B", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("c", "C", run));
         run.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
         modelRunDao.save(run);
         flushAndClear();
@@ -348,20 +348,22 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         return submodelStatistic;
     }
 
-    private CovariateInfluence createCovariateInfluence(String covariateName, ModelRun modelRun) {
+    private CovariateInfluence createCovariateInfluence(String covariateName, String displayName, ModelRun modelRun) {
         CovariateInfluence covariateInfluence = new CovariateInfluence();
         covariateInfluence.setModelRun(modelRun);
         covariateInfluence.setCovariateName(covariateName);
+        covariateInfluence.setCovariateDisplayName(displayName);
         covariateInfluence.setMeanInfluence(1.0);
         covariateInfluence.setLowerQuantile(2.0);
         covariateInfluence.setUpperQuantile(3.0);
         return covariateInfluence;
     }
 
-    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String covariateName, ModelRun modelRun) {
+    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String covariateName, String displayName, ModelRun modelRun) {
         EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
         effectCurveCovariateInfluence.setModelRun(modelRun);
         effectCurveCovariateInfluence.setCovariateName(covariateName);
+        effectCurveCovariateInfluence.setCovariateDisplayName(displayName);
         effectCurveCovariateInfluence.setMeanInfluence(1.0);
         effectCurveCovariateInfluence.setLowerQuantile(2.0);
         effectCurveCovariateInfluence.setUpperQuantile(3.0);

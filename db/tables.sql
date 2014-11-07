@@ -113,7 +113,7 @@ CREATE TABLE covariate_influence (
     id serial NOT NULL,
     model_run_id integer NOT NULL,
     covariate_name varchar(255) NOT NULL,
-    covariate_display_name varchar(255),
+    covariate_display_name varchar(255) NOT NULL,
     mean_influence double precision NOT NULL,
     upper_quantile double precision NOT NULL,
     lower_quantile double precision NOT NULL
@@ -193,7 +193,7 @@ CREATE TABLE effect_curve_covariate_influence (
     id serial NOT NULL,
     model_run_id integer NOT NULL,
     covariate_name varchar(255) NOT NULL,
-    covariate_display_name varchar(255),
+    covariate_display_name varchar(255) NOT NULL,
     covariate_value double precision NOT NULL,
     mean_influence double precision NOT NULL,
     upper_quantile double precision NOT NULL,
