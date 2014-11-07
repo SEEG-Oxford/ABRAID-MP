@@ -27,10 +27,10 @@ define([
         return ko.utils.recursivePeek(func());
     };
 
-    // Translates undefined, null and NaN to empty string (but not 0)
+    // Translates undefined, null and NaN to empty string (but not 0 or false)
     ko.utils.normaliseInput = function (s) {
-        if (s === 0) {
-            return 0;
+        if (s === 0 || s === false) {
+            return s;
         }
         return s || "";
     };

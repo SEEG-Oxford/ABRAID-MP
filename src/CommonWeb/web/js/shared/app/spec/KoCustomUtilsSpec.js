@@ -15,6 +15,7 @@ define([
             });
             it("does not translate other values", function () {
                 expect(ko.utils.normaliseInput(0)).toBe(0);
+                expect(ko.utils.normaliseInput(false)).toBe(false);
                 expect(ko.utils.normaliseInput(123)).toBe(123);
                 expect(ko.utils.normaliseInput("123")).toBe("123");
             });
