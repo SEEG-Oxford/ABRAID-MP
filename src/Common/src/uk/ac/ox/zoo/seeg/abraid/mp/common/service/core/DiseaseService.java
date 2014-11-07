@@ -60,6 +60,13 @@ public interface DiseaseService {
             Integer diseaseGroupId);
 
     /**
+     * Gets the disease occurrence with the specified ID.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @return The disease occurrence.
+     */
+    DiseaseOccurrence getDiseaseOccurrenceById(Integer diseaseOccurrenceId);
+
+    /**
      * Gets disease occurrences with the specified IDs.
      * @param diseaseOccurrenceIds The disease occurrence IDs.
      * @return The disease occurrences with the specified IDs.
@@ -257,4 +264,5 @@ public interface DiseaseService {
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForTrainingPredictor(int diseaseGroupId);
+
 }

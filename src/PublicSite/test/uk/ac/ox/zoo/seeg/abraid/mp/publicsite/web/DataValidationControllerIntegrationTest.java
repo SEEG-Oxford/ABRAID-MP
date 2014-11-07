@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -63,6 +64,9 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         // Setup user
         PublicSiteUser loggedInUser = mock(PublicSiteUser.class);
         when(loggedInUser.getId()).thenReturn(1);
+        Expert expert = mock(Expert.class);
+        when(expert.isSeegMember()).thenReturn(true);
+        when(expertService.getExpertById(1)).thenReturn(expert);
         AbstractAuthenticatingTests.setupCurrentUser(loggedInUser);
     }
 
@@ -72,7 +76,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
         occurrences.add(AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence());
 
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), anyInt())).thenReturn(occurrences);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(eq(1), eq(true), anyInt())).thenReturn(occurrences);
 
         this.mockMvc.perform(
                 get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
@@ -83,7 +87,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
 
     @Test
     public void occurrenceResourceRejectsInvalidNumericId() throws Exception {
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), anyInt()))
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), eq(true), anyInt()))
                 .thenThrow(new IllegalArgumentException());
 
         this.mockMvc.perform(

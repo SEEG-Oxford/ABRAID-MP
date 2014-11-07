@@ -55,7 +55,7 @@ public class AtlasControllerTest {
     }
 
     @Test
-    public void showAtlasAddsAllDiseaseGroupsToMapIfUserIsSeeg() throws Exception {
+    public void showAtlasAddsAllDiseaseGroupsWithCompletedModelRunsToMapIfUserIsSeeg() throws Exception {
         String expectation = "[" +
             "{\"disease\":\"Disease Group 1\",\"runs\":[" +
                 "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
@@ -69,7 +69,7 @@ public class AtlasControllerTest {
     }
 
     @Test
-    public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsIfUserIsNotSeeg() throws Exception {
+    public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsWithCompletedModelRunsIfUserIsNotSeeg() throws Exception {
         String expectation = "[" +
             "{\"disease\":\"Disease Group 1\",\"runs\":[" +
                 "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
