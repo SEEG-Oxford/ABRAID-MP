@@ -216,7 +216,7 @@ public class ModelRunDetailsControllerTest {
         // Arrange
         String name = "modelRun7";
         EffectCurveCovariateInfluence covariateInfluence = new EffectCurveCovariateInfluence();
-        covariateInfluence.setCovariateName("Name");
+        covariateInfluence.setCovariateDisplayName("Display name");
         covariateInfluence.setCovariateValue(1.23);
         covariateInfluence.setLowerQuantile(2.3);
         covariateInfluence.setUpperQuantile(3.2);
@@ -233,7 +233,7 @@ public class ModelRunDetailsControllerTest {
         WrappedList<JsonEffectCurveCovariateInfluence> body =
                 (WrappedList<JsonEffectCurveCovariateInfluence>) response.getBody();
         assertThat(body.getList()).hasSize(1);
-        assertThat(body.getList().get(0).getName()).isEqualTo("Name");
+        assertThat(body.getList().get(0).getName()).isEqualTo("Display name");
         assertThat(body.getList().get(0).getMeanInfluence()).isEqualTo(3.21);
         assertThat(body.getList().get(0).getLowerQuantile()).isEqualTo(2.3);
         assertThat(body.getList().get(0).getUpperQuantile()).isEqualTo(3.2);

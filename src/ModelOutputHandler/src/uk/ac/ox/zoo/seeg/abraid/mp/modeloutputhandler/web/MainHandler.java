@@ -179,7 +179,7 @@ public class MainHandler {
         }
     }
 
-    private List<CsvCovariateInfluence> readCovariateInfluencesFromCSV(byte[] file, Map<String,String> covariateNames)
+    private List<CsvCovariateInfluence> readCovariateInfluencesFromCSV(byte[] file, Map<String, String> covariateNames)
             throws IOException {
         List<CsvCovariateInfluence> csvCovariateInfluences = CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
         updateDisplayNameOnCovariateInfluences(csvCovariateInfluences, covariateNames);
@@ -187,7 +187,7 @@ public class MainHandler {
     }
 
     private void updateDisplayNameOnCovariateInfluences(
-            List<? extends AbstractCsvCovariateInfluence> csvCovariateInfluences, Map<String,String> covariateNames) {
+            List<? extends AbstractCsvCovariateInfluence> csvCovariateInfluences, Map<String, String> covariateNames) {
         for (AbstractCsvCovariateInfluence csv : csvCovariateInfluences) {
             if (covariateNames.containsKey(csv.getCovariateName())) {
                 csv.setCovariateDisplayName(covariateNames.get(csv.getCovariateName()));
@@ -197,7 +197,7 @@ public class MainHandler {
         }
     }
 
-    private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file, Map<String,String> covariateNames)
+    private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file, Map<String, String> covariateNames)
             throws IOException {
         if (file != null) {
             LOGGER.info(String.format(LOG_EFFECT_CURVES_FILE, file.length, modelRun.getName()));
@@ -221,7 +221,7 @@ public class MainHandler {
     }
 
     private List<CsvEffectCurveCovariateInfluence> readEffectCurveCovariateInfluencesFromCSV(
-            byte[] file, Map<String,String> covariateNames) throws IOException {
+            byte[] file, Map<String, String> covariateNames) throws IOException {
         List<CsvEffectCurveCovariateInfluence> csvCovariateInfluences =
                 CsvEffectCurveCovariateInfluence.readFromCSV(new String(file, UTF8));
         updateDisplayNameOnCovariateInfluences(csvCovariateInfluences, covariateNames);

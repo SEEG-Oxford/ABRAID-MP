@@ -103,7 +103,8 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private void createMetadataAndSaveToFile(ModelRunStatus status, String outputText, String errorText)
             throws IOException {
         // Create metadata and serialize as JSON
-        JsonModelOutputsMetadata metadata = new JsonModelOutputsMetadata(runName, status, outputText, errorText, covariateFiles);
+        JsonModelOutputsMetadata metadata =
+                new JsonModelOutputsMetadata(runName, status, outputText, errorText, covariateFiles);
 
         String metadataJson = objectMapper.writeValueAsString(metadata);
 

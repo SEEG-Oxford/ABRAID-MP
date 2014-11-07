@@ -46,8 +46,7 @@ public class AbstractCovariateInfluence {
     }
 
     public AbstractCovariateInfluence(String name, Double meanInfluence) {
-        // NB. Should be changed to covariateDisplayName
-        this.covariateName = name;
+        this.covariateDisplayName = name;
         this.meanInfluence = meanInfluence;
     }
 
