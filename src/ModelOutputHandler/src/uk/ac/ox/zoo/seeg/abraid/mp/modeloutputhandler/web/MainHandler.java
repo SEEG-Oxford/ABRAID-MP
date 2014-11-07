@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.collection.LambdaCollections.with;
 
@@ -87,9 +88,8 @@ public class MainHandler {
         ZipFile zipFile = new ZipFile(modelRunZipFile);
 
         // Handle the model run metadata
-        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME, true);
-        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
-        ModelRun modelRun = handleMetadataJson(metadataJsonAsString);
+        JsonModelOutputsMetadata metadata = extractMetadata(zipFile);
+        ModelRun modelRun = handleModelRunMetadata(metadata);
 
         boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
 
@@ -107,7 +107,7 @@ public class MainHandler {
 
         // Handle outputs
         handleValidationStatisticsFile(modelRun, validationStatisticsFile);
-        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
+        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile, metadata.getCovariateNames());
         handleEffectCurvesFile(modelRun, effectCurvesFile);
         handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
@@ -115,9 +115,14 @@ public class MainHandler {
         return modelRun;
     }
 
-    private ModelRun handleMetadataJson(String metadataJson) {
-        // Parse the JSON and retrieve the model run from the database with the specified name
-        JsonModelOutputsMetadata metadata = new JsonParser().parse(metadataJson, JsonModelOutputsMetadata.class);
+    private JsonModelOutputsMetadata extractMetadata(ZipFile zipFile) throws ZipException, IOException {
+        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME, true);
+        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
+        return new JsonParser().parse(metadataJsonAsString, JsonModelOutputsMetadata.class);
+    }
+
+    private ModelRun handleModelRunMetadata(JsonModelOutputsMetadata metadata) {
+        // Retrieve the model run from the database with the specified name
         ModelRun modelRun = getModelRun(metadata.getModelRunName());
 
         // Transfer the metadata to the model run from the database
@@ -151,13 +156,13 @@ public class MainHandler {
         }
     }
 
-    private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file) throws IOException {
+    private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file, Map<String, String> covariateNames)
+            throws IOException {
         if (file != null) {
             LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
             try {
-                List<CsvCovariateInfluence> csvCovariateInfluence =
-                        CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
-                List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluence)
+                List<CsvCovariateInfluence> csvCovariateInfluences = readFromCSV(file, covariateNames);
+                List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluences)
                         .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
                             @Override
                             public CovariateInfluence convert(CsvCovariateInfluence csv) {
@@ -170,6 +175,16 @@ public class MainHandler {
                 throw new IOException(String.format(COULD_NOT_SAVE_RELATIVE_INFLUENCE, modelRun.getName()), e);
             }
         }
+    }
+
+    private List<CsvCovariateInfluence> readFromCSV(byte[] file, Map<String,String> covariateNames) throws IOException {
+        List<CsvCovariateInfluence> csvCovariateInfluences = CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
+        for (CsvCovariateInfluence csv : csvCovariateInfluences) {
+            if (covariateNames.containsKey(csv.getCovariateName())) {
+                csv.setCovariateDisplayName(covariateNames.get(csv.getCovariateName()));
+            }
+        }
+        return csvCovariateInfluences;
     }
 
     private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file) throws IOException {
