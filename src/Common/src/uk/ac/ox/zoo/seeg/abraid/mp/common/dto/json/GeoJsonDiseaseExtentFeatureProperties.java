@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
 import java.util.List;
@@ -43,15 +44,30 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         return s.charAt(0) + s.substring(1).toLowerCase();
     }
 
+    // An AdminUnitDiseaseExtentClass needs reviewing if it has never been reviewed before,
+    // or if the disease extent has been generated since the most recent review.
     private boolean computeNeedsReview(AdminUnitDiseaseExtentClass extentClass, List<AdminUnitReview> reviews) {
-        DateTime extentClassChangedDate = extentClass.getClassChangedDate();
-        if (extentClassChangedDate == null) {
-            // Extent class has not changed since last disease extent generation, so does not need review
-            return false;
+        DateTime comparisonDate = getComparisonDate(extentClass.getDiseaseGroup());
+        DateTime reviewedDate = extractReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
+        return reviewedDate == null || comparisonDate != null && comparisonDate.isAfter(reviewedDate);
+    }
+
+    /**
+     * Return the latest date (that is not null) between lastExtentGenerationDate and automaticModelRunsStartDate.
+     * @param diseaseGroup The disease group holding the two dates.
+     * @return The date against which to compare reviewed date.
+     */
+    public DateTime getComparisonDate(DiseaseGroup diseaseGroup) {
+        return getLatest(diseaseGroup.getLastExtentGenerationDate(), diseaseGroup.getAutomaticModelRunsStartDate());
+    }
+
+    private DateTime getLatest(DateTime date1, DateTime date2) {
+        if (date1 == null) {
+            return date2;
+        } else if (date2 == null) {
+            return date1;
         } else {
-            DateTime reviewedDate = extractReviewedDate(reviews, extentClass.getAdminUnitGlobalOrTropical());
-            return (reviewedDate == null || extentClassChangedDate.isAfter(reviewedDate));
-            // Needs review if expert has never reviewed it previously, or if class has changed since last review.
+            return date1.isAfter(date2) ? date1 : date2;
         }
     }
 

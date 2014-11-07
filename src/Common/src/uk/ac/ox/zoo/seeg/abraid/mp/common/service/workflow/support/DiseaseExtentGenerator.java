@@ -43,6 +43,7 @@ public class DiseaseExtentGenerator {
      */
     public void generateDiseaseExtent(DiseaseGroup diseaseGroup, DateTime minimumOccurrenceDate,
                                       boolean useGoldStandardOccurrences) {
+        DateTime now = DateTime.now();
         DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup, useGoldStandardOccurrences);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
@@ -52,6 +53,8 @@ public class DiseaseExtentGenerator {
         } else {
             updateExistingExtent(helper, minimumOccurrenceDate);
         }
+        diseaseGroup.setLastExtentGenerationDate(now);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup, boolean useGoldStandardOccurrences) {

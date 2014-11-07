@@ -267,9 +267,7 @@ public class DiseaseExtentGeneratorHelper {
                 row = createAdminUnitDiseaseExtentClass(adminUnit);
             }
             DiseaseExtentClass newClass = classesByAdminUnit.get(adminUnit);
-            if (newClass.equals(row.getDiseaseExtentClass())) {
-                row.setClassChangedDate(null);
-            } else {
+            if (!newClass.equals(row.getDiseaseExtentClass())) {
                 row.setDiseaseExtentClass(newClass);
                 row.setClassChangedDate(DateTime.now());
             }

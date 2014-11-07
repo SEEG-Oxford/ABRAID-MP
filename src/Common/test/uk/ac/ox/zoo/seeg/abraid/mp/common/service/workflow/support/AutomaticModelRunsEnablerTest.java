@@ -5,7 +5,6 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
@@ -56,23 +55,6 @@ public class AutomaticModelRunsEnablerTest {
         // Assert
         verify(diseaseService).saveDiseaseGroup(diseaseGroup);
         assertThat(diseaseGroup.getAutomaticModelRunsStartDate()).isEqualTo(now);
-    }
-
-    @Test
-    public void enableAutomaticModelRunsSavesClassChangedDateOnAdminUnitDiseaseExtentClasses() throws Exception {
-        // Arrange
-        int diseaseGroupId = 87;
-        AdminUnitDiseaseExtentClass extentClass = new AdminUnitDiseaseExtentClass();
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(Arrays.asList(extentClass));
-
-        // Act
-        automaticModelRunsEnabler.enable(diseaseGroupId);
-
-        // Assert
-        verify(diseaseService).saveAdminUnitDiseaseExtentClass(extentClass);
-        assertThat(extentClass.getClassChangedDate()).isEqualTo(DateTime.now());
     }
 
     @Test
