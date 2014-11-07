@@ -153,4 +153,31 @@ public class LocationServiceTest extends AbstractCommonSpringUnitTests {
         // Assert
         assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
     }
+
+    @Test
+    public void findCountryThatContainsPoint() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(1, 2);
+        Integer expectedGaulCode = 123;
+        when(nativeSQL.findCountryThatContainsPoint(point)).thenReturn(expectedGaulCode);
+
+        // Act
+        Integer actualGaulCode = locationService.findCountryThatContainsPoint(point);
+
+        // Assert
+        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
+    }
+
+    @Test
+    public void doesLandSeaBorderContainPoint() {
+        // Arrange
+        Point point = GeometryUtils.createPoint(1, 2);
+        when(nativeSQL.doesLandSeaBorderContainPoint(point)).thenReturn(true);
+
+        // Act
+        boolean result = locationService.doesLandSeaBorderContainPoint(point);
+
+        // Assert
+        assertThat(result).isTrue();
+    }
 }
