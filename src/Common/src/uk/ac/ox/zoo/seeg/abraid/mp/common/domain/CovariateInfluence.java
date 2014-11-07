@@ -1,8 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * Represents the influence of a covariate file on a model run.

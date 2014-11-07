@@ -38,7 +38,6 @@ public class JsonCovariateConfiguration {
     public JsonCovariateConfiguration(List<JsonDisease> diseases, List<JsonCovariateFile> files) {
         setFiles(files);
         setDiseases(diseases);
-
     }
 
     public List<JsonDisease> getDiseases() {
