@@ -8,17 +8,13 @@ define(["ko"], function (ko) {
         var self = this;
 
         self.maxMonthsAgoForHigherOccurrenceScore = ko.observable().extend({ digit: true, min: 0 });
-        self.higherOccurrenceScore = ko.observable();
-        self.lowerOccurrenceScore = ko.observable();
-        self.higherOccurrenceScore.extend({ digit: true, customMin: self.lowerOccurrenceScore });
-        self.lowerOccurrenceScore.extend({ digit: true, customMax: self.higherOccurrenceScore, min: 0 });
-
+        self.higherOccurrenceScore = ko.observable().extend({ digit: true, min: 0 });
+        self.lowerOccurrenceScore = ko.observable().extend({ digit: true, min: 0, max: self.higherOccurrenceScore });
         self.minValidationWeighting = ko.observable().extend({ number: true, min: 0, max: 1 });
         self.minOccurrencesForPresence = ko.observable();
         self.minOccurrencesForPossiblePresence = ko.observable();
         self.minOccurrencesForPresence.extend({ digit: true, customMin: self.minOccurrencesForPossiblePresence });
         self.minOccurrencesForPossiblePresence.extend({digit: true, min: 0, customMax: self.minOccurrencesForPresence});
-
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             var parameters = diseaseGroup.diseaseExtentParameters;
@@ -30,12 +26,14 @@ define(["ko"], function (ko) {
                 self.minOccurrencesForPresence("");
                 self.minOccurrencesForPossiblePresence("");
             } else {
-                self.maxMonthsAgoForHigherOccurrenceScore(parameters.maxMonthsAgoForHigherOccurrenceScore || "");
-                self.higherOccurrenceScore(parameters.higherOccurrenceScore || "");
-                self.lowerOccurrenceScore(parameters.lowerOccurrenceScore || "");
-                self.minValidationWeighting(parameters.minValidationWeighting || "");
-                self.minOccurrencesForPresence(parameters.minOccurrencesForPresence || "");
-                self.minOccurrencesForPossiblePresence(parameters.minOccurrencesForPossiblePresence || "");
+                self.maxMonthsAgoForHigherOccurrenceScore(ko.utils.normaliseInput(
+                    parameters.maxMonthsAgoForHigherOccurrenceScore));
+                self.higherOccurrenceScore(ko.utils.normaliseInput(parameters.higherOccurrenceScore));
+                self.lowerOccurrenceScore(ko.utils.normaliseInput(parameters.lowerOccurrenceScore));
+                self.minValidationWeighting(ko.utils.normaliseInput(parameters.minValidationWeighting));
+                self.minOccurrencesForPresence(ko.utils.normaliseInput(parameters.minOccurrencesForPresence));
+                self.minOccurrencesForPossiblePresence(ko.utils.normaliseInput(
+                    parameters.minOccurrencesForPossiblePresence));
             }
         });
     };

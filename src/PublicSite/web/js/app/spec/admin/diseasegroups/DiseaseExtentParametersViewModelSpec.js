@@ -51,11 +51,11 @@ define([
                 expectRule(vm.maxMonthsAgoForHigherOccurrenceScore, "min", 0);
 
                 expectRule(vm.higherOccurrenceScore, "digit", true);
-                expectRule(vm.higherOccurrenceScore, "customMin", vm.lowerOccurrenceScore);
+                expectRule(vm.higherOccurrenceScore, "min", 0);
 
                 expectRule(vm.lowerOccurrenceScore, "digit", true);
                 expectRule(vm.lowerOccurrenceScore, "min", 0);
-                expectRule(vm.lowerOccurrenceScore, "customMax", vm.higherOccurrenceScore);
+                expectRule(vm.lowerOccurrenceScore, "max", vm.higherOccurrenceScore);
 
                 expectRule(vm.minValidationWeighting, "number", true);
                 expectRule(vm.minValidationWeighting, "min", 0);
@@ -73,7 +73,7 @@ define([
         describe("when the specified event is fired", function () {
             it("updates the parameter fields", function () {
                 // Arrange
-                var diseaseGroup = constructDiseaseGroup("60", "24", "4", "2", "0.6", "5", "2");
+                var diseaseGroup = constructDiseaseGroup(60, 24, 4, 2, 0.6, 5, 2);
                 var vm = new DiseaseExtentParametersViewModel(eventName);
 
                 // Act
@@ -104,10 +104,10 @@ define([
                 // Arrange
                 var vm = new DiseaseExtentParametersViewModel(eventName);
 
-                var diseaseGroup1 = constructDiseaseGroup("60", "24", "4", "2", "0.6", "5", "2");
+                var diseaseGroup1 = constructDiseaseGroup(60, 24, 4, 2, 0.6, 5, 2);
                 var diseaseGroup2 = { diseaseExtentParameters: {
-                    maxMonthsAgoForHigherOccurrenceScore: "12",
-                    higherOccurrenceScore: "0",
+                    maxMonthsAgoForHigherOccurrenceScore: 12,
+                    higherOccurrenceScore: 0,
                     lowerOccurrenceScore: null,
                     minValidationWeighting: undefined,
                     minOccurrencesForPresence: ""
@@ -119,8 +119,8 @@ define([
 
                 // Assert
                 var expectedParameters = {
-                    maxMonthsAgoForHigherOccurrenceScore: "12",
-                    higherOccurrenceScore: "0",
+                    maxMonthsAgoForHigherOccurrenceScore: 12,
+                    higherOccurrenceScore: 0,
                     lowerOccurrenceScore: "",
                     minValidationWeighting: "",
                     minOccurrencesForPresence: "",
