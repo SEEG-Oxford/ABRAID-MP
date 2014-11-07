@@ -13,7 +13,6 @@ import java.util.List;
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-
 /**
  * A DTO for the properties of an AdminUnit, with reference to a DiseaseGroup.
  * Copyright (c) 2014 University of Oxford
