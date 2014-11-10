@@ -85,10 +85,9 @@ public class ModelWrapperWebService {
      * @param modelWrapperUrl The base url path for the model wrapper instance to which the disease should be published.
      * @param diseaseGroup The disease group to publish.
      * @throws WebServiceClientException If the web service call fails.
-     * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
     public void publishSingleDisease(URI modelWrapperUrl, DiseaseGroup diseaseGroup)
-            throws WebServiceClientException, JsonParserException {
+            throws WebServiceClientException {
         String url = buildPublishSingleDiseaseUrl(modelWrapperUrl, diseaseGroup.getId());
         JsonModelDisease body = createJsonDisease(diseaseGroup);
         // Don't serialize properties that are annotated with ModellingJsonView
@@ -112,10 +111,9 @@ public class ModelWrapperWebService {
      * @param modelWrapperUrl The base url path for the model wrapper instance to which the diseases should be published
      * @param diseaseGroups The disease groups to publish.
      * @throws WebServiceClientException If the web service call fails.
-     * @throws JsonParserException If the web service's JSON response cannot be parsed.
      */
     public void publishAllDiseases(URI modelWrapperUrl, Collection<DiseaseGroup> diseaseGroups)
-            throws WebServiceClientException, JsonParserException {
+            throws WebServiceClientException {
         String url = buildPublishAllDiseasesUrl(modelWrapperUrl);
         WrappedList<JsonModelDisease> body = createJsonDiseases(diseaseGroups);
         // Don't serialize properties that are annotated with ModellingJsonView

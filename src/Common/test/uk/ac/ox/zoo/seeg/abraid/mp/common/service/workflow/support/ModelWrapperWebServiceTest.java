@@ -10,16 +10,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -35,7 +33,7 @@ public class ModelWrapperWebServiceTest {
         // Arrange
         String expectedUrl = "http://localhost:8080/ModelWrapper/model/run";
         String modelRunName = "foo_2014-04-24-10-50-27_cd0efc75-42d3-4d96-94b4-287e28fbcdac";
-        String requestJson = getRequestJson();
+        String requestJson = getStartRunRequestJson();
         String responseJson = String.format("{\"modelRunName\":\"%s\"}", modelRunName);
         ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, requestJson, responseJson);
         DiseaseGroup diseaseGroup = getDiseaseGroup();
@@ -71,7 +69,7 @@ public class ModelWrapperWebServiceTest {
     public void startRunWithInvalidResponseJSONThrowsException() {
         // Arrange
         String url = "http://localhost:8080/ModelWrapper/model/run";
-        String requestJson = getRequestJson();
+        String requestJson = getStartRunRequestJson();
         String responseJson = "this is invalid";
         ModelWrapperWebService webService = getModelWrapperWebService(url, requestJson, responseJson);
         DiseaseGroup diseaseGroup = getDiseaseGroup();
@@ -83,6 +81,67 @@ public class ModelWrapperWebServiceTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
+    }
+
+    @Test
+    public void publishSingleDiseaseSendsCorrectHTTPRequest() {
+        // Arrange
+        WebServiceClient client = mock(WebServiceClient.class);
+        ModelWrapperWebService target = getModelWrapperWebService(client);
+        DiseaseGroup diseaseGroup = getDiseaseGroup();
+
+        // Act
+        target.publishSingleDisease(ROOT_URL, diseaseGroup);
+
+        // Assert
+        verify(client).makePostRequestWithJSON(ROOT_URL.toString() + "/diseases/" + diseaseGroup.getId(), "{\"id\":188,\"name\":\"Leishmaniases\"}");
+    }
+
+    @Test
+    public void publishSingleDiseasePropagatesWebServiceClientException() {
+        // Arrange
+        WebServiceClient client = mock(WebServiceClient.class);
+        when(client.makePostRequestWithJSON(anyString(), anyString())).thenThrow(new WebServiceClientException(""));
+        ModelWrapperWebService target = getModelWrapperWebService(client);
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+
+        // Act
+        catchException(target).publishSingleDisease(ROOT_URL, diseaseGroup);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
+    }
+
+    @Test
+    public void publishAllDiseasesSendsCorrectHTTPRequest() {
+        // Arrange
+        WebServiceClient client = mock(WebServiceClient.class);
+        ModelWrapperWebService target = getModelWrapperWebService(client);
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getId()).thenReturn(321);
+        when(diseaseGroup.getName()).thenReturn("this is a test");
+        Collection<DiseaseGroup> diseaseGroups = Arrays.asList(getDiseaseGroup(), diseaseGroup);
+
+        // Act
+        target.publishAllDiseases(ROOT_URL, diseaseGroups);
+
+        // Assert
+        verify(client).makePostRequestWithJSON(ROOT_URL.toString() + "/diseases", "{\"list\":[{\"id\":188,\"name\":\"Leishmaniases\"},{\"id\":321,\"name\":\"this is a test\"}]}");
+    }
+
+    @Test
+    public void publishAllDiseasesPropagatesWebServiceClientException() {
+        // Arrange
+        WebServiceClient client = mock(WebServiceClient.class);
+        when(client.makePostRequestWithJSON(anyString(), anyString())).thenThrow(new WebServiceClientException(""));
+        ModelWrapperWebService target = getModelWrapperWebService(client);
+        Collection<DiseaseGroup> diseaseGroups = Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class));
+
+        // Act
+        catchException(target).publishAllDiseases(ROOT_URL, diseaseGroups);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     private ModelWrapperWebService getModelWrapperWebService(String url, String requestJson, String responseJson) {
@@ -126,7 +185,7 @@ public class ModelWrapperWebServiceTest {
         return map;
     }
 
-    private String getRequestJson() {
+    private String getStartRunRequestJson() {
         String disease = "\"id\":188,\"name\":\"Leishmaniases\",\"abbreviation\":\"leish\",\"global\":true";
         String occurrencesType = "\"type\":\"FeatureCollection\"";
         String occurrencesCrs = "\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}}";

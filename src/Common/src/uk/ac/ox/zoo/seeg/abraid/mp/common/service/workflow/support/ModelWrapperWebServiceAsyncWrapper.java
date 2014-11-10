@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractAsynchronousActionHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.net.URI;
 import java.util.Collection;
@@ -50,7 +51,7 @@ public class ModelWrapperWebServiceAsyncWrapper extends AbstractAsynchronousActi
                         public Boolean call() {
                             try {
                                 modelWrapperWebService.publishSingleDisease(modelWrapperUrl, diseaseGroup);
-                            } catch (Exception e) {
+                            } catch (WebServiceClientException e) {
                                 LOGGER.error(e);
                                 return false;
                             }
@@ -78,7 +79,7 @@ public class ModelWrapperWebServiceAsyncWrapper extends AbstractAsynchronousActi
                         public Boolean call() {
                             try {
                                 modelWrapperWebService.publishAllDiseases(modelWrapperUrl, diseaseGroups);
-                            } catch (Exception e) {
+                            } catch (WebServiceClientException e) {
                                 LOGGER.error(e);
                                 return false;
                             }
