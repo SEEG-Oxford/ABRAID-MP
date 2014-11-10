@@ -106,6 +106,16 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     * Determines whether one of the land-sea border geometries contains the point.
+     * @param point The point.
+     * @return True if the point is on land, otherwise false.
+     */
+    @Override
+    public boolean doesLandSeaBorderContainPoint(Point point) {
+        return nativeSQL.doesLandSeaBorderContainPoint(point);
+    }
+
+    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */

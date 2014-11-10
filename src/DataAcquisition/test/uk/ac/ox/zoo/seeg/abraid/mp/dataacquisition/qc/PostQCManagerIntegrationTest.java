@@ -47,22 +47,29 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     @Test
     public void findsAdminUnitsIfExactlyOnGeometry() {
         Location location = new Location(176, -39, LocationPrecision.ADMIN1);
+        location.setHasPassedQc(true);
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
+        assertThat(location.getCountryGaulCode()).isEqualTo(179);
+        assertThat(location.hasPassedQc()).isTrue();
     }
 
     @Test
     public void findsAdminUnitsIfWithinGeometry() {
         Location location = new Location(101.7, 3.16667, LocationPrecision.COUNTRY);
+        location.setHasPassedQc(true);
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(153);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(153);
+        assertThat(location.getCountryGaulCode()).isEqualTo(153);
+        assertThat(location.hasPassedQc()).isTrue();
     }
 
     @Test
     public void findsAdminUnitsIfWithinGeometryWithDifferentGaulCodesForGlobalAndTropical() {
         Location britishColumbiaCanadaCentroid = new Location(-124.76033, 54.75946, LocationPrecision.ADMIN1);
+        britishColumbiaCanadaCentroid.setHasPassedQc(true);
         postQCManager.runPostQCProcesses(britishColumbiaCanadaCentroid);
         assertThat(britishColumbiaCanadaCentroid.getAdminUnitGlobalGaulCode()).isEqualTo(826);
         assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isEqualTo(825);
@@ -75,6 +82,17 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isNull();
         assertThat(location.getAdminUnitTropicalGaulCode()).isNull();
+        assertThat(location.hasPassedQc()).isFalse();
+    }
+
+    @Test
+    public void doesNotPassQCIfPointWithinAdminUnitsAndCountryButOutsideLandSeaBorder() {
+        Location location = new Location(101.123, 3.456, LocationPrecision.PRECISE);
+        location.setHasPassedQc(true);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(153);
+        assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(153);
+        assertThat(location.getCountryGaulCode()).isEqualTo(153);
         assertThat(location.hasPassedQc()).isFalse();
     }
 }

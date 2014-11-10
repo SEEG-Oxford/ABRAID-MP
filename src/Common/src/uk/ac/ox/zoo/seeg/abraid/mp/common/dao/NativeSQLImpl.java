@@ -42,6 +42,17 @@ public class NativeSQLImpl implements NativeSQL {
     }
 
     /**
+     * Determines whether one of the land-sea border geometries contains the point.
+     * @param point The point.
+     * @return True if the point is on land, otherwise false.
+     */
+    @Override
+    public boolean doesLandSeaBorderContainPoint(Point point) {
+        Object id = uniqueResult(LAND_SEA_BORDER_CONTAINS_POINT_QUERY, "point", point);
+        return (id != null);
+    }
+
+    /**
      * Updates the disease_extent table for the specified disease. This is done by using the
      * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
      * table.

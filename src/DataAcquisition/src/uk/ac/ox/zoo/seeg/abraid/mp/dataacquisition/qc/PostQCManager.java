@@ -22,6 +22,7 @@ public class PostQCManager {
     public void runPostQCProcesses(Location location) {
         assignDiseaseExtentAdminUnits(location);
         assignCountry(location);
+        failQCIfNotOnLand(location);
         failQCIfAnyGaulCodesAreMissing(location);
         setResolutionWeighting(location);
     }
@@ -50,6 +51,13 @@ public class PostQCManager {
     private void assignCountry(Location location) {
         Integer countryGaulCode = locationService.findCountryThatContainsPoint(location.getGeom());
         location.setCountryGaulCode(countryGaulCode);
+    }
+
+    private void failQCIfNotOnLand(Location location) {
+        // A sanity check - this should only happen if, after QC stage 2, the point is adjusted to be off land
+        if (!locationService.doesLandSeaBorderContainPoint(location.getGeom())) {
+            location.setHasPassedQc(false);
+        }
     }
 
     private void failQCIfAnyGaulCodesAreMissing(Location location) {
