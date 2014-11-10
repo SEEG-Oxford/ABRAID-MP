@@ -309,26 +309,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     *  Gets a list of all the disease occurrence reviews in the database for the specified disease group.
-     *  @param diseaseGroupId The ID of the disease group.
-     *  @return The disease occurrence reviews.
-     */
-    @Override
-    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsByDiseaseGroupId(Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getAllReviewsByDiseaseGroupId(diseaseGroupId);
-    }
-
-    /**
-     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
+     * Gets all reviews (for all time) for the disease occurrences which are in review.
      * @param diseaseGroupId The ID of the disease group.
-     * @return A list of the reviews of disease occurrences whose weightings needs updating.
+     * @return A list of disease occurrence reviews.
      */
-    @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                                       Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate,
-                diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
+        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
     }
 
     /**

@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
@@ -21,27 +20,13 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     }
 
     /**
-     * Gets all reviews for the specified disease group.
+     * Gets all reviews (for all time) for the disease occurrences which are in review.
      * @param diseaseGroupId The ID of the disease group.
-     * @return A list of the reviews for the disease group.
+     * @return A list of disease occurrence reviews.
      */
-    @Override
-    public List<DiseaseOccurrenceReview> getAllReviewsByDiseaseGroupId(Integer diseaseGroupId) {
-        return listNamedQuery("getAllDiseaseOccurrenceReviewsByDiseaseGroupId", "diseaseGroupId", diseaseGroupId);
-    }
-
-    /**
-     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return A list of the reviews of disease occurrences whose weightings needs updating.
-     */
-    @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                                       Integer diseaseGroupId) {
-        return
-            listNamedQuery("getDiseaseOccurrenceReviewsForModelRunPrep",
-                    "lastModelRunPrepDate", lastModelRunPrepDate, "diseaseGroupId", diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrenceReviewsForOccurrencesInValidation", "diseaseGroupId",
+                diseaseGroupId);
     }
 
     /**

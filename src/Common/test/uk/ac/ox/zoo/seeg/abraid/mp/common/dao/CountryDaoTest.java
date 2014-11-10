@@ -21,7 +21,7 @@ public class CountryDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void getAllCountries() {
         List<Country> countries = countryDao.getAll();
-        assertThat(countries).hasSize(250);
+        assertThat(countries).hasSize(249);
     }
 
     @Test

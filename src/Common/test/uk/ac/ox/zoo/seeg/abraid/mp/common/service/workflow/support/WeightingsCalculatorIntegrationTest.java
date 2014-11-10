@@ -20,10 +20,8 @@ import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.*;
 
 /**
@@ -49,53 +47,36 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     }
 
     @Test
-    public void updateDiseaseOccurrenceExpertWeightingsGetsReviewsForAllTimeIfLastModelRunPrepDateIsNull() {
+    public void updateDiseaseOccurrenceExpertWeightingsGetsReviewsForAllTime() {
         // Arrange
-        DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 1;
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, 1);
+        target.updateDiseaseOccurrenceExpertWeightings(1);
 
         // Assert
-        verify(mockDiseaseService, times(1)).getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId);
-    }
-
-    @Test
-    public void updateDiseaseOccurrenceExpertWeightingsGetsReviewsForModelRunPrepForNonNullLastModelRunPrepDate() {
-        // Arrange
-        DateTime lastModelRunPrepDate = DateTime.now();
-        int diseaseGroupId = 1;
-        DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
-
-        // Act
-        target.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
-
-        // Assert
-        verify(mockDiseaseService, times(1)).getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate, diseaseGroupId);
+        verify(mockDiseaseService).getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
     }
 
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsLogsNoReviews() {
         // Arrange
-        DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 1;
 
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(diseaseGroupId))
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId))
                 .thenReturn(new ArrayList<DiseaseOccurrenceReview>());
 
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
-        target.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        target.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
 
         // Assert
-        verify(logger, times(1)).info(eq("No new occurrence reviews have been submitted - expert weightings of disease occurrences will not be updated"));
+        verify(logger).info(eq("No new occurrence reviews have been submitted - expert weightings of disease occurrences will not be updated"));
     }
 
     // One expert (who has a weighting of 0.9) has reviewed YES (value of 1) to an occurrence. The total weighting
@@ -104,7 +85,6 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsGivesExpectedResult() throws Exception {
         // Arrange
-        DateTime lastModelRunPrepDate = DateTime.now().minusDays(7);
         int diseaseGroupId = 87;
 
         double expertsWeighting = 0.9;
@@ -122,7 +102,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mockExpertService);
 
         // Act
-        target.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        target.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
 
         // Assert
         assertThat(occurrence.getExpertWeighting()).isEqualTo(expectedWeighting);
@@ -133,15 +113,14 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, occurrence, response);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(mock(DiseaseGroup.class));
-        when(mockDiseaseService.getDiseaseOccurrenceReviewsForModelRunPrep(
-                (DateTime) any(), anyInt())).thenReturn(new ArrayList<>(Arrays.asList(review)));
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(
+                anyInt())).thenReturn(new ArrayList<>(Arrays.asList(review)));
         return mockDiseaseService;
     }
 
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsCalculatesNewDiseaseOccurrenceExpertWeightings() {
         // Arrange
-        DateTime lastModelRunPrepDate = null;
         int diseaseGroupId = 87;
 
         List<DiseaseOccurrence> occurrences =
@@ -155,10 +134,10 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
-        target.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        target.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
 
         // Assert
-        verify(logger, times(1)).info(eq("Recalculating expert weightings for 3 disease occurrence(s) given 9 new review(s)"));
+        verify(logger).info(eq("Recalculating expert weightings for 3 disease occurrence(s) given 9 new review(s)"));
         // All experts reviewed YES (+1) for occ1, shifted from [-1, +1] to [0,1]
         assertThat(occ1.getExpertWeighting()).isEqualTo(1.0);
         // Split responses (1 YES, 1 UNSURE, 1 NO) for occ2, so the expert weighting is the total weighted response, normalised by sum of all expert weightings
@@ -171,7 +150,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         List<DiseaseOccurrenceReview> reviews = createListOfManyReviews(occ1, occ2, occ3,
                 createExpert(1, "ex1", 1.0), createExpert(2, "ex2", 0.2), createExpert(3, "ex3", 0.5));
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(87)).thenReturn(reviews);
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(87)).thenReturn(reviews);
         return mockDiseaseService;
     }
 
@@ -181,7 +160,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
 
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getAllDiseaseOccurrenceReviewsByDiseaseGroupId(anyInt())).thenReturn(Arrays.asList(
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(anyInt())).thenReturn(Arrays.asList(
                 new DiseaseOccurrenceReview(createExpert(1, "ex1", 0.0), occurrence, DiseaseOccurrenceReviewResponse.YES),
                 new DiseaseOccurrenceReview(createExpert(2, "ex2", 0.0), occurrence, DiseaseOccurrenceReviewResponse.YES),
                 new DiseaseOccurrenceReview(createExpert(3, "ex3", 0.0), occurrence, DiseaseOccurrenceReviewResponse.NO)
@@ -190,7 +169,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
-        target.updateDiseaseOccurrenceExpertWeightings(null, 1);
+        target.updateDiseaseOccurrenceExpertWeightings(1);
 
         // Assert
         assertThat(occurrence.getExpertWeighting()).isEqualTo(0.0);
@@ -210,7 +189,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
 
         // Assert
-        verify(logger, times(1)).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
+        verify(logger).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
     }
 
     @Test
