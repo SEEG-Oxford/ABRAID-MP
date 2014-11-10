@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+      Ivy dependencies for db.
+      Copyright (c) 2014 University of Oxford
+-->
+<ivy-module version="2.0">
+    <info organisation="uk.ac.ox.zoo.seeg.abraid.mp" module="db" />
+    <dependencies>
+        <dependency org="org.flywaydb" name="flyway-ant" rev="3.0" />
+        <dependency org="org.postgresql" name="postgresql" rev="9.3-1100-jdbc41"  />
+        <dependency org="org.postgis" name="postgis-jdbc" rev="1.5.2" />
+    </dependencies>
+</ivy-module>

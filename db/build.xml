@@ -1,148 +1,235 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-      Ant build file for the database component of ABRAID-MP.
-      Copyright (c) 2014 University of Oxford
-      
-      NB: The script assumes that the database's superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows)
+  Ant build file for the database component of ABRAID-MP.
+  Copyright (c) 2014 University of Oxford
+
+  NB: The script assumes that the database's superuser password is either empty or is in file ~/.pgpass (this is %APPDATA%\postgresql\pgpass.conf on Windows)
 -->
-<project name="Database" basedir="." default="create.test.database">
-    <description>Creates the ABRAID-MP database.</description>
+<project name="Database" basedir="." default="create.test.database" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:flyway="antlib:org.flywaydb.ant">
+  <description>Creates the ABRAID-MP database.</description>
 
-    <!-- To customise the database properties, copy file database.properties.example to database.properties and modify it -->
-    <!-- If database.properties does not exist, this uses database.properties.example -->
-    <property file="database.properties" />
-    <property file="database.properties.example" />
-    <!-- By default, scripts are run by connecting to the specified database -->
-    <property name="connect.database.name" value="${database.name}" />
+  <!-- To customise the database properties, copy file database.properties.example to database.properties and modify it -->
+  <!-- If database.properties does not exist, this uses database.properties.example -->
+  <property file="database.properties" />
+  <property file="database.properties.example" />
+  <!-- By default, scripts are run by connecting to the specified database -->
+  <property name="connect.database.name" value="${database.name}" />
 
-    <!-- Creates the database containing test data -->
-    <target name="create.test.database" depends="create.database, create.test.roles, create.test.data" />
+  <!-- Creates the database containing test data -->
+  <target name="create.test.database" depends="create.database, create.test.roles, create.test.data, upgrade.schema" />
 
-    <!-- Creates the database containing production data only (and test admin unit data if the shapefiles are unavailable) -->
-    <target name="create.database" depends="create.schema, import.shapefiles, create.test.admin.unit.data, create.data" />
-    
-    <!-- Creates the database schema -->
-    <target name="create.schema">
-        <echo>Creating database named ${database.name}</echo>
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="create_database.sql"/>
-            <param name="database.script.dir" value="."/>
-            <!-- Connect to the default database -->
-            <param name="connect.database.name" value=""/>
-        </antcall>
-    </target>
+  <!-- Creates the database containing production data only (and test admin unit data if the shapefiles are unavailable) -->
+  <target name="create.database" depends="create.schema, import.shapefiles, create.test.admin.unit.data, create.data, upgrade.schema" />
 
-    <!-- Imports shapefiles, if the property "shapefiles.path" is specified (this must be a valid path to the shapefiles folder) -->
-    <target name="import.shapefiles" if="shapefiles.path">
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit_global.shp"/>
-            <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit_qc.shp"/>
-            <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit_simplified_global.shp"/>
-            <param name="shapefile.import.options" value="-c"/> <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit_simplified_tropical.shp"/>
-            <param name="shapefile.import.options" value="-c"/> <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="admin_unit_tropical.shp"/>
-            <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="country.shp"/>
-            <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
-        </antcall>
-        <antcall target="import.shapefile">
-            <param name="shapefile.name" value="land_sea_border.shp"/>
-            <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
-        </antcall>
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="migrate_shapefiles.sql"/>
-            <param name="database.script.dir" value="."/>
-        </antcall>
-    </target>
+  <!-- Creates the database schema -->
+  <target name="create.schema">
+    <echo>Creating database named ${database.name}</echo>
+    <antcall target="run.database.script">
+      <param name="database.script.name" value="create_database.sql"/>
+      <param name="database.script.dir" value="."/>
+      <!-- Connect to the default database -->
+      <param name="connect.database.name" value=""/>
+    </antcall>
+  </target>
 
-    <!-- Adds administrative unit test data to an existing database, unless the property "shapefiles.path" is specified.
-         This ensures that tests can still use the shapefile data (except for the geometries themselves) even if the shapefiles
-         cannot be accessed. -->
-    <target name="create.test.admin.unit.data" unless="shapefiles.path">
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="admin_units_testdata.sql"/>
-            <param name="database.script.dir" value="testdata/admin_units"/>
-        </antcall>
-    </target>
-    
-    <!-- Adds data to an existing database -->
-    <target name="create.data">
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="data.sql"/>
-            <param name="database.script.dir" value="data"/>
-        </antcall>
-    </target>
+  <!-- Imports shapefiles, if the property "shapefiles.path" is specified (this must be a valid path to the shapefiles folder) -->
+  <target name="import.shapefiles" if="shapefiles.path">
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="admin_unit_global.shp"/>
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
+    </antcall>
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="admin_unit_qc.shp"/>
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
+    </antcall>
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="admin_unit_simplified_global.shp"/>
+      <param name="shapefile.import.options" value="-c"/> <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
+    </antcall>
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="admin_unit_simplified_tropical.shp"/>
+      <param name="shapefile.import.options" value="-c"/> <!-- Create new table (it is then dropped in migrate_shapefiles.sql) -->
+    </antcall>
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="admin_unit_tropical.shp"/>
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
+    </antcall>
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="country.shp"/>
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
+    </antcall>
+    <antcall target="import.shapefile">
+      <param name="shapefile.name" value="land_sea_border.shp"/>
+      <param name="shapefile.import.options" value="-a"/> <!-- Append to table that was created in tables.sql -->
+    </antcall>
+    <antcall target="run.database.script">
+      <param name="database.script.name" value="migrate_shapefiles.sql"/>
+      <param name="database.script.dir" value="."/>
+    </antcall>
+  </target>
 
-    <!-- Adds test roles to an existing database -->
-    <target name="create.test.roles">
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="test_roles.sql"/>
-            <param name="database.script.dir" value="."/>
-        </antcall>
-    </target>
-    
-    <!-- Adds test data to an existing database -->
-    <target name="create.test.data">
-        <antcall target="run.database.script">
-            <param name="database.script.name" value="testdata.sql"/>
-            <param name="database.script.dir" value="testdata"/>
-        </antcall>
-    </target>
+  <!--
+   Adds administrative unit test data to an existing database, unless the property "shapefiles.path" is specified.
+   This ensures that tests can still use the shapefile data (except for the geometries themselves) even if the shapefiles
+   cannot be accessed.
+  -->
+  <target name="create.test.admin.unit.data" unless="shapefiles.path">
+    <antcall target="run.database.script">
+      <param name="database.script.name" value="admin_units_testdata.sql"/>
+      <param name="database.script.dir" value="testdata/admin_units"/>
+    </antcall>
+  </target>
 
-    <!-- SUB-TARGETS -->
-    
-    <!-- Runs a database script -->
-    <target name="run.database.script">
-        <exec executable="psql" failonerror="true" dir="${database.script.dir}">
-            <arg value="-U" />
-            <arg value="${superuser.name}" />
-            <arg value="-q" />
-            <arg value="-w" />
-            <arg value="-v" />
-            <arg value="database_name=${database.name}" />
-            <arg value="-v" />
-            <arg value="application_username=${application.username}" />
-            <arg value="-v" />
-            <arg value="application_password=${application.password}" />
-            <arg value="-v" />
-            <arg value="ON_ERROR_STOP=ON" />
-            <arg value="-f" />
-            <arg value="${database.script.name}" />
-            <arg value="${connect.database.name}" />
-        </exec>
-    </target>
+  <!-- Adds data to an existing database -->
+  <target name="create.data">
+    <antcall target="run.database.script">
+      <param name="database.script.name" value="data.sql"/>
+      <param name="database.script.dir" value="data"/>
+    </antcall>
+  </target>
 
-    <!-- Imports a shapefile into the database -->
-    <!-- This calls a wrapper script for the appropriate operating system. Calling the commands (shp2pgsql and psql)
-         directly using exec was many times slower. -->
-    <target name="import.shapefile">
-        <echo>Importing shapefile "${shapefiles.path}/${shapefile.name}"</echo>
-        <echo/>
-        <exec executable="${basedir}/import_shapefile.bat" failonerror="true" osfamily="windows">
-            <arg value="${shapefiles.path}/${shapefile.name}" />
-            <arg value="${superuser.name}" />
-            <arg value="${database.name}" />
-            <arg value="${shapefile.import.options}" />
-        </exec>
+  <!-- Adds test roles to an existing database -->
+  <target name="create.test.roles">
+    <antcall target="run.database.script">
+      <param name="database.script.name" value="test_roles.sql"/>
+      <param name="database.script.dir" value="."/>
+    </antcall>
+  </target>
 
-        <exec executable="${basedir}/import_shapefile.sh" failonerror="true" osfamily="unix">
-            <arg value="${shapefiles.path}/${shapefile.name}" />
-            <arg value="${superuser.name}" />
-            <arg value="${database.name}" />
-            <arg value="${shapefile.import.options}" />
-        </exec>
-    </target>
+  <!-- Adds test data to an existing database -->
+  <target name="create.test.data">
+    <antcall target="run.database.script">
+      <param name="database.script.name" value="testdata.sql"/>
+      <param name="database.script.dir" value="testdata"/>
+    </antcall>
+  </target>
+
+  <!-- SUB-TARGETS -->
+  <!-- Runs a database script -->
+  <target name="run.database.script">
+    <exec executable="psql" failonerror="true" dir="${database.script.dir}">
+      <arg value="-U" />
+      <arg value="${superuser.name}" />
+      <arg value="-q" />
+      <arg value="-w" />
+      <arg value="-v" />
+      <arg value="database_name=${database.name}" />
+      <arg value="-v" />
+      <arg value="application_username=${application.username}" />
+      <arg value="-v" />
+      <arg value="application_password=${application.password}" />
+      <arg value="-v" />
+      <arg value="ON_ERROR_STOP=ON" />
+      <arg value="-f" />
+      <arg value="${database.script.name}" />
+      <arg value="${connect.database.name}" />
+    </exec>
+  </target>
+
+  <!-- Imports a shapefile into the database -->
+  <!--
+    This calls a wrapper script for the appropriate operating system. Calling the commands (shp2pgsql and psql)
+    directly using exec was many times slower.
+  -->
+  <target name="import.shapefile">
+    <echo>Importing shapefile "${shapefiles.path}/${shapefile.name}"</echo>
+    <echo/>
+    <exec executable="${basedir}/import_shapefile.bat" failonerror="true" osfamily="windows">
+      <arg value="${shapefiles.path}/${shapefile.name}" />
+      <arg value="${superuser.name}" />
+      <arg value="${database.name}" />
+      <arg value="${shapefile.import.options}" />
+    </exec>
+    <exec executable="${basedir}/import_shapefile.sh" failonerror="true" osfamily="unix">
+      <arg value="${shapefiles.path}/${shapefile.name}" />
+      <arg value="${superuser.name}" />
+      <arg value="${database.name}" />
+      <arg value="${shapefile.import.options}" />
+    </exec>
+  </target>
+
+  <!-- Lib targets -->
+  <property name="ivy.install.version" value="2.3.0" />
+
+  <condition property="ivy.home" value="${env.IVY_HOME}">
+    <isset property="env.IVY_HOME" />
+  </condition>
+
+  <property file="${basedir}/user.properties"/>
+  <property file="${basedir}/build.properties"/>
+  <property file="${project.root.dir}/user.properties"/>
+  <property file="${project.root.dir}/build.properties"/>
+  <property name="home.dir" value="${user.home}"/>
+  <property name="project.root.dir" value="${basedir}/.." />
+  <property name="lib.dir" value="${basedir}/lib" />
+  <property name="ivy.home" value="${home.dir}/.ant" />
+  <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+
+  <target name="download.ivy">
+    <mkdir dir="${ivy.jar.dir}"/>
+    <!-- download Ivy from web site so that it can be used even without any special installation -->
+    <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
+  </target>
+
+  <target name="create.lib.dirs">
+    <mkdir dir="${lib.dir}" />
+  </target>
+
+  <target name="init.ivy" depends="download.ivy">
+    <path id="ivy.lib.path">
+      <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    </path>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    <ivy:settings file="${project.root.dir}/src/ivy-settings.xml" />
+  </target>
+
+  <target name="resolve.libs" depends="init.ivy">
+    <ivy:resolve log="download-only"/>
+  </target>
+
+  <target name="retrieve.libs" depends="create.lib.dirs, resolve.libs" unless="skip.libs">
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision]-[type].[ext]" sync="true" />
+  </target>
+
+  <!-- Flyway targets -->
+  <path id="flyway.lib.path">
+    <fileset dir="${lib.dir}/default" includes="*.jar"/>
+  </path>
+
+  <target name="get.flyway" depends="retrieve.libs">
+    <taskdef uri="antlib:org.flywaydb.ant" resource="org/flywaydb/ant/antlib.xml" classpathref="flyway.lib.path"/>
+  </target>
+
+  <target name="upgrade.schema" depends="get.flyway">
+    <flyway:migrate url="jdbc:postgresql://localhost:5432/${database.name}" user="${superuser.name}" password="${superuser.password}" outOfOrder="true" initOnMigrate="true" sqlMigrationPrefix="" validateOnMigrate="false">
+       <locations>
+        <location path="filesystem:${basedir}/migrations"/>
+      </locations>
+    </flyway:migrate>
+  </target>
+
+  <target name="check.schema" depends="get.flyway">
+    <flyway:info url="jdbc:postgresql://localhost:5432/${database.name}" user="${superuser.name}" password="${superuser.password}" outOfOrder="true" initOnMigrate="true" sqlMigrationPrefix="" validateOnMigrate="false">
+       <locations>
+        <location path="filesystem:${basedir}/migrations"/>
+      </locations>
+    </flyway:info>
+  </target>
+
+  <target name="validate.schema" depends="get.flyway">
+    <flyway:validate url="jdbc:postgresql://localhost:5432/${database.name}" user="${superuser.name}" password="${superuser.password}" outOfOrder="true" initOnMigrate="true" sqlMigrationPrefix="" validateOnMigrate="false">
+       <locations>
+        <location path="filesystem:${basedir}/migrations"/>
+      </locations>
+    </flyway:validate>
+  </target>
+
+  <target name="create.migration">
+    <tstamp>
+      <format property="time.stamp" pattern="yyMMddHHmm" />
+    </tstamp>
+    <touch file="${basedir}/migrations/${time.stamp}__description_goes_here.sql" />
+  </target>
 </project>
+

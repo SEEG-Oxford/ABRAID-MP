@@ -21,10 +21,7 @@
     <!-- Copy artifacts to output directory -->
     <copy todir="${artifacts.out.dir}" flatten="true">
       <fileset dir="${src.dir}/uk/ac/ox/zoo/seeg/abraid/mp/datamanager">
-        <!-- log4j.properties -->
         <include name="log4j.properties"/>
-
-        <!-- Batch scripts -->
         <include name="config/datamanager.bat"/>
         <include name="config/datamanager.sh"/>
       </fileset>

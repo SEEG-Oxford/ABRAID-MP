@@ -2,8 +2,11 @@
 # Copyright (c) 2014 University of Oxford
 
 # The name of a database superuser
-# NB: The superuser's password must be either empty or specified in file ~/.pgpass (Linux) or %APPDATA%\postgresql\pgpass.conf (Windows)
 superuser.name=postgres
+
+# The password for the database superuser
+# NB: This password must be either empty or also be specified in file ~/.pgpass (Linux) or %APPDATA%\postgresql\pgpass.conf (Windows)
+superuser.password=tessella
 
 # The name of the ABRAID-MP database
 database.name=abraid_mp
