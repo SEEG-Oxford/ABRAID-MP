@@ -12,7 +12,7 @@
         basePath = commonBaseUrl + "js/shared/";
     }
 
-    var cdn = "http://cdnjs.cloudflare.com/ajax/libs/";
+    var cdn = "https://cdnjs.cloudflare.com/ajax/libs/";
     requirejs.config({
         baseUrl: baseUrl + "js/",
         paths: {

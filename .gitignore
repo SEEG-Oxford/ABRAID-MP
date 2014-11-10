@@ -16,3 +16,4 @@ db/.database.properties
 python/*.pyc
 *.pkl
 *.npy
+fake.zip

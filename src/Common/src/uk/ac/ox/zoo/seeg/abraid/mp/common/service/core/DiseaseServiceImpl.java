@@ -150,6 +150,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the disease occurrence with the specified ID.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @return The disease occurrence.
+     */
+    @Override
+    public DiseaseOccurrence getDiseaseOccurrenceById(Integer diseaseOccurrenceId) {
+        return diseaseOccurrenceDao.getById(diseaseOccurrenceId);
+    }
+
+    /**
      * Gets disease occurrences with the specified IDs.
      * @param diseaseOccurrenceIds The disease occurrence IDs.
      * @return The disease occurrences with the specified IDs.
@@ -196,8 +206,7 @@ public class DiseaseServiceImpl implements DiseaseService {
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean useGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, isDiseaseGroupGlobal(diseaseGroupId),
-            useGoldStandardOccurrences);
+            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, useGoldStandardOccurrences);
     }
 
     /**
@@ -246,6 +255,20 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by the disease
+     * group and admin unit gaul code pair).
+     * @param diseaseGroup The disease group the admin unit disease extent class represents.
+     * @param gaulCode The gaul code the admin unit disease extent class represents.
+     * @return The list of latest disease occurrences for the specified admin unit disease extent class.
+     */
+    @Override
+    public List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
+                                                                                      Integer gaulCode) {
+        return adminUnitDiseaseExtentClassDao.getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+                diseaseGroup.getId(), diseaseGroup.isGlobal(), gaulCode);
+    }
+
+    /**
      * Gets the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease extent.
@@ -286,26 +309,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     *  Gets a list of all the disease occurrence reviews in the database for the specified disease group.
-     *  @param diseaseGroupId The ID of the disease group.
-     *  @return The disease occurrence reviews.
-     */
-    @Override
-    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsByDiseaseGroupId(Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getAllReviewsByDiseaseGroupId(diseaseGroupId);
-    }
-
-    /**
-     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
+     * Gets all reviews (for all time) for the disease occurrences which are in review.
      * @param diseaseGroupId The ID of the disease group.
-     * @return A list of the reviews of disease occurrences whose weightings needs updating.
+     * @return A list of disease occurrence reviews.
      */
-    @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                                       Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForModelRunPrep(lastModelRunPrepDate,
-                diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
+        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
     }
 
     /**

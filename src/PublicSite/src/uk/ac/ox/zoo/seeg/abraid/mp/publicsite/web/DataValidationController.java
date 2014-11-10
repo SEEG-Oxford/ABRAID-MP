@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
+
 /**
  * Controller for the expert data validation map page.
  * Copyright (c) 2014 University of Oxford
@@ -69,14 +71,16 @@ public class DataValidationController extends AbstractController {
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         boolean userLoggedIn = (user != null);
-        boolean userIsSEEG = userLoggedIn && checkIfSeegMember(user);
+
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
+
         if (userLoggedIn) {
             int expertId = user.getId();
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
             List<ValidatorDiseaseGroup> diseaseInterests = getSortedDiseaseInterests(expertId);
+
             model.addAttribute("diseaseInterests", diseaseInterests);
             model.addAttribute("allOtherDiseases",
                     getSortedValidatorDiseaseGroupsExcludingDiseaseInterests(diseaseInterests));
@@ -85,10 +89,12 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("defaultValidatorDiseaseGroupName", DEFAULT_VALIDATOR_DISEASE_GROUP_NAME);
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
+
         model.addAttribute("userLoggedIn", userLoggedIn);
-        model.addAttribute("userSeeg", userIsSEEG);
+        model.addAttribute("userSeeg", userIsSeegMember(user));
         model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
+
         return "datavalidation/content";
     }
 
@@ -117,10 +123,12 @@ public class DataValidationController extends AbstractController {
 
     /**
      * Returns the disease occurrence points in need of review by the current user for a given disease id.
+     * Only SEEG users may view occurrences of disease groups during setup phase.
+     * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
@@ -130,16 +138,15 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        List<DiseaseOccurrence> occurrences;
+        boolean userIsSeeg = userIsSeegMember(user);
 
         try {
-            occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(user.getId(),
-                    validatorDiseaseGroupId);
+            List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(
+                user.getId(), userIsSeeg, validatorDiseaseGroupId);
+            return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
     }
 
     /**
@@ -149,7 +156,7 @@ public class DataValidationController extends AbstractController {
      * @param review The string submitted by the expert, should only be YES, UNSURE or NO.
      * @return A HTTP status code response entity.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
             method = RequestMethod.POST)
@@ -159,6 +166,12 @@ public class DataValidationController extends AbstractController {
                                                         String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
         Integer expertId = user.getId();
+
+        // Only SEEG members may submit disease occurrence reviews for disease groups still in setup phase.
+        DiseaseOccurrence occurrence = diseaseService.getDiseaseOccurrenceById(occurrenceId);
+        if (!userIsSeegMember(user) && !occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
 
         // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
         // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
@@ -186,7 +199,7 @@ public class DataValidationController extends AbstractController {
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
      * @return A GeoJSON DTO containing the admin units.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
@@ -196,24 +209,55 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        boolean userIsSEEG = checkIfSeegMember(user);
+        boolean userIsSEEG = userIsSeegMember(user);
 
-        // Only SEEG members may view disease extent for disease groups still in setup phase
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        if (diseaseGroup == null || (!diseaseGroup.isAutomaticModelRunsEnabled() && !userIsSEEG)) {
+        if (diseaseGroup == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<AdminUnitDiseaseExtentClass> diseaseExtent;
-        List<AdminUnitReview> reviews;
+        GeoJsonDiseaseExtentFeatureCollection featureCollection = new GeoJsonDiseaseExtentFeatureCollection();
+
+        // Only SEEG members may view disease extent for disease groups still in setup phase.
+        // Other users see an empty extent.
+        if (diseaseGroup.isAutomaticModelRunsEnabled() || userIsSEEG) {
+            try {
+                List<AdminUnitDiseaseExtentClass> diseaseExtent =
+                        diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+                List<AdminUnitReview> reviews =
+                        expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
+                featureCollection = new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(featureCollection, HttpStatus.OK);
+    }
+
+    /**
+     * Returns the latest disease occurrences corresponding to an admin unit.
+     * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
+    @ResponseBody
+    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
+        getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(@PathVariable Integer diseaseGroupId,
+                                                                  @PathVariable Integer gaulCode) {
         try {
-            diseaseExtent = diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-            reviews = expertService.getAllAdminUnitReviewsForDiseaseGroup(user.getId(), diseaseGroupId);
+            DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+            return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(
+                    diseaseService.getLatestOccurrencesForAdminUnitDiseaseExtentClass(diseaseGroup, gaulCode)
+            ), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews), HttpStatus.OK);
     }
 
     /**
@@ -224,7 +268,7 @@ public class DataValidationController extends AbstractController {
      *               PRESENCE, POSSIBLE_PRESENCE, UNCERTAIN, POSSIBLE_ABSENCE, or ABSENCE.
      * @return A HTTP status code response entity.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(
             value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
             method = RequestMethod.POST)
@@ -232,7 +276,7 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
                                                 String review) {
         PublicSiteUser user = currentUserService.getCurrentUser();
-        boolean userIsSEEG = checkIfSeegMember(user);
+        boolean userIsSEEG = userIsSeegMember(user);
         Integer expertId = user.getId();
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
@@ -240,6 +284,7 @@ public class DataValidationController extends AbstractController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
+        // Only SEEG members may submit disease extent reviews for disease groups still in setup phase.
         if (!userIsSEEG && !diseaseGroup.isAutomaticModelRunsEnabled()) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
@@ -258,16 +303,16 @@ public class DataValidationController extends AbstractController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    private boolean checkIfSeegMember(PublicSiteUser user) {
+    private boolean userIsSeegMember(PublicSiteUser user) {
         if (user == null) {
-            throw new IllegalArgumentException("No logged in user");
+            return false;
+        } else {
+            Expert expert = expertService.getExpertById(user.getId());
+            if (expert == null) {
+                throw new IllegalArgumentException("Logged in user does not have an associated expert.");
+            } else {
+                return expert.isSeegMember();
+            }
         }
-
-        Expert expert = expertService.getExpertById(user.getId());
-        if (expert == null) {
-            throw new IllegalArgumentException("Logged in user does not have an associated expert.");
-        }
-
-        return expert.isSeegMember();
     }
 }

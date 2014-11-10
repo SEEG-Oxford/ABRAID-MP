@@ -23,14 +23,10 @@ import javax.persistence.*;
                 "and diseaseOccurrence.id=:diseaseOccurrenceId"
     ),
     @NamedQuery(
-        name = "getAllDiseaseOccurrenceReviewsByDiseaseGroupId",
-        query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId"
-    ),
-    @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsForModelRunPrep",
-        query = "from DiseaseOccurrenceReview where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
-                "and diseaseOccurrence in " +
-                "(select diseaseOccurrence from DiseaseOccurrenceReview where createdDate > :lastModelRunPrepDate)"
+        name = "getDiseaseOccurrenceReviewsForOccurrencesInValidation",
+        query = "from DiseaseOccurrenceReview " +
+                "where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
+                "and diseaseOccurrence.status='IN_REVIEW'"
     )
 })
 @Entity

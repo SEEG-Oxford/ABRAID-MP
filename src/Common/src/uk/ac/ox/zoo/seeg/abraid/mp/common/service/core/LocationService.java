@@ -77,6 +77,13 @@ public interface LocationService {
     Integer findCountryThatContainsPoint(Point point);
 
     /**
+     * Determines whether one of the land-sea border geometries contains the point.
+     * @param point The point.
+     * @return True if the point is on land, otherwise false.
+     */
+    boolean doesLandSeaBorderContainPoint(Point point);
+
+    /**
      * Gets all land-sea borders.
      * @return All land-sea borders.
      */

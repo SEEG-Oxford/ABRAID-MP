@@ -284,12 +284,15 @@ html, body, #dataValidation {
     }
 }
 #modelRunDetails div.leaflet-bar.leaflet-control a {
-    width: auto;
+    min-width: 200px;
     padding: 0 5px;
-    min-width: 215px;
+    text-align: left;
+    text-align: center;
 }
-#modelRunDetails div.leaflet-bar.leaflet-control a i {
-    margin-right: 5px;
+#modelRunDetails div.leaflet-bar.leaflet-control a i.fa {
+    float: left;
+    margin-right: 6px;
+    margin-top: 7px
 }
 #covariatesAndStatistics table {
     margin: 0;
@@ -331,4 +334,29 @@ html, body, #dataValidation {
 }
 .leaflet-popup-tip-container {
     display: none;
+}
+.leaflet-panel-button {
+    display: inline-block !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    background-image: none;
+    margin: 4px 0 0 0;
+    padding: 4px 8px !important;
+    line-height: 12px !important;
+    font-size: 12px;
+    border: 1px solid #cccccc !important;
+}
+/* columns of same height styles */
+.container-xs-height {
+    display:table;
+    padding-left:0px;
+    padding-right:0px;
+}
+.row-xs-height {
+    display:table-row;
+}
+.col-xs-height {
+    display:table-cell;
+    float:none;
 }

@@ -229,6 +229,61 @@ public class HealthMapAlertConverterTest {
     }
 
     @Test
+    public void invalidUrlIsNotSavedOnConvertedAlert() {
+        testInvalidUrl("/invalid/url.com");
+        testInvalidUrl("article.aspx?articleNO=21162&?????? 10 ?????? ????? ??\"??????\" ?29 ???? ?????? ??? ????? ??? ????? ?????-21162");
+        testInvalidUrl("gx.php?id=XX_ALERT_ID_XX&t=Single+Patient+Report+from+the+GeoSentinel+Surveillance+Network");
+        testInvalidUrl("onm.php?id=XX_ALERT_ID_XXhttps://hk.news.yahoo.com/???????????-????????-102800036.html");
+        testInvalidUrl("www.phac-aspc.gc.ca/phn-asp/2013/measles-0325-eng.php");
+        testInvalidUrl("file://www.phac-aspc.gc.ca/phn-asp/2013/measles-0325-eng.php");
+        testInvalidUrl("scp://www.phac-aspc.gc.ca/phn-asp/2013/measles-0325-eng.php");
+        testInvalidUrl("ftp://www.phac-aspc.gc.ca/phn-asp/2013/measles-0325-eng.php");
+        testInvalidUrl("ssh://www.phac-aspc.gc.ca/phn-asp/2013/measles-0325-eng.php");
+        testInvalidUrl("smb://www.phac-aspc.gc.ca/phn-asp/2013/measles-0325-eng.php");
+    }
+
+    @Test
+    public void onlyHttpAndHttpsUrlsAreAccepted() {
+        testValidUrl("http://promedmail.org/direct.php?id=20140106.2154965");
+        testValidUrl("https://promedmail.org/direct.php?id=20140106.2154965");
+    }
+
+    private void testInvalidUrl(String url) {
+        Alert newAlert = testUrl(url);
+        assertThat(newAlert.getUrl()).isNull();
+    }
+
+    private void testValidUrl(String url) {
+        Alert newAlert = testUrl(url);
+        assertThat(newAlert.getUrl()).isEqualTo(url);
+    }
+
+    private Alert testUrl(String url) {
+        // Arrange
+        int feedId = 1;
+
+        HealthMapLookupData lookupData = mock(HealthMapLookupData.class);
+        HashMap<Integer, Feed> feedMap = new HashMap<>();
+        feedMap.put(feedId, new Feed("Test feed", null, 0, "zh", 1));
+        when(lookupData.getFeedMap()).thenReturn(feedMap);
+
+        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(
+                mock(AlertService.class), mock(DiseaseService.class), mock(EmailService.class), lookupData);
+
+        HealthMapAlert healthMapAlert = mock(HealthMapAlert.class);
+        when(healthMapAlert.getFeedId()).thenReturn(feedId);
+        when(healthMapAlert.getOriginalUrl()).thenReturn(url);
+
+        // Act
+        DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, mock(Location.class));
+
+        // Assert
+        Alert newAlert = occurrence.getAlert();
+        assertThat(newAlert).isNotNull();
+        return newAlert;
+    }
+
+    @Test
     public void healthMapDiseaseNameChanged() {
         // Arrange
         String feedName = "Test feed";

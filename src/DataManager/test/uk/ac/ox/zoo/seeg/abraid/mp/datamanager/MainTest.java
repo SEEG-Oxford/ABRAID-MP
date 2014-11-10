@@ -179,7 +179,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 eq(URI.create(MODELWRAPPER_URL_PREFIX)),
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
-                argThat(new MapSizeMatcher<Integer, Integer>(460)));
+                argThat(new MapSizeMatcher<Integer, Integer>(451)));
         verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
                 startsWith(MODELWRAPPER_URL_PREFIX), anyString());
     }
@@ -253,7 +253,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         assertThat(occurrence1Alert.getFeed().getLanguage()).isEqualTo("my");
         assertThat(occurrence1Alert.getPublicationDate()).isEqualTo(new DateTime("2014-03-10T04:00:00+0000"));
         assertThat(occurrence1Alert.getHealthMapAlertId()).isEqualTo(2324002);
-        assertThat(occurrence1Alert.getUrl()).isEqualTo("onm.php?id=XX_ALERT_ID_XX");
+        assertThat(occurrence1Alert.getUrl()).isNull();
         assertThat(occurrence1Alert.getSummary()).isNullOrEmpty();
         assertThat(occurrence1Alert.getTitle()).isEqualTo("Dengue -- Kuala Lumpur, Malaysia");
         assertThat(occurrence1Alert.getCreatedDate()).isNotNull();

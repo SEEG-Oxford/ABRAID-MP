@@ -271,8 +271,7 @@ define([
                 var data = {
                     id: feature.id,
                     name: feature.properties.name,
-                    count: feature.properties.occurrenceCount,
-                    occurrences: feature.properties.latestOccurrences
+                    count: feature.properties.occurrenceCount
                 };
                 layer.on({
                     click: function () { ko.postbox.publish("admin-unit-selected", data); },
@@ -315,8 +314,7 @@ define([
                 return {
                     id: f.id,
                     name: f.properties.name,
-                    count: f.properties.occurrenceCount,
-                    occurrences: f.properties.latestOccurrences
+                    count: f.properties.occurrenceCount
                 };
             });
             ko.postbox.publish("admin-units-to-be-reviewed", { data: data, skipSerialize: true });
@@ -356,14 +354,9 @@ define([
         }
 
         // Display the admin units, and disease extent class, for the selected validator disease group.
-        function switchDiseaseExtentLayer(diseaseId, occurrenceOnly) {
+        function switchDiseaseExtentLayer(diseaseId) {
             clearDiseaseExtentLayers();
-            if (!occurrenceOnly) {
-                addDiseaseExtentData(diseaseId);
-            } else {
-                ko.postbox.publish("disease-not-ready-for-review", true);
-                ko.postbox.publish("map-view-update-in-progress", false);
-            }
+            addDiseaseExtentData(diseaseId);
         }
 
         /** LEGEND */
@@ -428,14 +421,13 @@ define([
 
         ko.postbox.subscribe("layers-changed", function (data) {
             ko.postbox.publish("map-view-update-in-progress", true);
-            ko.postbox.publish("disease-not-ready-for-review", false);
             validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
             switchValidationTypeView();
             resetSelectedFeature();
             if (validationTypeIsDiseaseOccurrenceLayer) {
                 switchDiseaseOccurrenceLayer(data.diseaseId);
             } else {
-                switchDiseaseExtentLayer(data.diseaseId, data.occurrenceOnly);
+                switchDiseaseExtentLayer(data.diseaseId);
             }
         });
 

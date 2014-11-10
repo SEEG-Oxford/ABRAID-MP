@@ -56,6 +56,5 @@ define([
         ko.postbox.subscribe("layers-changed", function (value) {
             diseaseId = value.diseaseId;
         });
-
     };
 });

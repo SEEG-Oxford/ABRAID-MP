@@ -42,6 +42,17 @@ public class NativeSQLImpl implements NativeSQL {
     }
 
     /**
+     * Determines whether one of the land-sea border geometries contains the point.
+     * @param point The point.
+     * @return True if the point is on land, otherwise false.
+     */
+    @Override
+    public boolean doesLandSeaBorderContainPoint(Point point) {
+        Object id = uniqueResult(LAND_SEA_BORDER_CONTAINS_POINT_QUERY, "point", point);
+        return (id != null);
+    }
+
+    /**
      * Updates the disease_extent table for the specified disease. This is done by using the
      * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
      * table.
@@ -55,18 +66,6 @@ public class NativeSQLImpl implements NativeSQL {
 
         String updateQuery = String.format(UPDATE_DISEASE_EXTENT_QUERY, getGlobalOrTropical(isGlobal));
         executeUpdate(updateQuery, "diseaseGroupId", diseaseGroupId);
-    }
-
-    /**
-     * Finds the suitability of the environment for the specified disease group to exist in the specified location.
-     * This is taken from the mean prediction raster of the latest model run for the disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @param point The location.
-     * @return The environmental suitability, or null if not found.
-     */
-    @Override
-    public Double findEnvironmentalSuitability(int diseaseGroupId, Point point) {
-        return (Double) uniqueResult(ENV_SUITABILITY_QUERY, "diseaseGroupId", diseaseGroupId, "geom", point);
     }
 
     /**

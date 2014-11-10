@@ -12,15 +12,27 @@ define([
     return function (baseUrl) {
         var self = this;
 
-        self.covariateInfluences = ko.observable([]);
+        var activeRun =  ko.observable();
+        self.covariateInfluences = ko.observable();
+        self.effectCurvesLink = ko.computed(function () {
+            return activeRun() ?
+                baseUrl + "atlas/details/modelrun/" + activeRun() + "/effectcurves.csv" :
+                "#";
+        }, self);
 
+        var ajax;
         ko.postbox.subscribe("selected-run", function (run) {
-            if (run.id) {
-                $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/covariates")
+            activeRun(undefined);
+            self.covariateInfluences(undefined);
+
+            if (run && run.id) {
+                activeRun(run.id);
+                if (ajax) {
+                    ajax.abort();
+                }
+                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/covariates")
                     .done(function (data) {
                         self.covariateInfluences(data);
-                    }).fail(function () {
-                        self.covariateInfluences([]);
                     });
             }
         });

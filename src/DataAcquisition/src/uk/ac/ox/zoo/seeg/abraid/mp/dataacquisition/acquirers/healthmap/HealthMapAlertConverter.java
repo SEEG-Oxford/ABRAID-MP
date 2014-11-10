@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -22,6 +23,8 @@ public class HealthMapAlertConverter {
     private static final String DISEASE_ID_NOT_FOUND = "HealthMap alert has no disease ID (disease name \"%s\"," +
             " alert ID %d)";
     private static final String ALERT_ID_NOT_FOUND = "Could not extract alert ID from link \"%s\"";
+    private static final String URL_INVALID =
+            "Invalid URL (%s) from HealthMap alert (ID %d) was not saved on the new alert";
     private static final String DISEASE_NOT_OF_INTEREST_MESSAGE =
             "Disease occurrence not of interest (HealthMap disease \"%s\", alert ID %d)";
     private static final String FOUND_NEW_FEED = "Found new HealthMap feed \"%s\" - adding it to the database";
@@ -36,6 +39,8 @@ public class HealthMapAlertConverter {
     private final DiseaseService diseaseService;
     private final EmailService emailService;
     private final HealthMapLookupData lookupData;
+
+    private UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
 
     public HealthMapAlertConverter(AlertService alertService, DiseaseService diseaseService,
                                    EmailService emailService, HealthMapLookupData lookupData) {
@@ -90,11 +95,19 @@ public class HealthMapAlertConverter {
         alert.setFeed(retrieveFeed(healthMapAlert));
         alert.setTitle(healthMapAlert.getSummary());
         alert.setPublicationDate(healthMapAlert.getDate());
-        alert.setUrl(healthMapAlert.getOriginalUrl());
+        setUrl(alert, healthMapAlert);
         alert.setSummary(healthMapAlert.getDescription());
         alert.setHealthMapAlertId(alertId);
-
         return alert;
+    }
+
+    private void setUrl(Alert alert, HealthMapAlert healthMapAlert) {
+        String url = healthMapAlert.getOriginalUrl();
+        if (urlValidator.isValid(url)) {
+            alert.setUrl(url);
+        } else {
+            LOGGER.warn(String.format(URL_INVALID, url, healthMapAlert.getAlertId()));
+        }
     }
 
     private Feed retrieveFeed(HealthMapAlert healthMapAlert) {

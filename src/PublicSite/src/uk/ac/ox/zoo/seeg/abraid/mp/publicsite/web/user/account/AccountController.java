@@ -70,7 +70,7 @@ public class AccountController extends AbstractController {
      * @return The template to render.
      * @throws JsonProcessingException Thrown if issue generating json for bootstrapped variables.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(value = "/account/edit", method = RequestMethod.GET)
     public String getAccountEditPage(ModelMap modelMap) throws JsonProcessingException {
         JsonExpertDetails expert = loadExpertDTO();
@@ -87,7 +87,7 @@ public class AccountController extends AbstractController {
      * @param expert The user input from the second account registration page.
      * @return A failure status with an array of response messages or a success status.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {
@@ -115,7 +115,7 @@ public class AccountController extends AbstractController {
      * Loads the password change page.
      * @return the template for the password page.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(value = "/account/password", method = RequestMethod.GET)
     public String getChangePasswordPage() {
         return "account/password";
@@ -128,7 +128,7 @@ public class AccountController extends AbstractController {
      * @param confirmPassword The user input for their new password (confirmation).
      * @return A failure status with an array of response messages or a success status.
      */
-    @Secured({ "ROLE_USER", "ROLE_ADMIN" })
+    @Secured("ROLE_USER")
     @RequestMapping(value = "/account/password",
             method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitChangePasswordPage(

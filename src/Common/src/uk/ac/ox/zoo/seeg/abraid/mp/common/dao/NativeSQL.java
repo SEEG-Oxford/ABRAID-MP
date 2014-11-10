@@ -25,6 +25,13 @@ public interface NativeSQL {
     Integer findCountryThatContainsPoint(Point point);
 
     /**
+     * Determines whether one of the land-sea border geometries contains the point.
+     * @param point The point.
+     * @return True if the point is on land, otherwise false.
+     */
+    boolean doesLandSeaBorderContainPoint(Point point);
+
+    /**
      * Updates the disease_extent table for the specified disease. This is done by using the
      * admin_unit_disease_extent_class table to aggregate the relevant geometries in the admin_unit_global/tropical
      * table.
@@ -32,15 +39,6 @@ public interface NativeSQL {
      * @param isGlobal True if the disease is global, false if tropical.
      */
     void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
-
-    /**
-     * Finds the suitability of the environment for the specified disease group to exist in the specified location.
-     * This is taken from the mean prediction raster of the latest model run for the disease group.
-     * @param diseaseGroupId The ID of the disease group.
-     * @param point The location.
-     * @return The environmental suitability, or null if not found.
-     */
-    Double findEnvironmentalSuitability(int diseaseGroupId, Point point);
 
     /**
      * Calculates the distance between the specified point and the boundaries of the disease extent of the specified

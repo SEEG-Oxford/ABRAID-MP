@@ -60,6 +60,13 @@ public interface DiseaseService {
             Integer diseaseGroupId);
 
     /**
+     * Gets the disease occurrence with the specified ID.
+     * @param diseaseOccurrenceId The id of the disease occurrence.
+     * @return The disease occurrence.
+     */
+    DiseaseOccurrence getDiseaseOccurrenceById(Integer diseaseOccurrenceId);
+
+    /**
      * Gets disease occurrences with the specified IDs.
      * @param diseaseOccurrenceIds The disease occurrence IDs.
      * @return The disease occurrences with the specified IDs.
@@ -130,6 +137,16 @@ public interface DiseaseService {
                                                                        DateTime startDate, DateTime endDate);
 
     /**
+     * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by the disease
+     * group and admin unit gaul code pair).
+     * @param diseaseGroup The disease group the admin unit disease extent class represents.
+     * @param gaulCode The gaul code the admin unit disease extent class represents.
+     * @return The list of latest disease occurrences for the specified admin unit disease extent class.
+     */
+    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
+                                                                               Integer gaulCode);
+
+    /**
      * Gets the disease extent for the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @return The disease extent.
@@ -156,20 +173,11 @@ public interface DiseaseService {
     List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
 
     /**
-     * Gets a list of all the disease occurrence reviews in the database for the specified disease group.
+     * Gets all reviews (for all time) for the disease occurrences which are in review.
      * @param diseaseGroupId The ID of the disease group.
-     * @return The disease occurrence reviews.
+     * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsByDiseaseGroupId(Integer diseaseGroupId);
-
-    /**
-     * Gets all reviews (for all time) for the disease occurrences which have new reviews.
-     * @param lastModelRunPrepDate The date on which the disease occurrence reviews were last retrieved.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return A list of the reviews of disease occurrences whose weightings needs updating.
-     */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForModelRunPrep(DateTime lastModelRunPrepDate,
-                                                                             Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
@@ -247,4 +255,5 @@ public interface DiseaseService {
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForTrainingPredictor(int diseaseGroupId);
+
 }

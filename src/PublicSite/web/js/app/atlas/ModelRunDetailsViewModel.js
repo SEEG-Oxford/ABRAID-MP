@@ -9,7 +9,10 @@ define(["ko"], function (ko) {
     return function (covariateInfluencesViewModel, downloadLinksViewModel, statisticsViewModel) {
         var self = this;
 
-        self.activeLayer = ko.observable().subscribeTo("active-atlas-layer");
+        var activeLayer = ko.observable().subscribeTo("active-atlas-layer");
+        self.hasActiveLayer = ko.computed(function () {
+            return activeLayer !== undefined;
+        });
 
         self.covariateInfluencesViewModel = covariateInfluencesViewModel;
         self.downloadLinksViewModel = downloadLinksViewModel;

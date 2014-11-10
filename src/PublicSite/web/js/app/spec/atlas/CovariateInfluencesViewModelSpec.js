@@ -8,27 +8,50 @@ define([
     "use strict";
 
     describe("The Covariate Influences View Model", function () {
+        var baseUrl = "/";
+        var vm;
+        beforeEach(function () {
+            // Clear postbox subscriptions (prevents test from bleeding into each other).
+            ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
+            vm = new CovariateInfluencesViewModel(baseUrl);
+        });
+
+        afterEach(function () {
+            // Clear postbox subscriptions (prevents test from bleeding into each other).
+            ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
+        });
+
+        describe("holds the effect curve covariate influences link which", function () {
+            it("is observable", function () {
+                expect(vm.effectCurvesLink).toBeObservable();
+            });
+
+            it("starts empty with '#'", function () {
+                expect(vm.effectCurvesLink()).toEqual("#");
+            });
+
+            it("is updated when the 'selected-run' event is fired", function () {
+                // Arrange
+                var modelRunId = "abc";
+                var expected = baseUrl + "atlas/details/modelrun/" + modelRunId + "/effectcurves.csv";
+                // Act
+                ko.postbox.publish("selected-run", { id: modelRunId });
+                // Assert
+                expect(vm.effectCurvesLink()).toEqual(expected);
+            });
+        });
+
         describe("holds the list of covariate influences which", function () {
             it("is observable", function () {
-                var vm = new CovariateInfluencesViewModel("");
                 expect(vm.covariateInfluences).toBeObservable();
             });
 
             it("starts empty", function () {
-                var vm = new CovariateInfluencesViewModel("");
-                expect(vm.covariateInfluences()).toEqual([]);
+                expect(vm.covariateInfluences()).toBeUndefined();
             });
 
             describe("is updated", function () {
                 var modelRunId = "modelRunId";
-                var baseUrl = "/";
-                var vm;
-                beforeEach(function () {
-                    // Clear postbox subscriptions (prevents test from bleeding into each other).
-                    ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
-
-                    vm = new CovariateInfluencesViewModel(baseUrl);
-                });
 
                 it("with a GET request when the 'selected-run' event is fired", function () {
                     // Arrange
@@ -54,12 +77,12 @@ define([
                     expect(vm.covariateInfluences()).toEqual(expectation);
                 });
 
-                it("when unsuccessful", function () {
+                it("when unsuccessful, to empty", function () {
                     // Act
                     ko.postbox.publish("selected-run", { id: modelRunId });
                     jasmine.Ajax.requests.mostRecent().response({ status: 400 });
                     // Assert
-                    expect(vm.covariateInfluences()).toEqual([]);
+                    expect(vm.covariateInfluences()).toBeUndefined();
                 });
             });
         });

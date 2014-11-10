@@ -28,7 +28,7 @@ fi
   if ! git pull -q --ff-only origin master; then
     echo "[[ CONFIG | Conflicts or problems detected ]]"
     read -p "Dropping to subshell for manual resolution (use 'git pull origin master' to start and 'exit' to finish). Press [enter] to continue ..."
-    bash --rcfile <(echo "PS1='[Deployment] \u@\h:\w\$'") -i
+    bash --rcfile <(echo "PS1='[Deployment] \u@\h:\w\$ '") -i
   fi
 )
 

@@ -26,8 +26,8 @@ public class ModelRunGatekeeper {
             "Threshold (minNewLocationsTrigger, minEnvSuitability or minDistanceFromExtent) has not been defined";
     private static final String NEVER_BEEN_EXECUTED_BEFORE =
             "Model run has never been executed before for this disease group";
-    private static final String WEEK_HAS_NOT_ELAPSED = "A week has not elapsed since last model run preparation on %s";
-    private static final String WEEK_HAS_ELAPSED = "At least a week has elapsed since last model run preparation on %s";
+    private static final String NOT_ELAPSED = "Not enough days have elapsed since last model run preparation on %s";
+    private static final String ELAPSED = "Enough days have elapsed since last model run preparation on %s";
     private static final String ENOUGH_NEW_LOCATIONS = "Number of new locations has exceeded minimum required";
     private static final String NOT_ENOUGH_NEW_LOCATIONS = "Number of new locations has not exceeded minimum value";
     private static final String STARTING_MODEL_RUN_PREP = "Starting model run preparation";
@@ -51,6 +51,7 @@ public class ModelRunGatekeeper {
      *  - there is no lastModelRunPrepDate for the disease group (ie model has never been run) or
      *  - more than a week has passed since last run, or
      *  - there have been more new locations (more than a week ago) than the minimum required for the disease group.
+     * Note that "a week" is configurable (i.e. days between model runs).
      * False if any of the 3 thresholds required for performing the number of distinct new locations check
      * (minNewLocationsTrigger, minEnvSuitability, minDistanceFromExtent) are not specified for the disease group.
      */
@@ -58,13 +59,13 @@ public class ModelRunGatekeeper {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId, diseaseGroup.getName()));
 
-        boolean dueToRun = neverBeenRunOrWeekHasElapsed(diseaseGroup) || enoughNewLocations(diseaseGroup);
+        boolean dueToRun = neverBeenRunOrDaysBetweenRunsElapsed(diseaseGroup) || enoughNewLocations(diseaseGroup);
 
         LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
         return dueToRun;
     }
 
-    private boolean neverBeenRunOrWeekHasElapsed(DiseaseGroup diseaseGroup) {
+    private boolean neverBeenRunOrDaysBetweenRunsElapsed(DiseaseGroup diseaseGroup) {
         DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         if (lastModelRunPrepDate == null) {
             LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
@@ -72,9 +73,9 @@ public class ModelRunGatekeeper {
         } else {
             DateTime comparisonDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
             DateTime lastModelRunPrepDay = lastModelRunPrepDate.withTimeAtStartOfDay();
-            final boolean weekHasElapsed = !comparisonDate.isBefore(lastModelRunPrepDay);
-            LOGGER.info(String.format(weekHasElapsed ? WEEK_HAS_ELAPSED : WEEK_HAS_NOT_ELAPSED, lastModelRunPrepDate));
-            return weekHasElapsed;
+            final boolean daysBetweenRunsElapsed = !comparisonDate.isBefore(lastModelRunPrepDay);
+            LOGGER.info(String.format(daysBetweenRunsElapsed ? ELAPSED : NOT_ELAPSED, lastModelRunPrepDate));
+            return daysBetweenRunsElapsed;
         }
     }
 

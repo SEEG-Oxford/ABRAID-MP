@@ -31,7 +31,7 @@ public class HealthMapCountryDaoTest extends AbstractCommonSpringIntegrationTest
         assertThat(healthMapCountries).hasSize(224);
 
         int numberOfAssociatedCountries = getNumberOfAssociatedCountries(healthMapCountries);
-        assertThat(numberOfAssociatedCountries).isEqualTo(265);
+        assertThat(numberOfAssociatedCountries).isEqualTo(264);
 
         int numberOfCountriesWithCentroidOverride = getNumberOfCountriesWithCentroidOverride(healthMapCountries);
         assertThat(numberOfCountriesWithCentroidOverride).isEqualTo(11);

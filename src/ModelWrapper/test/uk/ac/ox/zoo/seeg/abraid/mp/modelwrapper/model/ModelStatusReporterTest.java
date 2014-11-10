@@ -75,7 +75,7 @@ public class ModelStatusReporterTest {
     }
 
     @Test
-    public void reportDeletesWorkspaceIfResultsSent() throws Exception {
+    public void reportDeletesWorkspaceIfCompletedResultsSent() throws Exception {
         // Arrange
         File workingDirectory = testFolder.newFolder();
 
@@ -92,6 +92,26 @@ public class ModelStatusReporterTest {
 
         // Assert
         assertThat(workingDirectory).doesNotExist();
+    }
+
+    @Test
+    public void reportDoesNotDeleteWorkspaceIfNonCompletedResultsSent() throws Exception {
+        // Arrange
+        File workingDirectory = testFolder.newFolder();
+
+        ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+
+        String outputText = "test output text";
+        String errorText = "test error text";
+
+        addResultsToWorkspace(RESULTS_FILES, workingDirectory);
+
+        // Act
+        target.report(ModelRunStatus.FAILED, outputText, errorText);
+
+        // Assert
+        assertThat(workingDirectory).exists();
     }
 
     @Test

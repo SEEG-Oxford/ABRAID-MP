@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -26,8 +27,19 @@ public class EnvironmentalSuitabilityHelper {
     private RasterFilePathFactory rasterFilePathFactory;
 
     private static final Logger LOGGER = Logger.getLogger(EnvironmentalSuitabilityHelper.class);
-    private static final int RASTER_NO_DATA_VALUE = -9999;
+    private static final String ES_FOUND_MESSAGE =
+            "Environmental suitability at position (%f,%f) is %f";
+    private static final String ES_NOT_FOUND_NO_DATA_MESSAGE =
+            "Environmental suitability at position (%f,%f) is not defined (value \"no data\")";
+    private static final String ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE =
+            "Environmental suitability at position (%f,%f) is outside of the raster area";
+    private static final String READING_RASTER_FILE_MESSAGE =
+            "Reading raster file %s for environmental suitability calculation";
     private static final String CANNOT_FIND_FILE_MESSAGE = "Cannot find raster file \"%s\"";
+
+    private static final int RASTER_NO_DATA_VALUE = -9999;
+    private static final Hints RASTER_READ_HINTS =
+            new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, GeometryUtils.WGS_84_CRS);
 
     public EnvironmentalSuitabilityHelper(ModelRunService modelRunService,
                                           RasterFilePathFactory rasterFilePathFactory) {
@@ -69,9 +81,13 @@ public class EnvironmentalSuitabilityHelper {
                 double[] resultArray = raster.evaluate(position, (double[]) null);
                 if (resultArray[0] != RASTER_NO_DATA_VALUE) {
                     result = resultArray[0];
+                    LOGGER.debug(String.format(ES_FOUND_MESSAGE, point.getX(), point.getY(), result));
+                } else {
+                    LOGGER.debug(String.format(ES_NOT_FOUND_NO_DATA_MESSAGE, point.getX(), point.getY()));
                 }
-            } catch (PointOutsideCoverageException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+            } catch (PointOutsideCoverageException e) {
                 // Ignore the exception - if the point is outside of the raster area, the result is null
+                LOGGER.debug(String.format(ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE, point.getX(), point.getY()));
             }
         }
 
@@ -81,7 +97,8 @@ public class EnvironmentalSuitabilityHelper {
     private GridCoverage2D readRasterFile(File rasterFile) {
         if (rasterFile.exists()) {
             try {
-                GridCoverage2DReader reader = new GeoTiffReader(rasterFile);
+                LOGGER.debug(String.format(READING_RASTER_FILE_MESSAGE, rasterFile.getAbsolutePath()));
+                GridCoverage2DReader reader = new GeoTiffReader(rasterFile, RASTER_READ_HINTS);
                 return reader.read(null);
             } catch (Exception e) {
                 throw new RuntimeException(e);

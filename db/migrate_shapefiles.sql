@@ -4,6 +4,7 @@
 --
 -- Copyright (c) 2014 University of Oxford
 
+SET client_min_messages TO WARNING;
 
 -- Move column admin_unit_simplified_global.geom to admin_unit_global.geom
 UPDATE admin_unit_global aug
@@ -18,10 +19,17 @@ FROM admin_unit_simplified_tropical aust
 WHERE aut.gaul_code = aust.gaul_code;
 
 -- Add spatial indexes to the newly-populated columns
+DROP INDEX IF EXISTS ix_admin_unit_global_simplified_geom;
+DROP INDEX IF EXISTS ix_admin_unit_tropical_simplified_geom;
 CREATE INDEX ix_admin_unit_global_simplified_geom ON admin_unit_global USING GIST (simplified_geom);
 CREATE INDEX ix_admin_unit_tropical_simplified_geom ON admin_unit_tropical USING GIST (simplified_geom);
 
 -- Rename other spatial indexes to conform to our naming standard
+DROP INDEX IF EXISTS ix_admin_unit_global_geom;
+DROP INDEX IF EXISTS ix_admin_unit_qc_geom;
+DROP INDEX IF EXISTS ix_admin_unit_tropical_geom;
+DROP INDEX IF EXISTS ix_country_geom;
+DROP INDEX IF EXISTS ix_land_sea_border_geom;
 ALTER INDEX admin_unit_global_geom_gist RENAME TO ix_admin_unit_global_geom;
 ALTER INDEX admin_unit_qc_geom_gist RENAME TO ix_admin_unit_qc_geom;
 ALTER INDEX admin_unit_tropical_geom_gist RENAME TO ix_admin_unit_tropical_geom;

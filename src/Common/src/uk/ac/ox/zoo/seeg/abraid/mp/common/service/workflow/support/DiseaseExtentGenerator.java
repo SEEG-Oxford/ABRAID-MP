@@ -18,7 +18,8 @@ public class DiseaseExtentGenerator {
     private static final String INITIAL_MESSAGE = "Creating initial disease extent %s";
     private static final String UPDATING_MESSAGE = "Updating disease extent %s and %d review(s)";
     private static final String DISEASE_GROUP_AND_OCCURRENCES_MESSAGE =
-            "for disease group %d (%s) using %d disease occurrence(s)";
+            "for disease group %d (%s) using %d %sdisease occurrence(s)";
+    private static final String GOLD_STANDARD_MESSAGE = "gold standard ";
 
     private static final Logger LOGGER = Logger.getLogger(DiseaseExtentGenerator.class);
 
@@ -42,6 +43,7 @@ public class DiseaseExtentGenerator {
      */
     public void generateDiseaseExtent(DiseaseGroup diseaseGroup, DateTime minimumOccurrenceDate,
                                       boolean useGoldStandardOccurrences) {
+        DateTime now = DateTime.now();
         DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup, useGoldStandardOccurrences);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
@@ -51,6 +53,8 @@ public class DiseaseExtentGenerator {
         } else {
             updateExistingExtent(helper, minimumOccurrenceDate);
         }
+        diseaseGroup.setLastExtentGenerationDate(now);
+        diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
     private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup, boolean useGoldStandardOccurrences) {
@@ -147,8 +151,9 @@ public class DiseaseExtentGenerator {
 
     private String getDiseaseGroupAndOccurrencesLogMessage(DiseaseExtentGeneratorHelper helper) {
         DiseaseGroup diseaseGroup = helper.getDiseaseGroup();
+        String goldStandardMessage = helper.useGoldStandardOccurrences() ? GOLD_STANDARD_MESSAGE : "";
         return String.format(DISEASE_GROUP_AND_OCCURRENCES_MESSAGE, diseaseGroup.getId(), diseaseGroup.getName(),
-                helper.getOccurrences().size());
+                helper.getOccurrences().size(), goldStandardMessage);
     }
 
     private void updateAggregatedDiseaseExtent(DiseaseGroup diseaseGroup) {

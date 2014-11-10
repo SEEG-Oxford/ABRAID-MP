@@ -63,7 +63,7 @@ public class AdminUnitDiseaseExtentClass {
     private int occurrenceCount;
 
     // List of the latest disease occurrences that were used in determining this disease extent class classification.
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "admin_unit_disease_extent_class_id")
     private List<DiseaseOccurrence> latestOccurrences;
 
