@@ -20,7 +20,7 @@ public class ModelWrapperWebServiceAsyncWrapperTest {
     @Test
     public void publishSingleDiseaseCallsPublishForAllKnownModelWrappers() throws Exception {
         // Arrange
-        String[] mwList = new String[] { "mw1", "mw2" };
+        String[] mwList = new String[] {"mw1", "mw2"};
         ModelWrapperWebService modelWrapperWebService = mock(ModelWrapperWebService.class);
         ModelWrapperWebServiceAsyncWrapper target = new ModelWrapperWebServiceAsyncWrapper(modelWrapperWebService, mwList);
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
@@ -38,7 +38,7 @@ public class ModelWrapperWebServiceAsyncWrapperTest {
     @Test
     public void publishSingleDiseaseReturnsFalseIfAnyCallFails() throws Exception {
         // Arrange
-        String[] mwList = new String[] { "mw1", "mw2" };
+        String[] mwList = new String[] {"mw1", "mw2"};
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         ModelWrapperWebService modelWrapperWebService = mock(ModelWrapperWebService.class);
         doThrow(new WebServiceClientException("fail")).when(modelWrapperWebService).publishSingleDisease(URI.create(mwList[0]), diseaseGroup);
@@ -55,7 +55,7 @@ public class ModelWrapperWebServiceAsyncWrapperTest {
     @Test
     public void publishAllDiseasesCallsPublishForAllKnownModelWrappers() throws Exception {
         // Arrange
-        String[] mwList = new String[] { "mw1", "mw2" };
+        String[] mwList = new String[] {"mw1", "mw2"};
         ModelWrapperWebService modelWrapperWebService = mock(ModelWrapperWebService.class);
         ModelWrapperWebServiceAsyncWrapper target = new ModelWrapperWebServiceAsyncWrapper(modelWrapperWebService, mwList);
         Collection<DiseaseGroup> diseaseGroups = Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class), mock(DiseaseGroup.class));
@@ -73,7 +73,7 @@ public class ModelWrapperWebServiceAsyncWrapperTest {
     @Test
     public void publishAllDiseasesReturnsFalseIfAnyCallFails() throws Exception {
         // Arrange
-        String[] mwList = new String[] { "mw1", "mw2" };
+        String[] mwList = new String[] {"mw1", "mw2"};
         Collection<DiseaseGroup> diseaseGroups = Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class), mock(DiseaseGroup.class));
         ModelWrapperWebService modelWrapperWebService = mock(ModelWrapperWebService.class);
         doThrow(new WebServiceClientException("fail")).when(modelWrapperWebService).publishAllDiseases(URI.create(mwList[0]), diseaseGroups);

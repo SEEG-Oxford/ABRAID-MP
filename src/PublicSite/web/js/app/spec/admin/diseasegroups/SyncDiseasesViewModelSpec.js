@@ -55,9 +55,12 @@ define([
 
             it("it specifies custom UI messages", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[4].fail).toBe("Failed to synchronise the disease groups with all model wrapper instances.");
-                expect(args[4].error).toBe("Failed to synchronise the disease groups with all model wrapper instances.");
-                expect(args[4].success).toBe("Disease groups synchronised successfully with all model wrapper instances.");
+                expect(args[4].fail)
+                    .toBe("Failed to synchronise the disease groups with all model wrapper instances.");
+                expect(args[4].error)
+                    .toBe("Failed to synchronise the disease groups with all model wrapper instances.");
+                expect(args[4].success)
+                    .toBe("Disease groups synchronised successfully with all model wrapper instances.");
             });
         });
     });
