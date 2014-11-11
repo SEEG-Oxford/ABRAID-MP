@@ -19,6 +19,11 @@
                 <artifact pattern="${ivy.trunk.default.root}/${ivy.trunk.default.artifact.pattern}" />
             </filesystem>
             <ibiblio name="ibiblio" m2compatible="true" usepoms="true"/>
+            <url name="Hibernate Spatial repo" m2compatible="true">
+                <!-- The ivy element resolves dependencies by looking for a .pom file. Note the use of [module] rather than [artifact] (the latter resolves to "ivy"). -->
+                <ivy pattern="http://www.hibernatespatial.org/repository/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
+                <artifact pattern="http://www.hibernatespatial.org/repository/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+            </url>
         </chain>
     </resolvers>
 </ivysettings>
