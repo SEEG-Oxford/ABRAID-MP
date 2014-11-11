@@ -1,5 +1,5 @@
 <!--
-      Ivy settings for ABRAID-MP source code.
+      Ivy settings for ABRAID-MP database.
       Copyright (c) 2014 University of Oxford
 -->
 <ivysettings>
@@ -12,9 +12,6 @@
     <property name="ivy.trunk.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
 
     <resolvers>
-        <url name="OSGEO GeoTools repo" m2compatible="true">
-            <artifact pattern="http://download.osgeo.org/webdav/geotools/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-        </url>
         <chain name="full-chain">
             <!-- change name of resolver, also change any ivy-publish targets in build.xml files -->
             <filesystem name="trunk" checkmodified="true">
@@ -22,7 +19,6 @@
                 <artifact pattern="${ivy.trunk.default.root}/${ivy.trunk.default.artifact.pattern}" />
             </filesystem>
             <ibiblio name="ibiblio" m2compatible="true" usepoms="true"/>
-            <resolver ref="OSGEO GeoTools repo"/>
             <url name="Hibernate Spatial repo" m2compatible="true">
                 <!-- The ivy element resolves dependencies by looking for a .pom file. Note the use of [module] rather than [artifact] (the latter resolves to "ivy"). -->
                 <ivy pattern="http://www.hibernatespatial.org/repository/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
@@ -30,11 +26,4 @@
             </url>
         </chain>
     </resolvers>
-
-    <modules>
-        <!-- ibiblio (maven1) doesn't have jai in an ivy friendly way (reports as present then 404s), so we have to avoid maven1 altogether -->
-        <module organisation="javax.media" name="jai_core" resolver="OSGEO GeoTools repo"/>
-        <module organisation="javax.media" name="jai_codec" resolver="OSGEO GeoTools repo"/>
-        <module organisation="javax.media" name="jai_imageio" resolver="OSGEO GeoTools repo"/>
-    </modules>
 </ivysettings>
