@@ -193,6 +193,8 @@
   </target>
 
   <!-- Flyway targets -->
+  <property name="flyway.placeholders.application_username" value="${application.username}"/>
+
   <path id="flyway.lib.path">
     <fileset dir="${lib.dir}/default" includes="*.jar"/>
   </path>
