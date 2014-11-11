@@ -1,0 +1,24 @@
+<!--
+      Ivy settings for ABRAID-MP database.
+      Copyright (c) 2014 University of Oxford
+-->
+<ivysettings>
+    <settings defaultResolver="full-chain"/>
+
+    <caches defaultCacheDir="${ivy.default.ivy.user.dir}/cache"/>
+
+    <property name="ivy.trunk.default.root" value="${ivy.default.ivy.user.dir}/resp" override="false"/>
+    <property name="ivy.trunk.default.ivy.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+    <property name="ivy.trunk.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+
+    <resolvers>
+        <chain name="full-chain">
+            <!-- change name of resolver, also change any ivy-publish targets in build.xml files -->
+            <filesystem name="trunk" checkmodified="true">
+                <ivy pattern="${ivy.trunk.default.root}/${ivy.trunk.default.ivy.pattern}" />
+                <artifact pattern="${ivy.trunk.default.root}/${ivy.trunk.default.artifact.pattern}" />
+            </filesystem>
+            <ibiblio name="ibiblio" m2compatible="true" usepoms="true"/>
+        </chain>
+    </resolvers>
+</ivysettings>
