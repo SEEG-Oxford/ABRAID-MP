@@ -8,7 +8,7 @@
          includeNavBar=false includeFooter=false>
 <div class="container">
     <#if (table.errorMessage)??>
-        <p>${table.errorMessage}</p>
+        <div class="alert alert-warning" role="alert">${table.errorMessage}</div>
     <#else>
         <table class="table table-condensed">
             <thead>

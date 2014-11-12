@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,5 +36,15 @@ public class DiseaseOccurrenceSpreadTable {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    /**
+     * Adds a row to the table.
+     * @param country The country.
+     * @param occurrenceCounts The occurrences counts per year in this country.
+     */
+    public void addRow(Country country, List<Integer> occurrenceCounts) {
+        DiseaseOccurrenceSpreadTableRow tableRow = new DiseaseOccurrenceSpreadTableRow(country, occurrenceCounts);
+        rows.add(tableRow);
     }
 }

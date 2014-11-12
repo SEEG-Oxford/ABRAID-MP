@@ -1,13 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTable;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTableRow;
 
 import java.util.*;
 
@@ -66,13 +65,17 @@ public class DiseaseOccurrenceSpreadHelper {
         Collections.sort(countries, new Comparator<Country>() {
             @Override
             public int compare(Country o1, Country o2) {
-                return o1.getName().compareTo(o2.getName());
+                return new CompareToBuilder()
+                        .append(o2.isForMinDataSpread(), o1.isForMinDataSpread()) // descending (i.e. true before false)
+                        .append(o1.getName(), o2.getName()) // ascending
+                        .toComparison();
             }
         });
         return countries;
     }
 
     private Set<Integer> getUniqueOccurrenceYears(List<DiseaseOccurrence> occurrences) {
+        // Use a TreeSet to keep the set sorted
         Set<Integer> years = new TreeSet<>();
         for (DiseaseOccurrence occurrence : occurrences) {
             years.add(occurrence.getOccurrenceDate().getYear());
@@ -117,9 +120,7 @@ public class DiseaseOccurrenceSpreadHelper {
         DiseaseOccurrenceSpreadTable table = new DiseaseOccurrenceSpreadTable(years);
         int row = 0;
         for (Country country : countries) {
-            DiseaseOccurrenceSpreadTableRow tableRow =
-                    new DiseaseOccurrenceSpreadTableRow(country, toList(tableArray[row]));
-            table.getRows().add(tableRow);
+            table.addRow(country, toList(tableArray[row]));
             row++;
         }
         return table;
