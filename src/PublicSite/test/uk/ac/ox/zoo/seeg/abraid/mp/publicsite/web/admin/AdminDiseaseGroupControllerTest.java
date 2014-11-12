@@ -48,9 +48,9 @@ public class AdminDiseaseGroupControllerTest {
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunService = mock(ModelRunService.class);
         helper = mock(DiseaseOccurrenceSpreadHelper.class);
+        modelWrapperWebServiceAsyncWrapper = mock(ModelWrapperWebServiceAsyncWrapper.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
                 modelRunService, helper, modelWrapperWebServiceAsyncWrapper);
-        modelWrapperWebServiceAsyncWrapper = mock(ModelWrapperWebServiceAsyncWrapper.class);
     }
 
     @Test
