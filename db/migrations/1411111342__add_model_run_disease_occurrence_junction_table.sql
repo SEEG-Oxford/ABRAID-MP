@@ -5,8 +5,10 @@
 
 -- Represents the collection of disease_occurrence ids which where submitted for modelling for each model_run id.
 CREATE TABLE model_run_disease_occurrence (
-    model_run_id integer NOT NULL CONSTRAINT fk_model_run_disease_occurrence_model_run REFERENCES model_run (id),
-    disease_occurrence_id integer NOT NULL CONSTRAINT fk_model_run_disease_occurrence_disease_occurrence REFERENCES model_run (id),
+    model_run_id integer NOT NULL
+        CONSTRAINT fk_model_run_disease_occurrence_model_run REFERENCES model_run (id),
+    disease_occurrence_id integer NOT NULL
+        CONSTRAINT fk_model_run_disease_occurrence_disease_occurrence REFERENCES disease_occurrence (id),
     CONSTRAINT pk_model_run_disease_occurrence PRIMARY KEY (model_run_id, disease_occurrence_id)
 );
 

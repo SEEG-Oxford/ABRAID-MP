@@ -105,6 +105,24 @@ public class ModelRunDetailsController extends AbstractController {
         }
     }
 
+    /**
+     * Gets the list of input disease occurrences associated with a model run.
+     * @param modelRunName The unique name of the model run.
+     * @return The DTO of effect curve covariate influences.
+     */
+    @RequestMapping(value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
+    @Transactional
+    @ResponseBody
+    public ResponseEntity<WrappedList<JsonDiseaseOccurrence>> getInputDiseaseOccurrences(
+            @PathVariable String modelRunName) {
+        ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
+        if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            List<DiseaseOccurrence> inputDiseaseOccurrences = modelRun.getInputDiseaseOccurrences();
+            return new ResponseEntity<>(convertToDto(inputDiseaseOccurrences), HttpStatus.OK);
+        }
+    }
 
     private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences) {
         List<JsonCovariateInfluence> json = new ArrayList<>();
@@ -141,4 +159,8 @@ public class ModelRunDetailsController extends AbstractController {
         }
         return new WrappedList<>(dtos);
     }
+
+    private WrappedList<JsonDiseaseOccurrence> convertToDto(List<DiseaseOccurrence> inputDiseaseOccurrences) {
+    }
+
 }
