@@ -23,7 +23,7 @@ define([
 
         var diseaseGroupId;
         self.buildSubmissionUrl = function () {
-            return baseUrl + "admin/diseases/" + (diseaseGroupId ?  (diseaseGroupId + "/save") : "add");
+            return baseUrl + "admin/diseases/" + (diseaseGroupId ? (diseaseGroupId + "/save") : "add");
         };
 
         var baseSuccessHandler = self.successHandler;

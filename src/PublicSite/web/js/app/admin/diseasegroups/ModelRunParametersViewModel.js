@@ -4,8 +4,10 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (diseaseGroupSelectedEventName) {
+    return function (baseUrl, diseaseGroupSelectedEventName) {
         var self = this;
+
+        self.diseaseGroupId = ko.observable("");
 
         // Triggering a Model Run
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
@@ -44,7 +46,16 @@ define(["ko"], function (ko) {
             owner: self
         }).extend({ digit: true, min: 0 });
 
+        self.diseaseOccurrenceSpreadUrl = ko.computed(function () {
+            return baseUrl + "admin/diseases/" + self.diseaseGroupId() + "/spread";
+        }, self);
+
+        self.diseaseOccurrenceSpreadButtonEnabled = ko.computed(function () {
+            return self.diseaseGroupId() !== "";
+        }, self);
+
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
+            self.diseaseGroupId(ko.utils.normaliseInput(diseaseGroup.id));
             self.minNewLocations(ko.utils.normaliseInput(diseaseGroup.minNewLocations));
             self.minEnvironmentalSuitability(ko.utils.normaliseInput(diseaseGroup.minEnvironmentalSuitability));
             self.minDistanceFromDiseaseExtent(ko.utils.normaliseInput(diseaseGroup.minDistanceFromDiseaseExtent));

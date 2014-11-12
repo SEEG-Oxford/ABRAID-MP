@@ -74,7 +74,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         int diseaseGroupId = 87;
 
         // Act
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId,
                 DiseaseOccurrenceStatus.READY);
 
         // Assert
@@ -87,7 +87,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         int diseaseGroupId = 87;
 
         // Act
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId,
                 DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
 
         // Assert
@@ -100,11 +100,24 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         int diseaseGroupId = 87;
 
         // Act
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId,
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId,
                 DiseaseOccurrenceStatus.UNBATCHED);
 
         // Assert
         assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getByDiseaseGroupIdAndStatusReadyAndFailedQc() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+
+        // Assert
+        assertThat(occurrences).hasSize(48);
     }
 
     @Test

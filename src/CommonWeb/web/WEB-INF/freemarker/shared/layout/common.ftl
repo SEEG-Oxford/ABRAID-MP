@@ -2,7 +2,7 @@
     The page template, including header and footer.
     Copyright (c) 2014 University of Oxford
 -->
-<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="/js/shared/kickstart/default">
+<#macro page title endOfHead="" bootstrapData="" templates="" mainjs="/js/shared/kickstart/default" includeNavBar=true includeFooter=true>
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html class="no-js">
@@ -28,11 +28,15 @@
         <link rel="stylesheet" href="<@spring.url '/css/shared/main.css'/>">
     </head>
     <body>
-        <#include "../../layout/navbar.ftl"/>
+        <#if includeNavBar>
+            <#include "../../layout/navbar.ftl"/>
+        </#if>
         <div id="common">
             <#nested/>
         </div>
-        <#include "footer.ftl"/>
+        <#if includeFooter>
+            <#include "footer.ftl"/>
+        </#if>
 
         <!-- Base url -->
         <script>

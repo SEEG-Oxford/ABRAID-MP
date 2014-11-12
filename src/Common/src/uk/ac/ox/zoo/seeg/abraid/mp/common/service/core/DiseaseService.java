@@ -81,13 +81,13 @@ public interface DiseaseService {
     List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupId(int diseaseGroupId);
 
     /**
-     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * Gets all disease occurrences for the specified disease group and occurrence statuses.
      * @param diseaseGroupId The disease group's ID.
-     * @param status The disease occurrence's status.
-     * @return All disease occurrences for the specified disease group and status.
+     * @param statuses One or more disease occurrence statuses.
+     * @return All disease occurrences for the specified disease group and statuses.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupIdAndStatus(int diseaseGroupId,
-                                                                           DiseaseOccurrenceStatus status);
+    List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(int diseaseGroupId,
+                                                                             DiseaseOccurrenceStatus... statuses);
 
     /**
      * Gets disease occurrences for generating the disease extent for the specified disease group.

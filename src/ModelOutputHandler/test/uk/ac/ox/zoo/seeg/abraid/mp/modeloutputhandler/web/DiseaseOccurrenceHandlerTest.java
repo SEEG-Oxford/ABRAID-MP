@@ -105,7 +105,7 @@ public class DiseaseOccurrenceHandlerTest {
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
-        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroupId,
+        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroupId,
                 DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
 
         // Act
