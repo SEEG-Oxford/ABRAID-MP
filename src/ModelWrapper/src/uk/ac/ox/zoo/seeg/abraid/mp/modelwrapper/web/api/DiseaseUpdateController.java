@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 @Controller
 public class DiseaseUpdateController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(DiseaseUpdateController.class);
-    private static final String ONE_DISEASES_SYNCHRONISED = "One diseases synchronised from main ABRAID platform (%s).";
+    private static final String ONE_DISEASES_SYNCHRONISED = "One disease synchronised from main ABRAID platform (%s).";
     private static final String ALL_DISEASES_SYNCHRONISED = "All diseases synchronised from main ABRAID platform.";
 
     private final ConfigurationService configurationService;
@@ -58,7 +58,7 @@ public class DiseaseUpdateController extends AbstractController {
     }
 
     /**
-     * Update all of the disease.
+     * Update all of the diseases.
      * @param requestDiseases The updated diseases.
      * @return 204 for success or 400 if invalid input is provided.
      * @throws Exception thrown if the updated configuration can not be saved correctly
