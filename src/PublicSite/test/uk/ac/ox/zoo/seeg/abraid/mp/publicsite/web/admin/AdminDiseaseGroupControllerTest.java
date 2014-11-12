@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -13,14 +14,19 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonParentDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -34,6 +40,7 @@ public class AdminDiseaseGroupControllerTest {
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
     private AdminDiseaseGroupController controller;
+    private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
 
     @Before
     public void setUp() {
@@ -41,8 +48,9 @@ public class AdminDiseaseGroupControllerTest {
         objectMapper = new AbraidJsonObjectMapper();
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunService = mock(ModelRunService.class);
+        modelWrapperWebServiceAsyncWrapper = mock(ModelWrapperWebServiceAsyncWrapper.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService);
+                modelRunService, modelWrapperWebServiceAsyncWrapper);
     }
 
     @Test
@@ -230,6 +238,23 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
+    public void saveAttemptsToSendsTheDiseaseGroupToAllModelWrappers() throws Exception {
+        // Arrange
+        int diseaseGroupId = 1;
+        DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
+
+        // Act
+        ResponseEntity result = controller.save(1, newValues);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(modelWrapperWebServiceAsyncWrapper).publishSingleDisease(diseaseGroup);
+    }
+
+    @Test
     public void saveReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(null);
@@ -326,7 +351,28 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(diseaseService).saveDiseaseGroup(any(DiseaseGroup.class));
+        ArgumentCaptor<DiseaseGroup> diseaseGroupArgumentCaptor = ArgumentCaptor.forClass(DiseaseGroup.class);
+        verify(diseaseService).saveDiseaseGroup(diseaseGroupArgumentCaptor.capture());
+        DiseaseGroup value = diseaseGroupArgumentCaptor.getValue();
+        assertThat(value.getName()).isEqualTo("Name");
+    }
+
+    @Test
+    public void addAttemptsToSendsTheDiseaseGroupToAllModelWrappers() throws Exception {
+        // Arrange
+        when(diseaseService.getDiseaseGroupById(87)).thenReturn(new DiseaseGroup());
+        when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4);
+
+        // Act
+        ResponseEntity result = controller.add(values);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        ArgumentCaptor<DiseaseGroup> diseaseGroupArgumentCaptor = ArgumentCaptor.forClass(DiseaseGroup.class);
+        verify(diseaseService).saveDiseaseGroup(diseaseGroupArgumentCaptor.capture());
+        DiseaseGroup value = diseaseGroupArgumentCaptor.getValue();
+        verify(modelWrapperWebServiceAsyncWrapper).publishSingleDisease(value);
     }
 
     @Test
@@ -377,6 +423,64 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void syncAllDiseasesWithModelWrapperReturnsErrorIfSyncFails() throws Exception {
+        // Arrange
+        Future future = mock(Future.class);
+        when(future.get()).thenReturn(false);
+        when(modelWrapperWebServiceAsyncWrapper.publishAllDiseases(anyCollectionOf(DiseaseGroup.class)))
+                .thenReturn(future);
+
+        // Act
+        ResponseEntity result = controller.syncAllDiseasesWithModelWrapper();
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void syncAllDiseasesWithModelWrapperReturnsSuccessIfSyncSucceeds() throws Exception {
+        // Arrange
+        Future future = mock(Future.class);
+        when(future.get()).thenReturn(true);
+        when(modelWrapperWebServiceAsyncWrapper.publishAllDiseases(anyCollectionOf(DiseaseGroup.class)))
+                .thenReturn(future);
+
+        // Act
+        ResponseEntity result = controller.syncAllDiseasesWithModelWrapper();
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void syncAllDiseasesWithModelWrapperSendsTheCorrectDiseases() throws Exception {
+        // Arrange
+        Future future = mock(Future.class);
+        when(future.get()).thenReturn(true);
+        when(modelWrapperWebServiceAsyncWrapper.publishAllDiseases(anyCollectionOf(DiseaseGroup.class)))
+                .thenReturn(future);
+        when(diseaseService.getAllDiseaseGroups()).thenReturn(Arrays.asList(
+                createDiseaseGroup(10, null, "bob", null, DiseaseGroupType.CLUSTER, "Bob", "bo", "b", true, null, 0),
+                createDiseaseGroup(175, null, "bob", null, DiseaseGroupType.CLUSTER, "Bob", "bo", "b", true, null, 0),
+                createDiseaseGroup(121, null, "bob", null, DiseaseGroupType.CLUSTER, "Bob", "bo", "b", true, null, 0),
+                createDiseaseGroup(123, null, "bob", null, DiseaseGroupType.CLUSTER, "Bob", "bo", "b", true, null, 0),
+                createDiseaseGroup(523, null, "bob", null, DiseaseGroupType.CLUSTER, "Bob", "bo", null, true, null, 0),
+                createDiseaseGroup(132, null, "bob", null, null, null, null, null, true, null, 0),
+                createDiseaseGroup(111, null, null, null, null, null, null, null, true, null, 0)
+        ));
+
+        // Act
+        ResponseEntity result = controller.syncAllDiseasesWithModelWrapper();
+
+        // Assert
+        ArgumentCaptor<Collection<DiseaseGroup>> diseaseGroupArgumentCaptor = ArgumentCaptor.forClass((Class) Collection.class);
+        verify(modelWrapperWebServiceAsyncWrapper).publishAllDiseases(diseaseGroupArgumentCaptor.capture());
+        Collection<DiseaseGroup> value = diseaseGroupArgumentCaptor.getValue();
+        assertThat(value).hasSize(4);
+        assertThat(extract(value, on(DiseaseGroup.class).getId())).containsOnly(10, 175, 121, 123);
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

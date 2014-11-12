@@ -476,7 +476,7 @@ define([
                     });
                 });
 
-                it("shows a message if the data can not be obtained", function () {
+                it("shows a message if the data cannot be obtained", function () {
                     // Arrange
                     var diseaseGroupId = 1;
 
