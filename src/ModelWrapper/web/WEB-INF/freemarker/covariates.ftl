@@ -17,7 +17,7 @@
     <@t.tableTemplates numberOfColumns=4 plural="files">
         <tr>
             <td data-bind="event: { mouseover: function() { mouseOver(true) }, mouseout: function() { mouseOver(false) } }">
-                <input type="text" data-bind="formValue: name, attr: { title: name }, css: { 'transparent-input': !mouseOver() }" placeholder="No name given" >
+                <input type="text" data-bind="formValue: name, attr: { title: name }, css: { 'transparent-input': !mouseOver() }" placeholder="A name must be provided" >
             </td>
             <td><input type="text" data-bind="formValue: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
             <td><input type="checkbox" data-bind="formChecked: state"></td>
