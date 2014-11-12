@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
