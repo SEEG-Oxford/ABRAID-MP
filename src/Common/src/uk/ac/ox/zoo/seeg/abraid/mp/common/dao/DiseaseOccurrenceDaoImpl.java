@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,8 +17,7 @@ import java.util.List;
 @Repository
 public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Integer> implements DiseaseOccurrenceDao {
     // HQL fragments used to build queries to obtain disease occurrences
-    private static final String DISEASE_EXTENT_QUERY =
-            "from DiseaseOccurrence d " +
+    private static final String DISEASE_EXTENT_QUERY = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.status = 'READY' " +
             "and d.location.adminUnitGlobalGaulCode is not null " +
@@ -72,14 +72,16 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets all disease occurrences for the specified disease group and occurrence status.
+     * Gets all disease occurrences for the specified disease group and occurrence statuses.
      * @param diseaseGroupId The disease group's ID.
-     * @param status The disease occurrence's status.
-     * @return All disease occurrences for the specified disease group and status.
+     * @param statuses One or more disease occurrence statuses.
+     * @return All disease occurrences for the specified disease group and statuses.
      */
-    public List<DiseaseOccurrence> getByDiseaseGroupIdAndStatus(int diseaseGroupId, DiseaseOccurrenceStatus status) {
-        return listNamedQuery("getDiseaseOccurrencesByDiseaseGroupIdAndStatus", "diseaseGroupId", diseaseGroupId,
-                "status", status);
+    public List<DiseaseOccurrence> getByDiseaseGroupIdAndStatuses(int diseaseGroupId,
+                                                                  DiseaseOccurrenceStatus... statuses) {
+        List<DiseaseOccurrenceStatus> statusesList = Arrays.asList(statuses);
+        return listNamedQuery("getDiseaseOccurrencesByDiseaseGroupIdAndStatuses", "diseaseGroupId", diseaseGroupId,
+                "statuses", statusesList);
     }
 
     /**

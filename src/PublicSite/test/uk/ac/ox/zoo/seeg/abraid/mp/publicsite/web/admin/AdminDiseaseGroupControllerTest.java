@@ -15,10 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonDiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonModelRunInformation;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonParentDiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +37,7 @@ public class AdminDiseaseGroupControllerTest {
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
     private AdminDiseaseGroupController controller;
+    private DiseaseOccurrenceSpreadHelper helper;
     private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
 
     @Before
@@ -48,9 +46,10 @@ public class AdminDiseaseGroupControllerTest {
         objectMapper = new AbraidJsonObjectMapper();
         modelRunWorkflowService = mock(ModelRunWorkflowService.class);
         modelRunService = mock(ModelRunService.class);
+        helper = mock(DiseaseOccurrenceSpreadHelper.class);
         modelWrapperWebServiceAsyncWrapper = mock(ModelWrapperWebServiceAsyncWrapper.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService, modelWrapperWebServiceAsyncWrapper);
+                modelRunService, helper, modelWrapperWebServiceAsyncWrapper);
     }
 
     @Test
@@ -423,6 +422,23 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getDiseaseOccurrenceSpreadAddsTableToModel() {
+        // Arrange
+        Model model = mock(Model.class);
+        DiseaseOccurrenceSpreadTable table = mock(DiseaseOccurrenceSpreadTable.class);
+        int diseaseGroupId = 87;
+
+        when(helper.getDiseaseOccurrenceSpreadTable(diseaseGroupId)).thenReturn(table);
+
+        // Act
+        String view = controller.getDiseaseOccurrenceSpread(model, diseaseGroupId);
+
+        // Assert
+        assertThat(view).isEqualTo("admin/diseasegroups/occurrencespread");
+        verify(model).addAttribute("table", table);
     }
 
     @Test

@@ -156,11 +156,11 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         int diseaseGroupId = 1;
         DiseaseOccurrenceStatus status = DiseaseOccurrenceStatus.IN_REVIEW;
         List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
-        when(diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId, status)).thenReturn(expectedOccurrences);
+        when(diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId, status)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrence> actualOccurrences =
-                diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroupId, status);
+                diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroupId, status);
 
         // Assert
         assertThat(actualOccurrences).isSameAs(expectedOccurrences);

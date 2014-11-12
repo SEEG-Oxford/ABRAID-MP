@@ -53,17 +53,19 @@ public class AdminDiseaseGroupController extends AbstractController {
     private AbraidJsonObjectMapper objectMapper;
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
-    private final ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
+    private DiseaseOccurrenceSpreadHelper helper;
+    private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
 
     @Autowired
     public AdminDiseaseGroupController(DiseaseService diseaseService, AbraidJsonObjectMapper objectMapper,
                                        ModelRunWorkflowService modelRunWorkflowService,
-                                       ModelRunService modelRunService,
+                                       ModelRunService modelRunService, DiseaseOccurrenceSpreadHelper helper,
                                        ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper) {
         this.diseaseService = diseaseService;
         this.objectMapper = objectMapper;
         this.modelRunWorkflowService = modelRunWorkflowService;
         this.modelRunService = modelRunService;
+        this.helper = helper;
         this.modelWrapperWebServiceAsyncWrapper = modelWrapperWebServiceAsyncWrapper;
     }
 
@@ -284,6 +286,20 @@ public class AdminDiseaseGroupController extends AbstractController {
         }
         LOGGER.info(String.format(ADD_DISEASE_GROUP_ERROR, settings.getName()));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Gets a page containing the disease occurrence spread table, for the specified disease group.
+     * @param model The model.
+     * @param diseaseGroupId The id of the disease group.
+     * @return The disease occurrence spread table page.
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/spread", method = RequestMethod.GET)
+    public String getDiseaseOccurrenceSpread(Model model, @PathVariable int diseaseGroupId) {
+        DiseaseOccurrenceSpreadTable table = helper.getDiseaseOccurrenceSpreadTable(diseaseGroupId);
+        model.addAttribute("table", table);
+        return "admin/diseasegroups/occurrencespread";
     }
 
     private List<DiseaseGroup> getSortedDiseaseGroups() {

@@ -182,13 +182,13 @@ public class DiseaseServiceImpl implements DiseaseService {
     /**
      * Gets all disease occurrences for the specified disease group and occurrence status.
      * @param diseaseGroupId The disease group's ID.
-     * @param status The disease occurrence's status.
+     * @param statuses The disease occurrence's status.
      * @return All disease occurrences for the specified disease group and status.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupIdAndStatus(int diseaseGroupId,
-                                                                                  DiseaseOccurrenceStatus status) {
-        return diseaseOccurrenceDao.getByDiseaseGroupIdAndStatus(diseaseGroupId, status);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(int diseaseGroupId,
+            DiseaseOccurrenceStatus... statuses) {
+        return diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId, statuses);
     }
 
     /**

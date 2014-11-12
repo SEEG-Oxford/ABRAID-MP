@@ -103,7 +103,7 @@ public class DiseaseOccurrenceHandler {
     }
 
     private List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(DiseaseGroup diseaseGroup) {
-        return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatus(diseaseGroup.getId(),
+        return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroup.getId(),
                 DiseaseOccurrenceStatus.READY);
     }
 

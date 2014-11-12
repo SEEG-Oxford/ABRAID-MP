@@ -6,7 +6,6 @@
 require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
-
     require([
         "ko",
         "app/admin/diseasegroups/DiseaseExtentParametersViewModel",
@@ -47,7 +46,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                 baseUrl,
                 refresh,
                 new DiseaseGroupSettingsViewModel(diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName),
-                new ModelRunParametersViewModel(diseaseGroupSelectedEventName),
+                new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName),
                 new DiseaseExtentParametersViewModel(diseaseGroupSelectedEventName),
                 diseaseGroupSelectedEventName,
                 diseaseGroupSavedEventName

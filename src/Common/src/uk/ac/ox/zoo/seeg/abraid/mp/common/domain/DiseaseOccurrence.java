@@ -18,15 +18,18 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(
                 name = "getDiseaseOccurrencesByIds",
-                query = "from DiseaseOccurrence where id in :diseaseOccurrenceIds"
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.id in :diseaseOccurrenceIds"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesByDiseaseGroupId",
-                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId"
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId"
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesByDiseaseGroupIdAndStatus",
-                query = "from DiseaseOccurrence where diseaseGroup.id=:diseaseGroupId and status=:status"
+                name = "getDiseaseOccurrencesByDiseaseGroupIdAndStatuses",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId and d.status in :statuses"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",

@@ -1,3 +1,5 @@
+<#import "../../shared/layout/form.ftl" as f/>
+
 <#macro formGroup id title bind>
 <div class="form-group">
     <label for="${id}" class="col-sm-8 control-label">${title}</label>
@@ -49,6 +51,9 @@
                     </div>
                     <@formGroup id="min-high-frequency-countries" title="Min. Number of High Frequency Countries" bind="syncValue: minHighFrequencyCountries, bootstrapDisable: find('isSubmitting') || !occursInAfrica()"></@formGroup>
                     <@formGroup id="high-frequency-threshold" title="Min. Number of Occurrences to be deemed a High Frequency Country" bind="syncValue: highFrequencyThreshold, bootstrapDisable: find('isSubmitting') || !occursInAfrica()"></@formGroup>
+                    <p class="form-group" style="text-align: center">
+                        <a class="btn btn-primary" data-bind="attr: { href: diseaseOccurrenceSpreadUrl() }, bootstrapDisable: !diseaseOccurrenceSpreadButtonEnabled()" target="_blank">Show Disease Occurrence Spread</a>
+                    </p>
                 </div>
             </div>
         </div>
