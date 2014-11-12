@@ -24,7 +24,7 @@ public class HandlersAsyncWrapper extends AbstractAsynchronousActionHandler {
     @Autowired
     public HandlersAsyncWrapper(DiseaseExtentGenerationHandler diseaseExtentGenerationHandler,
                                 DiseaseOccurrenceHandler diseaseOccurrenceHandler) {
-        super(THREAD_POOL_SIZE);
+        super(THREAD_POOL_SIZE, LOGGER);
         this.diseaseExtentGenerationHandler = diseaseExtentGenerationHandler;
         this.diseaseOccurrenceHandler = diseaseOccurrenceHandler;
     }

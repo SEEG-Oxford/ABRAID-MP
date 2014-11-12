@@ -17,7 +17,7 @@
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
     <!-- API realm -->
-    <security:http realm="ABRAID-MP: ModelWrapper API" pattern="/model/**" create-session="stateless" authentication-manager-ref="apiAuthenticationManager">
+    <security:http realm="ABRAID-MP: ModelWrapper API" pattern="/api/**" create-session="stateless" authentication-manager-ref="apiAuthenticationManager">
         <security:intercept-url pattern="/**" access="ROLE_API" />
         <security:http-basic />
     </security:http>

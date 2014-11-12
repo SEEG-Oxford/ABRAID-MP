@@ -8,6 +8,11 @@
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="modelWrapperUrls" class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
+        <constructor-arg type="java.lang.String" value="${model.wrapper.instance.list}"/>
+        <constructor-arg type="java.lang.String" value=" "/>
+    </bean>
+
     <!-- Core services -->
     <bean id="alertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertServiceImpl" autowire="constructor"/>
     <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor"/>
@@ -30,12 +35,7 @@
         <constructor-arg name="maxDaysOnValidator" value="${max.days.for.occurrences.on.validator}" />
     </bean>
     <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequester" autowire="constructor">
-        <constructor-arg name="modelWrapperUrlCollection">
-            <bean class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
-                <constructor-arg type="java.lang.String" value="${model.wrapper.instance.list}"/>
-                <constructor-arg type="java.lang.String" value=" "/>
-            </bean>
-        </constructor-arg>
+        <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
     </bean>
     <bean id="environmentalSuitabilityHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper" autowire="constructor"/>
     <bean id="distanceFromDiseaseExtentHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper" autowire="constructor"/>
@@ -43,6 +43,9 @@
 
     <!-- Web services -->
     <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService" autowire="constructor" />
+    <bean id="modelWrapperWebServiceAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper" autowire="constructor" >
+        <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
+    </bean>
 
     <bean id="machineLearningWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineLearningWebService" autowire="constructor">
         <constructor-arg name="rootUrl" value="${machinelearning.root.url}"/>

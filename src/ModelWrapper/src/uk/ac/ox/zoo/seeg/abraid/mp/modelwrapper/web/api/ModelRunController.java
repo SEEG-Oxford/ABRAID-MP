@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web;
+package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.api;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class ModelRunController extends AbstractController {
      * @param runData The run data to model.
      * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
-    @RequestMapping(value = "/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<JsonModelRunResponse> startRun(@RequestBody JsonModelRun runData) {
         if (runData == null || !runData.isValid() || !runData.getDisease().isValid()) {

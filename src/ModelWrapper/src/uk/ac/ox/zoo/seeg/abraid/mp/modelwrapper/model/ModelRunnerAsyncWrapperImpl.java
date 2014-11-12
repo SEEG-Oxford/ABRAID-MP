@@ -25,7 +25,7 @@ public class ModelRunnerAsyncWrapperImpl extends AbstractAsynchronousActionHandl
     private final ModelRunner modelRunner;
 
     public ModelRunnerAsyncWrapperImpl(ModelRunner modelRunner) {
-        super(THREAD_POOL_SIZE);
+        super(THREAD_POOL_SIZE, LOGGER);
         this.modelRunner = modelRunner;
     }
 

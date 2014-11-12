@@ -73,7 +73,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         setUpExpectedRunName(runName);
 
         this.mockMvc
-                .perform(post("/model/run")
+                .perform(post("/api/model/run")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extentWeightings\":{\"1\":1,\"2\":2}}"))
                         .andExpect(status().isOk())
@@ -83,14 +83,14 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     @Test
     public void runRejectsRequestWithNoContent() throws Exception {
         this.mockMvc
-                .perform(post("/model/run").contentType(MediaType.APPLICATION_JSON))
+                .perform(post("/api/model/run").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void runRejectsRequestWithInvalidContent() throws Exception {
         this.mockMvc
-                .perform(post("/model/run")
+                .perform(post("/api/model/run")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":null,\"extentWeightings\":null}"))
                 .andExpect(status().isBadRequest())
@@ -117,7 +117,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     }
 
     private MockHttpServletRequestBuilder createRequest(HttpMethod method) {
-        return request(method, "/model/run")
+        return request(method, "/api/model/run")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extentWeightings\":{\"1\":1,\"2\":2,\"3\":3}}");
     }

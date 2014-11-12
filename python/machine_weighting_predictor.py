@@ -6,6 +6,8 @@ from chain import Chain
 from flask import Flask, request
 from sklearn.externals import joblib
 import numpy as np
+import logging, sys
+logging.basicConfig(stream=sys.stderr)
 
 app = Flask(__name__)
 
@@ -51,6 +53,7 @@ def predict(disease_group_id):
         try:
             filename = _get_pickled_predictor_filename(disease_group_id)
             predictor = joblib.load(filename)
+            PREDICTORS[disease_group_id] = predictor
         except IOError as e:
             return ('Unable to load predictor for disease group - ' + e.strerror, 400)
 
@@ -61,6 +64,7 @@ def predict(disease_group_id):
         try:
             filename = _get_pickled_feed_classes_filename(disease_group_id)
             feed_classes = joblib.load(filename)
+            FEED_CLASSES[disease_group_id] = feed_classes
         except IOError as e:
             return ('Unable to load feeds for disease group - ' + e.strerror, 400)
 
@@ -111,7 +115,7 @@ def _save_predictor(disease_group_id, predictor):
     PREDICTORS[disease_group_id] = predictor
     try:
         joblib.dump(predictor, _get_pickled_predictor_filename(disease_group_id))
-        joblib.dump(FEED_CLASSES, _get_pickled_feed_classes_filename(disease_group_id))
+        joblib.dump(FEED_CLASSES[disease_group_id], _get_pickled_feed_classes_filename(disease_group_id))
     except IOError as e:
         print 'Unable to save pickle - ' + e.strerror
 
