@@ -125,6 +125,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/generatediseaseextent",
             method = RequestMethod.POST)
     @ResponseBody
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId, boolean useGoldStandardOccurrences) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup != null) {
