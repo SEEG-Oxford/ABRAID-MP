@@ -1,8 +1,7 @@
 -- Updates the database schema to prevent the display_name on covariate_influence and
 -- effect_curve_covariate_influence from being null, so that it may be used on Atlas page.
 --
---
--- Copyright (coffee) 2014 University of Oxford
+-- Copyright (c) 2014 University of Oxford
 
 UPDATE covariate_influence
 SET covariate_display_name = covariate_name 
