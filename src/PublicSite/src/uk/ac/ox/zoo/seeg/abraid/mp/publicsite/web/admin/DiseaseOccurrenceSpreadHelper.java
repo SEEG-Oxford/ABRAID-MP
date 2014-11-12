@@ -10,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTabl
 
 import java.util.*;
 
-
 /**
  * Helper class for generating a disease occurrence spread table for a particular disease group.
  *
