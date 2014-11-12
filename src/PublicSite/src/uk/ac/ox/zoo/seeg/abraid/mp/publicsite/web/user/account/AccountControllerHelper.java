@@ -47,7 +47,7 @@ public class AccountControllerHelper {
      * Updates the database entry for an expert.
      * @param id The expert to update.
      * @param expertDto The data to overwrite.
-     * @throws ValidationException Thrown if an id matching expert can not be found.
+     * @throws ValidationException Thrown if an id matching expert cannot be found.
      */
     @Transactional(rollbackFor = Exception.class)
     public void processExpertProfileUpdateAsTransaction(int id, JsonExpertDetails expertDto)
@@ -93,7 +93,7 @@ public class AccountControllerHelper {
      * Updates the database entry for an expert's password.
      * @param id The expert to update.
      * @param password The new password.
-     * @throws ValidationException Thrown if an id matching expert can not be found.
+     * @throws ValidationException Thrown if an id matching expert cannot be found.
      */
     @Transactional(rollbackFor = Exception.class)
     public void processExpertPasswordChangeAsTransaction(int id, String password) throws ValidationException {

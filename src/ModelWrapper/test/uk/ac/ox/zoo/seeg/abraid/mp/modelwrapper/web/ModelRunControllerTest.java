@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFacto
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelOutputHandlerWebService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerAsyncWrapperImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelStatusReporter;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.api.ModelRunController;
 
 import java.util.Arrays;
 import java.util.HashMap;

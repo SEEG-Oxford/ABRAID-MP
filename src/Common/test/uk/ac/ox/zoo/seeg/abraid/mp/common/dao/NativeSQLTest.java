@@ -80,6 +80,20 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
+    public void doesLandSeaBorderContainPointReturnsTrueIfPointOnLand() {
+        Point point = GeometryUtils.createPoint(-1.43547, 52.41617);
+        boolean result = nativeSQL.doesLandSeaBorderContainPoint(point);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void doesLandSeaBorderContainPointReturnsFalseIfPointNotOnLand() {
+        Point point = GeometryUtils.createPoint(0, 0);
+        boolean result = nativeSQL.doesLandSeaBorderContainPoint(point);
+        assertThat(result).isFalse();
+    }
+
+    @Test
     public void updateAggregatedDiseaseExtentForNewTropicalExtent() {
         // Arrange - set the disease extent of admin units that have test geometries
         int diseaseGroupId = 87;

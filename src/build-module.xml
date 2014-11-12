@@ -570,6 +570,7 @@
   <target name="unit.test.js" depends="retrieve.libs, find.phantom">
     <echo>Running: ${phantom.executable}</echo>
     <exec executable="${phantom.executable}" resultproperty="js.test.result">
+      <arg value="--ssl-protocol=any"/>
       <arg value="${project.root.dir}/src/run-jasmine.js"/>
       <arg value="${js.spec.runner.path}?console=true&amp;coverage=true"/>
     </exec>

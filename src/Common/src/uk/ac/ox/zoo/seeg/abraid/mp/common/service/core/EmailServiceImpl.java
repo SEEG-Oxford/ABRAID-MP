@@ -49,7 +49,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
                             String defaultToAddress, SmtpConfiguration smtpConfig,
                             Class[] classTemplateLookupPaths, File[] fileTemplateLookupPaths)
             throws IOException {
-        super(THREAD_POOL_SIZE);
+        super(THREAD_POOL_SIZE, LOGGER);
         this.emailFactory = emailFactory;
         this.fromAddress = fromAddress;
         this.defaultToAddress = defaultToAddress;

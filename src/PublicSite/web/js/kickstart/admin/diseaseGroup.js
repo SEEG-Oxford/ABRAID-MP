@@ -14,18 +14,26 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/admin/diseasegroups/DiseaseGroupSettingsViewModel",
         "app/admin/diseasegroups/ModelRunParametersViewModel",
         "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
+        "app/admin/diseasegroups/SyncDiseasesViewModel",
         "domReady!",
         "shared/navbar"
     ], function (ko, DiseaseExtentParametersViewModel, DiseaseGroupAdministrationViewModel, DiseaseGroupsListViewModel,
-                 DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel, doc) {
+                 DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel,
+                 SyncDiseasesViewModel, doc) {
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
         var diseaseGroupSavedEventName = "disease-group-saved";
 
         var diseaseGroupsListViewModel =
             new DiseaseGroupsListViewModel(diseaseGroups, diseaseGroupSelectedEventName);
-        ko.applyBindings(
-            diseaseGroupsListViewModel,
+
+        var syncDiseasesViewModel =
+            new SyncDiseasesViewModel(baseUrl);
+
+        ko.applyBindings({
+                diseaseGroupsListViewModel: diseaseGroupsListViewModel,
+                syncDiseasesViewModel: syncDiseasesViewModel
+            },
             doc.getElementById("disease-groups-list")
         );
 

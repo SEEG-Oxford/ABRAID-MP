@@ -169,9 +169,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     }
 
     private void updateWeightingsAndStatus(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
-        DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
         int diseaseGroupId = diseaseGroup.getId();
-        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(lastModelRunPrepDate, diseaseGroupId);
+        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
         reviewManager.updateDiseaseOccurrenceStatus(diseaseGroupId, modelRunPrepDate);
         weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
     }

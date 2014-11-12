@@ -10,13 +10,19 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="
+    <context:property-placeholder order="3" ignore-unresolvable="true" ignore-resource-not-found="true" location="
+        file:conf/application/database.properties,
+        file:conf/shared/email.properties,
+        file:conf/application/misc.properties,
+        file:conf/application/webservice.properties" />
+
+    <context:property-placeholder order="4" ignore-unresolvable="true" ignore-resource-not-found="true" location="
         file:/var/lib/abraid/conf/application/database.properties,
         file:/var/lib/abraid/conf/shared/email.properties,
         file:/var/lib/abraid/conf/application/misc.properties,
         file:/var/lib/abraid/conf/application/webservice.properties" />
 
-    <context:property-placeholder order="3" ignore-unresolvable="false" ignore-resource-not-found="true" location="
+    <context:property-placeholder order="5" ignore-unresolvable="false" ignore-resource-not-found="true" location="
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/database-testing.properties,
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/email-testing.properties,
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/misc-testing.properties,

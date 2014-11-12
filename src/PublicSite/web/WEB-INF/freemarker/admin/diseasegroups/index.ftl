@@ -22,13 +22,42 @@
     #disease-group-settings label, #model-run-parameters label, #disease-extent-parameters label {
         text-align: left;
     }
+
+    @media (min-width: 730px) {
+        #disease-groups-list .right-buttons {
+            float: right;
+            max-width: 350px;
+        }
+        #disease-groups-list .left-control {
+            margin-right: 350px;
+        }
+    }
+    @media (max-width: 730px) {
+        #disease-groups-list .right-buttons {
+            width: 100%;
+            text-align: center;
+        }
+        #disease-groups-list .right-buttons > span button {
+            margin-bottom: 10px;
+        }
+    }
 </style>
 </#assign>
 
 <@c.page title="ABRAID-MP Administration: Diseases" mainjs="/js/kickstart/admin/diseaseGroup" bootstrapData=bootstrapData endOfHead=css>
 <div class="container">
     <div id="disease-groups-list">
-        <div class="col-sm-8">
+        <div class="right-buttons">
+            <span data-bind="with: diseaseGroupsListViewModel">
+                <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease</button>
+            </span>
+            <span data-bind="with: syncDiseasesViewModel">
+                <form id="sync-diseases-form" action="" data-bind="formSubmit: submit" style="display: inline-block; margin: 0">
+                    <button type="submit" class="btn btn-primary disabled" data-bind="formButton: { submitting: 'Syncing ...', standard: 'Sync all diseases to model' }" disabled>Sync all diseases to model</button>
+                </form>
+            </span>
+        </div>
+        <div class="left-control" data-bind="with: diseaseGroupsListViewModel">
             <label for="disease-group-picker" class="side-by-side">Selected Disease</label>
             <span class="input-group">
                 <span class="input-group-addon">
@@ -37,12 +66,13 @@
                 <select id="disease-group-picker" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name', valueAllowUnset: true" ></select>
             </span>
         </div>
-        <div class="col-sm-4">
-            <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease</button>
-        </div>
+        <div style="clear: both;"></div>
+        <!-- ko with: syncDiseasesViewModel -->
+            <div class="form-group" data-bind="foreach: notices">
+                <div data-bind="alert: $data"></div>
+            </div>
+        <!-- /ko -->
     </div>
-    <br />
-    <br />
     <div class="panel panel-default">
         <div class="panel-body" id="disease-group-administration-panel">
             <@f.form formId="disease-group-administration">

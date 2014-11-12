@@ -77,7 +77,6 @@
 92	0	Georgia	Georgia	
 93	0	Germany	Germany	
 94	0	Ghana	Ghana	
-95	0	Gibraltar	Gibraltar	
 97	0	Greece	Greece	
 98	0	Greenland	Greenland	
 99	0	Grenada	Grenada	
@@ -163,7 +162,6 @@
 203	0	Romania	Romania	
 205	0	Rwanda	Rwanda	
 206	0	Réunion	Réunion	
-207	0	Saint Helena	Saint Helena	
 208	0	Saint Kitts and Nevis	Saint Kitts and Nevis	
 209	0	Saint Lucia	Saint Lucia	
 210	0	Saint Pierre et Miquelon	Saint Pierre et Miquelon	
@@ -213,7 +211,6 @@
 270	0	Zambia	Zambia	
 271	0	Zimbabwe	Zimbabwe	
 429	1	Buenos Aires	Buenos aires,Argentina	
-430	1	Buenos Aires D.f.	Buenos aires d.f.,Argentina	
 431	1	Catamarca	Catamarca,Argentina	
 432	1	Chaco	Chaco,Argentina	
 433	1	Chubut	Chubut,Argentina	
@@ -236,10 +233,8 @@
 450	1	Santiago Del Estero	Santiago del estero,Argentina	
 451	1	Tierra Del Fuego	Tierra del fuego,Argentina	
 452	1	Tucuman	Tucuman,Argentina	
-468	1	Australian Capital Territory	Australian Capital Territory, Australia	
 470	1	New South Wales	New South Wales, Australia	
 471	1	Northern Territory	Northern Territory, Australia	
-472	1	Other Territories	Other Territories, Australia	
 473	1	Queensland	Queensland, Australia	
 474	1	South Australia	South Australia, Australia	
 475	1	Tasmania	Tasmania, Australia	
@@ -305,6 +300,7 @@
 927	1	Xinjiang Uygur Zizhiqu	Xinjiang uygur zizhiqu,China	
 928	1	Xizang Zizhiqu	Xizang zizhiqu,China	
 929	1	Yunnan Sheng	Yunnan sheng,China	
+930	1	Zhejiang Sheng	Zhejiang sheng,China	
 1143	0	Galapagos	Galapagos	
 1484	1	Andaman and Nicobar	Andaman and nicobar,India	
 1485	1	Andhra Pradesh	Andhra pradesh,India	
@@ -353,7 +349,6 @@
 3219	1	Colorado	Colorado,USA	
 3220	1	Connecticut	Connecticut,USA	
 3221	1	Delaware	Delaware,USA	
-3222	1	District Of Columbia	District of columbia,USA	
 3223	1	Florida	Florida,USA	
 3224	1	Georgia	Georgia,USA	
 3225	1	Hawaii	Hawaii,USA	
@@ -402,13 +397,9 @@
 40765	0	Egypt	Egypt	
 61013	0	Ilemi triangle	Ilemi triangle	
 70073	1	Bihar	Bihar,India	
-70074	1	Chandigarh	Chandigarh,India	
 70075	1	Chhattisgarh	Chhattisgarh,India	
-70076	1	Dadra and Nagar Haveli	Dadra and nagar haveli,India	
-70077	1	Daman and Diu	Daman and diu,India	
 70078	1	Jharkhand	Jharkhand,India	
 70079	1	Madhya Pradesh	Madhya pradesh,India	
-70080	1	Puducherry	Puducherry,India	
 70081	1	Uttar Pradesh	Uttar pradesh,India	
 70082	1	Uttarakhand	Uttarakhand,India	
 74578	0	Azores Islands	Azores Islands	

@@ -20,6 +20,6 @@ public class AdminUnitTropicalDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getAll() {
         List<AdminUnitTropical> globalAdminUnits = adminUnitTropicalDao.getAll();
-        assertThat(globalAdminUnits).hasSize(460);
+        assertThat(globalAdminUnits).hasSize(451);
     }
 }

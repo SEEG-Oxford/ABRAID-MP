@@ -20,6 +20,10 @@ public final class NativeSQLConstants {
     public static final String COUNTRY_CONTAINS_POINT_QUERY =
             "SELECT MIN(gaul_code) FROM country WHERE ST_Intersects(geom, :point)";
 
+    /** Query: Finds the first land-sea border pixel that contains the specified point, using ST_INTERSECTS as above. */
+    public static final String LAND_SEA_BORDER_CONTAINS_POINT_QUERY =
+            "SELECT MIN(id) FROM land_sea_border WHERE ST_Intersects(geom, :point)";
+
     /** Clause for selecting relevant disease extent rows in the queries below. */
     private static final String DISEASE_EXTENT_CLAUSE =
             "FROM admin_unit_disease_extent_class c " +
