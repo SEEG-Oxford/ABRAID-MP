@@ -25,7 +25,6 @@ import java.util.concurrent.Future;
 import static ch.lambdaj.Lambda.extract;
 import static ch.lambdaj.Lambda.on;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
 /**
@@ -439,7 +438,7 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(view).isEqualTo("admin/diseasegroups/occurrencespread");
-        verify(model).addAttribute("table", is(table));
+        verify(model).addAttribute("table", table);
     }
 
     @Test
