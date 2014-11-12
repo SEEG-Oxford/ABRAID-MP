@@ -64,7 +64,7 @@ public class MainHandler {
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
             "Failed to create directory for output rasters: %s";
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
@@ -118,7 +118,7 @@ public class MainHandler {
 
     private JsonModelOutputsMetadata extractMetadata(ZipFile zipFile) throws ZipException, IOException {
         byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME, true);
-        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
+        String metadataJsonAsString = new String(metadataJson, UTF8);
         return new JsonParser().parse(metadataJsonAsString, JsonModelOutputsMetadata.class);
     }
 

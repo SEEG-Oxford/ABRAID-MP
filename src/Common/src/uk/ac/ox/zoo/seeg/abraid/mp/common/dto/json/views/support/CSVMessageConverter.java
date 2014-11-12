@@ -12,6 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Iterator;
  */
 public class CSVMessageConverter
         extends AbstractHttpMessageConverter<WrappedList<?>> {
-    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String CANNOT_WRITE_NULL = "Cannot write collection containing null";
     private static final String CANNOT_WRITE_MIXED_TYPES = "Cannot write collection containing mixed types";
     private final CsvMapper csvMapper;
