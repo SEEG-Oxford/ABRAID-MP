@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,8 @@ public class CovariateRunConfiguration {
     public CovariateRunConfiguration(final String covariateDirectory, final Map<String, String> covariateNames) {
         // Convert the file path key of every entry to include the absolute path, suitable for use in R.
         for (Map.Entry<String, String> entry : covariateNames.entrySet()) {
-            String absolutePath = escapeFilePathForR(Paths.get(covariateDirectory, entry.getKey()).toString());
+            Path path = Paths.get(covariateDirectory, entry.getKey());
+            String absolutePath = escapeFilePathForR(path.toString());
             covariateFiles.put(absolutePath, entry.getValue());
         }
     }
