@@ -38,7 +38,7 @@ public class DiseaseUpdateController extends AbstractController {
      * @param diseaseId The id of the disease to update.
      * @param requestDisease The updated disease.
      * @return 204 for success or 400 if invalid input is provided.
-     * @throws Exception thrown if the updated configuration can not be saved correctly
+     * @throws Exception thrown if the updated configuration cannot be saved correctly
      */
     @RequestMapping(value = "/api/diseases/{diseaseId}",
             method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -61,7 +61,7 @@ public class DiseaseUpdateController extends AbstractController {
      * Update all of the diseases.
      * @param requestDiseases The updated diseases.
      * @return 204 for success or 400 if invalid input is provided.
-     * @throws Exception thrown if the updated configuration can not be saved correctly
+     * @throws Exception thrown if the updated configuration cannot be saved correctly
      */
     @RequestMapping(value = "/api/diseases",
             method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -26,7 +26,7 @@ public class AdminExpertsControllerHelper {
     /**
      * Updates the database entries for a set of experts.
      * @param experts The experts to update.
-     * @throws ValidationException Thrown if an id matching expert can not be found for one of the argument experts.
+     * @throws ValidationException Thrown if an id matching expert cannot be found for one of the argument experts.
      */
     @Transactional(rollbackFor = Exception.class)
     public void processExpertsAsTransaction(Collection<JsonExpertFull> experts) throws ValidationException {
