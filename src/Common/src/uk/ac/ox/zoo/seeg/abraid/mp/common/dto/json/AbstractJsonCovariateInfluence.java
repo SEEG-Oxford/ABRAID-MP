@@ -11,8 +11,7 @@ public abstract class AbstractJsonCovariateInfluence {
     private Double meanInfluence;
 
     public AbstractJsonCovariateInfluence(AbstractCovariateInfluence covariateInfluence) {
-        // NB. Should use CovariateDisplayName when it is returned from the R model.
-        this.name = covariateInfluence.getCovariateName();
+        this.name = covariateInfluence.getCovariateDisplayName();
         this.meanInfluence = covariateInfluence.getMeanInfluence();
     }
 

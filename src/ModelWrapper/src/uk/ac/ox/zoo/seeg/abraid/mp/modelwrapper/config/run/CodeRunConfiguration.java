@@ -21,4 +21,3 @@ public class CodeRunConfiguration {
         return modelRepository;
     }
 }
-

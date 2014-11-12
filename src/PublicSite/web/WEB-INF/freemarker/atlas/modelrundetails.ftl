@@ -1,4 +1,4 @@
-<div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: hasActiveLayer">
+<div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: hasActiveLayer, event: { 'dblclick' : function () { return false; } }, dblclickBubble: false">
     <!-- ko with:downloadLinksViewModel -->
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">

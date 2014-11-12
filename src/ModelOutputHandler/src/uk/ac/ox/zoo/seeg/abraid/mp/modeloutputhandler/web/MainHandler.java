@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.AbstractCsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
@@ -27,6 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.collection.LambdaCollections.with;
 
@@ -62,7 +64,7 @@ public class MainHandler {
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
             "Failed to create directory for output rasters: %s";
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
@@ -87,9 +89,8 @@ public class MainHandler {
         ZipFile zipFile = new ZipFile(modelRunZipFile);
 
         // Handle the model run metadata
-        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME, true);
-        String metadataJsonAsString = new String(metadataJson, StandardCharsets.UTF_8);
-        ModelRun modelRun = handleMetadataJson(metadataJsonAsString);
+        JsonModelOutputsMetadata metadata = extractMetadata(zipFile);
+        ModelRun modelRun = handleModelRunMetadata(metadata);
 
         boolean areOutputsMandatory = (modelRun.getStatus() == ModelRunStatus.COMPLETED);
 
@@ -107,17 +108,22 @@ public class MainHandler {
 
         // Handle outputs
         handleValidationStatisticsFile(modelRun, validationStatisticsFile);
-        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
-        handleEffectCurvesFile(modelRun, effectCurvesFile);
+        handleRelativeInfluenceFile(modelRun, relativeInfluenceFile, metadata.getCovariateNames());
+        handleEffectCurvesFile(modelRun, effectCurvesFile, metadata.getCovariateNames());
         handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
 
         return modelRun;
     }
 
-    private ModelRun handleMetadataJson(String metadataJson) {
-        // Parse the JSON and retrieve the model run from the database with the specified name
-        JsonModelOutputsMetadata metadata = new JsonParser().parse(metadataJson, JsonModelOutputsMetadata.class);
+    private JsonModelOutputsMetadata extractMetadata(ZipFile zipFile) throws ZipException, IOException {
+        byte[] metadataJson = extract(zipFile, ModelOutputConstants.METADATA_JSON_FILENAME, true);
+        String metadataJsonAsString = new String(metadataJson, UTF8);
+        return new JsonParser().parse(metadataJsonAsString, JsonModelOutputsMetadata.class);
+    }
+
+    private ModelRun handleModelRunMetadata(JsonModelOutputsMetadata metadata) {
+        // Retrieve the model run from the database with the specified name
         ModelRun modelRun = getModelRun(metadata.getModelRunName());
 
         // Transfer the metadata to the model run from the database
@@ -151,13 +157,14 @@ public class MainHandler {
         }
     }
 
-    private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file) throws IOException {
+    private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file, Map<String, String> covariateNames)
+            throws IOException {
         if (file != null) {
             LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
             try {
-                List<CsvCovariateInfluence> csvCovariateInfluence =
-                        CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
-                List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluence)
+                List<CsvCovariateInfluence> csvCovariateInfluences =
+                        readCovariateInfluencesFromCSV(file, covariateNames);
+                List<CovariateInfluence> covariateInfluences = with(csvCovariateInfluences)
                         .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
                             @Override
                             public CovariateInfluence convert(CsvCovariateInfluence csv) {
@@ -172,12 +179,31 @@ public class MainHandler {
         }
     }
 
-    private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file) throws IOException {
+    private List<CsvCovariateInfluence> readCovariateInfluencesFromCSV(byte[] file, Map<String, String> covariateNames)
+            throws IOException {
+        List<CsvCovariateInfluence> csvCovariateInfluences = CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
+        updateDisplayNameOnCovariateInfluences(csvCovariateInfluences, covariateNames);
+        return csvCovariateInfluences;
+    }
+
+    private void updateDisplayNameOnCovariateInfluences(
+            List<? extends AbstractCsvCovariateInfluence> csvCovariateInfluences, Map<String, String> covariateNames) {
+        for (AbstractCsvCovariateInfluence csv : csvCovariateInfluences) {
+            if (covariateNames.containsKey(csv.getCovariateName())) {
+                csv.setCovariateDisplayName(covariateNames.get(csv.getCovariateName()));
+            } else {
+                csv.setCovariateDisplayName(csv.getCovariateName());
+            }
+        }
+    }
+
+    private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file, Map<String, String> covariateNames)
+            throws IOException {
         if (file != null) {
             LOGGER.info(String.format(LOG_EFFECT_CURVES_FILE, file.length, modelRun.getName()));
             try {
                 List<CsvEffectCurveCovariateInfluence> csvEffectCurveCovariateInfluences =
-                        CsvEffectCurveCovariateInfluence.readFromCSV(new String(file, UTF8));
+                        readEffectCurveCovariateInfluencesFromCSV(file, covariateNames);
                 List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences =
                     with(csvEffectCurveCovariateInfluences)
                         .convert(new Converter<CsvEffectCurveCovariateInfluence, EffectCurveCovariateInfluence>() {
@@ -192,6 +218,14 @@ public class MainHandler {
                 throw new IOException(String.format(COULD_NOT_SAVE_EFFECT_CURVES, modelRun.getName()), e);
             }
         }
+    }
+
+    private List<CsvEffectCurveCovariateInfluence> readEffectCurveCovariateInfluencesFromCSV(
+            byte[] file, Map<String, String> covariateNames) throws IOException {
+        List<CsvEffectCurveCovariateInfluence> csvCovariateInfluences =
+                CsvEffectCurveCovariateInfluence.readFromCSV(new String(file, UTF8));
+        updateDisplayNameOnCovariateInfluences(csvCovariateInfluences, covariateNames);
+        return csvCovariateInfluences;
     }
 
     private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) throws IOException {

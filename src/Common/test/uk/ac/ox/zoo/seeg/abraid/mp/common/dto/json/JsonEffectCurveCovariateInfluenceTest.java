@@ -16,6 +16,7 @@ public class JsonEffectCurveCovariateInfluenceTest {
     public void constructorBindsFieldsCorrectly() {
         // Arrange
         String name = "upr_p";
+        String displayName = "Periurban";
         double meanInfluence = 45.94;
         double lowerQuantile = 1231.43;
         double upperQuantile = 51342.1;
@@ -23,6 +24,7 @@ public class JsonEffectCurveCovariateInfluenceTest {
 
         EffectCurveCovariateInfluence covariateInfluence = mock(EffectCurveCovariateInfluence.class);
         when(covariateInfluence.getCovariateName()).thenReturn(name);
+        when(covariateInfluence.getCovariateDisplayName()).thenReturn(displayName);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
         when(covariateInfluence.getCovariateValue()).thenReturn(covariateValue);
         when(covariateInfluence.getUpperQuantile()).thenReturn(upperQuantile);
@@ -32,7 +34,7 @@ public class JsonEffectCurveCovariateInfluenceTest {
         JsonEffectCurveCovariateInfluence result = new JsonEffectCurveCovariateInfluence(covariateInfluence);
 
         // Assert
-        assertThat(result.getName()).isEqualTo(name);
+        assertThat(result.getName()).isEqualTo(displayName);
         assertThat(result.getMeanInfluence()).isEqualTo(meanInfluence);
         assertThat(result.getCovariateValue()).isEqualTo(covariateValue);
         assertThat(result.getUpperQuantile()).isEqualTo(upperQuantile);

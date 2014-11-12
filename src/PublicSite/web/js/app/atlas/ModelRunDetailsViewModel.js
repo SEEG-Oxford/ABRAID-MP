@@ -11,7 +11,7 @@ define(["ko"], function (ko) {
 
         var activeLayer = ko.observable().subscribeTo("active-atlas-layer");
         self.hasActiveLayer = ko.computed(function () {
-            return activeLayer !== undefined;
+            return (typeof activeLayer() !== "undefined");
         });
 
         self.covariateInfluencesViewModel = covariateInfluencesViewModel;

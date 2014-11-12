@@ -16,7 +16,7 @@ define([
         validator: function (valueAccessor, thresholdAccessor) {
             var value = ko.utils.recursiveUnwrap(valueAccessor);
             var threshold = ko.utils.recursiveUnwrap(thresholdAccessor);
-            return (value === "" || threshold === "") || (value > threshold);
+            return (value === "" || threshold === "") || (parseInt(value, 10) > parseInt(threshold, 10));
         },
         message: "Please enter a number greater than {0}."
     };
@@ -26,7 +26,7 @@ define([
         validator: function (valueAccessor, thresholdAccessor) {
             var value = ko.utils.recursiveUnwrap(valueAccessor);
             var threshold = ko.utils.recursiveUnwrap(thresholdAccessor);
-            return (value === "" || threshold === "") || (value < threshold);
+            return (value === "" || threshold === "") || (parseInt(value, 10) < parseInt(threshold, 10));
         },
         message: "Please enter a number less than {0}."
     };

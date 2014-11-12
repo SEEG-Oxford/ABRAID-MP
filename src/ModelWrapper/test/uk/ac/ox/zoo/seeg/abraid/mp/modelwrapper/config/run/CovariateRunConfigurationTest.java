@@ -16,16 +16,20 @@ public class CovariateRunConfigurationTest {
     public void constructorBindsParametersCorrectly() {
         // Arrange
         String expectedCovariateDir = "foobar";
+        Map<String, String> covariateNames = new HashMap<>();
+        covariateNames.put("a", "a");
+        covariateNames.put("b", "b");
+        covariateNames.put("c", "c");
+
         Map<String, String> expectedCovariateFiles = new HashMap<>();
-        expectedCovariateFiles.put("a", "a");
-        expectedCovariateFiles.put("b", "b");
-        expectedCovariateFiles.put("c", "c");
+        expectedCovariateFiles.put("foobar/a", "a");
+        expectedCovariateFiles.put("foobar/b", "b");
+        expectedCovariateFiles.put("foobar/c", "c");
 
         // Act
-        CovariateRunConfiguration result = new CovariateRunConfiguration(expectedCovariateDir, expectedCovariateFiles);
+        CovariateRunConfiguration result = new CovariateRunConfiguration(expectedCovariateDir, covariateNames);
 
         // Assert
-        assertThat(result.getCovariateDirectory()).isEqualTo(expectedCovariateDir);
         assertThat(result.getCovariateFiles()).isEqualTo(expectedCovariateFiles);
     }
 }
