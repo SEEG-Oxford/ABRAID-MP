@@ -6,6 +6,8 @@ from chain import Chain
 from flask import Flask, request
 from sklearn.externals import joblib
 import numpy as np
+import logging, sys
+logging.basicConfig(stream=sys.stderr)
 
 app = Flask(__name__)
 
