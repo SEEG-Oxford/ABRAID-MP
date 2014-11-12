@@ -146,7 +146,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, null, true);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate)
             throws ModelRunRequesterException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);

@@ -154,6 +154,7 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
                                                   String batchEndDate, boolean useGoldStandardOccurrences) {
         try {
