@@ -82,8 +82,8 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void doesLandSeaBorderContainPointReturnsTrueIfPointOnLand() {
         Point point = GeometryUtils.createPoint(-1.43547, 52.41617);
-        Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
-        assertThat(gaulCode).isNull();
+        boolean result = nativeSQL.doesLandSeaBorderContainPoint(point);
+        assertThat(result).isTrue();
     }
 
     @Test
