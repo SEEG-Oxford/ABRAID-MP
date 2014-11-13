@@ -31,7 +31,7 @@ public class HealthMapDataAcquirerIntegrationTest {
         dataAcquisition.acquireDataFromFile(fileName);
 
         // Assert
-        verify(dataConverter, times(1)).convert(eq(locations), eq((DateTime) null));
+        verify(dataConverter).convert(eq(locations), eq((DateTime) null));
     }
 
     @Test

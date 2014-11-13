@@ -23,7 +23,7 @@ public class GeoJsonNamedEnumSerializerTest {
         target.serialize(namedEnum, generator, null);
 
         // Assert
-        verify(namedEnum, times(1)).getGeoJsonName();
-        verify(generator, times(1)).writeString(expected);
+        verify(namedEnum).getGeoJsonName();
+        verify(generator).writeString(expected);
     }
 }

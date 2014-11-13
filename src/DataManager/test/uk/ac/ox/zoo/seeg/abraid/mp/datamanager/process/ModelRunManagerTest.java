@@ -124,7 +124,7 @@ public class ModelRunManagerTest {
         arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).prepareForAndRequestAutomaticModelRun(eq(DISEASE_GROUP_ID));
+        verify(modelRunWorkflowService).prepareForAndRequestAutomaticModelRun(eq(DISEASE_GROUP_ID));
     }
 
     private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {

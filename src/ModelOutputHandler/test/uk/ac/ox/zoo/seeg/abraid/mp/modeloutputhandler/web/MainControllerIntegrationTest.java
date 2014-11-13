@@ -304,7 +304,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void assertThatRasterPublishedToGeoserver(ModelRun run, String type) throws IOException, TemplateException {
-        verify(geoserverRestService, times(1)).publishGeoTIFF(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
+        verify(geoserverRestService).publishGeoTIFF(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
     }
     private void assertThatNoRastersPublishedToGeoserver() throws IOException, TemplateException {
         verify(geoserverRestService, times(0)).publishGeoTIFF(any(File.class));

@@ -56,7 +56,7 @@ public class AdminExpertsControllerTest {
 
         // Assert
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(model, times(1)).addAttribute(eq("experts"), captor.capture());
+        verify(model).addAttribute(eq("experts"), captor.capture());
         String json = captor.getValue();
 
         assertThat(json).startsWith("[{");
@@ -99,8 +99,8 @@ public class AdminExpertsControllerTest {
         ResponseEntity<Collection<String>> result = target.submitPage(experts);
 
         // Assert
-        verify(validator, times(1)).validate(validExpert);
-        verify(validator, times(1)).validate(invalidExpert);
+        verify(validator).validate(validExpert);
+        verify(validator).validate(invalidExpert);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(result.getBody()).containsOnly("Fail1", "Fail2");
@@ -121,7 +121,7 @@ public class AdminExpertsControllerTest {
         ResponseEntity<Collection<String>> result = target.submitPage(experts);
 
         // Assert
-        verify(helper, times(1)).processExpertsAsTransaction(experts);
+        verify(helper).processExpertsAsTransaction(experts);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 

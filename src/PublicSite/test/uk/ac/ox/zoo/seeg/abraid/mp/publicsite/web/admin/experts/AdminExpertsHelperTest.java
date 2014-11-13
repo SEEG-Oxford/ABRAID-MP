@@ -39,12 +39,12 @@ public class AdminExpertsHelperTest {
         target.processExpertsAsTransaction(experts);
 
         // Assert
-        verify(expert, times(1)).setVisibilityApproved(true);
-        verify(expert, times(1)).setWeighting(123.456);
-        verify(expert, times(1)).setAdministrator(false);
-        verify(expert, times(1)).setSeegMember(true);
+        verify(expert).setVisibilityApproved(true);
+        verify(expert).setWeighting(123.456);
+        verify(expert).setAdministrator(false);
+        verify(expert).setSeegMember(true);
 
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expertService).saveExpert(expert);
     }
 
     @Test

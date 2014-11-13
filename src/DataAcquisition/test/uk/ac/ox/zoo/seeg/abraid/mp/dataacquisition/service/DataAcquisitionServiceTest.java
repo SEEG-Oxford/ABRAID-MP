@@ -26,20 +26,20 @@ public class DataAcquisitionServiceTest {
     @Test
     public void acquireHealthMapDataFromWebService() {
         service.acquireHealthMapDataFromWebService();
-        verify(healthMapDataAcquirer, times(1)).acquireDataFromWebService();
+        verify(healthMapDataAcquirer).acquireDataFromWebService();
     }
 
     @Test
     public void acquireHealthMapDataFromFile() {
         String fileName = "test.json";
         service.acquireHealthMapDataFromFile(fileName);
-        verify(healthMapDataAcquirer, times(1)).acquireDataFromFile(eq(fileName));
+        verify(healthMapDataAcquirer).acquireDataFromFile(eq(fileName));
     }
 
     @Test
     public void acquireCsvData() {
         byte[] csv = "1, 2, 3".getBytes();
         service.acquireCsvData(csv, true);
-        verify(csvDataAcquirer, times(1)).acquireDataFromCsv(eq(csv), eq(true));
+        verify(csvDataAcquirer).acquireDataFromCsv(eq(csv), eq(true));
     }
 }

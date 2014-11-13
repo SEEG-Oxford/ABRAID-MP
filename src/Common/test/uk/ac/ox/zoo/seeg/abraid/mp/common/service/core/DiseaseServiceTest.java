@@ -473,7 +473,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         diseaseService.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
 
         // Assert
-        verify(nativeSQL, times(1)).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
+        verify(nativeSQL).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
     }
 
     @Test

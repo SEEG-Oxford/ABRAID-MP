@@ -84,7 +84,7 @@ public class RepositoryControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(configurationService, times(1)).setModelRepositoryVersion(expectedVersion);
+        verify(configurationService).setModelRepositoryVersion(expectedVersion);
     }
 
     @Test
@@ -138,11 +138,11 @@ public class RepositoryControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         // should try the new url
-        verify(configurationService, times(1)).setModelRepositoryUrl(url);
+        verify(configurationService).setModelRepositoryUrl(url);
         // which will fail
-        verify(sourceCodeManager, times(1)).updateRepository();
+        verify(sourceCodeManager).updateRepository();
         // so the url should be reset
-        verify(configurationService, times(1)).setModelRepositoryUrl("initialValue");
+        verify(configurationService).setModelRepositoryUrl("initialValue");
         // leaving it at the initial value
         assertThat(configurationService.getModelRepositoryUrl()).isEqualTo("initialValue");
     }
@@ -164,11 +164,11 @@ public class RepositoryControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         // should try the new url
-        verify(configurationService, times(1)).setModelRepositoryUrl(url);
+        verify(configurationService).setModelRepositoryUrl(url);
         // which will fail
-        verify(sourceCodeManager, times(1)).updateRepository();
+        verify(sourceCodeManager).updateRepository();
         // so the url should be reset
-        verify(configurationService, times(1)).setModelRepositoryUrl("initialValue");
+        verify(configurationService).setModelRepositoryUrl("initialValue");
         // leaving it at the initial value
         assertThat(configurationService.getModelRepositoryUrl()).isEqualTo("initialValue");
     }
@@ -189,7 +189,7 @@ public class RepositoryControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(configurationService, times(1)).setModelRepositoryVersion("");
+        verify(configurationService).setModelRepositoryVersion("");
     }
 
     @Test

@@ -86,8 +86,8 @@ public class AccountControllerTest {
         String result = target.getAccountEditPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("diseases", "[{\"id\":1,\"name\":\"1\"},{\"id\":2,\"name\":\"2\"},{\"id\":3,\"name\":\"3\"}]");
-        verify(model, times(1)).addAttribute("jsonExpert", "{\"name\":\"name\",\"visibilityRequested\":true,\"diseaseInterests\":[1,2,3],\"jobTitle\":\"job\",\"institution\":\"institute\"}");
+        verify(model).addAttribute("diseases", "[{\"id\":1,\"name\":\"1\"},{\"id\":2,\"name\":\"2\"},{\"id\":3,\"name\":\"3\"}]");
+        verify(model).addAttribute("jsonExpert", "{\"name\":\"name\",\"visibilityRequested\":true,\"diseaseInterests\":[1,2,3],\"jobTitle\":\"job\",\"institution\":\"institute\"}");
     }
 
     @Test
@@ -134,7 +134,7 @@ public class AccountControllerTest {
         ResponseEntity<Collection<String>> result = target.submitAccountEditPage(expert);
 
         // Assert
-        verify(helper, times(1)).processExpertProfileUpdateAsTransaction(userId, expert);
+        verify(helper).processExpertProfileUpdateAsTransaction(userId, expert);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -194,7 +194,7 @@ public class AccountControllerTest {
         ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
 
         // Assert
-        verify(helper, times(1)).processExpertPasswordChangeAsTransaction(userId, "newPassword");
+        verify(helper).processExpertPasswordChangeAsTransaction(userId, "newPassword");
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 

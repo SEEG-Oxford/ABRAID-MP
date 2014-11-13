@@ -64,13 +64,13 @@ public class DataValidationControllerTest {
         String result = target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("diseaseInterests", new ArrayList<>());
-        verify(model, times(1)).addAttribute("allOtherDiseases", new ArrayList<>());
-        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
-        verify(model, times(1)).addAttribute("userLoggedIn", true);
-        verify(model, times(1)).addAttribute("userSeeg", false);
-        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
-        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
+        verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
+        verify(model).addAttribute("userLoggedIn", true);
+        verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model).addAttribute("adminUnitReviewCount", 0);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class DataValidationControllerTest {
         String result = target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("userSeeg", true);
+        verify(model).addAttribute("userSeeg", true);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class DataValidationControllerTest {
         target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", result);
+        verify(model).addAttribute("validatorDiseaseGroupMap", result);
     }
 
     @Test
@@ -157,12 +157,12 @@ public class DataValidationControllerTest {
         String result = target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
-        verify(model, times(1)).addAttribute("defaultDiseaseGroupShortName", "dengue");
-        verify(model, times(1)).addAttribute("userLoggedIn", false);
-        verify(model, times(1)).addAttribute("userSeeg", false);
-        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
-        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
+        verify(model).addAttribute("defaultDiseaseGroupShortName", "dengue");
+        verify(model).addAttribute("userLoggedIn", false);
+        verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model).addAttribute("adminUnitReviewCount", 0);
     }
 
     @Test
@@ -415,7 +415,7 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(expertService, times(1)).saveAdminUnitReview(1, 1, 2, diseaseExtentClass);
+        verify(expertService).saveAdminUnitReview(1, 1, 2, diseaseExtentClass);
     }
 
     @Test

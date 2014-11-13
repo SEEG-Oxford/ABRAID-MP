@@ -61,7 +61,7 @@ public class ModelRunControllerTest {
                 new JsonModelDisease(1, true, "foo", "foo"), occurrence, extent));
 
         // Assert
-        verify(mockRunner, times(1)).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
+        verify(mockRunner).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
         assertResponseEntity(result, runName, null, HttpStatus.OK);
     }
 

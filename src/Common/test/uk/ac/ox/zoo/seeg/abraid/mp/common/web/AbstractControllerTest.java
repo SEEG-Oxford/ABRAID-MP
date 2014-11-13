@@ -25,6 +25,6 @@ public class AbstractControllerTest {
         target.initBinder(binder);
 
         // Assert
-        verify(binder, times(1)).registerCustomEditor(eq(String.class), any(StringTrimmerEditor.class));
+        verify(binder).registerCustomEditor(eq(String.class), any(StringTrimmerEditor.class));
     }
 }

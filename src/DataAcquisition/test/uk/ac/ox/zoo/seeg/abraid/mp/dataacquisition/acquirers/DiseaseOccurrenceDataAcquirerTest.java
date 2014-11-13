@@ -119,8 +119,8 @@ public class DiseaseOccurrenceDataAcquirerTest {
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation);
-        verify(qcManager, times(1)).performQC(same(currentLocation));
-        verify(postQcManager, times(1)).runPostQCProcesses(same(currentLocation));
+        verify(qcManager).performQC(same(currentLocation));
+        verify(postQcManager).runPostQCProcesses(same(currentLocation));
         verifySuccessfulSave(occurrence, false, result);
     }
 
@@ -137,7 +137,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
 
         // Assert
         assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
-        verify(postQcManager, times(1)).runPostQCProcesses(same(occurrence.getLocation()));
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
         verifySuccessfulSave(occurrence, false, result);
     }
 
@@ -154,7 +154,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
 
         // Assert
         assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
-        verify(postQcManager, times(1)).runPostQCProcesses(same(occurrence.getLocation()));
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
         verifySuccessfulSave(occurrence, true, result);
     }
 
@@ -197,9 +197,9 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean isGoldStandard, boolean result) {
-        verify(diseaseOccurrenceValidationService, times(1)).addValidationParametersWithChecks(same(occurrence),
+        verify(diseaseOccurrenceValidationService).addValidationParametersWithChecks(same(occurrence),
                 eq(isGoldStandard));
-        verify(diseaseService, times(1)).saveDiseaseOccurrence(same(occurrence));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence));
         assertThat(result).isTrue();
     }
 

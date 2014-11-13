@@ -33,7 +33,7 @@ public class InputDataManagerTest {
         target.writeOccurrenceData(mock(GeoJsonDiseaseOccurrenceFeatureCollection.class), dataDir);
 
         // Assert
-        verify(mockOccurrenceWriter, times(1)).write(any(GeoJsonDiseaseOccurrenceFeatureCollection.class), eq(Paths.get(dataDir.toString(), "occurrences.csv").toFile()));
+        verify(mockOccurrenceWriter).write(any(GeoJsonDiseaseOccurrenceFeatureCollection.class), eq(Paths.get(dataDir.toString(), "occurrences.csv").toFile()));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class InputDataManagerTest {
         target.writeOccurrenceData(mockData, testFolder.newFolder());
 
         // Assert
-        verify(mockOccurrenceWriter, times(1)).write(eq(mockData), any(File.class));
+        verify(mockOccurrenceWriter).write(eq(mockData), any(File.class));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class InputDataManagerTest {
         target.writeExtentData(new HashMap<Integer, Integer>(), mockAdminUnitRunConfiguration, dataDir);
 
         // Assert
-        verify(mockExtentWriter, times(1)).write(
+        verify(mockExtentWriter).write(
                 anyMapOf(Integer.class, Integer.class),
                 any(File.class),
                 eq(Paths.get(dataDir.toString(), "extent.tif").toFile()));
@@ -80,7 +80,7 @@ public class InputDataManagerTest {
         target.writeExtentData(new HashMap<Integer, Integer>(), mockAdminUnitRunConfiguration, testFolder.newFolder());
 
         // Assert
-        verify(mockExtentWriter, times(1)).write(
+        verify(mockExtentWriter).write(
                 anyMapOf(Integer.class, Integer.class),
                 eq(new File("global.asc")),
                 any(File.class));
@@ -96,7 +96,7 @@ public class InputDataManagerTest {
         target.writeExtentData(new HashMap<Integer, Integer>(), mockAdminUnitRunConfiguration, testFolder.newFolder());
 
         // Assert
-        verify(mockExtentWriter, times(1)).write(
+        verify(mockExtentWriter).write(
                 anyMapOf(Integer.class, Integer.class),
                 eq(new File("tropical.asc")),
                 any(File.class));
@@ -114,7 +114,7 @@ public class InputDataManagerTest {
         target.writeExtentData(extentData, mockAdminUnitRunConfiguration, testFolder.newFolder());
 
         // Assert
-        verify(mockExtentWriter, times(1)).write(
+        verify(mockExtentWriter).write(
                 eq(extentData),
                 any(File.class),
                 any(File.class));

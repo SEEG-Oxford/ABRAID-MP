@@ -67,7 +67,7 @@ public class WorkspaceProvisionerTest {
         File script = target.provisionWorkspace(config, null, null);
 
         // Assert
-        verify(scriptGenerator, times(1)).generateScript(eq(config), any(File.class));
+        verify(scriptGenerator).generateScript(eq(config), any(File.class));
         assertThat(script).isEqualTo(expectedScript);
     }
 
@@ -89,7 +89,7 @@ public class WorkspaceProvisionerTest {
         // Assert
         ArgumentCaptor<String> versionCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<File> directoryCaptor = ArgumentCaptor.forClass(File.class);
-        verify(sourceCodeManager, times(1)).provisionVersion(versionCaptor.capture(), directoryCaptor.capture());
+        verify(sourceCodeManager).provisionVersion(versionCaptor.capture(), directoryCaptor.capture());
         assertThat(versionCaptor.getValue()).isEqualTo(expectedVersion);
         assertThat(directoryCaptor.getValue().getParentFile()).isEqualTo(runDir);
         assertThat(directoryCaptor.getValue().getName()).isEqualTo("model");
@@ -112,7 +112,7 @@ public class WorkspaceProvisionerTest {
         // Assert
         ArgumentCaptor<GeoJsonDiseaseOccurrenceFeatureCollection> dataCaptor = ArgumentCaptor.forClass(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         ArgumentCaptor<File> directoryCaptor = ArgumentCaptor.forClass(File.class);
-        verify(inputDataManager, times(1)).writeOccurrenceData(dataCaptor.capture(), directoryCaptor.capture());
+        verify(inputDataManager).writeOccurrenceData(dataCaptor.capture(), directoryCaptor.capture());
         assertThat(dataCaptor.getValue()).isEqualTo(expectedData);
         assertThat(directoryCaptor.getValue().getParentFile()).isEqualTo(runDir);
         assertThat(directoryCaptor.getValue().getName()).isEqualTo("data");

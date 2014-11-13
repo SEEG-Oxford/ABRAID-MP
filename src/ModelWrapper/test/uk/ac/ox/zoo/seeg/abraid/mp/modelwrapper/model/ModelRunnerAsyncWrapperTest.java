@@ -40,7 +40,7 @@ public class ModelRunnerAsyncWrapperTest {
 
         // Assert
         assertThat(result).isSameAs(expectedResult);
-        verify(mockModelRunner, times(1)).runModel(expectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
+        verify(mockModelRunner).runModel(expectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
     }
 
     @Test
@@ -60,6 +60,6 @@ public class ModelRunnerAsyncWrapperTest {
         future.get();
 
         // Assert
-        verify(mockModelStatusReporter, times(1)).report(ModelRunStatus.FAILED, "", "Model setup failed: java.io.IOException: message");
+        verify(mockModelStatusReporter).report(ModelRunStatus.FAILED, "", "Model setup failed: java.io.IOException: message");
     }
 }

@@ -27,7 +27,7 @@ public class AccountControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkName(eq(expert.getName()), anyListOf(String.class));
+        verify(checker).checkName(eq(expert.getName()), anyListOf(String.class));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class AccountControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkJobTitle(eq(expert.getJobTitle()), anyListOf(String.class));
+        verify(checker).checkJobTitle(eq(expert.getJobTitle()), anyListOf(String.class));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class AccountControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkInstitution(eq(expert.getInstitution()), anyListOf(String.class));
+        verify(checker).checkInstitution(eq(expert.getInstitution()), anyListOf(String.class));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class AccountControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkVisibilityRequested(eq(expert.getVisibilityRequested()), anyListOf(String.class));
+        verify(checker).checkVisibilityRequested(eq(expert.getVisibilityRequested()), anyListOf(String.class));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class AccountControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkDiseaseInterests(eq(expert.getDiseaseInterests()), anyListOf(String.class));
+        verify(checker).checkDiseaseInterests(eq(expert.getDiseaseInterests()), anyListOf(String.class));
     }
 
     private static JsonExpertDetails mockExpert() {

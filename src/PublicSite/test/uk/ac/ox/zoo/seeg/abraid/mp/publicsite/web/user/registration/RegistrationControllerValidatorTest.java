@@ -35,7 +35,7 @@ public class RegistrationControllerValidatorTest {
 
         // Assert
         assertThat(result).isEqualTo("expected");
-        verify(mockCaptcha, times(1)).createRecaptchaHtml(eq((String) null), eq("clean"), eq((Integer) null));
+        verify(mockCaptcha).createRecaptchaHtml(eq((String) null), eq("clean"), eq((Integer) null));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class RegistrationControllerValidatorTest {
         target.validateBasicFields(expert);
 
         // Assert
-        verify(checker, times(1)).checkEmail(eq(expert.getEmail()), anyListOf(String.class));
+        verify(checker).checkEmail(eq(expert.getEmail()), anyListOf(String.class));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class RegistrationControllerValidatorTest {
         target.validateBasicFields(expert);
 
         // Assert
-        verify(checker, times(1)).checkPassword(eq(expert.getPassword()), anyListOf(String.class));
+        verify(checker).checkPassword(eq(expert.getPassword()), anyListOf(String.class));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class RegistrationControllerValidatorTest {
         target.validateDetailsFields(expert);
 
         // Assert
-        verify(checker, times(1)).checkName(eq(expert.getName()), anyListOf(String.class));
+        verify(checker).checkName(eq(expert.getName()), anyListOf(String.class));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class RegistrationControllerValidatorTest {
         target.validateDetailsFields(expert);
 
         // Assert
-        verify(checker, times(1)).checkJobTitle(eq(expert.getJobTitle()), anyListOf(String.class));
+        verify(checker).checkJobTitle(eq(expert.getJobTitle()), anyListOf(String.class));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class RegistrationControllerValidatorTest {
         target.validateDetailsFields(expert);
 
         // Assert
-        verify(checker, times(1)).checkInstitution(eq(expert.getInstitution()), anyListOf(String.class));
+        verify(checker).checkInstitution(eq(expert.getInstitution()), anyListOf(String.class));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class RegistrationControllerValidatorTest {
         List<String> result = target.validateTransientFields(expert, mockRequest);
 
         // Assert
-        verify(checker, times(1)).checkPasswordConfirmation(eq("abc123q"), eq("abc123Q"), anyListOf(String.class));
+        verify(checker).checkPasswordConfirmation(eq("abc123q"), eq("abc123Q"), anyListOf(String.class));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class RegistrationControllerValidatorTest {
 
         // Assert
         assertThat(result).contains("Captcha incorrect.");
-        verify(mockCaptcha, times(1))
+        verify(mockCaptcha)
                 .checkAnswer("expected address", expert.getCaptchaChallenge(), expert.getCaptchaResponse());
     }
 

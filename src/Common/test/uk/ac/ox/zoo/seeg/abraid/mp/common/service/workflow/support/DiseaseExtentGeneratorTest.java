@@ -390,7 +390,7 @@ public class DiseaseExtentGeneratorTest {
                 any(AdminUnitDiseaseExtentClass.class));
 
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
-            verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(argThat(new AdminUnitDiseaseExtentClassMatcher(extentClass)));
+            verify(diseaseService).saveAdminUnitDiseaseExtentClass(argThat(new AdminUnitDiseaseExtentClassMatcher(extentClass)));
         }
     }
 

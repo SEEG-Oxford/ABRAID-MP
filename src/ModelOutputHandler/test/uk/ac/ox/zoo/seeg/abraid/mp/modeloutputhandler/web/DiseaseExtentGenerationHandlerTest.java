@@ -36,7 +36,7 @@ public class DiseaseExtentGenerationHandlerTest {
         handler.handle(modelRun);
 
         // Assert
-        verify(modelRunWorkflowService, times(1)).generateDiseaseExtent(diseaseGroup);
+        verify(modelRunWorkflowService).generateDiseaseExtent(diseaseGroup);
     }
 
     private DiseaseService mockDiseaseService(int id, DiseaseGroup diseaseGroup) {

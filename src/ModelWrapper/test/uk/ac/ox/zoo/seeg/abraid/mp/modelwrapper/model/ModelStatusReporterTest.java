@@ -75,7 +75,7 @@ public class ModelStatusReporterTest {
 
         // Assert
         assertThatZip(handledZip).hasContentFiles(expectedFiles, testFolder);
-        verify(logger, times(1)).info(eq("Successfully sent model outputs to model output handler."));
+        verify(logger).info(eq("Successfully sent model outputs to model output handler."));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ModelStatusReporterTest {
 
         // Assert
         assertThatZip(handledZip).hasContentFiles(expectedFiles, testFolder);
-        verify(logger, times(1)).info(eq("Successfully sent model outputs to model output handler."));
+        verify(logger).info(eq("Successfully sent model outputs to model output handler."));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class ModelStatusReporterTest {
         target.report(ModelRunStatus.COMPLETED, "", "");
 
         // Assert
-        verify(logger, times(1)).error(eq("Error received from model output handler: " + webServiceResponseMessage));
+        verify(logger).error(eq("Error received from model output handler: " + webServiceResponseMessage));
     }
 
     @Test
@@ -185,7 +185,7 @@ public class ModelStatusReporterTest {
         target.report(ModelRunStatus.COMPLETED, "", "");
 
         // Assert
-        verify(logger, times(1)).fatal("Error sending model outputs for handling: " + webServiceResponseMessage, ioException);
+        verify(logger).fatal("Error sending model outputs for handling: " + webServiceResponseMessage, ioException);
     }
 
     @Test
@@ -223,7 +223,7 @@ public class ModelStatusReporterTest {
         target.report(ModelRunStatus.COMPLETED, "", "");
 
         // Assert
-        verify(logger, times(1)).fatal(
+        verify(logger).fatal(
                 startsWith("Error sending model outputs for handling: working directory"),
                 any(IllegalArgumentException.class));
     }
@@ -262,7 +262,7 @@ public class ModelStatusReporterTest {
         target.report(ModelRunStatus.COMPLETED, "", "");
 
         // Assert
-        verify(logger, times(1)).fatal(
+        verify(logger).fatal(
                 startsWith("Error sending model outputs for handling: File does not exist"),
                 any(ZipException.class));
     }

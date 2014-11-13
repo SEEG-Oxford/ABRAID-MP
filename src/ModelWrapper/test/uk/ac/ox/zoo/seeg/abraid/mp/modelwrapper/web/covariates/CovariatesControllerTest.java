@@ -45,7 +45,7 @@ public class CovariatesControllerTest {
         target.showCovariatesPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("initialData", "{\"diseases\":null,\"files\":null}");
+        verify(model).addAttribute("initialData", "{\"diseases\":null,\"files\":null}");
     }
 
     @Test
@@ -126,7 +126,7 @@ public class CovariatesControllerTest {
         ResponseEntity result = target.updateCovariates(conf);
 
         // Assert
-        verify(configurationService, times(1)).setCovariateConfiguration(conf);
+        verify(configurationService).setCovariateConfiguration(conf);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -155,7 +155,7 @@ public class CovariatesControllerTest {
         ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
 
         // Assert
-        verify(validator, times(1)).validateCovariateUpload(
+        verify(validator).validateCovariateUpload(
                 expectedName, expectedSubdirectory, expectedFile, expectedPath, expectedCovariateDir, expectedCovariateConf
         );
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
