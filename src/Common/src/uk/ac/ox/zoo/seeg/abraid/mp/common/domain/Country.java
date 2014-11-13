@@ -50,6 +50,11 @@ public class Country {
         this.name = name;
     }
 
+    public Country(Integer gaulCode, String name, boolean forMinDataSpread) {
+        this(gaulCode, name);
+        this.forMinDataSpread = forMinDataSpread;
+    }
+
     public Country(Integer gaulCode, String name, MultiPolygon geom) {
         this(gaulCode, name);
         this.geom = geom;
