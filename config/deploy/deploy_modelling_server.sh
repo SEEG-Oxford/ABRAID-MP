@@ -10,8 +10,8 @@ if [ "$(whoami)" != "root" ]; then
   exit 1
 fi
 
-if [[ ! $# -eq 2 ]]; then
-  echo "Usage: deploy_modelling_server.sh 'remote_user_name' 'remote_config_repo_path'"
+if [[ ! $# -eq 3 ]]; then
+  echo "Usage: deploy_modelling_server.sh 'remote_user_name' 'remote_config_repo_path' 'remote_config_repo_branch'"
   exit 1
 fi
 
@@ -33,6 +33,8 @@ export REMOTE_USER="$1"
 declare -r REMOTE_USER
 export CONFIG_PATH="$2"
 declare -r CONFIG_PATH
+export CONFIG_BRANCH="$3"
+declare -r CONFIG_BRANCH
 
 # Stop servlet containers
 echo "[[ Stopping services ]]"

@@ -25,9 +25,9 @@ fi
   cd "$ABRAID_SUPPORT_PATH/conf/"
   git remote add origin "$REMOTE_USER@$CONFIG_PATH"
   echo "Performing git pull"
-  if ! git pull -q --ff-only origin master; then
+  if ! git pull -q --ff-only origin "$CONFIG_BRANCH"; then
     echo "[[ CONFIG | Conflicts or problems detected ]]"
-    read -p "Dropping to subshell for manual resolution (use 'git pull origin master' to start and 'exit' to finish). Press [enter] to continue ..."
+    read -p "Dropping to subshell for manual resolution (use 'git pull origin $CONFIG_BRANCH' to start and 'exit' to finish). Press [enter] to continue ..."
     bash --rcfile <(echo "PS1='[Deployment] \u@\h:\w\$ '") -i
   fi
 )
