@@ -39,12 +39,12 @@ public class DiseaseExtentGenerator {
      * @param diseaseGroup The disease group.
      * @param minimumOccurrenceDate The minimum occurrence date for the disease extent, as calculated from minimum
      *                              occurrence date of all the occurrences that can be sent to the model.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      */
     public void generateDiseaseExtent(DiseaseGroup diseaseGroup, DateTime minimumOccurrenceDate,
-                                      boolean useGoldStandardOccurrences) {
+                                      boolean onlyUseGoldStandardOccurrences) {
         DateTime now = DateTime.now();
-        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup, useGoldStandardOccurrences);
+        DiseaseExtentGeneratorHelper helper = createHelper(diseaseGroup, onlyUseGoldStandardOccurrences);
 
         // If there is currently no disease extent for this disease group, create an initial extent, otherwise
         // update existing extent
@@ -57,7 +57,8 @@ public class DiseaseExtentGenerator {
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
-    private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup, boolean useGoldStandardOccurrences) {
+    private DiseaseExtentGeneratorHelper createHelper(DiseaseGroup diseaseGroup,
+                                                      boolean onlyUseGoldStandardOccurrences) {
         int diseaseGroupId = diseaseGroup.getId();
 
         // Find current disease extent
@@ -77,7 +78,7 @@ public class DiseaseExtentGenerator {
         boolean hasModelBeenSuccessfullyRun = (modelRun != null);
 
         return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses,
-                hasModelBeenSuccessfullyRun, useGoldStandardOccurrences);
+                hasModelBeenSuccessfullyRun, onlyUseGoldStandardOccurrences);
     }
 
     private void createInitialExtent(DiseaseExtentGeneratorHelper helper) {
@@ -109,7 +110,7 @@ public class DiseaseExtentGenerator {
                 helper.getDiseaseGroup().getId(),
                 null,
                 null,
-                helper.useGoldStandardOccurrences());
+                helper.onlyUseGoldStandardOccurrences());
         helper.setOccurrences(occurrences);
     }
 
@@ -131,7 +132,7 @@ public class DiseaseExtentGenerator {
                 helper.getDiseaseGroup().getId(),
                 minimumValidationWeighting,
                 minimumOccurrenceDate,
-                helper.useGoldStandardOccurrences()
+                helper.onlyUseGoldStandardOccurrences()
         );
         helper.setOccurrences(occurrences);
     }
@@ -151,7 +152,7 @@ public class DiseaseExtentGenerator {
 
     private String getDiseaseGroupAndOccurrencesLogMessage(DiseaseExtentGeneratorHelper helper) {
         DiseaseGroup diseaseGroup = helper.getDiseaseGroup();
-        String goldStandardMessage = helper.useGoldStandardOccurrences() ? GOLD_STANDARD_MESSAGE : "";
+        String goldStandardMessage = helper.onlyUseGoldStandardOccurrences() ? GOLD_STANDARD_MESSAGE : "";
         return String.format(DISEASE_GROUP_AND_OCCURRENCES_MESSAGE, diseaseGroup.getId(), diseaseGroup.getName(),
                 helper.getOccurrences().size(), goldStandardMessage);
     }

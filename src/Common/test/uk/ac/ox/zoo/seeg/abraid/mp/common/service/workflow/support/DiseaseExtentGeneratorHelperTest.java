@@ -52,10 +52,10 @@ public class DiseaseExtentGeneratorHelperTest {
     }
 
     @Test
-    public void useGoldStandardOccurrencesReturnsCorrectValue() {
+    public void onlyUseGoldStandardOccurrencesReturnsCorrectValue() {
         DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
                 defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses, false, true);
-        assertThat(helper.useGoldStandardOccurrences()).isTrue();
+        assertThat(helper.onlyUseGoldStandardOccurrences()).isTrue();
     }
 
     @Test

@@ -151,7 +151,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         MockHttpServletRequestBuilder requestBuilder = post(url)
                 .param("batchStartDate", batchStartDate.toString())
                 .param("batchEndDate", batchEndDate.toString())
-                .param("useGoldStandardOccurrences", "false");
+                .param("onlyUseGoldStandardOccurrences", "false");
         this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         // Assert
@@ -171,7 +171,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         MockHttpServletRequestBuilder requestBuilder = post(url)
                 .param("batchStartDate", batchStartDate.toString())
                 .param("batchEndDate", batchEndDate.toString())
-                .param("useGoldStandardOccurrences", "true");
+                .param("onlyUseGoldStandardOccurrences", "true");
         this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         // Assert

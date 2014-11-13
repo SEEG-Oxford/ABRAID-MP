@@ -525,14 +525,14 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     public void getDiseaseOccurrencesForModelRunRequest() {
         // Arrange
         int diseaseGroupId = 87;
-        boolean useGoldStandardOccurrences = true;
+        boolean onlyUseGoldStandardOccurrences = true;
         List<DiseaseOccurrence> occurrences = Arrays.asList(new DiseaseOccurrence());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(
-                diseaseGroupId, useGoldStandardOccurrences)).thenReturn(occurrences);
+                diseaseGroupId, onlyUseGoldStandardOccurrences)).thenReturn(occurrences);
 
         // Act
         List<DiseaseOccurrence> testOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(
-                diseaseGroupId, useGoldStandardOccurrences);
+                diseaseGroupId, onlyUseGoldStandardOccurrences);
 
         // Assert
         assertThat(testOccurrences).isSameAs(occurrences);
@@ -542,7 +542,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         // Arrange
         int diseaseGroupId = 10;
         double minimumValidationWeighting = 0.7;
-        boolean useGoldStandardOccurrences = true;
+        boolean onlyUseGoldStandardOccurrences = true;
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
@@ -550,11 +550,11 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
 
         when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
-                minimumOccurrenceDate, useGoldStandardOccurrences)).thenReturn(expectedOccurrences);
+                minimumOccurrenceDate, onlyUseGoldStandardOccurrences)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
-                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, useGoldStandardOccurrences);
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, onlyUseGoldStandardOccurrences);
 
         // Assert
         assertThat(expectedOccurrences).isSameAs(actualOccurrences);
