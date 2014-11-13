@@ -195,7 +195,6 @@ public class ModelStatusReporterTest {
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
         ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
-        Logger logger = GeneralTestUtils.createMockLogger(target);
 
         addResultsToWorkspace(RESULTS_FILES, workingDirectory);
 

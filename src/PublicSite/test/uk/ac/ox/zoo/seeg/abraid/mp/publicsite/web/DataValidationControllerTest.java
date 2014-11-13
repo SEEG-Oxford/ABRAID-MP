@@ -61,7 +61,7 @@ public class DataValidationControllerTest {
         DataValidationController target = createTarget();
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
         verify(model).addAttribute("diseaseInterests", new ArrayList<>());
@@ -82,7 +82,7 @@ public class DataValidationControllerTest {
         DataValidationController target = createTarget(null, null, expertService);
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
         verify(model).addAttribute("userSeeg", true);
@@ -154,7 +154,7 @@ public class DataValidationControllerTest {
         DataValidationController target = createTarget(currentUserService, null, null);
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
         verify(model).addAttribute("defaultValidatorDiseaseGroupName", "dengue");

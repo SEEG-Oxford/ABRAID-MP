@@ -30,7 +30,7 @@ public class ApiUserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Incorrect username specified");
         }
 
-        ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+        ArrayList<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority(ROLE_API));
 
         return new User(API_USERNAME, apiKeyHash, roles);

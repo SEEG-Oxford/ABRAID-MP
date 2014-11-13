@@ -60,7 +60,7 @@ class ViewInjectingReturnValueHandler implements
             // Really we just want to wrap the body of the response entity in a PojoView
             // but it's immutable, so we will have to build a new one
             ResponseEntity responseEntity = (ResponseEntity) result;
-            response = new ResponseEntity<PojoView>(
+            response = new ResponseEntity<>(
                     new PojoView(responseEntity.getBody(), viewClass),
                     responseEntity.getHeaders(),
                     responseEntity.getStatusCode());

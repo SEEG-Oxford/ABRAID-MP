@@ -72,7 +72,6 @@ public class DistanceFromDiseaseExtentHelperTest {
         // Arrange
         int diseaseGroupId = 87;
         Point point = GeometryUtils.createPoint(10, 10);
-        double expectedDistance = 10;
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, point);
         when(nativeSQL.findDistanceOutsideDiseaseExtent(eq(diseaseGroupId), eqExact(point))).thenReturn(null);

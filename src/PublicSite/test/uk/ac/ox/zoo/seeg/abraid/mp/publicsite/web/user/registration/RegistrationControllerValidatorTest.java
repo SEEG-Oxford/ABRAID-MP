@@ -134,7 +134,7 @@ public class RegistrationControllerValidatorTest {
         when(expert.getPasswordConfirmation()).thenReturn("abc123Q");
 
         // Act
-        List<String> result = target.validateTransientFields(expert, mockRequest);
+        target.validateTransientFields(expert, mockRequest);
 
         // Assert
         verify(checker).checkPasswordConfirmation(eq("abc123q"), eq("abc123Q"), anyListOf(String.class));

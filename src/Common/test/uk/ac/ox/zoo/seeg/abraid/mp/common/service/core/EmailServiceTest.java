@@ -176,7 +176,7 @@ public class EmailServiceTest {
         EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation,
                 new Class[0], new File[] {testFolder.getRoot()});
 
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("foo", "!");
 
         // Act

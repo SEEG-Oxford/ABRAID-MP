@@ -57,7 +57,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
         this.freemarkerConfig = setupFreemarkerConfig(classTemplateLookupPaths, fileTemplateLookupPaths);
     }
 
-    private static void setupSMTP(Email email, SmtpConfiguration smtpConfig) throws EmailException {
+    private static void setupSMTP(Email email, SmtpConfiguration smtpConfig) {
         email.setHostName(smtpConfig.getAddress());
         email.setSmtpPort(smtpConfig.getPort());
         email.setSslSmtpPort(Integer.toString(smtpConfig.getPort()));

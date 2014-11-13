@@ -52,7 +52,7 @@ public class AdminExpertsControllerTest {
         Model model = mock(Model.class);
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);

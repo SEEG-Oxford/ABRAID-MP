@@ -404,7 +404,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 "}\n";
     }
 
-    private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
+    private void createAndSaveTestModelRun(int diseaseGroupId) {
         ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, "localhost", DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());

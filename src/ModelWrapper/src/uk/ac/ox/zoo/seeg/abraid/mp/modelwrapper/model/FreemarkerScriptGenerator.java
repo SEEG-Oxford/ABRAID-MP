@@ -81,7 +81,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
     }
 
     private static Map<String, Object> buildDataModel(RunConfiguration runConfiguration) {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("run", runConfiguration.getRunName());
         data.put("dry_run", runConfiguration.getExecutionConfig().getDryRunFlag());
         data.put("max_cpu", runConfiguration.getExecutionConfig().getMaxCPUs());
