@@ -26,6 +26,7 @@ def train(disease_group_id):
         return ('Invalid JSON', 400)
 
     predictor = Chain()
+    FEED_CLASSES[disease_group_id] = {}
 
     if len(data) > 50:
         try:
@@ -98,8 +99,6 @@ def _convert_json_to_matrix(disease_group_id, json):
 
 def _get_feed_class(disease_group_id, feed_id):
     """ Map from feed id (which could be any integer and skew the data) to an incremental class number """
-    if disease_group_id not in FEED_CLASSES:
-        FEED_CLASSES[disease_group_id] = {}
     if feed_id not in FEED_CLASSES[disease_group_id]:
         FEED_CLASSES[disease_group_id][feed_id] = len(FEED_CLASSES[disease_group_id])
     return FEED_CLASSES[disease_group_id][feed_id]
