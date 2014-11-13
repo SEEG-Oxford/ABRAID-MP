@@ -6,7 +6,7 @@ define(["shared/app/BaseFormViewModel"], function (BaseFormViewModel) {
 
     return function (baseUrl) {
         var self = this;
-        BaseFormViewModel.call(self, false, false, baseUrl, "/admin/diseases/sync", {
+        BaseFormViewModel.call(self, false, false, baseUrl, "admin/diseases/sync", {
             fail: "Failed to synchronise the disease groups with all model wrapper instances.",
             error: "Failed to synchronise the disease groups with all model wrapper instances.",
             success: "Disease groups synchronised successfully with all model wrapper instances."

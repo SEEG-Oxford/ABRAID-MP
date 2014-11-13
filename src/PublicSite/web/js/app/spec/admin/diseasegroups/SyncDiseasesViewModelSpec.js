@@ -44,7 +44,7 @@ define([
 
             it("it specifies the correct form url", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[3]).toBe("/admin/diseases/sync");
+                expect(args[3]).toBe("admin/diseases/sync");
             });
 
             it("it specifies the correct content type option", function () {
