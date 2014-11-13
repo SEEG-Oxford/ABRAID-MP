@@ -21,6 +21,7 @@ public class CsvCovariateInfluence extends AbstractCsvCovariateInfluence {
         CsvSchema schema = CsvSchema.builder()
                 .setSkipFirstDataRow(true)
                 .addColumn("covariateName")
+                .addColumn("covariateDisplayName")
                 .addColumn("meanInfluence", CsvSchema.ColumnType.NUMBER)
                 .addColumn("lowerQuantile", CsvSchema.ColumnType.NUMBER)
                 .addColumn("upperQuantile", CsvSchema.ColumnType.NUMBER)
