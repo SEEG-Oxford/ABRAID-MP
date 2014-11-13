@@ -1,8 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.ArrayList;
@@ -19,9 +19,24 @@ import static org.mockito.Mockito.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
-    @Autowired
+public class ExpertServiceTest {
     private ExpertService expertService;
+    private AdminUnitReviewDao adminUnitReviewDao;
+    private ExpertDao expertDao;
+    private DiseaseGroupDao diseaseGroupDao;
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+
+    @Before
+    public void setUp() {
+        adminUnitReviewDao = mock(AdminUnitReviewDao.class);
+        expertDao = mock(ExpertDao.class);
+        diseaseGroupDao = mock(DiseaseGroupDao.class);
+        diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
+        diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
+        expertService = new ExpertServiceImpl(adminUnitReviewDao, expertDao, diseaseGroupDao, diseaseOccurrenceDao,
+                diseaseOccurrenceReviewDao);
+    }
 
     @Test
     public void getDiseaseInterestsReturnsExpectedList() {
@@ -67,7 +82,6 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
         // Arrange
         List<DiseaseOccurrence> testList = new ArrayList<>();
         when(expertDao.getById(anyInt())).thenReturn(new Expert());
-        when(validatorDiseaseGroupDao.getById(anyInt())).thenReturn(new ValidatorDiseaseGroup());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), anyBoolean(), anyInt())).thenReturn(testList);
 
         // Act
@@ -82,7 +96,6 @@ public class ExpertServiceTest extends AbstractCommonSpringUnitTests {
         // Arrange
         List<DiseaseOccurrence> testList = new ArrayList<>();
         when(expertDao.getById(anyInt())).thenReturn(new Expert());
-        when(validatorDiseaseGroupDao.getById(anyInt())).thenReturn(new ValidatorDiseaseGroup());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(anyInt(), anyBoolean(), anyInt())).thenReturn(testList);
 
         // Act
