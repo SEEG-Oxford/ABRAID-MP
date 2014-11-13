@@ -18,8 +18,8 @@ public class AbstractCovariateInfluence {
     @JoinColumn(name = "model_run_id", nullable = false)
     private ModelRun modelRun;
 
-    @Column(name = "covariate_name", nullable = false)
-    private String covariateName;
+    @Column(name = "covariate_file_path", nullable = false)
+    private String covariateFilePath;
 
     @Column(name = "covariate_display_name", nullable = false)
     private String covariateDisplayName;
@@ -38,15 +38,15 @@ public class AbstractCovariateInfluence {
 
     public AbstractCovariateInfluence(AbstractCsvCovariateInfluence dto, ModelRun parentRun) {
         setModelRun(parentRun);
-        setCovariateName(dto.getCovariateName());
+        setCovariateFilePath(dto.getCovariateFilePath());
         setCovariateDisplayName(dto.getCovariateDisplayName());
         setMeanInfluence(dto.getMeanInfluence());
         setUpperQuantile(dto.getUpperQuantile());
         setLowerQuantile(dto.getLowerQuantile());
     }
 
-    public AbstractCovariateInfluence(String name, Double meanInfluence) {
-        this.covariateDisplayName = name;
+    public AbstractCovariateInfluence(String displayName, Double meanInfluence) {
+        this.covariateDisplayName = displayName;
         this.meanInfluence = meanInfluence;
     }
 
@@ -66,12 +66,12 @@ public class AbstractCovariateInfluence {
         this.modelRun = modelRun;
     }
 
-    public String getCovariateName() {
-        return covariateName;
+    public String getCovariateFilePath() {
+        return covariateFilePath;
     }
 
-    public void setCovariateName(String covariateName) {
-        this.covariateName = covariateName;
+    public void setCovariateFilePath(String covariateFilePath) {
+        this.covariateFilePath = covariateFilePath;
     }
 
     public String getCovariateDisplayName() {
@@ -117,7 +117,7 @@ public class AbstractCovariateInfluence {
 
         if (covariateDisplayName != null ? !covariateDisplayName.equals(that.covariateDisplayName) : that.covariateDisplayName != null)
             return false;
-        if (covariateName != null ? !covariateName.equals(that.covariateName) : that.covariateName != null)
+        if (covariateFilePath != null ? !covariateFilePath.equals(that.covariateFilePath) : that.covariateFilePath != null)
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (lowerQuantile != null ? !lowerQuantile.equals(that.lowerQuantile) : that.lowerQuantile != null)
@@ -135,7 +135,7 @@ public class AbstractCovariateInfluence {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (modelRun != null ? modelRun.hashCode() : 0);
-        result = 31 * result + (covariateName != null ? covariateName.hashCode() : 0);
+        result = 31 * result + (covariateFilePath != null ? covariateFilePath.hashCode() : 0);
         result = 31 * result + (covariateDisplayName != null ? covariateDisplayName.hashCode() : 0);
         result = 31 * result + (meanInfluence != null ? meanInfluence.hashCode() : 0);
         result = 31 * result + (upperQuantile != null ? upperQuantile.hashCode() : 0);

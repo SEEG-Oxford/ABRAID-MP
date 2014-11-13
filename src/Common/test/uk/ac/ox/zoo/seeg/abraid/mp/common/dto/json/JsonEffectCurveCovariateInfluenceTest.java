@@ -23,7 +23,7 @@ public class JsonEffectCurveCovariateInfluenceTest {
         double covariateValue = 2345.0;
 
         EffectCurveCovariateInfluence covariateInfluence = mock(EffectCurveCovariateInfluence.class);
-        when(covariateInfluence.getCovariateName()).thenReturn(name);
+        when(covariateInfluence.getCovariateFilePath()).thenReturn(name);
         when(covariateInfluence.getCovariateDisplayName()).thenReturn(displayName);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
         when(covariateInfluence.getCovariateValue()).thenReturn(covariateValue);

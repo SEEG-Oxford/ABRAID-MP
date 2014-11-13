@@ -20,7 +20,7 @@ public class JsonCovariateInfluenceTest {
         double meanInfluence = 45.94;
 
         CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
-        when(covariateInfluence.getCovariateName()).thenReturn(name);
+        when(covariateInfluence.getCovariateFilePath()).thenReturn(name);
         when(covariateInfluence.getCovariateDisplayName()).thenReturn(displayName);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
 

@@ -41,7 +41,7 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
         assertThat(result.getId()).isNotNull();
         assertThat(result.getId()).isEqualTo(id);
         assertThat(result.getModelRun()).isEqualTo(modelRun);
-        assertThat(result.getCovariateName()).isEqualTo(expectation.getCovariateName());
+        assertThat(result.getCovariateFilePath()).isEqualTo(expectation.getCovariateFilePath());
         assertThat(result.getCovariateDisplayName()).isEqualTo(expectation.getCovariateDisplayName());
         assertThat(result.getMeanInfluence()).isEqualTo(expectation.getMeanInfluence());
         assertThat(result.getLowerQuantile()).isEqualTo(expectation.getLowerQuantile());
@@ -71,7 +71,7 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
 
     private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String name, ModelRun modelRun) {
         CsvEffectCurveCovariateInfluence dto = new CsvEffectCurveCovariateInfluence();
-        dto.setCovariateName(name);
+        dto.setCovariateFilePath(name);
         dto.setCovariateDisplayName("2");
         dto.setMeanInfluence(3.0);
         dto.setLowerQuantile(4.0);

@@ -25,7 +25,7 @@ public class CsvEffectCurveCovariateInfluence extends AbstractCsvCovariateInflue
         CsvSchema schema = CsvSchema.builder()
                 .setSkipFirstDataRow(true)
                 .addColumn("index")
-                .addColumn("covariateName")
+                .addColumn("covariateFilePath")
                 .addColumn("covariateDisplayName")
                 .addColumn("covariateValue")
                 .addColumn("meanInfluence", CsvSchema.ColumnType.NUMBER)

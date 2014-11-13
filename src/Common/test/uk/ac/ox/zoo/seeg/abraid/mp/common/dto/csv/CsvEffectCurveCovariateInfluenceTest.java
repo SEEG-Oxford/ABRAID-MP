@@ -25,14 +25,14 @@ public class CsvEffectCurveCovariateInfluenceTest {
 
         // Assert
         assertThat(result).hasSize(4);
-        assertThat(result.get(0).getCovariateName()).isEqualTo("upr_u");
+        assertThat(result.get(0).getCovariateFilePath()).isEqualTo("upr_u");
         assertThat(result.get(0).getCovariateDisplayName()).isEqualTo("Periurban");
         assertThat(result.get(0).getIndex()).isEqualTo(1);
         assertThat(result.get(0).getCovariateValue()).isEqualTo(0);
         assertThat(result.get(0).getMeanInfluence()).isEqualTo(-3.12483381292309);
         assertThat(result.get(0).getLowerQuantile()).isEqualTo(-5.33090496651437);
         assertThat(result.get(0).getUpperQuantile()).isEqualTo(0.290991614282302);
-        assertThat(result.get(1).getCovariateName()).isEqualTo("upr_u");
+        assertThat(result.get(1).getCovariateFilePath()).isEqualTo("upr_u");
         assertThat(result.get(1).getCovariateDisplayName()).isEqualTo("Periurban");
         assertThat(result.get(1).getIndex()).isEqualTo(2);
         assertThat(result.get(1).getCovariateValue()).isEqualTo(0.0101010101010101);

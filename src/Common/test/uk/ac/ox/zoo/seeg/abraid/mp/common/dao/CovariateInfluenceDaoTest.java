@@ -41,7 +41,7 @@ public class CovariateInfluenceDaoTest extends AbstractCommonSpringIntegrationTe
         assertThat(result.getId()).isNotNull();
         assertThat(result.getId()).isEqualTo(id);
         assertThat(result.getModelRun()).isEqualTo(modelRun);
-        assertThat(result.getCovariateName()).isEqualTo(expectation.getCovariateName());
+        assertThat(result.getCovariateFilePath()).isEqualTo(expectation.getCovariateFilePath());
         assertThat(result.getCovariateDisplayName()).isEqualTo(expectation.getCovariateDisplayName());
         assertThat(result.getMeanInfluence()).isEqualTo(expectation.getMeanInfluence());
         assertThat(result.getLowerQuantile()).isEqualTo(expectation.getLowerQuantile());
@@ -68,7 +68,7 @@ public class CovariateInfluenceDaoTest extends AbstractCommonSpringIntegrationTe
 
     private CovariateInfluence createCovariateInfluence(String name, ModelRun modelRun) {
         CsvCovariateInfluence dto = new CsvCovariateInfluence();
-        dto.setCovariateName(name);
+        dto.setCovariateFilePath(name);
         dto.setCovariateDisplayName("2");
         dto.setMeanInfluence(3.0);
         dto.setLowerQuantile(4.0);

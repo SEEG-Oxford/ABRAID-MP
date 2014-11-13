@@ -22,9 +22,9 @@ public class JsonModelRunLayerTest {
         // Arrange
         ModelRun modelRun = mock(ModelRun.class);
 
-        String covariateName = "Name";
+        String displayName = "Display name";
         double meanInfluence = 20.2;
-        CovariateInfluence covariateInfluence = new CovariateInfluence(covariateName, meanInfluence);
+        CovariateInfluence covariateInfluence = new CovariateInfluence(displayName, meanInfluence);
         SubmodelStatistic submodelStatistic = mock(SubmodelStatistic.class);
 
         when(modelRun.getName()).thenReturn("expectedName");

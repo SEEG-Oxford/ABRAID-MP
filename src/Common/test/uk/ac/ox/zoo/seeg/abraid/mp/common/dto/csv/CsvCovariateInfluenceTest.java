@@ -26,12 +26,12 @@ public class CsvCovariateInfluenceTest {
 
         // Assert
         assertThat(result).hasSize(3);
-        assertThat(result.get(0).getCovariateName()).isEqualTo("rand2");
+        assertThat(result.get(0).getCovariateFilePath()).isEqualTo("rand2");
         assertThat(result.get(0).getCovariateDisplayName()).isEqualTo("Random 2");
         assertThat(result.get(0).getMeanInfluence()).isEqualTo(38.3298990317527);
         assertThat(result.get(0).getLowerQuantile()).isEqualTo(37.2171654834767);
         assertThat(result.get(0).getUpperQuantile()).isEqualTo(39.4426325800287);
-        assertThat(result.get(1).getCovariateName()).isEqualTo("rand3");
+        assertThat(result.get(1).getCovariateFilePath()).isEqualTo("rand3");
         assertThat(result.get(1).getCovariateDisplayName()).isEqualTo("Random 3");
     }
 }
