@@ -17,9 +17,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ch.lambdaj.Lambda.filter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,10 +52,8 @@ public class ModelStatusReporterTest {
         // Arrange
         File workingDirectory = testFolder.newFolder();
 
-        Map<String, String> covariateNames = new HashMap<>();
-        covariateNames.put("dir/upr_p", "Periurban");
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), covariateNames, mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         String outputText = "test output text";
@@ -84,7 +80,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
 
         String outputText = "test output text";
         String errorText = "test error text";
@@ -104,7 +100,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
 
         String outputText = "test output text";
         String errorText = "test error text";
@@ -123,10 +119,8 @@ public class ModelStatusReporterTest {
         // Arrange
         File workingDirectory = testFolder.newFolder();
 
-        Map<String, String> covariateNames = new HashMap<>();
-        covariateNames.put("dir/upr_p", "Periurban");
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), covariateNames, mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         String outputText = "test output text";
@@ -151,7 +145,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         addResultsToWorkspace(RESULTS_FILES, workingDirectory);
@@ -172,7 +166,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         addResultsToWorkspace(RESULTS_FILES, workingDirectory);
@@ -194,7 +188,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         addResultsToWorkspace(RESULTS_FILES, workingDirectory);
@@ -216,7 +210,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = new File("this path does not exist");
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
@@ -253,7 +247,7 @@ public class ModelStatusReporterTest {
         File workingDirectory = testFolder.newFolder();
 
         ModelOutputHandlerWebService mockOutputServiceClient = mock(ModelOutputHandlerWebService.class);
-        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), new HashMap<String, String>(), mockOutputServiceClient, new AbraidJsonObjectMapper());
+        ModelStatusReporter target = new ModelStatusReporterImpl(MODEL_RUN_NAME, workingDirectory.toPath(), mockOutputServiceClient, new AbraidJsonObjectMapper());
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         addResultsToWorkspace(filter(not(missingFile), RESULTS_FILES), workingDirectory);
