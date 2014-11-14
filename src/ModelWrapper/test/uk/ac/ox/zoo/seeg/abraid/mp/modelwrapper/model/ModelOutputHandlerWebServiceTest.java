@@ -43,6 +43,6 @@ public class ModelOutputHandlerWebServiceTest {
 
         // Assert
         assertThat(actualResponse).isEqualTo("expected Result");
-        verify(webServiceClient, times(1)).makePostRequestWithBinary(expectedUrl, testBody);
+        verify(webServiceClient).makePostRequestWithBinary(expectedUrl, testBody);
     }
 }

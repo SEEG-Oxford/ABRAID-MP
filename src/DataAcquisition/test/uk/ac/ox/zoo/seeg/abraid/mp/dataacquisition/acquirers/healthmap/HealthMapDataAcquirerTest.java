@@ -42,7 +42,7 @@ public class HealthMapDataAcquirerTest {
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
-        verify(dataConverter, times(1)).convert(same(locations), eq(endDate));
+        verify(dataConverter).convert(same(locations), eq(endDate));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class HealthMapDataAcquirerTest {
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
-        verify(dataConverter, times(1)).convert(same(locations), eq(endDate));
+        verify(dataConverter).convert(same(locations), eq(endDate));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class HealthMapDataAcquirerTest {
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
-        verify(dataConverter, times(1)).convert(same(locations), eq(endDate));
+        verify(dataConverter).convert(same(locations), eq(endDate));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class HealthMapDataAcquirerTest {
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
-        verify(dataConverter, times(1)).convert(same(locations), eq(endDate));
+        verify(dataConverter).convert(same(locations), eq(endDate));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class HealthMapDataAcquirerTest {
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
-        verify(dataConverter, times(1)).convert(same(locations), eq(endDate));
+        verify(dataConverter).convert(same(locations), eq(endDate));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class HealthMapDataAcquirerTest {
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
-        verify(dataConverter, times(1)).convert(same(locations), eq(endDate));
+        verify(dataConverter).convert(same(locations), eq(endDate));
     }
 
     @Test

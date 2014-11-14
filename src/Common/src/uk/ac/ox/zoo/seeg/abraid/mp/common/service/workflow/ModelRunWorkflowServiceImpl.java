@@ -177,9 +177,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
                                             DateTime batchStartDate, DateTime batchEndDate,
-                                            boolean useGoldStandardOccurrences) {
+                                            boolean onlyUseGoldStandardOccurrences) {
         List<DiseaseOccurrence> occurrencesForModelRun =
-                selectOccurrencesForModelRun(diseaseGroup.getId(), useGoldStandardOccurrences);
+                selectOccurrencesForModelRun(diseaseGroup.getId(), onlyUseGoldStandardOccurrences);
         modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchStartDate, batchEndDate);
         diseaseGroup.setLastModelRunPrepDate(modelRunPrepDate);
         diseaseService.saveDiseaseGroup(diseaseGroup);
@@ -188,14 +188,14 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     /**
      * Selects occurrences for a model run, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
-     * @param useGoldStandardOccurrences True if only "gold standard" disease occurrences should be selected, otherwise
-     *                                   false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" disease occurrences should be selected,
+     * otherwise false.
      * @return The occurrences to send to the model.
      */
     public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId,
-                                                                boolean useGoldStandardOccurrences) {
+                                                                boolean onlyUseGoldStandardOccurrences) {
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, useGoldStandardOccurrences);
+                diseaseGroupId, onlyUseGoldStandardOccurrences);
         return selector.selectModelRunDiseaseOccurrences();
     }
 

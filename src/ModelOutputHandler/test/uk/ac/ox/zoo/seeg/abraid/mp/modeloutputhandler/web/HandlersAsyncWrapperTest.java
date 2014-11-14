@@ -24,8 +24,8 @@ public class HandlersAsyncWrapperTest {
         wrapper.handle(modelRun).get();
 
         // Assert
-        verify(diseaseExtentGenerationHandler, times(1)).handle(same(modelRun));
-        verify(diseaseOccurrenceHandler, times(1)).handle(same(modelRun));
+        verify(diseaseExtentGenerationHandler).handle(same(modelRun));
+        verify(diseaseOccurrenceHandler).handle(same(modelRun));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class HandlersAsyncWrapperTest {
         wrapper.handle(modelRun).get();
 
         // Assert
-        verify(diseaseExtentGenerationHandler, times(1)).handle(same(modelRun));
+        verify(diseaseExtentGenerationHandler).handle(same(modelRun));
         verify(diseaseOccurrenceHandler, never()).handle(same(modelRun));
     }
 }

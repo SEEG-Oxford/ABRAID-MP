@@ -56,8 +56,8 @@
                     <!-- Use gold standard occurrences (yes/no) -->
                     <div data-bind="if: hasGoldStandardOccurrences">
                         <div class="btn-group" id="use-gold-standard-occurrences" data-bind="foreach: [ { value: true, label: 'Yes' }, { value: false, label: 'No' } ]">
-                            <label class="btn btn-default" data-bind="css: {active: $parent.useGoldStandardOccurrences() === value, disabled: find('isSubmitting')}">
-                                <input type="radio" name="use-gold-standard-occurrences" data-bind="formRadio: { selected: $parent.useGoldStandardOccurrences, value: value }">
+                            <label class="btn btn-default" data-bind="css: {active: $parent.onlyUseGoldStandardOccurrences() === value, disabled: find('isSubmitting')}">
+                                <input type="radio" name="use-gold-standard-occurrences" data-bind="formRadio: { selected: $parent.onlyUseGoldStandardOccurrences, value: value }">
                                 <span data-bind="text: label"></span>
                             </label>
                         </div>
@@ -78,17 +78,17 @@
                     <div style="overflow: auto; width: 100%" class="form-group">
                         <span data-bind="if: hasModelBeenSuccessfullyRun" class="side-by-side">
                             <button class="btn btn-primary" data-bind="click: submit,
-                                                                       text: isSubmitting() ? 'Working...' : (useGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
+                                                                       text: isSubmitting() ? 'Working...' : (onlyUseGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
                                                                        bootstrapDisable: disableButtonThatRunsModel()">
                             </button>
                         </span>
                         <span data-bind="ifnot: hasModelBeenSuccessfullyRun" class="side-by-side">
                             <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'},
-                                                                       text: isSubmitting() ? 'Working...' : (useGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
+                                                                       text: isSubmitting() ? 'Working...' : (onlyUseGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
                                                                        bootstrapDisable: disableButtonThatRunsModel()">
                             </button>
                         </span>
-                        <span data-bind="ifnot: useGoldStandardOccurrences" class="side-by-side">
+                        <span data-bind="ifnot: onlyUseGoldStandardOccurrences" class="side-by-side">
                             <label for="batch-start-date" style="margin-left: 20px" class="side-by-side">Batch Start Date:</label>
                             <span class="input-group date side-by-side">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>

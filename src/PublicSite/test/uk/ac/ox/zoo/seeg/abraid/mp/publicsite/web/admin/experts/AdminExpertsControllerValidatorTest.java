@@ -25,7 +25,7 @@ public class AdminExpertsControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkId(eq(123), anyListOf(String.class));
+        verify(checker).checkId(eq(123), anyListOf(String.class));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class AdminExpertsControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkVisibilityApproved(eq(false), anyListOf(String.class));
+        verify(checker).checkVisibilityApproved(eq(false), anyListOf(String.class));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class AdminExpertsControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkWeighting(eq(123.321), anyListOf(String.class));
+        verify(checker).checkWeighting(eq(123.321), anyListOf(String.class));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class AdminExpertsControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkIsAdministrator(eq(false), anyListOf(String.class));
+        verify(checker).checkIsAdministrator(eq(false), anyListOf(String.class));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class AdminExpertsControllerValidatorTest {
         target.validate(expert);
 
         // Assert
-        verify(checker, times(1)).checkIsSeegMember(eq(false), anyListOf(String.class));
+        verify(checker).checkIsSeegMember(eq(false), anyListOf(String.class));
     }
 
     private static JsonExpertFull mockExpert() {

@@ -45,7 +45,7 @@ public class ContributorsControllerTest {
         target.showExperts(model, 1);
 
         // Assert
-        verify(model, times(1)).addAttribute(eq("pageCount"), eq(NUMBER_OF_PAGES));
+        verify(model).addAttribute(eq("pageCount"), eq(NUMBER_OF_PAGES));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ContributorsControllerTest {
         target.showExperts(model, pageNumber);
 
         // Assert
-        verify(model, times(1)).addAttribute(eq("pageNumber"), eq(pageNumber));
+        verify(model).addAttribute(eq("pageNumber"), eq(pageNumber));
     }
 
     @Test
@@ -72,8 +72,8 @@ public class ContributorsControllerTest {
         target.showExperts(model, 1);
 
         // Assert
-        verify(expertService, times(1)).getPageOfPubliclyVisibleExperts(1, NUMBER_OF_EXPERTS_PER_PAGE);
-        verify(model, times(1)).addAttribute(eq("page"), eq(experts));
+        verify(expertService).getPageOfPubliclyVisibleExperts(1, NUMBER_OF_EXPERTS_PER_PAGE);
+        verify(model).addAttribute(eq("page"), eq(experts));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class ContributorsControllerTest {
         String result = target.showExperts(model, 1);
 
         // Assert
-        verify(model, times(1)).addAttribute(eq("pageCount"), eq(NUMBER_OF_PAGES));
+        verify(model).addAttribute(eq("pageCount"), eq(NUMBER_OF_PAGES));
         assertThat(result).isEqualTo("experts");
     }
 

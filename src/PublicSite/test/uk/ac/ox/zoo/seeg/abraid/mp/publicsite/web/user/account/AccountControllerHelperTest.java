@@ -41,12 +41,12 @@ public class AccountControllerHelperTest {
         target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
-        verify(expert, times(1)).setName(expertDto.getName());
-        verify(expert, times(1)).setJobTitle(expertDto.getJobTitle());
-        verify(expert, times(1)).setInstitution(expertDto.getInstitution());
-        verify(expert, times(1)).setVisibilityRequested(expertDto.getVisibilityRequested());
+        verify(expert).setName(expertDto.getName());
+        verify(expert).setJobTitle(expertDto.getJobTitle());
+        verify(expert).setInstitution(expertDto.getInstitution());
+        verify(expert).setVisibilityRequested(expertDto.getVisibilityRequested());
 
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expertService).saveExpert(expert);
     }
 
     @Test
@@ -65,10 +65,10 @@ public class AccountControllerHelperTest {
         target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
-        verify(expert, times(1)).setVisibilityApproved(false);
-        verify(expert, times(1)).setUpdatedDate(DateTime.now());
+        verify(expert).setVisibilityApproved(false);
+        verify(expert).setUpdatedDate(DateTime.now());
 
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expertService).saveExpert(expert);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class AccountControllerHelperTest {
         // Assert
         verify(expert, times(0)).setVisibilityApproved(anyBoolean());
         verify(expert, times(0)).setUpdatedDate(any(DateTime.class));
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expertService).saveExpert(expert);
     }
 
     @Test
@@ -136,10 +136,10 @@ public class AccountControllerHelperTest {
         target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expertService).saveExpert(expert);
         Map<String, Object> data = new HashMap<>();
         data.put("expert", expert);
-        verify(emailService, times(1)).sendEmailInBackground(
+        verify(emailService).sendEmailInBackground(
                 "Updated user requiring visibility sign off",
                 "account/updatedUserEmail.ftl",
                 data);
@@ -163,7 +163,7 @@ public class AccountControllerHelperTest {
         target.processExpertProfileUpdateAsTransaction(321, expertDto);
 
         // Assert
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expertService).saveExpert(expert);
         verify(emailService, never()).sendEmailInBackground(anyString(), anyString(), anyMapOf(String.class, Object.class));
     }
 
@@ -183,8 +183,8 @@ public class AccountControllerHelperTest {
         target.processExpertPasswordChangeAsTransaction(321, "password");
 
         // Assert
-        verify(expert, times(1)).setPassword("passwordHash");
-        verify(expertService, times(1)).saveExpert(expert);
+        verify(expert).setPassword("passwordHash");
+        verify(expertService).saveExpert(expert);
     }
 
     @Test

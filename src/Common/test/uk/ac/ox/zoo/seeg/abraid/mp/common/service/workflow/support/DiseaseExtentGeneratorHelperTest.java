@@ -52,10 +52,10 @@ public class DiseaseExtentGeneratorHelperTest {
     }
 
     @Test
-    public void useGoldStandardOccurrencesReturnsCorrectValue() {
+    public void onlyUseGoldStandardOccurrencesReturnsCorrectValue() {
         DiseaseExtentGeneratorHelper helper = new DiseaseExtentGeneratorHelper(
                 defaultDiseaseGroup, emptyDiseaseExtent, defaultAdminUnits, defaultDiseaseExtentClasses, false, true);
-        assertThat(helper.useGoldStandardOccurrences()).isTrue();
+        assertThat(helper.onlyUseGoldStandardOccurrences()).isTrue();
     }
 
     @Test
@@ -382,7 +382,7 @@ public class DiseaseExtentGeneratorHelperTest {
     }
 
     private <T> List<T> createList(T... items) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         Collections.addAll(list, items);
         return list;
     }

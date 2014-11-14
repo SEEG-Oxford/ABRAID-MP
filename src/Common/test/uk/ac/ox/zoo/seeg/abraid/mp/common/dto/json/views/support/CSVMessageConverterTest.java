@@ -77,7 +77,7 @@ public class CSVMessageConverterTest {
         CSVMessageConverter target = new CSVMessageConverter(mock(CsvMapper.class));
 
         // Act
-        catchException(target).supports((new WrappedList<Object>()).getClass());
+        catchException(target).supports((new WrappedList<>()).getClass());
 
         // Assert
         assertThat(caughtException()).isInstanceOf(UnsupportedOperationException.class);
@@ -89,7 +89,7 @@ public class CSVMessageConverterTest {
         CSVMessageConverter target = new CSVMessageConverter(mock(CsvMapper.class));
 
         // Act
-        boolean result = target.canRead((new WrappedList<Object>()).getClass(), MediaType.parseMediaType("application/csv"));
+        boolean result = target.canRead((new WrappedList<>()).getClass(), MediaType.parseMediaType("application/csv"));
 
         // Assert
         assertThat(result).isFalse();

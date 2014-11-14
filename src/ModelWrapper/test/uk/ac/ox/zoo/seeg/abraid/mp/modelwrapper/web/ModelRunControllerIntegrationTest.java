@@ -111,7 +111,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         RunConfiguration runConfiguration = mock(RunConfiguration.class);
         when(runConfiguration.getRunName()).thenReturn(runName);
         when(runConfiguration.getCovariateConfig()).thenReturn(mock(CovariateRunConfiguration.class));
-        when(runConfigurationFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString(), anyString()))
+        when(runConfigurationFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString()))
                 .thenReturn(runConfiguration);
         return runName;
     }

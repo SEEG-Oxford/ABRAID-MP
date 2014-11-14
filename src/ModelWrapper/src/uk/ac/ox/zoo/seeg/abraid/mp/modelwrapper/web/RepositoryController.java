@@ -67,7 +67,7 @@ public class RepositoryController extends AbstractController {
 
                 LOGGER.info(LOG_SYNC_REPO_SUCCESSFUL);
                 // Respond with a 204, this is equivalent to a 200 (OK) but without any content.
-                return new ResponseEntity<List<String>>(versions, HttpStatus.OK);
+                return new ResponseEntity<>(versions, HttpStatus.OK);
             } catch (Exception e) {
                 LOGGER.error(LOG_SYNC_REPO_FAILED, e);
                 if (!repositoryUrl.equals(oldUrl)) {
@@ -77,7 +77,7 @@ public class RepositoryController extends AbstractController {
             }
         }
 
-        return new ResponseEntity<List<String>>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     /**

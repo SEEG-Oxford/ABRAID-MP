@@ -185,7 +185,7 @@ public class HealthMapLocationConverterTest {
         // Assert
         assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
-        verify(locationService, times(1)).saveGeoName(eq(geoName));
+        verify(locationService).saveGeoName(eq(geoName));
     }
 
     @Test
@@ -209,7 +209,7 @@ public class HealthMapLocationConverterTest {
         // Assert
         assertThat(location.getGeoNameId()).isEqualTo(geoNameId);
         assertThat(location.getPrecision()).isEqualTo(LocationPrecision.ADMIN1);
-        verify(locationService, times(1)).saveGeoName(eq(geoName));
+        verify(locationService).saveGeoName(eq(geoName));
     }
 
     @Test

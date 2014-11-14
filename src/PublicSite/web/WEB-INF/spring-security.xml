@@ -39,7 +39,6 @@
     <!-- The Authentication Filter bean from http custom-filter tag -->
     <bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="filterProcessesUrl" value="/j_spring_security_check"/>
         <property name="authenticationFailureHandler" ref="failureHandler"/>
         <property name="authenticationSuccessHandler" ref="successHandler"/>
         <property name="rememberMeServices" ref="rememberMeServices" />
@@ -48,7 +47,7 @@
     <!-- Define custom handlers to return JSON with status and error message, instead of default redirect -->
     <bean id="successHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationSuccessHandler"/>
 
-    <bean id="failureHandler" class=" uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationFailureHandler" />
+    <bean id="failureHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.AjaxAuthenticationFailureHandler" />
 
     <!-- Persistent session remember me service -->
     <bean id="rememberMeFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">

@@ -28,6 +28,6 @@ public class GeoJsonNamedCrsTest {
         GeoJsonNamedCrs target = GeoJsonNamedCrs.createEPSG4326();
 
         // Assert
-        assertThat(((GeoJsonNamedCrsProperties) target.getProperties()).getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
+        assertThat(target.getProperties().getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
     }
 }

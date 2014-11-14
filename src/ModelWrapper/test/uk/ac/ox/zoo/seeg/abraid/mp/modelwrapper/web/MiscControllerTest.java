@@ -50,7 +50,7 @@ public class MiscControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(configurationService, times(1)).setRExecutablePath(value);
+        verify(configurationService).setRExecutablePath(value);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class MiscControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(configurationService, times(1)).setRExecutablePath(value);
+        verify(configurationService).setRExecutablePath(value);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class MiscControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(configurationService, times(1)).setMaxModelRunDuration(value);
+        verify(configurationService).setMaxModelRunDuration(value);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class MiscControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(configurationService, times(1)).setCovariateDirectory(dir);
+        verify(configurationService).setCovariateDirectory(dir);
     }
 
     @Test
