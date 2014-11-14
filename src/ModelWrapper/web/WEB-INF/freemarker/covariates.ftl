@@ -17,7 +17,9 @@
     <@t.tableTemplates numberOfColumns=4 plural="files">
         <tr>
             <td data-bind="event: { mouseover: function() { mouseOver(true) }, mouseout: function() { mouseOver(false) } }">
-                <input type="text" data-bind="formValue: name, attr: { title: name }, css: { 'transparent-input': !mouseOver() }" placeholder="A name must be provided" >
+                <span class="input-group">
+                    <input type="text" data-bind="formValue: name, attr: { title: name }, css: { 'transparent-input': !mouseOver() }" placeholder="A name must be provided">
+                </span>
             </td>
             <td><input type="text" data-bind="formValue: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
             <td><input type="checkbox" data-bind="formChecked: state"></td>
@@ -34,6 +36,13 @@
         <p style="text-align:center;">
             <span class="btn btn-default" data-bind="click: function () { hide(true) }" data-dismiss="popover">Confirm<span>
         </p>
+    </script>
+    <script type="text/html" id="covariate-validation-template">
+        <!-- ko if: field.rules().length != 0 -->
+        <span class="input-group-addon" style="background-color: transparent; border: none" data-container="body" data-bind="tooltip: { title: field.error, placement: 'right' } ">
+            <i class="fa fa-lg" data-bind="css: field.isValid() ? '' : 'text-danger fa-exclamation-circle'"></i>
+        </span>
+        <!-- /ko -->
     </script>
 </#assign>
 

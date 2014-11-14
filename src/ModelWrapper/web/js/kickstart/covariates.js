@@ -18,9 +18,21 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         };
 
         var covariatesListViewModel = new CovariatesListViewModel(baseUrl, initialData);
-        ko.applyBindings(
-            covariatesListViewModel,
-            doc.getElementById("covariate-body"));
+        ko.applyBindingsWithValidation(
+            ko.validatedObservable(covariatesListViewModel),
+            doc.getElementById("covariate-body"),
+            {
+                insertMessages: true,
+                messageTemplate: "covariate-validation-template",
+                messagesOnModified: true,
+                registerExtenders: true,
+                grouping: {
+                    deep: true,
+                    observable: true,
+                    live: true
+                }
+            }
+        );
 
         ko.applyBindings(
             ko.validatedObservable(new CovariateUploadViewModel(baseUrl, covariatesListViewModel, refresh)),

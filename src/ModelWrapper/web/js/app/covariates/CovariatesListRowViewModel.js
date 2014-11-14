@@ -6,7 +6,7 @@ define(["ko", "underscore"], function (ko, _) {
 
     return function (parentViewModel, parentFile, activeDiseaseId) {
         var self = this;
-        self.name = ko.observable(parentFile.name);
+        self.name = ko.observable(parentFile.name).extend({ required: true });
         self.name.subscribe(function (value) {
             parentFile.name = value;
             parentViewModel.hasUnsavedChanges(true);
