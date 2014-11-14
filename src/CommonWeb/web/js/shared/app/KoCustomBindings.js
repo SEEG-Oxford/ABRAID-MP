@@ -159,9 +159,9 @@ define([
     ko.bindingHandlers.bootstrapDisable = {
         init: function (element, valueAccessor) {
             ko.applyBindingAccessorsToNode(element, {
-                enable: function () { return !valueAccessor(); },
+                enable: function () { return !ko.utils.recursiveUnwrap(valueAccessor); },
                 css: function () {
-                    return { disabled: valueAccessor() };
+                    return { disabled: ko.utils.recursiveUnwrap(valueAccessor) };
                 }
             });
         }
