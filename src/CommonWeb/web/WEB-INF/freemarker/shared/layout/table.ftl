@@ -35,10 +35,11 @@
     <p class="form-group">
         <label for="${singular}-filter">Filter: </label>
         <span class="input-group">
-        <span class="input-group-addon">
-            <i class="glyphicon glyphicon-filter"></i>
-        </span>
-        <span id="filter-clear" class="clear glyphicon glyphicon-remove-circle" data-bind='click: function() { ${innerPath}filter(""); }'></span>
+            <span class="input-group-addon">
+                <i class="glyphicon glyphicon-filter"></i>
+            </span>
+            <span id="filter-clear" class="clear glyphicon glyphicon-remove-circle" data-bind='click: function() { ${innerPath}filter(""); }'>
+            </span>
             <input id="${singular}-filter" type="text" class="form-control" placeholder="Filter" data-bind="formValue: ${innerPath}filter">
         </span>
     </p>
