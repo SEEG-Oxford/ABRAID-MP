@@ -158,8 +158,7 @@ public class DiseaseOccurrenceSpreadHelperTest {
         }
     }
 
-    @SafeVarargs
-    private final <T> void assertSetIsEqual(Collection<T> set, T... contents) {
+    private <T> void assertSetIsEqual(Collection<T> set, T... contents) {
         assertThat(set).hasSize(contents.length);
         int i = 0;
         for (T setItem : set) {

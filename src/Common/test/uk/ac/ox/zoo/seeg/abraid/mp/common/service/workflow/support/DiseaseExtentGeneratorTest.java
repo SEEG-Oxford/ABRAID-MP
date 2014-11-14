@@ -562,8 +562,7 @@ public class DiseaseExtentGeneratorTest {
         return null;
     }
 
-    @SafeVarargs
-    private final <T> List<T> concatenate(List<T>... inputLists) {
+    private <T> List<T> concatenate(List<T>... inputLists) {
         List<T> outputList = new ArrayList<>();
         for (List<T> inputList : inputLists) {
             outputList.addAll(inputList);
@@ -576,8 +575,7 @@ public class DiseaseExtentGeneratorTest {
         return list;
     }
 
-    @SafeVarargs
-    private final <T> List<T> createList(T... items) {
+    private <T> List<T> createList(T... items) {
         List<T> list = new ArrayList<>();
         Collections.addAll(list, items);
         return list;

@@ -381,8 +381,7 @@ public class DiseaseExtentGeneratorHelperTest {
         return new AdminUnitReview(expert, 0, null, new DiseaseGroup(), extentClass);
     }
 
-    @SafeVarargs
-    private final <T> List<T> createList(T... items) {
+    private <T> List<T> createList(T... items) {
         List<T> list = new ArrayList<>();
         Collections.addAll(list, items);
         return list;
