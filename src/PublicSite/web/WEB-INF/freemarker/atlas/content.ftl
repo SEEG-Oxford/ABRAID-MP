@@ -39,6 +39,7 @@
                 <i style="background-color:#91ab84;"></i><span>0</span><br>
             </div>
         </div>
+        <#include "atlasdisclaimer.ftl"/>
     </div>
 
     <!-- Base url -->
