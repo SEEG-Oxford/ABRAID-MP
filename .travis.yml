@@ -7,6 +7,8 @@ jdk:
 # - oraclejdk7
 services:
   - postgresql
+addons:
+  postgresql: "9.3"
 # Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
 # Note: need to be careful that the ivy-published version of common doesn't cache
 #cache:
@@ -19,7 +21,8 @@ before_install:
 install:
   - sudo apt-get -y -q install r-base devscripts
 before_script:
-  - sudo sh -c 'echo "POSTGIS_GDAL_ENABLED_DRIVERS=GTiff" >> /etc/postgresql/9.1/main/environment'
+# Note: We no longer use rasters in the database.
+# - sudo sh -c 'echo "POSTGIS_GDAL_ENABLED_DRIVERS=GTiff" >> /etc/postgresql/9.3/main/environment'
   - sudo service postgresql restart
   - git config core.fileMode false
   - chmod +x .travis.*.sh
