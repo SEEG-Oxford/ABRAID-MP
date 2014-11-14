@@ -12,7 +12,7 @@ done < "$TEMP_FILE"
 rm -f "$TEMP_FILE"
 
 # Install war
-installWar "MW" "../../ABRAID-MP_ModelWrapper.war" "ROOT"
+installWar "MW" "../../ABRAID-MP_ModelWrapper.war" "${deploy_props[modelwrapper.install.dir]}"
 
 # R library directory
 # Note this must be specified in /etc/default/R/Renvironment.site
@@ -40,7 +40,6 @@ dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/m
 
 
 echo "[[ MW | Ensuring correct file permissions ]]"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates/"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/rasters/"
+permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/"
 
 echo "[[ MW | Done ]]"
