@@ -13,6 +13,7 @@ define([
         var self = this;
 
         self.activeLayer = ko.observable();
+        self.activeRun = ko.observable();
 
         self.png = ko.computed(function () {
             var wmsParams = {
@@ -35,8 +36,21 @@ define([
             return self.activeLayer() ? baseUrl + "atlas/results/" + self.activeLayer() + ".tif" : "#";
         }, self);
 
+        self.occurrences = ko.computed(function () {
+            return self.activeLayer() ?
+                baseUrl + "atlas/details/modelrun/" + self.activeRun().id + "/inputoccurrences.csv": "#";
+        }, self);
+
+        self.showOccurrences = ko.computed(function () {
+            return self.activeRun() ? self.activeRun().automatic : false;
+        }, self);
+
         ko.postbox.subscribe("active-atlas-layer", function (layer) {
             self.activeLayer(layer);
+        });
+
+        ko.postbox.subscribe("selected-run", function (run) {
+            self.activeRun(run);
         });
     };
 });
