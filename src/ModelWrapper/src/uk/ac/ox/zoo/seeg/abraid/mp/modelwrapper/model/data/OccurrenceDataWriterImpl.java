@@ -1,14 +1,18 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonNamedCrs;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides a mechanism for writing model input occurrence data into the working directory.
@@ -21,7 +25,6 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
     private static final String LOG_TOP_LEVEL_CRS_WARN = "Aborted writing occurrence data due to incorrect CRS.";
 
     private static final String UTF_8 = "UTF-8";
-    private static final String R_CODE_NULL_IDENTIFIER = "NA";
 
     /**
      * Write the occurrence data to a csv file ready to run the model.
@@ -39,53 +42,18 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
             throw new IllegalArgumentException("Only EPSG:4326 is supported.");
         }
 
-
-        try (BufferedWriter writer = createBufferedWriter(targetFile)) {
-            writer.write(extractCsvHeaderLine());
-            writer.newLine();
-
-            for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
-                if (occurrence.getCrs() != null) {
-                    LOGGER.warn(LOG_FEATURE_CRS_WARN);
-                    throw new IllegalArgumentException("Feature level CRS are not supported.");
-                }
-
-                writer.write(extractCsvLine(occurrence));
-                writer.newLine();
+        List<JsonDiseaseOccurrence> occurrences = new ArrayList<>();
+        for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
+            if (occurrence.getCrs() != null) {
+                LOGGER.warn(LOG_FEATURE_CRS_WARN);
+                throw new IllegalArgumentException("Feature level CRS are not supported.");
             }
+
+            occurrences.add(new JsonDiseaseOccurrence(occurrence));
         }
-    }
 
-    private BufferedWriter createBufferedWriter(File file) throws IOException {
-        return new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file.getAbsoluteFile()), UTF_8));
-    }
-
-    private String extractCsvLine(GeoJsonDiseaseOccurrenceFeature occurrence) {
-        return StringUtils.join(new String[]{
-                Double.toString(occurrence.getGeometry().getCoordinates().getLongitude()),
-                Double.toString(occurrence.getGeometry().getCoordinates().getLatitude()),
-                ObjectUtils.toString(occurrence.getProperties().getWeighting()),
-                ObjectUtils.toString(occurrence.getProperties().getLocationPrecision().getModelValue()),
-                extractGaulCode(occurrence)
-        }, ',');
-    }
-
-    private String extractCsvHeaderLine() {
-        return StringUtils.join(new String[]{
-                "Longitude",
-                "Latitude",
-                "Weight",
-                "Admin",
-                "GAUL"
-        }, ',');
-    }
-
-    private String extractGaulCode(GeoJsonDiseaseOccurrenceFeature occurrence) {
-        if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE) {
-            return R_CODE_NULL_IDENTIFIER;
-        } else {
-            return ObjectUtils.toString(occurrence.getProperties().getGaulCode());
-        }
+        CsvMapper csvMapper = new CsvMapper();
+        CsvSchema schema = csvMapper.schemaFor(JsonDiseaseOccurrence.class).withHeader();
+        csvMapper.writer(schema).writeValue(new FileOutputStream(targetFile.getAbsoluteFile()), occurrences);
     }
 }

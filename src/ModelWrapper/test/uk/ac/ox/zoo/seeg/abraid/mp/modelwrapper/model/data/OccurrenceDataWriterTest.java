@@ -32,7 +32,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence());
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,-999,NA" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,-999,NA" + "\n");
     }
 
     @Test
@@ -44,7 +44,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,1,102" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,1,102" + "\n");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + System.lineSeparator() + "-1.0,1.0,0.5,2,102" + System.lineSeparator());
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,2,102" + "\n");
     }
 
     private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {
