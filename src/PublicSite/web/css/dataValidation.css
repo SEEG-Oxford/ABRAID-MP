@@ -44,6 +44,30 @@ html, body, #dataValidation {
     top:50%;
     left:50%;
 }
+#helpTextBackground {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    opacity: 0.3;
+}
+#helpTextPanel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color:white;
+    font-size: 14px;
+    max-width: 70%;
+    max-height: 80%;
+    overflow: auto;
+}
+#helpTextContent {
+    padding: 25px;
+    text-align: justify
+}
 #sidePanel {
     height: 100%;
     width: 280px;
