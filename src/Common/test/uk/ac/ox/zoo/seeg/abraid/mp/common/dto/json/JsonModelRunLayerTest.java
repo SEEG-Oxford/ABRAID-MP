@@ -33,7 +33,7 @@ public class JsonModelRunLayerTest {
         when(modelRun.getSubmodelStatistics()).thenReturn(Arrays.asList(submodelStatistic));
 
         // Act
-        JsonModelRunLayer result = new JsonModelRunLayer(modelRun);
+        JsonModelRunLayer result = new JsonModelRunLayer(modelRun, true);
 
         // Assert
         assertThat(result.getId()).isEqualTo("expectedName");

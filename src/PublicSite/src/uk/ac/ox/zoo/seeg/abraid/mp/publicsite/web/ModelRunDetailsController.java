@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonEffectCurveCovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
@@ -120,7 +117,7 @@ public class ModelRunDetailsController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             List<DiseaseOccurrence> inputDiseaseOccurrences = modelRun.getInputDiseaseOccurrences();
-            return new ResponseEntity<>(convertToDto(inputDiseaseOccurrences), HttpStatus.OK);
+            return new ResponseEntity<>(convertToJsonDiseaseOccurrenceDtos(inputDiseaseOccurrences), HttpStatus.OK);
         }
     }
 
@@ -160,7 +157,15 @@ public class ModelRunDetailsController extends AbstractController {
         return new WrappedList<>(dtos);
     }
 
-    private WrappedList<JsonDiseaseOccurrence> convertToDto(List<DiseaseOccurrence> inputDiseaseOccurrences) {
+    private WrappedList<JsonDiseaseOccurrence> convertToJsonDiseaseOccurrenceDtos(
+            List<DiseaseOccurrence> inputDiseaseOccurrences) {
+        List<JsonDiseaseOccurrence> json = new ArrayList<>();
+        if (!inputDiseaseOccurrences.isEmpty()) {
+            for (DiseaseOccurrence inputDiseaseOccurrence : inputDiseaseOccurrences) {
+                json.add(new JsonDiseaseOccurrence(inputDiseaseOccurrence));
+            }
+        }
+        return new WrappedList<>(json);
     }
 
 }
