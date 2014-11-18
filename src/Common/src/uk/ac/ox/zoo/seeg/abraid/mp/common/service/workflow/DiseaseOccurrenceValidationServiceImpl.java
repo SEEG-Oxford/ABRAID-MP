@@ -76,7 +76,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
                     addValidationParameters(occurrence, raster);
                 }
             } finally {
-                dispose(raster);
+                disposeResource(raster);
             }
         }
     }
@@ -115,7 +115,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
             addValidationParameters(occurrence, raster);
         } finally {
-            dispose(raster);
+            disposeResource(raster);
         }
     }
 
@@ -182,7 +182,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         return diseaseGroup;
     }
 
-    private void dispose(GridCoverage2D raster) {
+    private void disposeResource(GridCoverage2D raster) {
         if (raster != null) {
             raster.dispose(true);
         }

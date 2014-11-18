@@ -105,7 +105,7 @@ public class EnvironmentalSuitabilityHelper {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
-                dispose(reader);
+                disposeResource(reader);
             }
         } else {
             String message = String.format(CANNOT_FIND_FILE_MESSAGE, rasterFile.getAbsolutePath());
@@ -114,7 +114,7 @@ public class EnvironmentalSuitabilityHelper {
         }
     }
 
-    private void dispose(GridCoverage2DReader reader) {
+    private void disposeResource(GridCoverage2DReader reader) {
         if (reader != null) {
             try {
                 reader.dispose();

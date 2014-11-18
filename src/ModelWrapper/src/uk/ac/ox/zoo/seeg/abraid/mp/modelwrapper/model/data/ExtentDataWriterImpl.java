@@ -61,7 +61,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
 
             saveRaster(targetFile, rasterData, rasterExtent, rasterProperties);
         } finally {
-            dispose(sourceRaster);
+            disposeResource(sourceRaster);
         }
     }
 
@@ -76,7 +76,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             LOGGER.error(message, e);
             throw new IOException(message, e);
         } finally {
-            dispose(reader);
+            disposeResource(reader);
         }
     }
 
@@ -115,8 +115,8 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             LOGGER.error(message, e);
             throw new IOException(message, e);
         } finally {
-            dispose(targetRaster);
-            dispose(writer);
+            disposeResource(targetRaster);
+            disposeResource(writer);
         }
     }
 
@@ -132,19 +132,19 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
         };
     }
 
-    private void dispose(GridCoverage2D raster) {
+    private void disposeResource(GridCoverage2D raster) {
         if (raster != null) {
             raster.dispose(true);
         }
     }
 
-    private void dispose(GridCoverage2DReader reader) throws IOException {
+    private void disposeResource(GridCoverage2DReader reader) throws IOException {
         if (reader != null) {
             reader.dispose();
         }
     }
 
-    private void dispose(GridCoverageWriter writer) throws IOException {
+    private void disposeResource(GridCoverageWriter writer) throws IOException {
         if (writer != null) {
             writer.dispose();
         }
