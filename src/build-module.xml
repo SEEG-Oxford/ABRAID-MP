@@ -44,6 +44,7 @@
   <property file="${project.root.dir}/user.properties"/>
   <property file="${project.root.dir}/build.properties"/>
   <property name="home.dir" value="${user.home}"/>
+  <property environment="env" />
 
   <!-- Versioning -->
   <exec executable="git" outputproperty="repository.version">
@@ -269,6 +270,7 @@
         <or>
           <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
           <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
+          <available file="phantomjs" filepath="${env.PATH}" />
         </or>
       </not>
     </condition>
@@ -282,6 +284,7 @@
   <target name="find.phantom">
     <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe" property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}.exe"/>
     <available file="${lib.local.analysis.dir}/phantomjs-${phantom.version}" property="phantom.executable" value="${lib.local.analysis.dir}/phantomjs-${phantom.version}"/>
+    <available file="phantomjs" filepath="${env.PATH}" property="phantom.executable" value="phantomjs" />
   </target>
 
   <target name="chmod.phantom" depends="find.phantom">
