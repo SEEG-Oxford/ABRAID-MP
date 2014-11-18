@@ -9,7 +9,6 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "ko",
         "jquery",
         "app/datavalidation/CounterViewModel",
-        "app/datavalidation/HelpTextViewModel",
         "app/datavalidation/LatestOccurrencesViewModel",
         "app/datavalidation/MapView",
         "app/datavalidation/SelectedPointViewModel",
@@ -18,17 +17,12 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
         "domReady!"
-    ], function (ko, $, CounterViewModel, HelpTextViewModel, LatestOccurrencesViewModel, setupMap, SelectedPointViewModel,
+    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, SelectedPointViewModel,
                  SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
             ko.applyBindings(
                 new SpinnerViewModel(),
                 doc.getElementById("spinner")
-            );
-
-            ko.applyBindings(
-                new HelpTextViewModel(),
-                doc.getElementById("helpText")
             );
 
             ko.applyBindings(
