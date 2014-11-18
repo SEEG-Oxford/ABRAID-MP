@@ -118,7 +118,7 @@ public class EnvironmentalSuitabilityHelper {
         if (reader != null) {
             try {
                 reader.dispose();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
