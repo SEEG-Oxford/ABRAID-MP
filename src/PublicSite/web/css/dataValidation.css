@@ -50,7 +50,11 @@ html, body, #dataValidation {
     background-color: black;
     opacity: 0.3;
 }
+#helpModal {
+    overflow: hidden;
+}
 #helpModal .modal-dialog {
+    position: relative;
     width: 60%;
     height: 85%;
 }
@@ -58,12 +62,18 @@ html, body, #dataValidation {
     height: 100%;
 }
 #helpModal .modal-body {
-    height: 90%;
+    position: absolute;
+    top: 56px;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding: 0 !important;
 }
 #helpModal iframe {
     height: 100%;
     width: 100%;
     border: none;
+    border-bottom: 1px solid #e5e5e5;
 }
 #sidePanel {
     height: 100%;

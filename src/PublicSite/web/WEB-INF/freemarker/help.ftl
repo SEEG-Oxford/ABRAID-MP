@@ -20,6 +20,7 @@
     <style>
         body {
             text-align: justify;
+            padding: 15px;
         }
         .panel {
             border: 1px solid #e3e3e3;
@@ -36,12 +37,12 @@
                     opinion on the geographical extent of a disease at a national/state level. Both contributions will
                     feed into our mapping process and help ensure the final outputs are valid.
                 </p>
-                <p>
-                    * As a disease expert you are either an expert on a particular disease or disease class, or an
+                <p><small>
+                    *As a disease expert you are either an expert on a particular disease or disease class, or an
                     expert on the range of diseases found within a particular geographical region, or a combination of
                     both. All expertise in these fields is useful, and you are not expected to validate or comment on
                     areas outside your field of expertise.
-                </p>
+                </small></p>
             </div>
         </div>
         <div class="panel">
@@ -71,7 +72,7 @@
                         district or state. This will be specified in the text description for each dot on the map.
                     </p>
                     <p><strong><i>
-                        We are asking you to validate whether, in your expert opinion, the named disease is a current**
+                        We are asking you to validate whether, in your expert opinion, the named disease is a current*
                         infection risk at the place specified.
                     </i></strong></p>
                     <p>
@@ -83,10 +84,10 @@
                         not, and <i>unsure</i> if there is uncertainty in the occurrence of this disease at this place. 
                         Once you have validated a point, it will disappear from the map.
                     </p>
-                    <p>
-                        ** By "currently" we mean that the disease is extant at the location, i.e. it has not been 
+                    <p><small>
+                        *By "currently" we mean that the disease is extant at the location, i.e. it has not been
                         eliminated, even if there are seasons when new cases are not seen.
-                    </p>
+                    </small></p>
                 </div>
             </div>
         </div>
