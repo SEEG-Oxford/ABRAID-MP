@@ -12,8 +12,8 @@ define([
     return function (baseUrl, wmsUrl) {
         var self = this;
 
-        self.activeLayer = ko.observable();
-        self.activeRun = ko.observable();
+        var activeLayer = ko.observable().subscribeTo("active-atlas-layer");
+        var activeRun = ko.observable().subscribeTo("selected-run");
 
         self.png = ko.computed(function () {
             var wmsParams = {
@@ -26,31 +26,23 @@ define([
                 height: 667,
                 srs: "EPSG:4326",
                 format: "image/png",
-                layers: "abraid:" + self.activeLayer()
+                layers: "abraid:" + activeLayer()
             };
 
-            return self.activeLayer() ? wmsUrl + "?" + $.param(wmsParams) : "#";
+            return activeLayer() ? wmsUrl + "?" + $.param(wmsParams) : "#";
         }, self);
 
         self.tif = ko.computed(function () {
-            return self.activeLayer() ? baseUrl + "atlas/results/" + self.activeLayer() + ".tif" : "#";
+            return activeLayer() ? baseUrl + "atlas/results/" + activeLayer() + ".tif" : "#";
         }, self);
 
         self.occurrences = ko.computed(function () {
-            return self.activeLayer() ?
-                baseUrl + "atlas/details/modelrun/" + self.activeRun().id + "/inputoccurrences.csv": "#";
+            return activeRun() ?
+                baseUrl + "atlas/details/modelrun/" + activeRun().id + "/inputoccurrences.csv": "#";
         }, self);
 
         self.showOccurrences = ko.computed(function () {
-            return self.activeRun() ? self.activeRun().automatic : false;
+            return activeRun() ? activeRun().automatic : false;
         }, self);
-
-        ko.postbox.subscribe("active-atlas-layer", function (layer) {
-            self.activeLayer(layer);
-        });
-
-        ko.postbox.subscribe("selected-run", function (run) {
-            self.activeRun(run);
-        });
     };
 });

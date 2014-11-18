@@ -58,11 +58,11 @@ public class AtlasControllerTest {
     public void showAtlasAddsAllDiseaseGroupsWithCompletedModelRunsToMapIfUserIsSeeg() throws Exception {
         String expectation = "[" +
             "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
-                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
+                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"automatic\":true}," +
+                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"automatic\":true}" +
             "]}," +
                 "{\"disease\":\"Disease Group 2\",\"runs\":[" +
-                "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\"}" +
+                "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\",\"automatic\":false}" +
             "]}" +
         "]";
         showAtlasTemplatesTheCorrectData(true, expectation);
@@ -71,9 +71,9 @@ public class AtlasControllerTest {
     @Test
     public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsWithCompletedModelRunsIfUserIsNotSeeg() throws Exception {
         String expectation = "[" +
-            "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\"}," +
-                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\"}" +
+            "{\"disease\",:\"Disease Group 1\",\"runs\":[" +
+                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"automatic\":true}," +
+                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"automatic\":true}" +
             "]}" +
         "]";
         showAtlasTemplatesTheCorrectData(false, expectation);

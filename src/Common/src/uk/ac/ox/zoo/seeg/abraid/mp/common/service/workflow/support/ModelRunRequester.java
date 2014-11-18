@@ -122,7 +122,6 @@ public class ModelRunRequester {
             ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestServer, requestDate);
             modelRun.setBatchStartDate(batchStartDate);
             modelRun.setBatchEndDate(batchEndDate);
-            //modelRun.setIsAutomatic(automaticRun);
             if (automaticRun) {
                 modelRun.setInputDiseaseOccurrences(occurrencesForModelRun);
             }

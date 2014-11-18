@@ -8,7 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
 /**
- * foo
+ * A DTO to represent DiseaseOccurrences in an R compatible form (NA instead of null).
+ * Used for CSV serialization of occurrences.
  * Copyright (c) 2014 University of Oxford
  */
 @JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul" })

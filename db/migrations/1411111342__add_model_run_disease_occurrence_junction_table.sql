@@ -1,6 +1,4 @@
 -- Updated the database schema to add a many-to-many junction table between model_run and disease_occurrence.
---
---
 -- Copyright (c) 2014 University of Oxford
 
 -- Represents the collection of disease_occurrence ids which where submitted for modelling for each model_run id.

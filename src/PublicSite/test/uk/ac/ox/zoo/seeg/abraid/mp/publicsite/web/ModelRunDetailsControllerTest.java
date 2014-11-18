@@ -1,13 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
+import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonEffectCurveCovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.ArrayList;
@@ -240,6 +238,86 @@ public class ModelRunDetailsControllerTest {
         assertThat(body.getList().get(0).getCovariateValue()).isEqualTo(1.23);
     }
 
+    @Test
+    public void getInputDiseaseOccurrencesReturnsExpectedJson() throws Exception {
+        // Arrange
+        String name = "modelRun7";
+        DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
+        when(occurrence.getLocation()).thenReturn(mock(Location.class));
+        when(occurrence.getLocation().getGeom()).thenReturn(mock(Point.class));
+        when(occurrence.getLocation().getGeom().getX()).thenReturn(1.0);
+        when(occurrence.getLocation().getGeom().getY()).thenReturn(2.0);
+        when(occurrence.getFinalWeighting()).thenReturn(3.0);
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+        when(occurrence.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
+
+        ModelRun modelRun = mockCompletedModelRunWithOccurrences(Arrays.asList(occurrence));
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        WrappedList<JsonDiseaseOccurrence> body = (WrappedList<JsonDiseaseOccurrence>) response.getBody();
+        assertThat(body.getList()).hasSize(1);
+        assertThat(body.getList().get(0).getLongitude()).isEqualTo(1.0);
+        assertThat(body.getList().get(0).getLatitude()).isEqualTo(2.0);
+        assertThat(body.getList().get(0).getWeight()).isEqualTo(3.0);
+        assertThat(body.getList().get(0).getAdmin()).isEqualTo(LocationPrecision.ADMIN1.getModelValue());
+        assertThat(body.getList().get(0).getGaul()).isEqualTo("1234");
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesReturnsBadRequestIfModelDoesNotExist() throws Exception {
+        // Arrange
+        String name = "modelRun5";
+        ModelRunService modelRunService = mockModelRunService(name, null);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesReturnsBadRequestIfModelIsNotComplete() throws Exception {
+        // Arrange
+        String name = "modelRun6";
+
+        ModelRun modelRun = mock(ModelRun.class);
+        when(modelRun.getStatus()).thenReturn(ModelRunStatus.IN_PROGRESS);
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesReturnsEmptyDTOIfNoInputDiseaseOccurrences() throws Exception {
+        // Arrange (eg manual run)
+        String name = "modelRun7";
+        ModelRun modelRun = mockCompletedModelRunWithOccurrences(new ArrayList<DiseaseOccurrence>());
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+
+        // Act
+        ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        WrappedList<JsonDiseaseOccurrence> body =
+                (WrappedList<JsonDiseaseOccurrence>) response.getBody();
+        assertThat(body.getList()).isEmpty();
+    }
+
     private ModelRun mockCompletedModelRunWithStatistics(List<SubmodelStatistic> submodelStatistics) {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
@@ -259,6 +337,13 @@ public class ModelRunDetailsControllerTest {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
         when(modelRun.getEffectCurveCovariateInfluences()).thenReturn(effectCurveCovariateInfluences);
+        return modelRun;
+    }
+
+    private ModelRun mockCompletedModelRunWithOccurrences(List<DiseaseOccurrence> occurrences) {
+        ModelRun modelRun = mock(ModelRun.class);
+        when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
+        when(modelRun.getInputDiseaseOccurrences()).thenReturn(occurrences);
         return modelRun;
     }
 
