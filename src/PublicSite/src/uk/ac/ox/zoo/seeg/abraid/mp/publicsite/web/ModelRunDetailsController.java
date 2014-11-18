@@ -105,7 +105,7 @@ public class ModelRunDetailsController extends AbstractController {
     /**
      * Gets the list of input disease occurrences associated with a model run.
      * @param modelRunName The unique name of the model run.
-     * @return The DTO of effect curve covariate influences.
+     * @return The DTO of input disease occurrences.
      */
     @RequestMapping(
             value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)

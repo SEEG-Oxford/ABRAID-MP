@@ -132,7 +132,7 @@ public class ModelRun {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
 
-    // List of disease groups an expert has interest in and can validate.
+    // List of disease occurrences used in this model run.
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "model_run_disease_occurrence",
             joinColumns = @JoinColumn(name = "model_run_id"),

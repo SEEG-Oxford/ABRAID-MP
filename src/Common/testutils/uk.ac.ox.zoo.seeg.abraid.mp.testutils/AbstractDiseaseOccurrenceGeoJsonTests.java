@@ -45,7 +45,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static Location defaultLocation() {
-        return mockLocation(1.0, -1.0, "locationName", LocationPrecision.PRECISE, 102);
+        return mockLocation(1.0, -1.0, "locationName", LocationPrecision.ADMIN1, 102);
     }
 
     public static DiseaseOccurrence mockDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Location location, DateTime occurrenceDate, Alert alert, double weighting) {
@@ -89,7 +89,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
            "            \"occurrenceDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
 
         String modellingViewProperties =
-           "            \"locationPrecision\":\"PRECISE\"," +
+           "            \"locationPrecision\":\"ADMIN1\"," +
            "            \"weighting\":0.5," +
            "            \"gaulCode\":102";
 

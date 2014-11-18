@@ -83,7 +83,7 @@ public class ModelRunRequesterTest {
     }
 
     @Test
-    public void requestModelRunDoesNotSavesTheInputOccurrencesForManualModelRun() throws Exception {
+    public void requestModelRunDoesNotSaveTheInputOccurrencesForManualModelRun() throws Exception {
         // Arrange
         ModelRunService runService = mock(ModelRunService.class);
 
