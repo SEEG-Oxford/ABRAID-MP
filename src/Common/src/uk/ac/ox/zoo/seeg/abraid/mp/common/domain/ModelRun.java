@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -129,6 +131,14 @@ public class ModelRun {
     // List of effect curve covariate influence data points associated with this model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
+
+    // List of disease occurrences used in this model run.
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "model_run_disease_occurrence",
+            joinColumns = @JoinColumn(name = "model_run_id"),
+            inverseJoinColumns = @JoinColumn(name = "disease_occurrence_id"))
+    @Fetch(FetchMode.SELECT)
+    private List<DiseaseOccurrence> inputDiseaseOccurrences;
 
     public ModelRun() {
     }
@@ -263,6 +273,14 @@ public class ModelRun {
 
     public void setEffectCurveCovariateInfluences(List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
         this.effectCurveCovariateInfluences = effectCurveCovariateInfluences;
+    }
+
+    public List<DiseaseOccurrence> getInputDiseaseOccurrences() {
+        return inputDiseaseOccurrences;
+    }
+
+    public void setInputDiseaseOccurrences(List<DiseaseOccurrence> inputDiseaseOccurrences) {
+        this.inputDiseaseOccurrences = inputDiseaseOccurrences;
     }
 
     ///COVERAGE:OFF - generated code

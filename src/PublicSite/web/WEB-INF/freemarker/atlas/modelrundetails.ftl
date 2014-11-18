@@ -10,6 +10,11 @@
             <i class="fa fa-lg fa-download"></i>Download as raw GeoTIFF
         </a>
     </div>
+    <div class="leaflet-bar leaflet-control" style="display: none" data-bind="visible: showOccurrences">
+        <a target="_blank" title="Input CSV" data-bind="attr: { href: occurrences }">
+            <i class="fa fa-lg fa-file-excel-o"></i>Download input occurrences
+        </a>
+    </div>
     <!-- /ko -->
     <div class="leaflet-bar leaflet-control">
         <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; width: auto; height: auto;">

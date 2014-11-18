@@ -72,16 +72,29 @@ public class ModelRunRequester {
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
                 URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
+                ModelRun modelRun = createPreliminaryModelRun(diseaseGroup, requestDate, modelWrapperUrl,
+                                                              batchStartDate, batchEndDate, occurrencesForModelRun);
                 JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
                                                                                 occurrencesForModelRun, diseaseExtent);
-                handleModelRunResponse(response, diseaseGroupId, requestDate, modelWrapperUrl.getHost(),
-                        batchStartDate, batchEndDate);
+                handleModelRunResponse(response, modelRun);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
                 throw new ModelRunRequesterException(message, e);
             }
         }
+    }
+
+    private ModelRun createPreliminaryModelRun(DiseaseGroup diseaseGroup, DateTime requestDate, URI modelWrapperUrl,
+                                               DateTime batchStartDate, DateTime batchEndDate,
+                                               List<DiseaseOccurrence> occurrencesForModelRun) {
+        ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate);
+        modelRun.setBatchStartDate(batchStartDate);
+        modelRun.setBatchEndDate(batchEndDate);
+        if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            modelRun.setInputDiseaseOccurrences(occurrencesForModelRun);
+        }
+        return modelRun;
     }
 
     private URI selectLeastBusyModelWrapperUrl() {
@@ -111,16 +124,13 @@ public class ModelRunRequester {
                 diseaseOccurrences.size()));
     }
 
-    private void handleModelRunResponse(JsonModelRunResponse response, int diseaseGroupId, DateTime requestDate,
-                                        String requestServer, DateTime batchStartDate, DateTime batchEndDate) {
+    private void handleModelRunResponse(JsonModelRunResponse response, ModelRun modelRun) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
             throw new ModelRunRequesterException(message);
         } else {
-            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestServer, requestDate);
-            modelRun.setBatchStartDate(batchStartDate);
-            modelRun.setBatchEndDate(batchEndDate);
+            modelRun.setName(response.getModelRunName());
             modelRunService.saveModelRun(modelRun);
         }
     }
