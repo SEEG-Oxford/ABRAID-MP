@@ -44,6 +44,11 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                 new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),
                 doc.getElementById("layerSelector")
             );
+
+            // Prevent mouse events propagating to map movements when help text modal is open.
+            $("#helpModal").on("mousedown mousewheel", function (e) {
+                e.stopPropagation();
+            });
         }
     );
 });
