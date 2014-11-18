@@ -107,7 +107,8 @@ public class ModelRunDetailsController extends AbstractController {
      * @param modelRunName The unique name of the model run.
      * @return The DTO of effect curve covariate influences.
      */
-    @RequestMapping(value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
+    @RequestMapping(
+            value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
     @Transactional
     @ResponseBody
     public ResponseEntity<WrappedList<JsonDiseaseOccurrence>> getInputDiseaseOccurrences(

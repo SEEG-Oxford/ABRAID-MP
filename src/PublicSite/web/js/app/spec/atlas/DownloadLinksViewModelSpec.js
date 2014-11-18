@@ -119,5 +119,38 @@ define([
                 expect(vm.occurrences()).toContain("/details/modelrun/zxcv/inputoccurrences.csv");
             });
         });
+
+        describe("holds a field to indicate if the occurrence download link should be shown", function () {
+            it("is observable", function () {
+                expect(vm.showOccurrences).toBeObservable();
+            });
+
+            it("is 'false' when there is no selected run", function () {
+                ko.postbox.publish("selected-run", undefined);
+                expect(vm.showOccurrences()).toBe(false);
+            });
+
+            it("is 'false' when there is a manual run selected", function () {
+                ko.postbox.publish("selected-run", { id: "run", automatic: false });
+                expect(vm.showOccurrences()).toBe(false);
+            });
+
+            it("is 'true' when there is an automatic run selected", function () {
+                ko.postbox.publish("selected-run", { id: "run", automatic: true });
+                expect(vm.showOccurrences()).toBe(true);
+            });
+
+            it("updates to reflect the 'selected-run' through an event subscription", function () {
+                expect(vm.showOccurrences()).toBe(false);
+                ko.postbox.publish("selected-run", { id: "asdf", automatic: true });
+                expect(vm.showOccurrences()).toBe(true);
+                ko.postbox.publish("selected-run", { id: "wert", automatic: false });
+                expect(vm.showOccurrences()).toBe(false);
+                ko.postbox.publish("selected-run", undefined);
+                expect(vm.showOccurrences()).toBe(false);
+                ko.postbox.publish("selected-run", { id: "zxcv", automatic: true });
+                expect(vm.showOccurrences()).toBe(true);
+            });
+        });
     });
 });

@@ -71,7 +71,7 @@ public class AtlasControllerTest {
     @Test
     public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsWithCompletedModelRunsIfUserIsNotSeeg() throws Exception {
         String expectation = "[" +
-            "{\"disease\",:\"Disease Group 1\",\"runs\":[" +
+            "{\"disease\":\"Disease Group 1\",\"runs\":[" +
                 "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"automatic\":true}," +
                 "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"automatic\":true}" +
             "]}" +

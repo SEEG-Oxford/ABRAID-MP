@@ -54,6 +54,9 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
 
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema schema = csvMapper.schemaFor(JsonDiseaseOccurrence.class).withHeader();
-        csvMapper.writer(schema).writeValue(new FileOutputStream(targetFile.getAbsoluteFile()), occurrences);
+        try (FileOutputStream fileStream = new FileOutputStream(targetFile.getAbsoluteFile())) {
+            csvMapper.writer(schema).writeValue(fileStream, occurrences);
+            fileStream.flush();
+        }
     }
 }
