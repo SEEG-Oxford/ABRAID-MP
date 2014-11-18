@@ -83,11 +83,11 @@ public class JsonDiseaseOccurrenceTest {
     }
 
     @Test
-    public void domainObjectConstructorBindsFieldsCorrectlyForPrecise() {
+    public void domainObjectConstructorBindsFieldsCorrectlyWithNullGAUL() {
         double longitude = 7;
         double latitude = 8;
         double weight = 9;
-        int admin = LocationPrecision.PRECISE.getModelValue();
+        int admin = LocationPrecision.ADMIN1.getModelValue();
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
         when(mock.getLocation()).thenReturn(mock(Location.class));
@@ -95,8 +95,8 @@ public class JsonDiseaseOccurrenceTest {
         when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
         when(mock.getLocation().getGeom().getY()).thenReturn(latitude);
         when(mock.getFinalWeighting()).thenReturn(weight);
-        when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.PRECISE);
-        when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
+        when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+        when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(null);
 
         // Act
         JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(mock);
@@ -141,11 +141,11 @@ public class JsonDiseaseOccurrenceTest {
     }
 
     @Test
-    public void geoJsonObjectConstructorBindsFieldsCorrectlyForPrecise() {
+    public void geoJsonObjectConstructorBindsFieldsCorrectlyWithNullGAUL() {
         double longitude = 7;
         double latitude = 8;
         double weight = 9;
-        int admin = LocationPrecision.PRECISE.getModelValue();
+        int admin = LocationPrecision.ADMIN1.getModelValue();
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
         when(mock.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
@@ -156,8 +156,8 @@ public class JsonDiseaseOccurrenceTest {
         when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
         when(mock.getLocation().getGeom().getY()).thenReturn(latitude);
         when(mock.getFinalWeighting()).thenReturn(weight);
-        when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.PRECISE);
-        when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
+        when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+        when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(null);
 
         // Act
         JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(new GeoJsonDiseaseOccurrenceFeature(mock));

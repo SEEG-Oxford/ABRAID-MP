@@ -32,6 +32,19 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence());
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,1,102" + "\n");
+    }
+
+    @Test
+    public void writeCreatesCorrectCsvForPrecise() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.PRECISE);
+        when(occurrence.getLocation().getAdminUnitQCGaulCode()).thenReturn(null);
+
+        String result = arrangeAndActWriteDataTest(occurrence);
+
+        // Assert
         assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,-999,NA" + "\n");
     }
 
@@ -86,6 +99,44 @@ public class OccurrenceDataWriterTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Only EPSG:4326 is supported.");
+    }
+
+
+    @Test
+    public void writeRejectsPrecisePointWithGAUL() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.PRECISE);
+        when(occurrence.getLocation().getAdminUnitQCGaulCode()).thenReturn(123);
+
+        GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
+                Arrays.asList(occurrence));
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
+
+        // Act
+        catchException(target).write(data, targetFile);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Precise location occurrences with GAUL codes are not supported.");
+    }
+
+    @Test
+    public void writeRejectsCountryPoint() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.COUNTRY);
+
+        GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
+                Arrays.asList(occurrence));
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
+
+        // Act
+        catchException(target).write(data, targetFile);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Country location occurrences are not supported.");
     }
 
     @Test

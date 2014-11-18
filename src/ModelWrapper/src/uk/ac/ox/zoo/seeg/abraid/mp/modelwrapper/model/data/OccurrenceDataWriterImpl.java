@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.apache.log4j.Logger;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseOccurrence;
@@ -37,18 +38,11 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
             throws IOException {
         LOGGER.info(String.format(
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), targetFile.toString()));
-        if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
-            LOGGER.warn(LOG_TOP_LEVEL_CRS_WARN);
-            throw new IllegalArgumentException("Only EPSG:4326 is supported.");
-        }
+        validateOccurrenceCollection(occurrenceData);
 
         List<JsonDiseaseOccurrence> occurrences = new ArrayList<>();
         for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
-            if (occurrence.getCrs() != null) {
-                LOGGER.warn(LOG_FEATURE_CRS_WARN);
-                throw new IllegalArgumentException("Feature level CRS are not supported.");
-            }
-
+            validateOccurrence(occurrence);
             occurrences.add(new JsonDiseaseOccurrence(occurrence));
         }
 
@@ -57,6 +51,29 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         try (FileOutputStream fileStream = new FileOutputStream(targetFile.getAbsoluteFile())) {
             csvMapper.writer(schema).writeValue(fileStream, occurrences);
             fileStream.flush();
+        }
+    }
+
+    private void validateOccurrenceCollection(GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData) {
+        if (!occurrenceData.getCrs().equals(GeoJsonNamedCrs.createEPSG4326())) {
+            LOGGER.warn(LOG_TOP_LEVEL_CRS_WARN);
+            throw new IllegalArgumentException("Only EPSG:4326 is supported.");
+        }
+    }
+
+    private void validateOccurrence(GeoJsonDiseaseOccurrenceFeature occurrence) {
+        if (occurrence.getCrs() != null) {
+            LOGGER.warn(LOG_FEATURE_CRS_WARN);
+            throw new IllegalArgumentException("Feature level CRS are not supported.");
+        }
+
+        if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.COUNTRY) {
+            throw new IllegalArgumentException("Country location occurrences are not supported.");
+        }
+
+        if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE
+                && occurrence.getProperties().getGaulCode() != null) {
+            throw new IllegalArgumentException("Precise location occurrences with GAUL codes are not supported.");
         }
     }
 }

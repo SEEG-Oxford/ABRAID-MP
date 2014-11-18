@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.ObjectUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
 /**
  * A DTO to represent a DiseaseOccurrence in an R compatible form (NA instead of null).
@@ -44,7 +42,7 @@ public class JsonDiseaseOccurrence {
             inputDiseaseOccurrence.getLocation().getGeom().getY(),
             inputDiseaseOccurrence.getFinalWeighting(),
             inputDiseaseOccurrence.getLocation().getPrecision().getModelValue(),
-            extractGaulCode(inputDiseaseOccurrence.getLocation()));
+            extractGaulString(inputDiseaseOccurrence.getLocation().getAdminUnitQCGaulCode()));
     }
 
     public JsonDiseaseOccurrence(GeoJsonDiseaseOccurrenceFeature occurrence) {
@@ -52,23 +50,11 @@ public class JsonDiseaseOccurrence {
             occurrence.getGeometry().getCoordinates().getLatitude(),
             occurrence.getProperties().getWeighting(),
             occurrence.getProperties().getLocationPrecision().getModelValue(),
-            extractGaulCode(occurrence));
+            extractGaulString(occurrence.getProperties().getGaulCode()));
     }
 
-    private static String extractGaulCode(Location location) {
-        if (location.getPrecision() == LocationPrecision.PRECISE) {
-            return null;
-        } else {
-            return ObjectUtils.toString(location.getAdminUnitQCGaulCode());
-        }
-    }
-
-    private static String extractGaulCode(GeoJsonDiseaseOccurrenceFeature occurrence) {
-        if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE) {
-            return null;
-        } else {
-            return ObjectUtils.toString(occurrence.getProperties().getGaulCode());
-        }
+    private static String extractGaulString(Integer gaul) {
+        return (gaul == null) ? null : ObjectUtils.toString(gaul);
     }
 
     public double getLongitude() {
