@@ -66,7 +66,7 @@ define([
                 });
 
                 if (window.FormData !== undefined && !window._phantom) {
-                    // Don't try run this test in environments that can support it
+                    // Only run this test in environments that support it
 
                     it("to use FormData if available", function () {
                         var vm = new BaseFileFormViewModel("a", "b");
