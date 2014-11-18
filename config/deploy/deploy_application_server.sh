@@ -49,15 +49,15 @@ service tomcat7 stop > /dev/null
 service gunicorn stop > /dev/null
 echo -e "#\x21/bin/sh\n\n:" > "/etc/cron.hourly/abraid"
 
+# Source useful functions
+source "functions.sh"
+
 # Checking for dir
 if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   echo "[[ Creating support directory ]]"
   mkdir -p "$ABRAID_SUPPORT_PATH"
   permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
-
-# Source useful functions
-source "functions.sh"
 
 # Getting config
 echo "[[ Updating ABRAID configuration ]]"

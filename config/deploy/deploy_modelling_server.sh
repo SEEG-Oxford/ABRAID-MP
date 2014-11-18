@@ -41,15 +41,15 @@ echo "[[ Stopping services ]]"
 service nginx stop > /dev/null
 service tomcat7 stop > /dev/null
 
+# Source useful functions
+source "functions.sh"
+
 # Checking for dir
 if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   echo "[[ Creating support directory ]]"
   mkdir -p "$ABRAID_SUPPORT_PATH"
   permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
-
-# Source useful functions
-source "functions.sh"
 
 # Getting config
 echo "[[ Updating ABRAID configuration ]]"
