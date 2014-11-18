@@ -68,10 +68,15 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
-            GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
-            for (DiseaseOccurrence occurrence : occurrences) {
-                clearAndSetToReady(occurrence);
-                addValidationParameters(occurrence, raster);
+            GridCoverage2D raster = null;
+            try {
+                raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+                for (DiseaseOccurrence occurrence : occurrences) {
+                    clearAndSetToReady(occurrence);
+                    addValidationParameters(occurrence, raster);
+                }
+            } finally {
+                dispose(raster);
             }
         }
     }
@@ -105,8 +110,13 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence) {
-        GridCoverage2D raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
-        addValidationParameters(occurrence, raster);
+        GridCoverage2D raster = null;
+        try {
+            raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
+            addValidationParameters(occurrence, raster);
+        } finally {
+            dispose(raster);
+        }
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
@@ -170,5 +180,11 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             }
         }
         return diseaseGroup;
+    }
+
+    private void dispose(GridCoverage2D raster) {
+        if (raster != null) {
+            raster.dispose(true);
+        }
     }
 }
