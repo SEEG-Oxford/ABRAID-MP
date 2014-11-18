@@ -65,14 +65,20 @@ define([
                     expect(args.contentType).toBe(false);
                 });
 
-                it("to use FormData if available", function () {
-                    var vm = new BaseFileFormViewModel("a", "b");
-                    vm.buildSubmissionData = function () { return { a: "b" }; };
-                    vm.useFormData = true;
-                    var args = vm.buildAjaxArgs();
-                    expect(Object.getPrototypeOf(args.data).constructor).toBe(window.FormData);
-                    expect(args.iframe).toBeUndefined();
-                });
+                if (window.FormData !== undefined && !window._phantom) {
+                    // Don't try run this test in environments that can support it
+
+                    it("to use FormData if available", function () {
+                        var vm = new BaseFileFormViewModel("a", "b");
+                        vm.buildSubmissionData = function () {
+                            return { a: "b" };
+                        };
+                        vm.useFormData = true;
+                        var args = vm.buildAjaxArgs();
+                        expect(Object.getPrototypeOf(args.data).constructor).toBe(window.FormData);
+                        expect(args.iframe).toBeUndefined();
+                    });
+                }
 
                 it("to use iframe-transport if FormData not available", function () {
                     var vm = new BaseFileFormViewModel("a", "b");
