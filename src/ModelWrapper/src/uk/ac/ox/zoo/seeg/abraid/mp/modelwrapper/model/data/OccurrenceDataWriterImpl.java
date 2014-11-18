@@ -25,8 +25,6 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
     private static final String LOG_WRITING_OCCURRENCE_DATA = "Writing %d occurrence data points to workspace at %s";
     private static final String LOG_TOP_LEVEL_CRS_WARN = "Aborted writing occurrence data due to incorrect CRS.";
 
-    private static final String UTF_8 = "UTF-8";
-
     /**
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
