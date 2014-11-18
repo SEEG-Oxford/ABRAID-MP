@@ -49,26 +49,34 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
      */
     @Override
     public void write(Map<Integer, Integer> extentData, File sourceRasterFile, File targetFile) throws IOException {
-        GridCoverage2D sourceRaster = loadRaster(sourceRasterFile);
+        GridCoverage2D sourceRaster = null;
+        try {
+            sourceRaster = loadRaster(sourceRasterFile);
 
-        Envelope2D rasterExtent = sourceRaster.getGridGeometry().getEnvelope2D();
-        GridSampleDimension[] rasterProperties = sourceRaster.getSampleDimensions();
-        WritableRaster rasterData = (WritableRaster) sourceRaster.getRenderedImage().getData();
+            Envelope2D rasterExtent = sourceRaster.getGridGeometry().getEnvelope2D();
+            GridSampleDimension[] rasterProperties = sourceRaster.getSampleDimensions();
+            WritableRaster rasterData = (WritableRaster) sourceRaster.getRenderedImage().getData();
 
-        transformRaster(extentData, rasterData);
+            transformRaster(extentData, rasterData);
 
-        saveRaster(targetFile, rasterData, rasterExtent, rasterProperties);
+            saveRaster(targetFile, rasterData, rasterExtent, rasterProperties);
+        } finally {
+            disposeResource(sourceRaster);
+        }
     }
 
     private GridCoverage2D loadRaster(File location) throws IOException {
         LOGGER.info(String.format(LOG_LOADING_SOURCE_RASTER, location.toString()));
+        GridCoverage2DReader reader = null;
         try {
-            GridCoverage2DReader reader = new GeoTiffReader(location);
+            reader = new GeoTiffReader(location);
             return reader.read(null);
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_READ_SOURCE_RASTER, location.toString());
             LOGGER.error(message, e);
             throw new IOException(message, e);
+        } finally {
+            disposeResource(reader);
         }
     }
 
@@ -92,16 +100,23 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
     private void saveRaster(File location, WritableRaster raster, Envelope2D extents, GridSampleDimension[] properties)
             throws IOException {
         LOGGER.info(String.format(LOG_SAVING_TRANSFORMED_RASTER, location.toString()));
+
+        GridCoverage2D targetRaster = null;
+        GridCoverageWriter writer = null;
+
         try {
             GridCoverageFactory factory = new GridCoverageFactory();
-            GridCoverage2D targetRaster = factory.create(location.getName(), raster, extents, properties);
+            targetRaster = factory.create(location.getName(), raster, extents, properties);
 
-            GridCoverageWriter writer = GEOTIFF_FORMAT.getWriter(location);
+            writer = GEOTIFF_FORMAT.getWriter(location);
             writer.write(targetRaster, getGeoTiffWriteParameters());
         } catch (Exception e) {
             final String message = String.format(LOG_FAILED_TO_SAVE_TRANSFORMED_RASTER, location.toString());
             LOGGER.error(message, e);
             throw new IOException(message, e);
+        } finally {
+            disposeResource(targetRaster);
+            disposeResource(writer);
         }
     }
 
@@ -115,5 +130,23 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
         return new GeneralParameterValue[] {
                 parameterValue
         };
+    }
+
+    private void disposeResource(GridCoverage2D raster) {
+        if (raster != null) {
+            raster.dispose(true);
+        }
+    }
+
+    private void disposeResource(GridCoverage2DReader reader) throws IOException {
+        if (reader != null) {
+            reader.dispose();
+        }
+    }
+
+    private void disposeResource(GridCoverageWriter writer) throws IOException {
+        if (writer != null) {
+            writer.dispose();
+        }
     }
 }
