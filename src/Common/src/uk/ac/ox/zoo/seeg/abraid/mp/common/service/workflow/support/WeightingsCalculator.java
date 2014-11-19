@@ -30,7 +30,7 @@ public class WeightingsCalculator {
     private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
             "Recalculating weightings of experts given %d review(s)";
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
-            "No occurrences for model run - validation and final weightings will not be updated";
+            "No occurrences found that need their validation and final weightings set";
     private static final String UPDATING_WEIGHTINGS =
             "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
     private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
