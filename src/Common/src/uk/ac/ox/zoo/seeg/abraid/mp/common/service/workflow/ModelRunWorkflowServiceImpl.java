@@ -52,12 +52,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
      * run is completed), otherwise null.
      * @param batchEndDate The end date for batching (if it should happen), otherwise null.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
     public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,
                                                               DateTime batchStartDate, DateTime batchEndDate)
-            throws ModelRunRequesterException {
+            throws ModelRunWorkflowException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         prepareForAndRequestModelRun(diseaseGroupId, batchStartDate, batchEndDate);
         saveExpertsWeightings(newExpertWeightings);
@@ -67,11 +67,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * Prepares for and requests a model run, for the specified disease group.
      * This method is designed for use when automatically triggering one or more model runs.
      * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
-            throws ModelRunRequesterException {
+            throws ModelRunWorkflowException {
         prepareForAndRequestModelRun(diseaseGroupId, null, null);
     }
 
@@ -80,11 +80,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
      * been uploaded to send to the model.
      * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
     public void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId)
-            throws ModelRunRequesterException {
+            throws ModelRunWorkflowException {
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
@@ -147,7 +147,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     }
 
     private void prepareForAndRequestModelRun(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate)
-            throws ModelRunRequesterException {
+            throws ModelRunWorkflowException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
 
@@ -158,9 +158,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
             generateDiseaseExtent(diseaseGroup);
         }
-
-        machineWeightingPredictor.train(diseaseGroupId,
-                                        diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId));
 
         // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
         // they may have changed as a result of updating weightings and status. So retrieve them again before running
@@ -178,9 +175,25 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
                                             DateTime batchStartDate, DateTime batchEndDate,
                                             boolean onlyUseGoldStandardOccurrences) {
+        trainPredictor(diseaseGroup);
+        requestModelRun(diseaseGroup, batchStartDate, batchEndDate, onlyUseGoldStandardOccurrences);
+        updateLastModelRunPrepDate(diseaseGroup, modelRunPrepDate);
+    }
+
+    private void trainPredictor(DiseaseGroup diseaseGroup) {
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor =
+                diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroup.getId());
+        machineWeightingPredictor.train(diseaseGroup.getId(), occurrencesForTrainingPredictor);
+    }
+
+    private void requestModelRun(DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate,
+                                 boolean onlyUseGoldStandardOccurrences) {
         List<DiseaseOccurrence> occurrencesForModelRun =
                 selectOccurrencesForModelRun(diseaseGroup.getId(), onlyUseGoldStandardOccurrences);
         modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchStartDate, batchEndDate);
+    }
+
+    private void updateLastModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
         diseaseGroup.setLastModelRunPrepDate(modelRunPrepDate);
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }

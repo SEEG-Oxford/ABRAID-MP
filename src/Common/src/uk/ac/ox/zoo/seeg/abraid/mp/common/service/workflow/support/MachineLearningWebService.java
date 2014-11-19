@@ -76,7 +76,7 @@ public class MachineLearningWebService {
                 return parseDouble(response);
             }
         } else {
-            throw new MachineWeightingPredictorException("No disease group");
+            throw new ModelRunWorkflowException("No disease group");
         }
     }
 

@@ -10,10 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -31,6 +28,7 @@ public class ModelRunWorkflowServiceTest {
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private ModelRunWorkflowServiceImpl modelRunWorkflowService;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
+    private MachineWeightingPredictor machineWeightingPredictor;
 
     @Before
     public void setUp() {
@@ -41,9 +39,10 @@ public class ModelRunWorkflowServiceTest {
         LocationService locationService = mock(LocationService.class);
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
         automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
-        MachineWeightingPredictor machineWeightingPredictor = mock(MachineWeightingPredictor.class);
+        machineWeightingPredictor = mock(MachineWeightingPredictor.class);
         modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
-                reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler, machineWeightingPredictor));
+                reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler,
+                machineWeightingPredictor));
     }
 
     @Test
@@ -59,22 +58,25 @@ public class ModelRunWorkflowServiceTest {
         DateTime batchEndDate = DateTime.now().plusDays(1);
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
 
         // Act
         modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
-        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(
-                eq(diseaseGroupId));
+        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchStartDate), eq(batchEndDate));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator).saveExpertsWeightings(same(newWeightings));
+        verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
     }
 
     @Test
@@ -88,9 +90,12 @@ public class ModelRunWorkflowServiceTest {
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
 
         // Act
         modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
@@ -101,8 +106,10 @@ public class ModelRunWorkflowServiceTest {
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate),
                 eq(false));
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
+        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class),
+                isNull(DateTime.class));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
+        verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
     }
 
     @Test
@@ -116,10 +123,13 @@ public class ModelRunWorkflowServiceTest {
         Map<Integer, Double> newWeightings = new HashMap<>();
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, true);
         when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
 
         // Act
         modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
@@ -128,9 +138,11 @@ public class ModelRunWorkflowServiceTest {
         verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(anyInt());
         verify(reviewManager, never()).updateDiseaseOccurrenceStatus(anyInt(), any(DateTime.class));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(true));
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
+        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class),
+                isNull(DateTime.class));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator).saveExpertsWeightings(same(newWeightings));
+        verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
     }
 
     @Test

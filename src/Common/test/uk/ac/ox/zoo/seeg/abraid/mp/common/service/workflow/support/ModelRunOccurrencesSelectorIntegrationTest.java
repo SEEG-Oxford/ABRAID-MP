@@ -61,7 +61,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         // Assert
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false)).hasSize(27);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         // Assert
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false)).hasSize(27);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         // Assert
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, true)).hasSize(2);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test

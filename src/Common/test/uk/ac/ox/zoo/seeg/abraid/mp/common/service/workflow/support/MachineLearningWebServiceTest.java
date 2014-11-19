@@ -61,7 +61,7 @@ public class MachineLearningWebServiceTest {
         catchException(webService).getPrediction(occurrence);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(MachineWeightingPredictorException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
         assertThat(caughtException()).hasMessage("No disease group");
     }
 

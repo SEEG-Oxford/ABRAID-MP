@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager;
 
@@ -94,7 +94,7 @@ public class Main {
     private void prepareForAndRequestModelRun(int diseaseGroupId) {
         try {
             modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-        } catch (ModelRunRequesterException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+        } catch (ModelRunWorkflowException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
             // Ignore the exception, because it is thrown to roll back the transaction per disease group if the model
             // run request fails. Logging has already been done by this point.
         }

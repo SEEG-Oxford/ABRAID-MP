@@ -18,7 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
@@ -165,7 +165,6 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
                                                   String batchEndDate, boolean onlyUseGoldStandardOccurrences) {
         try {
@@ -178,7 +177,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                         parsedBatchStartDate, parsedBatchEndDate);
             }
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ModelRunRequesterException e) {
+        } catch (ModelRunWorkflowException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
