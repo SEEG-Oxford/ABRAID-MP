@@ -475,6 +475,7 @@
   </target>
 
   <target name="build.war" depends="compile.production, create.dist.dir">
+    <echo file="${web.dir}/WEB-INF/version.properties" message="application.version=${repository.version}" />
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">

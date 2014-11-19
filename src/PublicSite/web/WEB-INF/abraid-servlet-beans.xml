@@ -35,6 +35,7 @@
         <property name="freemarkerVariables">
             <map>
                 <entry key="baseWmsUrl" value="${base.wms.url}" />
+                <entry key="applicationVersion" value="${application.version}" />
             </map>
         </property>
     </bean>
