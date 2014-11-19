@@ -27,8 +27,8 @@
     </bean>
 
     <bean id="reCaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
-        <property name="privateKey" value="6Lf4ZPwSAAAAACoVwmksWbQXQpROZP4oJ1JRNdWO" />
-        <property name="publicKey" value="6Lf4ZPwSAAAAABIP2aAan96r0tGl9ARquK54qzZo" />
+        <property name="privateKey" value="${recaptcha.private.key}" />
+        <property name="publicKey" value="${recaptcha.public.key}" />
         <property name="includeNoscript" value="false" />
         <property name="recaptchaServer">
             <utils:constant static-field="net.tanesha.recaptcha.ReCaptchaImpl.HTTPS_SERVER" />
