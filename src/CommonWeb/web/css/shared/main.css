@@ -197,13 +197,26 @@ button.btn[type=submit] {
 #about .row {
     border-top: 2px solid rgb(238, 238, 238);
     border-bottom: 2px solid rgb(238, 238, 238);
-    padding-top: 10px;
-    padding-bottom: 10px
 }
-#about .col-sm-2 {
-    min-width: 150px;
+#about-text div {
+    padding: 5px;
 }
-#about .col-sm-10 div {
-    padding-top: 5px;
-    padding-bottom: 5px
+@media (max-width: 768px) {
+    #about-img {
+        text-align: center;
+        margin: 10px 0;
+    }
+}
+@media (min-width: 768px) {
+    #about {
+        display:table;
+    }
+    #about-img {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0 20px;
+    }
+    #about-text {
+        display: table-cell;
+    }
 }
