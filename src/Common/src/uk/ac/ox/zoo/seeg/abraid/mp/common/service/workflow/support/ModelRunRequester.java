@@ -60,10 +60,10 @@ public class ModelRunRequester {
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
      * run is completed), otherwise null.
      * @param batchEndDate The end date for batching (if it should happen), otherwise null.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     public void requestModelRun(int diseaseGroupId, List<DiseaseOccurrence> occurrencesForModelRun,
-                                DateTime batchStartDate, DateTime batchEndDate) throws ModelRunRequesterException {
+                                DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         if (occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
@@ -80,7 +80,7 @@ public class ModelRunRequester {
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
-                throw new ModelRunRequesterException(message, e);
+                throw new ModelRunWorkflowException(message, e);
             }
         }
     }
@@ -128,7 +128,7 @@ public class ModelRunRequester {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
-            throw new ModelRunRequesterException(message);
+            throw new ModelRunWorkflowException(message);
         } else {
             modelRun.setName(response.getModelRunName());
             modelRunService.saveModelRun(modelRun);

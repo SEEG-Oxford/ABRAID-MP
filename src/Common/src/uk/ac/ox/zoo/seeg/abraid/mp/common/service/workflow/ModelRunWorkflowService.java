@@ -2,7 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
 import java.util.Map;
 
@@ -18,28 +18,28 @@ public interface ModelRunWorkflowService {
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
      * run is completed), otherwise null.
      * @param batchEndDate The end date for batching (if it should happen), otherwise null.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,
                                                        DateTime batchStartDate, DateTime batchEndDate)
-            throws ModelRunRequesterException;
+            throws ModelRunWorkflowException;
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
      * This method is designed for use when automatically triggering one or more model runs.
      * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
-    void prepareForAndRequestAutomaticModelRun(int diseaseGroupId) throws ModelRunRequesterException;
+    void prepareForAndRequestAutomaticModelRun(int diseaseGroupId) throws ModelRunWorkflowException;
 
     /**
      * Prepares for and requests a model run using "gold standard" disease occurrences, for the specified disease group.
      * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
      * been uploaded to send to the model.
      * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
-    void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId) throws ModelRunRequesterException;
+    void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId) throws ModelRunWorkflowException;
 
     /**
      * Set model runs to be triggered automatically for the specified disease group.

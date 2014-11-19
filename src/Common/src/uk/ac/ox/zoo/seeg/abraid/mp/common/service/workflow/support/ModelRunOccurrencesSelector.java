@@ -89,10 +89,10 @@ public class ModelRunOccurrencesSelector {
     /**
      * Gets the list of occurrences to be used in the model run.
      * @return The list of occurrences with which to run the model,
-     * @throws ModelRunRequesterException if the model should not run because the required thresholds have not been
+     * @throws ModelRunWorkflowException if the model should not run because the required thresholds have not been
      * reached.
      */
-    public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() throws ModelRunRequesterException {
+    public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() throws ModelRunWorkflowException {
         List<DiseaseOccurrence> occurrences = null;
 
         // Minimum Data Volume must always be satisfied
@@ -239,7 +239,7 @@ public class ModelRunOccurrencesSelector {
     private void handleCannotRunModel(String logSuffixMessage, String exceptionMessage) {
         LOGGER.warn(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
                 diseaseGroup.getName()));
-        throw new ModelRunRequesterException(exceptionMessage);
+        throw new ModelRunWorkflowException(exceptionMessage);
     }
 
     private void handleCanRunModel() {
