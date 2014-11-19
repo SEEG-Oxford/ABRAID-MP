@@ -159,9 +159,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             generateDiseaseExtent(diseaseGroup);
         }
 
-        machineWeightingPredictor.train(diseaseGroupId,
-                                        diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId));
-
         // Although the set of occurrences for the model run has already been retrieved in generateDiseaseExtent,
         // they may have changed as a result of updating weightings and status. So retrieve them again before running
         // the model.
@@ -178,9 +175,25 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,
                                             DateTime batchStartDate, DateTime batchEndDate,
                                             boolean onlyUseGoldStandardOccurrences) {
+        trainPredictor(diseaseGroup);
+        requestModelRun(diseaseGroup, batchStartDate, batchEndDate, onlyUseGoldStandardOccurrences);
+        updateLastModelRunPrepDate(diseaseGroup, modelRunPrepDate);
+    }
+
+    private void trainPredictor(DiseaseGroup diseaseGroup) {
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor =
+                diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroup.getId());
+        machineWeightingPredictor.train(diseaseGroup.getId(), occurrencesForTrainingPredictor);
+    }
+
+    private void requestModelRun(DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate,
+                                 boolean onlyUseGoldStandardOccurrences) {
         List<DiseaseOccurrence> occurrencesForModelRun =
                 selectOccurrencesForModelRun(diseaseGroup.getId(), onlyUseGoldStandardOccurrences);
         modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchStartDate, batchEndDate);
+    }
+
+    private void updateLastModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
         diseaseGroup.setLastModelRunPrepDate(modelRunPrepDate);
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
