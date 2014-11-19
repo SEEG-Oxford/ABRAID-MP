@@ -8,6 +8,10 @@
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="loggingContextName" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="PublicSite"/>
+    </bean>
+
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/beans.xml"/>
 
 </beans>

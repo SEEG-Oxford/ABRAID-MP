@@ -50,15 +50,7 @@
         </constructor-arg>
         <constructor-arg name="fromAddress" value="${email.from.address}"/>
         <constructor-arg name="defaultToAddress" value="${email.default.to.address}"/>
-        <constructor-arg name="smtpConfig">
-            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
-                <constructor-arg name="address" value="${email.smtp.host}" />
-                <constructor-arg name="port" value="${email.smtp.port}" />
-                <constructor-arg name="useSSL" value="${email.smtp.ssl}" />
-                <constructor-arg name="username" value="${email.smtp.username}" />
-                <constructor-arg name="password" value="${email.smtp.password}" />
-            </bean>
-        </constructor-arg>
+        <constructor-arg name="smtpConfig" ref="smtpConfig" />
         <constructor-arg name="classTemplateLookupPaths" ref="emailTemplateClassLookupPaths" />
         <constructor-arg name="fileTemplateLookupPaths" ref="emailTemplateFileLookupPaths" />
     </bean>

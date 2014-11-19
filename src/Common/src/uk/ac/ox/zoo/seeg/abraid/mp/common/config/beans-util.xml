@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Contains web-specific beans.
+      Copyright (c) 2014 University of Oxford
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="smtpConfig" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
+        <constructor-arg name="address" value="${email.smtp.host}" />
+        <constructor-arg name="port" value="${email.smtp.port}" />
+        <constructor-arg name="useSSL" value="${email.smtp.ssl}" />
+        <constructor-arg name="username" value="${email.smtp.username}" />
+        <constructor-arg name="password" value="${email.smtp.password}" />
+    </bean>
+
+    <bean id="loggingSetupUtil" class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.LoggingSetupUtil" init-method="setupLogging">
+        <constructor-arg name="loggingContextName" ref="loggingContextName"/>
+        <constructor-arg name="useEmailLogging" value="${use.email.logging}"/>
+        <constructor-arg name="emailFromAddress" value="${email.from.address}"/>
+        <constructor-arg name="emailToAddress" value="${email.default.to.address}"/>
+        <constructor-arg name="emailSmtpConfig" ref="smtpConfig" />
+    </bean>
+
+</beans>

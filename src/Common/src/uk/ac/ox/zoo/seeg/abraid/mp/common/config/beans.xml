@@ -10,6 +10,7 @@
 
     <import resource="common-properties.xml"/>
 
+    <import resource="beans-util.xml"/>
     <import resource="beans-database.xml"/>
     <import resource="beans-service.xml"/>
     <import resource="beans-web.xml"/>
