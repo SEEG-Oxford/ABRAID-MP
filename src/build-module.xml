@@ -473,9 +473,12 @@
       <attribute name="Built-On" value="${time.stamp}"/>
     </manifest>
   </target>
-
-  <target name="build.war" depends="compile.production, create.dist.dir">
+  
+  <target name="create.war.version.properties">
     <echo file="${web.dir}/WEB-INF/version.properties" message="application.version=${repository.version}" />
+  </target>
+
+  <target name="build.war" depends="compile.production, create.dist.dir, create.war.version.properties">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
@@ -496,7 +499,7 @@
     </war>
   </target>
 
-  <target name="build.war.with.commonweb" depends="compile.production, create.dist.dir">
+  <target name="build.war.with.commonweb" depends="compile.production, create.dist.dir, create.war.version.properties">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
