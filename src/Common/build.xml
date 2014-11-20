@@ -29,6 +29,15 @@
         <type type="file"/>
       </fileset>
     </copy>
+      <copy todir="${test.out.dir}">
+        <fileset dir="${basedir}/testutils">
+          <patternset>
+            <exclude name="**/?*.java"/>
+            <exclude name="**/?*.class"/>
+          </patternset>
+          <type type="file"/>
+        </fileset>
+    </copy>
   </target>
 
   <!-- Packaging overrides -->

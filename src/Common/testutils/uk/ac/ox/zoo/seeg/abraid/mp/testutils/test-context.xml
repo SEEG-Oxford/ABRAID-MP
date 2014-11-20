@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-      Top-level middle tier beans specification.
+      Extra beans for use in context aware tests.
       Copyright (c) 2014 University of Oxford
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -9,9 +9,7 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="loggingContextName" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="ModelWrapper"/>
+        <constructor-arg type="java.lang.String" value="TestContext"/>
     </bean>
-
-    <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/beans.xml"/>
 
 </beans>
