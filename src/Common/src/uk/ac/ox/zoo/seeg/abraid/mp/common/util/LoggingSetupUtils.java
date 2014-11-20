@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.apache.log4j.Priority;
 import org.apache.log4j.net.SMTPAppender;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
 
@@ -13,6 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
  */
 public class LoggingSetupUtils {
     private static final PatternLayout LAYOUT = new PatternLayout("%d{ISO8601} %5p [%t] %c - %m%n");
+    private static final int EMAIL_BUFFER_SIZE = 10;
     private final String loggingContextName;
     private final boolean useEmailLogging;
     private final String emailFromAddress;
@@ -28,13 +28,16 @@ public class LoggingSetupUtils {
         this.emailSmtpConfig = emailSmtpConfig;
     }
 
+    /**
+     * Set up additional log4j appenders.
+     */
     public void setupLogging() {
         if (useEmailLogging) {
             setupEmailLogging();
         }
     }
 
-    public void setupEmailLogging() {
+    private void setupEmailLogging() {
         SMTPAppender emailAppender = new SMTPAppender();
         emailAppender.setSMTPHost(emailSmtpConfig.getAddress());
         emailAppender.setSMTPPort(emailSmtpConfig.getPort());
@@ -43,7 +46,7 @@ public class LoggingSetupUtils {
         emailAppender.setFrom(emailFromAddress);
         emailAppender.setTo(emailToAddress);
         emailAppender.setLayout(LAYOUT);
-        emailAppender.setBufferSize(10);
+        emailAppender.setBufferSize(EMAIL_BUFFER_SIZE);
         emailAppender.setThreshold(Level.ERROR);
         emailAppender.setSubject(String.format("%s Error Alert", loggingContextName));
         emailAppender.activateOptions();
