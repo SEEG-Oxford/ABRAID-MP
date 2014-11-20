@@ -50,6 +50,7 @@
         var data = {
             wmsUrl: "${baseWmsUrl}",
             loggedIn: ${userLoggedIn?c},
+            showHelpText: ${showHelpText?c},
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
             diseaseInterests: [

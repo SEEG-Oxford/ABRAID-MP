@@ -70,13 +70,24 @@ public class DataValidationController extends AbstractController {
     @Transactional(rollbackFor = Exception.class)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
+
         boolean userLoggedIn = (user != null);
+        boolean userIsSeeg = false;
+        boolean showHelpText = false;
 
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
 
         if (userLoggedIn) {
             int expertId = user.getId();
+
+            Expert expert = getExpert(expertId);
+            userIsSeeg = expert.isSeegMember();
+            showHelpText = !expert.hasSeenHelpText();
+            if (showHelpText) {
+                expert.setHasSeenHelpText(true);
+            }
+
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
             List<ValidatorDiseaseGroup> diseaseInterests = getSortedDiseaseInterests(expertId);
@@ -91,7 +102,8 @@ public class DataValidationController extends AbstractController {
         }
 
         model.addAttribute("userLoggedIn", userLoggedIn);
-        model.addAttribute("userSeeg", userIsSeegMember(user));
+        model.addAttribute("userSeeg", userIsSeeg);
+        model.addAttribute("showHelpText", showHelpText);
         model.addAttribute("diseaseOccurrenceReviewCount", diseaseOccurrenceReviewCount);
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
 
@@ -307,12 +319,17 @@ public class DataValidationController extends AbstractController {
         if (user == null) {
             return false;
         } else {
-            Expert expert = expertService.getExpertById(user.getId());
-            if (expert == null) {
-                throw new IllegalArgumentException("Logged in user does not have an associated expert.");
-            } else {
-                return expert.isSeegMember();
-            }
+            Expert expert = getExpert(user.getId());
+            return expert.isSeegMember();
+        }
+    }
+
+    private Expert getExpert(int userId) {
+        Expert expert = expertService.getExpertById(userId);
+        if (expert == null) {
+            throw new IllegalArgumentException("Logged in user does not have an associated expert.");
+        } else {
+            return expert;
         }
     }
 }

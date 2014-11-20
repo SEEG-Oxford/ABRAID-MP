@@ -46,9 +46,13 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             );
 
             // Prevent mouse events propagating to map movements when help text modal is open.
-            $("#helpModal").on("mousedown mousewheel", function (e) {
+            var helpModal = $("#helpModal");
+            helpModal.on("mousedown mousewheel", function (e) {
                 e.stopPropagation();
             });
+            if (data.showHelpText) {
+                helpModal.modal("show");
+            }
         }
     );
 });

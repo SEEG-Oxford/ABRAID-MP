@@ -62,6 +62,9 @@ public class Expert {
     @Column(name = "is_seeg_member", nullable = false)
     private boolean isSeegMember; //default false
 
+    @Column(name = "has_seen_help_text", nullable = false)
+    private boolean hasSeenHelpText; // default false
+
     // Whether the expert wants to be displayed in list on public site.
     @Column(name = "visibility_requested", nullable = false)
     private boolean visibilityRequested; //default false
@@ -161,6 +164,18 @@ public class Expert {
         this.isSeegMember = isSeegMember;
     }
 
+    /**
+     * Indicates whether the expert has been shown the Data Validator help text.
+     * @return True if the expert has viewed the help text panel.
+     */
+    public boolean hasSeenHelpText() {
+        return hasSeenHelpText;
+    }
+
+    public void setHasSeenHelpText(boolean hasSeenHelpText) {
+        this.hasSeenHelpText = hasSeenHelpText;
+    }
+
     public boolean getVisibilityRequested() {
         return visibilityRequested;
     }
@@ -217,6 +232,7 @@ public class Expert {
 
         if (isAdministrator != expert.isAdministrator) return false;
         if (isSeegMember != expert.isSeegMember) return false;
+        if (hasSeenHelpText != expert.hasSeenHelpText) return false;
         if (visibilityApproved != expert.visibilityApproved) return false;
         if (visibilityRequested != expert.visibilityRequested) return false;
         if (Double.compare(expert.weighting, weighting) != 0) return false;
@@ -246,6 +262,7 @@ public class Expert {
         result = 31 * result + (institution != null ? institution.hashCode() : 0);
         result = 31 * result + (isAdministrator ? 1 : 0);
         result = 31 * result + (isSeegMember ? 1 : 0);
+        result = 31 * result + (hasSeenHelpText ? 1 : 0);
         result = 31 * result + (visibilityRequested ? 1 : 0);
         result = 31 * result + (visibilityApproved ? 1 : 0);
         temp = Double.doubleToLongBits(weighting);
