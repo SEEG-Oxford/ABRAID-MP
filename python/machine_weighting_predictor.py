@@ -14,12 +14,12 @@ PREDICTORS = {}
 FEED_CLASSES = {}
 PICKLES_SUBFOLDER_PATH = 'pickles/'
 
-# Replace Flask's existing log handler with a custom format handler
+# Replace Flask's existing log handlers (debug and prod) with one custom format handler
 del app.logger.handlers[:]
 handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter((
+handler.setFormatter(logging.Formatter(
     '%(asctime)s [%(process)d] [%(levelname)s] [%(filename)s:%(lineno)d]: %(message)s'
-)))
+))
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.DEBUG)
 
@@ -30,7 +30,7 @@ def train(disease_group_id):
     try:
         data = request.json['points']
     except KeyError:
-        return _log_response('Invalid JSON', 400)
+        return _log_response('Invalid JSON', disease_group_id, 400)
 
     predictor = Chain()
     FEED_CLASSES[disease_group_id] = {}
@@ -40,14 +40,14 @@ def train(disease_group_id):
             X = _convert_json_to_matrix(disease_group_id, data)
             y = np.array(_pluck('expertWeighting', data))
         except KeyError:
-            return _log_response('Invalid JSON', 400)
+            return _log_response('Invalid JSON', disease_group_id, 400)
         else:
             predictor.train(X, y)
             _save_predictor(disease_group_id, predictor)
-            return _log_response('Trained predictor saved', 200)
+            return _log_response('Trained predictor saved', disease_group_id, 200)
     else:
         _save_predictor(disease_group_id, predictor)
-        return _log_response('Insufficient training data - empty predictor saved', 200)
+        return _log_response('Insufficient training data - empty predictor saved', disease_group_id, 200)
 
 
 @app.route('/<int:disease_group_id>/predict', methods=['POST'])
@@ -63,7 +63,7 @@ def predict(disease_group_id):
             predictor = joblib.load(filename)
             PREDICTORS[disease_group_id] = predictor
         except IOError as e:
-            return _log_response('Unable to load predictor for disease group (' + str(disease_group_id) + ') - ' + e.strerror, 400)
+            return _log_response(e.strerror + ': Unable to load predictor', disease_group_id, 400)
 
     # Use the feed classes map in memory, otherwise load from backup pickle version
     if disease_group_id in FEED_CLASSES:
@@ -74,7 +74,7 @@ def predict(disease_group_id):
             feed_classes = joblib.load(filename)
             FEED_CLASSES[disease_group_id] = feed_classes
         except IOError as e:
-            return _log_response('Unable to load feeds for disease group (' + str(disease_group_id) + ') - ' + e.strerror, 400)
+            return _log_response(e.strerror + ': Unable to load feeds', disease_group_id, 400)
 
     try:
         x = np.zeros(2 + len(feed_classes) + 1)
@@ -83,7 +83,7 @@ def predict(disease_group_id):
         feed = _get_feed_class(disease_group_id, request.json['feedId'])
         x[feed + 2] = 1
     except KeyError:
-        return _log_response('Invalid JSON', 400)
+        return _log_response('Invalid JSON', disease_group_id, 400)
 
     prediction = predictor.predict(x)
     if prediction is None:
@@ -123,7 +123,7 @@ def _save_predictor(disease_group_id, predictor):
         joblib.dump(predictor, _get_pickled_predictor_filename(disease_group_id))
         joblib.dump(FEED_CLASSES[disease_group_id], _get_pickled_feed_classes_filename(disease_group_id))
     except IOError as e:
-        app.logger.warn('Unable to save pickle - ' + e.strerror)
+        app.logger.error(e.strerror + ': Unable to save pickle for disease group (' + str(disease_group_id) + ')')
 
 
 def _get_pickled_predictor_filename(disease_group_id):
@@ -134,8 +134,12 @@ def _get_pickled_feed_classes_filename(disease_group_id):
     return PICKLES_SUBFOLDER_PATH + str(disease_group_id) + '_feed_classes.pkl'
 
 
-def _log_response(message, status_code):
-    app.logger.info(message)
+def _log_response(message, disease_group_id, status_code):
+    message = message + ' for disease group (' + str(disease_group_id) + ')'
+    if status_code == 400:
+        app.logger.error(message)
+    else:
+        app.logger.info(message)
     return (message, status_code)
 
 
