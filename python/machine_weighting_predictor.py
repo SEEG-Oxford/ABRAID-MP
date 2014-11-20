@@ -136,10 +136,13 @@ def _get_pickled_feed_classes_filename(disease_group_id):
 
 def _log_response(message, disease_group_id, status_code):
     message = message + ' for disease group (' + str(disease_group_id) + ')'
-    if status_code == 400:
+    if status_code >= 500:
         app.logger.error(message)
+    elif status_code >= 400:
+        app.logger.warn(message)
     else:
         app.logger.info(message)
+    
     return (message, status_code)
 
 
