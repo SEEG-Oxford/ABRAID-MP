@@ -461,7 +461,9 @@
 
   <target name="build.jar" depends="compile.production, create.dist.dir, create.jar.manifest">
     <jar jarfile="${dist.out.dir}/ABRAID-MP_${module.name}.jar" manifest="${dist.out.dir}/MANIFEST.MF">
-      <fileset dir="${module.out.dir}" />
+      <fileset dir="${module.out.dir}">
+        <exclude name="**/*-testing.properties" />
+      </fileset>
     </jar>
     <delete file="${dist.out.dir}/MANIFEST.MF"/>
   </target>
@@ -477,7 +479,7 @@
       <attribute name="Built-On" value="${time.stamp}"/>
     </manifest>
   </target>
-  
+
   <target name="create.version.properties">
     <echo file="${module.out.dir}/${version.properties.path}" message="application.version=${repository.version}" />
   </target>
@@ -486,10 +488,12 @@
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}">
         <exclude name="WEB-INF/**" />
+        <exclude name="**/*-testing.properties" />
       </classes>
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
+        <exclude name="**/*-testing.properties" />
         <exclude name="js/app/spec/*" />
       </fileset>
       <fileset dir="${module.out.dir}">
@@ -512,10 +516,12 @@
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}">
         <exclude name="WEB-INF/**" />
+        <exclude name="**/*-testing.properties" />
       </classes>
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
+        <exclude name="**/*-testing.properties" />
         <exclude name="js/app/spec/*" />
       </fileset>
       <fileset dir="${module.out.dir}">

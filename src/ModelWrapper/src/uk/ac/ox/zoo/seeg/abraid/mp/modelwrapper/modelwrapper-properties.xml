@@ -12,5 +12,5 @@
 
     <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:conf/modelling/modelwrapper.properties"/>
     <context:property-placeholder order="1" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:/var/lib/abraid/conf/modelling/modelwrapper.properties"/>
-    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/modelwrapper/modelwrapper-testing.properties" />
+    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/modelwrapper-testing.properties" />
 </beans>
