@@ -191,7 +191,6 @@ button.btn[type=submit] {
     padding: 5px 15px;
 }
 #about {
-    padding-top: 50px;
     text-align: justify;
 }
 #about .row {
@@ -200,6 +199,10 @@ button.btn[type=submit] {
 }
 #about-text div {
     padding: 5px;
+}
+#about #contact-links {
+    float: right;
+    padding: 10px 0;
 }
 @media (max-width: 768px) {
     #about-img {
