@@ -474,18 +474,19 @@
     </manifest>
   </target>
   
-  <target name="create.war.version.properties">
-    <echo file="${web.dir}/WEB-INF/version.properties" message="application.version=${repository.version}" />
+  <target name="create.version.properties">
+    <echo file="${module.out.dir}/WEB-INF/version.properties" message="application.version=${repository.version}" />
   </target>
 
-  <target name="build.war" depends="compile.production, create.dist.dir, create.war.version.properties">
+  <target name="build.war" depends="compile.production, create.dist.dir, create.version.properties">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
-        <!--exclude name="js/app/spec/**" / -->
+        <exclude name="js/app/spec/*" />
       </fileset>
+      <file file="${module.out.dir}/WEB-INF/version.properties" />
       <lib dir="${lib.dir}/build">
         <exclude name="**/javax.servlet-api-*-jar.jar" />
       </lib>
@@ -499,7 +500,7 @@
     </war>
   </target>
 
-  <target name="build.war.with.commonweb" depends="compile.production, create.dist.dir, create.war.version.properties">
+  <target name="build.war.with.commonweb" depends="compile.production, create.dist.dir, create.version.properties">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
       <classes dir="${module.out.dir}" />
       <fileset dir="${web.dir}">
@@ -507,6 +508,7 @@
         <exclude name="WEB-INF/web.xml" />
         <exclude name="js/app/spec/*" />
       </fileset>
+      <file file="${module.out.dir}/WEB-INF/version.properties" />
       <fileset dir="${project.root.dir}/src/CommonWeb/web" />
       <lib dir="${lib.dir}/build">
         <exclude name="**/javax.servlet-api-*-jar.jar" />
