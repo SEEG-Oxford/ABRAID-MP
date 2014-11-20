@@ -190,3 +190,36 @@ button.btn[type=submit] {
 #footer {
     padding: 5px 15px;
 }
+#about {
+    text-align: justify;
+}
+#about .row {
+    border-top: 2px solid rgb(238, 238, 238);
+    border-bottom: 2px solid rgb(238, 238, 238);
+}
+#about-text div {
+    padding: 5px;
+}
+#about #contact-links {
+    float: right;
+    padding: 10px 0;
+}
+@media (max-width: 768px) {
+    #about-img {
+        text-align: center;
+        margin: 10px 0;
+    }
+}
+@media (min-width: 768px) {
+    #about {
+        display:table;
+    }
+    #about-img {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0 20px;
+    }
+    #about-text {
+        display: table-cell;
+    }
+}

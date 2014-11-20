@@ -37,6 +37,7 @@
 
   <!-- Misc -->
   <property name="js.spec.runner.path" value="${web.dir}/js/app/spec/SpecRunner.html" />
+  <property name="version.properties.path" value="WEB-INF/version.properties" />
 
   <!-- Properties override. Default build settings go in build.properties, override these using user.properties (the latter is not checked in) -->
   <property file="${basedir}/user.properties"/>
@@ -476,14 +477,23 @@
       <attribute name="Built-On" value="${time.stamp}"/>
     </manifest>
   </target>
+  
+  <target name="create.version.properties">
+    <echo file="${module.out.dir}/${version.properties.path}" message="application.version=${repository.version}" />
+  </target>
 
-  <target name="build.war" depends="compile.production, create.dist.dir">
+  <target name="build.war" depends="compile.production, create.dist.dir, create.version.properties">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
-      <classes dir="${module.out.dir}" />
+      <classes dir="${module.out.dir}">
+        <exclude name="WEB-INF/**" />
+      </classes>
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
-        <!--exclude name="js/app/spec/**" / -->
+        <exclude name="js/app/spec/*" />
+      </fileset>
+      <fileset dir="${module.out.dir}">
+        <include name="${version.properties.path}" />
       </fileset>
       <lib dir="${lib.dir}/build">
         <exclude name="**/javax.servlet-api-*-jar.jar" />
@@ -498,13 +508,18 @@
     </war>
   </target>
 
-  <target name="build.war.with.commonweb" depends="compile.production, create.dist.dir">
+  <target name="build.war.with.commonweb" depends="compile.production, create.dist.dir, create.version.properties">
     <war warfile="${dist.out.dir}/ABRAID-MP_${module.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
-      <classes dir="${module.out.dir}" />
+      <classes dir="${module.out.dir}">
+        <exclude name="WEB-INF/**" />
+      </classes>
       <fileset dir="${web.dir}">
         <!-- Need to exclude it since web.xml is an attribute of the war tag above -->
         <exclude name="WEB-INF/web.xml" />
         <exclude name="js/app/spec/*" />
+      </fileset>
+      <fileset dir="${module.out.dir}">
+        <include name="${version.properties.path}" />
       </fileset>
       <fileset dir="${project.root.dir}/src/CommonWeb/web" />
       <lib dir="${lib.dir}/build">
