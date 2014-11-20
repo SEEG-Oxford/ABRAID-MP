@@ -16,7 +16,7 @@
         <constructor-arg name="password" value="${email.smtp.password}" />
     </bean>
 
-    <bean id="loggingSetupUtil" class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.LoggingSetupUtil" init-method="setupLogging">
+    <bean id="loggingSetupUtil" class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.LoggingSetupUtils" init-method="setupLogging">
         <constructor-arg name="loggingContextName" ref="loggingContextName"/>
         <constructor-arg name="useEmailLogging" value="${use.email.logging}"/>
         <constructor-arg name="emailFromAddress" value="${email.from.address}"/>
