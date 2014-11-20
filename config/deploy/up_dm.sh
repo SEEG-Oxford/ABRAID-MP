@@ -26,7 +26,7 @@ else
 fi
 
 echo "[[ DM | Ensuring correct file permissions ]]"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/datamanager/"
+permissionFix "abraid:abraid" "$ABRAID_SUPPORT_PATH/datamanager/"
 chmod +x "$ABRAID_SUPPORT_PATH/datamanager/datamanager.sh"
 
 echo "[[ DM | Done ]]"

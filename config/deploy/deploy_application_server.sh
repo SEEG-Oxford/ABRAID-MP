@@ -95,7 +95,7 @@ read -p "You should now update all modelling servers before continuing. Press [e
 echo "[[ Restarting services ]]"
 service gunicorn start > /dev/null
 service tomcat7 start > /dev/null
-echo -e "#\x21/bin/sh\n\n/var/lib/abraid/datamanager/datamanager.sh" > "/etc/cron.hourly/abraid"
+echo -e "#\x21/bin/sh\n\nsudo -H -u abraid /var/lib/abraid/datamanager/datamanager.sh" > "/etc/cron.hourly/abraid"
 
 # Remove under-construction page
 echo "[[ Removing under-construction page ]]"
