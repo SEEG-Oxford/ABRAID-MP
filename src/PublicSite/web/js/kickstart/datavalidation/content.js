@@ -22,7 +22,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                  SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
 
-            var modal = new ModalView(doc.getElementById("helpModal"), data.showHelpText);
+            var modal = new ModalView(doc.getElementById("helpModal"), data.showHelpText);  // jshint ignore:line
 
             ko.applyBindings(
                 new SpinnerViewModel(),
