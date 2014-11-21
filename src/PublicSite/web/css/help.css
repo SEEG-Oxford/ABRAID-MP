@@ -1,12 +1,27 @@
+/**
+ * Styling for PublicSite Help page
+ * Copyright (c) 2014 University of Oxford
+ */
+
 body {
     text-align: justify;
     padding: 15px;
 }
-.panel {
-    border: 1px solid #e3e3e3;
+/* Keep link behaviour consistent with map button behaviour from Leaflet (remove underline) */
+a {
+    text-decoration: none !important;
+}
+.panel-heading-custom :hover {
+    background-color: rgb(244, 244, 244);
 }
 .panel-title {
     color: rgb(51, 51, 51);
+}
+.panel {
+    border: 1px solid #e3e3e3;
+}
+.panel-heading-custom {
+    border-bottom: 1px solid #e3e3e3;
 }
 .expander {
     display: none;

@@ -20,19 +20,21 @@
 </head>
 <body>
 <#macro panelHeading panel title>
-    <div class="panel-heading">
-        <a class="collapsed" data-toggle="collapse" href=${panel}>
-            <h4 class="panel-title">
-                <strong>${title}</strong>
-                <button class="close expander">
-                    <span class="glyphicon glyphicon-chevron-down"></span>
-                </button>
-                <button class="close collapser">
-                    <span class="glyphicon glyphicon-chevron-up"></span>
-                </button>
-            </h4>
-        </a>
-    </div>
+    <a class="collapsed" data-toggle="collapse" href=${panel}>
+        <div class="panel-heading-custom">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <strong>${title}</strong>
+                    <button class="close expander">
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </button>
+                    <button class="close collapser">
+                        <span class="glyphicon glyphicon-chevron-up"></span>
+                    </button>
+                </h4>
+            </div>
+        </div>
+    </a>
 </#macro>
     <div class="panel-group">
         <div class="panel">
@@ -130,7 +132,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Base url -->
     <script>
         var baseUrl = "<@spring.url '/'/>";
