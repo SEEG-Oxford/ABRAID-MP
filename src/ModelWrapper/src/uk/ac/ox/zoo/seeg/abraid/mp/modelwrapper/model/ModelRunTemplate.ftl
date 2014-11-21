@@ -30,7 +30,7 @@ occurrence_path <- "${occurrence_file}"
 extent_path <- "${extent_file}"
 
 # Define covariates to use.
-# If you would like to use these covariate files please contact TBD@TBD.com, as we cannot release them in all circumstances.
+# If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
 covariate_paths <- c(
 <#list covariate_files as covariate>
     "${covariate}"<#if covariate_has_next>,</#if>
@@ -38,7 +38,7 @@ covariate_paths <- c(
 )
 
 # Define admin unit rasters to use.
-# If you would like to use these admin unit rasters (or related shape files) please contact TBD@TBD.com, as we cannot release them in all circumstances.
+# If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
 admin1_path <- "${admin1_file}"
 admin2_path <- "${admin2_file}"
 
