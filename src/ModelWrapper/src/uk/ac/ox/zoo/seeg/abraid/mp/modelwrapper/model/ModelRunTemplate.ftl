@@ -20,9 +20,6 @@ max_cpus <- ${max_cpu?c}
 # Set parallel execution
 parallel_flag <- TRUE
 
-# Set dry run
-dry_run <- ${dry_run?string("TRUE","FALSE")}
-
 # Define occurrence data
 occurrence_path <- "${occurrence_file}"
 
@@ -52,18 +49,18 @@ local({r <- getOption("repos")
 })
 
 # Load devtools
-if (!dry_run && !require('devtools', quietly=TRUE)) {
+if (!require('devtools', quietly=TRUE)) {
     install.packages('devtools', quiet=TRUE)
     library('devtools', quietly=TRUE)
 }
 
+<#if !dry_run>
 # Load the model and its dependencies via devtools
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
-if (!dry_run) {
-    install_deps('model')
-    load_all('model', recompile=TRUE)
-    rasterOptions(tmpdir="temp")
-}
+install_deps('model')
+load_all('model', recompile=TRUE)
+rasterOptions(tmpdir="temp")
+</#if>
 
 # Define a function that can be used to load the model on cluster nodes
 load_seegSDM <- function () {
@@ -72,6 +69,7 @@ load_seegSDM <- function () {
     rasterOptions(tmpdir="temp")
 }
 
+<#if dry_run>
 # Define a function to create an output raster for model dry runs
 create_dry_run_raster <- function(suffix, output_path) {
     # Get disease abbreviation (working directory prefix before underscore)
@@ -95,55 +93,60 @@ create_dry_run_raster <- function(suffix, output_path) {
     }
 }
 
+do_dry_run <- function() {
+    # Create a small fake result set
+    if (!require('rgdal', quietly=TRUE)) {
+        install.packages('rgdal', quiet=TRUE)
+        library('rgdal', quietly=TRUE)
+    }
+    if (!require('raster', quietly=TRUE)) {
+        install.packages('raster', quiet=TRUE)
+        library('raster', quietly=TRUE)
+    }
+    rasterOptions(tmpdir="temp")
+    dir.create('results')
+    create_dry_run_raster("mean", "results/mean_prediction.tif")
+    create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
+    fileConn <- file("results/statistics.csv")
+    writeLines(c(
+        '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
+        '1,2,3,4,5,6,7,8,9,10,11,12,13'
+    ), fileConn)
+    close(fileConn)
+    fileConn <- file("results/relative_influence.csv")
+    writeLines(c(
+        '"","mean","2.5%","97.5%"',
+        '"1",2,3,4'
+    ), fileConn)
+    close(fileConn)
+    fileConn <- file("results/effect_curves.csv")
+    writeLines(c(
+        '"","covariate","covariate","mean","2.5%","97.5%"',
+        '"1","upr_u","0","-3","-5","0.3"'
+    ), fileConn)
+    close(fileConn)
+}
+</#if>
+
 # Run the model
 result <- tryCatch({
     innerResult <- -1
-    if (!dry_run) {
-        innerResult <- runABRAID(
-            occurrence_path,
-            extent_path,
-            admin1_path,
-            admin2_path,
-            covariate_paths,
-            rep(FALSE, length(covariate_paths)),
-            verbose,
-            max_cpus,
-            load_seegSDM,
-            parallel_flag)
-    } else {
-        # Create a small fake result set
-        if (!require('rgdal', quietly=TRUE)) {
-            install.packages('rgdal', quiet=TRUE)
-            library('rgdal', quietly=TRUE)
-        }
-        if (!require('raster', quietly=TRUE)) {
-            install.packages('raster', quiet=TRUE)
-            library('raster', quietly=TRUE)
-        }
-        rasterOptions(tmpdir="temp")
-        dir.create('results')
-        create_dry_run_raster("mean", "results/mean_prediction.tif")
-        create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
-        fileConn <- file("results/statistics.csv")
-        writeLines(c(
-            '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
-            '1,2,3,4,5,6,7,8,9,10,11,12,13'
-        ), fileConn)
-        close(fileConn)
-        fileConn <- file("results/relative_influence.csv")
-        writeLines(c(
-            '"","mean","2.5%","97.5%"',
-            '"1",2,3,4'
-        ), fileConn)
-        close(fileConn)
-        fileConn <- file("results/effect_curves.csv")
-        writeLines(c(
-            '"","covariate","covariate","mean","2.5%","97.5%"',
-            '"1","upr_u","0","-3","-5","0.3"'
-        ), fileConn)
-        close(fileConn)
-        innerResult <- 0
-    }
+    <#if dry_run>
+    do_dry_run()
+    innerResult <- 0
+    <#else>
+    innerResult <- runABRAID(
+        occurrence_path,
+        extent_path,
+        admin1_path,
+        admin2_path,
+        covariate_paths,
+        rep(FALSE, length(covariate_paths)),
+        verbose,
+        max_cpus,
+        load_seegSDM,
+        parallel_flag)
+    </#if>
     innerResult # return
 }, error = function(e) {
     print(paste("Error:  ", e))
