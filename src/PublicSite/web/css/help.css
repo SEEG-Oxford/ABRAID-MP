@@ -1,0 +1,22 @@
+body {
+    text-align: justify;
+    padding: 15px;
+}
+.panel {
+    border: 1px solid #e3e3e3;
+}
+.panel-title {
+    color: rgb(51, 51, 51);
+}
+.expander {
+    display: none;
+}
+.collapser {
+    display: block;
+}
+.collapsed .expander {
+    display: block;
+}
+.collapsed .collapser {
+    display: none;
+}

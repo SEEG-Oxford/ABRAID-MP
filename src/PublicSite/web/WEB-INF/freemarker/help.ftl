@@ -16,18 +16,24 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap-theme.css">
-
-    <style>
-        body {
-            text-align: justify;
-            padding: 15px;
-        }
-        .panel {
-            border: 1px solid #e3e3e3;
-        }
-    </style>
+    <link rel="stylesheet" href="<@spring.url"/css/help.css"/>">
 </head>
 <body>
+<#macro panelHeading panel title>
+    <div class="panel-heading">
+        <a class="collapsed" data-toggle="collapse" href=${panel}>
+            <h4 class="panel-title">
+                <strong>${title}</strong>
+                <button class="close expander">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                </button>
+                <button class="close collapser">
+                    <span class="glyphicon glyphicon-chevron-up"></span>
+                </button>
+            </h4>
+        </a>
+    </div>
+</#macro>
     <div class="panel-group">
         <div class="panel">
             <div class="panel-body">
@@ -37,22 +43,16 @@
                     opinion on the geographical extent of a disease at a national/state level. Both contributions will
                     feed into our mapping process and help ensure the final outputs are valid.
                 </p>
-                <p><small>
-                    *As a disease expert you are either an expert on a particular disease or disease class, or an
+                <p>
+                    * As a disease expert you are either an expert on a particular disease or disease class, or an
                     expert on the range of diseases found within a particular geographical region, or a combination of
                     both. All expertise in these fields is useful, and you are not expected to validate or comment on
                     areas outside your field of expertise.
-                </small></p>
+                </p>
             </div>
         </div>
         <div class="panel">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" href="#diseaseOccurrencePanel">
-                        <strong>Validating new disease occurrence data points</strong>
-                    </a>
-                </h4>
-            </div>
+            <@panelHeading panel="#diseaseOccurrencePanel" title="Validating new disease occurrence data points"></@panelHeading>
             <div id="diseaseOccurrencePanel" class="panel-collapse collapse">
                 <div class="panel-body">
                     <p>
@@ -84,21 +84,15 @@
                         not, and <i>unsure</i> if there is uncertainty in the occurrence of this disease at this place. 
                         Once you have validated a point, it will disappear from the map.
                     </p>
-                    <p><small>
-                        *By "currently" we mean that the disease is extant at the location, i.e. it has not been
+                    <p>
+                        * By "currently" we mean that the disease is extant at the location, i.e. it has not been
                         eliminated, even if there are seasons when new cases are not seen.
-                    </small></p>
+                    </p>
                 </div>
             </div>
         </div>
         <div class="panel">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" href="#diseaseExtentPanel">
-                        <strong>Providing an expert opinion on the geographical extent of a disease</strong>
-                    </a>
-                </h4>
-            </div>
+            <@panelHeading panel="#diseaseExtentPanel" title="Providing an expert opinion on the geographical extent of a disease"></@panelHeading>
             <div id="diseaseExtentPanel" class="panel-collapse collapse">
                 <div class="panel-body">
                     <p>

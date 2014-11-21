@@ -11,7 +11,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
                     <span class="sr-only">Close</span>
                 </button>
                 <h4 class="modal-title" id="helpModalLabel">ABRAID-MP Data Validation</h4>
