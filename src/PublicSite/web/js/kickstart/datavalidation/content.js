@@ -11,15 +11,18 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/datavalidation/CounterViewModel",
         "app/datavalidation/LatestOccurrencesViewModel",
         "app/datavalidation/MapView",
+        "app/datavalidation/ModalView",
         "app/datavalidation/SelectedPointViewModel",
         "app/datavalidation/SelectedLayerViewModel",
         "app/datavalidation/SelectedAdminUnitViewModel",
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
         "domReady!"
-    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, SelectedPointViewModel,
+    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, setupModal, SelectedPointViewModel,
                  SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
+            setupModal(doc.getElementById("helpModal"), data.showHelpText);
+
             ko.applyBindings(
                 new SpinnerViewModel(),
                 doc.getElementById("spinner")
@@ -44,15 +47,6 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                 new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),
                 doc.getElementById("layerSelector")
             );
-
-            // Prevent mouse events propagating to map movements when help text modal is open.
-            var helpModal = $("#helpModal");
-            helpModal.on("mousedown mousewheel", function (e) {
-                e.stopPropagation();
-            });
-            if (data.showHelpText) {
-                helpModal.modal("show");
-            }
         }
     );
 });
