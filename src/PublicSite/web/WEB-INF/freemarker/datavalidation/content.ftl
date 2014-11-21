@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </head>
 <body>
@@ -35,7 +36,7 @@
             <#include "latestoccurrencespanel.ftl"/>
             <div id="spinner" data-bind="fadeVisible: { visible: visible() }">
                 <i class="fa fa-3x fa-spinner fa-spin"></i>
-                <div class="overlayBackground"></div>
+                <div class="background"></div>
             </div>
         </div>
     </div>

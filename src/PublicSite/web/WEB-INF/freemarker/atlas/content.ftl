@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/atlas.css" />">
 </head>
 <body>
     <div id="map">
@@ -39,8 +40,8 @@
                 <i style="background-color:#91ab84;"></i><span>0</span><br>
             </div>
         </div>
-        <#include "atlasdisclaimer.ftl"/>
     </div>
+    <#include "atlasdisclaimer.ftl"/>
 
     <!-- Base url -->
     <script>
