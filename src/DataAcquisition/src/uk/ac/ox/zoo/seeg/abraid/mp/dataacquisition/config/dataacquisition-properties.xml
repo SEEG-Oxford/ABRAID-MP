@@ -12,5 +12,5 @@
 
     <context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:conf/application/dataacquisition.properties"/>
     <context:property-placeholder order="1" ignore-unresolvable="true" ignore-resource-not-found="true" location="file:/var/lib/abraid/conf/application/dataacquisition.properties"/>
-    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/dataacquisition-testing.properties" />
+    <context:property-placeholder order="2" ignore-unresolvable="true" ignore-resource-not-found="true" location="classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/dataacquisition-testing.properties" />
 </beans>
