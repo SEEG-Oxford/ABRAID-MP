@@ -250,6 +250,11 @@ public class ModelRunDetailsControllerTest {
         when(occurrence.getFinalWeighting()).thenReturn(3.0);
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
         when(occurrence.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
+        when(occurrence.getAlert()).thenReturn(mock(Alert.class));
+        when(occurrence.getAlert().getFeed()).thenReturn(mock(Feed.class));
+        when(occurrence.getAlert().getFeed().getName()).thenReturn("feed");
+        when(occurrence.getAlert().getFeed().getProvenance()).thenReturn(mock(Provenance.class));
+        when(occurrence.getAlert().getFeed().getProvenance().getName()).thenReturn("provenance");
 
         ModelRun modelRun = mockCompletedModelRunWithOccurrences(Arrays.asList(occurrence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
@@ -260,13 +265,15 @@ public class ModelRunDetailsControllerTest {
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        WrappedList<JsonDiseaseOccurrence> body = (WrappedList<JsonDiseaseOccurrence>) response.getBody();
+        WrappedList<JsonDownloadDiseaseOccurrence> body = (WrappedList<JsonDownloadDiseaseOccurrence>) response.getBody();
         assertThat(body.getList()).hasSize(1);
         assertThat(body.getList().get(0).getLongitude()).isEqualTo(1.0);
         assertThat(body.getList().get(0).getLatitude()).isEqualTo(2.0);
         assertThat(body.getList().get(0).getWeight()).isEqualTo(3.0);
         assertThat(body.getList().get(0).getAdmin()).isEqualTo(LocationPrecision.ADMIN1.getModelValue());
         assertThat(body.getList().get(0).getGaul()).isEqualTo("1234");
+        assertThat(body.getList().get(0).getProvenance()).isEqualTo("provenance");
+        assertThat(body.getList().get(0).getFeed()).isEqualTo("feed");
     }
 
     @Test
@@ -313,8 +320,8 @@ public class ModelRunDetailsControllerTest {
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        WrappedList<JsonDiseaseOccurrence> body =
-                (WrappedList<JsonDiseaseOccurrence>) response.getBody();
+        WrappedList<JsonDownloadDiseaseOccurrence> body =
+                (WrappedList<JsonDownloadDiseaseOccurrence>) response.getBody();
         assertThat(body.getList()).isEmpty();
     }
 

@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModellingDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonNamedCrs;
 
 import java.io.File;
@@ -38,14 +38,14 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.getFeatures().size(), targetFile.toString()));
         validateOccurrenceCollection(occurrenceData);
 
-        List<JsonDiseaseOccurrence> occurrences = new ArrayList<>();
+        List<JsonModellingDiseaseOccurrence> occurrences = new ArrayList<>();
         for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
             validateOccurrence(occurrence);
-            occurrences.add(new JsonDiseaseOccurrence(occurrence));
+            occurrences.add(new JsonModellingDiseaseOccurrence(occurrence));
         }
 
         CsvMapper csvMapper = new CsvMapper();
-        CsvSchema schema = csvMapper.schemaFor(JsonDiseaseOccurrence.class).withHeader();
+        CsvSchema schema = csvMapper.schemaFor(JsonModellingDiseaseOccurrence.class).withHeader();
         try (FileOutputStream fileStream = new FileOutputStream(targetFile.getAbsoluteFile())) {
             csvMapper.writer(schema).writeValue(fileStream, occurrences);
             fileStream.flush();
