@@ -20,6 +20,8 @@
     <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager" autowire="constructor"/>
 
     <!-- Main bean (program entry point) -->
-    <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor"/>
+    <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor">
+        <constructor-arg name="applicationVersion" value="${application.version}"/>
+    </bean>
 
 </beans>
