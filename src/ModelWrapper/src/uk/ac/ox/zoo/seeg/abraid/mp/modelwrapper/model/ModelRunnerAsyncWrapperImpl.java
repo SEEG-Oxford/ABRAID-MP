@@ -49,6 +49,7 @@ public class ModelRunnerAsyncWrapperImpl extends AbstractAsynchronousActionHandl
                 try {
                     handler = modelRunner.runModel(
                             configuration, occurrenceData, extentWeightings, modelStatusReporter);
+                    handler.waitForCompletion();
                 } catch (Exception e) {
                     LOGGER.error(String.format(LOG_ERROR_DURING_THE_MODEL_SETUP, configuration.getRunName()), e);
                     modelStatusReporter.report(ModelRunStatus.FAILED, "", String.format(SETUP_FAILED_MESSAGE, e));

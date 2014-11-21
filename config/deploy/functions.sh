@@ -242,7 +242,7 @@ installWar() {
 
   if [[ -f "$WAR_TEMP_DIR/$WAR_PATH/WEB-INF/classes/log4j.properties" ]]; then
     sed -i "s|^log4j\.rootLogger\=.*$|log4j.rootLogger=ERROR, logfile|g" "$WAR_TEMP_DIR/$WAR_PATH/WEB-INF/classes/log4j.properties"
-  done
+  fi
 
   echo "[[ $WAR_ID | Performing update ]]"
   dirAsk "$WAR_TEMP_DIR/$WAR_PATH" "$WEBAPP_PATH/$WAR_PATH"
