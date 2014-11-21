@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for JsonDiseaseOccurrence.
+ * Tests for JsonDownloadDiseaseOccurrence.
  * Copyright (c) 2014 University of Oxford
  */
-public class JsonDiseaseOccurrenceTest {
+public class JsonDownloadDiseaseOccurrenceTest {
     @Test
     public void explicitConstructorBindsFieldsCorrectly() {
         // Arrange
@@ -23,9 +23,11 @@ public class JsonDiseaseOccurrenceTest {
         double weight = 9;
         int admin = 10;
         String gaul = "gaul";
+        String provenance = "provenance";
+        String feed = "feed";
 
         // Act
-        JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(longitude, latitude, weight, admin, gaul);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(longitude, latitude, weight, admin, gaul, provenance, feed);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -33,6 +35,8 @@ public class JsonDiseaseOccurrenceTest {
         assertThat(result.getWeight()).isEqualTo(weight);
         assertThat(result.getAdmin()).isEqualTo(admin);
         assertThat(result.getGaul()).isEqualTo(gaul);
+        assertThat(result.getProvenance()).isEqualTo(provenance);
+        assertThat(result.getFeed()).isEqualTo(feed);
     }
 
     @Test
@@ -42,9 +46,11 @@ public class JsonDiseaseOccurrenceTest {
         double latitude = 8;
         double weight = 9;
         int admin = 10;
+        String provenance = "provenance";
+        String feed = "feed";
 
         // Act
-        JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(longitude, latitude, weight, admin, null);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(longitude, latitude, weight, admin, null, provenance, feed);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -52,6 +58,8 @@ public class JsonDiseaseOccurrenceTest {
         assertThat(result.getWeight()).isEqualTo(weight);
         assertThat(result.getAdmin()).isEqualTo(admin);
         assertThat(result.getGaul()).isEqualTo("NA");
+        assertThat(result.getProvenance()).isEqualTo(provenance);
+        assertThat(result.getFeed()).isEqualTo(feed);
     }
 
     @Test
@@ -61,6 +69,8 @@ public class JsonDiseaseOccurrenceTest {
         double weight = 9;
         int admin = LocationPrecision.ADMIN1.getModelValue();
         String gaul = "1234";
+        String provenance = "provenance";
+        String feed = "feed";
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
         when(mock.getLocation()).thenReturn(mock(Location.class));
@@ -70,9 +80,14 @@ public class JsonDiseaseOccurrenceTest {
         when(mock.getFinalWeighting()).thenReturn(weight);
         when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
         when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
+        when(mock.getAlert()).thenReturn(mock(Alert.class));
+        when(mock.getAlert().getFeed()).thenReturn(mock(Feed.class));
+        when(mock.getAlert().getFeed().getName()).thenReturn(feed);
+        when(mock.getAlert().getFeed().getProvenance()).thenReturn(mock(Provenance.class));
+        when(mock.getAlert().getFeed().getProvenance().getName()).thenReturn(provenance);
 
         // Act
-        JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(mock);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -80,6 +95,8 @@ public class JsonDiseaseOccurrenceTest {
         assertThat(result.getWeight()).isEqualTo(weight);
         assertThat(result.getAdmin()).isEqualTo(admin);
         assertThat(result.getGaul()).isEqualTo(gaul);
+        assertThat(result.getProvenance()).isEqualTo(provenance);
+        assertThat(result.getFeed()).isEqualTo(feed);
     }
 
     @Test
@@ -88,6 +105,8 @@ public class JsonDiseaseOccurrenceTest {
         double latitude = 8;
         double weight = 9;
         int admin = LocationPrecision.ADMIN1.getModelValue();
+        String provenance = "provenance";
+        String feed = "feed";
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
         when(mock.getLocation()).thenReturn(mock(Location.class));
@@ -97,9 +116,14 @@ public class JsonDiseaseOccurrenceTest {
         when(mock.getFinalWeighting()).thenReturn(weight);
         when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
         when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(null);
+        when(mock.getAlert()).thenReturn(mock(Alert.class));
+        when(mock.getAlert().getFeed()).thenReturn(mock(Feed.class));
+        when(mock.getAlert().getFeed().getName()).thenReturn(feed);
+        when(mock.getAlert().getFeed().getProvenance()).thenReturn(mock(Provenance.class));
+        when(mock.getAlert().getFeed().getProvenance().getName()).thenReturn(provenance);
 
         // Act
-        JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(mock);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -107,90 +131,31 @@ public class JsonDiseaseOccurrenceTest {
         assertThat(result.getWeight()).isEqualTo(weight);
         assertThat(result.getAdmin()).isEqualTo(admin);
         assertThat(result.getGaul()).isEqualTo("NA");
-    }
-
-    @Test
-    public void geoJsonObjectConstructorBindsFieldsCorrectly() {
-        double longitude = 7;
-        double latitude = 8;
-        double weight = 9;
-        int admin = LocationPrecision.ADMIN1.getModelValue();
-        String gaul = "1234";
-
-        DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
-        when(mock.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
-        when(mock.getAlert()).thenReturn(mock(Alert.class));
-        when(mock.getAlert().getFeed()).thenReturn(mock(Feed.class));
-        when(mock.getLocation()).thenReturn(mock(Location.class));
-        when(mock.getLocation().getGeom()).thenReturn(mock(Point.class));
-        when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
-        when(mock.getLocation().getGeom().getY()).thenReturn(latitude);
-        when(mock.getFinalWeighting()).thenReturn(weight);
-        when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
-        when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
-
-        // Act
-        JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(new GeoJsonDiseaseOccurrenceFeature(mock));
-
-        // Assert
-        assertThat(result.getLongitude()).isEqualTo(longitude);
-        assertThat(result.getLatitude()).isEqualTo(latitude);
-        assertThat(result.getWeight()).isEqualTo(weight);
-        assertThat(result.getAdmin()).isEqualTo(admin);
-        assertThat(result.getGaul()).isEqualTo(gaul);
-    }
-
-    @Test
-    public void geoJsonObjectConstructorBindsFieldsCorrectlyWithNullGAUL() {
-        double longitude = 7;
-        double latitude = 8;
-        double weight = 9;
-        int admin = LocationPrecision.ADMIN1.getModelValue();
-
-        DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
-        when(mock.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
-        when(mock.getAlert()).thenReturn(mock(Alert.class));
-        when(mock.getAlert().getFeed()).thenReturn(mock(Feed.class));
-        when(mock.getLocation()).thenReturn(mock(Location.class));
-        when(mock.getLocation().getGeom()).thenReturn(mock(Point.class));
-        when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
-        when(mock.getLocation().getGeom().getY()).thenReturn(latitude);
-        when(mock.getFinalWeighting()).thenReturn(weight);
-        when(mock.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
-        when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(null);
-
-        // Act
-        JsonDiseaseOccurrence result = new JsonDiseaseOccurrence(new GeoJsonDiseaseOccurrenceFeature(mock));
-
-        // Assert
-        assertThat(result.getLongitude()).isEqualTo(longitude);
-        assertThat(result.getLatitude()).isEqualTo(latitude);
-        assertThat(result.getWeight()).isEqualTo(weight);
-        assertThat(result.getAdmin()).isEqualTo(admin);
-        assertThat(result.getGaul()).isEqualTo("NA");
+        assertThat(result.getProvenance()).isEqualTo(provenance);
+        assertThat(result.getFeed()).isEqualTo(feed);
     }
 
     @Test
     public void serializesCorrectly() throws JsonProcessingException {
         // Arrange
-        JsonDiseaseOccurrence target = new JsonDiseaseOccurrence(7, 6, 5, 4, "3");
+        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(7, 6, 5, 4, "3", "2", "1");
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
 
         // Assert
-        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"3\"}");
+        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"3\",\"Provenance\":\"2\",\"Feed\":\"1\"}");
     }
 
     @Test
     public void serializesCorrectlyWithNull() throws JsonProcessingException {
         // Arrange
-        JsonDiseaseOccurrence target = new JsonDiseaseOccurrence(7, 6, 5, 4, null);
+        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(7, 6, 5, 4, null, "2", "1");
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
 
         // Assert
-        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\"}");
+        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\",\"Provenance\":\"2\",\"Feed\":\"1\"}");
     }
 }

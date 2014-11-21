@@ -111,7 +111,7 @@ public class ModelRunDetailsController extends AbstractController {
             value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
     @Transactional
     @ResponseBody
-    public ResponseEntity<WrappedList<JsonDiseaseOccurrence>> getInputDiseaseOccurrences(
+    public ResponseEntity<WrappedList<JsonDownloadDiseaseOccurrence>> getInputDiseaseOccurrences(
             @PathVariable String modelRunName) {
         ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
         if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
@@ -158,12 +158,12 @@ public class ModelRunDetailsController extends AbstractController {
         return new WrappedList<>(dtos);
     }
 
-    private WrappedList<JsonDiseaseOccurrence> convertToJsonDiseaseOccurrenceDtos(
+    private WrappedList<JsonDownloadDiseaseOccurrence> convertToJsonDiseaseOccurrenceDtos(
             List<DiseaseOccurrence> inputDiseaseOccurrences) {
-        List<JsonDiseaseOccurrence> json = new ArrayList<>();
+        List<JsonDownloadDiseaseOccurrence> json = new ArrayList<>();
         if (!inputDiseaseOccurrences.isEmpty()) {
             for (DiseaseOccurrence inputDiseaseOccurrence : inputDiseaseOccurrences) {
-                json.add(new JsonDiseaseOccurrence(inputDiseaseOccurrence));
+                json.add(new JsonDownloadDiseaseOccurrence(inputDiseaseOccurrence));
             }
         }
         return new WrappedList<>(json);

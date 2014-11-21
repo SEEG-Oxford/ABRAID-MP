@@ -3,15 +3,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.ObjectUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
 /**
  * A DTO to represent a DiseaseOccurrence in an R compatible form (NA instead of null).
- * Used for CSV serialization of occurrences.
+ * Used for CSV serialization of occurrences for modelling.
  * Copyright (c) 2014 University of Oxford
  */
 @JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul" })
-public class JsonDiseaseOccurrence {
+public class JsonModellingDiseaseOccurrence {
     private static final String R_CODE_NULL_IDENTIFIER = "NA";
 
     @JsonProperty("Longitude")
@@ -29,7 +28,7 @@ public class JsonDiseaseOccurrence {
     @JsonProperty("GAUL")
     private String gaul;
 
-    public JsonDiseaseOccurrence(double longitude, double latitude, double weight, int admin, String gaul) {
+    public JsonModellingDiseaseOccurrence(double longitude, double latitude, double weight, int admin, String gaul) {
         setLongitude(longitude);
         setLatitude(latitude);
         setWeight(weight);
@@ -37,15 +36,7 @@ public class JsonDiseaseOccurrence {
         setGaul(gaul);
     }
 
-    public JsonDiseaseOccurrence(DiseaseOccurrence inputDiseaseOccurrence) {
-        this(inputDiseaseOccurrence.getLocation().getGeom().getX(),
-            inputDiseaseOccurrence.getLocation().getGeom().getY(),
-            inputDiseaseOccurrence.getFinalWeighting(),
-            inputDiseaseOccurrence.getLocation().getPrecision().getModelValue(),
-            extractGaulString(inputDiseaseOccurrence.getLocation().getAdminUnitQCGaulCode()));
-    }
-
-    public JsonDiseaseOccurrence(GeoJsonDiseaseOccurrenceFeature occurrence) {
+    public JsonModellingDiseaseOccurrence(GeoJsonDiseaseOccurrenceFeature occurrence) {
         this(occurrence.getGeometry().getCoordinates().getLongitude(),
             occurrence.getGeometry().getCoordinates().getLatitude(),
             occurrence.getProperties().getWeighting(),
@@ -53,7 +44,12 @@ public class JsonDiseaseOccurrence {
             extractGaulString(occurrence.getProperties().getGaulCode()));
     }
 
-    private static String extractGaulString(Integer gaul) {
+    /**
+     * Handles null gaul codes appropriately. For use in constructors.
+     * @param gaul The gaul code.
+     * @return The gaul code string.
+     */
+    protected static String extractGaulString(Integer gaul) {
         return (gaul == null) ? null : ObjectUtils.toString(gaul);
     }
 
