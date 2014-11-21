@@ -14,8 +14,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap-theme.css">
     <link rel="stylesheet" href="<@spring.url"/css/help.css"/>">
 </head>
 <body>
@@ -41,7 +41,7 @@
             <div class="panel-body">
                 <p>
                     The Data Validator allows disease experts* to contribute to two components of the ABRAID platform.
-                    Experts can validate new disease occurrence data coming in to the platform, and provide an expert
+                    Experts can validate new disease occurrence data coming into the platform, and provide an expert
                     opinion on the geographical extent of a disease at a national/state level. Both contributions will
                     feed into our mapping process and help ensure the final outputs are valid.
                 </p>
@@ -82,7 +82,7 @@
                         in the right-hand side panel. Three buttons are provided in the right-hand panel - <i>valid</i>,
                         <i>unsure</i>, <i>invalid</i> - and the fourth option is to ignore a data point altogether if it
                         is outside your area of expertise. Click <i>valid</i> if, in your expert opinion, the named 
-                        disease currently** occurs at the place specified, <i>invalid</i> if your opinion is that it does
+                        disease currently* occurs at the place specified, <i>invalid</i> if your opinion is that it does
                         not, and <i>unsure</i> if there is uncertainty in the occurrence of this disease at this place. 
                         Once you have validated a point, it will disappear from the map.
                     </p>
@@ -139,6 +139,6 @@
     </script>
     
     <!-- Require -->
-    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/help' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
+    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/help' />" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>
 </html>

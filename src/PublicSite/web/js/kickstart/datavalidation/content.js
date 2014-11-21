@@ -18,10 +18,11 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
         "domReady!"
-    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, setupModal, SelectedPointViewModel,
+    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, ModalView, SelectedPointViewModel,
                  SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
-            setupModal(doc.getElementById("helpModal"), data.showHelpText);
+
+            var modal = new ModalView(doc.getElementById("helpModal"), data.showHelpText);
 
             ko.applyBindings(
                 new SpinnerViewModel(),

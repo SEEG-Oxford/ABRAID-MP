@@ -1,3 +1,7 @@
+/**
+ * AMD to define a modal.
+ * Copyright (c) 2014 University of Oxford
+ */
 define(["jquery"], function ($) {
     "use strict";
 

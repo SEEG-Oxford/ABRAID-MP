@@ -1,5 +1,5 @@
 /**
- * AMD for adding Leaflet map and layers for the atlas view.
+ * AMD for adding Leaflet map and layers for the Atlas View.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
  * -- 'active-atlas-layer' - published by LayerSelectorViewModel
