@@ -165,7 +165,7 @@ public class CommonsExecIntegrationTest {
         });
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, null);
+        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
         int exitCode = processHandler.waitForCompletion();
 
         // Assert

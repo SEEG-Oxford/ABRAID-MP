@@ -48,13 +48,13 @@ local({r <- getOption("repos")
     options(repos=r)
 })
 
+<#if !dry_run>
 # Load devtools
 if (!require('devtools', quietly=TRUE)) {
     install.packages('devtools', quiet=TRUE)
     library('devtools', quietly=TRUE)
 }
 
-<#if !dry_run>
 # Load the model and its dependencies via devtools
 # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
 install_deps('model')
@@ -94,6 +94,10 @@ create_dry_run_raster <- function(suffix, output_path) {
 }
 
 do_dry_run <- function() {
+    # Skip dry run on travis
+    if (!is.na(Sys.getenv("CONTINUOUS_INTEGRATION", unset = NA))) {
+        return()
+    }
     # Create a small fake result set
     if (!require('rgdal', quietly=TRUE)) {
         install.packages('rgdal', quiet=TRUE)
