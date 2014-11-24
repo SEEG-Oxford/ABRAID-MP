@@ -4,6 +4,7 @@ define([
     "use strict";
 
     describe("KoCustomRules defines", function () {
+        var wrap = function (value) { return function () { return value; }; };
         var ko = { validation: { rules:  undefined }, utils: {}, bindingContext: { prototype: {} } };
         beforeEach(function (done) {
             if (!ko.validation.rules) {
@@ -23,6 +24,58 @@ define([
             }
         });
 
+        describe("the 'minDate' rule which", function () {
+            var format = "DD MMM YYYY";
+
+            it("checks the threshold date is less than the query date", function () {
+                // Arrange
+                var minDate = "7 Apr 2008";
+                var options = { date: minDate, format: format };
+                // Act
+                expect(ko.validation.rules.minDate.validator("31 Dec 2008", options)).toBe(true);
+                expect(ko.validation.rules.minDate.validator("1 Apr 2007", options)).toBe(false);
+            });
+
+            it("allows the dates to be equal", function () {
+                var date = "24 Nov 2014";
+                var options = { date: date, format: format };
+                expect(ko.validation.rules.minDate.validator(date, options)).toBe(true);
+            });
+
+            it("can handle wrapped values", function () {
+                var minDate = wrap("02 Nov 2013");
+                var options = { date: minDate, format: format };
+                expect(ko.validation.rules.minDate.validator(wrap("01 Dec 2013"), options)).toBe(true);
+                expect(ko.validation.rules.minDate.validator(wrap("31 Oct 2013"), options)).toBe(false);
+            });
+        });
+
+        describe("the 'maxDate' rule which", function () {
+            var format = "DD MMM YYYY";
+
+            it("checks the threshold date is greater than the query date", function () {
+                // Arrange
+                var maxDate = "7 Apr 2008";
+                var options = { date: maxDate, format: format };
+                // Act
+                expect(ko.validation.rules.maxDate.validator("31 Dec 2008", options)).toBe(false);
+                expect(ko.validation.rules.maxDate.validator("1 Apr 2007", options)).toBe(true);
+            });
+
+            it("allows the dates to be equal", function () {
+                var date = "24 Nov 2014";
+                var options = { date: date, format: format };
+                expect(ko.validation.rules.maxDate.validator(date, options)).toBe(true);
+            });
+
+            it("can handle wrapped values", function () {
+                var maxDate = wrap("02 Nov 2013");
+                var options = { date: maxDate, format: format };
+                expect(ko.validation.rules.maxDate.validator(wrap("01 Dec 2013"), options)).toBe(false);
+                expect(ko.validation.rules.maxDate.validator(wrap("31 Oct 2013"), options)).toBe(true);
+            });
+        });
+
         describe("the 'customMin' rule which", function () {
             it("checks the second value is strictly less than the first", function () {
                 expect(ko.validation.rules.customMin.validator(1, 0)).toBe(true);
@@ -38,8 +91,6 @@ define([
             });
 
             it("can validate wrapped values", function () {
-                var wrap = function (value) { return function () { return value; }; };
-
                 expect(ko.validation.rules.customMin.validator(wrap(2), wrap(1))).toBe(true);
                 expect(ko.validation.rules.customMin.validator(wrap(1), wrap(1))).toBe(false);
                 expect(ko.validation.rules.customMin.validator(wrap(1), wrap(2))).toBe(false);
@@ -84,12 +135,6 @@ define([
             });
 
             it("can validate wrapped values", function () {
-                var wrap = function (value) {
-                    return function () {
-                        return value;
-                    };
-                };
-
                 expect(ko.validation.rules.areSame.validator(wrap(1), wrap(wrap(1)))).toBe(true);
                 expect(ko.validation.rules.areSame.validator(wrap(1), wrap(wrap(2)))).toBe(false);
             });
