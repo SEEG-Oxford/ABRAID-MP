@@ -3,11 +3,38 @@
  */
 define([
     "underscore",
+    "moment",
     "knockout",
     "knockout.validation",
     "shared/app/KoCustomUtils"
-], function (_, ko) {
+], function (_, moment, ko) {
     "use strict";
+
+    ko.validation.rules.minDate = {
+        validator: function (valueAccessor, options) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var threshold = ko.utils.recursiveUnwrap(options.date);
+            var format = options.format;
+            return moment(value, format) >= moment(threshold, format);
+        },
+        message: function (options) {
+            var date = moment(ko.utils.recursiveUnwrap(options.date)).format(options.format);
+            return "Please select a date on or after " + date;
+        }
+    };
+
+    ko.validation.rules.maxDate = {
+        validator: function (valueAccessor, options) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            var threshold = ko.utils.recursiveUnwrap(options.date);
+            var format = options.format;
+            return moment(value, format) <= moment(threshold, format);
+        },
+        message: function (options) {
+            var date = moment(ko.utils.recursiveUnwrap(options.date)).format(options.format);
+            return "Please select a date on or before " + date;
+        }
+    };
 
     // Value must be strictly greater than (not equal to) the threshold, but the values are not required. The comparison
     // will only be performed if both values are defined, so 'required: true' must be explicitly used in the extend on
