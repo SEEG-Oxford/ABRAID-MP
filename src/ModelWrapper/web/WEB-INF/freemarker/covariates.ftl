@@ -23,9 +23,9 @@
             <td><input type="checkbox" data-bind="formChecked: state"></td>
             <td>
                 <button class="btn btn-default fa fa-lg fa-trash-o" style="float: right" data-bind="popover: { title: 'Delete file?', trigger: 'focus', placement: 'bottom', template: 'file-list-delete-template'}, click: function(data, event) { event.preventDefault(); }, bootstrapDisable: $parent.isSubmitting()"></button>
-                    <span data-bind="if: info">
-                        <i class="fa fa-lg fa-info-circle text-info" data-bind="tooltip: { title: info, placement: 'bottom' }"></i>&nbsp;
-                    </span>
+                <span data-bind="if: info">
+                    <i class="fa fa-lg fa-info-circle text-info" data-bind="tooltip: { title: info, placement: 'bottom' }"></i>&nbsp;
+                </span>
             </td>
         </tr>
     </@t.tableTemplates>

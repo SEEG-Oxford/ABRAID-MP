@@ -28,7 +28,7 @@
                 <div class="panel-heading">
                     <h2 class="panel-title">
                         <a href="#user-body">
-                            User details
+                            User Details
                         </a>
                     </h2>
                 </div>
@@ -75,7 +75,7 @@
                 <div class="panel-heading">
                     <h2 class="panel-title">
                         <a href="#interests-body">
-                            Disease interests
+                            Disease Interests
                         </a>
                     </h2>
                 </div>
