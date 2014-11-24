@@ -384,6 +384,21 @@ define([
                         expect(subBindings.css().disabled).toBe(accessor());
                     }
                 );
+
+                it("can handle wrapped values", function () {
+                    // Arrange
+                    ko.applyBindingAccessorsToNode = jasmine.createSpy("ko.applyBindingAccessorsToNode");
+                    var element = "5678";
+                    var wrap = function (value) { return function () { return value; }; };
+                    var accessor = function () { return true; };
+                    // Act
+                    ko.bindingHandlers.bootstrapDisable.init(element, wrap(accessor));
+                    // Assert
+                    expect(ko.applyBindingAccessorsToNode.calls.mostRecent().args[0]).toBe(element);
+                    var subBindings = ko.applyBindingAccessorsToNode.calls.mostRecent().args[1];
+                    expect(subBindings.enable()).toBe(!accessor());
+                    expect(subBindings.css().disabled).toBe(accessor());
+                });
             });
 
             describe("the 'formSubmit' binding, which", function () {
