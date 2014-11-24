@@ -1,17 +1,20 @@
 define([
-    "squire"
-], function (Squire) {
+    "squire",
+    "moment"
+], function (Squire, realMoment) {
     "use strict";
 
     describe("KoCustomRules defines", function () {
         var wrap = function (value) { return function () { return value; }; };
         var ko = { validation: { rules:  undefined }, utils: {}, bindingContext: { prototype: {} } };
+        var momentSpy = jasmine.createSpy("momentSpy").and.callFake(realMoment);
         beforeEach(function (done) {
             if (!ko.validation.rules) {
                 ko.validation.rules = { digit: {} };
                 jasmine.Ajax.uninstall();
                 var injector = new Squire();
 
+                injector.mock("moment", momentSpy);
                 injector.mock("knockout", ko);
                 injector.mock("knockout.validation", function () {
                 });
@@ -26,6 +29,18 @@ define([
 
         describe("the 'minDate' rule which", function () {
             var format = "DD MMM YYYY";
+
+            it("parses the dates according to the provided format", function () {
+                // Arrange
+                var date = "";
+                var thresholdDate = "";
+                var options = { date: thresholdDate, format: format };
+                // Act
+                ko.validation.rules.minDate.validator(date, options);
+                // Assert
+                expect(momentSpy).toHaveBeenCalledWith(date, format);
+                expect(momentSpy).toHaveBeenCalledWith(thresholdDate, format);
+            });
 
             it("checks the threshold date is less than the query date", function () {
                 // Arrange
@@ -52,6 +67,17 @@ define([
 
         describe("the 'maxDate' rule which", function () {
             var format = "DD MMM YYYY";
+
+            it("parses the dates according to the provided format", function () {
+                // Arrange
+                var date = "";
+                var thresholdDate = "";
+                // Act
+                ko.validation.rules.maxDate.validator(date, { date: thresholdDate, format: format });
+                // Assert
+                expect(momentSpy).toHaveBeenCalledWith(date, format);
+                expect(momentSpy).toHaveBeenCalledWith(thresholdDate, format);
+            });
 
             it("checks the threshold date is greater than the query date", function () {
                 // Arrange
