@@ -96,12 +96,13 @@ public interface DiseaseService {
      * value, and must have a final weighting. If null, the validation and final weightings are ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise
+     * false.
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            boolean useGoldStandardOccurrences);
+            boolean onlyUseGoldStandardOccurrences);
 
     /**
      * Gets disease occurrences currently in validation, for the specified disease group.
@@ -120,11 +121,12 @@ public interface DiseaseService {
     /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise
+     * false.
      * @return Disease occurrences for a request to run the model.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId,
-                                                                    boolean useGoldStandardOccurrences);
+                                                                    boolean onlyUseGoldStandardOccurrences);
 
     /**
      * Gets the list of new disease occurrences for the specified disease group.

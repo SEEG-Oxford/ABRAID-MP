@@ -489,7 +489,7 @@ public class AdminDiseaseGroupControllerTest {
         ));
 
         // Act
-        ResponseEntity result = controller.syncAllDiseasesWithModelWrapper();
+        controller.syncAllDiseasesWithModelWrapper();
 
         // Assert
         ArgumentCaptor<Collection<DiseaseGroup>> diseaseGroupArgumentCaptor = ArgumentCaptor.forClass((Class) Collection.class);

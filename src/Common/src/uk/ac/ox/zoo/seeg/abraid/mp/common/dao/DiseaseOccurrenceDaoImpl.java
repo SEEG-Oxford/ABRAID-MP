@@ -123,14 +123,15 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * value, and must have a final weighting. If null, the validation and final weightings are ignored.
      * @param minimumOccurrenceDate All disease occurrences must have an occurrence date after this value. If null,
      * the occurrence date is ignored.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise
+     * false.
      * @return A list of disease occurrences.
      */
     @Override
     @SuppressWarnings("unchecked")
     public List<DiseaseOccurrence> getDiseaseOccurrencesForDiseaseExtent(
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
-            boolean useGoldStandardOccurrences) {
+            boolean onlyUseGoldStandardOccurrences) {
         String queryString = DISEASE_EXTENT_QUERY;
 
         if (minimumValidationWeighting != null) {
@@ -139,7 +140,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         if (minimumOccurrenceDate != null) {
             queryString += DISEASE_EXTENT_OCCURRENCE_DATE_CLAUSE;
         }
-        if (useGoldStandardOccurrences) {
+        if (onlyUseGoldStandardOccurrences) {
             queryString += GOLD_STANDARD_OCCURRENCES_CLAUSE;
         }
 
@@ -178,14 +179,15 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     /**
      * Gets disease occurrences for a request to run the model.
      * @param diseaseGroupId The ID of the disease group.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be retrieved, otherwise
+     * false.
      * @return Disease occurrences for a request to run the model.
      */
     @Override
     public List<DiseaseOccurrence> getDiseaseOccurrencesForModelRunRequest(Integer diseaseGroupId,
-                                                                           boolean useGoldStandardOccurrences) {
+                                                                           boolean onlyUseGoldStandardOccurrences) {
         String queryString = MODEL_RUN_REQUEST_QUERY;
-        if (useGoldStandardOccurrences) {
+        if (onlyUseGoldStandardOccurrences) {
             queryString += GOLD_STANDARD_OCCURRENCES_CLAUSE;
         } else {
             queryString += MODEL_RUN_REQUEST_FINAL_WEIGHTING_ABOVE_ZERO_CLAUSE;

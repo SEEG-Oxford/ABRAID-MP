@@ -7,7 +7,6 @@ import org.springframework.web.bind.WebDataBinder;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -25,6 +24,6 @@ public class AbstractControllerTest {
         target.initBinder(binder);
 
         // Assert
-        verify(binder, times(1)).registerCustomEditor(eq(String.class), any(StringTrimmerEditor.class));
+        verify(binder).registerCustomEditor(eq(String.class), any(StringTrimmerEditor.class));
     }
 }

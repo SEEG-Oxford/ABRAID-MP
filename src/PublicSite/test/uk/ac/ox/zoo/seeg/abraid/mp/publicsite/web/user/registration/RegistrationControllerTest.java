@@ -83,7 +83,7 @@ public class RegistrationControllerTest {
         String result = target.getAccountPage(mock(ModelMap.class), sessionStatus);
 
         // Assert
-        verify(sessionStatus, times(1)).setComplete();
+        verify(sessionStatus).setComplete();
         assertThat(result).isEqualTo("redirect:/");
     }
 
@@ -96,7 +96,7 @@ public class RegistrationControllerTest {
         String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        verify(modelMap, times(1)).addAttribute(eq("expert"), any(Expert.class));
+        verify(modelMap).addAttribute(eq("expert"), any(Expert.class));
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -112,7 +112,7 @@ public class RegistrationControllerTest {
         String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        verify(validator, times(1)).validateBasicFields(expert);
+        verify(validator).validateBasicFields(expert);
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -128,7 +128,7 @@ public class RegistrationControllerTest {
         String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        verify(validator, times(1)).validateBasicFields(expert);
+        verify(validator).validateBasicFields(expert);
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -145,7 +145,7 @@ public class RegistrationControllerTest {
         String result = target.getAccountPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        verify(validator, times(1)).validateBasicFields(expert);
+        verify(validator).validateBasicFields(expert);
         assertThat(result).isEqualTo("register/account");
     }
 
@@ -195,7 +195,7 @@ public class RegistrationControllerTest {
         String result = target.getDetailsPage(mock(ModelMap.class), sessionStatus);
 
         // Assert
-        verify(sessionStatus, times(1)).setComplete();
+        verify(sessionStatus).setComplete();
         assertThat(result).isEqualTo("redirect:/");
     }
 
@@ -223,7 +223,7 @@ public class RegistrationControllerTest {
         String result = target.getDetailsPage(modelMap, mock(SessionStatus.class));
 
         // Assert
-        verify(validator, times(1)).validateBasicFields(expert);
+        verify(validator).validateBasicFields(expert);
         assertThat(result).isEqualTo("redirect:/register/account");
     }
 
@@ -265,7 +265,7 @@ public class RegistrationControllerTest {
                 mock(ModelMap.class), sessionStatus, mock(JsonExpertBasic.class), mock(ServletRequest.class));
 
         // Assert
-        verify(sessionStatus, times(1)).setComplete();
+        verify(sessionStatus).setComplete();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(result.getBody()).containsOnly("Logged in users cannot create new accounts");
     }
@@ -280,7 +280,7 @@ public class RegistrationControllerTest {
                 mock(ModelMap.class), sessionStatus, mock(JsonExpertBasic.class), mock(ServletRequest.class));
 
         // Assert
-        verify(sessionStatus, times(1)).setComplete();
+        verify(sessionStatus).setComplete();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(result.getBody()).containsOnly("Invalid registration session");
     }
@@ -362,7 +362,7 @@ public class RegistrationControllerTest {
                 mock(ModelMap.class), sessionStatus, mock(JsonExpertDetails.class));
 
         // Assert
-        verify(sessionStatus, times(1)).setComplete();
+        verify(sessionStatus).setComplete();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(result.getBody()).containsOnly("Logged in users cannot create new accounts");
     }
@@ -377,7 +377,7 @@ public class RegistrationControllerTest {
                 mock(ModelMap.class), sessionStatus, mock(JsonExpertDetails.class));
 
         // Assert
-        verify(sessionStatus, times(1)).setComplete();
+        verify(sessionStatus).setComplete();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(result.getBody()).containsOnly("Invalid registration session");
     }
@@ -458,8 +458,8 @@ public class RegistrationControllerTest {
 
         // Hashes password before save
         InOrder inOrder = inOrder(passwordEncoder, expertService);
-        inOrder.verify(passwordEncoder, times(1)).encode("qwe123Q");
-        inOrder.verify(expertService, times(1)).saveExpert(expert);
+        inOrder.verify(passwordEncoder).encode("qwe123Q");
+        inOrder.verify(expertService).saveExpert(expert);
         assertThat(expert.getPassword()).isEqualTo("hash");
     }
 
@@ -484,8 +484,8 @@ public class RegistrationControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         InOrder inOrder = inOrder(passwordEncoder, expertService);
-        inOrder.verify(passwordEncoder, times(1)).encode("qwe123Q");
-        inOrder.verify(expertService, times(1)).saveExpert(expert);
+        inOrder.verify(passwordEncoder).encode("qwe123Q");
+        inOrder.verify(expertService).saveExpert(expert);
         assertThat(expert.getPassword()).isEqualTo("hash");
     }
 
@@ -544,7 +544,7 @@ public class RegistrationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Map<String, Object> data = new HashMap<>();
         data.put("expert", expert);
-        verify(emailService, times(1)).sendEmailInBackground(
+        verify(emailService).sendEmailInBackground(
                 "New user requiring visibility sign off",
                 "registration/newUserEmail.ftl",
                 data);

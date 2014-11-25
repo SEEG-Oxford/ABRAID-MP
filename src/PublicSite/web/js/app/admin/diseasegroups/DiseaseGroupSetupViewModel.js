@@ -30,7 +30,7 @@ define([
         self.batchDateMinimum = ko.observable("");
         self.batchDateMaximum = ko.observable("");
         self.hasGoldStandardOccurrences = ko.observable(false);
-        self.useGoldStandardOccurrences = ko.observable(false);
+        self.onlyUseGoldStandardOccurrences = ko.observable(false);
 
         self.buildSubmissionUrl = function () {
             return baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
@@ -40,7 +40,7 @@ define([
             return {
                 batchStartDate: formatDate(self.batchStartDate()),
                 batchEndDate: formatDate(self.batchEndDate()),
-                useGoldStandardOccurrences: self.useGoldStandardOccurrences()
+                onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences()
             };
         };
 
@@ -51,7 +51,7 @@ define([
         // (3) the form is being submitted (requesting model run, enabling automatic model runs, or generating extent)
         self.disableButtonThatRunsModel = ko.computed(function () {
             var datesValid = self.batchStartDate.isValid() && self.batchEndDate.isValid();
-            return (!self.useGoldStandardOccurrences() && !datesValid) ||
+            return (!self.onlyUseGoldStandardOccurrences() && !datesValid) ||
                 !self.canRunModel() ||
                 self.isSubmitting() ||
                 self.isEnablingAutomaticModelRuns() ||
@@ -62,7 +62,7 @@ define([
         self.generateDiseaseExtent = function () {
             self.notices.removeAll();
             self.isGeneratingDiseaseExtent(true);
-            var data = { useGoldStandardOccurrences: self.useGoldStandardOccurrences() };
+            var data = { onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences() };
             $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/generatediseaseextent", data)
                 .done(function () { self.notices.push({ message: "Disease extent generated.", priority: "success"}); })
                 .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
@@ -103,7 +103,7 @@ define([
             self.hasModelBeenSuccessfullyRun(false);
             self.canRunModel(false);
             self.hasGoldStandardOccurrences(false);
-            self.useGoldStandardOccurrences(false);
+            self.onlyUseGoldStandardOccurrences(false);
         };
 
         self.updateModelRunInfo = function (diseaseGroupId) { // only public for testing

@@ -156,7 +156,6 @@ public class CommonsExecIntegrationTest {
                 new AdminUnitRunConfiguration(true, "", "", "", ""));
 
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        ModelOutputHandlerWebService modelOutputHandlerWebService = mock(ModelOutputHandlerWebService.class);
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
@@ -166,7 +165,7 @@ public class CommonsExecIntegrationTest {
         });
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, null);
+        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
         int exitCode = processHandler.waitForCompletion();
 
         // Assert

@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
-    <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Source+Sans+Pro:600' type='text/css'>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:600" type="text/css">
     <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
@@ -103,6 +103,6 @@
     </script>
 
     <!-- Require -->
-    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/datavalidation/content' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
+    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/datavalidation/content' />" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>
 </html>

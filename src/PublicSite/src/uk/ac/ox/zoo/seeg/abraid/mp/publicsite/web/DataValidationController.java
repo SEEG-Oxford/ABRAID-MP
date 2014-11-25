@@ -27,8 +27,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.*;
-
 /**
  * Controller for the expert data validation map page.
  * Copyright (c) 2014 University of Oxford

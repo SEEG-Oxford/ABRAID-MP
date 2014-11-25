@@ -33,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("No such user.");
         }
 
-        ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+        ArrayList<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority(ROLE_USER));
 
         return new User(expectedUsername, expectedPasswordHash, roles);

@@ -12,7 +12,6 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,35 +92,5 @@ public class ExtentDataWriterTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(IOException.class);
-    }
-
-    private String createExpectation(Map<Integer, Integer> transform, Collection<Integer> allValuesInRaster, String initial) {
-        String expectation = initial;
-        for (Integer sourceInt : allValuesInRaster) {
-            String sourceValue = sourceInt.toString();
-            Integer targetInt = transform.containsKey(sourceInt) ? transform.get(sourceInt) : null;
-
-            // ArcGridWriter writes cell outputs with Double.toString (trailing '.0')
-            String targetValue = (targetInt != null) ? Double.toString(targetInt) : "-9999";
-
-            expectation = expectation.replace(sourceValue, targetValue);
-        }
-
-        // ArcGridWriter does print the leading space on data rows
-        expectation = expectation.replace("\n ", "\n");
-
-        // ArcGridWriter will use the system native line separator
-        expectation = expectation.replace("\n", System.lineSeparator());
-
-        // ArcGridWriter capitalises it's metadata fields
-        expectation = expectation.toUpperCase();
-
-        // ArcGridWriter does not indent it's fields
-        expectation = expectation.replaceAll(" +", " ");
-
-        // ArcGridWriter uses undue precision when printing cell size
-        expectation = expectation.replace("CELLSIZE 0.041666666667", "CELLSIZE 0.04166666666700003");
-
-        return expectation;
     }
 }

@@ -1,12 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +44,7 @@ public class ModelRunnerAsyncWrapperTest {
 
         // Assert
         assertThat(result).isSameAs(expectedResult);
-        verify(mockModelRunner, times(1)).runModel(expectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
+        verify(mockModelRunner).runModel(expectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
     }
 
     @Test
@@ -60,6 +64,79 @@ public class ModelRunnerAsyncWrapperTest {
         future.get();
 
         // Assert
-        verify(mockModelStatusReporter, times(1)).report(ModelRunStatus.FAILED, "", "Model setup failed: java.io.IOException: message");
+        verify(mockModelStatusReporter).report(ModelRunStatus.FAILED, "", "Model setup failed: java.io.IOException: message");
+    }
+
+    private List<String> actions = new ArrayList<>();
+    private boolean pauseModelRun = true;
+    private boolean readyToAssert = false;
+    @Test
+    public void startModelDoesNotTriggerASecondModelRunUntilTheFirstHasCompleted() throws Exception {
+        // Arrange
+        actions.clear();
+        GeoJsonDiseaseOccurrenceFeatureCollection expectedOccurrences = mock(GeoJsonDiseaseOccurrenceFeatureCollection.class);
+        ModelStatusReporter expectedModelStatusReporter = mock(ModelStatusReporter.class);
+        HashMap<Integer, Integer> expectedWeightings = new HashMap<>();
+
+        final RunConfiguration firstExpectedRunConfig = mock(RunConfiguration.class);
+        final ModelProcessHandler firstExpectedHandler = mock(ModelProcessHandler.class);
+
+        final RunConfiguration secondExpectedRunConfig = mock(RunConfiguration.class);
+        final ModelProcessHandler secondExpectedHandler = mock(ModelProcessHandler.class);
+
+        ModelRunner mockModelRunner = mock(ModelRunner.class);
+        when(mockModelRunner.runModel(firstExpectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter)).thenAnswer(
+                new Answer<ModelProcessHandler>() {
+                    @Override
+                    public ModelProcessHandler answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        actions.add("first run started");
+                        return firstExpectedHandler;
+                    }
+                });
+        when(firstExpectedHandler.waitForCompletion()).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                actions.add("first run paused");
+                readyToAssert = true;
+                while (pauseModelRun) {
+                    Thread.sleep(1);
+                }
+                actions.add("first run completed");
+                return 0;
+            }
+        });
+        when(mockModelRunner.runModel(secondExpectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter)).thenAnswer(
+                new Answer<ModelProcessHandler>() {
+                    @Override
+                    public ModelProcessHandler answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        actions.add("second run started");
+                        return secondExpectedHandler;
+                    }
+                });
+        when(secondExpectedHandler.waitForCompletion()).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                actions.add("second run completed");
+                return 0;
+            }
+        });
+
+        ModelRunnerAsyncWrapper target = new ModelRunnerAsyncWrapperImpl(mockModelRunner);
+
+        // Act
+        actions.add("first run triggered");
+        Future<ModelProcessHandler> future1 = target.startModel(firstExpectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
+        actions.add("second run triggered");
+        Future<ModelProcessHandler> future2 = target.startModel(secondExpectedRunConfig, expectedOccurrences, expectedWeightings, expectedModelStatusReporter);
+
+        // Assert
+        while (!readyToAssert) {
+            Thread.sleep(1);
+        }
+        assertThat(actions).containsOnly("first run triggered", "second run triggered", "first run started", "first run paused");
+        pauseModelRun = false;
+        future1.get();
+        future2.get();
+        assertThat(actions).containsSequence("first run completed", "second run started", "second run completed");
     }
 }

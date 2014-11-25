@@ -179,10 +179,9 @@ public class GitSourceCodeManager implements SourceCodeManager {
 
     /**
      * Clones a new copy of the git repository.
-     * @throws IOException
      * @throws GitAPIException
      */
-    private void cloneRepository() throws IOException, GitAPIException {
+    private void cloneRepository() throws GitAPIException {
         String repositoryUrl = configurationService.getModelRepositoryUrl();
 
         LOGGER.info(String.format(LOG_ATTEMPTING_CLONE_REPOSITORY, repositoryUrl));

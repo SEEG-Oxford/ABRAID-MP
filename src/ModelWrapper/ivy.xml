@@ -55,6 +55,7 @@
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="org.springframework" name="spring-context-support" rev="4.0.2.RELEASE" conf="external->default"/>
         <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.3.1" conf="external->default" />
+        <dependency org="com.fasterxml.jackson.dataformat" name="jackson-dataformat-csv" rev="2.3.1" conf="external->default" />
 
         <!-- External: Spring Security -->
         <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.2.RELEASE" conf="external->default"/>

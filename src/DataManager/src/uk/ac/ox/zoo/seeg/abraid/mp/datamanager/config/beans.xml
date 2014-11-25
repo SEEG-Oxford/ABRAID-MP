@@ -5,10 +5,12 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="loggingContextName" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="DataManager"/>
+    </bean>
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/config/beans.xml"/>
 
@@ -18,6 +20,8 @@
     <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager" autowire="constructor"/>
 
     <!-- Main bean (program entry point) -->
-    <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor"/>
+    <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor">
+        <constructor-arg name="applicationVersion" value="${application.version}"/>
+    </bean>
 
 </beans>

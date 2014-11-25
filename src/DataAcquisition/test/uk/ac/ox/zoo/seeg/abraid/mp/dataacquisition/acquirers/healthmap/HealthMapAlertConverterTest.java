@@ -224,7 +224,7 @@ public class HealthMapAlertConverterTest {
         assertThat(newAlert.getUrl()).isEqualTo(originalUrl);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
-        verify(alertService, times(1)).saveFeed(same(newFeed));
+        verify(alertService).saveFeed(same(newFeed));
         assertThat(lookupData.getFeedMap().get(feedId)).isSameAs(newFeed);
     }
 
@@ -329,7 +329,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         assertThat(healthMapDisease.getName()).isEqualTo(healthMapDiseaseNewName);
-        verify(diseaseService, times(1)).saveHealthMapDisease(eq(healthMapDisease));
+        verify(diseaseService).saveHealthMapDisease(eq(healthMapDisease));
     }
 
     @Test
@@ -381,7 +381,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert()).isSameAs(alert);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
-        verify(diseaseService, times(1)).saveHealthMapDisease(eq(newHealthMapDisease));
+        verify(diseaseService).saveHealthMapDisease(eq(newHealthMapDisease));
         assertThat(lookupData.getDiseaseMap().get(diseaseId)).isEqualTo(newHealthMapDisease);
     }
 
@@ -507,7 +507,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getFeed().getName()).isSameAs(feedNewName);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
-        verify(alertService, times(1)).saveFeed(same(feed));
+        verify(alertService).saveFeed(same(feed));
     }
 
     @Test
@@ -555,7 +555,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert().getFeed().getLanguage()).isSameAs(feedNewLanguage);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
-        verify(alertService, times(1)).saveFeed(same(feed));
+        verify(alertService).saveFeed(same(feed));
     }
 
     private void mockOutGetAlertByID(AlertService alertService, int healthMapAlertId, Alert alert) {

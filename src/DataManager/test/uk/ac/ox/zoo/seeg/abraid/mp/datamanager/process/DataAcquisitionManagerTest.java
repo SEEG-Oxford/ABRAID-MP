@@ -24,13 +24,13 @@ public class DataAcquisitionManagerTest {
     @Test
     public void runDataAcquisitionAcquiresFromWebServiceIfNullFileNamesList() {
         manager.runDataAcquisition(null);
-        verify(dataAcquisitionService, times(1)).acquireHealthMapDataFromWebService();
+        verify(dataAcquisitionService).acquireHealthMapDataFromWebService();
     }
 
     @Test
     public void runDataAcquisitionAcquiresFromWebServiceIfEmptyFileNamesList() {
         manager.runDataAcquisition(new String[] {});
-        verify(dataAcquisitionService, times(1)).acquireHealthMapDataFromWebService();
+        verify(dataAcquisitionService).acquireHealthMapDataFromWebService();
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DataAcquisitionManagerTest {
         String fileName1 = "test.json";
         String fileName2 = "test2.json";
         manager.runDataAcquisition(new String[] {fileName1, fileName2});
-        verify(dataAcquisitionService, times(1)).acquireHealthMapDataFromFile(eq(fileName1));
-        verify(dataAcquisitionService, times(1)).acquireHealthMapDataFromFile(eq(fileName2));
+        verify(dataAcquisitionService).acquireHealthMapDataFromFile(eq(fileName1));
+        verify(dataAcquisitionService).acquireHealthMapDataFromFile(eq(fileName2));
     }
 }

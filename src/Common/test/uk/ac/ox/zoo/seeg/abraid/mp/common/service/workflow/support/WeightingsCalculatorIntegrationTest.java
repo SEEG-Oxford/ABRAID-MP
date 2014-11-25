@@ -189,7 +189,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(1);
 
         // Assert
-        verify(logger).info(eq("No occurrences for model run - validation and final weightings will not be updated"));
+        verify(logger).info(eq("No occurrences found that need their validation and final weightings set"));
     }
 
     @Test

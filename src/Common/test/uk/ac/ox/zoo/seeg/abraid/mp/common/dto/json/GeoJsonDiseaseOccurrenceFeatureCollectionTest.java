@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonNamedCrsProperties;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectType;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
@@ -27,7 +26,7 @@ public class GeoJsonDiseaseOccurrenceFeatureCollectionTest extends AbstractDisea
         // Assert
         assertThat(result.getBBox()).isNull();
         assertThat(result.getCrs().getType()).isEqualTo("name");
-        assertThat(((GeoJsonNamedCrsProperties) result.getCrs().getProperties()).getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
+        assertThat(result.getCrs().getProperties().getName()).isEqualTo("urn:ogc:def:crs:EPSG::4326");
         assertThat(result.getType()).isEqualTo(GeoJsonObjectType.FEATURE_COLLECTION);
         assertThat(result.getFeatures()).hasSameSizeAs(occurrences);
         assertThat(result.getFeatures().get(0)).isInstanceOf(GeoJsonDiseaseOccurrenceFeature.class);

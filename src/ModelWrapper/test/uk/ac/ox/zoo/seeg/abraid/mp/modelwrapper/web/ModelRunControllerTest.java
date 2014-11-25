@@ -47,7 +47,7 @@ public class ModelRunControllerTest {
         ModelRunnerAsyncWrapperImpl mockRunner = mock(ModelRunnerAsyncWrapperImpl.class);
         when(mockConf.getRunName()).thenReturn(runName);
         when(mockConf.getCovariateConfig()).thenReturn(mock(CovariateRunConfiguration.class));
-        when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString(), anyString())).thenReturn(mockConf);
+        when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString())).thenReturn(mockConf);
 
 
         ModelRunController target = new ModelRunController(mockFactory, mockRunner, mock(ModelOutputHandlerWebService.class), new AbraidJsonObjectMapper());
@@ -61,7 +61,7 @@ public class ModelRunControllerTest {
                 new JsonModelDisease(1, true, "foo", "foo"), occurrence, extent));
 
         // Assert
-        verify(mockRunner, times(1)).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
+        verify(mockRunner).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
         assertResponseEntity(result, runName, null, HttpStatus.OK);
     }
 

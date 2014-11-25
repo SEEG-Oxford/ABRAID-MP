@@ -58,7 +58,7 @@ public class IndexController extends AbstractController {
             modelVersions = new ArrayList<>();
         }
 
-        String rPath = null;
+        String rPath;
         try {
             rPath = configurationService.getRExecutablePath();
         } catch (ConfigurationException e) {

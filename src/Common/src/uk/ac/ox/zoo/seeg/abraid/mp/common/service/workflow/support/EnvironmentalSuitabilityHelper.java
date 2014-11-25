@@ -17,6 +17,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Helper class to find the environmental suitability of a location.
@@ -96,17 +97,30 @@ public class EnvironmentalSuitabilityHelper {
 
     private GridCoverage2D readRasterFile(File rasterFile) {
         if (rasterFile.exists()) {
+            GridCoverage2DReader reader = null;
             try {
                 LOGGER.debug(String.format(READING_RASTER_FILE_MESSAGE, rasterFile.getAbsolutePath()));
-                GridCoverage2DReader reader = new GeoTiffReader(rasterFile, RASTER_READ_HINTS);
+                reader = new GeoTiffReader(rasterFile, RASTER_READ_HINTS);
                 return reader.read(null);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                disposeResource(reader);
             }
         } else {
             String message = String.format(CANNOT_FIND_FILE_MESSAGE, rasterFile.getAbsolutePath());
             LOGGER.error(message);
             throw new IllegalArgumentException(message);
+        }
+    }
+
+    private void disposeResource(GridCoverage2DReader reader) {
+        if (reader != null) {
+            try {
+                reader.dispose();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

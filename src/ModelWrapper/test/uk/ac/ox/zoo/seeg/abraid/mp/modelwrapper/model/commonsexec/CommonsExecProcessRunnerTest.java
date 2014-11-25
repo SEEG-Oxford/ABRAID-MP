@@ -46,7 +46,7 @@ public class CommonsExecProcessRunnerTest {
 
         // Assert
         ArgumentCaptor<CommandLine> commandLineCaptor = ArgumentCaptor.forClass(CommandLine.class);
-        verify(mockExecutor, times(1)).execute(commandLineCaptor.capture(), any(ExecuteResultHandler.class));
+        verify(mockExecutor).execute(commandLineCaptor.capture(), any(ExecuteResultHandler.class));
         assertThat(commandLineCaptor.getValue().toString()).isEqualTo(expectation);
     }
 
@@ -62,7 +62,7 @@ public class CommonsExecProcessRunnerTest {
         target.run(mock(ProcessHandler.class));
 
         // Assert
-        verify(mockExecutor, times(1)).setWorkingDirectory(eq(expectedWorkingDir));
+        verify(mockExecutor).setWorkingDirectory(eq(expectedWorkingDir));
     }
 
     @Test

@@ -3,7 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager;
 
@@ -21,14 +21,17 @@ public class Main {
     public static final String APPLICATION_CONTEXT_LOCATION =
             "classpath:uk/ac/ox/zoo/seeg/abraid/mp/datamanager/config/beans.xml";
     private static final Logger LOGGER = Logger.getLogger(Main.class);
-    private static final String STARTED_MESSAGE = "Data Manager started";
+    private static final String STARTED_MESSAGE = "Data Manager version %s: started";
 
     private DataAcquisitionManager dataAcquisitionManager;
     private ModelRunManager modelRunManager;
+    private String applicationVersion;
 
-    public Main(DataAcquisitionManager dataAcquisitionManager, ModelRunManager modelRunManager) {
+    public Main(DataAcquisitionManager dataAcquisitionManager, ModelRunManager modelRunManager,
+                String applicationVersion) {
         this.dataAcquisitionManager = dataAcquisitionManager;
         this.modelRunManager = modelRunManager;
+        this.applicationVersion = applicationVersion;
     }
 
     /**
@@ -39,7 +42,6 @@ public class Main {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = null;
         try {
-            LOGGER.info(STARTED_MESSAGE);
             context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_LOCATION);
             runMain(context, args);
         } catch (Throwable e) {
@@ -66,6 +68,7 @@ public class Main {
      */
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
+        logStarted(main.applicationVersion);
         main.runDataAcquisition(args);
         main.prepareForAndRequestModelRuns();
     }
@@ -94,9 +97,15 @@ public class Main {
     private void prepareForAndRequestModelRun(int diseaseGroupId) {
         try {
             modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-        } catch (ModelRunRequesterException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+        } catch (ModelRunWorkflowException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
             // Ignore the exception, because it is thrown to roll back the transaction per disease group if the model
             // run request fails. Logging has already been done by this point.
         }
+    }
+
+    private static void logStarted(String applicationVersion) {
+        String message = String.format(STARTED_MESSAGE, applicationVersion);
+        LOGGER.info(message);
+        System.out.println(message);
     }
 }
