@@ -13,36 +13,48 @@ html, body, #dataValidation {
     min-width: 575px;            /* Side panel width + layer selector width */
     min-height: 535px;
 }
-#layerSelector {
+.leaflet-control-zoomslider {
+    margin-top: 45px !important;
+}
+#spinner > i {
+    z-index: 20;
     position: absolute;
-    z-index: 100;                /* Overlay to ensure clicks*/
-    margin-left: 50px;           /* Space for zoomslider */
+    top:50%;
+    left:50%;
 }
-#layerSelector .alert {
-    text-align: center;
-}
-#layerSelector > h4, select {
-    background: none;
-    color: rgb(51, 51, 51);
-}
-#map {
-    height: 100%;
-    width: 100%;
-    background-color: white;
-}
-#spinner > div {
-    z-index:10;
+#spinner > .background {
+    z-index: 20;
     position: absolute;
     height: 100%;
     width: 100%;
     background-color: black;
     opacity: 0.3;
 }
-#spinner > i {
-    z-index:20;
+#helpModal {
+    overflow: hidden;
+}
+#helpModal .modal-dialog {
+    position: relative;
+    width: 60%;
+    height: 85%;
+}
+#helpModal .modal-content {
+    height: 100%;
+}
+#helpModal .modal-body {
     position: absolute;
-    top:50%;
-    left:50%;
+    top: 56px;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    /* Fix to ensure content (iframe) sits flush inside modal body */
+    padding: 0 1px 0 0 !important;
+}
+#helpModal iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #e5e5e5;
 }
 #sidePanel {
     height: 100%;
@@ -157,7 +169,6 @@ html, body, #dataValidation {
 #reportSummary .sidePanelText {
     max-height: 100%;
     margin: 0 5px 0 2px;
-
 }
 #summaryPanel {
     position: absolute;
@@ -227,19 +238,6 @@ html, body, #dataValidation {
 #counter ul {
     margin: 4px;
 }
-.legend {
-    background-color: white;
-    padding: 6px 8px;
-    line-height: 18px;
-    font-size: 12px;
-}
-.legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
-}
 #latestOccurrencesPanel a {
     width: auto;
     border: none;
@@ -283,46 +281,6 @@ html, body, #dataValidation {
         display: none !important;
     }
 }
-#modelRunDetails div.leaflet-bar.leaflet-control a {
-    min-width: 200px;
-    padding: 0 5px;
-    text-align: left;
-    text-align: center;
-}
-#modelRunDetails div.leaflet-bar.leaflet-control a i.fa {
-    float: left;
-    margin-right: 6px;
-    margin-top: 7px
-}
-#covariatesAndStatistics table {
-    margin: 0;
-}
-#covariatesAndStatistics .panel-body {
-    background-color: white;
-    padding: 5px 0;
-    min-width: 575px;
-}
-#covariatesAndStatistics h5,
-#covariates td:first-child {
-    text-align: center;
-}
-#covariates td:nth-child(2) {
-    min-width: 120px;
-}
-#covariates td:nth-child(3),
-#covariates th:nth-child(3) {
-    min-width: 120px;
-    text-align: center;
-}
-#statistics td:nth-child(2),
-#statistics th:nth-child(2) {
-    min-width: 80px;
-    text-align: center;
-}
-#statistics td:nth-child(3) {
-    min-width: 120px;
-    text-align: center;
-}
 .leaflet-popup-content {
     margin: 0;
     font-size: 14px;
@@ -334,16 +292,4 @@ html, body, #dataValidation {
 }
 .leaflet-popup-tip-container {
     display: none;
-}
-.leaflet-panel-button {
-    display: inline-block !important;
-    min-width: 0 !important;
-    width: auto !important;
-    height: auto !important;
-    background-image: none;
-    margin: 4px 0 0 0;
-    padding: 4px 8px !important;
-    line-height: 12px !important;
-    font-size: 12px;
-    border: 1px solid #cccccc !important;
 }

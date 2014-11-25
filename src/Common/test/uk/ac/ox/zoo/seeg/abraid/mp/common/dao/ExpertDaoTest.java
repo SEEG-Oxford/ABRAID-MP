@@ -20,6 +20,7 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private ExpertDao expertDao;
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void saveAndReloadExpert() {
         // Arrange
@@ -29,6 +30,8 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         String expertJob = "job";
         String expertInstitution = "institution";
         boolean visibilityRequested = true;
+        boolean isSeegMember = true;
+        boolean hasSeenHelpText = false;
 
         Expert expert = new Expert();
         expert.setName(expertName);
@@ -36,8 +39,9 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         expert.setPassword(expertPassword);
         expert.setJobTitle(expertJob);
         expert.setInstitution(expertInstitution);
-        //noinspection ConstantConditions
         expert.setVisibilityRequested(visibilityRequested);
+        expert.setSeegMember(isSeegMember);
+        expert.setHasSeenHelpText(hasSeenHelpText);
 
         // Act
         expertDao.save(expert);
@@ -56,8 +60,9 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(expert.getInstitution()).isEqualTo(expertInstitution);
         assertThat(expert.getCreatedDate()).isNotNull();
         assertThat(expert.getUpdatedDate()).isNotNull();
-        //noinspection ConstantConditions
         assertThat(expert.getVisibilityRequested()).isEqualTo(visibilityRequested);
+        assertThat(expert.isSeegMember()).isEqualTo(isSeegMember);
+        assertThat(expert.hasSeenHelpText()).isEqualTo(hasSeenHelpText);
     }
 
     @Test

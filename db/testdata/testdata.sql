@@ -7,7 +7,7 @@
 -- Firstly clear the disease_extent table, as it was already populated by data.sql
 TRUNCATE TABLE disease_extent;
 
-\copy expert (name, email, hashed_password, job_title, institution, is_administrator, is_seeg_member, weighting, visibility_requested, visibility_approved) FROM 'expert.txt' (ENCODING utf8, NULL '')
+\copy expert (name, email, hashed_password, job_title, institution, is_administrator, is_seeg_member, has_seen_help_text, weighting, visibility_requested, visibility_approved) FROM 'expert.txt' (ENCODING utf8, NULL '')
 \copy location (id, name, geom, precision, geoname_id, resolution_weighting, healthmap_country_id, admin_unit_qc_gaul_code, admin_unit_global_gaul_code, admin_unit_tropical_gaul_code, country_gaul_code, has_passed_qc) FROM 'location.txt' (ENCODING utf8, NULL '')
 \copy alert (id, feed_id, title, publication_date, url, summary, healthmap_alert_id) FROM 'alert.txt' (ENCODING utf8, NULL '')
 \copy disease_occurrence (id, disease_group_id, location_id, alert_id, status, occurrence_date, machine_weighting, validation_weighting, final_weighting, final_weighting_excl_spatial) FROM 'disease_occurrence.txt' (ENCODING utf8, NULL '')

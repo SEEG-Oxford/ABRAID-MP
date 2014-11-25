@@ -69,6 +69,7 @@ public class DataValidationControllerTest {
         verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
         verify(model).addAttribute("userLoggedIn", true);
         verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
     }
@@ -86,6 +87,41 @@ public class DataValidationControllerTest {
 
         // Assert
         verify(model).addAttribute("userSeeg", true);
+    }
+
+    @Test
+    public void showPageIndicatesToShowHelpTextToLoggedInUserOnce() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = mock(ExpertService.class);
+        Expert expert = mock(Expert.class);
+        when(expert.hasSeenHelpText()).thenReturn(false);
+        when(expertService.getExpertById(1)).thenReturn(expert);
+
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model).addAttribute("showHelpText", true);
+        verify(expert).setHasSeenHelpText(true);
+        verify(expertService).saveExpert(expert);
+    }
+
+    @Test
+    public void showPageIndicatesNotToShowHelpTextToLoggedInUserWhenUserHasAlreadySeenHelpText() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).hasSeenHelpText()).thenReturn(true);
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model).addAttribute("showHelpText", false);
     }
 
     @Test
@@ -161,6 +197,7 @@ public class DataValidationControllerTest {
         verify(model).addAttribute("defaultDiseaseGroupShortName", "dengue");
         verify(model).addAttribute("userLoggedIn", false);
         verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
     }
@@ -534,6 +571,7 @@ public class DataValidationControllerTest {
         ExpertService returnedExpertService = mock(ExpertService.class);
         Expert returnedExpert = mock(Expert.class);
         when(returnedExpert.isSeegMember()).thenReturn(userIsSeeg);
+        when(returnedExpert.hasSeenHelpText()).thenReturn(true);
         when(returnedExpertService.getExpertById(1)).thenReturn(returnedExpert);
         return returnedExpertService;
     }

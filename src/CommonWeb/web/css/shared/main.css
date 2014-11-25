@@ -31,7 +31,7 @@ body {
 #footer > .container {
     padding-top: 5px;
 }
-#footer .links > a, p {
+#footer .links > a, #footer p {
     display:inline;
 }
 #footer .links > a:link, #footer .links > a:visited {
