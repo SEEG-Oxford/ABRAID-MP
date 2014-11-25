@@ -9,8 +9,11 @@ define([
 ], function (ko, $, moment, BaseFormViewModel) {
     "use strict";
 
+    var displayFormat = "DD MMM YYYY";
+
+    // Transform date from display format to format sent as submission data.
     function formatDate(date) {
-        return moment(date, "DD MMM YYYY").format();
+        return moment(date, displayFormat).format();
     }
 
     return function (baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
@@ -25,8 +28,14 @@ define([
         self.canRunModel = ko.observable(false);
         self.batchStartDate = ko.observable("");
         self.batchEndDate = ko.observable("");
-        self.batchStartDate.extend({ required: true, date: true, max: self.batchEndDate });
-        self.batchEndDate.extend({ required: true, date: true, min: self.batchStartDate });
+        self.batchStartDate.extend({ required: true, date: true, maxDate: {
+            date: self.batchEndDate,
+            format: displayFormat
+        }});
+        self.batchEndDate.extend({ required: true, date: true, minDate: {
+            date: self.batchStartDate,
+            format: displayFormat
+        }});
         self.batchDateMinimum = ko.observable("");
         self.batchDateMaximum = ko.observable("");
         self.hasGoldStandardOccurrences = ko.observable(false);
