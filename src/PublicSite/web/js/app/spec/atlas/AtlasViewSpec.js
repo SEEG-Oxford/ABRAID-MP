@@ -19,10 +19,16 @@ define([
             }),
             tileLayer: {
                 wms: jasmine.createSpy("wmsSpy").and.callFake(function (wms, args) {
-                    return "wms " + args.layers[0];
+                    return "wms " + args.display;
                 })
             },
             CRS : { EPSG4326 : "fake EPSG4326" }
+        };
+
+        var wmsLayerParameterFactoryMock = {
+            createLayerParametersForDisplay: function (name) {
+                return { "display" : name };
+            }
         };
 
         beforeEach(function (done) {
@@ -55,18 +61,18 @@ define([
 
         describe("creates a Leaflet map", function () {
             it("on the correct DOM element", function () {
-                new AtlasView(); // jshint ignore:line
+                new AtlasView("wms", wmsLayerParameterFactoryMock); // jshint ignore:line
                 expect(leafletMock.map).toHaveBeenCalled();
                 expect(leafletMock.map.calls.count()).toBe(1);
                 expect(leafletMock.map.calls.first().args[0]).toBe("map");
             });
 
             it("showing the full extent", function () {
-                var view = new AtlasView();
+                var view = new AtlasView("wms", wmsLayerParameterFactoryMock);
                 expect(view.map.fitWorld).toHaveBeenCalled();
             });
 
-            it("with the standard abraid options", function () {
+            it("with the options provided by the parameter factory", function () {
                 new AtlasView(); // jshint ignore:line
                 expect(leafletMock.map.calls.first().args[1].attributionControl).toBe(false);
                 expect(leafletMock.map.calls.first().args[1].zoomControl).toBe(false);
@@ -82,11 +88,11 @@ define([
 
         describe("adds a wms layer to the map", function () {
             it("in response to 'active-atlas-layer' events ", function () {
-                var view = new AtlasView();
+                var view = new AtlasView("wms", wmsLayerParameterFactoryMock);
                 ko.postbox.publish("active-atlas-layer", "new layer");
                 expect(leafletMock.tileLayer.wms).toHaveBeenCalled();
                 expect(leafletMock.tileLayer.wms.calls.count()).toBe(1);
-                expect(leafletMock.tileLayer.wms.calls.first().args[1].layers[0]).toBe("new layer");
+                expect(leafletMock.tileLayer.wms.calls.first().args[1].display).toBe("new layer");
                 expect(view.map.addLayer).toHaveBeenCalled();
                 expect(view.map.addLayer.calls.count()).toBe(1);
                 expect(view.map.addLayer.calls.first().args[0]).toBe("wms new layer");
@@ -94,7 +100,7 @@ define([
             });
 
             it("replacing existing layers", function () {
-                var view = new AtlasView();
+                var view = new AtlasView("wms", wmsLayerParameterFactoryMock);
                 ko.postbox.publish("active-atlas-layer", "old layer");
                 expect(view.currentLayer).toBe("wms old layer");
                 view.map.addLayer.calls.reset();
@@ -110,18 +116,17 @@ define([
             });
 
             it("with the standard abraid options", function () {
-                new AtlasView("wms url qwertyuiop"); // jshint ignore:line
+                new AtlasView("wms url qwertyuiop", wmsLayerParameterFactoryMock); // jshint ignore:line
                 ko.postbox.publish("active-atlas-layer", "new layer");
                 expect(leafletMock.tileLayer.wms.calls.first().args[0]).toBe("wms url qwertyuiop");
-                expect(leafletMock.tileLayer.wms.calls.first().args[1].format).toBe("image/png");
-                expect(leafletMock.tileLayer.wms.calls.first().args[1].styles).toBe("abraid_raster");
-                expect(leafletMock.tileLayer.wms.calls.first().args[1].reuseTiles).toBe(true);
+                expect(leafletMock.tileLayer.wms.calls.first().args[1]).toEqual({ "display": "new layer" });
+
             });
         });
 
         describe("removes the wms layer to the map", function () {
             it("in response to empty 'active-atlas-layer' events ", function () {
-                var view = new AtlasView();
+                var view = new AtlasView("wms", wmsLayerParameterFactoryMock);
                 ko.postbox.publish("active-atlas-layer", "old layer");
                 expect(view.currentLayer).toBe("wms old layer");
                 view.map.addLayer.calls.reset();
