@@ -5,10 +5,7 @@ import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
@@ -66,16 +63,18 @@ public class ModelRunRequester {
                                 DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         if (occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-            Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
+            Collection<AdminUnitDiseaseExtentClass> diseaseExtent =
+                    diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+            Map<Integer, Integer> diseaseExtentMap = extractDiseaseExtentMap(diseaseExtent);
             DateTime requestDate = DateTime.now();
 
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
                 URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
                 ModelRun modelRun = createPreliminaryModelRun(diseaseGroup, requestDate, modelWrapperUrl,
-                                                              batchStartDate, batchEndDate, occurrencesForModelRun);
+                        batchStartDate, batchEndDate, occurrencesForModelRun, diseaseExtent);
                 JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
-                                                                                occurrencesForModelRun, diseaseExtent);
+                        occurrencesForModelRun, diseaseExtentMap);
                 handleModelRunResponse(response, modelRun);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
@@ -87,10 +86,19 @@ public class ModelRunRequester {
 
     private ModelRun createPreliminaryModelRun(DiseaseGroup diseaseGroup, DateTime requestDate, URI modelWrapperUrl,
                                                DateTime batchStartDate, DateTime batchEndDate,
-                                               List<DiseaseOccurrence> occurrencesForModelRun) {
-        ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate);
+                                               List<DiseaseOccurrence> occurrencesForModelRun,
+                                               Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
+        final ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate);
         modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
+        modelRun.setInputDiseaseExtent(convert(diseaseExtent,
+            new Converter<AdminUnitDiseaseExtentClass, ModelRunAdminUnitDiseaseExtentClass>() {
+                @Override
+                public ModelRunAdminUnitDiseaseExtentClass convert(AdminUnitDiseaseExtentClass adminUnitExtentClass) {
+                    return new ModelRunAdminUnitDiseaseExtentClass(adminUnitExtentClass, modelRun);
+                }
+            }
+        ));
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             modelRun.setInputDiseaseOccurrences(occurrencesForModelRun);
         }
@@ -135,10 +143,7 @@ public class ModelRunRequester {
         }
     }
 
-    private Map<Integer, Integer> getDiseaseExtent(int diseaseGroupId) {
-        List<AdminUnitDiseaseExtentClass> diseaseExtent =
-                diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-
+    private Map<Integer, Integer> extractDiseaseExtentMap(Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
         // Create a mapping of GAUL codes to extent class weightings
         Map<Integer, Integer> extentMapping = new HashMap<>();
         for (AdminUnitDiseaseExtentClass extentClass : diseaseExtent) {
