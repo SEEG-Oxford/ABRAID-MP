@@ -128,6 +128,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRasterPublishedToGeoserver(run, "mean");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterPublishedToGeoserver(run, "uncertainty");
+        assertThatRasterWrittenToFile(run, "extent.tif", "extent");
     }
 
     @Test
@@ -157,6 +158,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
+        assertThatRasterWrittenToFile(run, "extent.tif", "extent");
         assertThatNoRastersPublishedToGeoserver();
     }
 
@@ -246,6 +248,19 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
                 .perform(post(OUTPUT_HANDLER_PATH).content(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
+    }
+
+    @Test
+    public void handleModelOutputsRejectsMissingExtentInputRasterIfStatusIsCompleted() throws Exception {
+        // Arrange
+        insertModelRun(TEST_MODEL_RUN_NAME);
+        byte[] body = loadTestFile("missing_extent_input.zip");
+
+        // Act and assert
+        this.mockMvc
+                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Model outputs handler failed with error \"File extent.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     @Test

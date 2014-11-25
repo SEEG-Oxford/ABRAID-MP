@@ -39,10 +39,11 @@ public class ModelStatusReporterTest {
 
     private static final File MEAN_PREDICTION_RASTER_TEST_FILE = new File(TEST_DATA_FOLDER, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME);
     private static final File PREDICTION_UNCERTAINTY_RASTER_TEST_FILE = new File(TEST_DATA_FOLDER, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME);
+    private static final File EXTENT_INPUT_RASTER_TEST_FILE = new File(TEST_DATA_FOLDER, ModelOutputConstants.EXTENT_INPUT_RASTER_FILENAME);
     private static final File VALIDATION_STATS_TEST_FILE = new File(TEST_DATA_FOLDER, ModelOutputConstants.VALIDATION_STATISTICS_FILENAME);
     private static final File RELATIVE_INFLUENCE_TEST_FILE = new File(TEST_DATA_FOLDER, ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME);
     private static final File EFFECT_CURVES_TEST_FILE = new File(TEST_DATA_FOLDER, ModelOutputConstants.EFFECT_CURVES_FILENAME);
-    private static final List<File> RESULTS_FILES = Arrays.asList(MEAN_PREDICTION_RASTER_TEST_FILE, PREDICTION_UNCERTAINTY_RASTER_TEST_FILE, VALIDATION_STATS_TEST_FILE, RELATIVE_INFLUENCE_TEST_FILE, EFFECT_CURVES_TEST_FILE);
+    private static final List<File> RESULTS_FILES = Arrays.asList(MEAN_PREDICTION_RASTER_TEST_FILE, PREDICTION_UNCERTAINTY_RASTER_TEST_FILE, EXTENT_INPUT_RASTER_TEST_FILE, VALIDATION_STATS_TEST_FILE, RELATIVE_INFLUENCE_TEST_FILE, EFFECT_CURVES_TEST_FILE);
 
     private static final File COMPLETED_METADATA_JSON_TEST_FILE = new File(TEST_DATA_FOLDER + "/completed", ModelOutputConstants.METADATA_JSON_FILENAME);
     private static final File FAILED_METADATA_JSON_TEST_FILE = new File(TEST_DATA_FOLDER + "/failed", ModelOutputConstants.METADATA_JSON_FILENAME);
@@ -269,9 +270,15 @@ public class ModelStatusReporterTest {
     private void addResultsToWorkspace(List<File> files, File workspace) throws IOException {
         // Arrange - copy outputs to test folder
         File resultsDir = new File(workspace, "results");
+        File dataDir = new File(workspace, "data");
         resultsDir.mkdir();
+        dataDir.mkdir();
         for (File file : files) {
-            FileUtils.copyFileToDirectory(file, resultsDir);
+            if (file.getParentFile().getName().equals("results")) {
+                FileUtils.copyFileToDirectory(file, resultsDir);
+            } else {
+                FileUtils.copyFileToDirectory(file, dataDir);
+            }
         }
     }
 
