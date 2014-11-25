@@ -21,7 +21,7 @@ public class DiseaseOccurrenceHandler {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceHandler.class);
     private static final String STARTING_HANDLING_LOG_MESSAGE = "Model run %d: starting disease occurrence handling";
     private static final String INITIAL_BATCH_LOG_MESSAGE = "Model run %d: this is the initial batch, so setting " +
-            "status to UNBATCHED and final weighting to null for %d occurrence(s) of disease group %d (%s)";
+            "status to AWAITING_BATCHING and final weighting to null for %d occurrence(s) of disease group %d (%s)";
     private static final String VALIDATION_LOG_MESSAGE =
             "Model run %d: setting validation parameters for %d occurrence(s) of disease group %d (%s) " +
             "(batch start date %s, batch end date %s)";
@@ -69,14 +69,14 @@ public class DiseaseOccurrenceHandler {
 
     private void initialiseBatchingIfNecessary(ModelRun modelRun, DiseaseGroup diseaseGroup) {
         // If no batch of disease occurrences has completed for this disease group, initialise the batching process by
-        // changing the status of all READY occurrences to UNBATCHED and setting their final weightings to null
+        // changing the status of all READY occurrences to AWAITING_BATCHING and setting their final weightings to null
         if (!modelRunService.hasBatchingEverCompleted(diseaseGroup.getId())) {
             List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrencesForBatchingInitialisation(diseaseGroup);
             LOGGER.info(String.format(INITIAL_BATCH_LOG_MESSAGE, modelRun.getId(), diseaseOccurrences.size(),
                     diseaseGroup.getId(), diseaseGroup.getName()));
 
             for (DiseaseOccurrence occurrence : diseaseOccurrences) {
-                occurrence.setStatus(DiseaseOccurrenceStatus.UNBATCHED);
+                occurrence.setStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING);
                 occurrence.setFinalWeighting(null);
                 occurrence.setFinalWeightingExcludingSpatial(null);
                 diseaseService.saveDiseaseOccurrence(occurrence);
