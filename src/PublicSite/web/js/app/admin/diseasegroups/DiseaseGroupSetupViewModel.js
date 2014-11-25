@@ -44,7 +44,7 @@ define([
             };
         };
 
-        // The Run Model button is disabled if:
+        // The 'Run Model and Batch Occurrences For Validation' button is disabled if:
         // (1) either of the batch dates are invalid
         // (unless we are using gold standard occurrences as these do not require a batch end date); or
         // (2) the model cannot be run; or

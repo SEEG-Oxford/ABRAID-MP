@@ -190,7 +190,10 @@ define([
         }
 
         function addDiseaseOccurrenceData(diseaseId) {
-            $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId))
+            if (ajax) {
+                ajax.abort();
+            }
+            ajax = $.getJSON(getDiseaseOccurrencesRequestUrl(diseaseId))
                 .done(function (featureCollection) {
                     if (featureCollection.features.length !== 0) {
                         ko.postbox.publish("no-features-to-review", false);
@@ -333,7 +336,10 @@ define([
         }
 
         function addDiseaseExtentData(diseaseId) {
-            $.getJSON(getDiseaseExtentRequestUrl(diseaseId))
+            if (ajax) {
+                ajax.abort();
+            }
+            ajax = $.getJSON(getDiseaseExtentRequestUrl(diseaseId))
                 .done(function (fc) {
                     fitMapBounds(fc.features);
 
@@ -381,6 +387,7 @@ define([
         /** REACT TO EVENTS */
 
         var validationTypeIsDiseaseOccurrenceLayer;
+        var ajax;
 
         // Display the layer corresponding to the selected validation type (disease occurrences, or disease extent)
         function switchValidationTypeView() {

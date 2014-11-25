@@ -37,7 +37,7 @@
     "trailing"      : true,     // Prohibit trailing whitespaces.
     "maxparams"     : 0,        // Max number of formal parameters allowed per function.
     "maxdepth"      : 5,        // Max level of nesting in blocks.
-    "maxstatements" : 50,       // Max number of statements allowed per function.
+    "maxstatements" : 52,       // Max number of statements allowed per function.
     "maxcomplexity" : 10,       // Max cyclomatic complexity per function.
     "maxlen"        : 120,      // Maximum length of a line.
 
