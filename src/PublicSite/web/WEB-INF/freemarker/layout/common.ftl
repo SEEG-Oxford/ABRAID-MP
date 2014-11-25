@@ -18,3 +18,9 @@
         <#nested/>
     </@shared.page>
 </#macro>
+
+<#macro minimalPage title endOfHead="">
+    <@page title=title endOfHead=endOfHead mainjs="/js/kickstart/minimal" includeNavBar=false includeFooter=false>
+        <#nested/>
+    </@page>
+</#macro>

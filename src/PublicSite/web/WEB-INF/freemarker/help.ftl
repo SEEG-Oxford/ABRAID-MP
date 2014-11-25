@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="<@spring.url"/css/help.css"/>">
 </#assign>
 
-<@c.page title="Help" mainjs="/js/kickstart/help.js" endOfHead=endOfHeadContent includeNavBar=false includeFooter=false>
+<@c.minimalPage title="Help" endOfHead=endOfHeadContent>
 <#macro panelHeading panel title>
     <a class="collapsed" data-toggle="collapse" href=${panel}>
         <div class="panel-heading-custom">
@@ -124,4 +124,4 @@
         </div>
     </div>
 </div>
-</@c.page>
+</@c.minimalPage>
