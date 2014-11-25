@@ -84,6 +84,7 @@ public class DataValidationController extends AbstractController {
             showHelpText = !expert.hasSeenHelpText();
             if (showHelpText) {
                 expert.setHasSeenHelpText(true);
+                expertService.saveExpert(expert);
             }
 
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
