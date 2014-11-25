@@ -6,6 +6,9 @@
 body {
     text-align: justify;
     padding: 15px;
+    /* Override margin on body from main.css to remove top and bottom gaps inside iframe */
+    margin: 0 !important;
+    width: 100% !important;
 }
 /* Keep link behaviour consistent with map button behaviour from Leaflet (remove underline) */
 a {

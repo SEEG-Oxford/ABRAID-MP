@@ -47,7 +47,8 @@ html, body, #dataValidation {
     bottom: 20px;
     left: 0;
     right: 0;
-    padding: 0 !important;
+    /* Fix to ensure content (iframe) sits flush inside modal body */
+    padding: 0 1px 0 0 !important;
 }
 #helpModal iframe {
     height: 100%;
