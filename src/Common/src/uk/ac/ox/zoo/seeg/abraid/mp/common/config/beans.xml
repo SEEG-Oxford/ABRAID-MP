@@ -15,4 +15,11 @@
     <import resource="beans-service.xml"/>
     <import resource="beans-web.xml"/>
 
+    <!-- Raster file path -->
+    <bean id="rasterFileDirectory" class="java.io.File">
+        <constructor-arg value="${abraid.raster.dir}" />
+    </bean>
+
+    <bean id="rasterFilePathFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory" autowire="constructor"/>
+
 </beans>

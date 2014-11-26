@@ -19,7 +19,7 @@
     </copy>
     
     <!-- Create properties file containing the current version number -->
-    <echo file="${artifacts.out.dir}/version.properties" message="application.version=${repository.version}" />
+    <echo file="${artifacts.out.dir}/version.properties" message="application.version=${repository.version}${line.separator}" />
 
     <!-- Copy artifacts to output directory -->
     <copy todir="${artifacts.out.dir}" flatten="true">

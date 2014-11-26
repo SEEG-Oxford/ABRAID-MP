@@ -481,7 +481,7 @@
   </target>
 
   <target name="create.version.properties">
-    <echo file="${module.out.dir}/${version.properties.path}" message="application.version=${repository.version}" />
+    <echo file="${module.out.dir}/${version.properties.path}" message="application.version=${repository.version}${line.separator}" />
   </target>
 
   <target name="build.war" depends="compile.production, create.dist.dir, create.version.properties">
