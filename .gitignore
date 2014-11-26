@@ -17,3 +17,4 @@ python/*.pyc
 *.pkl
 *.npy
 fake.zip
+junit*.properties
