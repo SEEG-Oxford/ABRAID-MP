@@ -237,7 +237,7 @@ public class ModelRunOccurrencesSelector {
     }
 
     private void handleCannotRunModel(String logSuffixMessage, String exceptionMessage) {
-        LOGGER.warn(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
+        LOGGER.error(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
                 diseaseGroup.getName()));
         throw new ModelRunWorkflowException(exceptionMessage);
     }
