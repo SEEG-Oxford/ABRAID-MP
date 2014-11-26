@@ -1,14 +1,14 @@
 <featureType>
-  <id>FeatureTypeInfoImpl--7a673008:146c81232d1:-5d81</id>
-  <name>hatching</name>
-  <nativeName>admin_unit_simplified_global_view</nativeName>
+  <id>FeatureTypeInfoImpl-4688477d:149e7a30ca3:-7ea5</id>
+  <name>atlas_extent_layer</name>
+  <nativeName>model_run_extent_view</nativeName>
   <namespace>
     <id>NamespaceInfoImpl--5f32640d:1466746c7a9:-7ffa</id>
   </namespace>
-  <title>admin_unit_simplified_global_view</title>
+  <title>atlas_extent_layer</title>
   <keywords>
     <string>features</string>
-    <string>admin_unit_simplified_global_view</string>
+    <string>atlas_extent_layer</string>
   </keywords>
   <nativeCRS>GEOGCS[&quot;WGS 84&quot;,
   DATUM[&quot;World Geodetic System 1984&quot;,
