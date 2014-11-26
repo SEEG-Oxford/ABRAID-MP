@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
@@ -15,9 +16,8 @@ import java.util.List;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Integration tests for the DiseaseOccurrenceValidationService class.
@@ -29,13 +29,15 @@ public class DiseaseOccurrenceValidationServiceTest {
     private EnvironmentalSuitabilityHelper esHelper;
     private DistanceFromDiseaseExtentHelper dfdeHelper;
     private MachineWeightingPredictor mwPredictor;
+    private ModelRunService modelRunService;
 
     @Before
     public void setUp() {
         esHelper = mock(EnvironmentalSuitabilityHelper.class);
         dfdeHelper = mock(DistanceFromDiseaseExtentHelper.class);
         mwPredictor = mock(MachineWeightingPredictor.class);
-        service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper, mwPredictor);
+        modelRunService = mock(ModelRunService.class);
+        service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper, mwPredictor, modelRunService);
     }
 
     @Test
@@ -56,7 +58,9 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         // Assert
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
+
     @Test
     public void addValidationParametersWithChecksDiscardsOccurrenceIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsAreDisabled() {
         // Arrange
@@ -68,6 +72,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         // Assert
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -94,42 +99,59 @@ public class DiseaseOccurrenceValidationServiceTest {
         // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
         assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
-    public void addValidationParametersWithChecksSetsStatusToReadyAndReturnsTrueWhenAutomaticModelRunsAreDisabled() {
+    public void addValidationParametersWithChecksSetsStatusToReadyWhenAutomaticModelRunsAreDisabledAndNoBatching() {
         // Arrange
         int diseaseGroupId = 30;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
 
         // Act
         service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
-        assertDefaultParameters(occurrence);
+        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.READY);
     }
 
-    private void assertDefaultParameters(DiseaseOccurrence occurrence) {
+    @Test
+    public void addValidationParametersWithChecksSetsStatusToAwaitingBatchingWhenAutomaticModelRunsAreDisabledAndBatching() {
+        // Arrange
+        int diseaseGroupId = 30;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
+
+        // Act
+        service.addValidationParametersWithChecks(occurrence, false);
+
+        // Assert
+        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.AWAITING_BATCHING);
+    }
+
+    private void assertDefaultParameters(DiseaseOccurrence occurrence, DiseaseOccurrenceStatus status) {
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
         assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
+        assertThat(occurrence.getStatus()).isEqualTo(status);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
     }
 
     @Test
-    public void addValidationParametersWithChecksSetsOnlyIsValidatedForCountryPointWhenAutomaticModelRunsAreEnabled() {
+    public void addValidationParametersWithChecksSetsStatusToReadyForCountryPointWhenAutomaticModelRunsAreEnabled() {
         // Arrange
         int diseaseGroupId = 30;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setPrecision(LocationPrecision.COUNTRY);
 
         // Act
         service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
-        assertDefaultParameters(occurrence);
+        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.READY);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -147,12 +169,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         service.addValidationParametersWithChecks(occurrence, false);
 
         // Assert
-        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
-        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
-        assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
-        assertThat(occurrence.getFinalWeighting()).isNull();
-        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.IN_REVIEW);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -176,6 +194,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -199,6 +218,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -226,6 +246,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
         assertThat(occurrence.getMachineWeighting()).isNull();
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -244,6 +265,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -262,6 +284,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -282,6 +305,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -302,6 +326,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -323,6 +348,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -343,6 +369,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -364,6 +391,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -384,6 +412,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -404,6 +433,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
     @Test
@@ -471,7 +501,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         // Assert
         assertParameterValues(admin1Occurrence, environmentalSuitability, distanceFromDiseaseExtent);
-        assertDefaultParameters(countryOccurrence);
+        assertDefaultParameters(countryOccurrence, DiseaseOccurrenceStatus.READY);
     }
 
     @Test

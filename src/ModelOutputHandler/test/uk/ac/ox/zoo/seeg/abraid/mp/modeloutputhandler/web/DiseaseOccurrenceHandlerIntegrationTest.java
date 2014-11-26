@@ -91,11 +91,11 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
 
         // 29 occurrences were batched: 16 of them were sent to the Data Validator i.e. they have status IN_REVIEW
         // and a non-null environmental suitability, but 13 of them were country points so are READY without an
-        // environmental suitability. The remaining occurrences are 16 that are UNBATCHED as a result of
+        // environmental suitability. The remaining occurrences are 16 that are AWAITING_BATCHING as a result of
         // the batching initialisation, and 3 that were already DISCARDED_FAILED_QC.
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.IN_REVIEW, 16, 16);
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.READY, 13, 0);
-        assertOccurrences(occurrences, DiseaseOccurrenceStatus.UNBATCHED, 16, 0);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.AWAITING_BATCHING, 16, 0);
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 3, 0);
 
         // And the model run should have been updated correctly
@@ -125,7 +125,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         // As this is the second batch, the final weighting (and final weighting excluding spatial) will not have
         // been nulled. But, the final weighting will remain null for any occurrence with isValidated is null.
         for (DiseaseOccurrence occurrence : occurrences) {
-            assertThat(occurrence.getStatus()).isNotEqualTo(DiseaseOccurrenceStatus.UNBATCHED);
+            assertThat(occurrence.getStatus()).isNotEqualTo(DiseaseOccurrenceStatus.AWAITING_BATCHING);
             // In the test data, occurrences without status READY have null weightings already, so ignore them
             if (occurrence.getStatus().equals(DiseaseOccurrenceStatus.READY)) {
                 assertThat(occurrence.getFinalWeighting()).isNotNull();

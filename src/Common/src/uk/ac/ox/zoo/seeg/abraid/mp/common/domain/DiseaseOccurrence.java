@@ -72,13 +72,13 @@ import javax.persistence.Table;
                         "       (count(*), min(occurrenceDate), max(occurrenceDate)) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
-                        "and status in ('READY', 'IN_REVIEW', 'UNBATCHED')"
+                        "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING')"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForBatching",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.status = 'UNBATCHED' " +
+                        "and d.status = 'AWAITING_BATCHING' " +
                         "and d.occurrenceDate between :batchStartDate and :batchEndDate "
         ),
         @NamedQuery(

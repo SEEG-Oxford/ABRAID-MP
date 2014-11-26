@@ -95,13 +95,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getByDiseaseGroupIdAndStatusUnbatched() {
+    public void getByDiseaseGroupIdAndStatusAwaitingBatching() {
         // Arrange
         int diseaseGroupId = 87;
 
         // Act
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId,
-                DiseaseOccurrenceStatus.UNBATCHED);
+                DiseaseOccurrenceStatus.AWAITING_BATCHING);
 
         // Assert
         assertThat(occurrences).hasSize(0);
@@ -632,7 +632,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getOccurrencesForBatching() {
         // Arrange - the first 3 of these occurrences are before or on the batch end date, the others are after.
         // There is also an occurrence (275714) with status DISCARDED_FAILED_QC which is before the batch end date.
-        setOccurrencesToStatusUnbatched(274656, 273401, 275758, 275107, 274779);
+        setOccurrencesToStatusAwaitingBatching(274656, 273401, 275758, 275107, 274779);
         int diseaseGroupId = 87;
         DateTime batchStartDate = new DateTime("2014-02-24T02:45:35");
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
@@ -679,9 +679,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return alert;
     }
 
-    private void setOccurrencesToStatusUnbatched(Integer... ids) {
+    private void setOccurrencesToStatusAwaitingBatching(Integer... ids) {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
-            occurrence.setStatus(DiseaseOccurrenceStatus.UNBATCHED);
+            occurrence.setStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING);
             diseaseOccurrenceDao.save(occurrence);
         }
     }

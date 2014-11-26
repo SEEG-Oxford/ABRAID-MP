@@ -29,5 +29,5 @@ public enum DiseaseOccurrenceStatus {
     /**
      * The occurrence has not yet become part of a batch during disease group set-up.
      */
-    UNBATCHED
+    AWAITING_BATCHING
 }
