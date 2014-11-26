@@ -210,6 +210,10 @@ public class DiseaseOccurrence {
         this.occurrenceDate = occurrenceDate;
     }
 
+    public DiseaseOccurrence(DateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public Integer getId() {
         return id;
     }
