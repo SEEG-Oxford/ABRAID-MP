@@ -22,7 +22,7 @@
         file:/var/lib/abraid/conf/application/misc.properties,
         file:/var/lib/abraid/conf/application/webservice.properties,
         WEB-INF/version.properties,
-        version.properties" />
+        file:version.properties" />
 
     <context:property-placeholder order="5" ignore-unresolvable="false" ignore-resource-not-found="true" location="
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/database-testing.properties,
