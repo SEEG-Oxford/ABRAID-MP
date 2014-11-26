@@ -61,16 +61,17 @@ public class DataValidationControllerTest {
         DataValidationController target = createTarget();
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("diseaseInterests", new ArrayList<>());
-        verify(model, times(1)).addAttribute("allOtherDiseases", new ArrayList<>());
-        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
-        verify(model, times(1)).addAttribute("userLoggedIn", true);
-        verify(model, times(1)).addAttribute("userSeeg", false);
-        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
-        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
+        verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
+        verify(model).addAttribute("userLoggedIn", true);
+        verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("showHelpText", false);
+        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model).addAttribute("adminUnitReviewCount", 0);
     }
 
     @Test
@@ -82,10 +83,45 @@ public class DataValidationControllerTest {
         DataValidationController target = createTarget(null, null, expertService);
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("userSeeg", true);
+        verify(model).addAttribute("userSeeg", true);
+    }
+
+    @Test
+    public void showPageIndicatesToShowHelpTextToLoggedInUserOnce() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = mock(ExpertService.class);
+        Expert expert = mock(Expert.class);
+        when(expert.hasSeenHelpText()).thenReturn(false);
+        when(expertService.getExpertById(1)).thenReturn(expert);
+
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model).addAttribute("showHelpText", true);
+        verify(expert).setHasSeenHelpText(true);
+        verify(expertService).saveExpert(expert);
+    }
+
+    @Test
+    public void showPageIndicatesNotToShowHelpTextToLoggedInUserWhenUserHasAlreadySeenHelpText() {
+        // Arrange
+        Model model = mock(Model.class);
+        ExpertService expertService = createExpertService();
+        when(expertService.getExpertById(1).hasSeenHelpText()).thenReturn(true);
+        DataValidationController target = createTarget(null, null, expertService);
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model).addAttribute("showHelpText", false);
     }
 
     @Test
@@ -140,7 +176,7 @@ public class DataValidationControllerTest {
         target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("validatorDiseaseGroupMap", result);
+        verify(model).addAttribute("validatorDiseaseGroupMap", result);
     }
 
     @Test
@@ -154,15 +190,16 @@ public class DataValidationControllerTest {
         DataValidationController target = createTarget(currentUserService, null, null);
 
         // Act
-        String result = target.showPage(model);
+        target.showPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
-        verify(model, times(1)).addAttribute("defaultDiseaseGroupShortName", "dengue");
-        verify(model, times(1)).addAttribute("userLoggedIn", false);
-        verify(model, times(1)).addAttribute("userSeeg", false);
-        verify(model, times(1)).addAttribute("diseaseOccurrenceReviewCount", 0);
-        verify(model, times(1)).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
+        verify(model).addAttribute("defaultDiseaseGroupShortName", "dengue");
+        verify(model).addAttribute("userLoggedIn", false);
+        verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("showHelpText", false);
+        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model).addAttribute("adminUnitReviewCount", 0);
     }
 
     @Test
@@ -415,7 +452,7 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(expertService, times(1)).saveAdminUnitReview(1, 1, 2, diseaseExtentClass);
+        verify(expertService).saveAdminUnitReview(1, 1, 2, diseaseExtentClass);
     }
 
     @Test
@@ -534,6 +571,7 @@ public class DataValidationControllerTest {
         ExpertService returnedExpertService = mock(ExpertService.class);
         Expert returnedExpert = mock(Expert.class);
         when(returnedExpert.isSeegMember()).thenReturn(userIsSeeg);
+        when(returnedExpert.hasSeenHelpText()).thenReturn(true);
         when(returnedExpertService.getExpertById(1)).thenReturn(returnedExpert);
         return returnedExpertService;
     }

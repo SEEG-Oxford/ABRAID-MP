@@ -73,11 +73,12 @@ public class AtlasController extends AbstractController {
         Map<Integer, List<JsonModelRunLayer>> layersByDiseaseId = new HashMap<>();
         for (ModelRun modelRun : modelRuns) {
             int diseaseGroupId = modelRun.getDiseaseGroupId();
-            if (userIsSeegMember() || diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId)) {
+            boolean automaticRun = diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId);
+            if (userIsSeegMember() || automaticRun) {
                 if (!layersByDiseaseId.containsKey(diseaseGroupId)) {
                     layersByDiseaseId.put(diseaseGroupId, new ArrayList<JsonModelRunLayer>());
                 }
-                layersByDiseaseId.get(diseaseGroupId).add(new JsonModelRunLayer(modelRun));
+                layersByDiseaseId.get(diseaseGroupId).add(new JsonModelRunLayer(modelRun, automaticRun));
             }
         }
 

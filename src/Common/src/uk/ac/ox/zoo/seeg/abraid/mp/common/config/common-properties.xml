@@ -20,11 +20,14 @@
         file:/var/lib/abraid/conf/application/database.properties,
         file:/var/lib/abraid/conf/shared/email.properties,
         file:/var/lib/abraid/conf/application/misc.properties,
-        file:/var/lib/abraid/conf/application/webservice.properties" />
+        file:/var/lib/abraid/conf/application/webservice.properties,
+        WEB-INF/version.properties,
+        version.properties" />
 
     <context:property-placeholder order="5" ignore-unresolvable="false" ignore-resource-not-found="true" location="
-        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/database-testing.properties,
-        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/email-testing.properties,
-        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/misc-testing.properties,
-        classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/webservice-testing.properties" />
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/database-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/email-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/misc-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/webservice-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/version-testing.properties" />
 </beans>

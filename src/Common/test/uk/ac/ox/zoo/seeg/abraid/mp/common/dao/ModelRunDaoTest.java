@@ -24,6 +24,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
 
+    @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
     private ModelRun modelRunDengue1;
     private ModelRun modelRunDengue2;
     private ModelRun modelRunDengue3;
@@ -106,6 +109,25 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert
         assertThat(run.getSubmodelStatistics()).hasSize(3);
+    }
+
+    @Test
+    public void saveAndLoadCascadesToDiseaseOccurrenceJunctionTable() {
+        // Arrange
+        ModelRun run = createModelRun("name");
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getAll().subList(0, 6);
+        run.setInputDiseaseOccurrences(occurrences);
+        modelRunDao.save(run);
+        flushAndClear();
+
+        // Act
+        run = modelRunDao.getByName("name");
+
+        // Assert
+        assertThat(run.getInputDiseaseOccurrences()).hasSize(occurrences.size());
+        DiseaseOccurrence[] occurrences2 = new DiseaseOccurrence[6];
+        occurrences2 = occurrences.toArray(occurrences2);
+        assertThat(run.getInputDiseaseOccurrences()).containsOnly(occurrences2);
     }
 
     @Test

@@ -193,6 +193,8 @@
   </target>
 
   <!-- Flyway targets -->
+  <property name="flyway.placeholders.application_username" value="${application.username}"/>
+
   <path id="flyway.lib.path">
     <fileset dir="${lib.dir}/default" includes="*.jar"/>
   </path>
@@ -229,7 +231,7 @@
     <tstamp>
       <format property="time.stamp" pattern="yyMMddHHmm" />
     </tstamp>
-    <touch file="${basedir}/migrations/${time.stamp}__description_goes_here.sql" />
+    <echo file="${basedir}/migrations/${time.stamp}__description_goes_here.sql" message="-- Summary goes here.${line.separator}--${line.separator}-- Copyright (c) 2014 University of Oxford" />
   </target>
 </project>
 

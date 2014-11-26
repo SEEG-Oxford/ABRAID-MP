@@ -42,7 +42,6 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      * Creates a new RunConfiguration using the current defaults.
      * @param diseaseId The disease id
      * @param diseaseGlobal If the disease is global
-     * @param diseaseName The disease name
      * @param diseaseAbbreviation The disease abbreviation
      * @return The new RunConfiguration
      * @throws ConfigurationException When the R executable cannot be found.
@@ -50,7 +49,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      */
     @Override
     public RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseGlobal,
-                                                       String diseaseName, String diseaseAbbreviation)
+                                                       String diseaseAbbreviation)
             throws ConfigurationException, IOException {
         LOGGER.info(LOG_CREATING_THE_DEFAULT_RUN_CONFIGURATION);
         return new RunConfiguration(
@@ -109,8 +108,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 configurationService.getGlobalRasterFile());
     }
 
-    private Map<String, String> buildCovariateFileList(int diseaseId)
-            throws ConfigurationException, IOException {
+    private Map<String, String> buildCovariateFileList(int diseaseId) throws IOException {
         JsonCovariateConfiguration covariateConfig = configurationService.getCovariateConfiguration();
 
         Collection<JsonCovariateFile> files = covariateConfig.getFiles();

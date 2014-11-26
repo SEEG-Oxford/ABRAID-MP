@@ -25,8 +25,10 @@ import static org.mockito.Mockito.when;
  * Integration tests for the EnvironmentalSuitabilityHelper class.
  * Copyright (c) 2014 University of Oxford
  */
-@ContextConfiguration(loader = SpringockitoContextLoader.class,
-        locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
+@ContextConfiguration(loader = SpringockitoContextLoader.class, locations = {
+    "classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/test-context.xml",
+    "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml"
+})
 public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSpringIntegrationTests {
     // Parameters taken from the test raster files
     private static final String LARGE_RASTER_FILENAME =
@@ -114,7 +116,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         return modelRun;
     }
 
-    private void mockGetRasterFileForModelRun(ModelRun modelRun) throws Exception {
+    private void mockGetRasterFileForModelRun(ModelRun modelRun) {
         when(rasterFilePathFactory.getMeanPredictionRasterFile(same(modelRun)))
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }

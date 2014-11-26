@@ -310,6 +310,6 @@ public class HealthMapDataConverterTest {
 
     private void verifyWriteLastRetrievalEndDate(DateTime retrievalEndDate) {
         assertThat(healthMapProvenance.getLastRetrievalEndDate()).isEqualTo(retrievalEndDate);
-        verify(alertService, times(1)).saveProvenance(same(healthMapProvenance));
+        verify(alertService).saveProvenance(same(healthMapProvenance));
     }
 }

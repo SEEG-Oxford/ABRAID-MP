@@ -25,6 +25,16 @@
         <patternset>
           <exclude name="**/?*.java"/>
           <exclude name="**/?*.class"/>
+          <exclude name="**/*-testing.properties" />
+        </patternset>
+        <type type="file"/>
+      </fileset>
+    </copy>
+    <copy todir="${test.out.dir}">
+      <fileset dir="${basedir}/testutils">
+        <patternset>
+          <exclude name="**/?*.java"/>
+          <exclude name="**/?*.class"/>
         </patternset>
         <type type="file"/>
       </fileset>

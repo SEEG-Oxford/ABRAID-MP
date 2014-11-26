@@ -39,10 +39,10 @@ public class RunConfigurationFactoryTest {
         setupExpectedCovariateConfiguration(configurationService);
         setupExpectedAdminUnitConfiguration(configurationService);
 
-        String expectedRunNameStart = "foo1_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
+        String expectedRunNameStart = "foo_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
+        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo");
 
         // Assert
         assertThat(result.getRunName()).startsWith(expectedRunNameStart);
@@ -121,7 +121,7 @@ public class RunConfigurationFactoryTest {
                 longName.substring(0, 195) + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, true, longName, longName);
+        RunConfiguration result = target.createDefaultConfiguration(1, true, longName);
 
         // Assert
         assertThat(result.getRunName()).startsWith(expectedRunNameStart);
@@ -145,7 +145,7 @@ public class RunConfigurationFactoryTest {
         RunConfigurationFactory target = new RunConfigurationFactoryImpl(configurationService);
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo", "foo1");
+        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo1");
 
         // Assert
         assertThat(result.getCovariateConfig().getCovariateFiles()).containsKey("dir/path1");

@@ -48,7 +48,7 @@ public class ModelRunnerTest {
         target.runModel(config, null, null, null);
 
         // Assert
-        verify(mockWorkspaceProvisioner, times(1)).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class));
+        verify(mockWorkspaceProvisioner).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ModelRunnerTest {
         target.runModel(config, null, null, null);
 
         // Assert
-        verify(mockProcessRunner, times(1)).run(any(ModelProcessHandler.class));
+        verify(mockProcessRunner).run(any(ModelProcessHandler.class));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ModelRunnerTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<Map<String, File>> fileArgsCaptor = (ArgumentCaptor<Map<String, File>>) (Object) ArgumentCaptor.forClass(Map.class);
 
-        verify(mockProcessRunnerFactory, times(1))
+        verify(mockProcessRunnerFactory)
                 .createProcessRunner(eq(new File("foo")), eq(expectedR), stringArgsCaptor.capture(), fileArgsCaptor.capture(), eq(expectedTimeout));
 
         String[] stringArgs = stringArgsCaptor.getValue();

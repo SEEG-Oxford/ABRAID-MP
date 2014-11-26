@@ -18,7 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
@@ -128,7 +128,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     /**
      * Generates a disease extent for the specified disease group.
      * @param diseaseGroupId The id of the disease group.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      * @return An error status: 204 for success, 404 if disease group cannot be found in database.
      */
     @Secured({ "ROLE_ADMIN" })
@@ -136,10 +136,11 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST)
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId, boolean useGoldStandardOccurrences) {
+    public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId,
+                                                boolean onlyUseGoldStandardOccurrences) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup != null) {
-            if (useGoldStandardOccurrences) {
+            if (onlyUseGoldStandardOccurrences) {
                 modelRunWorkflowService.generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
             } else {
                 modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
@@ -155,7 +156,7 @@ public class AdminDiseaseGroupController extends AbstractController {
      * @param diseaseGroupId The id of the disease group for which to request the model run.
      * @param batchStartDate The start date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
      * @param batchEndDate The end date of the occurrences batch. Must be in ISO 8601 format for correct parsing.
-     * @param useGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
+     * @param onlyUseGoldStandardOccurrences True if only "gold standard" occurrences should be used, otherwise false.
      * @return An error message string (empty if no error).
      */
     @Secured({ "ROLE_ADMIN" })
@@ -164,11 +165,10 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
-                                                  String batchEndDate, boolean useGoldStandardOccurrences) {
+                                                  String batchEndDate, boolean onlyUseGoldStandardOccurrences) {
         try {
-            if (useGoldStandardOccurrences) {
+            if (onlyUseGoldStandardOccurrences) {
                 modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
             } else {
                 DateTime parsedBatchStartDate = DateTime.parse(batchStartDate);
@@ -177,7 +177,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                         parsedBatchStartDate, parsedBatchEndDate);
             }
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ModelRunRequesterException e) {
+        } catch (ModelRunWorkflowException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

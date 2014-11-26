@@ -8,11 +8,13 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:utils="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
          http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web"/>
 
@@ -25,9 +27,12 @@
     </bean>
 
     <bean id="reCaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
-        <property name="privateKey" value="6Lf4ZPwSAAAAACoVwmksWbQXQpROZP4oJ1JRNdWO" />
-        <property name="publicKey" value="6Lf4ZPwSAAAAABIP2aAan96r0tGl9ARquK54qzZo" />
+        <property name="publicKey" value="${recaptcha.public.key}" />
+        <property name="privateKey" value="${recaptcha.private.key}" />
         <property name="includeNoscript" value="false" />
+        <property name="recaptchaServer">
+            <utils:constant static-field="net.tanesha.recaptcha.ReCaptchaImpl.HTTPS_SERVER" />
+        </property>
     </bean>
 
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
@@ -35,6 +40,7 @@
         <property name="freemarkerVariables">
             <map>
                 <entry key="baseWmsUrl" value="${base.wms.url}" />
+                <entry key="applicationVersion" value="${application.version}" />
             </map>
         </property>
     </bean>

@@ -62,12 +62,12 @@ public class IndexControllerTest {
         target.showIndexPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("repository_url", expectedUrl);
-        verify(model, times(1)).addAttribute("model_version", expectedVersion);
-        verify(model, times(1)).addAttribute("available_versions", expectedVersions);
-        verify(model, times(1)).addAttribute("r_path", expectedRPath);
-        verify(model, times(1)).addAttribute("run_duration", expectedDuration);
-        verify(model, times(1)).addAttribute("covariate_directory", expectedCovariateDir);
+        verify(model).addAttribute("repository_url", expectedUrl);
+        verify(model).addAttribute("model_version", expectedVersion);
+        verify(model).addAttribute("available_versions", expectedVersions);
+        verify(model).addAttribute("r_path", expectedRPath);
+        verify(model).addAttribute("run_duration", expectedDuration);
+        verify(model).addAttribute("covariate_directory", expectedCovariateDir);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class IndexControllerTest {
 
         // Assert
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-        verify(model, times(1)).addAttribute(eq("available_versions"), captor.capture());
+        verify(model).addAttribute(eq("available_versions"), captor.capture());
         assertThat(captor.getValue()).hasSize(0);
     }
 
@@ -99,7 +99,7 @@ public class IndexControllerTest {
         target.showIndexPage(model);
 
         // Assert
-        verify(model, times(1)).addAttribute("r_path", "");
+        verify(model).addAttribute("r_path", "");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class IndexControllerTest {
         // Assert
         ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
-        verify(mockConfService, times(1)).setAuthenticationDetails(usernameCaptor.capture(), passwordCaptor.capture());
+        verify(mockConfService).setAuthenticationDetails(usernameCaptor.capture(), passwordCaptor.capture());
         assertThat(usernameCaptor.getValue()).isEqualTo(expectedUser);
         assertThat(BCrypt.checkpw(expectedPassword, passwordCaptor.getValue())).isTrue();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);

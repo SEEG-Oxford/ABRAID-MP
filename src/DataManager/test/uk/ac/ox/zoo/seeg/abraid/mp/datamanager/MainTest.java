@@ -13,7 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequesterException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
@@ -122,7 +122,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         mockGeoNamesRequests();
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
         when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
-                .thenThrow(new ModelRunRequesterException("Test message"));
+                .thenThrow(new ModelRunWorkflowException("Test message"));
 
         // Act
         runMain(new String[]{});
@@ -404,7 +404,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
                 "}\n";
     }
 
-    private void createAndSaveTestModelRun(int diseaseGroupId) throws Exception {
+    private void createAndSaveTestModelRun(int diseaseGroupId) {
         ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, "localhost", DateTime.now().minusDays(1));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());

@@ -18,7 +18,7 @@
         paths: {
             // CDN
             "jquery": cdn + "jquery/2.1.0/jquery",
-            "bootstrap": cdn + "twitter-bootstrap/3.2.0/js/bootstrap",
+            "bootstrap": cdn + "twitter-bootstrap/3.3.1/js/bootstrap.min",
             "bootstrap-datepicker": cdn + "bootstrap-datepicker/1.3.0/js/bootstrap-datepicker",
             "bootstrap.extensions": cdn + "jasny-bootstrap/3.1.3/js/jasny-bootstrap",
             "knockout": cdn + "knockout/3.1.0/knockout-debug",

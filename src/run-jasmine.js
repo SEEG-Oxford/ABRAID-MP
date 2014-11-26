@@ -72,7 +72,9 @@
                     return window.coverage;
                 });
                 console.log("[Summary] JS Line Coverage " + coverage);
-                phantom.exit(exitCode);
+                setTimeout(function(){
+                    phantom.exit(exitCode);
+                }, 0);
             });
         }
     });

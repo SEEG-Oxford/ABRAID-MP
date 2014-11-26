@@ -390,7 +390,7 @@ public class DiseaseExtentGeneratorTest {
                 any(AdminUnitDiseaseExtentClass.class));
 
         for (AdminUnitDiseaseExtentClass extentClass : expectedDiseaseExtent) {
-            verify(diseaseService, times(1)).saveAdminUnitDiseaseExtentClass(argThat(new AdminUnitDiseaseExtentClassMatcher(extentClass)));
+            verify(diseaseService).saveAdminUnitDiseaseExtentClass(argThat(new AdminUnitDiseaseExtentClassMatcher(extentClass)));
         }
     }
 
@@ -563,7 +563,7 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private <T> List<T> concatenate(List<T>... inputLists) {
-        List<T> outputList = new ArrayList<T>();
+        List<T> outputList = new ArrayList<>();
         for (List<T> inputList : inputLists) {
             outputList.addAll(inputList);
         }
@@ -576,7 +576,7 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private <T> List<T> createList(T... items) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         Collections.addAll(list, items);
         return list;
     }

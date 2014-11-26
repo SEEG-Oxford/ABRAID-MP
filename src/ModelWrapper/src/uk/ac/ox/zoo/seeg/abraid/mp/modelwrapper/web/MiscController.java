@@ -44,7 +44,7 @@ public class MiscController extends AbstractController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        String currentValue = null;
+        String currentValue;
         try {
             currentValue = configurationService.getRExecutablePath();
         } catch (ConfigurationException e) {

@@ -67,7 +67,6 @@ public class ModelRunController extends AbstractController {
             runConfiguration = runConfigurationFactory.createDefaultConfiguration(
                     runData.getDisease().getId(),
                     runData.getDisease().isGlobal(),
-                    runData.getDisease().getName(),
                     runData.getDisease().getAbbreviation());
 
             ModelStatusReporter modelStatusReporter = new ModelStatusReporterImpl(

@@ -10,8 +10,8 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
-if [[ ! $# -eq 2 ]]; then
-  echo "Usage: deploy_application_server.sh 'remote_user_name' 'remote_config_repo_path'"
+if [[ ! $# -eq 3 ]]; then
+  echo "Usage: deploy_application_server.sh 'remote_user_name' 'remote_config_repo_path' 'remote_config_repo_branch'"
   exit 1
 fi
 
@@ -33,6 +33,8 @@ export REMOTE_USER="$1"
 declare -r REMOTE_USER
 export CONFIG_PATH="$2"
 declare -r CONFIG_PATH
+export CONFIG_BRANCH="$3"
+declare -r CONFIG_BRANCH
 
 # Apply under-construction page
 echo "[[ Applying under-construction page ]]"
@@ -47,15 +49,15 @@ service tomcat7 stop > /dev/null
 service gunicorn stop > /dev/null
 echo -e "#\x21/bin/sh\n\n:" > "/etc/cron.hourly/abraid"
 
+# Source useful functions
+source "functions.sh"
+
 # Checking for dir
 if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   echo "[[ Creating support directory ]]"
   mkdir -p "$ABRAID_SUPPORT_PATH"
   permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
-
-# Source useful functions
-source "functions.sh"
 
 # Getting config
 echo "[[ Updating ABRAID configuration ]]"
@@ -85,13 +87,6 @@ echo "[[ Upgrading publicsite ]]"
 echo "[[ Upgrading datamanager ]]"
 . up_dm.sh
 
-# TEMP
-echo "[[ Dealing with log4j ]]"
-sed -i "s|^log4j\.rootLogger\=.*$|log4j.rootLogger=ERROR, logfile, email|g" "$WEBAPP_PATH/modeloutput/WEB-INF/classes/log4j.properties"
-sed -i "s|^log4j\.rootLogger\=.*$|log4j.rootLogger=ERROR, logfile, email|g" "$WEBAPP_PATH/ROOT/WEB-INF/classes/log4j.properties"
-sed -i "s|^log4j\.rootLogger\=.*$|log4j.rootLogger=ERROR, logfile, email|g" "$ABRAID_SUPPORT_PATH/datamanager/log4j.properties"
-sed -i "s|^log4j\.appender\.logfile\.file\=.*$|log4j.appender.logfile.file=$ABRAID_SUPPORT_PATH/datamanager/logs/datamanager.log|g" "$ABRAID_SUPPORT_PATH/datamanager/log4j.properties"
-
 # Waiting
 echo "[[ Main updates complete ]]"
 read -p "You should now update all modelling servers before continuing. Press [enter] to continue ..."
@@ -100,7 +95,7 @@ read -p "You should now update all modelling servers before continuing. Press [e
 echo "[[ Restarting services ]]"
 service gunicorn start > /dev/null
 service tomcat7 start > /dev/null
-echo -e "#\x21/bin/sh\n\n/var/lib/abraid/datamanager/datamanager.sh" > "/etc/cron.hourly/abraid"
+echo -e "#\x21/bin/sh\n\nsudo -H -u abraid /var/lib/abraid/datamanager/datamanager.sh" > "/etc/cron.hourly/abraid"
 
 # Remove under-construction page
 echo "[[ Removing under-construction page ]]"

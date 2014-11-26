@@ -4,8 +4,7 @@
 -->
 <#import "../../layout/common.ftl" as c/>
 
-<@c.page title="ABRAID-MP Administration: Disease Occurrence Spread" mainjs="/js/kickstart/admin/occurrencespread.js"
-         includeNavBar=false includeFooter=false>
+<@c.minimalPage title="ABRAID-MP Administration: Disease Occurrence Spread">
 <div class="container">
     <#if (table.errorMessage)??>
         <div class="alert alert-warning" role="alert">${table.errorMessage}</div>
@@ -34,4 +33,4 @@
         </table>
     </#if>
 </div>
-</@c.page>
+</@c.minimalPage>

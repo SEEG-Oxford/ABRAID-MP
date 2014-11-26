@@ -240,6 +240,10 @@ installWar() {
   mkdir -p "$WAR_TEMP_DIR/$WAR_PATH"
   unzip -q "$WAR_FILE" -d "$WAR_TEMP_DIR/$WAR_PATH"
 
+  if [[ -f "$WAR_TEMP_DIR/$WAR_PATH/WEB-INF/classes/log4j.properties" ]]; then
+    sed -i "s|^log4j\.rootLogger\=.*$|log4j.rootLogger=ERROR, logfile|g" "$WAR_TEMP_DIR/$WAR_PATH/WEB-INF/classes/log4j.properties"
+  fi
+
   echo "[[ $WAR_ID | Performing update ]]"
   dirAsk "$WAR_TEMP_DIR/$WAR_PATH" "$WEBAPP_PATH/$WAR_PATH"
 

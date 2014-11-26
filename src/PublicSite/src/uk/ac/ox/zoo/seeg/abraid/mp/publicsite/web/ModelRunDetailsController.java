@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonEffectCurveCovariateInfluence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunStatistics;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
@@ -105,6 +102,25 @@ public class ModelRunDetailsController extends AbstractController {
         }
     }
 
+    /**
+     * Gets the list of input disease occurrences associated with a model run.
+     * @param modelRunName The unique name of the model run.
+     * @return The DTO of input disease occurrences.
+     */
+    @RequestMapping(
+            value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
+    @Transactional
+    @ResponseBody
+    public ResponseEntity<WrappedList<JsonDownloadDiseaseOccurrence>> getInputDiseaseOccurrences(
+            @PathVariable String modelRunName) {
+        ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
+        if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            List<DiseaseOccurrence> inputDiseaseOccurrences = modelRun.getInputDiseaseOccurrences();
+            return new ResponseEntity<>(convertToJsonDiseaseOccurrenceDtos(inputDiseaseOccurrences), HttpStatus.OK);
+        }
+    }
 
     private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences) {
         List<JsonCovariateInfluence> json = new ArrayList<>();
@@ -141,4 +157,16 @@ public class ModelRunDetailsController extends AbstractController {
         }
         return new WrappedList<>(dtos);
     }
+
+    private WrappedList<JsonDownloadDiseaseOccurrence> convertToJsonDiseaseOccurrenceDtos(
+            List<DiseaseOccurrence> inputDiseaseOccurrences) {
+        List<JsonDownloadDiseaseOccurrence> json = new ArrayList<>();
+        if (!inputDiseaseOccurrences.isEmpty()) {
+            for (DiseaseOccurrence inputDiseaseOccurrence : inputDiseaseOccurrences) {
+                json.add(new JsonDownloadDiseaseOccurrence(inputDiseaseOccurrence));
+            }
+        }
+        return new WrappedList<>(json);
+    }
+
 }

@@ -39,13 +39,13 @@ public class EmailServiceTest {
         target.sendEmail("", "", "");
 
         // Assert
-        verify(email, times(1)).setHostName(expectation.getAddress());
-        verify(email, times(1)).setSmtpPort(expectation.getPort());
-        verify(email, times(1)).setSslSmtpPort("" + expectation.getPort());
-        verify(email, times(1)).setSSLOnConnect(expectation.useSSL());
+        verify(email).setHostName(expectation.getAddress());
+        verify(email).setSmtpPort(expectation.getPort());
+        verify(email).setSslSmtpPort("" + expectation.getPort());
+        verify(email).setSSLOnConnect(expectation.useSSL());
 
         ArgumentCaptor<DefaultAuthenticator> captor = ArgumentCaptor.forClass(DefaultAuthenticator.class);
-        verify(email, times(1)).setAuthenticator(captor.capture());
+        verify(email).setAuthenticator(captor.capture());
         DefaultAuthenticator authenticator = captor.getValue();
         Field protectedField = DefaultAuthenticator.class.getDeclaredField("authentication");
         protectedField.setAccessible(true);
@@ -66,10 +66,10 @@ public class EmailServiceTest {
         target.sendEmail("ToAddress", "Subject", "Body");
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setFrom("FromAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
+        verify(email).addTo("ToAddress");
+        verify(email).setFrom("FromAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class EmailServiceTest {
         target.sendEmail("ToAddress", "Subject", "Body");
 
         // Assert
-        verify(email, times(1)).send();
+        verify(email).send();
     }
 
     private EmailFactory arrangeEmailFactory(Email email) {
@@ -121,8 +121,8 @@ public class EmailServiceTest {
         target.sendEmail("", "", "template.ftl", null);
 
         // Assert
-        verify(email, times(1)).setMsg("expected result");
-        verify(email, times(1)).send();
+        verify(email).setMsg("expected result");
+        verify(email).send();
     }
 
     @Test
@@ -143,7 +143,7 @@ public class EmailServiceTest {
         target.sendEmail("", "", "template.ftl", null);
 
         // Assert
-        verify(email, times(1)).setMsg("expected result");
+        verify(email).setMsg("expected result");
     }
 
     @Test
@@ -163,7 +163,7 @@ public class EmailServiceTest {
         target.sendEmail("", "", "template.ftl", null);
 
         // Assert
-        verify(email, times(1)).setMsg("expected result");
+        verify(email).setMsg("expected result");
     }
 
     @Test
@@ -176,14 +176,14 @@ public class EmailServiceTest {
         EmailServiceImpl target = new EmailServiceImpl(arrangeEmailFactory(email), "FromAddress", "", expectation,
                 new Class[0], new File[] {testFolder.getRoot()});
 
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("foo", "!");
 
         // Act
         target.sendEmail("", "", "template.ftl", data);
 
         // Assert
-        verify(email, times(1)).setMsg("expected result!");
+        verify(email).setMsg("expected result!");
     }
 
     @Test
@@ -197,10 +197,10 @@ public class EmailServiceTest {
         target.sendEmail("ToAddress", "Subject", "Body");
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -215,10 +215,10 @@ public class EmailServiceTest {
         target.sendEmail("ToAddress", "Subject", "template.ftl", new HashMap<String, Object>());
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -233,10 +233,10 @@ public class EmailServiceTest {
         result.get();
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -252,10 +252,10 @@ public class EmailServiceTest {
         result.get();
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -269,10 +269,10 @@ public class EmailServiceTest {
         target.sendEmail("Subject", "Body");
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -287,10 +287,10 @@ public class EmailServiceTest {
         target.sendEmail("Subject", "template.ftl", new HashMap<String, Object>());
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -305,10 +305,10 @@ public class EmailServiceTest {
         result.get();
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 
     @Test
@@ -324,9 +324,9 @@ public class EmailServiceTest {
         result.get();
 
         // Assert
-        verify(email, times(1)).addTo("ToAddress");
-        verify(email, times(1)).setSubject("Subject");
-        verify(email, times(1)).setMsg("Body");
-        verify(email, times(1)).send();
+        verify(email).addTo("ToAddress");
+        verify(email).setSubject("Subject");
+        verify(email).setMsg("Body");
+        verify(email).send();
     }
 }

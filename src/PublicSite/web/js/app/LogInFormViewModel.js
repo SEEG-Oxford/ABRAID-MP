@@ -37,7 +37,7 @@ define([
         };
 
         self.successHandler = function () {
-            self.pushNotice("Success.", "success");
+            self.pushNotice("Success", "success");
             refresh();
         };
 

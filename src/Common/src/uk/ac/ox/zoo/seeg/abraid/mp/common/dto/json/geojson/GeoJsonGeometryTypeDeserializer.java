@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -14,7 +13,7 @@ import java.io.IOException;
 public class GeoJsonGeometryTypeDeserializer extends JsonDeserializer<GeoJsonGeometryType> {
     @Override
     public GeoJsonGeometryType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         String jsonValue = jsonParser.getText();
         for (GeoJsonGeometryType enumValue : GeoJsonGeometryType.values()) {

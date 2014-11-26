@@ -1,8 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Alert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
@@ -13,17 +15,26 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the AlertService class.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class AlertServiceTest extends AbstractCommonSpringUnitTests {
-    @Autowired
+public class AlertServiceTest {
     private AlertService alertService;
+    private AlertDao alertDao;
+    private FeedDao feedDao;
+    private ProvenanceDao provenanceDao;
+
+    @Before
+    public void setUp() {
+        alertDao = mock(AlertDao.class);
+        feedDao = mock(FeedDao.class);
+        provenanceDao = mock(ProvenanceDao.class);
+        alertService = new AlertServiceImpl(alertDao, feedDao, provenanceDao);
+    }
 
     @Test
     public void getAlertByHealthMapAlertId() {

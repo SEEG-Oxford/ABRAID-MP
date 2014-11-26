@@ -68,16 +68,16 @@ public class ModelRunOccurrencesSelector {
     private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
     public ModelRunOccurrencesSelector(DiseaseService diseaseService, LocationService locationService,
-                                       int diseaseGroupId, boolean useGoldStandardOccurrences) {
+                                       int diseaseGroupId, boolean onlyUseGoldStandardOccurrences) {
         this.diseaseService = diseaseService;
         this.locationService = locationService;
-        initialise(diseaseGroupId, useGoldStandardOccurrences);
+        initialise(diseaseGroupId, onlyUseGoldStandardOccurrences);
     }
 
     // Set the MDS calculation parameters for the specified disease group.
-    private void initialise(int diseaseGroupId, boolean useGoldStandardOccurrences) {
+    private void initialise(int diseaseGroupId, boolean onlyUseGoldStandardOccurrences) {
         allOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId,
-                useGoldStandardOccurrences);
+                onlyUseGoldStandardOccurrences);
         diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         minDataVolume = diseaseGroup.getMinDataVolume();
         minDistinctCountries = diseaseGroup.getMinDistinctCountries();
@@ -89,10 +89,10 @@ public class ModelRunOccurrencesSelector {
     /**
      * Gets the list of occurrences to be used in the model run.
      * @return The list of occurrences with which to run the model,
-     * @throws ModelRunRequesterException if the model should not run because the required thresholds have not been
+     * @throws ModelRunWorkflowException if the model should not run because the required thresholds have not been
      * reached.
      */
-    public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() throws ModelRunRequesterException {
+    public List<DiseaseOccurrence> selectModelRunDiseaseOccurrences() throws ModelRunWorkflowException {
         List<DiseaseOccurrence> occurrences = null;
 
         // Minimum Data Volume must always be satisfied
@@ -239,7 +239,7 @@ public class ModelRunOccurrencesSelector {
     private void handleCannotRunModel(String logSuffixMessage, String exceptionMessage) {
         LOGGER.warn(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
                 diseaseGroup.getName()));
-        throw new ModelRunRequesterException(exceptionMessage);
+        throw new ModelRunWorkflowException(exceptionMessage);
     }
 
     private void handleCanRunModel() {

@@ -60,10 +60,10 @@ public class ModelRunRequester {
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
      * run is completed), otherwise null.
      * @param batchEndDate The end date for batching (if it should happen), otherwise null.
-     * @throws ModelRunRequesterException if the model run could not be requested.
+     * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     public void requestModelRun(int diseaseGroupId, List<DiseaseOccurrence> occurrencesForModelRun,
-                                DateTime batchStartDate, DateTime batchEndDate) throws ModelRunRequesterException {
+                                DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         if (occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Map<Integer, Integer> diseaseExtent = getDiseaseExtent(diseaseGroupId);
@@ -72,16 +72,29 @@ public class ModelRunRequester {
             try {
                 logRequest(diseaseGroup, occurrencesForModelRun);
                 URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
+                ModelRun modelRun = createPreliminaryModelRun(diseaseGroup, requestDate, modelWrapperUrl,
+                                                              batchStartDate, batchEndDate, occurrencesForModelRun);
                 JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
                                                                                 occurrencesForModelRun, diseaseExtent);
-                handleModelRunResponse(response, diseaseGroupId, requestDate, modelWrapperUrl.getHost(),
-                        batchStartDate, batchEndDate);
+                handleModelRunResponse(response, modelRun);
             } catch (WebServiceClientException|JsonParserException e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
-                throw new ModelRunRequesterException(message, e);
+                throw new ModelRunWorkflowException(message, e);
             }
         }
+    }
+
+    private ModelRun createPreliminaryModelRun(DiseaseGroup diseaseGroup, DateTime requestDate, URI modelWrapperUrl,
+                                               DateTime batchStartDate, DateTime batchEndDate,
+                                               List<DiseaseOccurrence> occurrencesForModelRun) {
+        ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate);
+        modelRun.setBatchStartDate(batchStartDate);
+        modelRun.setBatchEndDate(batchEndDate);
+        if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            modelRun.setInputDiseaseOccurrences(occurrencesForModelRun);
+        }
+        return modelRun;
     }
 
     private URI selectLeastBusyModelWrapperUrl() {
@@ -111,16 +124,13 @@ public class ModelRunRequester {
                 diseaseOccurrences.size()));
     }
 
-    private void handleModelRunResponse(JsonModelRunResponse response, int diseaseGroupId, DateTime requestDate,
-                                        String requestServer, DateTime batchStartDate, DateTime batchEndDate) {
+    private void handleModelRunResponse(JsonModelRunResponse response, ModelRun modelRun) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
-            throw new ModelRunRequesterException(message);
+            throw new ModelRunWorkflowException(message);
         } else {
-            ModelRun modelRun = new ModelRun(response.getModelRunName(), diseaseGroupId, requestServer, requestDate);
-            modelRun.setBatchStartDate(batchStartDate);
-            modelRun.setBatchEndDate(batchEndDate);
+            modelRun.setName(response.getModelRunName());
             modelRunService.saveModelRun(modelRun);
         }
     }

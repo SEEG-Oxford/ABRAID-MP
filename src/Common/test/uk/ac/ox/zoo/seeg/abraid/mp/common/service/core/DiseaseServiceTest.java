@@ -1,9 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.*;
@@ -16,9 +16,35 @@ import static org.mockito.Mockito.*;
  * Tests the DiseaseService class.
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
-    @Autowired
+public class DiseaseServiceTest {
     private DiseaseService diseaseService;
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+    private DiseaseGroupDao diseaseGroupDao;
+    private HealthMapDiseaseDao healthMapDiseaseDao;
+    private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+    private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+    private AdminUnitTropicalDao adminUnitTropicalDao;
+    private DiseaseExtentClassDao diseaseExtentClassDao;
+    private NativeSQL nativeSQL;
+
+    @Before
+    public void setUp() {
+        diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
+        diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
+        diseaseGroupDao = mock(DiseaseGroupDao.class);
+        healthMapDiseaseDao = mock(HealthMapDiseaseDao.class);
+        validatorDiseaseGroupDao = mock(ValidatorDiseaseGroupDao.class);
+        adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
+        adminUnitGlobalDao = mock(AdminUnitGlobalDao.class);
+        adminUnitTropicalDao = mock(AdminUnitTropicalDao.class);
+        diseaseExtentClassDao = mock(DiseaseExtentClassDao.class);
+        nativeSQL = mock(NativeSQL.class);
+        diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
+                healthMapDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao, adminUnitGlobalDao,
+                adminUnitTropicalDao, diseaseExtentClassDao, nativeSQL);
+    }
 
     @Test
     public void saveDiseaseOccurrence() {
@@ -473,7 +499,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         diseaseService.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
 
         // Assert
-        verify(nativeSQL, times(1)).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
+        verify(nativeSQL).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
     }
 
     @Test
@@ -525,14 +551,14 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
     public void getDiseaseOccurrencesForModelRunRequest() {
         // Arrange
         int diseaseGroupId = 87;
-        boolean useGoldStandardOccurrences = true;
+        boolean onlyUseGoldStandardOccurrences = true;
         List<DiseaseOccurrence> occurrences = Arrays.asList(new DiseaseOccurrence());
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(
-                diseaseGroupId, useGoldStandardOccurrences)).thenReturn(occurrences);
+                diseaseGroupId, onlyUseGoldStandardOccurrences)).thenReturn(occurrences);
 
         // Act
         List<DiseaseOccurrence> testOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(
-                diseaseGroupId, useGoldStandardOccurrences);
+                diseaseGroupId, onlyUseGoldStandardOccurrences);
 
         // Assert
         assertThat(testOccurrences).isSameAs(occurrences);
@@ -542,7 +568,7 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
         // Arrange
         int diseaseGroupId = 10;
         double minimumValidationWeighting = 0.7;
-        boolean useGoldStandardOccurrences = true;
+        boolean onlyUseGoldStandardOccurrences = true;
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
@@ -550,11 +576,11 @@ public class DiseaseServiceTest extends AbstractCommonSpringUnitTests {
 
         when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(diseaseGroupId, minimumValidationWeighting,
-                minimumOccurrenceDate, useGoldStandardOccurrences)).thenReturn(expectedOccurrences);
+                minimumOccurrenceDate, onlyUseGoldStandardOccurrences)).thenReturn(expectedOccurrences);
 
         // Act
         List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForDiseaseExtent(
-                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, useGoldStandardOccurrences);
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, onlyUseGoldStandardOccurrences);
 
         // Assert
         assertThat(expectedOccurrences).isSameAs(actualOccurrences);

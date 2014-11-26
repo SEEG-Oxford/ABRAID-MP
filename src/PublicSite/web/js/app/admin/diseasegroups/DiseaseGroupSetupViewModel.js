@@ -9,8 +9,11 @@ define([
 ], function (ko, $, moment, BaseFormViewModel) {
     "use strict";
 
+    var displayFormat = "DD MMM YYYY";
+
+    // Transform date from display format to format sent as submission data.
     function formatDate(date) {
-        return moment(date, "DD MMM YYYY").format();
+        return moment(date, displayFormat).format();
     }
 
     return function (baseUrl, diseaseGroupSelectedEventName, diseaseGroupSavedEventName) {
@@ -25,12 +28,18 @@ define([
         self.canRunModel = ko.observable(false);
         self.batchStartDate = ko.observable("");
         self.batchEndDate = ko.observable("");
-        self.batchStartDate.extend({ required: true, date: true, max: self.batchEndDate });
-        self.batchEndDate.extend({ required: true, date: true, min: self.batchStartDate });
+        self.batchStartDate.extend({ required: true, date: true, maxDate: {
+            date: self.batchEndDate,
+            format: displayFormat
+        }});
+        self.batchEndDate.extend({ required: true, date: true, minDate: {
+            date: self.batchStartDate,
+            format: displayFormat
+        }});
         self.batchDateMinimum = ko.observable("");
         self.batchDateMaximum = ko.observable("");
         self.hasGoldStandardOccurrences = ko.observable(false);
-        self.useGoldStandardOccurrences = ko.observable(false);
+        self.onlyUseGoldStandardOccurrences = ko.observable(false);
 
         self.buildSubmissionUrl = function () {
             return baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
@@ -40,18 +49,18 @@ define([
             return {
                 batchStartDate: formatDate(self.batchStartDate()),
                 batchEndDate: formatDate(self.batchEndDate()),
-                useGoldStandardOccurrences: self.useGoldStandardOccurrences()
+                onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences()
             };
         };
 
-        // The Run Model button is disabled if:
+        // The 'Run Model and Batch Occurrences For Validation' button is disabled if:
         // (1) either of the batch dates are invalid
         // (unless we are using gold standard occurrences as these do not require a batch end date); or
         // (2) the model cannot be run; or
         // (3) the form is being submitted (requesting model run, enabling automatic model runs, or generating extent)
         self.disableButtonThatRunsModel = ko.computed(function () {
             var datesValid = self.batchStartDate.isValid() && self.batchEndDate.isValid();
-            return (!self.useGoldStandardOccurrences() && !datesValid) ||
+            return (!self.onlyUseGoldStandardOccurrences() && !datesValid) ||
                 !self.canRunModel() ||
                 self.isSubmitting() ||
                 self.isEnablingAutomaticModelRuns() ||
@@ -62,7 +71,7 @@ define([
         self.generateDiseaseExtent = function () {
             self.notices.removeAll();
             self.isGeneratingDiseaseExtent(true);
-            var data = { useGoldStandardOccurrences: self.useGoldStandardOccurrences() };
+            var data = { onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences() };
             $.post(baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/generatediseaseextent", data)
                 .done(function () { self.notices.push({ message: "Disease extent generated.", priority: "success"}); })
                 .fail(function () { self.notices.push({ message: "Server error.", priority: "warning"}); })
@@ -103,7 +112,7 @@ define([
             self.hasModelBeenSuccessfullyRun(false);
             self.canRunModel(false);
             self.hasGoldStandardOccurrences(false);
-            self.useGoldStandardOccurrences(false);
+            self.onlyUseGoldStandardOccurrences(false);
         };
 
         self.updateModelRunInfo = function (diseaseGroupId) { // only public for testing

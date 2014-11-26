@@ -35,7 +35,7 @@
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">About<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="#">ABRAID-MP</a>
+                <li><a href="<@spring.url "/about"/>">ABRAID-MP</a>
                 <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
                 <li><a href="#">Publications</a></li>
             </ul>

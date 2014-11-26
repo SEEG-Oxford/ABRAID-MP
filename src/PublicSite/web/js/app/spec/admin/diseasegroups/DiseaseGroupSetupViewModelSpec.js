@@ -139,11 +139,11 @@ define([
 
         describe("holds whether or not to use a disease group's 'gold standard' occurrences which", function () {
             it("is an observable", function () {
-                expect(vm.useGoldStandardOccurrences).toBeObservable();
+                expect(vm.onlyUseGoldStandardOccurrences).toBeObservable();
             });
 
             it("starts false", function () {
-                expect(vm.useGoldStandardOccurrences()).toBe(false);
+                expect(vm.onlyUseGoldStandardOccurrences()).toBe(false);
             });
         });
 
@@ -192,7 +192,7 @@ define([
         describe("holds whether to disable the button that runs the model, which", function () {
             // NB. Dates must be numbers, not date string, to allow for comparison in min/max rule and be valid.
             it("enables if not using gold standard occurrences and we should be able to run the model", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchStartDate(9);
                 vm.batchEndDate(10);
                 vm.canRunModel(true);
@@ -203,7 +203,7 @@ define([
             });
 
             it("enables if using gold standard occurrences and we should be able to run the model", function () {
-                vm.useGoldStandardOccurrences(true);
+                vm.onlyUseGoldStandardOccurrences(true);
                 vm.batchStartDate(9);
                 vm.batchEndDate(10);
                 vm.canRunModel(true);
@@ -214,7 +214,7 @@ define([
             });
 
             it("disables if not using gold standard occurrences and the start date is invalid", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchStartDate(10);
                 vm.batchEndDate(9);
                 vm.canRunModel(true);
@@ -225,7 +225,7 @@ define([
             });
 
             it("disables if not using gold standard occurrences and the end date is invalid", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchStartDate(9);
                 vm.batchEndDate("");
                 vm.canRunModel(true);
@@ -236,7 +236,7 @@ define([
             });
 
             it("disables if the model cannot be run", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchEndDate("10 Jul 2014");
                 vm.canRunModel(false);
                 vm.isSubmitting(false);
@@ -246,7 +246,7 @@ define([
             });
 
             it("disables if we are submitting", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchEndDate("10 Jul 2014");
                 vm.canRunModel(true);
                 vm.isSubmitting(true);
@@ -256,7 +256,7 @@ define([
             });
 
             it("disables if we are enabling automatic model runs", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchEndDate("10 Jul 2014");
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
@@ -266,7 +266,7 @@ define([
             });
 
             it("disables if we are generating the disease extent", function () {
-                vm.useGoldStandardOccurrences(false);
+                vm.onlyUseGoldStandardOccurrences(false);
                 vm.batchEndDate("10 Jul 2014");
                 vm.canRunModel(true);
                 vm.isSubmitting(false);
@@ -292,7 +292,7 @@ define([
             it("build submission data which is correct", function () {
                 // Arrange
                 vm.batchEndDate("10 Jul 2014");
-                vm.useGoldStandardOccurrences(true);
+                vm.onlyUseGoldStandardOccurrences(true);
                 var expectedBatchEndDate = "2014-07-10T00:00:00";
 
                 // Act
@@ -300,7 +300,7 @@ define([
 
                 // Assert
                 expect(actualData.batchEndDate).toContain(expectedBatchEndDate);
-                expect(actualData.useGoldStandardOccurrences).toBe(true);
+                expect(actualData.onlyUseGoldStandardOccurrences).toBe(true);
             });
         });
 
@@ -314,7 +314,7 @@ define([
             vm.hasModelBeenSuccessfullyRun(true);
             vm.canRunModel(true);
             vm.hasGoldStandardOccurrences(false);
-            vm.useGoldStandardOccurrences(false);
+            vm.onlyUseGoldStandardOccurrences(false);
 
             // Act
             vm.resetState(undefined);
@@ -328,7 +328,7 @@ define([
             expect(vm.hasModelBeenSuccessfullyRun()).toBe(false);
             expect(vm.canRunModel()).toBe(false);
             expect(vm.hasGoldStandardOccurrences()).toBe(false);
-            expect(vm.useGoldStandardOccurrences()).toBe(false);
+            expect(vm.onlyUseGoldStandardOccurrences()).toBe(false);
         });
 
         describe("has a 'updateModelRunInfo' method, which", function () {
@@ -498,9 +498,9 @@ define([
                 // Arrange
                 var id = 1;
                 vm.selectedDiseaseGroupId(id);
-                vm.useGoldStandardOccurrences(true);
+                vm.onlyUseGoldStandardOccurrences(true);
                 var expectedUrl = baseUrl + "admin/diseases/" + id + "/generatediseaseextent";
-                var expectedParams = "useGoldStandardOccurrences=true";
+                var expectedParams = "onlyUseGoldStandardOccurrences=true";
 
                 // Act
                 vm.generateDiseaseExtent();

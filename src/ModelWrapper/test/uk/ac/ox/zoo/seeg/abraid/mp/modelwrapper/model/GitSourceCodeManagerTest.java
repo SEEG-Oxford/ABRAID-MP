@@ -38,7 +38,7 @@ public class GitSourceCodeManagerTest {
     @Test
     public void updateRepositoryClonesRepositoryIfNeeded() throws Exception {
         // Arrange
-        SourceCodeManager target = setupSourceCodeManager();
+        setupSourceCodeManager();
 
         // Assert
         File baseRepoCacheDir = Paths.get(cacheDir.getRoot().toString(), "repos").toFile();
@@ -96,7 +96,6 @@ public class GitSourceCodeManagerTest {
     public void provisionVersionRejectsInvalidVersions() throws Exception {
         // Arrange
         SourceCodeManager target = setupSourceCodeManager();
-        File repoCacheDir = getRepoCloneDir();
         File targetDir = workingDir.newFolder();
 
         // Act
@@ -172,5 +171,4 @@ public class GitSourceCodeManagerTest {
         target.updateRepository(); // initial clone
         return target;
     }
-
 }

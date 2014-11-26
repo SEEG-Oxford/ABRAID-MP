@@ -14,15 +14,16 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap-theme.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
-    <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Source+Sans+Pro:600' type='text/css'>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:600" type="text/css">
     <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
+    <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </head>
 <body>
@@ -31,10 +32,11 @@
 
         <div id="map">
             <#include "layerselector.ftl"/>
+            <#include "helpmodal.ftl"/>
             <#include "latestoccurrencespanel.ftl"/>
             <div id="spinner" data-bind="fadeVisible: { visible: visible() }">
                 <i class="fa fa-3x fa-spinner fa-spin"></i>
-                <div></div>
+                <div class="background"></div>
             </div>
         </div>
     </div>
@@ -49,6 +51,7 @@
         var data = {
             wmsUrl: "${baseWmsUrl}",
             loggedIn: ${userLoggedIn?c},
+            showHelpText: ${showHelpText?c},
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
             diseaseInterests: [
@@ -100,6 +103,6 @@
     </script>
 
     <!-- Require -->
-    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/datavalidation/content' />" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
+    <script type="text/javascript" data-main="<@spring.url '/js/kickstart/datavalidation/content' />" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.js"></script>
 </body>
 </html>

@@ -29,16 +29,16 @@ public class MachineWeightingPredictor {
      * Train the model with the list of occurrences.
      * @param diseaseGroupId The ID of the disease group to which the occurrences belong.
      * @param occurrences The occurrences with which to train the predictor.
-     * @throws MachineWeightingPredictorException if the json cannot be processed, or the request cannot be made.
+     * @throws ModelRunWorkflowException if the json cannot be processed, or the request cannot be made.
      */
     public void train(int diseaseGroupId, List<DiseaseOccurrence> occurrences)
-            throws MachineWeightingPredictorException {
+            throws ModelRunWorkflowException {
         try {
             LOGGER.info(String.format(TRAINING_MESSAGE, diseaseGroupId, occurrences.size()));
             webService.sendTrainingData(diseaseGroupId, occurrences);
         } catch (WebServiceClientException|JsonProcessingException e) {
             LOGGER.error(e.getMessage());
-            throw new MachineWeightingPredictorException(TRAINING_FAILURE);
+            throw new ModelRunWorkflowException(TRAINING_FAILURE);
         }
     }
 
@@ -46,14 +46,14 @@ public class MachineWeightingPredictor {
      * Predict the weighting of a new occurrence.
      * @param occurrence The occurrence.
      * @return The predicted value for weighting.
-     * @throws MachineWeightingPredictorException if the request cannot be made or the response cannot be handled.
+     * @throws ModelRunWorkflowException if the request cannot be made or the response cannot be handled.
      */
-    public Double findMachineWeighting(DiseaseOccurrence occurrence) throws MachineWeightingPredictorException {
+    public Double findMachineWeighting(DiseaseOccurrence occurrence) throws ModelRunWorkflowException {
         try {
             return webService.getPrediction(occurrence);
         } catch (JsonProcessingException|WebServiceClientException|NumberFormatException e) {
             LOGGER.error(e.getMessage());
-            throw new MachineWeightingPredictorException(PREDICTION_FAILURE);
+            throw new ModelRunWorkflowException(PREDICTION_FAILURE);
         }
     }
 }

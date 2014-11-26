@@ -122,7 +122,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunRequesterException.class);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         });
     }
 
-    private void assertRequestJson(String requestJson) throws IOException {
+    private void assertRequestJson(String requestJson) {
         // Split the JSON into four groups: disease, feature collection header, features, extent
         Pattern regexp = Pattern.compile("\\{\"disease\"\\:\\{(.+?)},\"occurrences\"\\:\\{(.+?),\"features\"\\:\\[(.+?)\\]\\},\"extentWeightings\"\\:\\{(.+?)\\}\\}");
         Matcher matcher = regexp.matcher(requestJson);

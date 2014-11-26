@@ -1,15 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import com.vividsolutions.jts.geom.Point;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringUnitTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -17,9 +18,30 @@ import static org.mockito.Mockito.when;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class LocationServiceTest extends AbstractCommonSpringUnitTests {
-    @Autowired
+public class LocationServiceTest {
     private LocationService locationService;
+    private CountryDao countryDao;
+    private HealthMapCountryDao healthMapCountryDao;
+    private LocationDao locationDao;
+    private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
+    private GeoNameDao geoNameDao;
+    private AdminUnitQCDao adminUnitQCDao;
+    private NativeSQL nativeSQL;
+    private LandSeaBorderDao landSeaBorderDao;
+
+    @Before
+    public void setUp() {
+        countryDao = mock(CountryDao.class);
+        healthMapCountryDao = mock(HealthMapCountryDao.class);
+        locationDao = mock(LocationDao.class);
+        geoNamesLocationPrecisionDao = mock(GeoNamesLocationPrecisionDao.class);
+        geoNameDao = mock(GeoNameDao.class);
+        adminUnitQCDao = mock(AdminUnitQCDao.class);
+        nativeSQL = mock(NativeSQL.class);
+        landSeaBorderDao = mock(LandSeaBorderDao.class);
+        locationService = new LocationServiceImpl(countryDao, healthMapCountryDao, locationDao,
+                geoNamesLocationPrecisionDao, geoNameDao, adminUnitQCDao, nativeSQL, landSeaBorderDao);
+    }
 
     @Test
     public void getByGeoNameId() {
