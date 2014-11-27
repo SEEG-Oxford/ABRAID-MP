@@ -170,10 +170,8 @@ public class DiseaseOccurrenceHandlerHelperTest {
     public void handlingSucceedsIfThereAreNoOccurrencesToBatch() {
         // Arrange
         int diseaseGroupId = 87;
-        DateTime batchStartDate = new DateTime("2012-11-13T15:16:17");
-        DateTime batchStartDateWithMinimumTime = new DateTime("2012-11-13T00:00:00.000");
-        DateTime batchEndDate = new DateTime("2012-11-14T15:16:17");
-        DateTime batchEndDateWithMaximumTime = new DateTime("2012-11-14T23:59:59.999");
+        DateTime batchStartDate = new DateTime("2012-11-13T00:00:00.000");
+        DateTime batchEndDate = new DateTime("2012-11-14T23:59:59.999");
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
         modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
@@ -183,7 +181,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
-        when(diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDateWithMinimumTime, batchEndDateWithMaximumTime))
+        when(diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDate, batchEndDate))
                 .thenReturn(new ArrayList<DiseaseOccurrence>());
 
         // Act
@@ -192,7 +190,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         // Assert
         assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).getDiseaseOccurrencesForBatching(
-                eq(diseaseGroupId), eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
+                eq(diseaseGroupId), eq(batchStartDate), eq(batchEndDate));
         verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(modelRunService).saveModelRun(modelRun);
@@ -202,10 +200,8 @@ public class DiseaseOccurrenceHandlerHelperTest {
     public void handlingSucceedsIfThereAreOccurrencesToBatch() {
         // Arrange
         int diseaseGroupId = 87;
-        DateTime batchStartDate = new DateTime("2013-07-29T14:15:16");
-        DateTime batchStartDateWithMinimumTime = new DateTime("2013-07-29T00:00:00.000");
-        DateTime batchEndDate = new DateTime("2013-07-30T14:15:16");
-        DateTime batchEndDateWithMaximumTime = new DateTime("2013-07-30T23:59:59.999");
+        DateTime batchStartDate = new DateTime("2013-07-29T00:00:00.000");
+        DateTime batchEndDate = new DateTime("2013-07-30T23:59:59.999");
         ModelRun modelRun = createModelRun(diseaseGroupId, ModelRunStatus.COMPLETED);
         modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
@@ -219,7 +215,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
-        when(diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDateWithMinimumTime, batchEndDateWithMaximumTime))
+        when(diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDate, batchEndDate))
                 .thenReturn(occurrences);
 
         // Act
@@ -228,7 +224,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         // Assert
         assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).getDiseaseOccurrencesForBatching(
-                eq(diseaseGroupId), eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
+                eq(diseaseGroupId), eq(batchStartDate), eq(batchEndDate));
         verify(diseaseOccurrenceValidationService).addValidationParameters(same(occurrences));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));

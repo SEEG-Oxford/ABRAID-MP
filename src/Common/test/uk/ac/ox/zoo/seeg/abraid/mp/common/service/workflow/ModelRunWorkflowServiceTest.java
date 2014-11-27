@@ -31,6 +31,7 @@ public class ModelRunWorkflowServiceTest {
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
     private EmailService emailService;
+    private BatchDatesValidator batchDatesValidator;
 
     @Before
     public void setUp() {
@@ -43,9 +44,10 @@ public class ModelRunWorkflowServiceTest {
         automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
         machineWeightingPredictor = mock(MachineWeightingPredictor.class);
         emailService = mock(EmailService.class);
+        batchDatesValidator = mock(BatchDatesValidator.class);
         modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
                 reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler,
-                machineWeightingPredictor, emailService));
+                machineWeightingPredictor, emailService, batchDatesValidator));
     }
 
     @Test
@@ -57,8 +59,10 @@ public class ModelRunWorkflowServiceTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         Map<Integer, Double> newWeightings = new HashMap<>();
-        DateTime batchStartDate = DateTime.now();
-        DateTime batchEndDate = DateTime.now().plusDays(1);
+        DateTime batchStartDate = new DateTime("2012-11-13T15:16:17");
+        DateTime batchStartDateWithMinimumTime = new DateTime("2012-11-13T00:00:00.000");
+        DateTime batchEndDate = new DateTime("2012-11-14T15:16:17");
+        DateTime batchEndDateWithMaximumTime = new DateTime("2012-11-14T23:59:59.999");
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
         List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
@@ -73,13 +77,49 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
+        verify(batchDatesValidator).validate(eq(diseaseGroupId), eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchStartDate), eq(batchEndDate));
+        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences),
+                eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
         verify(weightingsCalculator).saveExpertsWeightings(same(newWeightings));
         verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+    }
+
+    @Test(expected = ModelRunWorkflowException.class)
+    public void prepareForAndRequestManuallyTriggeredModelRunWithInvalidBatchDates() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
+        DateTime lastModelRunPrepDate = DateTime.now().minusWeeks(1);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        Map<Integer, Double> newWeightings = new HashMap<>();
+        DateTime batchStartDate = new DateTime("2012-11-13T15:16:17");
+        DateTime batchStartDateWithMinimumTime = new DateTime("2012-11-13T00:00:00.000");
+        DateTime batchEndDate = new DateTime("2012-11-14T15:16:17");
+        DateTime batchEndDateWithMaximumTime = new DateTime("2012-11-14T23:59:59.999");
+        DateTime minimumOccurrenceDate = DateTime.now();
+        List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
+        String exceptionMessage = "Invalid batch dates";
+
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
+        when(weightingsCalculator.calculateNewExpertsWeightings()).thenReturn(newWeightings);
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
+        doThrow(new ModelRunWorkflowException(exceptionMessage)).when(batchDatesValidator).validate(
+                diseaseGroupId, batchStartDateWithMinimumTime, batchEndDateWithMaximumTime);
+
+
+        // Act
+        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchStartDate,
+                batchEndDate);
+
+        // Asserted exception is in the @Test annotation - cannot use catchException() on spies
     }
 
     @Test

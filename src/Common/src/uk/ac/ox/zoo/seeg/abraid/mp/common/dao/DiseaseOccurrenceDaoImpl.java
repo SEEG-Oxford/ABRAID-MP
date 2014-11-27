@@ -252,4 +252,20 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
         return listNamedQuery("getDiseaseOccurrencesForTrainingPredictor", "diseaseGroupId", diseaseGroupId,
                 "cutOffDate", DateTime.now().minusWeeks(WEEKS_AGO_FOR_TRAINING_DATA_CUT_OFF_DATE));
     }
+
+    /**
+     * Gets the number of occurrences that are eligible for being sent to the model, between the start and end dates.
+     * This helps to estimate whether the number of occurrences in a batch will be sufficient for a model run.
+     * @param diseaseGroupId The disease group ID.
+     * @param startDate The start date.
+     * @param endDate The end date.
+     * @return The number of occurrences that are eligible for being sent to the model. This is all occurrences
+     * except those that have been discarded, or points with COUNTRY precision.
+     */
+    @Override
+    public long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate) {
+        Query query = getParameterisedNamedQuery("getNumberOfDiseaseOccurrencesEligibleForModelRun", "diseaseGroupId",
+                diseaseGroupId, "startDate", startDate, "endDate", endDate);
+        return (long) query.uniqueResult();
+    }
 }

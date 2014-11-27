@@ -69,8 +69,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
-        DateTime batchStartDate = new DateTime("2014-02-24T17:35:29"); // Occurrence date for earliest READY occurrence
-        DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
+        DateTime batchStartDate = new DateTime("2014-02-24"); // Occurrence date for earliest READY occurrence
+        DateTime batchEndDate = new DateTime("2014-02-26").minusMillis(1);
         ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 
         // As this is the first batch, there was no training data available, so no prediction can be made.
@@ -111,8 +111,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
-        DateTime batchStartDate = new DateTime("2014-02-24T17:35:29");
-        DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
+        DateTime batchStartDate = new DateTime("2014-02-24"); // Occurrence date for earliest READY occurrence
+        DateTime batchEndDate = new DateTime("2014-02-26").minusMillis(1);
         createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, DateTime.now().minusWeeks(1));
         ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 

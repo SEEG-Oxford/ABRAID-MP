@@ -82,6 +82,15 @@ import javax.persistence.Table;
                         "and d.occurrenceDate between :batchStartDate and :batchEndDate "
         ),
         @NamedQuery(
+                name = "getNumberOfDiseaseOccurrencesEligibleForModelRun",
+                query = "select count(*) " +
+                        "from DiseaseOccurrence " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
+                        "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING') " +
+                        "and location.precision <> 'COUNTRY' " +
+                        "and occurrenceDate between :startDate and :endDate"
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesForTrainingPredictor",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
