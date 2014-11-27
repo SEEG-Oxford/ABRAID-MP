@@ -258,4 +258,13 @@ public interface DiseaseService {
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForTrainingPredictor(int diseaseGroupId);
 
+    /**
+     * Gets the number of occurrences that are eligible for being sent to the model, between the start and end batch
+     * date. This helps to estimate whether the number of occurrences in a batch will be sufficient for a model run.
+     * @param diseaseGroupId The disease group ID.
+     * @param startDate The start date.
+     * @param endDate The end date.
+     * @return The number of occurrences that are eligible for being sent to the model.
+     */
+    long getNumberOfDiseaseOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 }

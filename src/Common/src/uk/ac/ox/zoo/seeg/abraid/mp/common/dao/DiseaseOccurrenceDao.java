@@ -152,4 +152,15 @@ public interface DiseaseOccurrenceDao {
      * @return A list of disease occurrences.
      */
     List<DiseaseOccurrence> getDiseaseOccurrencesForTrainingPredictor(int diseaseGroupId);
+
+    /**
+     * Gets the number of occurrences that are eligible for being sent to the model, between the start and end dates.
+     * This helps to estimate whether the number of occurrences in a batch will be sufficient for a model run.
+     * @param diseaseGroupId The disease group ID.
+     * @param startDate The start date.
+     * @param endDate The end date.
+     * @return The number of occurrences that are eligible for being sent to the model. This is all occurrences
+     * except those that have been discarded, or points with COUNTRY precision.
+     */
+    long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 }
