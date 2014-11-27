@@ -12,6 +12,11 @@ define([
         expect(arg).toHaveValidationRule({name: "min", params: 0});
     };
 
+    var expectValidationRulesForPositiveInteger = function (arg) {
+        expect(arg).toHaveValidationRule({name: "digit", params: true});
+        expect(arg).toHaveValidationRule({name: "min", params: 1});
+    };
+
     var expectValidationRulesForNumberBetweenZeroAndOne = function (arg) {
         expect(arg).toHaveValidationRule({name: "number", params: true});
         expect(arg).toHaveValidationRule({name: "min", params: 0});
@@ -41,7 +46,7 @@ define([
 
             it("with appropriate validation rules", function () {
                 expectValidationRulesForNonNegativeInteger(vm.minNewLocations);
-                expectValidationRulesForNonNegativeInteger(vm.minDataVolume);
+                expectValidationRulesForPositiveInteger(vm.minDataVolume);
                 expectValidationRulesForNonNegativeInteger(vm.minDistinctCountries);
                 expectValidationRulesForNonNegativeInteger(vm.minHighFrequencyCountries);
                 expectValidationRulesForNonNegativeInteger(vm.highFrequencyThreshold);
