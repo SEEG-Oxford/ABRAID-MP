@@ -140,6 +140,11 @@ public class ModelRun {
     @Fetch(FetchMode.SELECT)
     private List<DiseaseOccurrence> inputDiseaseOccurrences;
 
+    // List of disease extent classes mapped to admin units used in this model run.
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "modelRun")
+    @Fetch(FetchMode.SELECT)
+    private List<ModelRunAdminUnitDiseaseExtentClass> inputDiseaseExtent;
+
     public ModelRun() {
     }
 
@@ -281,6 +286,14 @@ public class ModelRun {
 
     public void setInputDiseaseOccurrences(List<DiseaseOccurrence> inputDiseaseOccurrences) {
         this.inputDiseaseOccurrences = inputDiseaseOccurrences;
+    }
+
+    public List<ModelRunAdminUnitDiseaseExtentClass> getInputDiseaseExtent() {
+        return inputDiseaseExtent;
+    }
+
+    public void setInputDiseaseExtent(List<ModelRunAdminUnitDiseaseExtentClass> inputDiseaseExtent) {
+        this.inputDiseaseExtent = inputDiseaseExtent;
     }
 
     ///COVERAGE:OFF - generated code

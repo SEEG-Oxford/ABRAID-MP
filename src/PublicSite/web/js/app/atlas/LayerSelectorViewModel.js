@@ -20,7 +20,8 @@ define([
 
         self.types = [
             { display: "disease risk", id: "mean" },
-            { display: "risk uncertainty", id: "uncertainty" }
+            { display: "risk uncertainty", id: "uncertainty" },
+            { display: "disease extent", id: "extent" }
         ];
         self.selectedType = ko.observable(self.types[0]);
 

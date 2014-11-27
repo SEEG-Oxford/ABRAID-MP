@@ -9,26 +9,15 @@ define([
 ], function (ko, $) {
     "use strict";
 
-    return function (baseUrl, wmsUrl) {
+    return function (baseUrl, wmsUrl, wmsLayerParameterFactory) {
         var self = this;
 
         var activeLayer = ko.observable().subscribeTo("active-atlas-layer");
         var activeRun = ko.observable().subscribeTo("selected-run");
 
         self.png = ko.computed(function () {
-            var wmsParams = {
-                service: "WMS",
-                version: "1.1.0",
-                request: "GetMap",
-                styles: "abraid_raster",
-                bbox: "-180.0,-60.0,180.0,85.0",
-                width: 1656,
-                height: 667,
-                srs: "EPSG:4326",
-                format: "image/png",
-                layers: "abraid:" + activeLayer()
-            };
-
+            var wmsParams = activeLayer() ?
+                wmsLayerParameterFactory.createLayerParametersForDownload(activeLayer()) : {};
             return activeLayer() ? wmsUrl + "?" + $.param(wmsParams) : "#";
         }, self);
 

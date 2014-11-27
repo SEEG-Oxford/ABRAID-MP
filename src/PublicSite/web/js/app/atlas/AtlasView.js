@@ -10,7 +10,7 @@ define([
 ], function (L, ko) {
     "use strict";
 
-    return function (wmsUrl) {
+    return function (wmsUrl, wmsLayerParameterFactory) {
         var self = this;
 
         self.wmsUrl = wmsUrl;
@@ -38,12 +38,8 @@ define([
             }
 
             if (layer) {
-                self.currentLayer = L.tileLayer.wms(self.wmsUrl, {
-                    layers: [layer],
-                    format: "image/png",
-                    styles: "abraid_raster",
-                    reuseTiles: true
-                });
+                self.currentLayer = L.tileLayer.wms(self.wmsUrl,
+                    wmsLayerParameterFactory.createLayerParametersForDisplay(layer));
 
                 self.map.addLayer(self.currentLayer);
             }

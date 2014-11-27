@@ -10,16 +10,50 @@ html, body {
 }
 #disclaimerBanner {
     position: absolute;
-    bottom: 20px;
+    bottom: 8px;
     width: 100%;
     background-color: rgb(222, 222, 222);
     border-top: 2px solid rgb(170, 170, 170);
     border-bottom: 2px solid rgb(170, 170, 170);
-    padding: 5px 5px 5px 65px;
+    padding: 5px 170px;
     font-size: 22px;
 }
+@media  (max-width: 870px) {
+    #disclaimerBanner {
+        padding: 5px 15px 5px 170px !important;
+    }
+}
+@media  (min-width : 1025px) and (max-width : 1280px) {
+    #disclaimerBanner {
+        font-size: 20px !important;
+    }
+}
+@media  (min-width : 700px) and (max-width : 1025px) {
+    #disclaimerBanner {
+        font-size: 19px !important;
+    }
+}
+@media  (min-width : 600px) and (max-width: 700px) {
+    #disclaimerBanner {
+        font-size: 18px !important;
+    }
+}
+@media  (min-width : 500px) and (max-width: 600px) {
+    #disclaimerBanner {
+        font-size: 16px !important;
+    }
+}
+@media (min-width : 400px) and (max-width: 500px)  {
+    #disclaimerBanner {
+        font-size: 14px !important;
+    }
+}
+@media (max-width: 400px)  {
+    #disclaimerBanner {
+        font-size: 12px !important;
+    }
+}
 #disclaimerBanner div {
-    max-width: 95%;
     opacity: 0.8;
     color: rgb(51, 51, 51);
     text-align: justify;
