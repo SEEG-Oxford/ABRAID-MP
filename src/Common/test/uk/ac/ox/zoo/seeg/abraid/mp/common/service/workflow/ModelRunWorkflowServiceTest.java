@@ -13,8 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.*;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -90,7 +88,7 @@ public class ModelRunWorkflowServiceTest {
         verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
     }
 
-    @Test
+    @Test(expected = ModelRunWorkflowException.class)
     public void prepareForAndRequestManuallyTriggeredModelRunWithInvalidBatchDates() {
         // Arrange
         int diseaseGroupId = 87;
@@ -118,12 +116,10 @@ public class ModelRunWorkflowServiceTest {
 
 
         // Act
-        catchException(modelRunWorkflowService).prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId,
-                batchStartDate, batchEndDate);
+        modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId, batchStartDate,
+                batchEndDate);
 
-        // Assert
-        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
-        assertThat(caughtException()).hasMessage(exceptionMessage);
+        // Asserted exception is in the @Test annotation - cannot use catchException() on spies
     }
 
     @Test

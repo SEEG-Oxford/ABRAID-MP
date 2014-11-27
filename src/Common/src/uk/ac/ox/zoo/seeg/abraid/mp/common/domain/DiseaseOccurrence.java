@@ -86,7 +86,7 @@ import javax.persistence.Table;
                 query = "select count(*) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
-                        "and status in ('READY', 'IN_REVIEW', 'UNBATCHED') " +
+                        "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING') " +
                         "and location.precision <> 'COUNTRY' " +
                         "and occurrenceDate between :startDate and :endDate"
         ),

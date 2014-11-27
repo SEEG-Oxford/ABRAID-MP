@@ -648,8 +648,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getNumberOfOccurrencesEligibleForModelRun() {
         // Arrange
-        // Set some points in our date range to IN_REVIEW and UNBATCHED (including occurrences with COUNTRY precision,
-        // which should not be selected)
+        // Set some points in our date range to IN_REVIEW and AWAITING_BATCHING (including occurrences with COUNTRY
+        // precision, which should not be selected)
         setOccurrencesToStatus(DiseaseOccurrenceStatus.IN_REVIEW, 275761, 275219);
         setOccurrencesToStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING, 275758, 274790);
 
