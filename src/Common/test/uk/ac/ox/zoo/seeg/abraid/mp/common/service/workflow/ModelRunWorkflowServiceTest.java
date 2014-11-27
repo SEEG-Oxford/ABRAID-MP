@@ -7,6 +7,7 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
@@ -29,6 +30,7 @@ public class ModelRunWorkflowServiceTest {
     private ModelRunWorkflowServiceImpl modelRunWorkflowService;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
+    private EmailService emailService;
 
     @Before
     public void setUp() {
@@ -40,9 +42,10 @@ public class ModelRunWorkflowServiceTest {
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
         automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
         machineWeightingPredictor = mock(MachineWeightingPredictor.class);
+        emailService = mock(EmailService.class);
         modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
                 reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler,
-                machineWeightingPredictor));
+                machineWeightingPredictor, emailService));
     }
 
     @Test

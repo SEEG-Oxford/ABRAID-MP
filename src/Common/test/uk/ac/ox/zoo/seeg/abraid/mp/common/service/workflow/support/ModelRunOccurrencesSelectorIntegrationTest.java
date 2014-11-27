@@ -1,7 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
+import org.apache.commons.mail.EmailException;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -12,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.HashSet;
@@ -22,6 +25,7 @@ import static ch.lambdaj.Lambda.*;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests that the ModelRunOccurrencesSelector returns expected list of occurrences under each condition.
@@ -47,13 +51,20 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
+    private EmailService emailService;
+
+    @Before
+    public void setUp() {
+        emailService = mock(EmailService.class);
+    }
+
     @Test
     public void selectModelRunDiseaseOccurrencesThrowsExceptionWhenFewerOccurrencesThanMDV() {
         // Arrange
         int diseaseGroupId = 87;
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
@@ -62,6 +73,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false)).hasSize(27);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        verifySendEmail();
     }
 
     @Test
@@ -70,7 +82,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         int diseaseGroupId = 87;
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
@@ -79,6 +91,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, false)).hasSize(27);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        verifySendEmail();
     }
 
     @Test
@@ -88,7 +101,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         addUploadedOccurrences();
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, true);
+                emailService, diseaseGroupId, true);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
@@ -97,6 +110,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         assertThat(diseaseService.getDiseaseOccurrencesForModelRunRequest(diseaseGroupId, true)).hasSize(2);
         assertThat(diseaseService.getDiseaseGroupById(diseaseGroupId).getMinDataVolume()).isEqualTo(500);
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        verifySendEmail();
     }
 
     @Test
@@ -112,7 +126,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -133,7 +147,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -156,7 +170,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -179,7 +193,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -199,13 +213,14 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        verifySendEmail();
     }
 
     @Test
@@ -219,13 +234,14 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         catchException(selector).selectModelRunDiseaseOccurrences();
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        verifySendEmail();
     }
 
     @Test
@@ -243,7 +259,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -284,7 +300,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
 
         // Act
         List<DiseaseOccurrence> occurrences = selector.selectModelRunDiseaseOccurrences();
@@ -324,5 +340,13 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         occurrence.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence.setOccurrenceDate(DateTime.now());
         diseaseOccurrenceDao.save(occurrence);
+    }
+
+    private void verifySendEmail() {
+        try {
+            verify(emailService).sendEmail(eq("Minimum Data Volume/Spread Not Satisfied"), anyString());
+        } catch (EmailException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

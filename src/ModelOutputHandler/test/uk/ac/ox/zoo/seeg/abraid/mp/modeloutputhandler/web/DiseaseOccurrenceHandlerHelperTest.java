@@ -22,8 +22,8 @@ import static org.mockito.Mockito.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOccurrenceHandlerTest {
-    private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
+public class DiseaseOccurrenceHandlerHelperTest {
+    private DiseaseOccurrenceHandlerHelper helper;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
@@ -33,7 +33,7 @@ public class DiseaseOccurrenceHandlerTest {
         diseaseService = mock(DiseaseService.class);
         modelRunService = mock(ModelRunService.class);
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
-        diseaseOccurrenceHandler = new DiseaseOccurrenceHandler(diseaseService, modelRunService,
+        helper = new DiseaseOccurrenceHandlerHelper(diseaseService, modelRunService,
                 diseaseOccurrenceValidationService);
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
@@ -49,9 +49,10 @@ public class DiseaseOccurrenceHandlerTest {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isNull();
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupId(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class), any(DateTime.class));
@@ -72,9 +73,10 @@ public class DiseaseOccurrenceHandlerTest {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isNull();
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupId(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class), any(DateTime.class));
@@ -109,9 +111,10 @@ public class DiseaseOccurrenceHandlerTest {
                 DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
         assertThat(occurrence1.getFinalWeighting()).isNull();
@@ -132,9 +135,10 @@ public class DiseaseOccurrenceHandlerTest {
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isNull();
         verify(modelRunService).hasBatchingEverCompleted(eq(diseaseGroupId));
         verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupId(anyInt());
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
@@ -151,9 +155,10 @@ public class DiseaseOccurrenceHandlerTest {
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isNull();
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class), any(DateTime.class));
         verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
@@ -177,13 +182,15 @@ public class DiseaseOccurrenceHandlerTest {
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
         when(diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDateWithMinimumTime, batchEndDateWithMaximumTime))
                 .thenReturn(new ArrayList<DiseaseOccurrence>());
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).getDiseaseOccurrencesForBatching(
                 eq(diseaseGroupId), eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
         verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
@@ -211,19 +218,59 @@ public class DiseaseOccurrenceHandlerTest {
 
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
         when(diseaseService.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDateWithMinimumTime, batchEndDateWithMaximumTime))
                 .thenReturn(occurrences);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        DateTime batchingInitialisationDate = helper.handle(modelRun);
 
         // Assert
+        assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).getDiseaseOccurrencesForBatching(
                 eq(diseaseGroupId), eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
         verify(diseaseOccurrenceValidationService).addValidationParameters(same(occurrences));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
         verify(modelRunService).saveModelRun(modelRun);
+    }
+
+    @Test
+    public void continueBatchingInitialisationDoesNothingIfBatchingInitialisationDateIsNull() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        helper.continueBatchingInitialisation(diseaseGroupId, null);
+
+        // Assert
+        verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(anyInt(),
+                any(DiseaseOccurrenceStatus.class));
+        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+    }
+
+    @Test
+    public void continueBatchingInitialisationSavesOccurrencesAfterInitialisationDate() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(-1);
+        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(0);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(1);
+        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2, occurrence3);
+
+        // Act
+        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
+        helper.continueBatchingInitialisation(diseaseGroupId, DateTime.now());
+
+        // Assert
+        assertThat(occurrence1.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
+        assertThat(occurrence2.getStatus()).isEqualTo(DiseaseOccurrenceStatus.AWAITING_BATCHING);
+        assertThat(occurrence3.getStatus()).isEqualTo(DiseaseOccurrenceStatus.AWAITING_BATCHING);
+
+        verify(diseaseService, never()).saveDiseaseOccurrence(same(occurrence1));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
+        verify(diseaseService).saveDiseaseOccurrence(same(occurrence3));
     }
 
     private ModelRun createModelRun(int diseaseGroupId, ModelRunStatus status) {
@@ -233,5 +280,11 @@ public class DiseaseOccurrenceHandlerTest {
         modelRun.setRequestDate(DateTime.now());
         modelRun.setStatus(status);
         return modelRun;
+    }
+
+    private DiseaseOccurrence createDiseaseOccurrence(int daysOffset) {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence(DateTime.now().plusDays(daysOffset));
+        occurrence.setStatus(DiseaseOccurrenceStatus.READY);
+        return occurrence;
     }
 }

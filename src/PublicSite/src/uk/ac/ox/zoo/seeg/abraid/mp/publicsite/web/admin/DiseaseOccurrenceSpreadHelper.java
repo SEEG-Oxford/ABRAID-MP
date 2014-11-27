@@ -56,7 +56,7 @@ public class DiseaseOccurrenceSpreadHelper {
                 diseaseGroupId,
                 DiseaseOccurrenceStatus.READY,
                 DiseaseOccurrenceStatus.IN_REVIEW,
-                DiseaseOccurrenceStatus.UNBATCHED);
+                DiseaseOccurrenceStatus.AWAITING_BATCHING);
     }
 
     private List<Country> getCountries() {

@@ -133,7 +133,7 @@ public class DiseaseOccurrenceSpreadHelperTest {
                 diseaseGroupId,
                 DiseaseOccurrenceStatus.READY,
                 DiseaseOccurrenceStatus.IN_REVIEW,
-                DiseaseOccurrenceStatus.UNBATCHED)).thenReturn(occurrences);
+                DiseaseOccurrenceStatus.AWAITING_BATCHING)).thenReturn(occurrences);
     }
 
     private DiseaseOccurrence createDiseaseOccurrence(int id, String occurrenceDate, Integer countryGaulCode) {

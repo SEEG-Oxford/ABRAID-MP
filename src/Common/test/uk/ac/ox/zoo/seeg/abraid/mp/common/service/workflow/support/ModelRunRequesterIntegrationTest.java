@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
@@ -62,8 +63,13 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Autowired
     private ModelRunRequester modelRunRequester;
+
     @Autowired
     private ModelRunDao modelRunDao;
+
+    @ReplaceWithMock
+    @Autowired
+    private EmailService emailService;
 
     private static final String URL = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api/model/run";
 
@@ -158,7 +164,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     private List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
         return selector.selectModelRunDiseaseOccurrences();
     }
 
