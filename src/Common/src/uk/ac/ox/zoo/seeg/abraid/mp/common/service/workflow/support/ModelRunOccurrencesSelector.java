@@ -243,9 +243,9 @@ public class ModelRunOccurrencesSelector {
     }
 
     private void handleCannotRunModel(String longMessage, String shortMessage) {
-        // Log so it's in the logs. Send an e-mail to the default address so the user sees it if this was triggered
-        // by Data Manager. Throw an exception so that the transaction rolls back, and to send a shorter message back
-        // to the user if it was triggered manually.
+        // Log so it's in the logs. Send an e-mail to the default address so that the "longer" message is visible to
+        // the user (particularly relevant if this was triggered by Data Manager). Throw an exception so that the
+        // transaction rolls back, and to send a shorter message back to the user if it was triggered manually.
         String formattedLongMessage = String.format(NOT_REQUESTING_EMAIL_MESSAGE + longMessage, diseaseGroup.getId(),
                 diseaseGroup.getName());
         LOGGER.warn(formattedLongMessage);
