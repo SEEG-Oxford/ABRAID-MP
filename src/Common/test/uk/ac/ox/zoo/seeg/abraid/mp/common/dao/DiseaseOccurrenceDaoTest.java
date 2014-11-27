@@ -648,17 +648,17 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getNumberOfOccurrencesEligibleForModelRun() {
         // Arrange
-        // Set some points in our batch range to IN_REVIEW and UNBATCHED (including occurrences with COUNTRY precision,
+        // Set some points in our date range to IN_REVIEW and UNBATCHED (including occurrences with COUNTRY precision,
         // which should not be selected)
         setOccurrencesToStatus(DiseaseOccurrenceStatus.IN_REVIEW, 275761, 275219);
         setOccurrencesToStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING, 275758, 274790);
 
         int diseaseGroupId = 87;
-        DateTime batchStartDate = new DateTime("2014-02-25");
-        DateTime batchEndDate = new DateTime("2014-02-26T15:35:21Z");
+        DateTime startDate = new DateTime("2014-02-25");
+        DateTime endDate = new DateTime("2014-02-26T15:35:21Z");
 
-        long count = diseaseOccurrenceDao.getNumberOfOccurrencesEligibleForModelRun(diseaseGroupId, batchStartDate,
-                batchEndDate);
+        long count = diseaseOccurrenceDao.getNumberOfOccurrencesEligibleForModelRun(diseaseGroupId, startDate,
+                endDate);
 
         assertThat(count).isEqualTo(19);
     }

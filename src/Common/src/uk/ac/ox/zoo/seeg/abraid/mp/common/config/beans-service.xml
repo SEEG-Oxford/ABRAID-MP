@@ -40,6 +40,7 @@
     <bean id="environmentalSuitabilityHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper" autowire="constructor"/>
     <bean id="distanceFromDiseaseExtentHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper" autowire="constructor"/>
     <bean id="machineWeightingPredictor" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor" autowire="constructor"/>
+    <bean id="batchDatesValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.BatchDatesValidator" autowire="constructor"/>
 
     <!-- Web services -->
     <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService" autowire="constructor" />
