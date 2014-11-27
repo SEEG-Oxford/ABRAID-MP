@@ -1,9 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import org.apache.commons.mail.EmailException;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.*;
@@ -19,8 +21,9 @@ import static org.hamcrest.Matchers.notNullValue;
 public class ModelRunOccurrencesSelector {
 
     // Log messages
-    private static final String NOT_REQUESTING_LOG_MESSAGE =
+    private static final String NOT_REQUESTING_EMAIL_MESSAGE =
             "Not requesting a model run for disease group %d (%s) because ";
+    private static final String NOT_REQUESTING_EMAIL_SUBJECT = "Minimum Data Volume/Spread Not Satisfied";
     private static final String MDV_SATISFIED_LOG_MESSAGE =
             "Minimum Data Volume is satisfied: %d occurrence(s) exceeds threshold of %d";
     private static final String MDV_NOT_SATISFIED_LOG_MESSAGE =
@@ -52,6 +55,7 @@ public class ModelRunOccurrencesSelector {
 
     private DiseaseService diseaseService;
     private LocationService locationService;
+    private EmailService emailService;
 
     // Minimum Data Spread parameters for the disease group
     private List<DiseaseOccurrence> allOccurrences;
@@ -68,9 +72,11 @@ public class ModelRunOccurrencesSelector {
     private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
     public ModelRunOccurrencesSelector(DiseaseService diseaseService, LocationService locationService,
-                                       int diseaseGroupId, boolean onlyUseGoldStandardOccurrences) {
+                                       EmailService emailService, int diseaseGroupId,
+                                       boolean onlyUseGoldStandardOccurrences) {
         this.diseaseService = diseaseService;
         this.locationService = locationService;
+        this.emailService = emailService;
         initialise(diseaseGroupId, onlyUseGoldStandardOccurrences);
     }
 
@@ -236,10 +242,22 @@ public class ModelRunOccurrencesSelector {
             countriesWithAtLeastOneOccurrence.size(), minDistinctCountries);
     }
 
-    private void handleCannotRunModel(String logSuffixMessage, String exceptionMessage) {
-        LOGGER.error(String.format(NOT_REQUESTING_LOG_MESSAGE + logSuffixMessage, diseaseGroup.getId(),
-                diseaseGroup.getName()));
-        throw new ModelRunWorkflowException(exceptionMessage);
+    private void handleCannotRunModel(String longMessage, String shortMessage) {
+        // Log so it's in the logs. Send an e-mail to the default address so the user sees it if this was triggered
+        // by Data Manager. Throw an exception so that the transaction rolls back, and to send a shorter message back
+        // to the user if it was triggered manually.
+        String formattedLongMessage = String.format(NOT_REQUESTING_EMAIL_MESSAGE + longMessage, diseaseGroup.getId(),
+                diseaseGroup.getName());
+        LOGGER.warn(formattedLongMessage);
+
+        try {
+            emailService.sendEmail(NOT_REQUESTING_EMAIL_SUBJECT, formattedLongMessage);
+        } catch (EmailException e) {
+            throw new RuntimeException(e);
+        }
+
+        // And throw an exception
+        throw new ModelRunWorkflowException(shortMessage);
     }
 
     private void handleCanRunModel() {

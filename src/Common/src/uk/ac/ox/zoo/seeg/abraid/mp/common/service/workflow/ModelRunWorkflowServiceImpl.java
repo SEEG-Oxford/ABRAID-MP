@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
@@ -25,6 +26,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
+    private EmailService emailService;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
@@ -33,8 +35,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
                                        LocationService locationService,
                                        DiseaseExtentGenerator diseaseExtentGenerator,
                                        AutomaticModelRunsEnabler automaticModelRunsEnabler,
-                                       MachineWeightingPredictor machineWeightingPredictor
-    ) {
+                                       MachineWeightingPredictor machineWeightingPredictor,
+                                       EmailService emailService) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
@@ -43,6 +45,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.automaticModelRunsEnabler = automaticModelRunsEnabler;
         this.machineWeightingPredictor = machineWeightingPredictor;
+        this.emailService = emailService;
     }
 
     /**
@@ -208,7 +211,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId,
                                                                 boolean onlyUseGoldStandardOccurrences) {
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, onlyUseGoldStandardOccurrences);
+                emailService, diseaseGroupId, onlyUseGoldStandardOccurrences);
         return selector.selectModelRunDiseaseOccurrences();
     }
 
