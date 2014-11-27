@@ -1,14 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
-
-import java.util.List;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 /**
  * Handles disease occurrences. Specifically, if a batch end date is specified in the model run, it sets the

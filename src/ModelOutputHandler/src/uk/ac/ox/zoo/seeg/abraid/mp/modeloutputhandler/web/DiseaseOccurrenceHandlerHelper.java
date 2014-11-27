@@ -44,6 +44,8 @@ public class DiseaseOccurrenceHandlerHelper {
     /**
      * Handles disease occurrences for disease group setup (i.e. automatic model runs not yet enabled).
      * @param modelRun The model run.
+     * @return The date that batching initialisation started, or null if batching was not initialised by this call.
+     * This is to allow a subsequent call to continueBatchingInitialisation.
      */
     @Transactional(rollbackFor = Exception.class)
     public DateTime handle(ModelRun modelRun) {
