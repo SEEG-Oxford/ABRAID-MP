@@ -344,7 +344,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
 
     private void verifySendEmail() {
         try {
-            verify(emailService).sendEmail(anyString(), anyString());
+            verify(emailService).sendEmail(eq("Minimum Data Volume/Spread Not Satisfied"), anyString());
         } catch (EmailException e) {
             throw new RuntimeException(e);
         }
