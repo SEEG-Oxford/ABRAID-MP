@@ -116,7 +116,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithErrorReturnedByModelThrowsModelRunManagerException() {
+    public void requestModelRunWithErrorReturnedByModelThrowsException() {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -132,7 +132,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithWebClientExceptionThrowsModelRunManagerException() {
+    public void requestModelRunWithWebClientExceptionThrowsException() {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -149,7 +149,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithNoDiseaseOccurrencesDoesNothing() {
+    public void requestModelRunWithNoDiseaseOccurrencesThrowsException() {
         // Arrange
         int diseaseGroupId = 87;
 
@@ -158,8 +158,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
-        List<ModelRun> modelRuns = modelRunDao.getAll();
-        assertThat(modelRuns).hasSize(0);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        assertThat(caughtException()).hasMessage("Cannot request a model run because there are no occurrences");
     }
 
     private List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {

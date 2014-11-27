@@ -32,6 +32,7 @@ public class ModelRunRequester {
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
     private static final String REQUEST_LOG_MESSAGE =
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
+    private static final String NO_OCCURRENCES_MESSAGE = "Cannot request a model run because there are no occurrences";
     private List<URI> modelWrapperUrlCollection;
 
     public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
@@ -81,6 +82,8 @@ public class ModelRunRequester {
                 LOGGER.error(message);
                 throw new ModelRunWorkflowException(message, e);
             }
+        } else {
+            throw new ModelRunWorkflowException(NO_OCCURRENCES_MESSAGE);
         }
     }
 
