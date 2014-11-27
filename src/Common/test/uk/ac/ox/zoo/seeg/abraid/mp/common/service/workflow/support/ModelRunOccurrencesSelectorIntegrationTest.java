@@ -345,7 +345,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     private void verifySendEmail() {
         try {
             verify(emailService).sendEmail(anyString(), anyString());
-        } catch(EmailException e) {
+        } catch (EmailException e) {
             throw new RuntimeException(e);
         }
     }
