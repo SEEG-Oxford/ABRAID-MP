@@ -78,13 +78,13 @@
                     <div style="overflow: auto; width: 100%" class="form-group">
                         <span data-bind="if: hasModelBeenSuccessfullyRun" class="side-by-side">
                             <button class="btn btn-primary" data-bind="click: submit,
-                                                                       text: isSubmitting() ? 'Working...' : (onlyUseGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
+                                                                       text: isSubmitting() ? 'Working...' : (onlyUseGoldStandardOccurrences() ? 'Run Model' : 'Run Model then Batch Occurrences For Validation'),
                                                                        bootstrapDisable: disableButtonThatRunsModel()">
                             </button>
                         </span>
                         <span data-bind="ifnot: hasModelBeenSuccessfullyRun" class="side-by-side">
                             <button class="btn btn-primary" data-bind="popover: { title: 'Is ModelWrapper set up?', trigger: 'focus', placement: 'top', template: 'modelwrapper-alert-template'},
-                                                                       text: isSubmitting() ? 'Working...' : (onlyUseGoldStandardOccurrences() ? 'Run Model' : 'Run Model and Batch Occurrences For Validation'),
+                                                                       text: isSubmitting() ? 'Working...' : (onlyUseGoldStandardOccurrences() ? 'Run Model' : 'Run Model then Batch Occurrences For Validation'),
                                                                        bootstrapDisable: disableButtonThatRunsModel()">
                             </button>
                         </span>
