@@ -117,6 +117,7 @@ do_dry_run <- function() {
     dir.create('results')
     create_dry_run_raster("mean", "results/mean_prediction.tif")
     create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
+    create_dry_run_raster("extent", "results/extent.tif")
     fileConn <- file("results/statistics.csv")
     writeLines(c(
         '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',

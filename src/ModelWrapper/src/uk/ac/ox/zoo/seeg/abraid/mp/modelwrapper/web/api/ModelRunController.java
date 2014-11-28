@@ -28,7 +28,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelStatusReporterImpl;
 @Controller
 public class ModelRunController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(ModelRunController.class);
-    private static final String LOG_STARTING_NEW_BACKGROUND_MODEL_RUN = "Starting new background model run";
+    private static final String LOG_QUEUING_NEW_BACKGROUND_MODEL_RUN =
+            "Queuing new background model run for disease group %d (model run name %s)";
     private static final String LOG_EXCEPTION_STARTING_MODEL_RUN = "Exception starting model run.";
 
     private final RunConfigurationFactory runConfigurationFactory;
@@ -62,8 +63,6 @@ public class ModelRunController extends AbstractController {
 
         RunConfiguration runConfiguration;
         try {
-            LOGGER.info(LOG_STARTING_NEW_BACKGROUND_MODEL_RUN);
-
             runConfiguration = runConfigurationFactory.createDefaultConfiguration(
                     runData.getDisease().getId(),
                     runData.getDisease().isGlobal(),
@@ -76,6 +75,9 @@ public class ModelRunController extends AbstractController {
                     objectMapper);
 
             // Ignore result for now
+            LOGGER.info(String.format(LOG_QUEUING_NEW_BACKGROUND_MODEL_RUN, runData.getDisease().getId(),
+                    runConfiguration.getRunName()));
+
             modelRunnerAsyncWrapper.startModel(
                     runConfiguration, runData.getOccurrences(), runData.getExtentWeightings(), modelStatusReporter);
         } catch (Exception e) {

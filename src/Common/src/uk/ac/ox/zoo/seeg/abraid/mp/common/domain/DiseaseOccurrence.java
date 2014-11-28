@@ -72,14 +72,23 @@ import javax.persistence.Table;
                         "       (count(*), min(occurrenceDate), max(occurrenceDate)) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
-                        "and status in ('READY', 'IN_REVIEW', 'UNBATCHED')"
+                        "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING')"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForBatching",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.status = 'UNBATCHED' " +
+                        "and d.status = 'AWAITING_BATCHING' " +
                         "and d.occurrenceDate between :batchStartDate and :batchEndDate "
+        ),
+        @NamedQuery(
+                name = "getNumberOfDiseaseOccurrencesEligibleForModelRun",
+                query = "select count(*) " +
+                        "from DiseaseOccurrence " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
+                        "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING') " +
+                        "and location.precision <> 'COUNTRY' " +
+                        "and occurrenceDate between :startDate and :endDate"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForTrainingPredictor",
@@ -208,6 +217,10 @@ public class DiseaseOccurrence {
         this.status = status;
         this.finalWeighting = finalWeighting;
         this.occurrenceDate = occurrenceDate;
+    }
+
+    public DiseaseOccurrence(DateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Integer getId() {

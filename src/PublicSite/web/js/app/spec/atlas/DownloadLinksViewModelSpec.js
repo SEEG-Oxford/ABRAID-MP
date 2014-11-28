@@ -9,10 +9,17 @@ define([
 
     describe("The atlas 'download links' view model", function () {
         var vm = {};
+
+        var wmsLayerParameterFactoryMock = {
+            createLayerParametersForDownload: function (name) {
+                return { "download" : name };
+            }
+        };
+
         beforeEach(function () {
             ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
             ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
-            vm = new DownloadLinksViewModel("baseUrl-poiuytrewq", "wmsUrl-qwertyuiop");
+            vm = new DownloadLinksViewModel("baseUrl-poiuytrewq", "wmsUrl-qwertyuiop", wmsLayerParameterFactoryMock);
             ko.postbox.publish("active-atlas-layer", undefined);
             ko.postbox.publish("selected-run", undefined);
         });
@@ -37,30 +44,22 @@ define([
                     expect(vm.png().substring(0, "wmsUrl-qwertyuiop".length)).toBe("wmsUrl-qwertyuiop");
                 });
 
-                it("with the standard options", function () {
+                it("with the options provided by the parameter factory", function () {
                     ko.postbox.publish("active-atlas-layer", "layer");
-                    expect(vm.png()).toContain("service=WMS");
-                    expect(vm.png()).toContain("version=1.1.0");
-                    expect(vm.png()).toContain("request=GetMap");
-                    expect(vm.png()).toContain("styles=abraid_raster");
-                    expect(vm.png()).toContain("bbox=-180.0%2C-60.0%2C180.0%2C85.0");
-                    expect(vm.png()).toContain("width=1656");
-                    expect(vm.png()).toContain("height=667");
-                    expect(vm.png()).toContain("srs=EPSG%3A4326");
-                    expect(vm.png()).toContain("format=image%2Fpng");
+                    expect(vm.png()).toContain("?download=layer");
                 });
             });
 
             it("updates to reflect the 'active-atlas-layer' through an event subscription", function () {
                 expect(vm.png()).toBe("#");
                 ko.postbox.publish("active-atlas-layer", "asdf");
-                expect(vm.png()).toContain("layers=abraid%3Aasdf");
+                expect(vm.png()).toContain("?download=asdf");
                 ko.postbox.publish("active-atlas-layer", "wert");
-                expect(vm.png()).toContain("layers=abraid%3Awert");
+                expect(vm.png()).toContain("?download=wert");
                 ko.postbox.publish("active-atlas-layer", undefined);
                 expect(vm.png()).toBe("#");
                 ko.postbox.publish("active-atlas-layer", "zxcv");
-                expect(vm.png()).toContain("layers=abraid%3Azxcv");
+                expect(vm.png()).toContain("?download=zxcv");
             });
         });
 

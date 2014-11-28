@@ -2,9 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
@@ -12,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -70,7 +69,7 @@ public class ModelRunRequesterTest {
     public void requestModelRunSavesTheInputOccurrencesForAutomaticModelRun() throws Exception {
         // Arrange
         ModelRunService runService = mock(ModelRunService.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true);
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, null);
 
         // Act
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
@@ -87,7 +86,7 @@ public class ModelRunRequesterTest {
         // Arrange
         ModelRunService runService = mock(ModelRunService.class);
 
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, false);
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, false, null);
 
         // Act
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
@@ -99,8 +98,37 @@ public class ModelRunRequesterTest {
         assertThat(value.getInputDiseaseOccurrences()).isNull();
     }
 
-    private ModelRunRequester createMockModelRunRequester(ModelRunService runService, int diseaseGroupId, boolean automaticRuns) {
+    @Test
+    public void requestModelRunSavesTheInputExtent() throws Exception {
+        // Arrange
+        ModelRunService runService = mock(ModelRunService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
+        List<AdminUnitDiseaseExtentClass> extent = Arrays.asList(
+                createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass(),
+                createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass()
+        );
+        when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService);
+
+        // Act
+        target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null, null);
+
+        // Assert
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
+        ModelRun value = modelRunArgumentCaptor.getValue();
+        assertThat(value.getInputDiseaseExtent()).hasSize(4);
+    }
+
+    private AdminUnitDiseaseExtentClass createMockAdminUnitDiseaseExtentClass() {
+        AdminUnitDiseaseExtentClass mock = mock(AdminUnitDiseaseExtentClass.class);
+        when(mock.getAdminUnitGlobalOrTropical()).thenReturn(mock(AdminUnitGlobalOrTropical.class));
+        when(mock.getDiseaseExtentClass()).thenReturn(mock(DiseaseExtentClass.class));
+        return mock;
+    }
+
+    private ModelRunRequester createMockModelRunRequester(ModelRunService runService, int diseaseGroupId, boolean automaticRuns, DiseaseService mockDiseaseService) {
+        DiseaseService diseaseService = mockDiseaseService == null ? mock(DiseaseService.class) : mockDiseaseService;
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(mock(DiseaseGroup.class));
         when(diseaseService.getDiseaseGroupById(diseaseGroupId).isAutomaticModelRunsEnabled()).thenReturn(automaticRuns);
         ModelWrapperWebService webService = mock(ModelWrapperWebService.class);

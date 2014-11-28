@@ -27,8 +27,8 @@ define([
         });
 
         describe("holds a field for the available layer types which", function () {
-            it("has two entries", function () {
-                expect(vm.types.length).toBe(2);
+            it("has three entries", function () {
+                expect(vm.types.length).toBe(3);
             });
 
             it("has an entry for mean", function () {
@@ -37,6 +37,10 @@ define([
 
             it("has an entry for uncertainty", function () {
                 expect(vm.types).toContain({ display: "risk uncertainty", id: "uncertainty" });
+            });
+
+            it("has an entry for extent", function () {
+                expect(vm.types).toContain({ display: "disease extent", id: "extent" });
             });
         });
 

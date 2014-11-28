@@ -27,4 +27,6 @@ public final class ModelOutputConstants {
     /** The effect curves filename in the model outputs. */
     public static final String EFFECT_CURVES_FILENAME = "results/effect_curves.csv";
 
+    /** The extent raster generated as an input to the R code. */
+    public static final String EXTENT_INPUT_RASTER_FILENAME = "data/extent.tif";
 }

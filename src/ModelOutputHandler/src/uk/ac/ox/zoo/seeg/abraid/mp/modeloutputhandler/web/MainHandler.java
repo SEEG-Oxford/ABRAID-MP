@@ -37,26 +37,16 @@ import static ch.lambdaj.collection.LambdaCollections.with;
  */
 public class MainHandler {
     private static final Logger LOGGER = Logger.getLogger(MainHandler.class);
-    private static final String LOG_MEAN_PREDICTION_RASTER =
-            "Saving mean prediction raster (%s bytes) for model run \"%s\"";
-    private static final String LOG_PREDICTION_UNCERTAINTY_RASTER =
-            "Saving prediction uncertainty raster (%s bytes) for model run \"%s\"";
-    private static final String LOG_VALIDATION_STATISTICS_FILE =
-            "Saving validation statistics file (%s bytes) for model run \"%s\"";
-    private static final String LOG_RELATIVE_INFLUENCE_FILE =
-            "Saving relative influence file (%s bytes) for model run \"%s\"";
-    private static final String LOG_EFFECT_CURVES_FILE =
-            "Saving effect curves file (%s bytes) for model run \"%s\"";
-    private static final String COULD_NOT_SAVE_VALIDATION_STATISTICS =
-            "Could not save validation statistics csv for model run \"%s\"";
-    private static final String COULD_NOT_SAVE_RELATIVE_INFLUENCE =
-            "Could not save relative influence csv for model run \"%s\"";
-    private static final String COULD_NOT_SAVE_EFFECT_CURVES =
-            "Could not save effect curves csv for model run \"%s\"";
-    private static final String COULD_NOT_SAVE_UNCERTAINTY_RASTER =
-            "Could not save prediction uncertainty for model run \"%s\"";
-    private static final String COULD_NOT_SAVE_PREDICTION_RASTER =
-            "Could not save mean prediction raster for model run \"%s\"";
+    private static final String PREDICTION_RASTER = "prediction raster";
+    private static final String UNCERTAINTY_RASTER = "uncertainty raster";
+    private static final String EXTENT_RASTER = "extent raster";
+    private static final String STATISTICS_CSV = "validation statistics csv";
+    private static final String RELATIVE_INFLUENCE_CSV = "relative influence csv";
+    private static final String EFFECT_CURVES_CSV = "effect curves csv";
+    private static final String LOG_SAVING_FILE =
+            "Saving relative %s (%s bytes) for model run \"%s\"";
+    private static final String LOG_COULD_NOT_SAVE =
+            "Could not save %s for model run \"%s\"";
     private static final String RASTER_FILE_ALREADY_EXISTS =
             "Raster file \"%s\" already exists";
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
@@ -103,6 +93,8 @@ public class MainHandler {
                 extract(zipFile, ModelOutputConstants.MEAN_PREDICTION_RASTER_FILENAME, areOutputsMandatory);
         byte[] predUncertaintyRaster =
                 extract(zipFile, ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME, areOutputsMandatory);
+        byte[] extentInputRaster =
+                extract(zipFile, ModelOutputConstants.EXTENT_INPUT_RASTER_FILENAME, areOutputsMandatory);
 
         // Handle outputs
         handleValidationStatisticsFile(modelRun, validationStatisticsFile);
@@ -110,6 +102,7 @@ public class MainHandler {
         handleEffectCurvesFile(modelRun, effectCurvesFile);
         handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
+        handleExtentInputRaster(modelRun, extentInputRaster);
 
         return modelRun;
     }
@@ -136,7 +129,7 @@ public class MainHandler {
 
     private void handleValidationStatisticsFile(final ModelRun modelRun, byte[] file) throws IOException {
         if (file != null) {
-            LOGGER.info(String.format(LOG_VALIDATION_STATISTICS_FILE, file.length, modelRun.getName()));
+            LOGGER.info(String.format(LOG_SAVING_FILE, STATISTICS_CSV, file.length, modelRun.getName()));
             try {
                 List<CsvSubmodelStatistic> csvSubmodelStatistics =
                         CsvSubmodelStatistic.readFromCSV(new String(file, UTF8));
@@ -150,14 +143,14 @@ public class MainHandler {
                 modelRun.setSubmodelStatistics(submodelStatistics);
                 modelRunService.saveModelRun(modelRun);
             } catch (IOException e) {
-                throw new IOException(String.format(COULD_NOT_SAVE_VALIDATION_STATISTICS, modelRun.getName()), e);
+                throw new IOException(String.format(LOG_COULD_NOT_SAVE, STATISTICS_CSV, modelRun.getName()), e);
             }
         }
     }
 
     private void handleRelativeInfluenceFile(final ModelRun modelRun, byte[] file) throws IOException {
         if (file != null) {
-            LOGGER.info(String.format(LOG_RELATIVE_INFLUENCE_FILE, file.length, modelRun.getName()));
+            LOGGER.info(String.format(LOG_SAVING_FILE, RELATIVE_INFLUENCE_CSV, file.length, modelRun.getName()));
             try {
                 List<CsvCovariateInfluence> csvCovariateInfluences =
                         CsvCovariateInfluence.readFromCSV(new String(file, UTF8));
@@ -171,14 +164,14 @@ public class MainHandler {
                 modelRun.setCovariateInfluences(covariateInfluences);
                 modelRunService.saveModelRun(modelRun);
             } catch (IOException e) {
-                throw new IOException(String.format(COULD_NOT_SAVE_RELATIVE_INFLUENCE, modelRun.getName()), e);
+                throw new IOException(String.format(LOG_COULD_NOT_SAVE, RELATIVE_INFLUENCE_CSV, modelRun.getName()), e);
             }
         }
     }
 
     private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file) throws IOException {
         if (file != null) {
-            LOGGER.info(String.format(LOG_EFFECT_CURVES_FILE, file.length, modelRun.getName()));
+            LOGGER.info(String.format(LOG_SAVING_FILE, EFFECT_CURVES_CSV, file.length, modelRun.getName()));
             try {
                 List<CsvEffectCurveCovariateInfluence> csvEffectCurveCovariateInfluences =
                     CsvEffectCurveCovariateInfluence.readFromCSV(new String(file, UTF8));
@@ -193,7 +186,7 @@ public class MainHandler {
                 modelRun.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
                 modelRunService.saveModelRun(modelRun);
             } catch (IOException e) {
-                throw new IOException(String.format(COULD_NOT_SAVE_EFFECT_CURVES, modelRun.getName()), e);
+                throw new IOException(String.format(LOG_COULD_NOT_SAVE, EFFECT_CURVES_CSV, modelRun.getName()), e);
             }
         }
     }
@@ -201,14 +194,14 @@ public class MainHandler {
     private void handleMeanPredictionRaster(ModelRun modelRun, byte[] raster) throws IOException {
         if (raster != null) {
             try {
-                LOGGER.info(String.format(LOG_MEAN_PREDICTION_RASTER, raster.length, modelRun.getName()));
+                LOGGER.info(String.format(LOG_SAVING_FILE, PREDICTION_RASTER, raster.length, modelRun.getName()));
                 File file = rasterFilePathFactory.getMeanPredictionRasterFile(modelRun);
                 saveRaster(file, raster);
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(file);
                 }
             } catch (Exception e) {
-                throw new IOException(String.format(COULD_NOT_SAVE_PREDICTION_RASTER, modelRun.getName()), e);
+                throw new IOException(String.format(LOG_COULD_NOT_SAVE, PREDICTION_RASTER, modelRun.getName()), e);
             }
         }
     }
@@ -216,14 +209,26 @@ public class MainHandler {
     private void handlePredictionUncertaintyRaster(ModelRun modelRun, byte[] raster) throws IOException {
         if (raster != null) {
             try {
-                LOGGER.info(String.format(LOG_PREDICTION_UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
+                LOGGER.info(String.format(LOG_SAVING_FILE, UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
                 File file = rasterFilePathFactory.getPredictionUncertaintyRasterFile(modelRun);
                 saveRaster(file, raster);
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(file);
                 }
             } catch (Exception e) {
-                throw new IOException(String.format(COULD_NOT_SAVE_UNCERTAINTY_RASTER, modelRun.getName()), e);
+                throw new IOException(String.format(LOG_COULD_NOT_SAVE, UNCERTAINTY_RASTER, modelRun.getName()), e);
+            }
+        }
+    }
+
+    private void handleExtentInputRaster(ModelRun modelRun, byte[] raster) throws IOException {
+        if (raster != null) {
+            try {
+                LOGGER.info(String.format(LOG_SAVING_FILE, EXTENT_RASTER, raster.length, modelRun.getName()));
+                File file = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
+                saveRaster(file, raster);
+            } catch (Exception e) {
+                throw new IOException(String.format(LOG_COULD_NOT_SAVE, EXTENT_RASTER, modelRun.getName()), e);
             }
         }
     }

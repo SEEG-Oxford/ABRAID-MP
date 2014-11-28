@@ -1,0 +1,15 @@
+<layer>
+  <name>atlas_extent_layer</name>
+  <id>LayerInfoImpl-4688477d:149e7a30ca3:-7ea4</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-4688477d:149e7a30ca3:-7f2f</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl-4688477d:149e7a30ca3:-7ea5</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

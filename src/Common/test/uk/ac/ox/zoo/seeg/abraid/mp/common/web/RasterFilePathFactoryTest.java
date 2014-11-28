@@ -38,6 +38,14 @@ public class RasterFilePathFactoryTest {
         assertThat(file.getParent()).isEqualTo(getCurrentDirectory());
     }
 
+    @Test
+    public void getExtentInputRasterFileReturnsCorrectFile() {
+        ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now());
+        File file = builder.getExtentInputRasterFile(modelRun);
+        assertThat(file.getName()).isEqualTo("testname_extent.tif");
+        assertThat(file.getParent()).isEqualTo(getCurrentDirectory());
+    }
+
     private String getCurrentDirectory() {
         return System.getProperty("user.dir");
     }

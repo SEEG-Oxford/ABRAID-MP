@@ -29,6 +29,8 @@ export ABRAID_SUPPORT_PATH='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
 export WEBAPP_PATH='/var/lib/tomcat7/webapps'
 declare -r WEBAPP_PATH
+export DATA_MANAGER_CRON_SCRIPT_PATH='/etc/cron.hourly/abraid'
+declare -r DATA_MANAGER_CRON_SCRIPT_PATH
 export REMOTE_USER="$1"
 declare -r REMOTE_USER
 export CONFIG_PATH="$2"
@@ -47,7 +49,7 @@ service nginx restart > /dev/null
 echo "[[ Stopping services ]]"
 service tomcat7 stop > /dev/null
 service gunicorn stop > /dev/null
-echo -e "#\x21/bin/sh\n\n:" > "/etc/cron.hourly/abraid"
+echo -e "#\x21/bin/sh\n\n:" > "$DATA_MANAGER_CRON_SCRIPT_PATH"
 
 # Source useful functions
 source "functions.sh"
@@ -95,7 +97,8 @@ read -p "You should now update all modelling servers before continuing. Press [e
 echo "[[ Restarting services ]]"
 service gunicorn start > /dev/null
 service tomcat7 start > /dev/null
-echo -e "#\x21/bin/sh\n\nsudo -H -u abraid /var/lib/abraid/datamanager/datamanager.sh" > "/etc/cron.hourly/abraid"
+echo -e "#\x21/bin/sh\n\nsudo -H -u abraid /var/lib/abraid/datamanager/datamanager.sh" > "$DATA_MANAGER_CRON_SCRIPT_PATH"
+chmod o+x "$DATA_MANAGER_CRON_SCRIPT_PATH"
 
 # Remove under-construction page
 echo "[[ Removing under-construction page ]]"

@@ -179,7 +179,7 @@ dirAsk() {
 
   if [[ -d "$TARGET_DIR_NAME_ARG" ]]; then
     # Both files exist
-    if [[ ! -z "$(rsync --dry-run -cirm --delete "$SOURCE_DIR_NAME_ARG" "$TARGET_DIR_NAME_ARG")" ]]; then
+    if [[ ! -z "$(rsync --dry-run -cirm --delete ${@:4} "$SOURCE_DIR_NAME_ARG" "$TARGET_DIR_NAME_ARG")" ]]; then
       # Files in conflict
       while true; do
         # Ask the question
@@ -198,13 +198,13 @@ dirAsk() {
         case "$REPLY" in
           Y|y|1)
             echo "Overwriting the existing dir [$TARGET_DIR_NAME_ARG]"
-            rsync -crm --delete "$SOURCE_DIR_NAME_ARG" "$TARGET_DIR_NAME_ARG"
+            rsync -crm --delete ${@:4} "$SOURCE_DIR_NAME_ARG" "$TARGET_DIR_NAME_ARG"
             return 0 ;;
           N|n|3)
             echo "Keeping the existing dir [$TARGET_DIR_NAME_ARG]"
             return 0 ;;
           D|d|5)
-            rsync --dry-run -cirm --delete "$SOURCE_DIR_NAME_ARG" "$TARGET_DIR_NAME_ARG" | less
+            rsync --dry-run -cirm --delete ${@:4} "$SOURCE_DIR_NAME_ARG" "$TARGET_DIR_NAME_ARG" | less
             PREFIX="[Dry run done!]" ;;
           *)
             PREFIX="[Invalid input]" ;;

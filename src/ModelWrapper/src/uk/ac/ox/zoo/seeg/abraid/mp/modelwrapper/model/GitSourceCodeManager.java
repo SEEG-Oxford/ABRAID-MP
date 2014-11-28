@@ -36,7 +36,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
     private static final String LOG_RETRIEVING_VERSIONS = "Retrieving versions from local repository cache";
     private static final String LOG_PROVISIONING_MODEL_CODE = "Provisioning model code '%s' at %s";
     private static final String LOG_UPDATING_LOCAL_REPOSITORY_CACHE = "Updating local repository cache";
-    private static final String LOG_RETURNING_TO_HEAD_OF_MASTER = "Returning to HEAD of master.";
+    private static final String LOG_RETURNING_TO_HEAD_OF_MASTER = "Returning to HEAD of master";
     private static final String LOG_COPYING_MODEL_SOURCE_FILES = "Copying model source files";
     private static final String LOG_CHECKING_OUT_REPO_VERSION = "Checking out repo version ";
     private static final String LOG_PROVISIONING_FAILED = "Provisioning model code failed as version not in repository";

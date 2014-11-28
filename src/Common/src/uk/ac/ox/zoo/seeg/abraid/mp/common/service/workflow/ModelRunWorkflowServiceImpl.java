@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
@@ -25,6 +26,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
+    private EmailService emailService;
+    private BatchDatesValidator batchDatesValidator;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
@@ -33,8 +36,9 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
                                        LocationService locationService,
                                        DiseaseExtentGenerator diseaseExtentGenerator,
                                        AutomaticModelRunsEnabler automaticModelRunsEnabler,
-                                       MachineWeightingPredictor machineWeightingPredictor
-    ) {
+                                       MachineWeightingPredictor machineWeightingPredictor,
+                                       EmailService emailService,
+                                       BatchDatesValidator batchDatesValidator) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
@@ -43,6 +47,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.automaticModelRunsEnabler = automaticModelRunsEnabler;
         this.machineWeightingPredictor = machineWeightingPredictor;
+        this.emailService = emailService;
+        this.batchDatesValidator = batchDatesValidator;
     }
 
     /**
@@ -58,6 +64,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,
                                                               DateTime batchStartDate, DateTime batchEndDate)
             throws ModelRunWorkflowException {
+        // Ensure that the batch date range is from start of day to end of day, then validate the dates
+        batchStartDate = getBatchStartDateWithMinimumTime(batchStartDate);
+        batchEndDate = getBatchEndDateWithMaximumTime(batchEndDate);
+        batchDatesValidator.validate(diseaseGroupId, batchStartDate, batchEndDate);
+
         Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         prepareForAndRequestModelRun(diseaseGroupId, batchStartDate, batchEndDate);
         saveExpertsWeightings(newExpertWeightings);
@@ -208,7 +219,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId,
                                                                 boolean onlyUseGoldStandardOccurrences) {
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, onlyUseGoldStandardOccurrences);
+                emailService, diseaseGroupId, onlyUseGoldStandardOccurrences);
         return selector.selectModelRunDiseaseOccurrences();
     }
 
@@ -220,5 +231,13 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
             minimumOccurrenceDate = occurrencesForModelRun.get(0).getOccurrenceDate();
         }
         return minimumOccurrenceDate;
+    }
+
+    private DateTime getBatchStartDateWithMinimumTime(DateTime batchStartDate) {
+        return (batchStartDate == null) ? null : batchStartDate.withTimeAtStartOfDay();
+    }
+
+    private DateTime getBatchEndDateWithMaximumTime(DateTime batchEndDate) {
+        return (batchEndDate == null) ? null : batchEndDate.withTimeAtStartOfDay().plusDays(1).minusMillis(1);
     }
 }

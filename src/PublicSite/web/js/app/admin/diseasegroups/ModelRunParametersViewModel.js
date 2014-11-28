@@ -28,7 +28,7 @@ define(["ko"], function (ko) {
         });
 
         // Minimum Data Volume and Minimum Data Spread
-        self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 0 });
+        self.minDataVolume = ko.observable().extend({ required: true, digit: true, min: 1 });
         self.minDistinctCountries = ko.observable().extend({ digit: true, min: 0 });
         self.occursInAfrica = ko.observable();
 

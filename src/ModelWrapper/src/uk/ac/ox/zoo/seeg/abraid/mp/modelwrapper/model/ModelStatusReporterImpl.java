@@ -80,7 +80,8 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
                     ModelOutputConstants.PREDICTION_UNCERTAINTY_RASTER_FILENAME,
                     ModelOutputConstants.VALIDATION_STATISTICS_FILENAME,
                     ModelOutputConstants.RELATIVE_INFLUENCE_FILENAME,
-                    ModelOutputConstants.EFFECT_CURVES_FILENAME
+                    ModelOutputConstants.EFFECT_CURVES_FILENAME,
+                    ModelOutputConstants.EXTENT_INPUT_RASTER_FILENAME
             };
         } else {
             return new String[] {

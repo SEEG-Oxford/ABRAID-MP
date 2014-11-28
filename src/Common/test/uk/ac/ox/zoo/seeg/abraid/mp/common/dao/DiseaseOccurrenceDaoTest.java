@@ -95,13 +95,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getByDiseaseGroupIdAndStatusUnbatched() {
+    public void getByDiseaseGroupIdAndStatusAwaitingBatching() {
         // Arrange
         int diseaseGroupId = 87;
 
         // Act
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupIdAndStatuses(diseaseGroupId,
-                DiseaseOccurrenceStatus.UNBATCHED);
+                DiseaseOccurrenceStatus.AWAITING_BATCHING);
 
         // Assert
         assertThat(occurrences).hasSize(0);
@@ -632,7 +632,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getOccurrencesForBatching() {
         // Arrange - the first 3 of these occurrences are before or on the batch end date, the others are after.
         // There is also an occurrence (275714) with status DISCARDED_FAILED_QC which is before the batch end date.
-        setOccurrencesToStatusUnbatched(274656, 273401, 275758, 275107, 274779);
+        setOccurrencesToStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING, 274656, 273401, 275758, 275107, 274779);
         int diseaseGroupId = 87;
         DateTime batchStartDate = new DateTime("2014-02-24T02:45:35");
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
@@ -643,6 +643,24 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Assert
         assertThat(occurrences).hasSize(3);
+    }
+
+    @Test
+    public void getNumberOfOccurrencesEligibleForModelRun() {
+        // Arrange
+        // Set some points in our date range to IN_REVIEW and AWAITING_BATCHING (including occurrences with COUNTRY
+        // precision, which should not be selected)
+        setOccurrencesToStatus(DiseaseOccurrenceStatus.IN_REVIEW, 275761, 275219);
+        setOccurrencesToStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING, 275758, 274790);
+
+        int diseaseGroupId = 87;
+        DateTime startDate = new DateTime("2014-02-25");
+        DateTime endDate = new DateTime("2014-02-26T15:35:21Z");
+
+        long count = diseaseOccurrenceDao.getNumberOfOccurrencesEligibleForModelRun(diseaseGroupId, startDate,
+                endDate);
+
+        assertThat(count).isEqualTo(19);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
@@ -679,9 +697,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return alert;
     }
 
-    private void setOccurrencesToStatusUnbatched(Integer... ids) {
+    private void setOccurrencesToStatus(DiseaseOccurrenceStatus status, Integer... ids) {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
-            occurrence.setStatus(DiseaseOccurrenceStatus.UNBATCHED);
+            occurrence.setStatus(status);
             diseaseOccurrenceDao.save(occurrence);
         }
     }

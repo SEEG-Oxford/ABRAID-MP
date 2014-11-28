@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
@@ -23,13 +24,16 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     private EnvironmentalSuitabilityHelper esHelper;
     private DistanceFromDiseaseExtentHelper dfdeHelper;
     private MachineWeightingPredictor mwPredictor;
+    private ModelRunService modelRunService;
 
     public DiseaseOccurrenceValidationServiceImpl(EnvironmentalSuitabilityHelper esHelper,
                                                   DistanceFromDiseaseExtentHelper dfdeHelper,
-                                                  MachineWeightingPredictor mwPredictor) {
+                                                  MachineWeightingPredictor mwPredictor,
+                                                  ModelRunService modelRunService) {
         this.esHelper = esHelper;
         this.dfdeHelper = dfdeHelper;
         this.mwPredictor = mwPredictor;
+        this.modelRunService = modelRunService;
     }
 
     /**
@@ -43,16 +47,13 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         clearAndSetToReady(occurrence);
         if (hasPassedQc(occurrence)) {
             if (isGoldStandard) {
-                // Passed QC and is a gold standard occurrence
-                addGoldStandardParameters(occurrence);
+                handleGoldStandard(occurrence);
             } else if (automaticModelRunsEnabled(occurrence)) {
-                // Passed QC and automatic model runs are enabled, so add validation parameters. If automatic model
-                // runs are disabled, leave the status at READY so that it can be used in an initial model run and
-                // disease extent generation.
-                addValidationParameters(occurrence);
+                handleAutomaticModelRunsEnabled(occurrence);
+            } else {
+                handleAutomaticModelRunsDisabled(occurrence);
             }
         } else {
-            // Failed QC, so set the status accordingly
             setToFailedQc(occurrence);
         }
     }
@@ -81,32 +82,50 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         }
     }
 
-    private boolean hasPassedQc(DiseaseOccurrence occurrence) {
-        return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
-    }
-
     private void clearAndSetToReady(DiseaseOccurrence occurrence) {
         // By default, the occurrence avoids the validation process altogether (i.e. marked READY with no validation
         // parameters
         occurrence.setEnvironmentalSuitability(null);
         occurrence.setDistanceFromDiseaseExtent(null);
         occurrence.setMachineWeighting(null);
+        occurrence.setValidationWeighting(null);
+        occurrence.setFinalWeighting(null);
+        occurrence.setFinalWeightingExcludingSpatial(null);
         occurrence.setStatus(DiseaseOccurrenceStatus.READY);
+    }
+
+    private boolean hasPassedQc(DiseaseOccurrence occurrence) {
+        return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
     }
 
     private void setToFailedQc(DiseaseOccurrence occurrence) {
         occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
     }
 
-    private void addGoldStandardParameters(DiseaseOccurrence occurrence) {
+    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
+    }
+
+    private void handleGoldStandard(DiseaseOccurrence occurrence) {
         // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
         // final weightings to 1.
         occurrence.setFinalWeighting(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
         occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
     }
 
-    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
-        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
+    private void handleAutomaticModelRunsEnabled(DiseaseOccurrence occurrence) {
+        addValidationParameters(occurrence);
+    }
+
+    private void handleAutomaticModelRunsDisabled(DiseaseOccurrence occurrence) {
+        if (modelRunService.hasBatchingEverCompleted(occurrence.getDiseaseGroup().getId())) {
+            // We are in disease group set-up and points are being batched for validation, so we need to set this point
+            // to AWAITING_BATCHING
+            occurrence.setStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING);
+        }
+
+        // If there is no batching for this disease group, leave the status at the default (READY) so that it can be
+        // used in an initial model run and disease extent generation
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence) {

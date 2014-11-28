@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
@@ -62,8 +63,13 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Autowired
     private ModelRunRequester modelRunRequester;
+
     @Autowired
     private ModelRunDao modelRunDao;
+
+    @ReplaceWithMock
+    @Autowired
+    private EmailService emailService;
 
     private static final String URL = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api/model/run";
 
@@ -110,7 +116,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithErrorReturnedByModelThrowsModelRunManagerException() {
+    public void requestModelRunWithErrorReturnedByModelThrowsException() {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -126,7 +132,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithWebClientExceptionThrowsModelRunManagerException() {
+    public void requestModelRunWithWebClientExceptionThrowsException() {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -143,7 +149,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithNoDiseaseOccurrencesDoesNothing() {
+    public void requestModelRunWithNoDiseaseOccurrencesThrowsException() {
         // Arrange
         int diseaseGroupId = 87;
 
@@ -152,13 +158,13 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         catchException(modelRunRequester).requestModelRun(diseaseGroupId, occurrences, null, null);
 
         // Assert
-        List<ModelRun> modelRuns = modelRunDao.getAll();
-        assertThat(modelRuns).hasSize(0);
+        assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
+        assertThat(caughtException()).hasMessage("Cannot request a model run because there are no occurrences");
     }
 
     private List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
-                diseaseGroupId, false);
+                emailService, diseaseGroupId, false);
         return selector.selectModelRunDiseaseOccurrences();
     }
 

@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,6 +27,15 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+
+    @Autowired
+    private AdminUnitTropicalDao adminUnitTropicalDao;
+
+    @Autowired
+    private DiseaseExtentClassDao diseaseExtentClassDao;
 
     private ModelRun modelRunDengue1;
     private ModelRun modelRunDengue2;
@@ -112,7 +122,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
-    public void saveAndLoadCascadesToDiseaseOccurrenceJunctionTable() {
+    public void saveAndLoadCascadesToInputDiseaseOccurrences() {
         // Arrange
         ModelRun run = createModelRun("name");
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getAll().subList(0, 6);
@@ -125,9 +135,32 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert
         assertThat(run.getInputDiseaseOccurrences()).hasSize(occurrences.size());
-        DiseaseOccurrence[] occurrences2 = new DiseaseOccurrence[6];
+        DiseaseOccurrence[] occurrences2 = new DiseaseOccurrence[occurrences.size()];
         occurrences2 = occurrences.toArray(occurrences2);
         assertThat(run.getInputDiseaseOccurrences()).containsOnly(occurrences2);
+    }
+
+    @Test
+    public void saveAndLoadCascadesToInputDiseaseExtent() {
+        // Arrange
+        ModelRun run = createModelRun("name");
+        List<ModelRunAdminUnitDiseaseExtentClass> extent = Arrays.asList(
+                createAdminUnitDiseaseExtentClass(run, DiseaseExtentClass.ABSENCE, 194, null),
+                createAdminUnitDiseaseExtentClass(run, DiseaseExtentClass.POSSIBLE_ABSENCE, 30, null),
+                createAdminUnitDiseaseExtentClass(run, DiseaseExtentClass.PRESENCE, null, 906)
+        );
+        run.setInputDiseaseExtent(extent);
+        modelRunDao.save(run);
+        flushAndClear();
+
+        // Act
+        run = modelRunDao.getByName("name");
+
+        // Assert
+        assertThat(run.getInputDiseaseExtent()).hasSize(extent.size());
+        ModelRunAdminUnitDiseaseExtentClass[] extent2 = new ModelRunAdminUnitDiseaseExtentClass[extent.size()];
+        extent2 = extent.toArray(extent2);
+        assertThat(run.getInputDiseaseExtent()).containsOnly(extent2);
     }
 
     @Test
@@ -362,6 +395,17 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(result.get(0)).isEqualTo("host3");
         assertThat(result.get(1)).isEqualTo("host2");
         assertThat(result.get(2)).isEqualTo("host1");
+    }
+
+    private ModelRunAdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(
+            ModelRun run, String diseaseExtentClass,
+            Integer adminUnitTropicalGaul, Integer adminUnitGlobalGaul) {
+        ModelRunAdminUnitDiseaseExtentClass value = new ModelRunAdminUnitDiseaseExtentClass();
+        value.setModelRun(run);
+        value.setDiseaseExtentClass(diseaseExtentClassDao.getByName(diseaseExtentClass));
+        value.setAdminUnitGlobal(adminUnitGlobalGaul == null ? null : adminUnitGlobalDao.getByGaulCode(adminUnitGlobalGaul));
+        value.setAdminUnitTropical(adminUnitTropicalGaul == null ? null : adminUnitTropicalDao.getByGaulCode(adminUnitTropicalGaul));
+        return value;
     }
 
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {
