@@ -28,8 +28,6 @@ public class EnvironmentalSuitabilityHelper {
     private RasterFilePathFactory rasterFilePathFactory;
 
     private static final Logger LOGGER = Logger.getLogger(EnvironmentalSuitabilityHelper.class);
-    private static final String ES_FOUND_MESSAGE =
-            "Environmental suitability at position (%f,%f) is %f";
     private static final String ES_NOT_FOUND_NO_DATA_MESSAGE =
             "Environmental suitability at position (%f,%f) is not defined (value \"no data\")";
     private static final String ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE =
@@ -82,7 +80,6 @@ public class EnvironmentalSuitabilityHelper {
                 double[] resultArray = raster.evaluate(position, (double[]) null);
                 if (resultArray[0] != RASTER_NO_DATA_VALUE) {
                     result = resultArray[0];
-                    LOGGER.debug(String.format(ES_FOUND_MESSAGE, point.getX(), point.getY(), result));
                 } else {
                     LOGGER.debug(String.format(ES_NOT_FOUND_NO_DATA_MESSAGE, point.getX(), point.getY()));
                 }
