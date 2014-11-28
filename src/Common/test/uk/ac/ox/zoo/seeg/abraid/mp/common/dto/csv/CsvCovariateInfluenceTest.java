@@ -16,10 +16,10 @@ public class CsvCovariateInfluenceTest {
     public void readFromCSVReturnsCorrectResult() throws IOException {
         // Arrange
         String csv =
-                "\"\",\"\",\"mean\",\"2.5%\",\"97.5%\"\n" +
-                "\"rand2\",\"Random 2\",38.3298990317527,37.2171654834767,39.4426325800287\n" +
-                "\"rand3\",\"Random 3\",35.7954256696217,35.0476600405772,36.5431912986662\n" +
-                "\"rand1\",\"Random 1\",25.8746752986256,24.0141761213051,27.7351744759462\n";
+                "\"\",\"name\",\"displayName\",\"mean\",\"2.5%\",\"97.5%\"\n" +
+                "\"X2\",\"rand2\",\"Random 2\",38.3298990317527,37.2171654834767,39.4426325800287\n" +
+                "\"X3\",\"rand3\",\"Random 3\",35.7954256696217,35.0476600405772,36.5431912986662\n" +
+                "\"X1\",\"rand1\",\"Random 1\",25.8746752986256,24.0141761213051,27.7351744759462\n";
 
         // Act
         List<CsvCovariateInfluence> result = CsvCovariateInfluence.readFromCSV(csv);

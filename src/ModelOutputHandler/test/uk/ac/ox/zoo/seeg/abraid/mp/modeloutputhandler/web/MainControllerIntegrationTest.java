@@ -314,20 +314,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         List<SubmodelStatistic> database = run.getSubmodelStatistics();
         List<CsvSubmodelStatistic> file = CsvSubmodelStatistic.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
 
-        Collections.sort(database, new Comparator<SubmodelStatistic>() {
-            @Override
-            public int compare(SubmodelStatistic o1, SubmodelStatistic o2) {
-                return o1.getDeviance().compareTo(o2.getDeviance());
-            }
-        });
-
-        Collections.sort(file, new Comparator<CsvSubmodelStatistic>() {
-            @Override
-            public int compare(CsvSubmodelStatistic o1, CsvSubmodelStatistic o2) {
-                return o1.getDeviance().compareTo(o2.getDeviance());
-            }
-        });
-
         assertThat(extractProperty("deviance").from(database)).isEqualTo(extractProperty("deviance").from(file));
         assertThat(extractProperty("rootMeanSquareError").from(database)).isEqualTo(extractProperty("rootMeanSquareError").from(file));
         assertThat(extractProperty("kappa").from(database)).isEqualTo(extractProperty("kappa").from(file));

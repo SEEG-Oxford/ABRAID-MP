@@ -20,6 +20,7 @@ public class CsvCovariateInfluence extends AbstractCsvCovariateInfluence {
     public static List<CsvCovariateInfluence> readFromCSV(String csv) throws IOException {
         CsvSchema schema = CsvSchema.builder()
                 .setSkipFirstDataRow(true)
+                .addColumn("index")
                 .addColumn("covariateFilePath")
                 .addColumn("covariateDisplayName")
                 .addColumn("meanInfluence", CsvSchema.ColumnType.NUMBER)

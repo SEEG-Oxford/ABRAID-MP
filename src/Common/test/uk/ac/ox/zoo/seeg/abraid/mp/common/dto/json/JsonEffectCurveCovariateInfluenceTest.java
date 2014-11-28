@@ -16,7 +16,7 @@ public class JsonEffectCurveCovariateInfluenceTest {
     public void constructorBindsFieldsCorrectly() {
         // Arrange
         String name = "upr_p";
-        String displayName = "Periurban";
+        String displayName = "GRUMP peri-urban surface";
         double meanInfluence = 45.94;
         double lowerQuantile = 1231.43;
         double upperQuantile = 51342.1;

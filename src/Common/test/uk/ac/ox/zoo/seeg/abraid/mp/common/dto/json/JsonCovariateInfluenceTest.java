@@ -15,8 +15,8 @@ public class JsonCovariateInfluenceTest {
     @Test
     public void constructorBindsFieldsCorrectly() {
         // Arrange
-        String name = "upr_p";
-        String displayName = "Periurban";
+        String name = "dir/upr_p.tif";
+        String displayName = "GRUMP peri-urban surface";
         double meanInfluence = 45.94;
 
         CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
