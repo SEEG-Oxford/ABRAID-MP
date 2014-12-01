@@ -108,25 +108,22 @@ public class WeightingsCalculator {
      * not currently set, set its validation weighting and final weighting for the first and only time.
      * @param diseaseGroupId The id of the disease group.
      */
-    public void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrence> occurrences = getOccurrencesForValidationWeightingsAndFinalWeightings(diseaseGroupId);
+    public void updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(int diseaseGroupId) {
+        List<DiseaseOccurrence> occurrences =
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {
             logger.info(String.format(UPDATING_WEIGHTINGS, occurrences.size()));
-            setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(occurrences);
+            updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(occurrences);
         }
     }
 
-    private List<DiseaseOccurrence> getOccurrencesForValidationWeightingsAndFinalWeightings(int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
-    }
-
-    private void setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
+    private void updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(List<DiseaseOccurrence> occurrences) {
         for (DiseaseOccurrence occurrence : occurrences) {
             Double newValidation = calculateNewValidationWeighting(occurrence);
             double newFinal = calculateNewFinalWeighting(occurrence, newValidation);
-            double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(occurrence, newValidation);
+            double newFinalExcludingSpatial = calculateNewFinalWeightingExcludingSpatial(newValidation);
             if (hasAnyWeightingChanged(occurrence, newValidation, newFinal, newFinalExcludingSpatial)) {
                 occurrence.setValidationWeighting(newValidation);
                 occurrence.setFinalWeighting(newFinal);
@@ -147,36 +144,28 @@ public class WeightingsCalculator {
 
     /**
      * If the validation weighting is null, there are no reviews on the disease occurrence and no machine weighting
-     * either. So set the final weighting, nominally, to the location resolution weighting. Otherwise, recalculate the
-     * final weighting as the average across each of the 4 properties. However, if the value of any of the 4 weightings
-     * is 0, then the occurrence should not be sent to the model by setting the final weighting to 0.
+     * either. So set the final weighting, nominally, to the location resolution weighting. (This happens during disease
+     * group setup, when the model has not yet been run.)
+     * Otherwise, recalculate the final weighting as the average of location resolution and validation weightings,
+     * unless the location resolution weighting is 0.
      */
     private double calculateNewFinalWeighting(DiseaseOccurrence occurrence, Double validationWeighting) {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
         if (validationWeighting == null) {
             return locationResolutionWeighting;
-        }
-        double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
-        double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
-        if (locationResolutionWeighting == 0.0 || diseaseGroupTypeWeighting == 0.0) {
+        } else if ((validationWeighting <= VALIDATION_WEIGHTING_THRESHOLD) || (locationResolutionWeighting == 0.0)) {
             return 0.0;
+        } else {
+            return average(locationResolutionWeighting, validationWeighting);
         }
-        return average(locationResolutionWeighting, feedWeighting, diseaseGroupTypeWeighting, validationWeighting);
     }
 
     /**
      * As above, but excluding the location resolution weighting.
      * In this case, if validation weighting is null, final weighting is 1.0.
      */
-    private double calculateNewFinalWeightingExcludingSpatial(DiseaseOccurrence occurrence,
-                                                              Double validationWeighting) {
-        if (validationWeighting == null) {
-            return 1.0;
-        }
-        double feedWeighting = occurrence.getAlert().getFeed().getWeighting();
-        double diseaseGroupTypeWeighting = occurrence.getDiseaseGroup().getWeighting();
-        return (diseaseGroupTypeWeighting == 0.0) ? 0.0 :
-                average(feedWeighting, diseaseGroupTypeWeighting, validationWeighting);
+    private double calculateNewFinalWeightingExcludingSpatial(Double validationWeighting) {
+        return (validationWeighting == null) ? 1.0 : validationWeighting;
     }
 
     private boolean hasAnyWeightingChanged(DiseaseOccurrence occurrence,

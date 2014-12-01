@@ -10,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service class to support the workflow surrounding a model run request.
@@ -180,7 +179,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         int diseaseGroupId = diseaseGroup.getId();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
         reviewManager.updateDiseaseOccurrenceStatus(diseaseGroupId, modelRunPrepDate);
-        weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        weightingsCalculator.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(diseaseGroupId);
     }
 
     private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,

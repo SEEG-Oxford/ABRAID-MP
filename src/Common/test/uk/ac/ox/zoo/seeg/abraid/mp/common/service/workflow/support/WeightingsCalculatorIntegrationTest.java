@@ -258,7 +258,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         // Arrange
         int diseaseGroupId = 1;
         DiseaseOccurrence occ = new DiseaseOccurrence(1,
-                createDiseaseGroupWithWeighting(0.4),
+                mock(DiseaseGroup.class),
                 createLocationWithWeighting(0.3),
                 createAlertWithFeed(0.5),
                 DiseaseOccurrenceStatus.READY, null, DateTime.now());
@@ -282,7 +282,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         int diseaseGroupId = 1;
         double locationResolutionWeighting = 0.3;
         DiseaseOccurrence occ = new DiseaseOccurrence(1,
-                createDiseaseGroupWithWeighting(0.4),
+                mock(DiseaseGroup.class),
                 createLocationWithWeighting(locationResolutionWeighting),
                 createAlertWithFeed(0.5),
         DiseaseOccurrenceStatus.READY, null, DateTime.now());
@@ -306,23 +306,18 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         return location;
     }
 
-    private DiseaseGroup createDiseaseGroupWithWeighting(double weighting) {
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
-        diseaseGroup.setWeighting(weighting);
-        return diseaseGroup;
-    }
-
     @Test
-    public void updateDiseaseOccurrenceValidationAndFinalWeightingsSetToZeroForZeroDiseaseGroupTypeWeighting() {
+    public void finalWeightingCalculatedAsAverageOfValidationWeightingAndLocationResolutionWeighting() {
+        // Final weighting calculation considers only validation
         // Arrange
         int diseaseGroupId = 8; // Alga, a CLUSTER
         double weighting = 0.7;
         DiseaseOccurrence occ = new DiseaseOccurrence(1,
                 diseaseService.getDiseaseGroupById(diseaseGroupId),
-                locationService.getLocationByGeoNameId(1880252),    // Singapore, a PRECISE location
+                locationService.getLocationByGeoNameId(1880252),    // Singapore, a PRECISE location, with weighting 1.0
                 createAlertWithFeed(weighting),
                 DiseaseOccurrenceStatus.READY, weighting, DateTime.now());
-        occ.setMachineWeighting(weighting);
+        occ.setMachineWeighting(weighting);                         // So validation weighting will be 'weighting' = 0.7
         DiseaseService mockDiseaseService = mockDiseaseServiceWithOccurrence(diseaseGroupId, occ);
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
@@ -330,7 +325,6 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         target.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
 
         // Assert
-        assertThat(occ.getDiseaseGroup().getWeighting()).isEqualTo(0.0);
         assertThat(occ.getFinalWeighting()).isEqualTo(0.0);
     }
 
