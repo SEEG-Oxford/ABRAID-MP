@@ -208,7 +208,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         if (hasBeenReviewed) {
             reviews.add(new DiseaseOccurrenceReview(mock(Expert.class), occurrence, DiseaseOccurrenceReviewResponse.UNSURE));
         }
-        when(diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID)).thenReturn(reviews);
+        when(diseaseService.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID)).thenReturn(reviews);
         return diseaseService;
     }
 }

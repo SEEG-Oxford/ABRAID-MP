@@ -41,6 +41,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
+    private static double EXPERT_WEIGHTING_THRESHOLD = 0.6;
+
     @Before
     public void setFixedTime() {
         DateTimeUtils.setCurrentMillisFixed(1400148490000L);
@@ -57,7 +59,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         target.updateDiseaseOccurrenceExpertWeightings(1);
 
         // Assert
-        verify(mockDiseaseService).getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
+        verify(mockDiseaseService).getDiseaseOccurrenceReviewsForUpdatingWeightings(diseaseGroupId, EXPERT_WEIGHTING_THRESHOLD);
     }
 
     @Test
@@ -66,7 +68,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         int diseaseGroupId = 1;
 
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId))
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(diseaseGroupId, EXPERT_WEIGHTING_THRESHOLD))
                 .thenReturn(new ArrayList<DiseaseOccurrenceReview>());
 
         WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
@@ -113,8 +115,8 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, occurrence, response);
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(mock(DiseaseGroup.class));
-        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(
-                anyInt())).thenReturn(new ArrayList<>(Arrays.asList(review)));
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(
+                anyInt(), eq(EXPERT_WEIGHTING_THRESHOLD))).thenReturn(new ArrayList<>(Arrays.asList(review)));
         return mockDiseaseService;
     }
 
@@ -150,7 +152,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         List<DiseaseOccurrenceReview> reviews = createListOfManyReviews(occ1, occ2, occ3,
                 createExpert(1, "ex1", 1.0), createExpert(2, "ex2", 0.2), createExpert(3, "ex3", 0.5));
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(87)).thenReturn(reviews);
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(eq(87), eq(EXPERT_WEIGHTING_THRESHOLD))).thenReturn(reviews);
         return mockDiseaseService;
     }
 
@@ -160,7 +162,7 @@ public class WeightingsCalculatorIntegrationTest extends AbstractCommonSpringInt
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
 
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(anyInt())).thenReturn(Arrays.asList(
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(anyInt(), eq(EXPERT_WEIGHTING_THRESHOLD))).thenReturn(Arrays.asList(
                 new DiseaseOccurrenceReview(createExpert(1, "ex1", 0.0), occurrence, DiseaseOccurrenceReviewResponse.YES),
                 new DiseaseOccurrenceReview(createExpert(2, "ex2", 0.0), occurrence, DiseaseOccurrenceReviewResponse.YES),
                 new DiseaseOccurrenceReview(createExpert(3, "ex3", 0.0), occurrence, DiseaseOccurrenceReviewResponse.NO)

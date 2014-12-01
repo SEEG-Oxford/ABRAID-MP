@@ -104,6 +104,10 @@ public class Expert {
         this.id = id;
     }
 
+    public Expert(double weighting) {
+        this.weighting = weighting;
+    }
+
     public Integer getId() {
         return id;
     }

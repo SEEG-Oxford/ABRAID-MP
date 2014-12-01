@@ -19,24 +19,30 @@ import static org.hamcrest.core.IsEqual.equalTo;
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculator {
+    private static final double EXPERT_WEIGHTING_THRESHOLD = 0.6;
+    private static final double VALIDATION_WEIGHTING_THRESHOLD = 0.2;
+
     private static Logger logger = Logger.getLogger(WeightingsCalculator.class);
+
     private static final String NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS =
-            "No new occurrence reviews have been submitted - expert weightings of disease occurrences will not be " +
-            "updated";
-    private static final String NOT_UPDATING_WEIGHTINGS_OF_EXPERTS =
-            "No occurrence reviews have been submitted - weightings of experts will not be updated";
+        "No new occurrence reviews have been submitted by experts with a weighting >= %.2f - " +
+        "expert weightings of disease occurrences will not be updated";
     private static final String RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS =
-            "Recalculating expert weightings for %d disease occurrence(s) given %d new review(s)";
+        "Recalculating expert weightings for %d disease occurrence(s) given %d new review(s)";
+
+    private static final String NOT_UPDATING_WEIGHTINGS_OF_EXPERTS =
+        "No occurrence reviews have been submitted - weightings of experts will not be updated";
     private static final String RECALCULATING_WEIGHTINGS_OF_EXPERTS =
-            "Recalculating weightings of experts given %d review(s)";
+        "Recalculating weightings of experts given %d review(s)";
+
     private static final String NO_OCCURRENCES_FOR_MODEL_RUN =
-            "No occurrences found that need their validation and final weightings set";
+        "No occurrences found that need their validation and final weightings set";
     private static final String UPDATING_WEIGHTINGS =
-            "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
+        "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
     private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
-            "Weightings changed for %d expert(s) - saving to database";
+        "Weightings changed for %d expert(s) - saving to database";
     private static final String NOT_SAVING_WEIGHTINGS_OF_EXPERTS =
-            "Weightings of experts have not changed - nothing to save";
+        "Weightings of experts have not changed - nothing to save";
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
@@ -47,60 +53,49 @@ public class WeightingsCalculator {
     }
 
     /**
-     * Get every disease occurrence point that has had new reviews submitted since the last recalculation.
-     * Calculate its new weighting, by taking the weighted average of every expert review in the database (not just the
-     * new reviews) and shifting it to be between 0 and 1.
+     * Calculate and save the new weighting of disease occurrence points in validation that have had reviews submitted:
+     * Take the average response of the reviews from the "reliable" experts (those who have an expert weighting greater
+     * than EXPERT_WEIGHTING_THRESHOLD).
      * @param diseaseGroupId The id of the disease group.
      */
     public void updateDiseaseOccurrenceExpertWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrenceReview> allReviews = getAllReviewsForDiseaseGroup(diseaseGroupId);
+        List<DiseaseOccurrenceReview> allReviews = diseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(
+                diseaseGroupId, EXPERT_WEIGHTING_THRESHOLD);
         if (allReviews.isEmpty()) {
-            logger.info(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS);
+            logger.info(String.format(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS, EXPERT_WEIGHTING_THRESHOLD));
         } else {
-            calculateNewDiseaseOccurrenceExpertWeightings(allReviews);
+            updateDiseaseOccurrenceExpertWeightings(allReviews);
         }
     }
 
-    private List<DiseaseOccurrenceReview> getAllReviewsForDiseaseGroup(int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
-    }
-
-    private void calculateNewDiseaseOccurrenceExpertWeightings(List<DiseaseOccurrenceReview> allReviews) {
-        Set<DiseaseOccurrence> distinctOccurrences = extractDistinctDiseaseOccurrences(allReviews);
-        logger.info(String.format(RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS, distinctOccurrences.size(),
-                allReviews.size()));
-        for (DiseaseOccurrence occurrence : distinctOccurrences) {
-            List<DiseaseOccurrenceReview> reviews = extractReviewsForOccurrence(allReviews, occurrence);
-            Double expertWeighting = reviews.isEmpty() ? null : calculateWeightedAverageResponse(reviews);
-            occurrence.setExpertWeighting(expertWeighting);
+    private void updateDiseaseOccurrenceExpertWeightings(List<DiseaseOccurrenceReview> allReviews) {
+        for (DiseaseOccurrence occurrence : extractDistinctDiseaseOccurrences(allReviews)) {
+            List<DiseaseOccurrenceReview> reviews = selectReviewsForOccurrence(allReviews, occurrence);
+            double averageResponseValue = average(extractReviewResponseValues(reviews));
+            occurrence.setExpertWeighting(averageResponseValue);
             diseaseService.saveDiseaseOccurrence(occurrence);
         }
     }
 
     private Set<DiseaseOccurrence> extractDistinctDiseaseOccurrences(List<DiseaseOccurrenceReview> allReviews) {
-        return new HashSet<>(extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
+        Set<DiseaseOccurrence> occurrences = new HashSet<>(
+            extract(allReviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence())
+        );
+        logger.info(String.format(RECALCULATING_OCCURRENCE_EXPERT_WEIGHTINGS, occurrences.size(), allReviews.size()));
+        return occurrences;
     }
 
-    private List<DiseaseOccurrenceReview> extractReviewsForOccurrence(List<DiseaseOccurrenceReview> allReviews,
-                                                                      DiseaseOccurrence occurrence) {
-        return select(allReviews,
-               having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), equalTo(occurrence)));
+    private List<DiseaseOccurrenceReview> selectReviewsForOccurrence(List<DiseaseOccurrenceReview> reviews,
+                                                                     DiseaseOccurrence occurrence) {
+        return select(reviews, having(on(DiseaseOccurrenceReview.class).getDiseaseOccurrence(), equalTo(occurrence)));
     }
 
-    private double calculateWeightedAverageResponse(List<DiseaseOccurrenceReview> reviews) {
-        double weightedResponseTotal = 0.0;
-        double expertWeightingsTotal = 0.0;
-        for (DiseaseOccurrenceReview review : reviews) {
-            double expertWeighting = review.getExpert().getWeighting();
-            weightedResponseTotal += review.getResponse().getValue() * expertWeighting;
-            expertWeightingsTotal += expertWeighting;
-        }
-        return (expertWeightingsTotal == 0.0) ? 0.0 : shift(weightedResponseTotal / expertWeightingsTotal);
-    }
-
-    // Shift weighting from range [-1, 1] to desired range of [0, 1]
-    private double shift(double weighting) {
-        return (weighting + 1) / 2;
+    private List<Double> extractReviewResponseValues(List<DiseaseOccurrenceReview> reviewsOfOccurrence) {
+        return convert(reviewsOfOccurrence, new Converter<DiseaseOccurrenceReview, Double>() {
+            public Double convert(DiseaseOccurrenceReview review) {
+                return review.getResponse().getValue();
+            }
+        });
     }
 
     /**
@@ -235,14 +230,6 @@ public class WeightingsCalculator {
             // There are no other experts' review responses, so the difference is zero
             return 0.0;
         }
-    }
-
-    private List<Double> extractReviewResponseValues(List<DiseaseOccurrenceReview> reviewsOfOccurrence) {
-        return convert(reviewsOfOccurrence, new Converter<DiseaseOccurrenceReview, Double>() {
-            public Double convert(DiseaseOccurrenceReview review) {
-                return review.getResponse().getValue();
-            }
-        });
     }
 
     /**

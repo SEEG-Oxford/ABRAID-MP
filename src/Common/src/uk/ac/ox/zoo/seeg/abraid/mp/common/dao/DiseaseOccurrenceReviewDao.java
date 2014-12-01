@@ -21,7 +21,16 @@ public interface DiseaseOccurrenceReviewDao {
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId);
+    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId);
+
+    /**
+     * Gets the reviews submitted by reliable experts (whose weighting is greater than the threshold) for the disease
+     * occurrences which are in review.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
+     * @return A list of disease occurrence reviews.
+     */
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId, Double expertWeightingThreshold);
 
     /**
      * Gets the total number of reviews submitted by the specified expert.
