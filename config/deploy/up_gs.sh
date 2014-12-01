@@ -91,6 +91,7 @@ $GS_UPDATE_CMD "$GS_TEMP_DIR/web.xml" "$WEBAPP_PATH/geoserver/WEB-INF/web.xml" "
 $GS_UPDATE_CMD "../geoserver/logging.xml" "$WEBAPP_PATH/geoserver/data/logging.xml" "GeoServer logging config"
 $GS_UPDATE_CMD "../geoserver/ABRAID_LOGGING.properties" "$WEBAPP_PATH/geoserver/data/logs/ABRAID_LOGGING.properties" "ABRAID GeoServer logging settings"
 $GS_UPDATE_CMD "../geoserver/gwc-gs.xml" "$WEBAPP_PATH/geoserver/data/gwc-gs.xml" "GeoServer geo-web-cache config"
+$GS_UPDATE_CMD "../geoserver/geowebcache-diskquota.xml" "$WEBAPP_PATH/geoserver/data/gwc/geowebcache-diskquota.xml" "GeoServer geo-web-cache disk quota config"
 $GS_UPDATE_CMD "../geoserver/geowebcache.xml" "$WEBAPP_PATH/geoserver/data/gwc/geowebcache.xml" "GeoServer geo-web-cache extended config"
 
 echo "[[ GS | Adding/checking the abraid workspace ]]"
