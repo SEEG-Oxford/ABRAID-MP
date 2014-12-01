@@ -39,10 +39,6 @@ public class WeightingsCalculator {
         "No occurrences found that need their validation and final weightings set";
     private static final String UPDATING_WEIGHTINGS =
         "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
-    private static final String SAVING_WEIGHTINGS_OF_EXPERTS =
-        "Weightings changed for %d expert(s) - saving to database";
-    private static final String NOT_SAVING_WEIGHTINGS_OF_EXPERTS =
-        "Weightings of experts have not changed - nothing to save";
 
     private DiseaseService diseaseService;
     private ExpertService expertService;
@@ -175,30 +171,31 @@ public class WeightingsCalculator {
     }
 
     /**
-     * For each expert, calculate their new weighting as the absolute difference between their response and the average
-     * response from all other experts, averaged over all the occurrences that they have reviewed.
-     * Record the values in a map, to be saved after updating the occurrences' weightings.
-     * @return A map from expert ID to new weighting value.
+     * For each expert, calculate (and save) their new weighting as the absolute difference between their response and
+     * the average response from all other experts, averaged over all the occurrences that they have reviewed.
      */
-    public Map<Integer, Double> calculateNewExpertsWeightings() {
-        Map<Integer, Double> newExpertsWeightings = new HashMap<>();
+    public void updateExpertsWeightings() {
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
         if (allReviews.size() == 0) {
             logger.info(NOT_UPDATING_WEIGHTINGS_OF_EXPERTS);
         } else {
             logger.info(String.format(RECALCULATING_WEIGHTINGS_OF_EXPERTS, allReviews.size()));
-            for (Expert expert : extractDistinctExperts(allReviews)) {
-                List<Double> differencesInResponses = new ArrayList<>();
-                for (DiseaseOccurrence occurrence : selectExpertsReviewedOccurrences(allReviews, expert)) {
-                    differencesInResponses.add(calculateDifference(allReviews, occurrence, expert));
-                }
-                double newWeighting = 1 - average(differencesInResponses);
-                if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
-                    newExpertsWeightings.put(expert.getId(), newWeighting);
-                }
+            updateExpertsWeightings(allReviews);
+        }
+    }
+
+    private void updateExpertsWeightings(List<DiseaseOccurrenceReview> allReviews) {
+        for (Expert expert : extractDistinctExperts(allReviews)) {
+            List<Double> differencesInResponses = new ArrayList<>();
+            for (DiseaseOccurrence occurrence : selectExpertsReviewedOccurrences(allReviews, expert)) {
+                differencesInResponses.add(calculateDifference(allReviews, occurrence, expert));
+            }
+            double newWeighting = 1 - average(differencesInResponses);
+            if (hasWeightingChanged(expert.getWeighting(), newWeighting)) {
+                expert.setWeighting(newWeighting);
+                expertService.saveExpert(expert);
             }
         }
-        return newExpertsWeightings;
     }
 
     private Set<Expert> extractDistinctExperts(List<DiseaseOccurrenceReview> allReviews) {
@@ -233,29 +230,11 @@ public class WeightingsCalculator {
     }
 
     /**
-     * Saves each expert with a new weighting value.
-     * @param newExpertsWeightings A map from expert ID to new weighting value.
-     */
-    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
-        if (newExpertsWeightings.size() > 0) {
-            logger.info(String.format(SAVING_WEIGHTINGS_OF_EXPERTS, newExpertsWeightings.size()));
-            for (Map.Entry<Integer, Double> entry : newExpertsWeightings.entrySet()) {
-                // We need to reload each expert because you cannot reuse Hibernate objects across transactions
-                Expert expert = expertService.getExpertById(entry.getKey());
-                expert.setWeighting(entry.getValue());
-                expertService.saveExpert(expert);
-            }
-        } else {
-            logger.info(String.format(NOT_SAVING_WEIGHTINGS_OF_EXPERTS));
-        }
-    }
-
-    /**
      * Calculate the average of the provided values.
      * @param args The values.
      * @return The mean of the given values.
      */
-    static double average(Double... args) {
+    protected static double average(Double... args) {
         return average(Arrays.asList(args));
     }
 

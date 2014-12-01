@@ -48,16 +48,9 @@ public interface ModelRunWorkflowService {
     void enableAutomaticModelRuns(int diseaseGroupId);
 
     /**
-     * Gets the new weighting for each active expert.
-     * @return A map from expert ID to the new weighting value.
+     * Calculates and saves the new weighting for each active expert.
      */
-    Map<Integer, Double> calculateExpertsWeightings();
-
-    /**
-     * Saves the new weighting for each expert.
-     * @param newExpertsWeightings The map from expert to the new weighting value.
-     */
-    void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings);
+    void updateExpertsWeightings();
 
     /**
      * Generates the disease extent for the specified disease group.

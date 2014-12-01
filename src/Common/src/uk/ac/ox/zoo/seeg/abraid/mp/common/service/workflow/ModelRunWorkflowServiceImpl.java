@@ -60,17 +60,15 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,
-                                                              DateTime batchStartDate, DateTime batchEndDate)
-            throws ModelRunWorkflowException {
+    public void prepareForAndRequestManuallyTriggeredModelRun(
+            int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         // Ensure that the batch date range is from start of day to end of day, then validate the dates
         batchStartDate = getBatchStartDateWithMinimumTime(batchStartDate);
         batchEndDate = getBatchEndDateWithMaximumTime(batchEndDate);
         batchDatesValidator.validate(diseaseGroupId, batchStartDate, batchEndDate);
 
-        Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
+        updateExpertsWeightings();
         prepareForAndRequestModelRun(diseaseGroupId, batchStartDate, batchEndDate);
-        saveExpertsWeightings(newExpertWeightings);
     }
 
     /**
@@ -95,12 +93,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     @Override
     public void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId)
             throws ModelRunWorkflowException {
-        Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
+
+        updateExpertsWeightings();
         generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
         requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, null, null, true);
-        saveExpertsWeightings(newExpertWeightings);
     }
 
     /**
@@ -113,21 +111,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     }
 
     /**
-     * Gets the new weighting for each active expert.
-     * @return A map from expert ID to the new weighting value.
+     * Calculates and saves the new weighting for each active expert.
      */
     @Override
-    public Map<Integer, Double> calculateExpertsWeightings() {
-        return weightingsCalculator.calculateNewExpertsWeightings();
-    }
-
-    /**
-     * Saves the new weighting for each expert.
-     * @param newExpertsWeightings The map from expert to the new weighting value.
-     */
-    @Override
-    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
-        weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
+    public void updateExpertsWeightings() {
+        weightingsCalculator.updateExpertsWeightings();
     }
 
     /**

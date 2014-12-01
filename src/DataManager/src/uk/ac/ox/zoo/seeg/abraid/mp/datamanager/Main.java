@@ -70,6 +70,7 @@ public class Main {
         Main main = (Main) context.getBean("main");
         logStarted(main.applicationVersion);
         main.runDataAcquisition(args);
+        main.updateExpertsWeightings();
         main.prepareForAndRequestModelRuns();
     }
 
@@ -83,23 +84,24 @@ public class Main {
     }
 
     /**
+     * Calculates and saves the new weighting for each active expert, with their reviews across all disease groups.
+     */
+    public void updateExpertsWeightings() {
+        modelRunManager.updateExpertsWeightings();
+    }
+
+    /**
      * Requests a model run (after preparation and if relevant), for each disease group that has automatic model
      * runs enabled.
      */
     public void prepareForAndRequestModelRuns() {
-        Map<Integer, Double> newExpertWeightings = modelRunManager.prepareExpertsWeightings();
         for (int diseaseGroupId : modelRunManager.getDiseaseGroupIdsForAutomaticModelRuns()) {
-            prepareForAndRequestModelRun(diseaseGroupId);
-        }
-        modelRunManager.saveExpertsWeightings(newExpertWeightings);
-    }
-
-    private void prepareForAndRequestModelRun(int diseaseGroupId) {
-        try {
-            modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-        } catch (ModelRunWorkflowException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+            try {
+                modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
+            } catch (ModelRunWorkflowException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
             // Ignore the exception, because it is thrown to roll back the transaction per disease group if the model
             // run request fails. Logging has already been done by this point.
+            }
         }
     }
 
