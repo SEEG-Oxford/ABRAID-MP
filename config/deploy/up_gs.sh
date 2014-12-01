@@ -7,6 +7,10 @@ setupTempConfigFiles() {
   echo "${deploy_props[geoserver.root.password.hash]}" > "$GS_TEMP_DIR/passwd"
   cp "$WEBAPP_PATH/geoserver/data/security/usergroup/default/users.xml" "$GS_TEMP_DIR/users.xml"
   sed -i "s|password=\".*\"|password=\"${deploy_props[geoserver.admin.password.hash]}\"|g" "$GS_TEMP_DIR/users.xml"
+  cp "$WEBAPP_PATH/geoserver/WEB-INF/web.xml" "$GS_TEMP_DIR/web.xml"
+  if ! grep -Fqx "<context-param><param-name>GEOWEBCACHE_CACHE_DIR</param-name><param-value>$WEBAPP_PATH/geoserver/data/gwc</param-value></context-param>" "$GS_TEMP_DIR/users.xml"; then
+    sed -i "/.*<display-name>.*/a <context-param><param-name>GEOWEBCACHE_CACHE_DIR</param-name><param-value>$WEBAPP_PATH/geoserver/data/gwc</param-value></context-param>" "$GS_TEMP_DIR/web.xml"
+  fi
 }
 
 setupTempWorkspaceFiles() {
@@ -67,6 +71,8 @@ if [[ ! -d "$WEBAPP_PATH/geoserver" ]]; then
   mkdir -p "$WEBAPP_PATH/geoserver/data/data/"
   rm -rf "$WEBAPP_PATH/geoserver/data/coverages/"
   mkdir -p "$WEBAPP_PATH/geoserver/data/coverages/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/gwc/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/gwc/"
 
   GS_UPDATE_CMD="fileCopy"
 else
@@ -79,9 +85,11 @@ echo "[[ GS | Customizing/checking geoserver config ]]"
 setupTempConfigFiles
 $GS_UPDATE_CMD "$GS_TEMP_DIR/passwd" "$WEBAPP_PATH/geoserver/data/security/masterpw/default/passwd" "GeoServer root password"
 $GS_UPDATE_CMD "$GS_TEMP_DIR/users.xml" "$WEBAPP_PATH/geoserver/data/security/usergroup/default/users.xml" "GeoServer admin password"
+$GS_UPDATE_CMD "$GS_TEMP_DIR/web.xml" "$WEBAPP_PATH/geoserver/WEB-INF/web.xml" "GeoServer servlet settings"
 $GS_UPDATE_CMD "../geoserver/logging.xml" "$WEBAPP_PATH/geoserver/data/logging.xml" "GeoServer logging config"
 $GS_UPDATE_CMD "../geoserver/ABRAID_LOGGING.properties" "$WEBAPP_PATH/geoserver/data/logs/ABRAID_LOGGING.properties" "ABRAID GeoServer logging settings"
 $GS_UPDATE_CMD "../geoserver/gwc-gs.xml" "$WEBAPP_PATH/geoserver/data/gwc-gs.xml" "GeoServer geo-web-cache config"
+$GS_UPDATE_CMD "../geoserver/geowebcache.xml" "$WEBAPP_PATH/geoserver/data/gwc/geowebcache.xml" "GeoServer geo-web-cache extended config"
 
 echo "[[ GS | Adding/checking the abraid workspace ]]"
 setupTempWorkspaceFiles
