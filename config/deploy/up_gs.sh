@@ -73,6 +73,8 @@ if [[ ! -d "$WEBAPP_PATH/geoserver" ]]; then
   mkdir -p "$WEBAPP_PATH/geoserver/data/coverages/"
   rm -rf "$WEBAPP_PATH/geoserver/data/gwc/"
   mkdir -p "$WEBAPP_PATH/geoserver/data/gwc/"
+  rm -rf "$WEBAPP_PATH/geoserver/data/gwc-layers/"
+  mkdir -p "$WEBAPP_PATH/geoserver/data/gwc-layers/"
 
   GS_UPDATE_CMD="fileCopy"
 else
@@ -97,6 +99,7 @@ export GS_UPDATE_CMD
 export GS_TEMP_DIR
 export WEBAPP_PATH
 ( cd "$GS_TEMP_DIR/workspace" && find . -type "f" -exec bash -c '"$GS_UPDATE_CMD" "$GS_TEMP_DIR/workspace/$0" "$WEBAPP_PATH/geoserver/data/workspaces/abraid/$0"' {} \; )
+( cd "../geoserver/gwc-layers" && find . -type "f" -exec bash -c '"$GS_UPDATE_CMD" "$0" "$WEBAPP_PATH/geoserver/data/gwc-layers/$0"' {} \; )
 
 echo "[[ GS | Ensuring correct file permissions ]]"
 permissionFix "tomcat7:tomcat7" "$WEBAPP_PATH/geoserver/"
