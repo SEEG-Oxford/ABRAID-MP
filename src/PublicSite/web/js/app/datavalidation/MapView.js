@@ -43,13 +43,15 @@ define([
         var baseLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:base_layer"],
             format: "image/png",
-            reuseTiles: true
+            reuseTiles: true,
+            tiled: true // For gwc
         }).addTo(map);
 
         var hatchingLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:hatching"],
             format: "image/png",
-            reuseTiles: true
+            reuseTiles: true,
+            tiled: true // For gwc
         });
 
         // Global colour variables

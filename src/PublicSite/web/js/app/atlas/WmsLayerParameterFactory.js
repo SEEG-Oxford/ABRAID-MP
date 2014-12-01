@@ -17,7 +17,8 @@ define(["underscore"], function (_) {
                 layers: "abraid:" + layerName,
                 format: "image/png",
                 styles: style,
-                reuseTiles: true
+                reuseTiles: true,
+                tiled: true // For gwc
             };
 
             if (isExtentLayer) {
