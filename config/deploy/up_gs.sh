@@ -50,12 +50,12 @@ echo "[[ GS | Performing prechecks ]]"
 echo "[[ GS | Checking for existing GeoServer installation ]]"
 if [[ ! -d "$WEBAPP_PATH/geoserver" ]]; then
   echo "No GeoServer install found"
-  echo "[[ GS | Downloading GeoServer 2.5.1 ]]"
-  curl -# -L "http://sourceforge.net/projects/geoserver/files/GeoServer/2.5.1/geoserver-2.5.1-war.zip" -o "$GS_TEMP_DIR/geoserver-2.5.1-war.zip"
-  unzip -p "$GS_TEMP_DIR/geoserver-2.5.1-war.zip" "geoserver.war" > "$GS_TEMP_DIR/geoserver.war"
-  rm -f "$GS_TEMP_DIR/geoserver-2.5.1-war.zip"
+  echo "[[ GS | Downloading GeoServer 2.6.1 ]]"
+  curl -# -L "http://sourceforge.net/projects/geoserver/files/GeoServer/2.6.1/geoserver-2.6.1-war.zip" -o "$GS_TEMP_DIR/geoserver-2.6.1-war.zip"
+  unzip -p "$GS_TEMP_DIR/geoserver-2.6.1-war.zip" "geoserver.war" > "$GS_TEMP_DIR/geoserver.war"
+  rm -f "$GS_TEMP_DIR/geoserver-2.6.1-war.zip"
 
-  echo "[[ GS | Installing GeoServer 2.5.1 ]]"
+  echo "[[ GS | Installing GeoServer 2.6.1 ]]"
   unzip -q "$GS_TEMP_DIR/geoserver.war" -d "$WEBAPP_PATH/geoserver"
 
   echo "[[ GS | Removing default setup ]]"
