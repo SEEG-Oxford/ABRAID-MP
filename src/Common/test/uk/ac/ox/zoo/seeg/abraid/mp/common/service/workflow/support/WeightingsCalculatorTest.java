@@ -24,12 +24,13 @@ public class WeightingsCalculatorTest {
 
     private static final int DISEASE_GROUP_ID = 87;
     private static final double EXPERT_WEIGHTING_THRESHOLD = 0.6;
+    private static final double VALIDATION_WEIGHTING_THRESHOLD = 0.2;
 
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsGetsExpectedListOfReviews() {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
-        WeightingsCalculator target = new WeightingsCalculator(diseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(diseaseService, mock(ExpertService.class));
 
         // Act
         target.updateDiseaseOccurrenceExpertWeightings(DISEASE_GROUP_ID);
@@ -45,7 +46,7 @@ public class WeightingsCalculatorTest {
         when(mockDiseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD))
             .thenReturn(new ArrayList<DiseaseOccurrenceReview>());
 
-        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(mockDiseaseService, mock(ExpertService.class));
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
@@ -94,7 +95,7 @@ public class WeightingsCalculatorTest {
 
         DiseaseService diseaseService = mock(DiseaseService.class);
         when(diseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD)).thenReturn(reviews);
-        WeightingsCalculator target = new WeightingsCalculator(diseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(diseaseService, mock(ExpertService.class));
 
         // Act
         target.updateDiseaseOccurrenceExpertWeightings(DISEASE_GROUP_ID);
@@ -113,7 +114,7 @@ public class WeightingsCalculatorTest {
     public void updateDiseaseOccurrenceValidationWeightingAndFinalWeightingsGetsExpectedListOfOccurrences() {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
-        WeightingsCalculator target = new WeightingsCalculator(diseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(diseaseService, mock(ExpertService.class));
 
         // Act
         target.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(DISEASE_GROUP_ID);
@@ -129,7 +130,7 @@ public class WeightingsCalculatorTest {
         when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID))
             .thenReturn(new ArrayList<DiseaseOccurrence>());
 
-        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(mockDiseaseService, mock(ExpertService.class));
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
@@ -157,7 +158,7 @@ public class WeightingsCalculatorTest {
         when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID))
             .thenReturn(Arrays.asList(occurrenceWithExpertWeighting, occurrenceWithMachineWeighting));
 
-        WeightingsCalculator target =  new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+        WeightingsCalculator target =  weightingsCalculator(mockDiseaseService, mock(ExpertService.class));
 
         // Act
         target.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(DISEASE_GROUP_ID);
@@ -250,7 +251,7 @@ public class WeightingsCalculatorTest {
     public void updateExpertsWeightingsUsesAllReviews() {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
-        WeightingsCalculator target = new WeightingsCalculator(diseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(diseaseService, mock(ExpertService.class));
 
         // Act
         target.updateExpertsWeightings();
@@ -265,7 +266,7 @@ public class WeightingsCalculatorTest {
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
         when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(new ArrayList<DiseaseOccurrenceReview>());
 
-        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mock(ExpertService.class));
+        WeightingsCalculator target = weightingsCalculator(mockDiseaseService, mock(ExpertService.class));
         Logger logger = GeneralTestUtils.createMockLogger(target);
 
         // Act
@@ -285,7 +286,7 @@ public class WeightingsCalculatorTest {
             new DiseaseOccurrenceReview(expert, new DiseaseOccurrence(), DiseaseOccurrenceReviewResponse.YES)
         ));
 
-        WeightingsCalculator target = new WeightingsCalculator(diseaseService, expertService);
+        WeightingsCalculator target = weightingsCalculator(diseaseService, expertService);
 
         // Act
         target.updateExpertsWeightings();
@@ -320,7 +321,7 @@ public class WeightingsCalculatorTest {
         when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(reviews);
 
         ExpertService mockExpertService = mock(ExpertService.class);
-        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mockExpertService);
+        WeightingsCalculator target = weightingsCalculator(mockDiseaseService, mockExpertService);
 
         // Act
         target.updateExpertsWeightings();
@@ -364,7 +365,7 @@ public class WeightingsCalculatorTest {
         when(mockDiseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(reviews);
 
         ExpertService mockExpertService = mock(ExpertService.class);
-        WeightingsCalculator target = new WeightingsCalculator(mockDiseaseService, mockExpertService);
+        WeightingsCalculator target = weightingsCalculator(mockDiseaseService, mockExpertService);
 
         // Act
         target.updateExpertsWeightings();
@@ -425,6 +426,10 @@ public class WeightingsCalculatorTest {
         when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID))
             .thenReturn(Arrays.asList(occurrence));
 
-        return new WeightingsCalculator(diseaseService, mock(ExpertService.class));
+        return weightingsCalculator(diseaseService, mock(ExpertService.class));
+    }
+
+    private WeightingsCalculator weightingsCalculator(DiseaseService diseaseService, ExpertService expertService) {
+        return new WeightingsCalculator(diseaseService, expertService, EXPERT_WEIGHTING_THRESHOLD, VALIDATION_WEIGHTING_THRESHOLD);
     }
 }

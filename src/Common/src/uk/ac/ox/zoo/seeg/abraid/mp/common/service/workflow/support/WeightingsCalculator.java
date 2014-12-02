@@ -19,8 +19,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
  * Copyright (c) 2014 University of Oxford
  */
 public class WeightingsCalculator {
-    private static final double EXPERT_WEIGHTING_THRESHOLD = 0.6;
-    private static final double VALIDATION_WEIGHTING_THRESHOLD = 0.2;
 
     private static Logger logger = Logger.getLogger(WeightingsCalculator.class);
 
@@ -40,12 +38,17 @@ public class WeightingsCalculator {
     private static final String UPDATING_WEIGHTINGS =
         "Updating validation and final weightings for %d disease occurrence(s) in preparation for model run";
 
+    private final double validationWeightingThreshold;
+    private final double expertWeightingThreshold;
+
     private DiseaseService diseaseService;
     private ExpertService expertService;
 
-    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService) {
+    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService, double expertWeightingThreshold, double validationWeightingThreshold) {
         this.diseaseService = diseaseService;
         this.expertService = expertService;
+        this.expertWeightingThreshold = expertWeightingThreshold;
+        this.validationWeightingThreshold = validationWeightingThreshold;
     }
 
     /**
@@ -56,9 +59,9 @@ public class WeightingsCalculator {
      */
     public void updateDiseaseOccurrenceExpertWeightings(int diseaseGroupId) {
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(
-                diseaseGroupId, EXPERT_WEIGHTING_THRESHOLD);
+                diseaseGroupId, expertWeightingThreshold);
         if (allReviews.isEmpty()) {
-            logger.info(String.format(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS, EXPERT_WEIGHTING_THRESHOLD));
+            logger.info(String.format(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS, expertWeightingThreshold));
         } else {
             updateDiseaseOccurrenceExpertWeightings(allReviews);
         }
@@ -144,7 +147,7 @@ public class WeightingsCalculator {
         double locationResolutionWeighting = occurrence.getLocation().getResolutionWeighting();
         if (validationWeighting == null) {
             return locationResolutionWeighting;
-        } else if ((validationWeighting <= VALIDATION_WEIGHTING_THRESHOLD) || (locationResolutionWeighting == 0.0)) {
+        } else if ((validationWeighting <= validationWeightingThreshold) || (locationResolutionWeighting == 0.0)) {
             return 0.0;
         } else {
             return average(locationResolutionWeighting, validationWeighting);
@@ -234,7 +237,7 @@ public class WeightingsCalculator {
      * @param args The values.
      * @return The mean of the given values.
      */
-    protected static double average(Double... args) {
+    static double average(Double... args) {
         return average(Arrays.asList(args));
     }
 
