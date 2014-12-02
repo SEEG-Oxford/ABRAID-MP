@@ -5,7 +5,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Prepares for and requests a model run.

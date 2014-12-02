@@ -25,8 +25,10 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
      * @return A list of disease occurrence reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
-        return listNamedQuery("getAllDiseaseOccurrenceReviewsForOccurrencesInValidation", "diseaseGroupId", diseaseGroupId);
+    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(
+            Integer diseaseGroupId) {
+        return listNamedQuery("getAllDiseaseOccurrenceReviewsForOccurrencesInValidation",
+                "diseaseGroupId", diseaseGroupId);
     }
 
     /**
@@ -37,7 +39,8 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
      * @return A list of disease occurrence reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId, Double expertWeightingThreshold) {
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(
+    Integer diseaseGroupId, Double expertWeightingThreshold) {
         return listNamedQuery("getDiseaseOccurrenceReviewsForUpdatingWeightings",
                 "diseaseGroupId", diseaseGroupId, "expertWeightingThreshold", expertWeightingThreshold);
     }

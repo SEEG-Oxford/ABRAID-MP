@@ -188,7 +188,8 @@ public interface DiseaseService {
      * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
      * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId, Double expertWeightingThreshold);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId,
+                                                                                   Double expertWeightingThreshold);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an

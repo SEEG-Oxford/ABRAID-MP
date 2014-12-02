@@ -25,10 +25,6 @@ public class WeightingsCalculatorTest {
     private static final int DISEASE_GROUP_ID = 87;
     private static final double EXPERT_WEIGHTING_THRESHOLD = 0.6;
 
-    List<DiseaseOccurrence> occurrences = Arrays.asList(
-            new DiseaseOccurrence(0), new DiseaseOccurrence(1), new DiseaseOccurrence(2), new DiseaseOccurrence(3)
-    );
-
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsGetsExpectedListOfReviews() {
         // Arrange
@@ -68,6 +64,10 @@ public class WeightingsCalculatorTest {
         // not actually feature in occurrence's expertWeighting calculation.
         List<Expert> experts = Arrays.asList(
                 new Expert(1.0), new Expert(0.9), new Expert(0.8), new Expert(0.7), new Expert(0.6)
+        );
+
+        List<DiseaseOccurrence> occurrences = Arrays.asList(
+                new DiseaseOccurrence(0), new DiseaseOccurrence(1), new DiseaseOccurrence(2), new DiseaseOccurrence(3)
         );
 
         List<DiseaseOccurrenceReview> reviews = Arrays.asList(
@@ -276,7 +276,7 @@ public class WeightingsCalculatorTest {
     }
 
     @Test
-    public void updateExpertsWeightingsForOneExpertBeingOnlyOneToReviewOccurrenceGivesExpectedResult(){
+    public void updateExpertsWeightingsForOneExpertBeingOnlyOneToReviewOccurrenceGivesExpectedResult() {
         // Arrange - Only one expert has reviewed an occurrence so "reviewsOfOccurrence" in calculateDifference is empty
         Expert expert = new Expert();
         ExpertService expertService = mock(ExpertService.class);
@@ -299,6 +299,10 @@ public class WeightingsCalculatorTest {
     public void updateExpertsWeightingsSavesExpectedValuesWhenAllExpertsProvideSameResponse() {
         // Arrange
         List<Expert> experts = Arrays.asList(new Expert(0), new Expert(1), new Expert(2));
+
+        List<DiseaseOccurrence> occurrences = Arrays.asList(
+                new DiseaseOccurrence(0), new DiseaseOccurrence(1), new DiseaseOccurrence(2), new DiseaseOccurrence(3)
+        );
 
         List<DiseaseOccurrenceReview> reviews = Arrays.asList(
             new DiseaseOccurrenceReview(experts.get(0), occurrences.get(0), DiseaseOccurrenceReviewResponse.YES),
@@ -332,6 +336,10 @@ public class WeightingsCalculatorTest {
     public void updateExpertsWeightingsSavesExpectedValues() {
         // Arrange
         List<Expert> experts = Arrays.asList(new Expert(0), new Expert(1), new Expert(2), new Expert(3));
+
+        List<DiseaseOccurrence> occurrences = Arrays.asList(
+                new DiseaseOccurrence(0), new DiseaseOccurrence(1), new DiseaseOccurrence(2), new DiseaseOccurrence(3)
+        );
 
         List<DiseaseOccurrenceReview> reviews = Arrays.asList(
             new DiseaseOccurrenceReview(experts.get(0), occurrences.get(0), DiseaseOccurrenceReviewResponse.YES),

@@ -30,7 +30,8 @@ public interface DiseaseOccurrenceReviewDao {
      * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
      * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId, Double expertWeightingThreshold);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId,
+                                                                                   Double expertWeightingThreshold);
 
     /**
      * Gets the total number of reviews submitted by the specified expert.

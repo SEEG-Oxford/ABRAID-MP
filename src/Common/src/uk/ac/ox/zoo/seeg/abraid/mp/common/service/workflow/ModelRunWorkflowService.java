@@ -4,8 +4,6 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
-import java.util.Map;
-
 /**
  * Service interface to support the workflow surrounding a model run request.
  * Copyright (c) 2014 University of Oxford

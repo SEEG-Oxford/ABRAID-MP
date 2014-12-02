@@ -317,7 +317,8 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return A list of disease occurrence reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
+    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(
+            Integer diseaseGroupId) {
         return diseaseOccurrenceReviewDao.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
     }
 
@@ -329,8 +330,10 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return A list of disease occurrence reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId, Double expertWeightingThreshold) {
-        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(diseaseGroupId, expertWeightingThreshold);
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(
+            Integer diseaseGroupId, Double expertWeightingThreshold) {
+        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(
+                diseaseGroupId, expertWeightingThreshold);
     }
 
     /**

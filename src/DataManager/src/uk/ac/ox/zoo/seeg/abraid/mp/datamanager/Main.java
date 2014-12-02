@@ -7,8 +7,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkf
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager;
 
-import java.util.Map;
-
 /**
  * Entry point for the DataAcquisition module.
  *
