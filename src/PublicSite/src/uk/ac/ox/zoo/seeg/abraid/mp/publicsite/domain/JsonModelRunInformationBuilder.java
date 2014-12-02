@@ -99,25 +99,26 @@ public class JsonModelRunInformationBuilder {
         DateTime minimumDate = statistics.getMinimumOccurrenceDate();
         DateTime maximumDate = statistics.getMaximumOccurrenceDate();
 
-        // To find the default value of "batch end date", let date X be the minimum occurrence date if this is the first
-        // batch, otherwise let date X be the day after the latest batch end date. Then the default batch end date is
-        // the last day of date X's year.
-        DateTime defaultEndDate = null;
-        if (minimumDate != null && maximumDate != null) {
-            defaultEndDate = minimumDate;
-            if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
-                    lastCompletedModelRun.getBatchEndDate() != null) {
-                // Find the day after the latest batch end date
-                defaultEndDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
-            }
+        // The default value of "batch start date" is the minimum occurrence date if this is the first
+        // batch, otherwise it is the day after the latest batch end date
+        DateTime defaultStartDate = minimumDate;
+        if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
+                lastCompletedModelRun.getBatchEndDate() != null) {
+            defaultStartDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
+        }
 
-            defaultEndDate = defaultEndDate.plusYears(1).withDayOfYear(1).minusDays(1);
+        // The default value of "batch end date" is the last day of the default start date's year, limited to
+        // the maximum occurrence date
+        DateTime defaultEndDate = null;
+        if (defaultStartDate != null && maximumDate != null) {
+            defaultEndDate = defaultStartDate.plusYears(1).withDayOfYear(1).minusDays(1);
             if (defaultEndDate.isAfter(maximumDate)) {
                 defaultEndDate = maximumDate;
             }
         }
 
         information.setBatchDateMinimum(getDateText(minimumDate));
+        information.setBatchStartDateDefault(getDateText(defaultStartDate));
         information.setBatchEndDateDefault(getDateText(defaultEndDate));
         information.setBatchDateMaximum(getDateText(maximumDate));
         return this;

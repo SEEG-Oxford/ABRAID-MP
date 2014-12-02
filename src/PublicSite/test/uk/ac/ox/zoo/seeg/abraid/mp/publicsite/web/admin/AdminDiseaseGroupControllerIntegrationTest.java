@@ -72,7 +72,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(
                 get(AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/87/modelruninformation"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"lastModelRunText\":\"never\",\"diseaseOccurrencesText\":\"total 45, occurring between 24 Feb 2014 and 27 Feb 2014\",\"hasModelBeenSuccessfullyRun\":false,\"canRunModel\":true,\"batchDateMinimum\":\"24 Feb 2014\",\"batchDateMaximum\":\"27 Feb 2014\",\"batchEndDateDefault\":\"27 Feb 2014\",\"hasGoldStandardOccurrences\":false}"));
+                .andExpect(content().string("{\"lastModelRunText\":\"never\",\"diseaseOccurrencesText\":\"total 45, occurring between 24 Feb 2014 and 27 Feb 2014\",\"hasModelBeenSuccessfullyRun\":false,\"canRunModel\":true,\"batchDateMinimum\":\"24 Feb 2014\",\"batchDateMaximum\":\"27 Feb 2014\",\"batchStartDateDefault\":\"24 Feb 2014\",\"batchEndDateDefault\":\"27 Feb 2014\",\"hasGoldStandardOccurrences\":false}"));
     }
 
     @Test
