@@ -33,20 +33,21 @@ def train(disease_group_id):
         return _log_response('Invalid JSON', disease_group_id, 400)
 
     predictor = Chain()
-    FEED_CLASSES[disease_group_id] = {}
+    feed_classes = {}
 
     if len(data) > 50:
         try:
-            X = _convert_json_to_matrix(disease_group_id, data)
+            feed_classes = _construct_feed_classes(data)
+            X = _convert_training_data_to_matrix(data, feed_classes)
             y = np.array(_pluck('expertWeighting', data))
         except KeyError:
             return _log_response('Invalid JSON', disease_group_id, 400)
         else:
             predictor.train(X, y)
-            _save_predictor(disease_group_id, predictor)
+            _save_pickles(disease_group_id, predictor, feed_classes)
             return _log_response('Trained predictor saved', disease_group_id, 200)
     else:
-        _save_predictor(disease_group_id, predictor)
+        _save_pickles(disease_group_id, predictor, feed_classes)
         return _log_response('Insufficient training data - empty predictor saved', disease_group_id, 200)
 
 
@@ -77,11 +78,8 @@ def predict(disease_group_id):
             return _log_response(e.strerror + ': Unable to load feeds', disease_group_id, 400)
 
     try:
-        x = np.zeros(2 + len(feed_classes) + 1)
-        x[0] = request.json['environmentalSuitability']
-        x[1] = request.json['distanceFromExtent']
-        feed = _get_feed_class(disease_group_id, request.json['feedId'])
-        x[feed + 2] = 1
+        data = request.get_json()
+        x = _convert_data_to_vector(data, feed_classes)
     except KeyError:
         return _log_response('Invalid JSON', disease_group_id, 400)
 
@@ -92,36 +90,57 @@ def predict(disease_group_id):
         return (str(prediction), 200)
 
 
-def _convert_json_to_matrix(disease_group_id, json):
-    feeds = [_get_feed_class(disease_group_id, feed_id) for feed_id in _pluck('feedId', json)]
-    n = 2 + len(FEED_CLASSES[disease_group_id]) + 1
-    X = np.zeros((len(json), n))
+def _construct_feed_classes(data):
+    """ Create a dictionary mapping from each feedId in training data, to an incremental class number """
+    feed_classes = {}
+    for feed_id in _pluck('feedId', data):
+        if feed_id not in feed_classes:
+            feed_classes[feed_id] = len(feed_classes)
+    return feed_classes
 
-    X[:, 0] = _pluck('environmentalSuitability', json)
-    X[:, 1] = _pluck('distanceFromExtent', json)
-    for i, f in enumerate(feeds):
-        X[i, f + 2] = 1
+
+def _convert_training_data_to_matrix(json, feed_classes):
+    """ Columns of X represent features eg: [0.9, 123, 0, 1, 0] for a datapoint coming from the second of 3 feeds """
+    n = 2 + len(feed_classes)
+    m = len(json)
+    X = np.zeros((m, n))
+
+    X[:, 0] = _pluck('environmentalSuitability', json) # A probability between 0 and 1
+    X[:, 1] = _pluck('distanceFromExtent', json)       # A value in km
+    
+    # Each unique feed_id maps to a column number, where a 1 represents the occurrence alert came from that feed.
+    feeds = [feed_classes[feed_id] for feed_id in _pluck('feedId', json)]
+    for i, feed_class in enumerate(feeds):
+        X[i, feed_class + 2] = 1
     return X
 
 
-def _get_feed_class(disease_group_id, feed_id):
-    """ Map from feed id (which could be any integer and skew the data) to an incremental class number """
-    if feed_id not in FEED_CLASSES[disease_group_id]:
-        FEED_CLASSES[disease_group_id][feed_id] = len(FEED_CLASSES[disease_group_id])
-    return FEED_CLASSES[disease_group_id][feed_id]
+def _convert_data_to_vector(data, feed_classes):
+    n = 2 + len(feed_classes)
+    x = np.zeros(n)
+    
+    x[0] = data['environmentalSuitability']
+    x[1] = data['distanceFromExtent']
+
+    feed_id = data['feedId']
+    if feed_id in feed_classes:
+        feed_class = feed_classes[feed_id]
+        x[feed_class + 2] = 1
+    return x
+
+    
+def _pluck(name, data):
+    """ Extract the named feature from each item in data, as an array """
+    return [x[name] for x in data]
 
 
-def _pluck(name, json):
-    """ Extract the named feature from each item in json, as an array """
-    return [x[name] for x in json]
-
-
-def _save_predictor(disease_group_id, predictor):
-    """ Save to dict, and back up a pickled version on disk """
+def _save_pickles(disease_group_id, predictor, feed_classes):
+    """ Save to global dict, and back up a pickled version on disk """
     PREDICTORS[disease_group_id] = predictor
+    FEED_CLASSES[disease_group_id] = feed_classes
     try:
         joblib.dump(predictor, _get_pickled_predictor_filename(disease_group_id))
-        joblib.dump(FEED_CLASSES[disease_group_id], _get_pickled_feed_classes_filename(disease_group_id))
+        joblib.dump(feed_classes, _get_pickled_feed_classes_filename(disease_group_id))
     except IOError as e:
         app.logger.error(e.strerror + ': Unable to save pickle for disease group (' + str(disease_group_id) + ')')
 
@@ -147,5 +166,4 @@ def _log_response(message, disease_group_id, status_code):
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', debug=True, use_debugger=True)
-
+    app.run(host='localhost')
