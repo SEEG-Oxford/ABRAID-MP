@@ -17,15 +17,16 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunLayerTest {
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void constructorBindsFieldsCorrectly() {
         // Arrange
         ModelRun modelRun = mock(ModelRun.class);
 
-        String covariateName = "Name";
+        String displayName = "Display name";
         double meanInfluence = 20.2;
+        CovariateInfluence covariateInfluence = new CovariateInfluence(displayName, meanInfluence);
         boolean automaticRun = true;
-        CovariateInfluence covariateInfluence = new CovariateInfluence(covariateName, meanInfluence);
         SubmodelStatistic submodelStatistic = mock(SubmodelStatistic.class);
 
         when(modelRun.getName()).thenReturn("expectedName");
@@ -34,7 +35,6 @@ public class JsonModelRunLayerTest {
         when(modelRun.getSubmodelStatistics()).thenReturn(Arrays.asList(submodelStatistic));
 
         // Act
-
         JsonModelRunLayer result = new JsonModelRunLayer(modelRun, automaticRun);
 
         // Assert

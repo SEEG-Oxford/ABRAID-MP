@@ -1,4 +1,5 @@
-"","mean","2.5%","97.5%"
-"rand2",38.3298990317527,37.2171654834767,39.4426325800287
-"rand3",35.7954256696217,35.0476600405772,36.5431912986662
-"rand1",25.8746752986256,24.0141761213051,27.7351744759462
+"","file_path","covariate","mean","2.5%","97.5%"
+"X4","/var/lib/abraid/modelwrapper/covariates/tempaucpv.tif","Temperature suitability index (Malaria Pv)","85.2443821174109","78.0962137739846","89.6437036968154"
+"X3","/var/lib/abraid/modelwrapper/covariates/wd0114a0.tif","AVHRR Normalized Difference Vegetation Index (mean)","10.446434302638","6.30709809904488","16.9330982142733"
+"X2","/var/lib/abraid/modelwrapper/covariates/upr_p.tif","GRUMP peri-urban surface","2.85156061558689","1.63273339493853","4.04396887681117"
+"X1","/var/lib/abraid/modelwrapper/covariates/upr_u.tif","GRUMP urban surface","1.45762296436416","0.717795627914255","2.70022249615236"

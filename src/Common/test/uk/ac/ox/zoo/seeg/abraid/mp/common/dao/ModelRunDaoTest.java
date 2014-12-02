@@ -414,10 +414,10 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         return submodelStatistic;
     }
 
-    private CovariateInfluence createCovariateInfluence(String covariateName, String displayName, ModelRun modelRun) {
+    private CovariateInfluence createCovariateInfluence(String filePath, String displayName, ModelRun modelRun) {
         CovariateInfluence covariateInfluence = new CovariateInfluence();
         covariateInfluence.setModelRun(modelRun);
-        covariateInfluence.setCovariateName(covariateName);
+        covariateInfluence.setCovariateFilePath(filePath);
         covariateInfluence.setCovariateDisplayName(displayName);
         covariateInfluence.setMeanInfluence(1.0);
         covariateInfluence.setLowerQuantile(2.0);
@@ -425,10 +425,10 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         return covariateInfluence;
     }
 
-    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String covariateName, String displayName, ModelRun modelRun) {
+    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String filePath, String displayName, ModelRun modelRun) {
         EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
         effectCurveCovariateInfluence.setModelRun(modelRun);
-        effectCurveCovariateInfluence.setCovariateName(covariateName);
+        effectCurveCovariateInfluence.setCovariateFilePath(filePath);
         effectCurveCovariateInfluence.setCovariateDisplayName(displayName);
         effectCurveCovariateInfluence.setMeanInfluence(1.0);
         effectCurveCovariateInfluence.setLowerQuantile(2.0);

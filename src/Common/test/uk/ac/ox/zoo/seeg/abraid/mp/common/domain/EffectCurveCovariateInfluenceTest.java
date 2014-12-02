@@ -16,7 +16,7 @@ public class EffectCurveCovariateInfluenceTest {
         // Arrange
         ModelRun runExpectation = mock(ModelRun.class);
         CsvEffectCurveCovariateInfluence dtoExpectation = new CsvEffectCurveCovariateInfluence();
-        dtoExpectation.setCovariateName("1");
+        dtoExpectation.setCovariateFilePath("1");
         dtoExpectation.setCovariateDisplayName("2");
         dtoExpectation.setMeanInfluence(3.0);
         dtoExpectation.setLowerQuantile(4.0);
@@ -28,7 +28,7 @@ public class EffectCurveCovariateInfluenceTest {
 
         // Assert
         assertThat(result.getModelRun()).isEqualTo(runExpectation);
-        assertThat(result.getCovariateName()).isEqualTo(dtoExpectation.getCovariateName());
+        assertThat(result.getCovariateFilePath()).isEqualTo(dtoExpectation.getCovariateFilePath());
         assertThat(result.getCovariateDisplayName()).isEqualTo(dtoExpectation.getCovariateDisplayName());
         assertThat(result.getMeanInfluence()).isEqualTo(dtoExpectation.getMeanInfluence());
         assertThat(result.getLowerQuantile()).isEqualTo(dtoExpectation.getLowerQuantile());

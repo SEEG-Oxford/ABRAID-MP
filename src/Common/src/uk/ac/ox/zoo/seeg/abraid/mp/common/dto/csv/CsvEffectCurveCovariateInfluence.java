@@ -13,7 +13,6 @@ import java.util.List;
  */
 public class CsvEffectCurveCovariateInfluence extends AbstractCsvCovariateInfluence {
     private Double covariateValue;
-    private Integer index;
 
     /**
      * Parses a collection of CsvCovariateInfluence entries from a csv string (header row expected).
@@ -25,7 +24,8 @@ public class CsvEffectCurveCovariateInfluence extends AbstractCsvCovariateInflue
         CsvSchema schema = CsvSchema.builder()
                 .setSkipFirstDataRow(true)
                 .addColumn("index")
-                .addColumn("covariateName")
+                .addColumn("covariateFilePath")
+                .addColumn("covariateDisplayName")
                 .addColumn("covariateValue")
                 .addColumn("meanInfluence", CsvSchema.ColumnType.NUMBER)
                 .addColumn("lowerQuantile", CsvSchema.ColumnType.NUMBER)
@@ -41,13 +41,5 @@ public class CsvEffectCurveCovariateInfluence extends AbstractCsvCovariateInflue
 
     public void setCovariateValue(Double covariateValue) {
         this.covariateValue = covariateValue;
-    }
-
-    public Integer getIndex() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
     }
 }

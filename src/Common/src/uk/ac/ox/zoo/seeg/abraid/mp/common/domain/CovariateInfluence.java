@@ -28,7 +28,7 @@ public class CovariateInfluence extends AbstractCovariateInfluence {
         super(dto, parentRun);
     }
 
-    public CovariateInfluence(String name, Double meanInfluence) {
-        super(name, meanInfluence);
+    public CovariateInfluence(String displayName, Double meanInfluence) {
+        super(displayName, meanInfluence);
     }
 }

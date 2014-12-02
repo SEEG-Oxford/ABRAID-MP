@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Provides a mechanism for reporting model completion or failure (and results) to the model output handler.
@@ -38,15 +37,13 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
 
     private final String runName;
     private final Path workingDirectoryPath;
-    private final Map<String, String> covariateFiles;
     private ModelOutputHandlerWebService modelOutputHandlerWebService;
     private final AbraidJsonObjectMapper objectMapper;
 
-    public ModelStatusReporterImpl(String runName, Path workingDirectory, Map<String, String> covariatesFiles,
+    public ModelStatusReporterImpl(String runName, Path workingDirectory,
             ModelOutputHandlerWebService modelOutputHandlerWebService, AbraidJsonObjectMapper objectMapper) {
         this.runName = runName;
         this.workingDirectoryPath = workingDirectory;
-        this.covariateFiles = covariatesFiles;
         this.modelOutputHandlerWebService = modelOutputHandlerWebService;
         this.objectMapper = objectMapper;
     }
@@ -104,8 +101,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private void createMetadataAndSaveToFile(ModelRunStatus status, String outputText, String errorText)
             throws IOException {
         // Create metadata and serialize as JSON
-        JsonModelOutputsMetadata metadata =
-                new JsonModelOutputsMetadata(runName, status, outputText, errorText, covariateFiles);
+        JsonModelOutputsMetadata metadata = new JsonModelOutputsMetadata(runName, status, outputText, errorText);
 
         String metadataJson = objectMapper.writeValueAsString(metadata);
 

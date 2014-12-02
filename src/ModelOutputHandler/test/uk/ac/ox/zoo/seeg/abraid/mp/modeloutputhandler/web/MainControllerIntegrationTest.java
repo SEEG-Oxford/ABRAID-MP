@@ -329,20 +329,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         List<SubmodelStatistic> database = run.getSubmodelStatistics();
         List<CsvSubmodelStatistic> file = CsvSubmodelStatistic.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
 
-        Collections.sort(database, new Comparator<SubmodelStatistic>() {
-            @Override
-            public int compare(SubmodelStatistic o1, SubmodelStatistic o2) {
-                return o1.getDeviance().compareTo(o2.getDeviance());
-            }
-        });
-
-        Collections.sort(file, new Comparator<CsvSubmodelStatistic>() {
-            @Override
-            public int compare(CsvSubmodelStatistic o1, CsvSubmodelStatistic o2) {
-                return o1.getDeviance().compareTo(o2.getDeviance());
-            }
-        });
-
         assertThat(extractProperty("deviance").from(database)).isEqualTo(extractProperty("deviance").from(file));
         assertThat(extractProperty("rootMeanSquareError").from(database)).isEqualTo(extractProperty("rootMeanSquareError").from(file));
         assertThat(extractProperty("kappa").from(database)).isEqualTo(extractProperty("kappa").from(file));
@@ -376,14 +362,8 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             }
         });
 
-        assertThat(extractProperty("covariateName").from(database)).isEqualTo(extractProperty("covariateName").from(file));
-        // The covariateInfluence in database has a display name, mapped from the metadata json, but the file from the model has only the name.
-        for (Object covariateDisplayName : extractProperty("covariateDisplayName").from(database)) {
-            assertThat(covariateDisplayName).isNotNull();
-        }
-        for (Object covariateDisplayName : extractProperty("covariateDisplayName").from(file)) {
-            assertThat(covariateDisplayName).isNull();
-        }
+        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
+        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
         assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
@@ -397,7 +377,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             @Override
             public int compare(EffectCurveCovariateInfluence o1, EffectCurveCovariateInfluence o2) {
                 return new CompareToBuilder()
-                        .append(o1.getCovariateName(), o2.getCovariateName())
+                        .append(o1.getCovariateFilePath(), o2.getCovariateFilePath())
                         .append(o1.getCovariateValue(), o2.getCovariateValue())
                         .toComparison();
             }
@@ -407,19 +387,14 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             @Override
             public int compare(CsvEffectCurveCovariateInfluence o1, CsvEffectCurveCovariateInfluence o2) {
                 return new CompareToBuilder()
-                        .append(o1.getCovariateName(), o2.getCovariateName())
+                        .append(o1.getCovariateFilePath(), o2.getCovariateFilePath())
                         .append(o1.getCovariateValue(), o2.getCovariateValue())
                         .toComparison();
             }
         });
 
-        assertThat(extractProperty("covariateName").from(database)).isEqualTo(extractProperty("covariateName").from(file));
-        for (Object covariateDisplayName : extractProperty("covariateDisplayName").from(database)) {
-            assertThat(covariateDisplayName).isNotNull();
-        }
-        for (Object covariateDisplayName : extractProperty("covariateDisplayName").from(file)) {
-            assertThat(covariateDisplayName).isNull();
-        }
+        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
+        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
         assertThat(extractProperty("covariateValue").from(database)).isEqualTo(extractProperty("covariateValue").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));

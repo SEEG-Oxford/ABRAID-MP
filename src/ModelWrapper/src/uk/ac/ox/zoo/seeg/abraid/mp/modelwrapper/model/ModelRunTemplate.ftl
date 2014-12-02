@@ -34,6 +34,12 @@ covariate_paths <- c(
 </#list>
 )
 
+covariate_names <- c(
+<#list covariate_names as covariate>
+    "${covariate}"<#if covariate_has_next>,</#if>
+</#list>
+)
+
 # Define admin unit rasters to use.
 # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
 admin1_path <- "${admin1_file}"
@@ -146,6 +152,7 @@ result <- tryCatch({
         admin1_path,
         admin2_path,
         covariate_paths,
+        covariate_names,
         rep(FALSE, length(covariate_paths)),
         verbose,
         max_cpus,
