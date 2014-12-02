@@ -67,7 +67,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         batchEndDate = getBatchEndDateWithMaximumTime(batchEndDate);
         batchDatesValidator.validate(diseaseGroupId, batchStartDate, batchEndDate);
 
-        updateExpertsWeightings();
         prepareForAndRequestModelRun(diseaseGroupId, batchStartDate, batchEndDate);
     }
 
@@ -86,7 +85,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     /**
      * Prepares for and requests a model run using "gold standard" disease occurrences, for the specified disease group.
      * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
-     * been uploaded to send to the model.
+     * been uploaded to send to the model. Experts' weightings are updated here - across all disease groups - to ensure
+     * their most up-to-date values are used in disease extent generation.
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunWorkflowException if the model run could not be requested.
      */
@@ -150,9 +150,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         DateTime modelRunPrepDate = DateTime.now();
 
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            // Experts' weightings need not be updated here; re-calculation across all disease groups has already
+            // occurred in Main, before any automatic model runs are prepared or ran.
             generateDiseaseExtent(diseaseGroup);
             updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
         } else {
+            updateExpertsWeightings();
             updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
             generateDiseaseExtent(diseaseGroup);
         }
