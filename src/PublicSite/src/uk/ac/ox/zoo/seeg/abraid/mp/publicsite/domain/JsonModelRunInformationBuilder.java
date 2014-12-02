@@ -106,15 +106,11 @@ public class JsonModelRunInformationBuilder {
         // The maximum batch date is simply the maximum occurrence date
         DateTime maximumDate = statistics.getMaximumOccurrenceDate();
 
-        // The default value of "batch end date" is the last day of the minimum date's year, limited to:
-        // (a) the maximum occurrence date; (b) 1 week before now (because that is when batching normally ends)
+        // The default value of "batch end date" is the last day of the minimum date's year, limited to the
+        // maximum occurrence date
         DateTime defaultEndDate = null;
         if (minimumDate != null && maximumDate != null) {
-            DateTime defaultFinalBatchEndDate = DateTime.now().minusWeeks(1);
             defaultEndDate = minimumDate.plusYears(1).withDayOfYear(1).minusDays(1);
-            if (defaultEndDate.isAfter(defaultFinalBatchEndDate)) {
-                defaultEndDate = defaultFinalBatchEndDate;
-            }
             if (defaultEndDate.isAfter(maximumDate)) {
                 defaultEndDate = maximumDate;
             }
@@ -159,13 +155,22 @@ public class JsonModelRunInformationBuilder {
     private String getLastModelRunBatchingText(ModelRun lastRequestedModelRun) {
         String text = "";
 
-        if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
+        if (lastRequestedModelRun.getBatchStartDate() != null && lastRequestedModelRun.getBatchEndDate() != null) {
+            // Batching has been requested
             String batchStartDateText = getDateText(lastRequestedModelRun.getBatchStartDate());
             String batchEndDateText = getDateText(lastRequestedModelRun.getBatchEndDate());
-            int batchOccurrenceCount = lastRequestedModelRun.getBatchOccurrenceCount();
-            String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
-            text = String.format(" (including batching of %d occurrence%s for validation, start date %s, end date %s)",
-                    batchOccurrenceCount, pluralEnding, batchStartDateText, batchEndDateText);
+            String batchDateText = String.format("start date %s, end date %s", batchStartDateText, batchEndDateText);
+
+            if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
+                // Batching is complete
+                int batchOccurrenceCount = lastRequestedModelRun.getBatchOccurrenceCount();
+                String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
+                text = String.format(" (including batching of %d occurrence%s for validation, %s)",
+                        batchOccurrenceCount, pluralEnding, batchDateText);
+            } else {
+                // Batching is not complete
+                text = String.format(" (but batching not yet completed, %s)", batchDateText);
+            }
         }
 
         return text;
