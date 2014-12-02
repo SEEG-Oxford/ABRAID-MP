@@ -126,14 +126,14 @@ do_dry_run <- function() {
     close(fileConn)
     fileConn <- file("results/relative_influence.csv")
     writeLines(c(
-        '"","mean","2.5%","97.5%"',
-        '"1",2,3,4'
+        '"","file_path","covariate","mean","2.5%","97.5%"',
+        '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'
     ), fileConn)
     close(fileConn)
     fileConn <- file("results/effect_curves.csv")
     writeLines(c(
-        '"","covariate","covariate","mean","2.5%","97.5%"',
-        '"1","upr_u","0","-3","-5","0.3"'
+        '"","file_path","covariate","covariate","mean","2.5%","97.5%"',
+        '"1","path/upr_u.tif","GRUMP urban surface","0","-3","-5","0.3"'
     ), fileConn)
     close(fileConn)
 }
