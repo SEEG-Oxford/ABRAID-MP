@@ -62,7 +62,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
         email.setSmtpPort(smtpConfig.getPort());
         email.setSslSmtpPort(Integer.toString(smtpConfig.getPort()));
         email.setAuthenticator(new DefaultAuthenticator(smtpConfig.getUsername(), smtpConfig.getPassword()));
-        email.setSSLOnConnect(smtpConfig.useSSL());
+        email.setStartTLSRequired(smtpConfig.useSSL());
     }
 
     private static Configuration setupFreemarkerConfig(Class[] classTemplateLookupPaths, File[] fileTemplateLookupPaths)
