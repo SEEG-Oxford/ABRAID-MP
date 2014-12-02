@@ -95,22 +95,23 @@ public class JsonModelRunInformationBuilder {
      */
     public JsonModelRunInformationBuilder populateBatchDateParameters(ModelRun lastCompletedModelRun,
                                                                       DiseaseOccurrenceStatistics statistics) {
-        // The minimum batch date is the minimum occurrence date if this is the first batch, otherwise
-        // it is the day after the latest batch end date.
+        // The minimum and maximum batch dates are equal to the minimum and maximum occurrence date
         DateTime minimumDate = statistics.getMinimumOccurrenceDate();
-        if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
-                lastCompletedModelRun.getBatchEndDate() != null) {
-            minimumDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
-        }
-
-        // The maximum batch date is simply the maximum occurrence date
         DateTime maximumDate = statistics.getMaximumOccurrenceDate();
 
-        // The default value of "batch end date" is the last day of the minimum date's year, limited to the
-        // maximum occurrence date
+        // To find the default value of "batch end date", let date X be the minimum occurrence date if this is the first
+        // batch, otherwise let date X be the day after the latest batch end date. Then the default batch end date is
+        // the last day of date X's year.
         DateTime defaultEndDate = null;
         if (minimumDate != null && maximumDate != null) {
-            defaultEndDate = minimumDate.plusYears(1).withDayOfYear(1).minusDays(1);
+            defaultEndDate = minimumDate;
+            if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
+                    lastCompletedModelRun.getBatchEndDate() != null) {
+                // Find the day after the latest batch end date
+                defaultEndDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
+            }
+
+            defaultEndDate = defaultEndDate.plusYears(1).withDayOfYear(1).minusDays(1);
             if (defaultEndDate.isAfter(maximumDate)) {
                 defaultEndDate = maximumDate;
             }

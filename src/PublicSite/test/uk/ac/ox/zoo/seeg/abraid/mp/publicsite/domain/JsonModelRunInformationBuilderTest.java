@@ -218,19 +218,19 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateBatchEndDateParametersForNextBatchWherePreviousBatchEndedAtYearEnd() {
         populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2011-12-31",
-                "1 Jan 2012", "31 Dec 2012", "1 Jun 2013");
+                "5 Feb 2011", "31 Dec 2012", "1 Jun 2013");
     }
 
     @Test
     public void populateBatchEndDateParametersForNextBatchWherePreviousBatchEndedWithinTheYear() {
         populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2011-10-05",
-                "6 Oct 2011", "31 Dec 2011", "1 Jun 2013");
+                "5 Feb 2011", "31 Dec 2011", "1 Jun 2013");
     }
 
     @Test
     public void populateBatchEndDateParametersForFinalBatchWhereLastOccurrenceEndsWellBeforeNow() {
         populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2012-12-31",
-                "1 Jan 2013", "1 Jun 2013", "1 Jun 2013");
+                "5 Feb 2011", "1 Jun 2013", "1 Jun 2013");
     }
 
     @Test
