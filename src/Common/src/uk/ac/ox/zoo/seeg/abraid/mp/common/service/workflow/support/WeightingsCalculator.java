@@ -44,7 +44,8 @@ public class WeightingsCalculator {
     private DiseaseService diseaseService;
     private ExpertService expertService;
 
-    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService, double expertWeightingThreshold, double validationWeightingThreshold) {
+    public WeightingsCalculator(DiseaseService diseaseService, ExpertService expertService,
+                                double expertWeightingThreshold, double validationWeightingThreshold) {
         this.diseaseService = diseaseService;
         this.expertService = expertService;
         this.expertWeightingThreshold = expertWeightingThreshold;
