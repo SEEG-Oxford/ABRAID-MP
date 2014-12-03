@@ -8,7 +8,7 @@ setupTempConfigFiles() {
   cp "$WEBAPP_PATH/geoserver/data/security/usergroup/default/users.xml" "$GS_TEMP_DIR/users.xml"
   sed -i "s|password=\".*\"|password=\"${deploy_props[geoserver.admin.password.hash]}\"|g" "$GS_TEMP_DIR/users.xml"
   cp "$WEBAPP_PATH/geoserver/WEB-INF/web.xml" "$GS_TEMP_DIR/web.xml"
-  if ! grep -Fqx "<context-param><param-name>GEOWEBCACHE_CACHE_DIR</param-name><param-value>$WEBAPP_PATH/geoserver/data/gwc</param-value></context-param>" "$GS_TEMP_DIR/users.xml"; then
+  if ! grep -Fqx "<context-param><param-name>GEOWEBCACHE_CACHE_DIR</param-name><param-value>$WEBAPP_PATH/geoserver/data/gwc</param-value></context-param>" "$GS_TEMP_DIR/web.xml"; then
     sed -i "/.*<display-name>.*/a <context-param><param-name>GEOWEBCACHE_CACHE_DIR</param-name><param-value>$WEBAPP_PATH/geoserver/data/gwc</param-value></context-param>" "$GS_TEMP_DIR/web.xml"
   fi
 }
