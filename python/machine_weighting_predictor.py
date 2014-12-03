@@ -10,11 +10,18 @@ import numpy as np
 
 app = Flask(__name__)
 
+# Global structures, dict mapping disease_group_id to Chain and feed_classes dict
 PREDICTORS = {}
 FEED_CLASSES = {}
 PICKLES_SUBFOLDER_PATH = 'pickles/'
 
-# Replace Flask's existing log handlers (debug and prod) with one custom format handler
+# Feature keywords
+ENV_SUITABILITY = 'environmentalSuitability'
+DISTANCE_FROM_EXTENT = 'distanceFromExtent'
+FEED_ID = 'feedId'
+EXPERT_WEIGHTING = 'expertWeighting'
+
+""" Replace Flask's existing log handlers (debug and prod) with one custom format handler """
 del app.logger.handlers[:]
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter(
@@ -27,19 +34,22 @@ app.logger.setLevel(logging.DEBUG)
 def train(disease_group_id):
     """ Use data extracted from request JSON to create structure in a training phase. """
 
+    # Extract training data from JSON
     try:
         data = request.json['points']
     except KeyError:
         return _log_response('Invalid JSON', disease_group_id, 400)
 
+    # Initialise empty structures
     predictor = Chain()
     feed_classes = {}
 
+    # Train predictor (if enough data) and save structures
     if len(data) > 50:
         try:
             feed_classes = _construct_feed_classes(data)
             X = _convert_training_data_to_matrix(data, feed_classes)
-            y = np.array(_pluck('expertWeighting', data))
+            y = np.array(_pluck(EXPERT_WEIGHTING, data))
         except KeyError:
             return _log_response('Invalid JSON', disease_group_id, 400)
         else:
@@ -77,12 +87,14 @@ def predict(disease_group_id):
         except IOError as e:
             return _log_response(e.strerror + ': Unable to load feeds', disease_group_id, 400)
 
+    # Extra datapoint from JSON
     try:
         data = request.get_json()
         x = _convert_data_to_vector(data, feed_classes)
     except KeyError:
         return _log_response('Invalid JSON', disease_group_id, 400)
 
+    # Calculate and return the prediction
     prediction = predictor.predict(x)
     if prediction is None:
         return ('No prediction', 200)
@@ -91,9 +103,9 @@ def predict(disease_group_id):
 
 
 def _construct_feed_classes(data):
-    """ Create a dictionary mapping from each feedId in training data, to an incremental class number """
+    """ Create a dictionary mapping from each feed id in training data, to an incremental class number """
     feed_classes = {}
-    for feed_id in _pluck('feedId', data):
+    for feed_id in _pluck(FEED_ID, data):
         if feed_id not in feed_classes:
             feed_classes[feed_id] = len(feed_classes)
     return feed_classes
@@ -105,11 +117,11 @@ def _convert_training_data_to_matrix(json, feed_classes):
     m = len(json)
     X = np.zeros((m, n))
 
-    X[:, 0] = _pluck('environmentalSuitability', json) # A probability between 0 and 1
-    X[:, 1] = _pluck('distanceFromExtent', json)       # A value in km
-    
-    # Each unique feed_id maps to a column number, where a 1 represents the occurrence alert came from that feed.
-    feeds = [feed_classes[feed_id] for feed_id in _pluck('feedId', json)]
+    X[:, 0] = _pluck(ENV_SUITABILITY, json) # A probability between 0 and 1
+    X[:, 1] = _pluck(DISTANCE_FROM_EXTENT, json)       # A value in km
+
+    # Each unique feed_id maps to a column number, where a 1 indicates that the occurrence alert came from that feed.
+    feeds = [feed_classes[feed_id] for feed_id in _pluck(FEED_ID, json)]
     for i, feed_class in enumerate(feeds):
         X[i, feed_class + 2] = 1
     return X
@@ -118,17 +130,17 @@ def _convert_training_data_to_matrix(json, feed_classes):
 def _convert_data_to_vector(data, feed_classes):
     n = 2 + len(feed_classes)
     x = np.zeros(n)
-    
-    x[0] = data['environmentalSuitability']
-    x[1] = data['distanceFromExtent']
 
-    feed_id = data['feedId']
+    x[0] = data[ENV_SUITABILITY]
+    x[1] = data[DISTANCE_FROM_EXTENT]
+
+    feed_id = data[FEED_ID]
     if feed_id in feed_classes:
         feed_class = feed_classes[feed_id]
         x[feed_class + 2] = 1
     return x
 
-    
+
 def _pluck(name, data):
     """ Extract the named feature from each item in data, as an array """
     return [x[name] for x in data]
@@ -161,7 +173,7 @@ def _log_response(message, disease_group_id, status_code):
         app.logger.warn(message)
     else:
         app.logger.info(message)
-    
+
     return (message, status_code)
 
 
