@@ -56,7 +56,7 @@ public class JsonModelRunInformationBuilderTest {
     }
 
     @Test
-    public void populateLastModelRunTextWhenCompletedWithBatching() {
+    public void populateLastModelRunTextWhenCompletedWithBatchingCompleted() {
         // Arrange
         ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.COMPLETED);
@@ -73,6 +73,24 @@ public class JsonModelRunInformationBuilderTest {
         // Assert
         assertThat(information.getLastModelRunText()).isEqualTo(
                 "completed on 2 Jul 2014 19:18:17 (including batching of 1500 occurrences for validation, start date 30 Dec 2006, end date 31 Dec 2006)");
+    }
+
+    @Test
+    public void populateLastModelRunTextWhenCompletedWithBatchingIncomplete() {
+        // Arrange
+        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
+        modelRun.setStatus(ModelRunStatus.COMPLETED);
+        modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
+        modelRun.setBatchStartDate(new DateTime("2006-12-30T00:00:00"));
+        modelRun.setBatchEndDate(new DateTime("2006-12-31T23:59:59.999"));
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+
+        // Act
+        JsonModelRunInformation information = builder.populateLastModelRunText(modelRun).get();
+
+        // Assert
+        assertThat(information.getLastModelRunText()).isEqualTo(
+                "completed on 2 Jul 2014 09:08:07 (but batching not yet completed, start date 30 Dec 2006, end date 31 Dec 2006)");
     }
 
     @Test
@@ -188,37 +206,31 @@ public class JsonModelRunInformationBuilderTest {
 
     @Test
     public void populateBatchEndDateParametersWithNullOccurrenceDates() {
-        populateBatchEndDateParameters(null, null, null, "", "", "");
+        populateBatchDateParameters(null, null, null, "", "", "", "");
     }
 
     @Test
     public void populateBatchEndDateParametersForFirstBatch() {
-        populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", null,
-                "5 Feb 2011", "31 Dec 2011", "1 Jun 2013");
+        populateBatchDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", null,
+                "5 Feb 2011", "5 Feb 2011", "31 Dec 2011", "1 Jun 2013");
     }
 
     @Test
     public void populateBatchEndDateParametersForNextBatchWherePreviousBatchEndedAtYearEnd() {
-        populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2011-12-31",
-                "1 Jan 2012", "31 Dec 2012", "1 Jun 2013");
+        populateBatchDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2011-12-31",
+                "5 Feb 2011", "1 Jan 2012", "31 Dec 2012", "1 Jun 2013");
     }
 
     @Test
     public void populateBatchEndDateParametersForNextBatchWherePreviousBatchEndedWithinTheYear() {
-        populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2011-10-05",
-                "6 Oct 2011", "31 Dec 2011", "1 Jun 2013");
+        populateBatchDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2011-10-05",
+                "5 Feb 2011", "6 Oct 2011", "31 Dec 2011", "1 Jun 2013");
     }
 
     @Test
     public void populateBatchEndDateParametersForFinalBatchWhereLastOccurrenceEndsWellBeforeNow() {
-        populateBatchEndDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2012-12-31",
-                "1 Jan 2013", "1 Jun 2013", "1 Jun 2013");
-    }
-
-    @Test
-    public void populateBatchEndDateParametersForFinalBatchWhereLastOccurrenceEndsWithinAWeekBeforeNow() {
-        populateBatchEndDateParameters("2011-02-05T13:07:06", "2014-07-25T00:00:00", "2013-12-31",
-                "1 Jan 2014", "22 Jul 2014", "25 Jul 2014");
+        populateBatchDateParameters("2011-02-05T13:07:06", "2013-06-01T09:15:00", "2012-12-31",
+                "5 Feb 2011", "1 Jan 2013", "1 Jun 2013", "1 Jun 2013");
     }
 
     @Test
@@ -259,9 +271,10 @@ public class JsonModelRunInformationBuilderTest {
         return diseaseGroup;
     }
 
-    private void populateBatchEndDateParameters(String occurrenceStartDate, String occurrenceEndDate,
-                                                String previousBatchEndDate, String expectedBatchEndDateMinimum,
-                                                String expectedBatchEndDateDefault, String expectedBatchEndDateMaximum) {
+    private void populateBatchDateParameters(String occurrenceStartDate, String occurrenceEndDate,
+                                             String previousBatchEndDate, String expectedBatchDateMinimum,
+                                             String expectedBatchStartDateDefault, String expectedBatchEndDateDefault,
+                                             String expectedBatchDateMaximum) {
         // Arrange
         DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(100, getDate(occurrenceStartDate),
                 getDate(occurrenceEndDate));
@@ -282,9 +295,10 @@ public class JsonModelRunInformationBuilderTest {
         JsonModelRunInformation information = builder.populateBatchDateParameters(modelRun, statistics).get();
 
         // Assert
-        assertThat(information.getBatchDateMinimum()).isEqualTo(expectedBatchEndDateMinimum);
+        assertThat(information.getBatchDateMinimum()).isEqualTo(expectedBatchDateMinimum);
+        assertThat(information.getBatchStartDateDefault()).isEqualTo(expectedBatchStartDateDefault);
         assertThat(information.getBatchEndDateDefault()).isEqualTo(expectedBatchEndDateDefault);
-        assertThat(information.getBatchDateMaximum()).isEqualTo(expectedBatchEndDateMaximum);
+        assertThat(information.getBatchDateMaximum()).isEqualTo(expectedBatchDateMaximum);
     }
 
     private DateTime getDate(String dateText) {

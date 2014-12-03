@@ -12,6 +12,7 @@ public class JsonModelRunInformation {
     private String cannotRunModelReason;
     private String batchDateMinimum;
     private String batchDateMaximum;
+    private String batchStartDateDefault;
     private String batchEndDateDefault;
     private boolean hasGoldStandardOccurrences;
 
@@ -71,6 +72,14 @@ public class JsonModelRunInformation {
 
     public void setBatchDateMaximum(String batchDateMaximum) {
         this.batchDateMaximum = batchDateMaximum;
+    }
+
+    public String getBatchStartDateDefault() {
+        return batchStartDateDefault;
+    }
+
+    public void setBatchStartDateDefault(String batchStartDateDefault) {
+        this.batchStartDateDefault = batchStartDateDefault;
     }
 
     public String getBatchEndDateDefault() {

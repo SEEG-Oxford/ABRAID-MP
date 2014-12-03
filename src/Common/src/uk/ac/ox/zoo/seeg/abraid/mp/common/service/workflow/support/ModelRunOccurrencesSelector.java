@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class ModelRunOccurrencesSelector {
 
     // Log messages
-    private static final String NOT_REQUESTING_EMAIL_MESSAGE =
+    private static final String NOT_REQUESTING_EMAIL_MESSAGE_PREFIX =
             "Not requesting a model run for disease group %d (%s) because ";
     private static final String NOT_REQUESTING_EMAIL_SUBJECT = "Minimum Data Volume/Spread Not Satisfied";
     private static final String MDV_SATISFIED_LOG_MESSAGE =
@@ -46,10 +46,7 @@ public class ModelRunOccurrencesSelector {
             "Skipping Minimum Data Spread calculation; at least one parameter is not defined";
 
     // Exception messages (these are displayed in the user interface via the Bad Request response text)
-    private static final String MDV_NOT_SATISFIED_EXCEPTION_MESSAGE =
-            "Model cannot run because minimum data volume is not satisfied.";
-    private static final String MDS_NOT_SATISFIED_EXCEPTION_MESSAGE =
-            "Model cannot run because minimum data spread is not satisfied.";
+    private static final String EXCEPTION_MESSAGE_PREFIX = "Model cannot run because ";
 
     private static final Logger LOGGER = Logger.getLogger(ModelRunOccurrencesSelector.class);
 
@@ -118,8 +115,8 @@ public class ModelRunOccurrencesSelector {
                 occurrences = allOccurrences;
             }
         } else {
-            handleCannotRunModel(String.format(MDV_NOT_SATISFIED_LOG_MESSAGE, allOccurrences.size(), minDataVolume),
-                    MDV_NOT_SATISFIED_EXCEPTION_MESSAGE);
+            handleCannotRunModel(String.format(MDV_NOT_SATISFIED_LOG_MESSAGE, allOccurrences.size(), minDataVolume)
+            );
         }
         return occurrences;
     }
@@ -147,7 +144,7 @@ public class ModelRunOccurrencesSelector {
             while (!minDataSpreadCheckForAfricanDiseaseGroup()) {
                 int n = occurrences.size();
                 if (n == allOccurrences.size()) {
-                    handleCannotRunModel(buildAfricanMDSNotSatisfiedLogMessage(), MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
+                    handleCannotRunModel(buildAfricanMDSNotSatisfiedLogMessage());
                 }
                 DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
                 occurrences.add(nextOccurrence);
@@ -166,7 +163,7 @@ public class ModelRunOccurrencesSelector {
             while (!minDataSpreadCheckForOtherDiseaseGroup()) {
                 int n = occurrences.size();
                 if (n == allOccurrences.size()) {
-                    handleCannotRunModel(buildOtherMDSNotSatisfiedLogMessage(), MDS_NOT_SATISFIED_EXCEPTION_MESSAGE);
+                    handleCannotRunModel(buildOtherMDSNotSatisfiedLogMessage());
                 }
                 DiseaseOccurrence nextOccurrence = allOccurrences.get(n);
                 occurrences.add(nextOccurrence);
@@ -242,22 +239,22 @@ public class ModelRunOccurrencesSelector {
             countriesWithAtLeastOneOccurrence.size(), minDistinctCountries);
     }
 
-    private void handleCannotRunModel(String longMessage, String shortMessage) {
-        // Log so it's in the logs. Send an e-mail to the default address so that the "longer" message is visible to
-        // the user (particularly relevant if this was triggered by Data Manager). Throw an exception so that the
-        // transaction rolls back, and to send a shorter message back to the user if it was triggered manually.
-        String formattedLongMessage = String.format(NOT_REQUESTING_EMAIL_MESSAGE + longMessage, diseaseGroup.getId(),
+    private void handleCannotRunModel(String message) {
+        // Log so it's in the logs. Send an e-mail to the default address so that the message is visible to the user
+        // (particularly relevant if this was triggered by Data Manager). Throw an exception so that the transaction
+        // rolls back, and to send a message back to the user if it was triggered manually.
+        String logMessage = String.format(NOT_REQUESTING_EMAIL_MESSAGE_PREFIX + message, diseaseGroup.getId(),
                 diseaseGroup.getName());
-        LOGGER.warn(formattedLongMessage);
+        LOGGER.warn(logMessage);
 
         try {
-            emailService.sendEmail(NOT_REQUESTING_EMAIL_SUBJECT, formattedLongMessage);
+            emailService.sendEmail(NOT_REQUESTING_EMAIL_SUBJECT, logMessage);
         } catch (EmailException e) {
             throw new RuntimeException(e);
         }
 
         // And throw an exception
-        throw new ModelRunWorkflowException(shortMessage);
+        throw new ModelRunWorkflowException(EXCEPTION_MESSAGE_PREFIX + message);
     }
 
     private void handleCanRunModel() {

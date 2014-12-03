@@ -127,7 +127,7 @@ define([
                     .done(function (data) {
                         self.lastModelRunText(data.lastModelRunText);
                         self.diseaseOccurrencesText(data.diseaseOccurrencesText);
-                        self.batchStartDate(data.batchDateMinimum);
+                        self.batchStartDate(data.batchStartDateDefault);
                         self.batchEndDate(data.batchEndDateDefault);
                         self.batchDateMinimum(data.batchDateMinimum);
                         self.batchDateMaximum(data.batchDateMaximum);

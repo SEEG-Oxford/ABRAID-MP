@@ -165,8 +165,9 @@ public class AdminDiseaseGroupController extends AbstractController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
-                                                  String batchEndDate, boolean onlyUseGoldStandardOccurrences) {
+    public synchronized ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
+                                                               String batchEndDate,
+                                                               boolean onlyUseGoldStandardOccurrences) {
         try {
             if (onlyUseGoldStandardOccurrences) {
                 modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
