@@ -45,7 +45,7 @@ def train(disease_group_id):
     feed_classes = {}
 
     # Train predictor (if enough data) and save structures
-    if len(data) > 50:
+    if len(data) >= 50:
         try:
             feed_classes = _construct_feed_classes(data)
             X = _convert_training_data_to_matrix(data, feed_classes)
@@ -87,7 +87,7 @@ def predict(disease_group_id):
         except IOError as e:
             return _log_response(e.strerror + ': Unable to load feeds', disease_group_id, 400)
 
-    # Extra datapoint from JSON
+    # Extract datapoint from JSON
     try:
         data = request.get_json()
         x = _convert_data_to_vector(data, feed_classes)
@@ -117,8 +117,8 @@ def _convert_training_data_to_matrix(json, feed_classes):
     m = len(json)
     X = np.zeros((m, n))
 
-    X[:, 0] = _pluck(ENV_SUITABILITY, json) # A probability between 0 and 1
-    X[:, 1] = _pluck(DISTANCE_FROM_EXTENT, json)       # A value in km
+    X[:, 0] = _pluck(ENV_SUITABILITY, json)      # A probability between 0 and 1
+    X[:, 1] = _pluck(DISTANCE_FROM_EXTENT, json) # A value in km
 
     # Each unique feed_id maps to a column number, where a 1 indicates that the occurrence alert came from that feed.
     feeds = [feed_classes[feed_id] for feed_id in _pluck(FEED_ID, json)]
