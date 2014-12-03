@@ -5,6 +5,9 @@ import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,8 +25,11 @@ public class HealthMapAlert {
     @JsonProperty("feed_id")
     private Integer feedId;
     private String disease;
+    private List<String> diseases;
     @JsonProperty("disease_id")
     private Integer diseaseId;
+    @JsonProperty("disease_ids")
+    private List<Integer> diseaseIds;
     private String summary;
     private DateTime date;
     private String link;
@@ -75,12 +81,42 @@ public class HealthMapAlert {
         this.disease = ParseUtils.convertString(disease);
     }
 
+    public List<String> getDiseases() {
+        return retrieveListOrSingleItem(diseases, disease);
+    }
+
+    public void setDiseases(List<String> diseases) {
+        this.diseases = diseases;
+    }
+
     public Integer getDiseaseId() {
         return diseaseId;
     }
 
     public void setDiseaseId(String diseaseId) {
         this.diseaseId = ParseUtils.parseInteger(diseaseId);
+    }
+
+    public List<Integer> getDiseaseIds() {
+        return retrieveListOrSingleItem(diseaseIds, diseaseId);
+    }
+
+    /**
+     * Sets the disease IDs. Only those that are successfully parsed to integers are added.
+     * @param diseaseIds The disease IDs.
+     */
+    public void setDiseaseIds(List<String> diseaseIds) {
+        if (diseaseIds != null) {
+            this.diseaseIds = new ArrayList<>();
+            for (String originalDiseaseId : diseaseIds) {
+                Integer parsedDiseaseId = ParseUtils.parseInteger(originalDiseaseId);
+                if (parsedDiseaseId != null) {
+                    this.diseaseIds.add(parsedDiseaseId);
+                }
+            }
+        } else {
+            this.diseaseIds = null;
+        }
     }
 
     public String getSummary() {
@@ -144,5 +180,16 @@ public class HealthMapAlert {
             }
         }
         return alertId;
+    }
+
+    private <T> List<T> retrieveListOrSingleItem(List<T> list, T item) {
+        // Returns a non-null list of items, either from the input list or the input item
+        if (list != null && list.size() > 0) {
+            return list;
+        } else if (item == null) {
+            return new ArrayList<T>();
+        } else {
+            return Arrays.asList(item);
+        }
     }
 }

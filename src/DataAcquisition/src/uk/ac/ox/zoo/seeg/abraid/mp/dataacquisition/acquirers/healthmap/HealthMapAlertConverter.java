@@ -10,7 +10,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,8 +22,10 @@ import java.util.Map;
  */
 public class HealthMapAlertConverter {
     private static final Logger LOGGER = Logger.getLogger(HealthMapAlertConverter.class);
-    private static final String DISEASE_ID_NOT_FOUND = "HealthMap alert has no disease ID (disease name \"%s\"," +
-            " alert ID %d)";
+    private static final String DISEASE_IDS_NOT_FOUND = "HealthMap alert has no disease IDs (alert ID %d)";
+    private static final String DISEASE_NAMES_NOT_FOUND = "HealthMap alert has no disease IDs (alert ID %d)";
+    private static final String DISEASE_IDS_DO_NOT_MATCH_NAMES = "HealthMap alert %d disease ID(s) but %d disease " +
+            "name(s) (alert ID %d)";
     private static final String ALERT_ID_NOT_FOUND = "Could not extract alert ID from link \"%s\"";
     private static final String URL_INVALID =
             "Invalid URL (%s) from HealthMap alert (ID %d) was not saved on the new alert";
@@ -51,25 +55,27 @@ public class HealthMapAlertConverter {
     }
 
     /**
-     * Converts a HealthMap alert into an ABRAID disease occurrence.
+     * Converts a HealthMap alert into a list of ABRAID disease occurrences.
      * @param healthMapAlert The HealthMap alert to convert.
      * @param location The ABRAID location (already converted from HealthMap).
-     * @return A disease occurrence, or null if the alert could not (or should not) be converted to an occurrence.
+     * @return A list of disease occurrences. This is empty if the alert should not be converted.
      */
-    public DiseaseOccurrence convert(HealthMapAlert healthMapAlert, Location location) {
-        DiseaseOccurrence occurrence = null;
-        Alert alert = retrieveAlert(healthMapAlert);
-        DiseaseGroup diseaseGroup = retrieveDiseaseGroup(healthMapAlert);
+    public List<DiseaseOccurrence> convert(HealthMapAlert healthMapAlert, Location location) {
+        List<DiseaseOccurrence> occurrences = new ArrayList<>();
 
-        if (diseaseGroup != null) {
-            occurrence = new DiseaseOccurrence();
+        Alert alert = retrieveAlert(healthMapAlert);
+        List<DiseaseGroup> diseaseGroups = retrieveDiseaseGroups(healthMapAlert);
+
+        for (DiseaseGroup diseaseGroup : diseaseGroups) {
+            DiseaseOccurrence occurrence = new DiseaseOccurrence();
             occurrence.setDiseaseGroup(diseaseGroup);
             occurrence.setOccurrenceDate(healthMapAlert.getDate());
             occurrence.setAlert(alert);
             occurrence.setLocation(location);
+            occurrences.add(occurrence);
         }
 
-        return occurrence;
+        return occurrences;
     }
 
     private Alert retrieveAlert(HealthMapAlert healthMapAlert) {
@@ -144,19 +150,34 @@ public class HealthMapAlertConverter {
         return feed;
     }
 
-    private DiseaseGroup retrieveDiseaseGroup(HealthMapAlert healthMapAlert) {
-        if (healthMapAlert.getDiseaseId() == null) {
-            LOGGER.warn(String.format(DISEASE_ID_NOT_FOUND, healthMapAlert.getDisease(), healthMapAlert.getAlertId()));
-            return null;
+    private List<DiseaseGroup> retrieveDiseaseGroups(HealthMapAlert healthMapAlert) {
+        List<DiseaseGroup> diseaseGroups = new ArrayList<>();
+        List<Integer> diseaseIds = healthMapAlert.getDiseaseIds();
+        List<String> diseaseNames = healthMapAlert.getDiseases();
+
+        if (validateDiseases(diseaseIds, diseaseNames, healthMapAlert.getAlertId())) {
+            for (int i = 0; i < diseaseIds.size(); i++) {
+                int diseaseId = diseaseIds.get(i);
+                String diseaseName = diseaseNames.get(i);
+
+                DiseaseGroup diseaseGroup = retrieveDiseaseGroup(healthMapAlert, diseaseId, diseaseName);
+                if (diseaseGroup != null) {
+                    diseaseGroups.add(diseaseGroup);
+                }
+            }
         }
 
-        HealthMapDisease healthMapDisease = retrieveHealthMapDisease(healthMapAlert);
+        return diseaseGroups;
+    }
+
+    private DiseaseGroup retrieveDiseaseGroup(HealthMapAlert healthMapAlert, int diseaseId, String diseaseName) {
+        HealthMapDisease healthMapDisease = retrieveHealthMapDisease(diseaseId);
         if (healthMapDisease != null) {
-            renameHealthMapDiseaseIfRequired(healthMapDisease, healthMapAlert);
+            renameHealthMapDiseaseIfRequired(healthMapDisease, diseaseName);
         } else {
             // HealthMap disease does not exist in database - create it and notify system administrator
-            healthMapDisease = createAndSaveHealthMapDisease(healthMapAlert);
-            notifyAboutNewHealthMapDisease(healthMapAlert, healthMapDisease);
+            healthMapDisease = createAndSaveHealthMapDisease(diseaseId, diseaseName);
+            notifyAboutNewHealthMapDisease(healthMapDisease);
         }
 
         if (healthMapDisease.getDiseaseGroup() == null) {
@@ -168,48 +189,61 @@ public class HealthMapAlertConverter {
         return healthMapDisease.getDiseaseGroup();
     }
 
-    private HealthMapDisease retrieveHealthMapDisease(HealthMapAlert healthMapAlert) {
-        return lookupData.getDiseaseMap().get(healthMapAlert.getDiseaseId());
+    private boolean validateDiseases(List<Integer> diseaseIds, List<String> diseases, Integer alertId) {
+        if (diseaseIds.size() == 0) {
+            LOGGER.warn(String.format(DISEASE_IDS_NOT_FOUND, alertId));
+        } else if (diseases.size() == 0) {
+            LOGGER.warn(String.format(DISEASE_NAMES_NOT_FOUND, alertId));
+        } else if (diseaseIds.size() != diseases.size()) {
+            LOGGER.warn(String.format(DISEASE_IDS_DO_NOT_MATCH_NAMES, diseaseIds.size(), diseases.size(), alertId));
+        } else {
+            return true;
+        }
+
+        return false;
     }
 
-    private void renameHealthMapDiseaseIfRequired(HealthMapDisease disease, HealthMapAlert alert) {
-        String diseaseName = alert.getDisease();
+    private HealthMapDisease retrieveHealthMapDisease(int diseaseId) {
+        return lookupData.getDiseaseMap().get(diseaseId);
+    }
+
+    private void renameHealthMapDiseaseIfRequired(HealthMapDisease disease, String diseaseName) {
         if (!disease.getName().equals(diseaseName)) {
             disease.setName(diseaseName);
             diseaseService.saveHealthMapDisease(disease);
         }
     }
 
-    private HealthMapDisease createAndSaveHealthMapDisease(HealthMapAlert healthMapAlert) {
+    private HealthMapDisease createAndSaveHealthMapDisease(int diseaseId, String diseaseName) {
         // The new HealthMapDisease must be linked to a DiseaseGroup in order to be of interest. So create a
         // dummy DiseaseGroup with the same name as the HealthMap disease, of type CLUSTER.
         DiseaseGroup diseaseGroup = new DiseaseGroup();
-        diseaseGroup.setName(String.format(NEW_DISEASE_NAME, healthMapAlert.getDisease()));
+        diseaseGroup.setName(String.format(NEW_DISEASE_NAME, diseaseName));
         diseaseGroup.setGroupType(DiseaseGroupType.CLUSTER);
 
         HealthMapDisease healthMapDisease = new HealthMapDisease();
-        healthMapDisease.setId(healthMapAlert.getDiseaseId());
-        healthMapDisease.setName(healthMapAlert.getDisease());
+        healthMapDisease.setId(diseaseId);
+        healthMapDisease.setName(diseaseName);
         healthMapDisease.setDiseaseGroup(diseaseGroup);
 
         // This saves both the new HealthMap disease and the new disease cluster
         diseaseService.saveHealthMapDisease(healthMapDisease);
 
         // Add the new HealthMap disease to the cached map
-        lookupData.getDiseaseMap().put(healthMapAlert.getDiseaseId(), healthMapDisease);
+        lookupData.getDiseaseMap().put(diseaseId, healthMapDisease);
 
         return healthMapDisease;
     }
 
-    private void notifyAboutNewHealthMapDisease(HealthMapAlert healthMapAlert, HealthMapDisease healthMapDisease) {
-        final String disease = healthMapAlert.getDisease();
-        final String groupName = healthMapDisease.getDiseaseGroup().getName();
+    private void notifyAboutNewHealthMapDisease(HealthMapDisease healthMapDisease) {
+        final String healthMapDiseaseName = healthMapDisease.getName();
+        final String diseaseGroupName = healthMapDisease.getDiseaseGroup().getName();
 
-        final String subject = String.format(FOUND_NEW_DISEASE_SUBJECT, disease);
+        final String subject = String.format(FOUND_NEW_DISEASE_SUBJECT, healthMapDiseaseName);
 
         Map<String, Object> templateData = new HashMap<>();
-        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_DISEASE_KEY, disease);
-        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY, groupName);
+        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_DISEASE_KEY, healthMapDiseaseName);
+        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY, diseaseGroupName);
 
         emailService.sendEmailInBackground(subject, FOUND_NEW_DISEASE_TEMPLATE, templateData);
 

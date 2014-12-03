@@ -77,9 +77,10 @@ public class HealthMapDataConverter {
                                        Set<DiseaseOccurrence> convertedOccurrences) {
         if (healthMapLocation.getAlerts() != null) {
             for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
-                DiseaseOccurrence occurrence = alertConverter.convert(healthMapAlert, location);
-                if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
-                    convertedOccurrences.add(occurrence);
+                for (DiseaseOccurrence occurrence : alertConverter.convert(healthMapAlert, location)) {
+                    if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
+                        convertedOccurrences.add(occurrence);
+                    }
                 }
             }
         }

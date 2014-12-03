@@ -292,6 +292,35 @@ public class HealthMapWebServiceTest {
         assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 
+    @Test
+    public void parseHealthMapJsonContainingMultipleDiseases() {
+        String alertJson = "[{" +
+                "\"alerts\": [" +
+                "{" +
+                "\"feed\": \"HM Community News Reports\"," +
+                "\"disease\": \"This disease should be ignored\"," +
+                "\"disease_id\": \"999\"," +
+                "\"diseases\": [\"Meningitis\", \"Hookworm\"]," +
+                "\"disease_ids\": [84, \"invalid\", \"64\"]" +
+                "}" +
+                "]" +
+                "}]";
+
+        HealthMapWebService webService = getHealthMapWebService(new WebServiceClient());
+        List<HealthMapLocation> locations = webService.parseJson(alertJson);
+
+        assertThat(locations).hasSize(1);
+        assertThat(locations.get(0).getAlerts()).hasSize(1);
+        assertThat(locations.get(0).getAlerts()).hasSize(1);
+        HealthMapAlert alert = locations.get(0).getAlerts().get(0);
+        assertThat(alert.getDiseases()).hasSize(2);
+        assertThat(alert.getDiseases().get(0)).isEqualTo("Meningitis");
+        assertThat(alert.getDiseases().get(1)).isEqualTo("Hookworm");
+        assertThat(alert.getDiseaseIds()).hasSize(2);
+        assertThat(alert.getDiseaseIds().get(0)).isEqualTo(84);
+        assertThat(alert.getDiseaseIds().get(1)).isEqualTo(64);
+    }
+
     private String getHealthMapBaseUrl() {
         return "http://healthmap.org/HMapi.php?auth=testauthcode&striphtml=false";
     }
