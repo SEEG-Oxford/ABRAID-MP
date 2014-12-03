@@ -17,7 +17,8 @@ define(["underscore"], function (_) {
                 layers: "abraid:" + layerName,
                 format: "image/png",
                 styles: style,
-                reuseTiles: true
+                reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
+                tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
             };
 
             if (isExtentLayer) {

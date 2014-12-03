@@ -15,6 +15,7 @@ define([
                 var params = vm.createLayerParametersForDisplay("the_name_of_a_model_run_uncertainty");
                 expect(params.format).toEqual("image/png");
                 expect(params.reuseTiles).toEqual(true);
+                expect(params.tiled).toEqual(true);
             });
 
             it("returns the correct extent specific configuration", function () {

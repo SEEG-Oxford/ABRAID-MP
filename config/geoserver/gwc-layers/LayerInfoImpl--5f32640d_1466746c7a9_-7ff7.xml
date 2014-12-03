@@ -1,0 +1,39 @@
+<GeoServerTileLayer>
+  <id>LayerInfoImpl--5f32640d:1466746c7a9:-7ff7</id>
+  <enabled>true</enabled>
+  <name>abraid:base_layer</name>
+  <mimeFormats>
+    <string>image/png</string>
+  </mimeFormats>
+  <gridSubsets>
+    <gridSubset>
+      <gridSetName>EPSG:4326</gridSetName>
+      <extent>
+        <coords>
+          <double>-180.0</double>
+          <double>-60.0</double>
+          <double>180.0</double>
+          <double>85.0</double>
+        </coords>
+      </extent>
+    </gridSubset>
+  </gridSubsets>
+  <metaWidthHeight>
+    <int>1</int>
+    <int>1</int>
+  </metaWidthHeight>
+  <expireCache>0</expireCache>
+  <expireClients>0</expireClients>
+  <parameterFilters>
+    <styleParameterFilter>
+      <key>STYLES</key>
+      <defaultValue></defaultValue>
+      <allowedStyles class="java.util.Collections$UnmodifiableSet">
+        <c class="sorted-set"/>
+      </allowedStyles>
+      <availableStyles class="sorted-set"/>
+      <defaultStyle>abraid_style</defaultStyle>
+    </styleParameterFilter>
+  </parameterFilters>
+  <gutter>0</gutter>
+</GeoServerTileLayer>

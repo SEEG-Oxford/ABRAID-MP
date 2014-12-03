@@ -43,13 +43,15 @@ define([
         var baseLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:base_layer"],
             format: "image/png",
-            reuseTiles: true
+            reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
+            tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
         }).addTo(map);
 
         var hatchingLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:hatching"],
             format: "image/png",
-            reuseTiles: true
+            reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
+            tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
         });
 
         // Global colour variables

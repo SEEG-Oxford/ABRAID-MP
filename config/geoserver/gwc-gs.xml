@@ -1,28 +1,25 @@
 <GeoServerGWCConfig>
   <version>1.0.0</version>
-  <directWMSIntegrationEnabled>false</directWMSIntegrationEnabled>
-  <WMSCEnabled>true</WMSCEnabled>
-  <WMTSEnabled>true</WMTSEnabled>
-  <TMSEnabled>true</TMSEnabled>
+  <directWMSIntegrationEnabled>true</directWMSIntegrationEnabled>
+  <WMSCEnabled>false</WMSCEnabled>
+  <WMTSEnabled>false</WMTSEnabled>
+  <TMSEnabled>false</TMSEnabled>
   <securityEnabled>false</securityEnabled>
   <cacheLayersByDefault>true</cacheLayersByDefault>
-  <cacheNonDefaultStyles>true</cacheNonDefaultStyles>
-  <metaTilingX>4</metaTilingX>
-  <metaTilingY>4</metaTilingY>
+  <cacheNonDefaultStyles>false</cacheNonDefaultStyles>
+  <metaTilingX>1</metaTilingX>
+  <metaTilingY>1</metaTilingY>
   <gutter>0</gutter>
   <defaultCachingGridSetIds>
     <string>EPSG:4326</string>
   </defaultCachingGridSetIds>
   <defaultCoverageCacheFormats>
-    <string>image/jpeg</string>
     <string>image/png</string>
   </defaultCoverageCacheFormats>
   <defaultVectorCacheFormats>
-    <string>image/jpeg</string>
     <string>image/png</string>
   </defaultVectorCacheFormats>
   <defaultOtherCacheFormats>
-    <string>image/jpeg</string>
     <string>image/png</string>
   </defaultOtherCacheFormats>
 </GeoServerGWCConfig>

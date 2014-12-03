@@ -1,0 +1,42 @@
+<GeoServerTileLayer>
+  <id>LayerInfoImpl-4688477d:149e7a30ca3:-7ea4</id>
+  <enabled>true</enabled>
+  <name>abraid:atlas_extent_layer</name>
+  <mimeFormats>
+    <string>image/png</string>
+  </mimeFormats>
+  <gridSubsets>
+    <gridSubset>
+      <gridSetName>EPSG:4326</gridSetName>
+      <extent>
+        <coords>
+          <double>-180.0</double>
+          <double>-60.0</double>
+          <double>180.0</double>
+          <double>85.0</double>
+        </coords>
+      </extent>
+    </gridSubset>
+  </gridSubsets>
+  <metaWidthHeight>
+    <int>1</int>
+    <int>1</int>
+  </metaWidthHeight>
+  <expireCache>0</expireCache>
+  <expireClients>0</expireClients>
+  <parameterFilters>
+    <regexParameterFilter>
+      <key>CQL_FILTER</key>
+      <defaultValue>INCLUDE</defaultValue>
+      <regex>^(.*)$</regex>
+    </regexParameterFilter>
+    <styleParameterFilter>
+      <key>STYLES</key>
+      <defaultValue></defaultValue>
+      <allowedStyles class="sorted-set"/>
+      <availableStyles class="sorted-set"/>
+      <defaultStyle>abraid_extent</defaultStyle>
+    </styleParameterFilter>
+  </parameterFilters>
+  <gutter>0</gutter>
+</GeoServerTileLayer>
