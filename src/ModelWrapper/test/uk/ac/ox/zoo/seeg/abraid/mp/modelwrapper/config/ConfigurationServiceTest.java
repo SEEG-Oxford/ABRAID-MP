@@ -677,7 +677,7 @@ public class ConfigurationServiceTest {
 
         JsonCovariateConfiguration conf = createJsonCovariateConfig();
         sortConfig(conf);
-        
+
         ConfigurationService target = new ConfigurationServiceImpl(testFile, confFile, mock(OSChecker.class));
 
         // Act
