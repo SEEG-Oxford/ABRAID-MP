@@ -14,10 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -639,6 +636,7 @@ public class ConfigurationServiceTest {
         FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
 
         JsonCovariateConfiguration conf = createJsonCovariateConfig();
+        sortConfig(conf);
 
         ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
 
@@ -647,6 +645,22 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(result).isEqualTo(conf);
+    }
+
+    private void sortConfig(JsonCovariateConfiguration conf) {
+        Collections.sort(conf.getDiseases(), new Comparator<JsonDisease>() {
+            @Override
+            public int compare(JsonDisease o1, JsonDisease o2) {
+                return Integer.compare(o1.getId(), o2.getId());
+            }
+        });
+
+        Collections.sort(conf.getFiles(), new Comparator<JsonCovariateFile>() {
+            @Override
+            public int compare(JsonCovariateFile o1, JsonCovariateFile o2) {
+                return o1.getPath().compareTo(o2.getPath());
+            }
+        });
     }
 
     @Test
@@ -662,7 +676,8 @@ public class ConfigurationServiceTest {
         FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
 
         JsonCovariateConfiguration conf = createJsonCovariateConfig();
-
+        sortConfig(conf);
+        
         ConfigurationService target = new ConfigurationServiceImpl(testFile, confFile, mock(OSChecker.class));
 
         // Act
