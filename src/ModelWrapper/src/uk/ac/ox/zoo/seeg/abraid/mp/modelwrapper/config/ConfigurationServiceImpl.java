@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.CovariateObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * Service class for configuration data.
@@ -383,6 +385,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         try {
+            // Ensure sort order
+            config.setDiseases(with(config.getDiseases()).sort(on(JsonDisease.class).getId()));
+            config.setFiles(with(config.getFiles()).sort(on(JsonCovariateFile.class).getPath()));
+
+            // Save
             jsonConverter.writeValue(configFile, config);
         } catch (IOException e) {
             LOGGER.error(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
