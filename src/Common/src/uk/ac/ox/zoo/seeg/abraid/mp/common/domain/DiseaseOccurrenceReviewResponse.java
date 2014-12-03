@@ -13,11 +13,11 @@ public enum DiseaseOccurrenceReviewResponse {
     /**
      * The expert believes the disease occurrence point is not valid.
      */
-    NO(-1),
+    NO(0),
     /**
      * The expert is unsure on validity of disease occurrence point.
      */
-    UNSURE(0.01);
+    UNSURE(0.5);
 
     private final double value;
 

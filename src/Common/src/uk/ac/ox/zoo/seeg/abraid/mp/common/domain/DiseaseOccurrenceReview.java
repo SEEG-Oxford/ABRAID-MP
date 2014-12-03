@@ -23,15 +23,26 @@ import javax.persistence.*;
                 "and diseaseOccurrence.id=:diseaseOccurrenceId"
     ),
     @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsForOccurrencesInValidation",
-        query = "from DiseaseOccurrenceReview " +
-                "where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
-                "and diseaseOccurrence.status='IN_REVIEW'"
+        name = "getAllDiseaseOccurrenceReviewsForOccurrencesInValidation",
+        query = DiseaseOccurrenceReview.QUERY
+    ),
+    @NamedQuery(
+        name = "getDiseaseOccurrenceReviewsForUpdatingWeightings",
+        query = DiseaseOccurrenceReview.QUERY +
+                "and expert.weighting >= :expertWeightingThreshold"
     )
 })
 @Entity
 @Table(name = "disease_occurrence_review")
 public class DiseaseOccurrenceReview {
+    /**
+     * An HQL fragment used for disease occurrence review queries.
+     */
+    public static final String QUERY =
+            "from DiseaseOccurrenceReview " +
+                "where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
+                "and diseaseOccurrence.status='IN_REVIEW'";
+
     // The id of the review.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -24,9 +24,25 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
      * @param diseaseGroupId The ID of the disease group.
      * @return A list of disease occurrence reviews.
      */
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrenceReviewsForOccurrencesInValidation", "diseaseGroupId",
-                diseaseGroupId);
+    @Override
+    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(
+            Integer diseaseGroupId) {
+        return listNamedQuery("getAllDiseaseOccurrenceReviewsForOccurrencesInValidation",
+                "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
+     * Gets the reviews submitted by reliable experts (whose weighting is greater than the threshold) for the disease
+     * occurrences which are in review.
+     * @param diseaseGroupId The ID of the disease group.
+     * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
+     * @return A list of disease occurrence reviews.
+     */
+    @Override
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(
+    Integer diseaseGroupId, Double expertWeightingThreshold) {
+        return listNamedQuery("getDiseaseOccurrenceReviewsForUpdatingWeightings",
+                "diseaseGroupId", diseaseGroupId, "expertWeightingThreshold", expertWeightingThreshold);
     }
 
     /**

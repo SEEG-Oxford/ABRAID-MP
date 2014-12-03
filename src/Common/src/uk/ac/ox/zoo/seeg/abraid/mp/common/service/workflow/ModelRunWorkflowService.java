@@ -4,8 +4,6 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
-import java.util.Map;
-
 /**
  * Service interface to support the workflow surrounding a model run request.
  * Copyright (c) 2014 University of Oxford
@@ -48,16 +46,9 @@ public interface ModelRunWorkflowService {
     void enableAutomaticModelRuns(int diseaseGroupId);
 
     /**
-     * Gets the new weighting for each active expert.
-     * @return A map from expert ID to the new weighting value.
+     * Calculates and saves the new weighting for each active expert.
      */
-    Map<Integer, Double> calculateExpertsWeightings();
-
-    /**
-     * Saves the new weighting for each expert.
-     * @param newExpertsWeightings The map from expert to the new weighting value.
-     */
-    void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings);
+    void updateExpertsWeightings();
 
     /**
      * Generates the disease extent for the specified disease group.

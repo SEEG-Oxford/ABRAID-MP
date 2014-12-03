@@ -10,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service class to support the workflow surrounding a model run request.
@@ -61,17 +60,14 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestManuallyTriggeredModelRun(int diseaseGroupId,
-                                                              DateTime batchStartDate, DateTime batchEndDate)
-            throws ModelRunWorkflowException {
+    public void prepareForAndRequestManuallyTriggeredModelRun(
+            int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         // Ensure that the batch date range is from start of day to end of day, then validate the dates
         batchStartDate = getBatchStartDateWithMinimumTime(batchStartDate);
         batchEndDate = getBatchEndDateWithMaximumTime(batchEndDate);
         batchDatesValidator.validate(diseaseGroupId, batchStartDate, batchEndDate);
 
-        Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         prepareForAndRequestModelRun(diseaseGroupId, batchStartDate, batchEndDate);
-        saveExpertsWeightings(newExpertWeightings);
     }
 
     /**
@@ -89,19 +85,20 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     /**
      * Prepares for and requests a model run using "gold standard" disease occurrences, for the specified disease group.
      * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
-     * been uploaded to send to the model.
+     * been uploaded to send to the model. Experts' weightings are updated here - across all disease groups - to ensure
+     * their most up-to-date values are used in disease extent generation.
      * @param diseaseGroupId The disease group ID.
      * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
     public void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId)
             throws ModelRunWorkflowException {
-        Map<Integer, Double> newExpertWeightings = calculateExpertsWeightings();
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         DateTime modelRunPrepDate = DateTime.now();
+
+        updateExpertsWeightings();
         generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
         requestModelRunAndSaveDate(diseaseGroup, modelRunPrepDate, null, null, true);
-        saveExpertsWeightings(newExpertWeightings);
     }
 
     /**
@@ -114,21 +111,11 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     }
 
     /**
-     * Gets the new weighting for each active expert.
-     * @return A map from expert ID to the new weighting value.
+     * Calculates and saves the new weighting for each active expert.
      */
     @Override
-    public Map<Integer, Double> calculateExpertsWeightings() {
-        return weightingsCalculator.calculateNewExpertsWeightings();
-    }
-
-    /**
-     * Saves the new weighting for each expert.
-     * @param newExpertsWeightings The map from expert to the new weighting value.
-     */
-    @Override
-    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
-        weightingsCalculator.saveExpertsWeightings(newExpertsWeightings);
+    public void updateExpertsWeightings() {
+        weightingsCalculator.updateExpertsWeightings();
     }
 
     /**
@@ -163,9 +150,12 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         DateTime modelRunPrepDate = DateTime.now();
 
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
+            // Experts' weightings need not be updated here; re-calculation across all disease groups has already
+            // occurred in Main, before any automatic model runs are prepared or ran.
             generateDiseaseExtent(diseaseGroup);
             updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
         } else {
+            updateExpertsWeightings();
             updateWeightingsAndStatus(diseaseGroup, modelRunPrepDate);
             generateDiseaseExtent(diseaseGroup);
         }
@@ -180,7 +170,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         int diseaseGroupId = diseaseGroup.getId();
         weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
         reviewManager.updateDiseaseOccurrenceStatus(diseaseGroupId, modelRunPrepDate);
-        weightingsCalculator.setDiseaseOccurrenceValidationWeightingsAndFinalWeightings(diseaseGroupId);
+        weightingsCalculator.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(diseaseGroupId);
     }
 
     private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate,

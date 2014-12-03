@@ -80,13 +80,13 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     @Test
-    public void getDiseaseOccurrenceReviewsForOccurrencesInValidationReturnsExpectedResult() {
+    public void getAllDiseaseOccurrenceReviewsForOccurrencesInValidationReturnsExpectedResult() {
         // Arrange
         List<DiseaseOccurrenceReview> testReviews = createTestReviews();
 
         // Act
         List<DiseaseOccurrenceReview> reviews =
-                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID_1);
+                diseaseOccurrenceReviewDao.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID_1);
 
         // Assert
         assertThat(reviews).hasSize(2);
@@ -94,9 +94,39 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         assertThat(containsById(reviews, testReviews.get(3))).isTrue();
     }
 
+    @Test
+    public void getDiseaseOccurrenceReviewsForUpdatingWeightingReturnsReviewsForOccurrencesInReviewByExpertsOverWeightingThreshold() {
+        // Arrange
+        List<DiseaseOccurrenceReview> testReviews = createTestReviews();
+        double expertWeightingThreshold = 0.6;
+
+        // Act
+        List<DiseaseOccurrenceReview> reviews =
+                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(
+                        DISEASE_GROUP_ID_1, expertWeightingThreshold);
+
+        // Assert
+        assertThat(reviews).hasSize(1);
+        assertThat(containsById(reviews, testReviews.get(2))).isTrue();     // Submitted by expert1 with weighting 0.6
+        assertThat(containsById(reviews, testReviews.get(3))).isFalse();    // Submitted by expert2 with weighting 0.5
+    }
+
+    @Test
+    public void getDiseaseOccurrenceReviewsForUpdatingWeightingReturnsEmptyListIfNoExpertsOverWeightingThreshold() {
+        // Arrange
+        createTestReviews();
+
+        // Act
+        List<DiseaseOccurrenceReview> reviews =
+                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID_1, 0.7);
+
+        // Assert
+        assertThat(reviews).isEmpty();
+    }
+
     private List<DiseaseOccurrenceReview> createTestReviews() {
-        Expert expert1 = createExpert("expert1@test.com");
-        Expert expert2 = createExpert("expert2@test.com");
+        Expert expert1 = createExpert("expert1@test.com", 0.6);
+        Expert expert2 = createExpert("expert2@test.com", 0.5);
 
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(DISEASE_GROUP_ID_1);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(DISEASE_GROUP_ID_2);
@@ -135,6 +165,10 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     private Expert createExpert(String email) {
+        return createExpert(email, 1.0);
+    }
+
+    private Expert createExpert(String email, double weighting) {
         String name = "Test Expert";
         String password = "pa55word";
         String jobTitle = "job";
@@ -149,6 +183,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         expert.setInstitution(institution);
         //noinspection ConstantConditions
         expert.setVisibilityRequested(visibilityRequested);
+        expert.setWeighting(weighting);
         expertDao.save(expert);
 
         return expert;
