@@ -19,6 +19,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.CovariateObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,6 +29,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * Controller for the ModelWrapper Covariates page.
@@ -69,6 +73,7 @@ public class CovariatesController {
 
         try {
             JsonCovariateConfiguration covariateConfig = configurationService.getCovariateConfiguration();
+            covariateConfig.setDiseases(with(covariateConfig.getDiseases()).sort(on(JsonDisease.class).getName()));
             String covariateJson = jsonConverter.writeValueAsString(covariateConfig);
             model.addAttribute("initialData", covariateJson);
             return "covariates";

@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +40,36 @@ public class CovariatesControllerTest {
         ConfigurationService configurationService = mock(ConfigurationService.class);
         CovariatesController target = new CovariatesController(configurationService, null);
         when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
         Model model = mock(Model.class);
 
         // Act
         target.showCovariatesPage(model);
 
         // Assert
-        verify(model).addAttribute("initialData", "{\"diseases\":null,\"files\":null}");
+        verify(model).addAttribute("initialData", "{\"diseases\":[],\"files\":[]}");
+    }
+
+    @Test
+    public void showCovariatesPageReturnsSortedDiseases() throws Exception {
+        // Arrange
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        CovariatesController target = new CovariatesController(configurationService, null);
+        when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        configurationService.getCovariateConfiguration().getDiseases().add(new JsonDisease(23, "aaa"));
+        configurationService.getCovariateConfiguration().getDiseases().add(new JsonDisease(24, "zzz"));
+        configurationService.getCovariateConfiguration().getDiseases().add(new JsonDisease(25, "ggg"));
+
+        Model model = mock(Model.class);
+
+        // Act
+        target.showCovariatesPage(model);
+
+        // Assert
+        verify(model).addAttribute("initialData", "{\"diseases\":[{\"id\":23,\"name\":\"aaa\"},{\"id\":25,\"name\":\"ggg\"},{\"id\":24,\"name\":\"zzz\"}],\"files\":[]}");
     }
 
     @Test
@@ -54,6 +78,8 @@ public class CovariatesControllerTest {
         ConfigurationService configurationService = mock(ConfigurationService.class);
         CovariatesController target = new CovariatesController(configurationService, null);
         when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
         Model model = mock(Model.class);
 
         // Act

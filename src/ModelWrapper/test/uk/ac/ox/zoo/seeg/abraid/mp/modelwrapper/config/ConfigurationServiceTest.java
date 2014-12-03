@@ -754,6 +754,7 @@ public class ConfigurationServiceTest {
         // Act
         target.setCovariateConfiguration(conf);
         String result = FileUtils.readFileToString(Paths.get(covariateDir.toString(), "abraid.json").toFile());
+        // In abraid.json the covariates files are sorted by path, and diseases by id. In "conf" they are not sorted.
 
         // Assert
         assertThat(result.replaceAll("[\\r\\n]+", "")).isEqualTo(TEST_COVARIATE_JSON.replaceAll("[\\r\\n]+", ""));
@@ -804,12 +805,12 @@ public class ConfigurationServiceTest {
     private static JsonCovariateConfiguration createJsonCovariateConfig() {
         JsonCovariateConfiguration conf = new JsonCovariateConfiguration();
         conf.setDiseases(Arrays.asList(
-                new JsonDisease(22, "Ascariasis"),
-                new JsonDisease(64, "Cholera")
+                new JsonDisease(64, "Cholera"),
+                new JsonDisease(22, "Ascariasis")
         ));
         conf.setFiles(Arrays.asList(
-                new JsonCovariateFile("f1", "a", null, false, Arrays.asList(22)),
-                new JsonCovariateFile("f2", "", null, true, new ArrayList<Integer>())
+                new JsonCovariateFile("f2", "", null, true, new ArrayList<Integer>()),
+                new JsonCovariateFile("f1", "a", null, false, Arrays.asList(22))
         ));
         return conf;
     }
