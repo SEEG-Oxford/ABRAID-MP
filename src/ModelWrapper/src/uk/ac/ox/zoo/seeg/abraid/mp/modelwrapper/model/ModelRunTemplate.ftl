@@ -82,14 +82,14 @@ find_dry_run_file <- function(suffix, extension) {
     library('stringr', quietly=TRUE)
     disease_abbreviation <- str_extract(basename(getwd()),"^[^_]*")
 
-    # Get files in the dry run outputs directory that are predefined output rasters for the specified disease and suffix
+    # Get files in the dry run outputs directory that are predefined output files for the specified disease and suffix
     # e.g. "mal_2014-11-18-18-02-04_c7a1950d-ecd0-4720-8edd-4432cdcae08a_mean.tif" matches if "mal" is the disease
     # abbreviation and "mean" is the suffix
     predefined_file_pattern <- paste(disease_abbreviation, "_.*", suffix, "\\.", extension, sep = "")
     predefined_files <- list.files(path="../dry_run_outputs/", pattern=predefined_file_pattern, full.names=TRUE)
 
     if (length(predefined_files) >= 1) {
-        # Predefined output raster found, so copy it to the desired output path
+        # Predefined output file found, so copy it to the desired output path
         return(predefined_files[1])
     } else {
         return(NA)
@@ -112,10 +112,10 @@ create_dry_run_raster <- function(suffix, output_path) {
 create_dry_run_csv <- function(suffix, output_path, fallback_data) {
     predefined_file <- find_dry_run_file(suffix, "csv")
     if (!is.na(predefined_file)) {
-        # Predefined output raster file found, so copy it to the desired output path
+        # Predefined output csv file found, so copy it to the desired output path
         file.copy(predefined_file, output_path)
     } else {
-        # Predefined output raster not found, so generate a raster with random pixels
+        # Predefined output csv not found, so generate a csv from fallback_data
         fileConn <- file(output_path)
         writeLines(fallback_data, fileConn)
         close(fileConn)
