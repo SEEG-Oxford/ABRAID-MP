@@ -76,8 +76,7 @@ load_seegSDM <- function () {
 }
 
 <#if dry_run>
-# Define a function to create an output raster for model dry runs
-create_dry_run_raster <- function(suffix, output_path) {
+find_dry_run_file <- function(suffix, extension) {
     # Get disease abbreviation (working directory prefix before underscore)
     install.packages('stringr', quiet=TRUE)
     library('stringr', quietly=TRUE)
@@ -86,16 +85,40 @@ create_dry_run_raster <- function(suffix, output_path) {
     # Get files in the dry run outputs directory that are predefined output rasters for the specified disease and suffix
     # e.g. "mal_2014-11-18-18-02-04_c7a1950d-ecd0-4720-8edd-4432cdcae08a_mean.tif" matches if "mal" is the disease
     # abbreviation and "mean" is the suffix
-    predefined_raster_file_pattern <- paste(disease_abbreviation, "_.*", suffix, "\\.tif", sep = "")
-    predefined_raster_files <- list.files(path="../dry_run_outputs/", pattern=predefined_raster_file_pattern, full.names=TRUE)
+    predefined_file_pattern <- paste(disease_abbreviation, "_.*", suffix, "\\.", extension, sep = "")
+    predefined_files <- list.files(path="../dry_run_outputs/", pattern=predefined_file_pattern, full.names=TRUE)
 
-    if (length(predefined_raster_files) >= 1) {
+    if (length(predefined_files) >= 1) {
         # Predefined output raster found, so copy it to the desired output path
-        file.copy(predefined_raster_files[1], output_path)
+        return(predefined_files[1])
+    } else {
+        return(NA)
+    }
+}
+
+# Define a function to create an output raster for model dry runs
+create_dry_run_raster <- function(suffix, output_path) {
+    predefined_file <- find_dry_run_file(suffix, "tif")
+    if (!is.na(predefined_file)) {
+        # Predefined output raster file found, so copy it to the desired output path
+        file.copy(predefined_file, output_path)
     } else {
         # Predefined output raster not found, so generate a raster with random pixels
         writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)),
                     filename=output_path, format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
+    }
+}
+
+create_dry_run_csv <- function(suffix, output_path, fallback_data) {
+    predefined_file <- find_dry_run_file(suffix, "csv")
+    if (!is.na(predefined_file)) {
+        # Predefined output raster file found, so copy it to the desired output path
+        file.copy(predefined_file, output_path)
+    } else {
+        # Predefined output raster not found, so generate a raster with random pixels
+        fileConn <- file(output_path)
+        writeLines(fallback_data, fileConn)
+        close(fileConn)
     }
 }
 
@@ -117,25 +140,15 @@ do_dry_run <- function() {
     dir.create('results')
     create_dry_run_raster("mean", "results/mean_prediction.tif")
     create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
-    create_dry_run_raster("extent", "results/extent.tif")
-    fileConn <- file("results/statistics.csv")
-    writeLines(c(
+    create_dry_run_csv("statistics", "results/statistics.csv", c(
         '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
-        '1,2,3,4,5,6,7,8,9,10,11,12,13'
-    ), fileConn)
-    close(fileConn)
-    fileConn <- file("results/relative_influence.csv")
-    writeLines(c(
+        '1,2,3,4,5,6,7,8,9,10,11,12,13'))
+    create_dry_run_csv("influence", "results/relative_influence.csv", c(
         '"","file_path","covariate","mean","2.5%","97.5%"',
-        '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'
-    ), fileConn)
-    close(fileConn)
-    fileConn <- file("results/effect_curves.csv")
-    writeLines(c(
+        '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'))
+    create_dry_run_csv("effect", "results/effect_curves.csv", c(
         '"","file_path","covariate","covariate","mean","2.5%","97.5%"',
-        '"1","path/upr_u.tif","GRUMP urban surface","0","-3","-5","0.3"'
-    ), fileConn)
-    close(fileConn)
+        '"1","path/upr_u.tif","GRUMP urban surface","0","-3","-5","0.3"'))
 }
 </#if>
 
