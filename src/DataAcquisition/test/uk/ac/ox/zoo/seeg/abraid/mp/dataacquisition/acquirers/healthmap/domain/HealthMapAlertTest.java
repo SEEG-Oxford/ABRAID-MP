@@ -113,6 +113,33 @@ public class HealthMapAlertTest {
         assertThat(alert.getDiseases()).contains("Disease 1", "Disease 2");
     }
 
+    @Test
+    public void splitCommentReturnsEmptyListForANullComment() {
+        HealthMapAlert alert = createHealthMapAlertWithComment(null);
+        assertThat(alert.getSplitComment()).hasSize(0);
+    }
+
+    @Test
+    public void splitCommentReturnsEmptyListForAWhitespaceComment() {
+        HealthMapAlert alert = createHealthMapAlertWithComment("    ");
+        assertThat(alert.getSplitComment()).hasSize(0);
+    }
+
+    @Test
+    public void splitCommentReturnsOneListItemForOneSubdisease() {
+        HealthMapAlert alert = createHealthMapAlertWithComment("  pf  ");
+        assertThat(alert.getSplitComment()).hasSize(1);
+        assertThat(alert.getSplitComment().get(0)).isEqualTo("pf");
+    }
+
+    @Test
+    public void splitCommentReturnsTwoListItemsForTwoSubdiseasesWithEmptyTokenAndWhitespaceAndCapitals() {
+        HealthMapAlert alert = createHealthMapAlertWithComment("P f, , p V");
+        assertThat(alert.getSplitComment()).hasSize(2);
+        assertThat(alert.getSplitComment().get(0)).isEqualTo("pf");
+        assertThat(alert.getSplitComment().get(1)).isEqualTo("pv");
+    }
+
     private HealthMapAlert createHealthMapAlert(String link) {
         HealthMapAlert alert = new HealthMapAlert();
         alert.setLink(link);
@@ -130,6 +157,12 @@ public class HealthMapAlertTest {
         HealthMapAlert alert = new HealthMapAlert();
         alert.setDisease(disease);
         alert.setDiseases(diseases);
+        return alert;
+    }
+
+    private HealthMapAlert createHealthMapAlertWithComment(String comment) {
+        HealthMapAlert alert = new HealthMapAlert();
+        alert.setComment(comment);
         return alert;
     }
 }

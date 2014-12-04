@@ -4,7 +4,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapDiseaseKey;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ public class HealthMapLookupData {
     private DiseaseService diseaseService;
 
     private Map<Integer, HealthMapCountry> countryMap;
-    private Map<Integer, HealthMapDisease> diseaseMap;
+    private Map<HealthMapDiseaseKey, HealthMapDisease> diseaseMap;
     private Map<Integer, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
     private Provenance healthMapProvenance;
@@ -47,13 +49,18 @@ public class HealthMapLookupData {
     }
 
     /**
-     * Gets a list of HealthMap diseases, indexed by HealthMap disease ID.
-     * @return A list of HealthMap diseases, indexed by HealthMap disease ID.
+     * Gets a list of HealthMap diseases, indexed by "HealthMap disease key" (i.e. ID and subname pair).
+     * @return A list of HealthMap diseases, indexed by HealthMap disease key.
      */
-    public Map<Integer, HealthMapDisease> getDiseaseMap() {
+    public Map<HealthMapDiseaseKey, HealthMapDisease> getDiseaseMap() {
         if (diseaseMap == null) {
             List<HealthMapDisease> diseases = diseaseService.getAllHealthMapDiseases();
-            diseaseMap = index(diseases, on(HealthMapDisease.class).getId());
+            diseaseMap = new HashMap<>();
+            for (HealthMapDisease disease : diseases) {
+                HealthMapDiseaseKey key = new HealthMapDiseaseKey(disease.getHealthMapDiseaseId(),
+                        disease.getSubName());
+                diseaseMap.put(key, disease);
+            }
         }
         return diseaseMap;
     }

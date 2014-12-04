@@ -5,6 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapDiseaseKey;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,19 +58,19 @@ public class HealthMapLookupDataTest {
 
         DiseaseGroup disease1 = new DiseaseGroup(1, null, "Test disease 1", DiseaseGroupType.CLUSTER);
         DiseaseGroup disease2 = new DiseaseGroup(2, null, "Test disease 2", DiseaseGroupType.CLUSTER);
-        HealthMapDisease healthMapDisease1 = new HealthMapDisease(1, "Test HealthMap disease 1", disease1);
-        HealthMapDisease healthMapDisease2 = new HealthMapDisease(2, "Test HealthMap disease 2", disease2);
+        HealthMapDisease healthMapDisease1 = new HealthMapDisease(1, "Test HealthMap disease 1", null, disease1);
+        HealthMapDisease healthMapDisease2 = new HealthMapDisease(2, "Test HealthMap disease 2", "pv", disease2);
 
         List<HealthMapDisease> diseases = Arrays.asList(healthMapDisease1, healthMapDisease2);
         when(diseaseService.getAllHealthMapDiseases()).thenReturn(diseases);
 
-        Map<Integer, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
-        expectedDiseaseMap.put(1, healthMapDisease1);
-        expectedDiseaseMap.put(2, healthMapDisease2);
+        Map<HealthMapDiseaseKey, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
+        expectedDiseaseMap.put(new HealthMapDiseaseKey(1, null), healthMapDisease1);
+        expectedDiseaseMap.put(new HealthMapDiseaseKey(2, "pv"), healthMapDisease2);
 
         // Act
         HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
-        Map<Integer, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
+        Map<HealthMapDiseaseKey, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
 
         // Assert
         assertThat(actualDiseaseMap).isEqualTo(expectedDiseaseMap);

@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ public class HealthMapAlert {
     private String originalUrl;
     @JsonProperty("feed_lang")
     private String feedLanguage;
+    private String comment;
 
     public HealthMapAlert() {
     }
@@ -167,6 +169,14 @@ public class HealthMapAlert {
         this.feedLanguage = ParseUtils.convertString(feedLanguage);
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     /**
      * Extracts the alert ID from the link.
      * @return The alert ID, or null if it could not be extracted from the link.
@@ -182,14 +192,39 @@ public class HealthMapAlert {
         return alertId;
     }
 
+    /**
+     * Gets the comment, split into constituent parts and sanitised.
+     * @return The split comment, or an empty list if no comment.
+     */
+    public List<String> getSplitComment() {
+        List<String> splitComment = new ArrayList<>();
+        for (String part : splitCommaDelimitedString(this.comment)) {
+            // For each comment part, remove whitespace and make lowercase
+            splitComment.add(part.replaceAll("\\s", "").toLowerCase());
+        }
+        return splitComment;
+    }
+
     private <T> List<T> retrieveListOrSingleItem(List<T> list, T item) {
         // Returns a non-null list of items, either from the input list or the input item
         if (list != null && list.size() > 0) {
             return list;
         } else if (item == null) {
-            return new ArrayList<T>();
+            return new ArrayList<>();
         } else {
             return Arrays.asList(item);
         }
+    }
+
+    private List<String> splitCommaDelimitedString(String text) {
+        List<String> splitList = new ArrayList<>();
+
+        if (StringUtils.hasText(text)) {
+            // Note: all tokens are trimmed and empty tokens are ignored
+            String[] splitArray = StringUtils.tokenizeToStringArray(text, ",", true, true);
+            Collections.addAll(splitList, splitArray);
+        }
+
+        return splitList;
     }
 }
