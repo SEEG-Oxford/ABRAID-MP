@@ -5,10 +5,7 @@ import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -196,8 +193,8 @@ public class HealthMapAlert {
      * Gets the comment, split into constituent parts and sanitised.
      * @return The split comment, or an empty list if no comment.
      */
-    public List<String> getSplitComment() {
-        List<String> splitComment = new ArrayList<>();
+    public Set<String> getSplitComment() {
+        Set<String> splitComment = new HashSet<>();
         for (String part : splitCommaDelimitedString(this.comment)) {
             // For each comment part, remove whitespace and make lowercase
             splitComment.add(part.replaceAll("\\s", "").toLowerCase());

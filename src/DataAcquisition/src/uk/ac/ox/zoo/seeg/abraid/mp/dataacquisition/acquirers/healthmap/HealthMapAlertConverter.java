@@ -11,10 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapDiseaseKey;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Converts a HealthMap alert into an ABRAID disease occurrence.
@@ -162,7 +159,7 @@ public class HealthMapAlertConverter {
         List<DiseaseGroup> diseaseGroups = new ArrayList<>();
         List<Integer> diseaseIds = healthMapAlert.getDiseaseIds();
         List<String> diseaseNames = healthMapAlert.getDiseases();
-        List<String> subDiseaseNames = healthMapAlert.getSplitComment();
+        Set<String> subDiseaseNames = healthMapAlert.getSplitComment();
         if (subDiseaseNames.size() == 0) {
             // If there are no sub-diseases, add an empty one for lookup purposes
             subDiseaseNames.add(null);

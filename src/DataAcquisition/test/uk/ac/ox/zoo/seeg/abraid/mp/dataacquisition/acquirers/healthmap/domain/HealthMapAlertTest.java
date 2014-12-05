@@ -129,15 +129,15 @@ public class HealthMapAlertTest {
     public void splitCommentReturnsOneListItemForOneSubdisease() {
         HealthMapAlert alert = createHealthMapAlertWithComment("  pf  ");
         assertThat(alert.getSplitComment()).hasSize(1);
-        assertThat(alert.getSplitComment().get(0)).isEqualTo("pf");
+        assertThat(alert.getSplitComment()).contains("pf");
     }
 
     @Test
     public void splitCommentReturnsTwoListItemsForTwoSubdiseasesWithEmptyTokenAndWhitespaceAndCapitals() {
         HealthMapAlert alert = createHealthMapAlertWithComment("P f, , p V");
         assertThat(alert.getSplitComment()).hasSize(2);
-        assertThat(alert.getSplitComment().get(0)).isEqualTo("pf");
-        assertThat(alert.getSplitComment().get(1)).isEqualTo("pv");
+        assertThat(alert.getSplitComment()).contains("pf");
+        assertThat(alert.getSplitComment()).contains("pv");
     }
 
     private HealthMapAlert createHealthMapAlert(String link) {
