@@ -303,11 +303,8 @@ define([
         }
 
         function getDiseaseExtentRequestUrl(diseaseId) {
-            if (loggedIn) {
-                return baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits";
-            } else {
-                return baseUrl + "static/defaultAdminUnits.json";
-            }
+            var adminUnits = loggedIn ? ("diseases/" + diseaseId  + "/adminunits") : "defaultadminunits"
+            return baseUrl + "datavalidation/" + adminUnits;
         }
 
         function createFeatureCollection(type, crs, features) {
