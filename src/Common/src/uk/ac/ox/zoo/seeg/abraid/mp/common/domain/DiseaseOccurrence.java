@@ -69,7 +69,8 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",
                 query = "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatistics" +
-                        "       (count(*), min(occurrenceDate), max(occurrenceDate)) " +
+                            "(count(*), coalesce(sum(case location.precision when 'COUNTRY' then 0 else 1 end), 0)," +
+                            " min(occurrenceDate), max(occurrenceDate)) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
                         "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING')"
