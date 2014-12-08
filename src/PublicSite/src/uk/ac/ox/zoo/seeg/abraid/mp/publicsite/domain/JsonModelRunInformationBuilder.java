@@ -58,10 +58,20 @@ public class JsonModelRunInformationBuilder {
         if (statistics.getOccurrenceCount() > 0) {
             String dateText = getDiseaseOccurrencesDateText(
                     statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
-            text = String.format("total %d, occurring %s", statistics.getOccurrenceCount(), dateText);
+            String nonCountryText = getNonCountryText(statistics.getOccurrenceCountExcludingCountries());
+            text = String.format("total %d (of which %s), occurring %s",
+                    statistics.getOccurrenceCount(), nonCountryText, dateText);
         }
         information.setDiseaseOccurrencesText(text);
         return this;
+    }
+
+    private String getNonCountryText(long occurrenceCountExcludingCountries) {
+        if (occurrenceCountExcludingCountries == 1) {
+            return "1 is a non-country occurrence";
+        } else {
+            return String.format("%d are non-country occurrences", occurrenceCountExcludingCountries);
+        }
     }
 
     /**
@@ -114,6 +124,9 @@ public class JsonModelRunInformationBuilder {
             defaultEndDate = defaultStartDate.plusYears(1).withDayOfYear(1).minusDays(1);
             if (defaultEndDate.isAfter(maximumDate)) {
                 defaultEndDate = maximumDate;
+            }
+            if (defaultStartDate.isAfter(defaultEndDate)) {
+                defaultStartDate = defaultEndDate;
             }
         }
 

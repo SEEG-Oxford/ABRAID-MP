@@ -55,22 +55,23 @@ public class AdminDiseaseGroupControllerTest {
     @Test
     public void showPageAddsDiseaseGroupsAndValidatorDiseaseGroupsToModel() throws JsonProcessingException {
         // Arrange
+        // NB. Expected JSONs sort disease groups by name, ignoring case.
         Model model = mock(Model.class);
 
         DiseaseGroup diseaseGroup1 = createDiseaseGroup(188, 5, "Leishmaniases", "leishmaniases", DiseaseGroupType.MICROCLUSTER,
                 "leishmaniases", "leishmaniases", "leish", true, 9, 0.5);
-        DiseaseGroup diseaseGroup2 = createDiseaseGroup(87, null, "Dengue", null, DiseaseGroupType.SINGLE,
+        DiseaseGroup diseaseGroup2 = createDiseaseGroup(87, null, "dengue", null, DiseaseGroupType.SINGLE,
                 "dengue", "dengue", "deng", false, 4, 1);
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2);
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
         String expectedJson = "[" +
-                "{\"id\":87,\"name\":\"Dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
+                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
                 "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
 
-        ValidatorDiseaseGroup validator1 = new ValidatorDiseaseGroup(2, "CCHF");
-        ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(3, "cholera");
+        ValidatorDiseaseGroup validator1 = new ValidatorDiseaseGroup(3, "Japanese encephalitis");
+        ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(2, "cholera");
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(Arrays.asList(validator1, validator2));
-        String expectedValidatorJson = "[{\"id\":2,\"name\":\"CCHF\"},{\"id\":3,\"name\":\"cholera\"}]";
+        String expectedValidatorJson = "[{\"id\":2,\"name\":\"cholera\"},{\"id\":3,\"name\":\"Japanese encephalitis\"}]";
 
         // Act
         String result = controller.showPage(model);
@@ -87,7 +88,7 @@ public class AdminDiseaseGroupControllerTest {
         int diseaseGroupId = 87;
         ModelRun lastRequestedModelRun = new ModelRun("dengue 1", 87, "host", new DateTime("2014-07-02T14:15:16"));
         ModelRun lastCompletedModelRun = new ModelRun();
-        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, null, null);
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
         DiseaseGroup diseaseGroup = new DiseaseGroup(87);
 
         when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);

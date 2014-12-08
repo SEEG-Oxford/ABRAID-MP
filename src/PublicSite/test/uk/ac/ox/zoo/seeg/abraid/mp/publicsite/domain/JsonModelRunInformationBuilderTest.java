@@ -111,7 +111,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateDiseaseOccurrencesTextWhenNoOccurrences() {
         // Arrange
-        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, null, null);
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
@@ -125,14 +125,14 @@ public class JsonModelRunInformationBuilderTest {
     public void populateDiseaseOccurrencesTextWithOccurrencesWithSameStartAndEndDate() {
         // Arrange
         DateTime dateTime = new DateTime("2014-07-01T13:07:06");
-        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(3, dateTime, dateTime);
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(3, 1, dateTime, dateTime);
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
         JsonModelRunInformation information = builder.populateDiseaseOccurrencesText(statistics).get();
 
         // Assert
-        assertThat(information.getDiseaseOccurrencesText()).isEqualTo("total 3, occurring on 1 Jul 2014");
+        assertThat(information.getDiseaseOccurrencesText()).isEqualTo("total 3 (of which 1 is a non-country occurrence), occurring on 1 Jul 2014");
     }
 
     @Test
@@ -140,7 +140,7 @@ public class JsonModelRunInformationBuilderTest {
         // Arrange
         DateTime startDate = new DateTime("2013-02-05T13:07:06");
         DateTime endDate = new DateTime("2014-06-01T09:15:00");
-        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(3, startDate, endDate);
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(3, 2, startDate, endDate);
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
@@ -148,7 +148,7 @@ public class JsonModelRunInformationBuilderTest {
 
         // Assert
         assertThat(information.getDiseaseOccurrencesText()).isEqualTo(
-                "total 3, occurring between 5 Feb 2013 and 1 Jun 2014");
+                "total 3 (of which 2 are non-country occurrences), occurring between 5 Feb 2013 and 1 Jun 2014");
     }
 
     @Test
@@ -276,7 +276,7 @@ public class JsonModelRunInformationBuilderTest {
                                              String expectedBatchStartDateDefault, String expectedBatchEndDateDefault,
                                              String expectedBatchDateMaximum) {
         // Arrange
-        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(100, getDate(occurrenceStartDate),
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(100, 50, getDate(occurrenceStartDate),
                 getDate(occurrenceEndDate));
 
         DateTime now = new DateTime("2014-07-29T09:10:11");

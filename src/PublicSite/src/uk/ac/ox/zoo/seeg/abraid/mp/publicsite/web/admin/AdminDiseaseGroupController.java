@@ -25,6 +25,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -55,6 +56,13 @@ public class AdminDiseaseGroupController extends AbstractController {
     private ModelRunService modelRunService;
     private DiseaseOccurrenceSpreadHelper helper;
     private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
+
+    private Comparator<String> caseInsensitiveComparator = new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.compareToIgnoreCase(o2);
+        }
+    };
 
     @Autowired
     public AdminDiseaseGroupController(DiseaseService diseaseService, AbraidJsonObjectMapper objectMapper,
@@ -305,7 +313,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private List<DiseaseGroup> getSortedDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
-        return sort(diseaseGroups, on(DiseaseGroup.class).getName());
+        return sort(diseaseGroups, on(DiseaseGroup.class).getName(), caseInsensitiveComparator);
     }
 
     private String convertDiseaseGroupsToJson(List<DiseaseGroup> diseaseGroups) throws JsonProcessingException {
@@ -318,7 +326,7 @@ public class AdminDiseaseGroupController extends AbstractController {
 
     private List<ValidatorDiseaseGroup> getSortedValidatorDiseaseGroups() {
         List<ValidatorDiseaseGroup> validatorDiseaseGroups = diseaseService.getAllValidatorDiseaseGroups();
-        return sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName());
+        return sort(validatorDiseaseGroups, on(ValidatorDiseaseGroup.class).getName(), caseInsensitiveComparator);
     }
 
     private String convertValidatorDiseaseGroupsToJson(List<ValidatorDiseaseGroup> validatorDiseaseGroups)
