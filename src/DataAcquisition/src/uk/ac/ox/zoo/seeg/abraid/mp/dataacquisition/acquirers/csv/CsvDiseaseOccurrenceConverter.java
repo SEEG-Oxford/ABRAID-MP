@@ -72,8 +72,8 @@ public class CsvDiseaseOccurrenceConverter {
 
     private Alert convertAlert(CsvDiseaseOccurrence csvDiseaseOccurrence) {
         Alert alert = new Alert();
-        alert.setFeed(csvLookupData.getFeedForUploadedData());
-        alert.setTitle(csvDiseaseOccurrence.getTitle());
+        alert.setFeed(csvLookupData.getFeedForManuallyUploadedData(csvDiseaseOccurrence.getFeedName()));
+        alert.setTitle(csvDiseaseOccurrence.getAlertTitle());
         alert.setSummary(csvDiseaseOccurrence.getSummary());
         alert.setUrl(csvDiseaseOccurrence.getUrl());
         return alert;

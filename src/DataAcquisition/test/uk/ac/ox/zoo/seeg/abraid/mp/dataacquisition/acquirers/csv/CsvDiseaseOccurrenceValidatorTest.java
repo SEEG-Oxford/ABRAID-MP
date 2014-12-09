@@ -129,7 +129,8 @@ public class CsvDiseaseOccurrenceValidatorTest {
         occurrence.setCountryName("United Kingdom");
         occurrence.setDiseaseGroupName("Dengue");
         occurrence.setOccurrenceDate("10/09/2014");
-        occurrence.setTitle("Disease occurrence title");
+        occurrence.setFeedName("SEEG Data 2014");
+        occurrence.setAlertTitle("Disease occurrence title");
         return occurrence;
     }
 

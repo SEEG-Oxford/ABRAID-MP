@@ -9,10 +9,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -79,25 +80,15 @@ public class CsvLookupDataTest {
     @Test
     public void getFeedForUploadedData() {
         // Arrange
-        Feed expectedFeed = new Feed();
-        when(alertService.getFeedsByProvenanceName("Uploaded")).thenReturn(Arrays.asList(expectedFeed));
+        String feedName = "ABRAID";
+        String provenanceName = "Manual dataset";
+        Feed expectedFeed = new Feed(feedName);
+        when(alertService.getFeedsByProvenanceName(provenanceName)).thenReturn(Arrays.asList(expectedFeed));
 
         // Act
-        Feed actualFeed = lookupData.getFeedForUploadedData();
+        Feed actualFeed = lookupData.getFeedForManuallyUploadedData(feedName);
 
         // Assert
         assertThat(actualFeed).isSameAs(expectedFeed);
-    }
-
-    @Test
-    public void getFeedForUploadedDataDoesNotReturnOneFeed() {
-        // Arrange
-        when(alertService.getFeedsByProvenanceName("Uploaded")).thenReturn(new ArrayList<Feed>());
-
-        // Act
-        catchException(lookupData).getFeedForUploadedData();
-
-        // Assert
-        assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 }

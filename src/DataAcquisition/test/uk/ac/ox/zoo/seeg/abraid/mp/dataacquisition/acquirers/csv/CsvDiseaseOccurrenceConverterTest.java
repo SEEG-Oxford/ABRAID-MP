@@ -12,7 +12,8 @@ import java.util.HashMap;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the CsvDiseaseOccurrenceConverter class.
@@ -37,12 +38,14 @@ public class CsvDiseaseOccurrenceConverterTest {
         diseaseGroupMap.put("dengue", new DiseaseGroup(87, "Dengue"));
         diseaseGroupMap.put("malarias", new DiseaseGroup(202, "Malarias"));
 
-        Feed feed = new Feed("Uploaded");
+        String feedName = "Test feed name";
+        Provenance provenance = new Provenance(ProvenanceNames.MANUAL);
+        Feed feed = new Feed(feedName, provenance);
 
         CsvLookupData csvLookupData = mock(CsvLookupData.class);
         when(csvLookupData.getCountryMap()).thenReturn(countryMap);
         when(csvLookupData.getDiseaseGroupMap()).thenReturn(diseaseGroupMap);
-        when(csvLookupData.getFeedForUploadedData()).thenReturn(feed);
+        when(csvLookupData.getFeedForManuallyUploadedData(feedName)).thenReturn(feed);
         return csvLookupData;
     }
 
@@ -66,7 +69,8 @@ public class CsvDiseaseOccurrenceConverterTest {
         Alert alert = occurrence.getAlert();
         assertThat(alert).isNotNull();
         assertThat(alert.getFeed()).isNotNull();
-        assertThat(alert.getFeed().getName()).isEqualTo("Uploaded");
+        assertThat(alert.getFeed().getName()).isEqualTo("Test feed name");
+        assertThat(alert.getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.MANUAL);
         assertThat(alert.getTitle()).isEqualTo("Disease occurrence title");
         assertThat(alert.getSummary()).isEqualTo("Disease occurrence summary");
         assertThat(alert.getUrl()).isEqualTo("http://testurl.com");
@@ -196,7 +200,8 @@ public class CsvDiseaseOccurrenceConverterTest {
         occurrence.setCountryName("France");
         occurrence.setDiseaseGroupName("DENGUE");
         occurrence.setOccurrenceDate("10/09/2014");
-        occurrence.setTitle("Disease occurrence title");
+        occurrence.setFeedName("Test feed name");
+        occurrence.setAlertTitle("Disease occurrence title");
         occurrence.setSummary("Disease occurrence summary");
         occurrence.setUrl("http://testurl.com");
         return occurrence;

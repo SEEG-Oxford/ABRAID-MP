@@ -1,9 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
@@ -11,6 +8,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Contains lookup data that is used when processing CSV data.
@@ -24,7 +24,8 @@ public class CsvLookupData {
 
     private Map<String, Country> countryMap;
     private Map<String, DiseaseGroup> diseaseGroupMap;
-    private Feed uploadedFeed;
+    private List<Feed> manuallyUploadedFeeds;
+    private List<Feed> goldStandardFeeds;
 
     public CsvLookupData(AlertService alertService, LocationService locationService, DiseaseService diseaseService) {
         this.alertService = alertService;
@@ -66,21 +67,45 @@ public class CsvLookupData {
     }
 
     /**
-     * Gets the feed to be associated with uploaded data.
-     * @return The feed to be associated with uploaded data.
+     * Gets the feed to be associated with this manually uploaded data, identified by the unique feed name in CSV row.
+     * If a feed with the given name has not been seen before, save it to the database.
+     * @param feedName The name of the feed to fetch (and add to the database if necessary).
+     * @return The feed to be associated with this manually uploaded datapoint.
      */
-    public Feed getFeedForUploadedData() {
-        if (uploadedFeed == null) {
-            List<Feed> feeds = alertService.getFeedsByProvenanceName(ProvenanceNames.UPLOADED);
-            if (feeds.size() == 1) {
-                uploadedFeed = feeds.get(0);
-            } else {
-                throw new RuntimeException(
-                        String.format("There are %d feeds associated with the Uploaded provenance (expected 1)",
-                        feeds.size()));
-            }
+    public Feed getFeedForManuallyUploadedData(String feedName, boolean goldStandard) {
+        Feed feed = getExistingFeedByName(feedName, goldStandard);
+        if (feed == null) {
+            feed = goldStandard ? addNewGoldStandardFeed(feedName) : addNewFeed(feedName);
         }
-        return uploadedFeed;
+        return feed;
+    }
+
+    public Feed getExistingFeedByName(String feedName, boolean goldStandard) {
+        if (goldStandard) {
+            if (manuallyUploadedFeeds == null) {
+                manuallyUploadedFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL);
+            }
+            return selectUnique(manuallyUploadedFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
+        } else {
+            if (goldStandardFeeds == null) {
+                goldStandardFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD);
+            }
+            return selectUnique(goldStandardFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
+        }
+    }
+
+    private Feed addNewGoldStandardFeed(String feedName) {
+        Feed feed = new Feed(feedName, alertService.getProvenanceByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
+        alertService.saveFeed(feed);
+        goldStandardFeeds.add(feed);
+        return feed;
+    }
+
+    private Feed addNewFeed(String feedName) {
+        Feed feed = new Feed(feedName, alertService.getProvenanceByName(ProvenanceNames.MANUAL));
+        alertService.saveFeed(feed);
+        manuallyUploadedFeeds.add(feed);
+        return feed;
     }
 
     /**
@@ -89,5 +114,7 @@ public class CsvLookupData {
      */
     public void clearLookups() {
         diseaseGroupMap = null;
+        manuallyUploadedFeeds = null;
+        goldStandardFeeds = null;
     }
 }
