@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
@@ -14,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,11 +33,17 @@ public class AccountControllerTest {
     private static AccountController createTarget(int userId, ExpertService expertServiceIn,
                                                   DiseaseService diseaseService,
                                                   AccountControllerValidator adminControllerValidator,
-                                                  AccountControllerHelper accountControllerTransactionHelper) {
-        CurrentUserService userService = mock(CurrentUserService.class);
-        PublicSiteUser user = mock(PublicSiteUser.class);
-        when(userService.getCurrentUser()).thenReturn(user);
-        when(user.getId()).thenReturn(userId);
+                                                  AccountControllerHelper accountControllerTransactionHelper,
+                                                  CurrentUserService currentUserService) {
+        CurrentUserService userService;
+        if (currentUserService == null) {
+            userService = mock(CurrentUserService.class);
+            PublicSiteUser user = mock(PublicSiteUser.class);
+            when(userService.getCurrentUser()).thenReturn(user);
+            when(user.getId()).thenReturn(userId);
+        } else {
+            userService = currentUserService;
+        }
 
         ExpertService expertService = expertServiceIn;
         if (expertService == null) {
@@ -55,7 +63,7 @@ public class AccountControllerTest {
     @Test
     public void getAccountEditPageReturnsCorrectTemplate() throws Exception {
         // Arrange
-        AccountController target = createTarget(1, null, null, null, null);
+        AccountController target = createTarget(1, null, null, null, null, null);
 
         // Act
         String result = target.getAccountEditPage(mock(ModelMap.class));
@@ -79,7 +87,7 @@ public class AccountControllerTest {
         DiseaseService diseaseService = mock(DiseaseService.class);
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(createMockValidatorDiseaseGroups());
 
-        AccountController target = createTarget(1, expertService, diseaseService, null, null);
+        AccountController target = createTarget(1, expertService, diseaseService, null, null, null);
 
         // Act
         ModelMap model = mock(ModelMap.class);
@@ -94,7 +102,7 @@ public class AccountControllerTest {
     public void submitAccountEditPageReturnsBadRequestIfValidationFails() throws Exception {
         // Arrange
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
-        AccountController target = createTarget(1, null, null, validator, null);
+        AccountController target = createTarget(1, null, null, validator, null, null);
         when(validator.validate(any(JsonExpertDetails.class))).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
 
         // Act
@@ -110,7 +118,7 @@ public class AccountControllerTest {
         // Arrange
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
-        AccountController target = createTarget(1, null, null, validator, helper);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
         doThrow(new ValidationException(Arrays.asList("FAIL3")))
                 .when(helper).processExpertProfileUpdateAsTransaction(anyInt(), any(JsonExpertDetails.class));
 
@@ -127,7 +135,7 @@ public class AccountControllerTest {
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
         int userId = 99;
-        AccountController target = createTarget(userId, null, null, validator, helper);
+        AccountController target = createTarget(userId, null, null, validator, helper, null);
 
         // Act
         JsonExpertDetails expert = mock(JsonExpertDetails.class);
@@ -141,7 +149,7 @@ public class AccountControllerTest {
     @Test
     public void getChangePasswordPageReturnsCorrectTemplate() throws Exception {
         // Arrange
-        AccountController target = createTarget(1, null, null, null, null);
+        AccountController target = createTarget(1, null, null, null, null, null);
 
         // Act
         String result = target.getChangePasswordPage();
@@ -155,7 +163,7 @@ public class AccountControllerTest {
         // Arrange
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
-        AccountController target = createTarget(1, null, null, validator, helper);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
         when(validator.validatePasswordChange(anyString(), anyString(), anyString(), anyInt())).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
 
         // Act
@@ -171,7 +179,7 @@ public class AccountControllerTest {
         // Arrange
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
-        AccountController target = createTarget(1, null, null, validator, helper);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
         doThrow(new ValidationException(Arrays.asList("FAIL3")))
                 .when(helper).processExpertPasswordChangeAsTransaction(anyInt(), anyString());
 
@@ -188,13 +196,185 @@ public class AccountControllerTest {
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
         int userId = 99;
-        AccountController target = createTarget(userId, null, null, validator, helper);
+        AccountController target = createTarget(userId, null, null, validator, helper, null);
 
         // Act
         ResponseEntity<Collection<String>> result = target.submitChangePasswordPage("oldPassword", "newPassword", "confirmPassword");
 
         // Assert
         verify(helper).processExpertPasswordChangeAsTransaction(userId, "newPassword");
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void getPasswordResetRequestPageReturnsCorrectTemplate() throws Exception {
+        // Arrange
+        AccountController target = createTarget(1, null, null, null, null, mock(CurrentUserService.class));
+
+        // Act
+        String result = target.getPasswordResetRequestPage();
+
+        // Assert
+        assertThat(result).isEqualTo("account/reset/request");
+    }
+
+    @Test
+    public void getPasswordResetRequestPageRedirectsLoggedInUsers() throws Exception {
+        // Arrange
+        CurrentUserService userService = mock(CurrentUserService.class);
+        when(userService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        AccountController target = createTarget(1, null, null, null, null, userService);
+
+        // Act
+        String result = target.getPasswordResetRequestPage();
+
+        // Assert
+        assertThat(result).isEqualTo("redirect:/");
+    }
+
+    @Test
+    public void submitPasswordResetRequestPageReturnsBadRequestIfValidationFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        when(validator.validateNewPasswordResetRequest(anyString())).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetRequestPage("email", mock(HttpServletRequest.class));
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void submitPasswordResetRequestPageReturnsBadRequestIfHelperFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        doThrow(new ValidationException(Arrays.asList("FAIL3")))
+                .when(helper).processExpertPasswordResetRequestAsTransaction(eq("email"), anyString());
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetRequestPage("email", mock(HttpServletRequest.class));
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL3");
+    }
+
+    @Test
+    public void submitPasswordResetRequestPageIssuesNewResetKeyForValidRequest() throws Exception {
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(99, null, null, validator, helper, null);
+        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+        when(httpServletRequest.getScheme()).thenReturn("123");
+        when(httpServletRequest.getServerName()).thenReturn("456");
+        when(httpServletRequest.getServerPort()).thenReturn(789);
+        when(httpServletRequest.getContextPath()).thenReturn("/0");
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetRequestPage("email", httpServletRequest);
+
+        // Assert
+        verify(helper).processExpertPasswordResetRequestAsTransaction("email", "123://456:789/0");
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void getPasswordResetProcessingPageReturnsCorrectTemplateForValidParameters() throws Exception {
+        // Arrange
+        AccountControllerValidator adminControllerValidator = mock(AccountControllerValidator.class);
+        AccountController target = createTarget(1, null, null, adminControllerValidator, null, mock(CurrentUserService.class));
+        when(adminControllerValidator.validatePasswordResetRequest(7, "key")).thenReturn(new ArrayList<String>());
+        Model model = mock(Model.class);
+
+        // Act
+        String result = target.getPasswordResetProcessingPage(7, "key", model);
+
+        // Assert
+        verify(model).addAttribute("id", 7);
+        verify(model).addAttribute("key", "key");
+        assertThat(result).isEqualTo("account/reset/process");
+    }
+
+    @Test
+    public void getPasswordResetProcessingPageReturnsCorrectTemplateForInvalidParameters() throws Exception {
+        // Arrange
+        AccountControllerValidator adminControllerValidator = mock(AccountControllerValidator.class);
+        AccountController target = createTarget(1, null, null, adminControllerValidator, null, mock(CurrentUserService.class));
+        List<String> failures = Arrays.asList("Failure");
+        when(adminControllerValidator.validatePasswordResetRequest(7, "key")).thenReturn(failures);
+        Model model = mock(Model.class);
+
+        // Act
+        String result = target.getPasswordResetProcessingPage(7, "key", model);
+
+        // Assert
+        verify(model).addAttribute("failures", failures);
+        assertThat(result).isEqualTo("account/reset/invalid");
+    }
+
+    @Test public void getPasswordResetProcessingPageRedirectsLoggedInUsers() throws Exception {
+        // Arrange
+        CurrentUserService userService = mock(CurrentUserService.class);
+        when(userService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        AccountController target = createTarget(1, null, null, null, null, userService);
+
+        // Act
+        String result = target.getPasswordResetProcessingPage(7, "key", mock(Model.class));
+
+        // Assert
+        assertThat(result).isEqualTo("redirect:/");
+    }
+
+    @Test
+    public void submitPasswordResetProcessingPageReturnsBadRequestIfValidationFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        when(validator.validatePasswordResetProcessing("password", "confirm", 7, "key")).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetProcessingPage(7, "password", "confirm", "key");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void submitPasswordResetProcessingPageReturnsBadRequestIfHelperFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        doThrow(new ValidationException(Arrays.asList("FAIL3")))
+                .when(helper).processExpertPasswordResetAsTransaction("password", 7);
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetProcessingPage(7, "password", "confirm", "key");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL3");
+    }
+
+    @Test
+    public void submitPasswordResetProcessingPageUpdatesPasswordForValidRequest() throws Exception {
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(99, null, null, validator, helper, null);
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetProcessingPage(7, "password", "confirm", "key");
+
+        // Assert
+        verify(helper).processExpertPasswordResetAsTransaction("password", 7);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 

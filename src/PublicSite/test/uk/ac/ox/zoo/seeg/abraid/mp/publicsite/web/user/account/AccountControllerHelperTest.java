@@ -3,8 +3,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.user.account;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.PasswordResetRequest;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
@@ -198,6 +201,117 @@ public class AccountControllerHelperTest {
 
         // Act
         catchException(target).processExpertPasswordChangeAsTransaction(-1, "password");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(ValidationException.class);
+    }
+
+    @Test
+    public void processExpertPasswordResetRequestAsTransactionCreatesNewPasswordResetRequest() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, null, mock(EmailService.class), null);
+
+        when(expertService.getExpertByEmail("email")).thenReturn(mock(Expert.class));
+
+
+        // Act
+        target.processExpertPasswordResetRequestAsTransaction("email", "url");
+
+        // Assert
+        verify(expertService).createAndSavePasswordResetRequest(eq("email"), anyString());
+    }
+
+    @Test
+    public void processExpertPasswordResetRequestAsTransactionSendsResetEmail() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        EmailService emailService = mock(EmailService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, null, emailService, null);
+
+        when(expertService.getExpertByEmail("email")).thenReturn(mock(Expert.class));
+        when(expertService.createAndSavePasswordResetRequest(eq("email"), anyString())).thenReturn(4321);
+
+        // Act
+        target.processExpertPasswordResetRequestAsTransaction("email", "url");
+
+        // Assert
+        Class<Map<String, Object>> argType = (Class<Map<String, Object>>) (Class) Map.class;
+        ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(argType);
+        verify(emailService).sendEmailInBackground(eq("email"), eq("ABRAID-MP Password Reset"), eq("account/passwordResetEmail.ftl"), captor.capture());
+        Map<String, Object> data = captor.getValue();
+        assertThat(data.get("url")).isEqualTo("url");
+        assertThat(data.get("id")).isEqualTo(4321);
+        assertThat(data.get("key")).isNotNull();
+    }
+
+    @Test
+    public void processExpertPasswordResetRequestAsTransactionThrowsValidationExceptionIfNoMatchingExpert() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, null, mock(EmailService.class), null);
+
+        when(expertService.getExpertByEmail("email")).thenReturn(null);
+
+        // Act
+        catchException(target).processExpertPasswordResetRequestAsTransaction("email", "url");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(ValidationException.class);
+    }
+
+    @Test
+    public void processExpertPasswordResetAsTransactionUpdatesExpertsPassword() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, null, mock(EmailService.class), passwordEncoder);
+
+        PasswordResetRequest resetRequest = mock(PasswordResetRequest.class);
+        Expert expert = mock(Expert.class);
+        when(expertService.getPasswordResetRequest(7)).thenReturn(resetRequest);
+        when(resetRequest.getExpert()).thenReturn(expert);
+        when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
+
+        // Act
+        target.processExpertPasswordResetAsTransaction("password", 7);
+
+        // Assert
+        InOrder inOrder = inOrder(expert, expertService);
+        inOrder.verify(expert).setPassword("hashedPassword");
+        inOrder.verify(expertService).saveExpert(expert);
+    }
+
+    @Test
+    public void processExpertPasswordResetAsTransactionDeletesCompletedResetRequest() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, null, mock(EmailService.class), passwordEncoder);
+
+        PasswordResetRequest resetRequest = mock(PasswordResetRequest.class);
+        Expert expert = mock(Expert.class);
+        when(expertService.getPasswordResetRequest(7)).thenReturn(resetRequest);
+        when(resetRequest.getExpert()).thenReturn(expert);
+        when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
+
+        // Act
+        target.processExpertPasswordResetAsTransaction("password", 7);
+
+        // Assert
+        verify(expertService).deletePasswordResetRequest(resetRequest);
+    }
+
+    @Test
+    public void processExpertPasswordResetAsTransactionThrowsValidationExceptionIfNoMatchingResetRequest() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, null, mock(EmailService.class), null);
+
+        when(expertService.getPasswordResetRequest(7)).thenReturn(null);
+
+        // Act
+        catchException(target).processExpertPasswordResetAsTransaction("password", 7);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ValidationException.class);
