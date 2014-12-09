@@ -320,13 +320,12 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     private void addManuallyUploadedGoldStandardOccurrences() {
         Feed feed = new Feed("Test feed", provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
         feedDao.save(feed);
-        createManuallyUploadedDiseaseOccurrenceForDengue(feed, null);
-        createManuallyUploadedDiseaseOccurrenceForDengue(feed, 1.0);
-        createManuallyUploadedDiseaseOccurrenceForDengue(feed, 0.9);
-        createManuallyUploadedDiseaseOccurrenceForDengue(feed, 1.0);
+
+        createManuallyUploadedDiseaseOccurrenceForDengue(feed);
+        createManuallyUploadedDiseaseOccurrenceForDengue(feed);
     }
 
-    private void createManuallyUploadedDiseaseOccurrenceForDengue(Feed feed, Double finalWeighting) {
+    private void createManuallyUploadedDiseaseOccurrenceForDengue(Feed feed) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
         Location location = locationDao.getById(80);
         Alert alert = new Alert();
@@ -336,8 +335,8 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setLocation(location);
         occurrence.setAlert(alert);
-        occurrence.setFinalWeighting(finalWeighting);
-        occurrence.setFinalWeightingExcludingSpatial(finalWeighting);
+        occurrence.setFinalWeighting(1.0);
+        occurrence.setFinalWeightingExcludingSpatial(1.0);
         occurrence.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence.setOccurrenceDate(DateTime.now());
         diseaseOccurrenceDao.save(occurrence);

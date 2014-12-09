@@ -82,15 +82,15 @@ public class CsvLookupData {
 
     public Feed getExistingFeedByName(String feedName, boolean goldStandard) {
         if (goldStandard) {
-            if (manuallyUploadedFeeds == null) {
-                manuallyUploadedFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL);
-            }
-            return selectUnique(manuallyUploadedFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
-        } else {
             if (goldStandardFeeds == null) {
                 goldStandardFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD);
             }
             return selectUnique(goldStandardFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
+        } else {
+            if (manuallyUploadedFeeds == null) {
+                manuallyUploadedFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL);
+            }
+            return selectUnique(manuallyUploadedFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
         }
     }
 

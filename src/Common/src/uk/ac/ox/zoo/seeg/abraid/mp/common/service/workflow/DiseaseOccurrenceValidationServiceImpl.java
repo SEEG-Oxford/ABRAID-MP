@@ -2,10 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
@@ -39,14 +36,13 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     /**
      * Adds validation parameters to a disease occurrence, including various checks.
      * @param occurrence The disease occurrence.
-     * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
      */
     @Override
-    public void addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard) {
+    public void addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
         // By default, set the occurrence to status READY
         clearAndSetToReady(occurrence);
         if (hasPassedQc(occurrence)) {
-            if (isGoldStandard) {
+            if (isGoldStandard(occurrence)) {
                 handleGoldStandard(occurrence);
             } else if (automaticModelRunsEnabled(occurrence)) {
                 handleAutomaticModelRunsEnabled(occurrence);
@@ -96,6 +92,10 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private boolean hasPassedQc(DiseaseOccurrence occurrence) {
         return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    }
+
+    private boolean isGoldStandard(DiseaseOccurrence occurrence) {
+        return occurrence.getAlert().getFeed().getProvenance().getName().equals(ProvenanceNames.MANUAL_GOLD_STANDARD);
     }
 
     private void setToFailedQc(DiseaseOccurrence occurrence) {

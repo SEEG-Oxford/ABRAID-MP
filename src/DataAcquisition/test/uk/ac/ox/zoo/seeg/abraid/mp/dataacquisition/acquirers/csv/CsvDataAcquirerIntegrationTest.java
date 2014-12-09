@@ -88,12 +88,14 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo("Manual dataset");
     }
 
     private void assertGoldStandardValidationParameters(DiseaseOccurrence occurrence) {
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
         assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
+        assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo("Manual gold standard dataset");
     }
 
     private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {
@@ -131,7 +133,6 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
         Alert occurrence1Alert = occurrence.getAlert();
         assertThat(occurrence1Alert.getFeed().getName()).isEqualTo("SEEG Data 2014");
-        assertThat(occurrence1Alert.getFeed().getProvenance().getName()).isEqualTo("Manual dataset");
         assertThat(occurrence1Alert.getPublicationDate()).isNull();
         assertThat(occurrence1Alert.getHealthMapAlertId()).isNull();
         assertThat(occurrence1Alert.getUrl()).isEqualTo("onm.php?id=XX_ALERT_ID_XX");
@@ -167,7 +168,6 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
         Alert occurrence2Alert = occurrence.getAlert();
         assertThat(occurrence2Alert.getFeed().getName()).isEqualTo("SEEG Data 2014");
-        assertThat(occurrence2Alert.getFeed().getProvenance().getName()).isEqualTo("Manual dataset");
         assertThat(occurrence2Alert.getPublicationDate()).isNull();
         assertThat(occurrence2Alert.getHealthMapAlertId()).isNull();
         assertThat(occurrence2Alert.getUrl()).isNull();

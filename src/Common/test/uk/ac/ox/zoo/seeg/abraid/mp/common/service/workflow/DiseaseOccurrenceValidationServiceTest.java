@@ -43,8 +43,19 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksDiscardsOccurrenceIfOccurrenceLocationIsNull() {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        service.addValidationParametersWithChecks(occurrence, false);
+        setIsGoldStandardProvenance(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+    }
+
+    private void setIsGoldStandardProvenance(DiseaseOccurrence occurrence, boolean isGoldStandard) {
+        String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
+        Provenance provenance = new Provenance(provenanceName);
+
+        Feed feed = new Feed("Test feed", provenance);
+        Alert alert = new Alert();
+        alert.setFeed(feed);
+        occurrence.setAlert(alert);
     }
 
     @Test
@@ -52,9 +63,10 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
         occurrence.getLocation().setHasPassedQc(false);
+        setIsGoldStandardProvenance(occurrence, false);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
@@ -66,9 +78,10 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
         occurrence.getLocation().setHasPassedQc(false);
+        setIsGoldStandardProvenance(occurrence, false);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
@@ -83,13 +96,14 @@ public class DiseaseOccurrenceValidationServiceTest {
         double distanceFromDiseaseExtent = 500;
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
@@ -107,10 +121,11 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        setIsGoldStandardProvenance(occurrence, false);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.READY);
@@ -121,10 +136,11 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        setIsGoldStandardProvenance(occurrence, false);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.AWAITING_BATCHING);
@@ -144,10 +160,11 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        setIsGoldStandardProvenance(occurrence, false);
         occurrence.getLocation().setPrecision(LocationPrecision.COUNTRY);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.READY);
@@ -161,12 +178,13 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(null);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.IN_REVIEW);
@@ -180,12 +198,13 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(null);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -204,12 +223,13 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.5);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.5);
@@ -230,13 +250,14 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
@@ -254,9 +275,10 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, true);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, true);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -273,9 +295,10 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, true);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, true);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -291,12 +314,13 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfBelowMaxES() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.39);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(-300.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.39);
@@ -312,12 +336,13 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfOutsideDiseaseExtent() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.6);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.6);
@@ -334,12 +359,13 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(null);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -355,12 +381,13 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfOutsideDiseaseExtentAndESIsNull() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(null);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -377,12 +404,13 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         occurrence.getDiseaseGroup().setMaxEnvironmentalSuitabilityWithoutML(null);
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.6);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.6);
@@ -398,12 +426,13 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksDoesNotSendToValidatorWithoutMLIfWithinTolerances() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.41);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(-1000.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.41);
@@ -419,12 +448,13 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSendsToValidatorWithoutMLIfAboveMaxESAndDistanceFromExtentIsNull() {
         // Arrange
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
+        setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.5);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence, false);
+        service.addValidationParametersWithChecks(occurrence);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.5);

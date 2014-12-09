@@ -49,11 +49,15 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     private static Feed TEST_FEED;
+    private static Feed GOLD_STANDARD_FEED;
 
     @Before
     public void setUp() {
         TEST_FEED = new Feed("Test feed", provenanceDao.getByName(ProvenanceNames.MANUAL));
         feedDao.save(TEST_FEED);
+
+        GOLD_STANDARD_FEED = new Feed("Gold standard feed", provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
+        feedDao.save(GOLD_STANDARD_FEED);
     }
 
     @Test
@@ -727,17 +731,21 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     private void addManuallyUploadedOccurrences() {
-        createManuallyUploadedDiseaseOccurrenceForDengue(null);
-        createManuallyUploadedDiseaseOccurrenceForDengue(1.0);
-        createManuallyUploadedDiseaseOccurrenceForDengue(0.9);
-        createManuallyUploadedDiseaseOccurrenceForDengue(1.0);
+        createManuallyUploadedDiseaseOccurrenceForDengue(null, false);
+        createManuallyUploadedDiseaseOccurrenceForDengue(0.9, false);
+        createManuallyUploadedDiseaseOccurrenceForDengue(1.0, true);
+        createManuallyUploadedDiseaseOccurrenceForDengue(1.0, true);
     }
 
-    private void createManuallyUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
+    private void createManuallyUploadedDiseaseOccurrenceForDengue(Double finalWeighting, boolean isGoldStandard) {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
         Location location = locationDao.getById(80);
         Alert alert = new Alert();
-        alert.setFeed(TEST_FEED);
+        if (isGoldStandard) {
+            alert.setFeed(GOLD_STANDARD_FEED);
+        } else {
+            alert.setFeed(TEST_FEED);
+        }
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setDiseaseGroup(diseaseGroup);

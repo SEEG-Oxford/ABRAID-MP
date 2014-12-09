@@ -46,11 +46,11 @@ public class CsvDiseaseOccurrenceConverter {
      * @return The converted DiseaseOccurrence.
      * @throws DataAcquisitionException if the DiseaseOccurrence could not be converted.
      */
-    public DiseaseOccurrence convert(CsvDiseaseOccurrence csvDiseaseOccurrence) throws DataAcquisitionException {
+    public DiseaseOccurrence convert(CsvDiseaseOccurrence csvDiseaseOccurrence, boolean isGoldStandard) throws DataAcquisitionException {
         validate(csvDiseaseOccurrence);
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setLocation(convertLocation(csvDiseaseOccurrence));
-        occurrence.setAlert(convertAlert(csvDiseaseOccurrence));
+        occurrence.setAlert(convertAlert(csvDiseaseOccurrence, isGoldStandard));
         occurrence.setDiseaseGroup(convertDiseaseGroup(csvDiseaseOccurrence));
         occurrence.setOccurrenceDate(convertOccurrenceDate(csvDiseaseOccurrence.getOccurrenceDate()));
         return occurrence;
@@ -70,9 +70,10 @@ public class CsvDiseaseOccurrenceConverter {
         return location;
     }
 
-    private Alert convertAlert(CsvDiseaseOccurrence csvDiseaseOccurrence) {
+    private Alert convertAlert(CsvDiseaseOccurrence csvDiseaseOccurrence, boolean isGoldStandard) {
         Alert alert = new Alert();
-        alert.setFeed(csvLookupData.getFeedForManuallyUploadedData(csvDiseaseOccurrence.getFeedName()));
+        Feed feed = csvLookupData.getFeedForManuallyUploadedData(csvDiseaseOccurrence.getFeedName(), isGoldStandard);
+        alert.setFeed(feed);
         alert.setTitle(csvDiseaseOccurrence.getAlertTitle());
         alert.setSummary(csvDiseaseOccurrence.getSummary());
         alert.setUrl(csvDiseaseOccurrence.getUrl());
