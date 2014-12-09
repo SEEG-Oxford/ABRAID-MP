@@ -1,11 +1,5 @@
 <#import "/spring.ftl" as spring />
 <div class="login-pane">
-    <form action="">
-        <p class="form-group">
-            <a class="btn btn-primary">Log in via TGHN</a>
-        </p>
-    </form>
-    <hr />
     <form id="login-form" action="" data-bind="formSubmit: submit">
         <p id="login-header" data-bind="html: message"></p>
         <p class="form-group">
@@ -28,7 +22,7 @@
             <button type="submit" class="btn btn-primary" data-bind="formButton: { submitting: 'Logging in ...', standard:'Log in' }"></button>
         </p>
         <p class="form-group form-info">
-            Forgotten password? <a href="#" target="_top">Reset it</a>.
+            Forgotten password? <a href="<@spring.url "/account/reset/request" />" target="_top">Reset it</a>.
         </p>
         <p class="form-group form-info">
             New user? <a href="<@spring.url "/register/account" />" target="_top">Create account</a>.
