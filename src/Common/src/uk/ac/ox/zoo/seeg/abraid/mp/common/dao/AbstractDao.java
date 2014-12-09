@@ -121,6 +121,18 @@ public abstract class AbstractDao<E, I extends Serializable> {
     }
 
     /**
+     * Convenience method to execute an update or delete named query with the specified parameters.
+     * @param namedQuery the named query to run
+     * @param parameterNamesAndValues the names and values of the parameters. These must be in the format
+     * name1, value1, name2, value2, ...
+     * @throws HibernateException if the query can not be executed
+     */
+    protected final void noResultNamedQuery(String namedQuery, Object... parameterNamesAndValues)
+            throws HibernateException {
+        Query query = getParameterisedNamedQuery(namedQuery, parameterNamesAndValues);
+        query.executeUpdate();
+    }
+    /**
      * Get the results of a {@link Criteria} query.
      * @param criteria the {@link Criteria} query to run
      * @return the list of matched query results
