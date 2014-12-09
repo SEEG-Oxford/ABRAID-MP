@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -13,22 +14,28 @@ import java.util.List;
  */
 @Transactional(rollbackFor = Exception.class)
 public class ExpertServiceImpl implements ExpertService {
-    private AdminUnitReviewDao adminUnitReviewDao;
-    private ExpertDao expertDao;
-    private DiseaseGroupDao diseaseGroupDao;
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
-    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+    private final AdminUnitReviewDao adminUnitReviewDao;
+    private final ExpertDao expertDao;
+    private final DiseaseGroupDao diseaseGroupDao;
+    private final DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private final DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+    private final PasswordResetRequestDao passwordResetRequestDao;
+    private final PasswordEncoder passwordEncoder;
 
     public ExpertServiceImpl(AdminUnitReviewDao adminUnitReviewDao,
                              ExpertDao expertDao,
                              DiseaseGroupDao diseaseGroupDao,
                              DiseaseOccurrenceDao diseaseOccurrenceDao,
-                             DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao) {
+                             DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
+                             PasswordResetRequestDao passwordResetRequestDao,
+                             PasswordEncoder passwordEncoder) {
         this.adminUnitReviewDao = adminUnitReviewDao;
         this.expertDao = expertDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
+        this.passwordResetRequestDao = passwordResetRequestDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -131,6 +138,69 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId) {
         return adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+    }
+
+    /**
+     * Creates a new PasswordResetRequest entry in the database. This will also delete any other PasswordResetRequest
+     * for this user and any PasswordResetRequests older than 24 hours.
+     * @param email The email address of the associated expert.
+     * @param key The key used to secure the PasswordResetRequest.
+     * @return The ID of the new PasswordResetRequest.
+     */
+    @Override
+    public Integer createAndSavePasswordResetRequest(String email, String key) {
+        passwordResetRequestDao.removeOldRequests();
+
+        Expert expert = expertDao.getByEmail(email);
+        String hashedKey = passwordEncoder.encode(key);
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest(expert, hashedKey);
+
+        passwordResetRequestDao.removeRequestsIssuedForExpert(expert);
+        passwordResetRequestDao.save(passwordResetRequest);
+
+        return passwordResetRequest.getId();
+    }
+
+    /**
+     * Gets a PasswordResetRequest by id.
+     * This will also delete any PasswordResetRequests older than 24 hours.
+     * @param id The id.
+     * @return The PasswordResetRequest.
+     */
+    @Override
+    public PasswordResetRequest getPasswordResetRequest(Integer id) {
+        passwordResetRequestDao.removeOldRequests();
+
+        if (id == null) {
+            return null;
+        }
+        return passwordResetRequestDao.getById(id);
+    }
+
+    /**
+     * Verifies a PasswordResetRequest key against the stored key hash for a PasswordResetRequest identified by it's id.
+     * This will also delete any PasswordResetRequests older than 24 hours.
+     * @param id The id of the PasswordResetRequest to check against.
+     * @param key The key to check.
+     * @return true if the check was successful.
+     */
+    @Override
+    public boolean checkPasswordResetRequest(Integer id, String key) {
+        passwordResetRequestDao.removeOldRequests();
+
+        PasswordResetRequest passwordResetRequest = passwordResetRequestDao.getById(id);
+        return passwordResetRequest != null && passwordEncoder.matches(key, passwordResetRequest.getHashedKey());
+    }
+
+    /**
+     * Deletes a PasswordResetRequest.
+     * This will also delete any PasswordResetRequests older than 24 hours.
+     * @param passwordResetRequest The PasswordResetRequest.
+     */
+    @Override
+    public void deletePasswordResetRequest(PasswordResetRequest passwordResetRequest) {
+        passwordResetRequestDao.removeOldRequests();
+        passwordResetRequestDao.delete(passwordResetRequest);
     }
 
     /**

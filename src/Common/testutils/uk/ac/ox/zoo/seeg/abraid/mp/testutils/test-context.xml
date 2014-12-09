@@ -11,6 +11,4 @@
     <bean id="loggingContextName" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="TestContext"/>
     </bean>
-
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder" />
 </beans>

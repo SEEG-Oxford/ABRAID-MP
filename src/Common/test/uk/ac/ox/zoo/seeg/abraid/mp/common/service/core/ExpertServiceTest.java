@@ -2,6 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
@@ -26,6 +29,8 @@ public class ExpertServiceTest {
     private DiseaseGroupDao diseaseGroupDao;
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+    private PasswordResetRequestDao passwordResetRequestDao;
+    private PasswordEncoder passwordEncoder;
 
     @Before
     public void setUp() {
@@ -34,8 +39,10 @@ public class ExpertServiceTest {
         diseaseGroupDao = mock(DiseaseGroupDao.class);
         diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
         diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
+        passwordResetRequestDao = mock(PasswordResetRequestDao.class);
+        passwordEncoder = mock(PasswordEncoder.class);
         expertService = new ExpertServiceImpl(adminUnitReviewDao, expertDao, diseaseGroupDao, diseaseOccurrenceDao,
-                diseaseOccurrenceReviewDao);
+                diseaseOccurrenceReviewDao, passwordResetRequestDao, passwordEncoder);
     }
 
     @Test
@@ -128,6 +135,187 @@ public class ExpertServiceTest {
 
         // Assert
         assertThat(occurrences.isEmpty());
+    }
+
+    @Test
+    public void deletePasswordResetRequestRemovesRequest() {
+        // Arrange
+        PasswordResetRequest request = mock(PasswordResetRequest.class);
+
+        // Act
+        expertService.deletePasswordResetRequest(request);
+
+        // Assert
+        verify(passwordResetRequestDao).delete(request);
+    }
+
+    @Test
+    public void deletePasswordResetRequestTriggersRemovalOfOldRequests() {
+        // Arrange
+        PasswordResetRequest request = mock(PasswordResetRequest.class);
+
+        // Act
+        expertService.deletePasswordResetRequest(request);
+
+        // Assert
+        verify(passwordResetRequestDao).removeOldRequests();
+    }
+
+    @Test
+    public void checkPasswordResetRequestReturnsFalseForInvalidID() {
+        // Arrange
+        when(passwordResetRequestDao.getById(7)).thenReturn(null);
+        when(passwordEncoder.matches(eq("any"), anyString())).thenReturn(true);
+
+        // Act
+        boolean result = expertService.checkPasswordResetRequest(7, "any");
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void checkPasswordResetRequestReturnsFalseForInvalidKey() {
+        // Arrange
+        when(passwordResetRequestDao.getById(7)).thenReturn(mock(PasswordResetRequest.class));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+        // Act
+        boolean result = expertService.checkPasswordResetRequest(7, "any");
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void checkPasswordResetRequestReturnsTrueForValidIDKeyPair() {
+        // Arrange
+        PasswordResetRequest request = mock(PasswordResetRequest.class);
+        when(request.getHashedKey()).thenReturn("hashedKey");
+        when(passwordResetRequestDao.getById(7)).thenReturn(request);
+        when(passwordEncoder.matches("key", "hashedKey")).thenReturn(true);
+
+        // Act
+        boolean result = expertService.checkPasswordResetRequest(7, "key");
+
+        // Assert
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void checkPasswordResetRequestTriggersRemovalOfOldRequests() {
+        // Act
+        expertService.checkPasswordResetRequest(7, "key");
+
+        // Assert
+        verify(passwordResetRequestDao).removeOldRequests();
+    }
+
+
+    @Test
+    public void getPasswordResetRequestReturnsNullForMissingID() {
+        // Act
+        PasswordResetRequest result = expertService.getPasswordResetRequest(null);
+
+        // Assert
+        assertThat(result).isNull();
+    }
+
+    @Test
+    public void getPasswordResetRequestReturnsCorrectResult() {
+        // Arrange
+        PasswordResetRequest request = mock(PasswordResetRequest.class);
+        when(passwordResetRequestDao.getById(7)).thenReturn(request);
+
+        // Act
+        PasswordResetRequest result = expertService.getPasswordResetRequest(7);
+
+        // Assert
+        assertThat(result).isEqualTo(request);
+    }
+
+    @Test
+    public void getPasswordResetRequestTriggersRemovalOfOldRequests() {
+        // Act
+        expertService.getPasswordResetRequest(7);
+
+        // Assert
+        verify(passwordResetRequestDao).removeOldRequests();
+    }
+
+    @Test
+    public void createAndSavePasswordResetRequestSavesNewRequest() {
+        // Arrange
+        String email = "email";
+        String key = "key";
+        Expert expert = mock(Expert.class);
+        when(passwordEncoder.encode(key)).thenReturn(key);
+        when(expertDao.getByEmail(email)).thenReturn(expert);
+
+        // Act
+        expertService.createAndSavePasswordResetRequest(email, key);
+
+        // Assert
+        ArgumentCaptor<PasswordResetRequest> captor = ArgumentCaptor.forClass(PasswordResetRequest.class);
+        verify(passwordResetRequestDao).save(captor.capture());
+        PasswordResetRequest value = captor.getValue();
+        assertThat(value.getHashedKey()).isEqualTo(key);
+        assertThat(value.getExpert()).isEqualTo(expert);
+    }
+
+    @Test
+    public void createAndSavePasswordResetRequestHashesTheSpecifiedKey() {
+        // Arrange
+        String email = "email";
+        String key = "key";
+        Expert expert = mock(Expert.class);
+        String hashedKey = "hashedKey";
+        when(passwordEncoder.encode(key)).thenReturn(hashedKey);
+        when(expertDao.getByEmail(email)).thenReturn(expert);
+
+        // Act
+        expertService.createAndSavePasswordResetRequest(email, key);
+
+        // Assert
+        ArgumentCaptor<PasswordResetRequest> captor = ArgumentCaptor.forClass(PasswordResetRequest.class);
+        verify(passwordEncoder).encode(key);
+        verify(passwordResetRequestDao).save(captor.capture());
+        PasswordResetRequest value = captor.getValue();
+        assertThat(value.getHashedKey()).isEqualTo(hashedKey);
+    }
+
+    @Test
+    public void createAndSavePasswordResetRequestTriggersRemovalOfOldRequests() {
+        // Arrange
+        String email = "email";
+        String key = "key";
+        Expert expert = mock(Expert.class);
+        when(passwordEncoder.encode(key)).thenReturn(key);
+        when(expertDao.getByEmail(email)).thenReturn(expert);
+
+        // Act
+        expertService.createAndSavePasswordResetRequest(email, key);
+
+        // Assert
+        verify(passwordResetRequestDao).removeOldRequests();
+    }
+
+    @Test
+    public void createAndSavePasswordResetRequestTriggersRemovalOfUsersRequests() {
+        // Arrange
+        String email = "email";
+        String key = "key";
+        Expert expert = mock(Expert.class);
+        when(passwordEncoder.encode(key)).thenReturn(key);
+        when(expertDao.getByEmail(email)).thenReturn(expert);
+
+        // Act
+        expertService.createAndSavePasswordResetRequest(email, key);
+
+        // Assert
+        InOrder inOrder = inOrder(passwordResetRequestDao);
+        inOrder.verify(passwordResetRequestDao).removeRequestsIssuedForExpert(expert);
+        inOrder.verify(passwordResetRequestDao).save(any(PasswordResetRequest.class));
     }
 
     @Test

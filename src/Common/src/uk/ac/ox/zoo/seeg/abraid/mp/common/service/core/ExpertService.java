@@ -87,6 +87,39 @@ public interface ExpertService {
     List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId);
 
     /**
+     * Creates a new PasswordResetRequest entry in the database. This will also delete any other PasswordResetRequest
+     * for this user and any PasswordResetRequests older than 24 hours.
+     * @param email The email address of the associated expert.
+     * @param key The key used to secure the PasswordResetRequest.
+     * @return The ID of the new PasswordResetRequest.
+     */
+    Integer createAndSavePasswordResetRequest(String email, String key);
+
+    /**
+     * Gets a PasswordResetRequest by id.
+     * This will also delete any PasswordResetRequests older than 24 hours.
+     * @param id The id.
+     * @return The PasswordResetRequest.
+     */
+    PasswordResetRequest getPasswordResetRequest(Integer id);
+
+    /**
+     * Verifies a PasswordResetRequest key against the stored key hash for a PasswordResetRequest identified by it's id.
+     * This will also delete any PasswordResetRequests older than 24 hours.
+     * @param id The id of the PasswordResetRequest to check against.
+     * @param key The key to check.
+     * @return true if the check was successful.
+     */
+    boolean checkPasswordResetRequest(Integer id, String key);
+
+    /**
+     * Deletes a PasswordResetRequest.
+     * This will also delete any PasswordResetRequests older than 24 hours.
+     * @param passwordResetRequest The PasswordResetRequest.
+     */
+    void deletePasswordResetRequest(PasswordResetRequest passwordResetRequest);
+
+    /**
      * Gets the number of admin unit reviews an expert has submitted, across all disease groups.
      * @param expertId The id of the specified expert.
      * @return The total number of admin unit reviews for the specified expert.

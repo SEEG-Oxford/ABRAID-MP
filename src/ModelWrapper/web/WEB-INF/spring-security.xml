@@ -12,8 +12,6 @@
 
     <import resource="modelwrapper-security-properties.xml" />
 
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-
     <!-- API realm -->
     <security:http realm="ABRAID-MP: ModelWrapper API" pattern="/api/**" create-session="stateless" authentication-manager-ref="apiAuthenticationManager">
         <security:intercept-url pattern="/**" access="ROLE_API" />
@@ -26,7 +24,7 @@
 
     <bean id="apiDaoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <property name="userDetailsService" ref="apiUserDetailsService"/> <!-- Expects fixed username 'api' -->
-        <property name="passwordEncoder" ref="passwordEncoder" /> <!-- Uses http basic password to hold the API key -->
+        <property name="passwordEncoder" ref="passwordEncoder" /> <!-- Uses http basic password to hold the API key. Defined in common/beans-web via applicationContext -->
     </bean>
 
     <bean id="apiUserDetailsService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.ApiUserDetailsServiceImpl" >
