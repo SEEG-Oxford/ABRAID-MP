@@ -258,7 +258,8 @@ public class AccountControllerTest {
                 .when(helper).processExpertPasswordResetRequestAsTransaction(eq("email"), anyString());
 
         // Act
-        ResponseEntity<Collection<String>> result = target.submitPasswordResetRequestPage("email", mock(HttpServletRequest.class));
+        HttpServletRequest httpServletRequest = createHttpServletRequest("https", "abraid.domain", 443, "/", true);
+        ResponseEntity<Collection<String>> result = target.submitPasswordResetRequestPage("email", httpServletRequest);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -270,17 +271,13 @@ public class AccountControllerTest {
         AccountControllerValidator validator = mock(AccountControllerValidator.class);
         AccountControllerHelper helper = mock(AccountControllerHelper.class);
         AccountController target = createTarget(99, null, null, validator, helper, null);
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
-        when(httpServletRequest.getScheme()).thenReturn("123");
-        when(httpServletRequest.getServerName()).thenReturn("456");
-        when(httpServletRequest.getServerPort()).thenReturn(789);
-        when(httpServletRequest.getContextPath()).thenReturn("/0");
+        HttpServletRequest httpServletRequest = createHttpServletRequest("https", "abraid.domain", 443, "/", true);
 
         // Act
         ResponseEntity<Collection<String>> result = target.submitPasswordResetRequestPage("email", httpServletRequest);
 
         // Assert
-        verify(helper).processExpertPasswordResetRequestAsTransaction("email", "123://456:789/0");
+        verify(helper).processExpertPasswordResetRequestAsTransaction("email", "https://abraid.domain/");
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -389,5 +386,23 @@ public class AccountControllerTest {
     private ValidatorDiseaseGroup createMockValidatorDiseaseGroup(int id, String name) {
         ValidatorDiseaseGroup mock = new ValidatorDiseaseGroup(id, name);
         return mock;
+    }
+
+    private HttpServletRequest createHttpServletRequest(String schema, String host, int port, String context, boolean useXFowarded) {
+        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+
+        if (useXFowarded) {
+            when(httpServletRequest.getScheme()).thenReturn("http");
+            when(httpServletRequest.getServerName()).thenReturn("localhost");
+            when(httpServletRequest.getServerPort()).thenReturn(8080);
+            when(httpServletRequest.getHeader("X-Forwarded-Host")).thenReturn(host + ":" + port);
+            when(httpServletRequest.getHeader("X-Forwarded-Proto")).thenReturn(schema);
+        } else {
+            when(httpServletRequest.getScheme()).thenReturn(schema);
+            when(httpServletRequest.getServerName()).thenReturn(host);
+            when(httpServletRequest.getServerPort()).thenReturn(port);
+        }
+        when(httpServletRequest.getContextPath()).thenReturn(context);
+        return httpServletRequest;
     }
 }
