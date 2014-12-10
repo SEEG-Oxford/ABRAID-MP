@@ -1,14 +1,18 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import org.apache.log4j.Logger;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,7 +24,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class CsvLookupData {
     private static final Logger LOGGER = Logger.getLogger(CsvLookupData.class);
-    private static final String SAVE_NEW_FEED = "Adding new feed (%s) under provenance %s";
+    private static final String SAVED_NEW_FEED = "Saved new feed (%s) under provenance '%s'";
 
     private AlertService alertService;
     private LocationService locationService;
@@ -28,8 +32,7 @@ public class CsvLookupData {
 
     private Map<String, Country> countryMap;
     private Map<String, DiseaseGroup> diseaseGroupMap;
-    private List<Feed> manuallyUploadedFeeds;
-    private List<Feed> goldStandardFeeds;
+    private Map<String, List<Feed>> provenanceFeeds;
 
     public CsvLookupData(AlertService alertService, LocationService locationService, DiseaseService diseaseService) {
         this.alertService = alertService;
@@ -77,40 +80,33 @@ public class CsvLookupData {
      * @return The feed to be associated with this manually uploaded datapoint.
      */
     public Feed getFeedForManuallyUploadedData(String feedName, boolean isGoldStandard) {
-        Feed feed = getExistingFeedByName(feedName, isGoldStandard);
+        initialiseProvenanceFeeds();
+        String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
+        Feed feed = getExistingFeed(provenanceName, feedName);
         if (feed == null) {
-            LOGGER.warn(String.format(SAVE_NEW_FEED,
-                    feedName, isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL));
-            feed = isGoldStandard ? addNewGoldStandardFeed(feedName) : addNewManualFeed(feedName);
+            feed = addNewFeed(provenanceName, feedName);
         }
         return feed;
     }
 
-    public Feed getExistingFeedByName(String feedName, boolean isGoldStandard) {
-        if (isGoldStandard) {
-            if (goldStandardFeeds == null) {
-                goldStandardFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD);
-            }
-            return selectUnique(goldStandardFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
-        } else {
-            if (manuallyUploadedFeeds == null) {
-                manuallyUploadedFeeds = alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL);
-            }
-            return selectUnique(manuallyUploadedFeeds, having(on(Feed.class).getName(), equalTo(feedName)));
+    private void initialiseProvenanceFeeds() {
+        if (provenanceFeeds == null) {
+            provenanceFeeds = new HashMap<>();
         }
     }
 
-    private Feed addNewGoldStandardFeed(String feedName) {
-        Feed feed = new Feed(feedName, alertService.getProvenanceByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
-        alertService.saveFeed(feed);
-        goldStandardFeeds.add(feed);
-        return feed;
+    private Feed getExistingFeed(String provenanceName, String feedName) {
+        if (!provenanceFeeds.containsKey(provenanceName)) {
+            provenanceFeeds.put(provenanceName, new ArrayList<>(alertService.getFeedsByProvenanceName(provenanceName)));
+        }
+        return selectUnique(provenanceFeeds.get(provenanceName), having(on(Feed.class).getName(), equalTo(feedName)));
     }
 
-    private Feed addNewManualFeed(String feedName) {
-        Feed feed = new Feed(feedName, alertService.getProvenanceByName(ProvenanceNames.MANUAL));
+    private Feed addNewFeed(String provenanceName, String feedName) {
+        Feed feed = new Feed(feedName, alertService.getProvenanceByName(provenanceName));
         alertService.saveFeed(feed);
-        manuallyUploadedFeeds.add(feed);
+        provenanceFeeds.get(provenanceName).add(feed);
+        LOGGER.warn(String.format(SAVED_NEW_FEED, feedName, provenanceName));
         return feed;
     }
 
@@ -120,7 +116,6 @@ public class CsvLookupData {
      */
     public void clearLookups() {
         diseaseGroupMap = null;
-        manuallyUploadedFeeds = null;
-        goldStandardFeeds = null;
+        provenanceFeeds = null;
     }
 }

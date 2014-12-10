@@ -74,6 +74,7 @@ public class Feed {
     public Feed(String name, Provenance provenance) {
         this.name = name;
         this.provenance = provenance;
+        this.weighting = provenance.getDefaultFeedWeighting();
     }
 
     public Feed(String name, Provenance provenance, double weighting, String language, Integer healthMapFeedId) {

@@ -2,22 +2,16 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the CsvLookupData class.
@@ -81,31 +75,36 @@ public class CsvLookupDataTest {
     @Test
     public void getFeedForManuallyUploadedData() {
         // Arrange
-        String feedName = "ABRAID";
-        String provenanceName = ProvenanceNames.MANUAL;
-        Feed expectedFeed = new Feed(feedName);
-        when(alertService.getFeedsByProvenanceName(provenanceName)).thenReturn(Arrays.asList(expectedFeed));
+        String feedName = "SEEG Data";
+        Feed manualFeed = new Feed(feedName);
+        Feed goldStandardFeed = new Feed(feedName);
+
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL)).thenReturn(Arrays.asList(manualFeed));
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD)).thenReturn(Arrays.asList(goldStandardFeed));
 
         // Act
-        Feed actualFeed = lookupData.getFeedForManuallyUploadedData(feedName, false);
+        Feed actualManualFeed = lookupData.getFeedForManuallyUploadedData(feedName, false);
+        Feed actualGoldStandardFeed = lookupData.getFeedForManuallyUploadedData(feedName, true);
 
         // Assert
-        assertThat(actualFeed).isSameAs(expectedFeed);
+        assertThat(actualManualFeed).isSameAs(manualFeed);
+        assertThat(actualGoldStandardFeed).isSameAs(goldStandardFeed);
     }
 
-
     @Test
-    public void getFeedForManuallyUploadedGoldStandardData() {
+    public void getFeedForManuallyUploadedDataAddsNewFeed() {
         // Arrange
-        String feedName = "ABRAID";
-        String provenanceName = ProvenanceNames.MANUAL_GOLD_STANDARD;
-        Feed expectedFeed = new Feed(feedName);
-        when(alertService.getFeedsByProvenanceName(provenanceName)).thenReturn(Arrays.asList(expectedFeed));
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL)).thenReturn(new ArrayList<Feed>());
+        when(alertService.getProvenanceByName(ProvenanceNames.MANUAL)).thenReturn(new Provenance(ProvenanceNames.MANUAL));
+        String newFeedName = "SEEG Data 2014";
 
         // Act
-        Feed actualFeed = lookupData.getFeedForManuallyUploadedData(feedName, true);
+        Feed newFeed = lookupData.getFeedForManuallyUploadedData(newFeedName, false);
 
         // Assert
-        assertThat(actualFeed).isSameAs(expectedFeed);
+        assertThat(newFeed.getName()).isEqualTo(newFeedName);
+        assertThat(newFeed.getProvenance().getName()).isEqualTo(ProvenanceNames.MANUAL);
+        assertThat(newFeed.getWeighting()).isEqualTo(newFeed.getProvenance().getDefaultFeedWeighting());
+        verify(alertService).saveFeed(any(Feed.class));
     }
 }
