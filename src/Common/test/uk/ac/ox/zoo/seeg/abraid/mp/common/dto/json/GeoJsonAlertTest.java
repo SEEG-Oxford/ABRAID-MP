@@ -21,15 +21,10 @@ public class GeoJsonAlertTest extends AbstractDiseaseOccurrenceGeoJsonTests {
 
     @Before
     public void setUp() {
-        alert = newAlert(summary, feedName, feedLanguage, url);
-    }
-
-    private Alert newAlert(String summary, String feedName, String feedLanguage, String url) {
-        Alert alert = new Alert();
+        alert = new Alert();
         alert.setSummary(summary);
         alert.setFeed(new Feed(feedName, feedLanguage));
         alert.setUrl(url);
-        return alert;
     }
 
     @Test

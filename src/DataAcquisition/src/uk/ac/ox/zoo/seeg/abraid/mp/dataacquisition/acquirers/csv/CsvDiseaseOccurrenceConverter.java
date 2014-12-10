@@ -43,10 +43,12 @@ public class CsvDiseaseOccurrenceConverter {
     /**
      * Converts a CsvDiseaseOccurrence into a DiseaseOccurrence.
      * @param csvDiseaseOccurrence The CsvDiseaseOccurrence.
+     * @param isGoldStandard Whether the occurrence is a "gold standard" datapoint.
      * @return The converted DiseaseOccurrence.
      * @throws DataAcquisitionException if the DiseaseOccurrence could not be converted.
      */
-    public DiseaseOccurrence convert(CsvDiseaseOccurrence csvDiseaseOccurrence, boolean isGoldStandard) throws DataAcquisitionException {
+    public DiseaseOccurrence convert(CsvDiseaseOccurrence csvDiseaseOccurrence, boolean isGoldStandard)
+            throws DataAcquisitionException {
         validate(csvDiseaseOccurrence);
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setLocation(convertLocation(csvDiseaseOccurrence));

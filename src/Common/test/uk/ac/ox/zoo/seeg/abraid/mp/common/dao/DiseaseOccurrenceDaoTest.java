@@ -48,16 +48,16 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Autowired
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
-    private static Feed TEST_FEED;
-    private static Feed GOLD_STANDARD_FEED;
+    private static Feed testFeed;
+    private static Feed goldStandardFeed;
 
     @Before
     public void setUp() {
-        TEST_FEED = new Feed("Test feed", provenanceDao.getByName(ProvenanceNames.MANUAL));
-        feedDao.save(TEST_FEED);
+        testFeed = new Feed("Test feed", provenanceDao.getByName(ProvenanceNames.MANUAL));
+        feedDao.save(testFeed);
 
-        GOLD_STANDARD_FEED = new Feed("Gold standard feed", provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
-        feedDao.save(GOLD_STANDARD_FEED);
+        goldStandardFeed = new Feed("Gold standard feed", provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
+        feedDao.save(goldStandardFeed);
     }
 
     @Test
@@ -742,9 +742,9 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         Location location = locationDao.getById(80);
         Alert alert = new Alert();
         if (isGoldStandard) {
-            alert.setFeed(GOLD_STANDARD_FEED);
+            alert.setFeed(goldStandardFeed);
         } else {
-            alert.setFeed(TEST_FEED);
+            alert.setFeed(testFeed);
         }
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();

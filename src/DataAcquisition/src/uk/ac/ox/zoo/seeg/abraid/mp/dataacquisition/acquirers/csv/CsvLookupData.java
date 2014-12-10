@@ -75,6 +75,8 @@ public class CsvLookupData {
      * Gets the feed to be associated with this manually uploaded data, identified by the unique feed name in CSV row.
      * If a feed with the given name has not been seen before, save it to the database.
      * @param feedName The name of the feed to fetch (and add to the database if necessary).
+     * @param isGoldStandard Whether the occurrence is a "gold standard" data point,
+     *                       and should be saved against that provenance.
      * @return The feed to be associated with this manually uploaded datapoint.
      */
     public Feed getFeedForManuallyUploadedData(String feedName, boolean isGoldStandard) {
