@@ -2,7 +2,8 @@
  * An AMD used to display the (up to) 5 occurrences defining the selected admin unit's disease extent class.
  * Copyright (c) 2014 University of Oxford
  * - Events subscribed to:
- * -- 'admin-unit-selected'        - published by MapView.
+ * -- 'admin-unit-selected' - published by MapView.
+ * -- 'layers-changed'      - published by SelectedLayerViewModel.
  */
 define([
     "ko",
