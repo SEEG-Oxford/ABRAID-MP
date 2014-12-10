@@ -73,22 +73,24 @@ public class CsvLookupDataTest {
     }
 
     @Test
-    public void getFeedForManuallyUploadedData() {
+    public void getFeedForManuallyUploadedDataReturnsExistingFeed() {
+        // NB. Case insensitive when checking for existing feed by name, and same feed name is allowed for different provenances
         // Arrange
         String feedName = "SEEG Data";
-        Feed manualFeed = new Feed(feedName);
-        Feed goldStandardFeed = new Feed(feedName);
+        Feed expectedManualFeed = new Feed(feedName);
+        Feed expectedGoldStandardFeed = new Feed(feedName);
 
-        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL)).thenReturn(Arrays.asList(manualFeed));
-        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD)).thenReturn(Arrays.asList(goldStandardFeed));
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL)).thenReturn(Arrays.asList(expectedManualFeed));
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD)).thenReturn(Arrays.asList(expectedGoldStandardFeed));
 
         // Act
-        Feed actualManualFeed = lookupData.getFeedForManuallyUploadedData(feedName, false);
-        Feed actualGoldStandardFeed = lookupData.getFeedForManuallyUploadedData(feedName, true);
+        Feed manualFeed = lookupData.getFeedForManuallyUploadedData("seeg data", false);
+        Feed goldStandardFeed = lookupData.getFeedForManuallyUploadedData("seeg DATA", true);
 
         // Assert
-        assertThat(actualManualFeed).isSameAs(manualFeed);
-        assertThat(actualGoldStandardFeed).isSameAs(goldStandardFeed);
+        assertThat(manualFeed).isSameAs(expectedManualFeed);
+        assertThat(goldStandardFeed).isSameAs(expectedGoldStandardFeed);
+        verify(alertService, never()).saveFeed(any(Feed.class));
     }
 
     @Test
@@ -99,12 +101,18 @@ public class CsvLookupDataTest {
         String newFeedName = "SEEG Data 2014";
 
         // Act
-        Feed newFeed = lookupData.getFeedForManuallyUploadedData(newFeedName, false);
+        Feed newFeed1 = lookupData.getFeedForManuallyUploadedData(newFeedName, false);
+        Feed newFeed2 = lookupData.getFeedForManuallyUploadedData(newFeedName.toLowerCase(), false);
 
-        // Assert
+        // Assert - Only one feed saved due to case insensitive checking on feed name.
+        assertFeed(newFeed1, newFeedName);
+        assertFeed(newFeed2, newFeedName);
+        verify(alertService, times(1)).saveFeed(any(Feed.class));
+    }
+
+    private void assertFeed(Feed newFeed, String newFeedName) {
         assertThat(newFeed.getName()).isEqualTo(newFeedName);
         assertThat(newFeed.getProvenance().getName()).isEqualTo(ProvenanceNames.MANUAL);
         assertThat(newFeed.getWeighting()).isEqualTo(newFeed.getProvenance().getDefaultFeedWeighting());
-        verify(alertService).saveFeed(any(Feed.class));
     }
 }

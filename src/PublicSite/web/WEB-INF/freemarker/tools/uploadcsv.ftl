@@ -77,7 +77,7 @@
                     <td>Must be in the format DD/MM/YYYY, MM/YYYY, YYYY, MMM-YY or MMM-YYYY</td>
                 </tr>
                 <tr>
-                    <td>Feed Name</td>
+                    <td>Feed</td>
                     <td>Yes</td>
                     <td>The source of the data</td>
                 </tr>

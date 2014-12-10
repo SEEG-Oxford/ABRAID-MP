@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.*;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
 /**
  * Contains lookup data that is used when processing CSV data.
@@ -24,7 +24,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class CsvLookupData {
     private static final Logger LOGGER = Logger.getLogger(CsvLookupData.class);
-    private static final String SAVED_NEW_FEED = "Saved new feed (%s) under provenance '%s'";
+    private static final String SAVED_NEW_FEED = "Saved new feed \"%s\" under provenance \"%s\"";
 
     private AlertService alertService;
     private LocationService locationService;
@@ -32,7 +32,7 @@ public class CsvLookupData {
 
     private Map<String, Country> countryMap;
     private Map<String, DiseaseGroup> diseaseGroupMap;
-    private Map<String, List<Feed>> provenanceFeeds;
+    private Map<String, List<Feed>> provenanceFeedsMap;
 
     public CsvLookupData(AlertService alertService, LocationService locationService, DiseaseService diseaseService) {
         this.alertService = alertService;
@@ -46,10 +46,9 @@ public class CsvLookupData {
      */
     public Map<String, Country> getCountryMap() {
         if (countryMap == null) {
-            List<Country> countries = locationService.getAllCountries();
             // We need the keys to be lowercase for case-insensitive comparisons (so Lambda.index cannot be used here)
             countryMap = new HashMap<>();
-            for (Country country : countries) {
+            for (Country country : locationService.getAllCountries()) {
                 countryMap.put(country.getName().toLowerCase(), country);
             }
 
@@ -63,10 +62,9 @@ public class CsvLookupData {
      */
     public Map<String, DiseaseGroup> getDiseaseGroupMap() {
         if (diseaseGroupMap == null) {
-            List<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
             // We need the keys to be lowercase for case-insensitive comparisons (so Lambda.index cannot be used here)
             diseaseGroupMap = new HashMap<>();
-            for (DiseaseGroup diseaseGroup : diseaseGroups) {
+            for (DiseaseGroup diseaseGroup : diseaseService.getAllDiseaseGroups()) {
                 diseaseGroupMap.put(diseaseGroup.getName().toLowerCase(), diseaseGroup);
             }
         }
@@ -80,7 +78,7 @@ public class CsvLookupData {
      * @return The feed to be associated with this manually uploaded datapoint.
      */
     public Feed getFeedForManuallyUploadedData(String feedName, boolean isGoldStandard) {
-        initialiseProvenanceFeeds();
+        initialiseProvenanceFeedsMap();
         String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
         Feed feed = getExistingFeed(provenanceName, feedName);
         if (feed == null) {
@@ -89,23 +87,24 @@ public class CsvLookupData {
         return feed;
     }
 
-    private void initialiseProvenanceFeeds() {
-        if (provenanceFeeds == null) {
-            provenanceFeeds = new HashMap<>();
+    private void initialiseProvenanceFeedsMap() {
+        if (provenanceFeedsMap == null) {
+            provenanceFeedsMap = new HashMap<>();
         }
     }
 
     private Feed getExistingFeed(String provenanceName, String feedName) {
-        if (!provenanceFeeds.containsKey(provenanceName)) {
-            provenanceFeeds.put(provenanceName, new ArrayList<>(alertService.getFeedsByProvenanceName(provenanceName)));
+        if (!provenanceFeedsMap.containsKey(provenanceName)) {
+            provenanceFeedsMap.put(provenanceName, new ArrayList<>(alertService.getFeedsByProvenanceName(provenanceName)));
         }
-        return selectUnique(provenanceFeeds.get(provenanceName), having(on(Feed.class).getName(), equalTo(feedName)));
+        return selectUnique(provenanceFeedsMap.get(provenanceName),
+                            having(on(Feed.class).getName(), equalToIgnoringCase(feedName)));
     }
 
     private Feed addNewFeed(String provenanceName, String feedName) {
         Feed feed = new Feed(feedName, alertService.getProvenanceByName(provenanceName));
         alertService.saveFeed(feed);
-        provenanceFeeds.get(provenanceName).add(feed);
+        provenanceFeedsMap.get(provenanceName).add(feed);
         LOGGER.warn(String.format(SAVED_NEW_FEED, feedName, provenanceName));
         return feed;
     }
@@ -116,6 +115,6 @@ public class CsvLookupData {
      */
     public void clearLookups() {
         diseaseGroupMap = null;
-        provenanceFeeds = null;
+        provenanceFeedsMap = null;
     }
 }
