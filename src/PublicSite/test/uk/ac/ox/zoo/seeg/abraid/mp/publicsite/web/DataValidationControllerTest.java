@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
@@ -56,6 +57,33 @@ public class DataValidationControllerTest {
     }
 
     @Test
+    public void showPageReturnsDataModelForAnonymousUser() {
+        // Arrange
+        CurrentUserService currentUserService = createCurrentUserService();
+        when(currentUserService.getCurrentUser()).thenReturn(null);
+
+        Model model = mock(Model.class);
+        DataValidationController target = createTarget(currentUserService, null, null);
+
+        // Act
+        target.showPage(model);
+
+        // Assert
+        verify(model).addAttribute("userLoggedIn", false);
+        verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("showHelpText", false);
+        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model).addAttribute("adminUnitReviewCount", 0);
+
+        verify(model, never()).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model, never()).addAttribute("allOtherDiseases", new ArrayList<>());
+        verify(model, never()).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
+
+        verify(model).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
+        verify(model).addAttribute("defaultDiseaseGroupShortName", "dengue");
+    }
+
+    @Test
     public void showPageReturnsDataModelForLoggedInUser() {
         // Arrange
         Model model = mock(Model.class);
@@ -65,14 +93,18 @@ public class DataValidationControllerTest {
         target.showPage(model);
 
         // Assert
-        verify(model).addAttribute("diseaseInterests", new ArrayList<>());
-        verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
-        verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
         verify(model).addAttribute("userLoggedIn", true);
         verify(model).addAttribute("userSeeg", false);
         verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
+
+        verify(model).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
+        verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
+
+        verify(model, never()).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
+        verify(model, never()).addAttribute("defaultDiseaseGroupShortName", "dengue");
     }
 
     @Test
@@ -87,7 +119,15 @@ public class DataValidationControllerTest {
         target.showPage(model);
 
         // Assert
+        verify(model).addAttribute("userLoggedIn", true);
         verify(model).addAttribute("userSeeg", true);
+        verify(model).addAttribute("showHelpText", false);
+        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
+        verify(model).addAttribute("adminUnitReviewCount", 0);
+
+        verify(model).addAttribute("diseaseInterests", new ArrayList<>());
+        verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
+        verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
     }
 
     @Test
@@ -126,7 +166,7 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void diseaseInterestsAndAllOtherDiseasesAddedToDataModelInAlphabeticalOrder() {
+    public void diseaseInterestsAndAllOtherDiseasesAddedToDataModelInCaseInsensitiveAlphabeticalOrder() {
         // Arrange
         Model model = mock(Model.class);
 
@@ -181,29 +221,6 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void showPageReturnsDataModelForAnonymousUser() {
-        // Arrange
-        CurrentUserService currentUserService = createCurrentUserService();
-        when(currentUserService.getCurrentUser()).thenReturn(null);
-
-        Model model = mock(Model.class);
-
-        DataValidationController target = createTarget(currentUserService, null, null);
-
-        // Act
-        target.showPage(model);
-
-        // Assert
-        verify(model).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
-        verify(model).addAttribute("defaultDiseaseGroupShortName", "dengue");
-        verify(model).addAttribute("userLoggedIn", false);
-        verify(model).addAttribute("userSeeg", false);
-        verify(model).addAttribute("showHelpText", false);
-        verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
-        verify(model).addAttribute("adminUnitReviewCount", 0);
-    }
-
-    @Test
     public void getDiseaseOccurrencesForReviewByCurrentUserReturnsAllOccurrencesForSeegUser() throws Exception {
         // Arrange
         ExpertService expertService = createExpertService(true);
@@ -219,6 +236,18 @@ public class DataValidationControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSameSizeAs(occurrences);
+    }
+
+
+    private List<DiseaseOccurrence> mockOccurrences() {
+        // Occurrence of disease group where automatic model runs are not enabled.
+        DiseaseOccurrence o1 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
+        when(o1.getId()).thenReturn(1);
+
+        DiseaseOccurrence o2 = mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled();
+        when(o2.getId()).thenReturn(2);
+
+        return Arrays.asList(o1, o2);
     }
 
     @Test
@@ -237,17 +266,6 @@ public class DataValidationControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(1);
-    }
-
-    private List<DiseaseOccurrence> mockOccurrences() {
-        // Occurrence of disease group where automatic model runs are not enabled.
-        DiseaseOccurrence o1 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
-        when(o1.getId()).thenReturn(1);
-
-        DiseaseOccurrence o2 = mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled();
-        when(o2.getId()).thenReturn(2);
-
-        return Arrays.asList(o1, o2);
     }
 
     private DiseaseOccurrence mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled() {
@@ -271,6 +289,79 @@ public class DataValidationControllerTest {
         // Act
         ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
                 target.getDiseaseOccurrencesForReviewByCurrentUser(1);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsForbiddenForNonSeegUserIfDuringDiseaseSetUp() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
+
+        ExpertService expertService = createExpertService();
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForValidInputsForSeegUser() {
+        // Arrange
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
+                .thenReturn(true);
+
+        ExpertService expertService = createExpertService(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidInputOccurrenceDoesNotMatchDisease() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
+        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
+                .thenReturn(false);
+
+        ExpertService expertService = createExpertService(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidReviewAlreadyExists() {
+        // Arrange
+        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
+        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
+                .thenReturn(false);
+
+        ExpertService expertService = createExpertService(true);
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(true);
+
+        DataValidationController target = createTarget(null, diseaseService, expertService);
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -373,76 +464,15 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsForbiddenForNonSeegUserIfDuringDiseaseSetUp() {
+    public void getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroupCallsMethodWithDengue() {
         // Arrange
-        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
-
-        ExpertService expertService = createExpertService();
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-
+        int defaultDiseaseGroupId = 87;
+        int gaulCode = 1;
+        DataValidationController spy = spy(createTarget());
         // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
-
+        spy.getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroup(gaulCode);
         // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    }
-
-    @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForValidInputsForSeegUser() {
-        // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(true);
-
-        ExpertService expertService = createExpertService(true);
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-
-        // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    }
-
-    @Test
-    public void submitReviewReturnsHttpBadRequestForInvalidInputOccurrenceDoesNotMatchDisease() {
-        // Arrange
-        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(false);
-
-        ExpertService expertService = createExpertService(true);
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-
-        // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    public void submitReviewReturnsHttpBadRequestForInvalidReviewAlreadyExists() {
-        // Arrange
-        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(false);
-
-        ExpertService expertService = createExpertService(true);
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(true);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-        // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(spy).getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(defaultDiseaseGroupId, gaulCode);
     }
 
     @Test
@@ -561,15 +591,15 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    private DataValidationController createTarget() {
+        return createTarget(null, null, null);
+    }
+
     private DataValidationController createTarget(CurrentUserService currentUserService, DiseaseService diseaseService, ExpertService expertService) {
         return new DataValidationController(
                 currentUserService == null ? createCurrentUserService() : currentUserService,
                 diseaseService == null ? mock(DiseaseService.class) : diseaseService,
                 expertService == null ? createExpertService() : expertService);
-    }
-
-    private DataValidationController createTarget() {
-        return createTarget(null, null, null);
     }
 
     private CurrentUserService createCurrentUserService() {

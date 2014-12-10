@@ -294,6 +294,22 @@ public class DataValidationController extends AbstractController {
     }
 
     /**
+     * Returns the latest disease occurrences corresponding to an admin unit for the default disease, to anonymous user.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
+    @ResponseBody
+    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
+    getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroup(@PathVariable Integer gaulCode) {
+        return getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(DEFAULT_DISEASE_GROUP_ID, gaulCode);
+    }
+
+    /**
      * Saves the expert's review to the database.
      * @param diseaseGroupId The id of the disease group.
      * @param gaulCode The gaulCode of the admin unit being reviewed.

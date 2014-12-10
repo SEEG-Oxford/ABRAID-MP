@@ -11,7 +11,7 @@ define([
 ], function (ko, $, _) {
     "use strict";
 
-    return function (baseUrl) {
+    return function (baseUrl, loggedIn) {
         var self = this;
         var DISEASE_EXTENT = "disease extent";
 
@@ -26,6 +26,11 @@ define([
         var ajax;
         var diseaseGroupId;
 
+        function getUrl(adminUnitId) {
+            var adminUnits = loggedIn ? ("diseases/" + diseaseGroupId + "/adminunits/") : "defaultadminunits/";
+            return baseUrl + "datavalidation/" + adminUnits + adminUnitId + "/occurrences";
+        }
+
         ko.postbox.subscribe("admin-unit-selected", function (adminUnit) {
             self.occurrences([]);
             self.count(0);
@@ -36,7 +41,7 @@ define([
                     ajax.abort();
                 }
                 ajax = $.getJSON(
-                baseUrl + "datavalidation/diseases/" + diseaseGroupId + "/adminunits/" + adminUnit.id + "/occurrences")
+                    getUrl(adminUnit.id))
                     .done(function (data) {
                         var properties = _(data.features).pluck("properties");
                         var sortedProperties = _(properties).sortBy("occurrenceDate").reverse();

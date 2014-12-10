@@ -40,7 +40,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             );
 
             ko.applyBindings(
-                new LatestOccurrencesViewModel(baseUrl),
+                new LatestOccurrencesViewModel(baseUrl, data.loggedIn),
                 doc.getElementById("latestOccurrencesPanel")
             );
 

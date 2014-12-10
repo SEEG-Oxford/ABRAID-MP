@@ -303,7 +303,7 @@ define([
         }
 
         function getDiseaseExtentRequestUrl(diseaseId) {
-            var adminUnits = loggedIn ? ("diseases/" + diseaseId  + "/adminunits") : "defaultadminunits"
+            var adminUnits = loggedIn ? ("diseases/" + diseaseId  + "/adminunits") : "defaultadminunits";
             return baseUrl + "datavalidation/" + adminUnits;
         }
 
