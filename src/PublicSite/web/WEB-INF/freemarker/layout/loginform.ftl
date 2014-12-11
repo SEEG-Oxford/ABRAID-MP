@@ -1,11 +1,5 @@
 <#import "/spring.ftl" as spring />
 <div class="login-pane">
-    <form action="">
-        <p class="form-group">
-            <a class="btn btn-primary">Log in via TGHN</a>
-        </p>
-    </form>
-    <hr />
     <form id="login-form" action="" data-bind="formSubmit: submit">
         <p id="login-header" data-bind="html: message"></p>
         <p class="form-group">
