@@ -201,7 +201,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     private Alert createAlert() {
-        Feed feed = feedDao.getById(1);
+        Feed feed = feedDao.getById(2);
         DateTime publicationDate = DateTime.now().minusDays(5);
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
         String summary = "This is a summary of the alert";
