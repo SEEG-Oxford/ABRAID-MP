@@ -24,7 +24,7 @@ public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveThenGetByHealthMapAlertId() {
         // Arrange
-        Feed feed = feedDao.getById(1);
+        Feed feed = feedDao.getById(2);
         DateTime publicationDate = new DateTime("2014-01-03T01:00:00-05:00");
         int healthMapAlertId = 100;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";

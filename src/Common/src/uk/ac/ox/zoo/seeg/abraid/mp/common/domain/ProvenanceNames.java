@@ -11,9 +11,14 @@ public final class ProvenanceNames {
      */
     public static final String HEALTHMAP = "HealthMap";
     /**
-     * The uploaded provenance.
+     * The manually uploaded data.
      */
-    public static final String UPLOADED = "Uploaded";
+    public static final String MANUAL = "Manual dataset";
+
+    /**
+     * The manually uploaded gold standard data.
+     */
+    public static final String MANUAL_GOLD_STANDARD = "Manual gold standard dataset";
 
     private ProvenanceNames() {
     }

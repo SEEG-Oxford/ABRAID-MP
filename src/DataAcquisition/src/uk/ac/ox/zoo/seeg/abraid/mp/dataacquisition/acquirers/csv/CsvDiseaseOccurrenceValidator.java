@@ -41,6 +41,7 @@ public class CsvDiseaseOccurrenceValidator {
         validateFieldMissing("Country", occurrence.getCountryName());
         validateFieldMissing("Disease", occurrence.getDiseaseGroupName());
         validateFieldMissing("Occurrence date", occurrence.getOccurrenceDate());
+        validateFieldMissing("Feed name", occurrence.getFeedName());
         validateFieldTooLong("URL", occurrence.getUrl(), URL_MAX_CHARACTERS);
     }
 

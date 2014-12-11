@@ -51,7 +51,7 @@ public class CsvDataAcquirerTest {
         DataAcquisitionException exception = new DataAcquisitionException("Test message");
         String csv = "\nMy site\n";
 
-        when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
+        when(converter.convert(any(CsvDiseaseOccurrence.class), anyBoolean())).thenThrow(exception);
 
         // Act
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
@@ -69,7 +69,7 @@ public class CsvDataAcquirerTest {
         DataAcquisitionException exception = new DataAcquisitionException("Test message");
         String csv = "\nMy site\nMy second site\n";
 
-        when(converter.convert(any(CsvDiseaseOccurrence.class))).thenThrow(exception);
+        when(converter.convert(any(CsvDiseaseOccurrence.class), anyBoolean())).thenThrow(exception);
 
         // Act
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
@@ -167,8 +167,7 @@ public class CsvDataAcquirerTest {
         diseaseOccurrence.setLocation(location);
         CsvDiseaseOccurrence csvDiseaseOccurrence = new CsvDiseaseOccurrence();
         csvDiseaseOccurrence.setSite(Integer.toString(id));
-        when(converter.convert(csvDiseaseOccurrence)).thenReturn(diseaseOccurrence);
-        when(diseaseOccurrenceDataAcquirer.acquire(diseaseOccurrence, isGoldStandard)).thenReturn(
-                wasDiseaseOccurrenceSaved);
+        when(converter.convert(csvDiseaseOccurrence, isGoldStandard)).thenReturn(diseaseOccurrence);
+        when(diseaseOccurrenceDataAcquirer.acquire(diseaseOccurrence)).thenReturn(wasDiseaseOccurrenceSaved);
     }
 }

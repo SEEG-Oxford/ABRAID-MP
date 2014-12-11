@@ -6,9 +6,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
@@ -90,7 +88,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation1, existingLocation2));
 
         // Act
-        boolean result = acquirer.acquire(occurrence, false);
+        boolean result = acquirer.acquire(occurrence);
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation1);
@@ -144,13 +142,13 @@ public class DiseaseOccurrenceDataAcquirerTest {
     @Test
     public void acquireSavesGoldStandardDiseaseOccurrence() {
         // Arrange
-        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
                 new ArrayList<Location>());
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence, true);
+        boolean result = acquirer.acquire(occurrence);
 
         // Assert
         assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
@@ -162,7 +160,24 @@ public class DiseaseOccurrenceDataAcquirerTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
+        setAlert(occurrence, false);
         return occurrence;
+    }
+
+    private DiseaseOccurrence createGoldStandardOccurrence() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        Location location = new Location(20, 10, LocationPrecision.ADMIN1);
+        occurrence.setLocation(location);
+        setAlert(occurrence, true);
+        return occurrence;
+    }
+
+    private void setAlert(DiseaseOccurrence occurrence, boolean isGoldStandard) {
+        String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
+        Feed feed = new Feed("Manual data", new Provenance(provenanceName));
+        Alert alert = new Alert();
+        alert.setFeed(feed);
+        occurrence.setAlert(alert);
     }
 
     private void locationIsKnownToAlreadyExist(DiseaseOccurrence occurrence) {
@@ -197,8 +212,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean isGoldStandard, boolean result) {
-        verify(diseaseOccurrenceValidationService).addValidationParametersWithChecks(same(occurrence),
-                eq(isGoldStandard));
+        verify(diseaseOccurrenceValidationService).addValidationParametersWithChecks(same(occurrence));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence));
         assertThat(result).isTrue();
     }

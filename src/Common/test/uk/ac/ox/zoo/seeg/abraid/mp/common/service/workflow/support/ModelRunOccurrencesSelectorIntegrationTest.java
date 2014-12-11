@@ -8,10 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AlertDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.FeedDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
@@ -43,13 +40,16 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     private AlertDao alertDao;
 
     @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
     private FeedDao feedDao;
 
     @Autowired
     private LocationDao locationDao;
 
     @Autowired
-    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+    private ProvenanceDao provenanceDao;
 
     private EmailService emailService;
 
@@ -98,7 +98,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     public void selectModelRunDiseaseOccurrencesThrowsExceptionWhenFewerOccurrencesThanMDVAndGoldStandardDataUsed() {
         // Arrange - NB. Automatic model runs are disabled by default
         int diseaseGroupId = 87;
-        addUploadedOccurrences();
+        addManuallyUploadedGoldStandardOccurrences();
 
         ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
                 emailService, diseaseGroupId, true);
@@ -317,17 +317,17 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         }));
     }
 
-    private void addUploadedOccurrences() {
-        createUploadedDiseaseOccurrenceForDengue(null);
-        createUploadedDiseaseOccurrenceForDengue(1.0);
-        createUploadedDiseaseOccurrenceForDengue(0.9);
-        createUploadedDiseaseOccurrenceForDengue(1.0);
+    private void addManuallyUploadedGoldStandardOccurrences() {
+        Feed feed = new Feed("Test feed", provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
+        feedDao.save(feed);
+
+        createManuallyUploadedDiseaseOccurrenceForDengue(feed);
+        createManuallyUploadedDiseaseOccurrenceForDengue(feed);
     }
 
-    private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
+    private void createManuallyUploadedDiseaseOccurrenceForDengue(Feed feed) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
         Location location = locationDao.getById(80);
-        Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
         Alert alert = new Alert();
         alert.setFeed(feed);
 
@@ -335,8 +335,8 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setLocation(location);
         occurrence.setAlert(alert);
-        occurrence.setFinalWeighting(finalWeighting);
-        occurrence.setFinalWeightingExcludingSpatial(finalWeighting);
+        occurrence.setFinalWeighting(1.0);
+        occurrence.setFinalWeightingExcludingSpatial(1.0);
         occurrence.setStatus(DiseaseOccurrenceStatus.READY);
         occurrence.setOccurrenceDate(DateTime.now());
         diseaseOccurrenceDao.save(occurrence);

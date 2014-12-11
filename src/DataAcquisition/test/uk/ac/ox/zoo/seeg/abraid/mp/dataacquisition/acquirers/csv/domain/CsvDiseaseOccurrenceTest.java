@@ -64,10 +64,10 @@ public class CsvDiseaseOccurrenceTest {
 
         // Arrange
         String csv =
-                "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Title,Summary,URL,Redundant Extra Header Column\n" +
-                "\" Ingombota, Luanda, Angola \", 13.22884, -8.8179,PRECISE,   Angola    , Cholera ,\"30/06/2006\",\"PRO/EDR> Cholera, diarrhea & dysentery update 2006 (27)\",,http://promedmail.org/direct.php?id=20060630.1807\r\n" +
-                "Bangladesh,,23,COUNTRY,Bangladesh,Smallpox,2007,\"Small pox: State alert to stay till WHO confirmation\",\"AGARTALA: The central government has sounded a health alert in India's northeast asking authorities to take immediate precautionary measures following reports of a smallpox outbreak in Bangladesh and Myanmar, officials said Monday. 'Following the\",\"http://c.moreover.com/click/here.pl?r962376995\"\r" +
-                "831274,00021.58105000,\"-9.5989\",precise,Indonesia,P. falciparum,2006,Malaria Atlas Project\n";
+                "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Feed,Alert Title,Summary,URL,Redundant Extra Header Column\n" +
+                "\" Ingombota, Luanda, Angola \", 13.22884, -8.8179,PRECISE,   Angola    , Cholera ,\"30/06/2006\",SEEG data 2014,\"PRO/EDR> Cholera, diarrhea & dysentery update 2006 (27)\",,http://promedmail.org/direct.php?id=20060630.1807\r\n" +
+                "Bangladesh,,23,COUNTRY,Bangladesh,Smallpox,2007,SEEG data 2014,\"Small pox: State alert to stay till WHO confirmation\",\"AGARTALA: The central government has sounded a health alert in India's northeast asking authorities to take immediate precautionary measures following reports of a smallpox outbreak in Bangladesh and Myanmar, officials said Monday. 'Following the\",\"http://c.moreover.com/click/here.pl?r962376995\"\r" +
+                "831274,00021.58105000,\"-9.5989\",precise,Indonesia,P. falciparum,2006,Malaria Atlas Project human infection data 2014\n";
 
         // Act
         List<CsvDiseaseOccurrence> occurrences = CsvDiseaseOccurrence.readFromCsv(csv);
@@ -75,21 +75,21 @@ public class CsvDiseaseOccurrenceTest {
         // Assert
         assertThat(occurrences).hasSize(3);
         assertThat(occurrences.get(0)).isEqualTo(new CsvDiseaseOccurrence("Ingombota, Luanda, Angola", 13.22884,
-                -8.8179, "PRECISE", "Angola", "Cholera", "30/06/2006",
+                -8.8179, "PRECISE", "Angola", "Cholera", "30/06/2006", "SEEG data 2014",
                 "PRO/EDR> Cholera, diarrhea & dysentery update 2006 (27)", null,
                 "http://promedmail.org/direct.php?id=20060630.1807"));
         assertThat(occurrences.get(1)).isEqualTo(new CsvDiseaseOccurrence("Bangladesh", null, 23.0, "COUNTRY",
-                "Bangladesh", "Smallpox", "2007", "Small pox: State alert to stay till WHO confirmation",
+                "Bangladesh", "Smallpox", "2007", "SEEG data 2014", "Small pox: State alert to stay till WHO confirmation",
                 "AGARTALA: The central government has sounded a health alert in India's northeast asking authorities to take immediate precautionary measures following reports of a smallpox outbreak in Bangladesh and Myanmar, officials said Monday. 'Following the",
                 "http://c.moreover.com/click/here.pl?r962376995"));
         assertThat(occurrences.get(2)).isEqualTo(new CsvDiseaseOccurrence("831274", 21.58105, -9.5989, "precise",
-                "Indonesia", "P. falciparum", "2006", "Malaria Atlas Project", null, null));
+                "Indonesia", "P. falciparum", "2006", "Malaria Atlas Project human infection data 2014", null, null, null));
     }
 
     @Test(expected = IOException.class)
     public void readCsvFileThrowsExceptionIfTooManyColumns() throws Exception {
-        String csv = "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Title,Summary,URL\n" +
-                "My site,10,20,PRECISE,England,Dengue,2012,My title,My summary,My URL,Extra column\n";
+        String csv = "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Feed,Alert Title,Summary,URL\n" +
+                "My site,10,20,PRECISE,England,Dengue,2012,My feed,My title,My summary,My URL,Extra column\n";
         CsvDiseaseOccurrence.readFromCsv(csv);
     }
 

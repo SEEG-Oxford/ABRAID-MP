@@ -19,7 +19,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     public static Alert mockAlert(String title, String summary, String feedName, String feedLanguage, String url) {
         Alert alert = mock(Alert.class);
         Feed feed = mock(Feed.class);
-        when(alert.getTitle()).thenReturn(title);
+        when(alert.getTitleForDisplay()).thenReturn(title);
         when(alert.getSummary()).thenReturn(summary);
         when(alert.getUrl()).thenReturn(url);
         when(alert.getFeed()).thenReturn(feed);

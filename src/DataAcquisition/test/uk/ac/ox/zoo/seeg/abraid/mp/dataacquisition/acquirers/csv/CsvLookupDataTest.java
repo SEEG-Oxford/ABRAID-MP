@@ -2,20 +2,16 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.*;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the CsvLookupData class.
@@ -77,27 +73,46 @@ public class CsvLookupDataTest {
     }
 
     @Test
-    public void getFeedForUploadedData() {
+    public void getFeedForManuallyUploadedDataReturnsExistingFeed() {
+        // NB. Case insensitive when checking for existing feed by name, and same feed name is allowed for different provenances
         // Arrange
-        Feed expectedFeed = new Feed();
-        when(alertService.getFeedsByProvenanceName("Uploaded")).thenReturn(Arrays.asList(expectedFeed));
+        String feedName = "SEEG Data";
+        Feed expectedManualFeed = new Feed(feedName);
+        Feed expectedGoldStandardFeed = new Feed(feedName);
+
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL)).thenReturn(Arrays.asList(expectedManualFeed));
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL_GOLD_STANDARD)).thenReturn(Arrays.asList(expectedGoldStandardFeed));
 
         // Act
-        Feed actualFeed = lookupData.getFeedForUploadedData();
+        Feed manualFeed = lookupData.getFeedForManuallyUploadedData("seeg data", false);
+        Feed goldStandardFeed = lookupData.getFeedForManuallyUploadedData("seeg DATA", true);
 
         // Assert
-        assertThat(actualFeed).isSameAs(expectedFeed);
+        assertThat(manualFeed).isSameAs(expectedManualFeed);
+        assertThat(goldStandardFeed).isSameAs(expectedGoldStandardFeed);
+        verify(alertService, never()).saveFeed(any(Feed.class));
     }
 
     @Test
-    public void getFeedForUploadedDataDoesNotReturnOneFeed() {
+    public void getFeedForManuallyUploadedDataAddsNewFeed() {
         // Arrange
-        when(alertService.getFeedsByProvenanceName("Uploaded")).thenReturn(new ArrayList<Feed>());
+        when(alertService.getFeedsByProvenanceName(ProvenanceNames.MANUAL)).thenReturn(new ArrayList<Feed>());
+        when(alertService.getProvenanceByName(ProvenanceNames.MANUAL)).thenReturn(new Provenance(ProvenanceNames.MANUAL));
+        String newFeedName = "SEEG Data 2014";
 
         // Act
-        catchException(lookupData).getFeedForUploadedData();
+        Feed newFeed1 = lookupData.getFeedForManuallyUploadedData(newFeedName, false);
+        Feed newFeed2 = lookupData.getFeedForManuallyUploadedData(newFeedName.toLowerCase(), false);
 
-        // Assert
-        assertThat(caughtException()).isInstanceOf(RuntimeException.class);
+        // Assert - Only one feed saved due to case insensitive checking on feed name.
+        assertFeed(newFeed1, newFeedName);
+        assertFeed(newFeed2, newFeedName);
+        verify(alertService, times(1)).saveFeed(any(Feed.class));
+    }
+
+    private void assertFeed(Feed newFeed, String newFeedName) {
+        assertThat(newFeed.getName()).isEqualTo(newFeedName);
+        assertThat(newFeed.getProvenance().getName()).isEqualTo(ProvenanceNames.MANUAL);
+        assertThat(newFeed.getWeighting()).isEqualTo(newFeed.getProvenance().getDefaultFeedWeighting());
     }
 }

@@ -31,8 +31,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
             "and d.occurrenceDate >= :minimumOccurrenceDate ";
 
     private static final String GOLD_STANDARD_OCCURRENCES_CLAUSE =
-            "and d.finalWeighting = " + DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING + " " +
-            "and d.alert in (from Alert where feed.provenance.name = '" + ProvenanceNames.UPLOADED + "') ";
+            "and d.alert in (from Alert where feed.provenance.name = '" + ProvenanceNames.MANUAL_GOLD_STANDARD + "') ";
 
     private static final String MODEL_RUN_REQUEST_QUERY = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
             "where d.diseaseGroup.id = :diseaseGroupId " +

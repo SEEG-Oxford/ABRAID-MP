@@ -18,7 +18,7 @@ public final class GeoJsonAlert {
     public GeoJsonAlert() { }
 
     public GeoJsonAlert(Alert alert) {
-        this.title = alert.getTitle();
+        this.title = alert.getTitleForDisplay();
         this.summary = alert.getSummary();
         this.url = alert.getUrl();
         this.feedName = alert.getFeed().getName();

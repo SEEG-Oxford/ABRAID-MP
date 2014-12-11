@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
@@ -42,7 +43,22 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     private LocationDao locationDao;
 
     @Autowired
+    private ProvenanceDao provenanceDao;
+
+    @Autowired
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+
+    private static Feed testFeed;
+    private static Feed goldStandardFeed;
+
+    @Before
+    public void setUp() {
+        testFeed = new Feed("Test feed", provenanceDao.getByName(ProvenanceNames.MANUAL));
+        feedDao.save(testFeed);
+
+        goldStandardFeed = new Feed("Gold standard feed", provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD));
+        feedDao.save(goldStandardFeed);
+    }
 
     @Test
     public void getByIds() {
@@ -519,7 +535,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesForModelRunRequest() {
         // Arrange
         int diseaseGroupId = 87; // Dengue
-        addUploadedOccurrences();
+        addManuallyUploadedOccurrences();
 
         // Act
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(
@@ -543,7 +559,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     public void getDiseaseOccurrencesForModelRunRequestUsingGoldStandardOccurrences() {
         // Arrange
         int diseaseGroupId = 87; // Dengue
-        addUploadedOccurrences();
+        addManuallyUploadedOccurrences();
 
         // Act
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForModelRunRequest(
@@ -555,7 +571,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
             assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(diseaseGroupId);
             assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
             assertThat(occurrence.getFinalWeighting()).isEqualTo(1);
-            assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.UPLOADED);
+            assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo(ProvenanceNames.MANUAL_GOLD_STANDARD);
             assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
         }
     }
@@ -670,7 +686,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
                                                        boolean onlyUseGoldStandardOccurrences,
                                                        int expectedOccurrenceCount) {
         // Arrange
-        addUploadedOccurrences();
+        addManuallyUploadedOccurrences();
 
         // Act
         List<DiseaseOccurrence> occurrences =
@@ -716,19 +732,22 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return review;
     }
 
-    private void addUploadedOccurrences() {
-        createUploadedDiseaseOccurrenceForDengue(null);
-        createUploadedDiseaseOccurrenceForDengue(1.0);
-        createUploadedDiseaseOccurrenceForDengue(0.9);
-        createUploadedDiseaseOccurrenceForDengue(1.0);
+    private void addManuallyUploadedOccurrences() {
+        createManuallyUploadedDiseaseOccurrenceForDengue(null, false);
+        createManuallyUploadedDiseaseOccurrenceForDengue(0.9, false);
+        createManuallyUploadedDiseaseOccurrenceForDengue(1.0, true);
+        createManuallyUploadedDiseaseOccurrenceForDengue(1.0, true);
     }
 
-    private void createUploadedDiseaseOccurrenceForDengue(Double finalWeighting) {
+    private void createManuallyUploadedDiseaseOccurrenceForDengue(Double finalWeighting, boolean isGoldStandard) {
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
         Location location = locationDao.getById(80);
-        Feed feed = feedDao.getByProvenanceName(ProvenanceNames.UPLOADED).get(0);
         Alert alert = new Alert();
-        alert.setFeed(feed);
+        if (isGoldStandard) {
+            alert.setFeed(goldStandardFeed);
+        } else {
+            alert.setFeed(testFeed);
+        }
 
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setDiseaseGroup(diseaseGroup);
