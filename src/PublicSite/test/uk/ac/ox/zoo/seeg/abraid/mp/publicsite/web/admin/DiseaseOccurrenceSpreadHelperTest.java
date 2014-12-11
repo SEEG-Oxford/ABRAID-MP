@@ -77,6 +77,8 @@ public class DiseaseOccurrenceSpreadHelperTest {
         assertThat(table.getHeadingYears()).hasSize(1);
         assertThat(table.getHeadingYears()).contains(2013);
 
+        assertThat(table.getTotalRow()).containsExactly(1);
+
         List<DiseaseOccurrenceSpreadTableRow> rows = table.getRows();
         assertThat(rows).hasSize(5);
         assertRowIsEqual(rows.get(0), "Sudan", true, 0);
@@ -107,6 +109,8 @@ public class DiseaseOccurrenceSpreadHelperTest {
         // Assert
         assertThat(table.getErrorMessage()).isNull();
         assertSetIsEqual(table.getHeadingYears(), 2011, 2012, 2014);
+
+        assertThat(table.getTotalRow()).containsExactly(2, 3, 1);
 
         List<DiseaseOccurrenceSpreadTableRow> rows = table.getRows();
         assertThat(rows).hasSize(5);
