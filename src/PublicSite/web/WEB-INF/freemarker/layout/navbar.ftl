@@ -37,7 +37,6 @@
             <ul class="dropdown-menu" role="menu">
                 <li><a href="<@spring.url "/about"/>">ABRAID-MP</a>
                 <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
-                <li><a href="#">Publications</a></li>
             </ul>
         </li>
         <@security.authorize ifAnyGranted="ROLE_SEEG, ROLE_ADMIN">
