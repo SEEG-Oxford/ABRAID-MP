@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents a disease occurrence spread table. This is a count of disease occurrences by country (rows) and year
- * (columns).
+ * Represents a disease occurrence spread table. This is a count of disease occurrences
+ * (excluding country-level points) by the country they occur in (rows) and year (columns).
  *
  * Copyright (c) 2014 University of Oxford
  */
