@@ -1,4 +1,5 @@
-/*
+/* View model for the password reset processing form.
+ * Copyright (c) 2014 University of Oxford
  */
 define([
     "ko",
