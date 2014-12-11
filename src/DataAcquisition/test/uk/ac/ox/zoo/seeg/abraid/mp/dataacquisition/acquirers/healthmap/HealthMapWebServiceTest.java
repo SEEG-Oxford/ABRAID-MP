@@ -183,7 +183,7 @@ public class HealthMapWebServiceTest {
                 "\"comment\": \"s h, p f, p m, \"," +
                 "\"species_name\": \"Humans\"," +
                 "\"dup_count\": \"0\"," +
-                "\"place_category\": []," +
+                "\"place_category\": [\"Imported Case\"]," +
                 "\"original_url\": \"http:\\/\\/www.ncbi.nlm.nih.gov\\/pubmed\\/21129869\"," +
                 "\"disease_id\": \"80\"," +
                 "\"feed_id\": \"172\"" +
@@ -269,6 +269,7 @@ public class HealthMapWebServiceTest {
         assertThat(location2Alert1.getDiseaseIds()).containsExactly(84);
         assertThat(location2Alert1.getFeedId()).isEqualTo(20);
         assertThat(location2Alert1.getFeedLanguage()).isNull();
+        assertThat(location2Alert1.getPlaceCategories()).isEmpty();
 
         HealthMapAlert location2Alert2 = location2.getAlerts().get(1);
         assertThat(location2Alert2.getAlertId()).isEqualTo(2576498);
@@ -287,6 +288,7 @@ public class HealthMapWebServiceTest {
         assertThat(location2Alert2.getFeedLanguage()).isNull();
         assertThat(location2Alert2.getComment()).isEqualTo("s h, p f, p m,");
         assertThat(location2Alert2.getSplitComment()).containsOnly("sh", "pf", "pm");
+        assertThat(location2Alert2.getPlaceCategories()).containsExactly("Imported Case");
     }
 
     @Test

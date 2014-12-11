@@ -126,4 +126,16 @@ public class ParseUtilsTest {
         List<String> convertedStrings = ParseUtils.convertStrings(Arrays.asList("   first string ", null, "", "second"));
         assertThat(convertedStrings).containsExactly("first string", null, null, "second");
     }
+
+    @Test
+    public void splitCommaDelimitedStringWhenNull() {
+        assertThat(ParseUtils.splitCommaDelimitedString(null)).isEmpty();
+    }
+
+    @Test
+    public void splitCommaDelimitedStringWhenNonNull() {
+        String text = "  One , two,,\nthree,    , four,";
+        List<String> split = ParseUtils.splitCommaDelimitedString(text);
+        assertThat(split).containsExactly("One", "two", "three", "four");
+    }
 }

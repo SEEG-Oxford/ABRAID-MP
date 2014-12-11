@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
 import java.util.*;
@@ -41,15 +42,24 @@ public class HealthMapAlertConverter {
     private final DiseaseService diseaseService;
     private final EmailService emailService;
     private final HealthMapLookupData lookupData;
+    private final List<String> placeCategoriesToIgnore;
 
     private UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
 
     public HealthMapAlertConverter(AlertService alertService, DiseaseService diseaseService,
-                                   EmailService emailService, HealthMapLookupData lookupData) {
+                                   EmailService emailService, HealthMapLookupData lookupData,
+                                   String placeCategoriesToIgnore) {
         this.alertService = alertService;
         this.diseaseService = diseaseService;
         this.emailService = emailService;
         this.lookupData = lookupData;
+
+        // This comes in as a comma-separated list, so split it and make it lowercase (for case-insensitive comparison)
+        if (placeCategoriesToIgnore != null) {
+            this.placeCategoriesToIgnore = ParseUtils.splitCommaDelimitedString(placeCategoriesToIgnore.toLowerCase());
+        } else {
+            this.placeCategoriesToIgnore = null;
+        }
     }
 
     /**
@@ -79,7 +89,7 @@ public class HealthMapAlertConverter {
     }
 
     private boolean validate(HealthMapAlert healthMapAlert) {
-        String validationMessage = new HealthMapAlertValidator(healthMapAlert).validate();
+        String validationMessage = new HealthMapAlertValidator(healthMapAlert, placeCategoriesToIgnore).validate();
         if (validationMessage != null) {
             LOGGER.warn(validationMessage);
             return false;

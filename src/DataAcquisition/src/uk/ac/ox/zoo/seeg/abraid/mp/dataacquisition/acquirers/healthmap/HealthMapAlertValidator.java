@@ -1,6 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
+
+import java.util.List;
 
 /**
  * Validates a HealthMapAlert.
@@ -12,11 +15,15 @@ public class HealthMapAlertValidator {
     private static final String DISEASES_NOT_FOUND = "Missing diseases in HealthMap alert (alert ID %d)";
     private static final String DISEASE_IDS_DO_NOT_MATCH_NAMES = "HealthMap alert has %d disease ID(s) but %d " +
             "disease name(s) (alert ID %d)";
+    private static final String HAS_A_PLACE_CATEGORY_TO_IGNORE = "Ignoring HealthMap alert because it has place " +
+            "category \"%s\" (alert ID %d)";
 
     private HealthMapAlert alert;
+    private List<String> placeCategoriesToIgnore;
 
-    public HealthMapAlertValidator(HealthMapAlert alert) {
+    public HealthMapAlertValidator(HealthMapAlert alert, List<String> placeCategoriesToIgnore) {
         this.alert = alert;
+        this.placeCategoriesToIgnore = placeCategoriesToIgnore;
     }
 
     /**
@@ -27,6 +34,7 @@ public class HealthMapAlertValidator {
         String errorMessage = validateDiseaseIdsMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateDiseasesMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateDiseaseIdsDoNotMatchNames();
+        errorMessage = (errorMessage != null) ? errorMessage : validatePlaceCategoriesAreNotToBeIgnored();
         return errorMessage;
     }
 
@@ -49,6 +57,17 @@ public class HealthMapAlertValidator {
         int diseasesSize = alert.getDiseases().size();
         if (diseaseIdsSize != diseasesSize) {
             return String.format(DISEASE_IDS_DO_NOT_MATCH_NAMES, diseaseIdsSize, diseasesSize, alert.getAlertId());
+        }
+        return null;
+    }
+
+    private String validatePlaceCategoriesAreNotToBeIgnored() {
+        if (alert.getPlaceCategories() != null) {
+            for (String category : alert.getPlaceCategories()) {
+                if (StringUtils.hasText(category) && placeCategoriesToIgnore.contains(category.toLowerCase())) {
+                    return String.format(HAS_A_PLACE_CATEGORY_TO_IGNORE, category, alert.getAlertId());
+                }
+            }
         }
         return null;
     }

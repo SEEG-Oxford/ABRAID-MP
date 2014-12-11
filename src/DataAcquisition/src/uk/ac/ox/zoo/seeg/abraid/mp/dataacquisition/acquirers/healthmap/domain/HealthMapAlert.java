@@ -39,6 +39,8 @@ public class HealthMapAlert {
     @JsonProperty("feed_lang")
     private String feedLanguage;
     private String comment;
+    @JsonProperty("place_category")
+    private List<String> placeCategories;
 
     public HealthMapAlert() {
     }
@@ -165,6 +167,14 @@ public class HealthMapAlert {
         this.comment = ParseUtils.convertString(comment);
     }
 
+    public List<String> getPlaceCategories() {
+        return placeCategories;
+    }
+
+    public void setPlaceCategories(List<String> placeCategories) {
+        this.placeCategories = ParseUtils.convertStrings(placeCategories);
+    }
+
     /**
      * Extracts the alert ID from the link.
      * @return The alert ID, or null if it could not be extracted from the link.
@@ -186,7 +196,7 @@ public class HealthMapAlert {
      */
     public Set<String> getSplitComment() {
         Set<String> splitComment = new HashSet<>();
-        for (String part : splitCommaDelimitedString(this.comment)) {
+        for (String part : ParseUtils.splitCommaDelimitedString(this.comment)) {
             // For each comment part, remove whitespace and make lowercase
             splitComment.add(part.replaceAll("\\s", "").toLowerCase());
         }
@@ -202,17 +212,5 @@ public class HealthMapAlert {
         } else {
             return Arrays.asList(item);
         }
-    }
-
-    private List<String> splitCommaDelimitedString(String text) {
-        List<String> splitList = new ArrayList<>();
-
-        if (StringUtils.hasText(text)) {
-            // Note: all tokens are trimmed and empty tokens are ignored
-            String[] splitArray = StringUtils.tokenizeToStringArray(text, ",", true, true);
-            Collections.addAll(splitList, splitArray);
-        }
-
-        return splitList;
     }
 }

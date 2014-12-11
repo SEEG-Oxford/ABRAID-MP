@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -115,6 +116,23 @@ public final class ParseUtils {
         }
 
         return convertedStrings;
+    }
+
+    /**
+     * Splits the specified comma-delimited text. All tokens are trimmed and empty tokens are ignored.
+     * @param text The text to split.
+     * @return The split text.
+     */
+    public static List<String> splitCommaDelimitedString(String text) {
+        List<String> splitList = new ArrayList<>();
+
+        if (StringUtils.hasText(text)) {
+            // Note: all tokens are trimmed and empty tokens are ignored
+            String[] splitArray = StringUtils.tokenizeToStringArray(text, ",", true, true);
+            Collections.addAll(splitList, splitArray);
+        }
+
+        return splitList;
     }
 
     /**

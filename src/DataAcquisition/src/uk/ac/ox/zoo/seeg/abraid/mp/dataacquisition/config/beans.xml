@@ -47,7 +47,10 @@
     </bean>
 
     <!-- HealthMap data acquisition beans -->
-    <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapAlertConverter" autowire="constructor"/>
+    <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapAlertConverter" autowire="constructor">
+        <!-- Expected to be a comma-separated list -->
+        <constructor-arg name="placeCategoriesToIgnore" value="${healthmap.placeCategoriesToIgnore}"/>
+    </bean>
     <bean id="healthMapDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer" autowire="constructor"/>
     <bean id="healthMapDataConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataConverter" autowire="constructor"/>
     <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLocationConverter" autowire="constructor"/>

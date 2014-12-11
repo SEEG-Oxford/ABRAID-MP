@@ -30,6 +30,11 @@ public class HealthMapAlertConverterTest {
     private HealthMapLookupData lookupData;
     private Map<Integer, HealthMapDisease> diseaseMap;
     private Map<String, HealthMapSubDisease> subDiseaseMap;
+    private HealthMapAlertConverter alertConverter;
+    private AlertService alertService;
+    private DiseaseService diseaseService;
+    private EmailService emailService;
+    private String placeCategoriesToIgnore;
 
     @Before
     public void setUp() {
@@ -38,6 +43,14 @@ public class HealthMapAlertConverterTest {
         subDiseaseMap = new HashMap<>();
         when(lookupData.getDiseaseMap()).thenReturn(diseaseMap);
         when(lookupData.getSubDiseaseMap()).thenReturn(subDiseaseMap);
+
+        alertService = mock(AlertService.class);
+        diseaseService = mock(DiseaseService.class);
+        emailService = mock(EmailService.class);
+        placeCategoriesToIgnore = "imported case";
+
+        alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData,
+                placeCategoriesToIgnore);
     }
 
     @Test
@@ -63,16 +76,12 @@ public class HealthMapAlertConverterTest {
                 publicationDate, link, description, originalUrl, "");
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -113,16 +122,12 @@ public class HealthMapAlertConverterTest {
                 publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -164,16 +169,12 @@ public class HealthMapAlertConverterTest {
                 publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
+        mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -207,17 +208,13 @@ public class HealthMapAlertConverterTest {
                 publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(null);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutGetHealthMapProvenance();
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -283,9 +280,6 @@ public class HealthMapAlertConverterTest {
         feedMap.put(feedId, new Feed("Test feed", null, 0, "zh", 1));
         when(lookupData.getFeedMap()).thenReturn(feedMap);
 
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(
-                mock(AlertService.class), mock(DiseaseService.class), mock(EmailService.class), lookupData);
-
         HealthMapAlert healthMapAlert = mock(HealthMapAlert.class);
         when(healthMapAlert.getFeedId()).thenReturn(feedId);
         when(healthMapAlert.getOriginalUrl()).thenReturn(url);
@@ -333,17 +327,13 @@ public class HealthMapAlertConverterTest {
                 summary, publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
+        mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         HealthMapDisease healthMapDisease =
                 mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -386,16 +376,12 @@ public class HealthMapAlertConverterTest {
         HealthMapDisease newHealthMapDisease = new HealthMapDisease(diseaseId, healthMapDiseaseName, newDiseaseGroup);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
+        mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(existingDiseaseId, existingHealthMapDiseaseName, existingDiseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -431,15 +417,11 @@ public class HealthMapAlertConverterTest {
                 publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
+        mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -508,15 +490,11 @@ public class HealthMapAlertConverterTest {
         healthMapDiseaseNew.setDiseaseGroup(diseaseGroupNew);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -565,16 +543,12 @@ public class HealthMapAlertConverterTest {
                 publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, alert);
+        mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -605,16 +579,12 @@ public class HealthMapAlertConverterTest {
                 summary, publicationDate, link, description, originalUrl, feedLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -653,16 +623,12 @@ public class HealthMapAlertConverterTest {
                 summary, publicationDate, link, description, originalUrl, feedNewLanguage);
 
         // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
+        mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
+        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
@@ -677,7 +643,7 @@ public class HealthMapAlertConverterTest {
         verify(alertService).saveFeed(same(feed));
     }
 
-    private void mockOutGetAlertByID(AlertService alertService, int healthMapAlertId, Alert alert) {
+    private void mockOutGetAlertByID(int healthMapAlertId, Alert alert) {
         when(alertService.getAlertByHealthMapAlertId(healthMapAlertId)).thenReturn(alert);
     }
 
@@ -710,7 +676,7 @@ public class HealthMapAlertConverterTest {
         return healthMapSubDisease;
     }
 
-    private void mockOutDoesDiseaseOccurrenceExist(DiseaseService diseaseService, boolean result) {
+    private void mockOutDoesDiseaseOccurrenceExist(boolean result) {
         when(diseaseService.doesDiseaseOccurrenceExist(any(DiseaseOccurrence.class))).thenReturn(result);
     }
 
