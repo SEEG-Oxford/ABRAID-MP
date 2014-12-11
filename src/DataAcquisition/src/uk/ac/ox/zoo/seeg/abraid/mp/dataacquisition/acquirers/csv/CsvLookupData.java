@@ -97,7 +97,8 @@ public class CsvLookupData {
 
     private Feed getExistingFeed(String provenanceName, String feedName) {
         if (!provenanceFeedsMap.containsKey(provenanceName)) {
-            provenanceFeedsMap.put(provenanceName, new ArrayList<>(alertService.getFeedsByProvenanceName(provenanceName)));
+            provenanceFeedsMap.put(provenanceName,
+                                   new ArrayList<>(alertService.getFeedsByProvenanceName(provenanceName)));
         }
         return selectUnique(provenanceFeedsMap.get(provenanceName),
                             having(on(Feed.class).getName(), equalToIgnoringCase(feedName)));
