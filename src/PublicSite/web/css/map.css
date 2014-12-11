@@ -8,6 +8,9 @@
     width: 100%;
     background-color: white;
 }
+.leaflet-tile {
+    background-color: white;
+}
 #layerSelector {
     position: absolute;
     z-index: 10;                 /* Overlay to ensure clicks*/

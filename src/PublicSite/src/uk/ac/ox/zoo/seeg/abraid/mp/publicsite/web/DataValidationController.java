@@ -23,6 +23,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,6 +39,7 @@ public class DataValidationController extends AbstractController {
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
     private static final String DEFAULT_DISEASE_GROUP_SHORT_NAME = "dengue";
+    private static final int DEFAULT_DISEASE_GROUP_ID = 87;
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
     private final ExpertService expertService;
@@ -246,6 +248,26 @@ public class DataValidationController extends AbstractController {
     }
 
     /**
+     * Returns the admin units, and their disease extent class, for the default disease (Dengue). The feature collection
+     * is constructed with an empty list of reviews (an anonymous user cannot submit reviews), so the polygons will all
+     * be selectable on Data Validation page.
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/defaultadminunits",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
+    @ResponseBody
+    public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDefaultDiseaseExtent() {
+        List<AdminUnitDiseaseExtentClass> diseaseExtent =
+                diseaseService.getDiseaseExtentByDiseaseGroupId(DEFAULT_DISEASE_GROUP_ID);
+        GeoJsonDiseaseExtentFeatureCollection featureCollection =
+                new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, new ArrayList<AdminUnitReview>());
+        return new ResponseEntity<>(featureCollection, HttpStatus.OK);
+    }
+
+    /**
      * Returns the latest disease occurrences corresponding to an admin unit.
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
      * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
@@ -269,6 +291,22 @@ public class DataValidationController extends AbstractController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * Returns the latest disease occurrences corresponding to an admin unit for the default disease, to anonymous user.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
+     * @return A GeoJSON DTO containing the admin units.
+     */
+    @RequestMapping(
+            value = GEOWIKI_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseView(DisplayJsonView.class)
+    @ResponseBody
+    public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
+    getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroup(@PathVariable Integer gaulCode) {
+        return getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(DEFAULT_DISEASE_GROUP_ID, gaulCode);
     }
 
     /**

@@ -160,25 +160,45 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         when(expertService.getExpertById(1)).thenReturn(expert);
         when(expert.isSeegMember()).thenReturn(true);
 
-        this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
-                .andExpect(status().isOk());
+        String url = DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits";
 
         this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
-                .andExpect(status().isMethodNotAllowed());
+                get(url)).andExpect(status().isOk());
 
         this.mockMvc.perform(
-                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
-                .andExpect(status().isMethodNotAllowed());
+                post(url)).andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
-                .andExpect(status().isMethodNotAllowed());
+                delete(url)).andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits"))
-                .andExpect(status().isMethodNotAllowed());
+                put(url)).andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(url)).andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void defaultExtentResourceOnlyAcceptsGET() throws Exception {
+
+        String url = DataValidationController.GEOWIKI_BASE_URL + "/defaultadminunits";
+
+        this.mockMvc.perform(
+                get(url))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"));
+
+        this.mockMvc.perform(
+                post(url)).andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                delete(url)).andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                put(url)).andExpect(status().isMethodNotAllowed());
+
+        this.mockMvc.perform(
+                patch(url)).andExpect(status().isMethodNotAllowed());
     }
 
     private AdminUnitGlobal createAdminUnitGlobal() {
