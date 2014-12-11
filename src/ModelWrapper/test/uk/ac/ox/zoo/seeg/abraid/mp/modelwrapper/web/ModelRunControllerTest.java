@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CovariateRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelOutputHandlerWebService;
@@ -47,6 +48,7 @@ public class ModelRunControllerTest {
         ModelRunnerAsyncWrapperImpl mockRunner = mock(ModelRunnerAsyncWrapperImpl.class);
         when(mockConf.getRunName()).thenReturn(runName);
         when(mockConf.getCovariateConfig()).thenReturn(mock(CovariateRunConfiguration.class));
+        when(mockConf.getExecutionConfig()).thenReturn(mock(ExecutionRunConfiguration.class));
         when(mockFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString())).thenReturn(mockConf);
 
 
