@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CovariateRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
@@ -111,6 +112,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         RunConfiguration runConfiguration = mock(RunConfiguration.class);
         when(runConfiguration.getRunName()).thenReturn(runName);
         when(runConfiguration.getCovariateConfig()).thenReturn(mock(CovariateRunConfiguration.class));
+        when(runConfiguration.getExecutionConfig()).thenReturn(mock(ExecutionRunConfiguration.class));
         when(runConfigurationFactory.createDefaultConfiguration(anyInt(), anyBoolean(), anyString()))
                 .thenReturn(runConfiguration);
         return runName;

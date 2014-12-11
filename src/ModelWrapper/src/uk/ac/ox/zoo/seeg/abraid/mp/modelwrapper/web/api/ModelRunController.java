@@ -71,6 +71,7 @@ public class ModelRunController extends AbstractController {
             ModelStatusReporter modelStatusReporter = new ModelStatusReporterImpl(
                     runConfiguration.getRunName(),
                     runConfiguration.getWorkingDirectoryPath(),
+                    runConfiguration.getExecutionConfig().getDryRunFlag(),
                     modelOutputHandlerWebService,
                     objectMapper);
 

@@ -32,18 +32,22 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private static final String LOG_HANDLER_SUCCESSFUL = "Successfully sent model outputs to model output handler.";
     private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
     private static final String LOG_COULD_NOT_DELETE_WORKSPACE_DIR = "Could not delete workspace directory \"%s\"";
+    private static final String LOG_NOT_DELETED_WORKSPACE_DIR_DRY_RUN =
+            "Did not delete workspace directory \"%s\", as it was a dry run";
     private static final String LOG_NOT_DELETED_WORKSPACE_DIR =
             "Did not delete workspace directory \"%s\", as the model run did not complete successfully";
 
     private final String runName;
     private final Path workingDirectoryPath;
-    private ModelOutputHandlerWebService modelOutputHandlerWebService;
+    private final boolean dryRun;
+    private final ModelOutputHandlerWebService modelOutputHandlerWebService;
     private final AbraidJsonObjectMapper objectMapper;
 
-    public ModelStatusReporterImpl(String runName, Path workingDirectory,
+    public ModelStatusReporterImpl(String runName, Path workingDirectory, boolean dryRun,
             ModelOutputHandlerWebService modelOutputHandlerWebService, AbraidJsonObjectMapper objectMapper) {
         this.runName = runName;
         this.workingDirectoryPath = workingDirectory;
+        this.dryRun = dryRun;
         this.modelOutputHandlerWebService = modelOutputHandlerWebService;
         this.objectMapper = objectMapper;
     }
@@ -153,12 +157,14 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     }
 
     private void deleteWorkingDirectory(ModelRunStatus modelRunStatus) {
-        if (modelRunStatus.equals(ModelRunStatus.COMPLETED)) {
+        if (modelRunStatus.equals(ModelRunStatus.COMPLETED) && !dryRun) {
             try {
                 FileUtils.deleteDirectory(workingDirectoryPath.toFile());
             } catch (IOException e) {
                 logger.error(String.format(LOG_COULD_NOT_DELETE_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
             }
+        } else if (dryRun) {
+            logger.info(String.format(LOG_NOT_DELETED_WORKSPACE_DIR_DRY_RUN, workingDirectoryPath.toAbsolutePath()));
         } else {
             logger.warn(String.format(LOG_NOT_DELETED_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
         }
