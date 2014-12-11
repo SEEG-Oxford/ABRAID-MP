@@ -19,6 +19,12 @@ public interface DiseaseService {
     List<HealthMapDisease> getAllHealthMapDiseases();
 
     /**
+     * Gets all HealthMap sub-diseases.
+     * @return All HealthMap sub-diseases.
+     */
+    List<HealthMapSubDisease> getAllHealthMapSubDiseases();
+
+    /**
      * Gets all disease groups.
      * @return All disease groups.
      */

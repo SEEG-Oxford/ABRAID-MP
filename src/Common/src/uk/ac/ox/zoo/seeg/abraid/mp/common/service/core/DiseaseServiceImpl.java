@@ -20,6 +20,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private DiseaseGroupDao diseaseGroupDao;
     private HealthMapDiseaseDao healthMapDiseaseDao;
+    private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
     private AdminUnitGlobalDao adminUnitGlobalDao;
@@ -31,6 +32,7 @@ public class DiseaseServiceImpl implements DiseaseService {
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
                               DiseaseGroupDao diseaseGroupDao,
                               HealthMapDiseaseDao healthMapDiseaseDao,
+                              HealthMapSubDiseaseDao healthMapSubDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               AdminUnitGlobalDao adminUnitGlobalDao,
@@ -41,6 +43,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
         this.healthMapDiseaseDao = healthMapDiseaseDao;
+        this.healthMapSubDiseaseDao = healthMapSubDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
         this.adminUnitGlobalDao = adminUnitGlobalDao;
@@ -56,6 +59,15 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public List<HealthMapDisease> getAllHealthMapDiseases() {
         return healthMapDiseaseDao.getAll();
+    }
+
+    /**
+     * Gets all HealthMap sub-diseases.
+     * @return All HealthMap sub-diseases.
+     */
+    @Override
+    public List<HealthMapSubDisease> getAllHealthMapSubDiseases() {
+        return healthMapSubDiseaseDao.getAll();
     }
 
     /**

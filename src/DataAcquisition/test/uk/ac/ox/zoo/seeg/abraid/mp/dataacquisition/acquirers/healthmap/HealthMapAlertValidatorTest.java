@@ -14,40 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class HealthMapAlertValidatorTest {
     @Test
-    public void alertWithOneDiseaseAndNoCommentIsValid() {
-        HealthMapAlert alert = createHealthMapAlert(5);
-        alert.setDiseaseId("123");
-        alert.setDisease("Test name");
-        actAndAssertMessage(alert, null);
-    }
-
-    @Test
-    public void alertWithTwoDiseasesAndNoCommentIsValid() {
-        HealthMapAlert alert = createHealthMapAlert(5);
-        alert.setDiseaseIds(Arrays.asList("123", "456"));
-        alert.setDiseases(Arrays.asList("Disease 1", "Disease 2"));
-        actAndAssertMessage(alert, null);
-    }
-
-    @Test
-    public void alertWithOneDiseaseAndCommentIsValid() {
-        HealthMapAlert alert = createHealthMapAlert(5);
-        alert.setDiseaseId("123");
-        alert.setDisease("Test name");
-        alert.setComment("pv,pf");
-        actAndAssertMessage(alert, null);
-    }
-
-    @Test
-    public void alertWithTwoDiseasesAndCommentIsInvalid() {
-        HealthMapAlert alert = createHealthMapAlert(5);
-        alert.setDiseaseIds(Arrays.asList("123", "456"));
-        alert.setDiseases(Arrays.asList("Disease 1", "Disease 2"));
-        alert.setComment("pv,pf");
-        actAndAssertMessage(alert, "HealthMap alert has 2 disease IDs and comment field \"pv,pf\"; this is not allowed because the comment cannot refer to multiple diseases (alert ID 5)");
-    }
-
-    @Test
     public void alertWithNoDiseaseIdsIsInvalid() {
         HealthMapAlert alert = createHealthMapAlert(5);
         alert.setDiseases(Arrays.asList("Disease 1", "Disease 2"));

@@ -30,6 +30,7 @@
     <bean id="geoNamesLocationPrecisionDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDaoImpl" autowire="constructor" />
     <bean id="healthMapCountryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapCountryDaoImpl" autowire="constructor" />
     <bean id="healthMapDiseaseDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapDiseaseDaoImpl" autowire="constructor" />
+    <bean id="healthMapSubDiseaseDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.HealthMapSubDiseaseDaoImpl" autowire="constructor" />
     <bean id="landSeaBorderDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LandSeaBorderDaoImpl" autowire="constructor" />
     <bean id="locationDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDaoImpl" autowire="constructor" />
     <bean id="modelRunDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDaoImpl" autowire="constructor" />

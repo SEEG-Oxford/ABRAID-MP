@@ -1,11 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapDiseaseKey;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,13 +22,22 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapLookupDataTest {
+    private AlertService alertService;
+    private LocationService locationService;
+    private DiseaseService diseaseService;
+    private HealthMapLookupData lookupData;
+
+    @Before
+    public void setUp() {
+        alertService = mock(AlertService.class);
+        locationService = mock(LocationService.class);
+        diseaseService = mock(DiseaseService.class);
+        lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
+    }
+
     @Test
     public void getCountryMap() {
         // Arrange
-        AlertService alertService = mock(AlertService.class);
-        LocationService locationService = mock(LocationService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-
         Country country1 = new Country(1, "Test country 1");
         Country country2 = new Country(2, "Test country 2");
         HealthMapCountry healthMapCountry1 = new HealthMapCountry(1, "Test HealthMap country 1", country1);
@@ -42,7 +51,7 @@ public class HealthMapLookupDataTest {
         expectedCountryMap.put(2, healthMapCountry2);
 
         // Act
-        HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
+        lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
         Map<Integer, HealthMapCountry> actualCountryMap = lookupData.getCountryMap();
 
         // Assert
@@ -52,37 +61,55 @@ public class HealthMapLookupDataTest {
     @Test
     public void getDiseaseMap() {
         // Arrange
-        AlertService alertService = mock(AlertService.class);
-        LocationService locationService = mock(LocationService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-
         DiseaseGroup disease1 = new DiseaseGroup(1, null, "Test disease 1", DiseaseGroupType.CLUSTER);
         DiseaseGroup disease2 = new DiseaseGroup(2, null, "Test disease 2", DiseaseGroupType.CLUSTER);
-        HealthMapDisease healthMapDisease1 = new HealthMapDisease(1, "Test HealthMap disease 1", null, disease1);
-        HealthMapDisease healthMapDisease2 = new HealthMapDisease(2, "Test HealthMap disease 2", "pv", disease2);
+        HealthMapDisease healthMapDisease1 = new HealthMapDisease(1, "Test HealthMap disease 1", disease1);
+        HealthMapDisease healthMapDisease2 = new HealthMapDisease(2, "Test HealthMap disease 2", disease2);
 
         List<HealthMapDisease> diseases = Arrays.asList(healthMapDisease1, healthMapDisease2);
         when(diseaseService.getAllHealthMapDiseases()).thenReturn(diseases);
 
-        Map<HealthMapDiseaseKey, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
-        expectedDiseaseMap.put(new HealthMapDiseaseKey(1, null), healthMapDisease1);
-        expectedDiseaseMap.put(new HealthMapDiseaseKey(2, "pv"), healthMapDisease2);
+        Map<Integer, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
+        expectedDiseaseMap.put(1, healthMapDisease1);
+        expectedDiseaseMap.put(2, healthMapDisease2);
 
         // Act
-        HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
-        Map<HealthMapDiseaseKey, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
+        lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
+        Map<Integer, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
 
         // Assert
         assertThat(actualDiseaseMap).isEqualTo(expectedDiseaseMap);
     }
 
     @Test
+    public void getSubDiseaseMap() {
+        // Arrange
+        DiseaseGroup disease1 = new DiseaseGroup(1, null, "Test disease 1", DiseaseGroupType.CLUSTER);
+        DiseaseGroup disease2 = new DiseaseGroup(2, null, "Test disease 2", DiseaseGroupType.CLUSTER);
+        DiseaseGroup disease3 = new DiseaseGroup(2, null, "Test disease 3", DiseaseGroupType.CLUSTER);
+        DiseaseGroup disease4 = new DiseaseGroup(2, null, "Test disease 4", DiseaseGroupType.CLUSTER);
+        HealthMapDisease healthMapDisease1 = new HealthMapDisease(1, "Test HealthMap disease 1", disease1);
+        HealthMapDisease healthMapDisease2 = new HealthMapDisease(2, "Test HealthMap disease 2", disease2);
+        HealthMapSubDisease healthMapSubDisease1 = new HealthMapSubDisease(healthMapDisease1, "sub1", disease3);
+        HealthMapSubDisease healthMapSubDisease2 = new HealthMapSubDisease(healthMapDisease2, "sub2", disease4);
+
+        List<HealthMapSubDisease> subDiseases = Arrays.asList(healthMapSubDisease1, healthMapSubDisease2);
+        when(diseaseService.getAllHealthMapSubDiseases()).thenReturn(subDiseases);
+
+        Map<String, HealthMapSubDisease> expectedSubDiseaseMap = new HashMap<>();
+        expectedSubDiseaseMap.put("sub1", healthMapSubDisease1);
+        expectedSubDiseaseMap.put("sub2", healthMapSubDisease2);
+
+        // Act
+        Map<String, HealthMapSubDisease> actualSubDiseaseMap = lookupData.getSubDiseaseMap();
+
+        // Assert
+        assertThat(actualSubDiseaseMap).isEqualTo(expectedSubDiseaseMap);
+    }
+
+    @Test
     public void getFeedMap() {
         // Arrange
-        AlertService alertService = mock(AlertService.class);
-        LocationService locationService = mock(LocationService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-
         Provenance provenance = new Provenance(ProvenanceNames.HEALTHMAP);
         Feed feed1 = new Feed(10, "Test feed 1", provenance, null, 1, 1);
         Feed feed2 = new Feed(20, "Test feed 2", provenance, "de", 1, 2);
@@ -105,10 +132,6 @@ public class HealthMapLookupDataTest {
     @Test
     public void getGeoNamesMap() {
         // Arrange
-        AlertService alertService = mock(AlertService.class);
-        LocationService locationService = mock(LocationService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-
         Map<String, LocationPrecision> expectedGeoNamesMap = new HashMap<>();
         expectedGeoNamesMap.put("ADM1", LocationPrecision.ADMIN1);
         expectedGeoNamesMap.put("PCLI", LocationPrecision.COUNTRY);
@@ -126,10 +149,6 @@ public class HealthMapLookupDataTest {
     @Test
     public void getHealthMapProvenance() {
         // Arrange
-        AlertService alertService = mock(AlertService.class);
-        LocationService locationService = mock(LocationService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-
         Provenance expectedProvenance = new Provenance();
         when(alertService.getProvenanceByName(ProvenanceNames.HEALTHMAP)).thenReturn(expectedProvenance);
 

@@ -3,12 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ObjectUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapDiseaseKey;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,13 +28,16 @@ public class HealthMapAlertConverterTest {
     private static final double DEFAULT_FEED_WEIGHTING = 0.5;
 
     private HealthMapLookupData lookupData;
-    private Map<HealthMapDiseaseKey, HealthMapDisease> diseaseMap;
+    private Map<Integer, HealthMapDisease> diseaseMap;
+    private Map<String, HealthMapSubDisease> subDiseaseMap;
 
     @Before
     public void setUp() {
         lookupData = mock(HealthMapLookupData.class);
         diseaseMap = new HashMap<>();
+        subDiseaseMap = new HashMap<>();
         when(lookupData.getDiseaseMap()).thenReturn(diseaseMap);
+        when(lookupData.getSubDiseaseMap()).thenReturn(subDiseaseMap);
     }
 
     @Test
@@ -53,7 +56,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
@@ -65,7 +68,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -103,7 +106,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
@@ -115,7 +118,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -153,7 +156,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Alert alert = new Alert();
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
@@ -166,7 +169,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, alert);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -198,7 +201,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
                 publicationDate, link, description, originalUrl, feedLanguage);
@@ -209,7 +212,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, null);
         mockOutGetFeed(null);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutGetHealthMapProvenance();
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
@@ -292,7 +295,7 @@ public class HealthMapAlertConverterTest {
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         when(healthMapAlert.getDiseaseIds()).thenReturn(Arrays.asList(diseaseId));
         when(healthMapAlert.getDiseases()).thenReturn(Arrays.asList(healthMapDiseaseName));
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, mock(Location.class));
@@ -322,7 +325,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Alert alert = new Alert();
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
@@ -336,7 +339,7 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(alertService, healthMapAlertId, alert);
         mockOutGetFeed(feed);
         HealthMapDisease healthMapDisease =
-                mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+                mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -373,15 +376,14 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup existingDiseaseGroup = new DiseaseGroup();
+        DiseaseGroup existingDiseaseGroup = new DiseaseGroup(1);
         Alert alert = new Alert();
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
                 publicationDate, link, description, originalUrl, feedLanguage);
         DiseaseGroup newDiseaseGroup = new DiseaseGroup(null, null, diseaseGroupName, DiseaseGroupType.CLUSTER);
-        HealthMapDisease newHealthMapDisease =
-                new HealthMapDisease(diseaseId, healthMapDiseaseName, null, newDiseaseGroup);
+        HealthMapDisease newHealthMapDisease = new HealthMapDisease(diseaseId, healthMapDiseaseName, newDiseaseGroup);
 
         // Prepare mock objects
         AlertService alertService = mock(AlertService.class);
@@ -389,8 +391,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, alert);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(existingDiseaseId, existingHealthMapDiseaseName, null,
-                existingDiseaseGroup);
+        mockOutGetExistingHealthMapDisease(existingDiseaseId, existingHealthMapDiseaseName, existingDiseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -405,8 +406,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         verify(diseaseService).saveHealthMapDisease(eq(newHealthMapDisease));
-        HealthMapDiseaseKey key = new HealthMapDiseaseKey(diseaseId, null);
-        assertThat(lookupData.getDiseaseMap().get(key)).isEqualTo(newHealthMapDisease);
+        assertThat(lookupData.getDiseaseMap().get(diseaseId)).isEqualTo(newHealthMapDisease);
     }
 
     @Test
@@ -447,34 +447,63 @@ public class HealthMapAlertConverterTest {
     }
 
     @Test
-    public void feedExistsAndAlertDoesNotExistAndMultipleDiseasesWithOneNotOfInterestAndOneNew() {
+    public void feedExistsAndAlertDoesNotExistAndMultipleDiseasesAndMultipleSubdiseases() {
         // Arrange
         String feedName = "Test feed";
         String summary = "Test summary";
         String feedLanguage = null;
         String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        List<String> diseaseIds = Arrays.asList("1", "2", "3", "4");
         int feedId = 1;
         DateTime publicationDate = DateTime.now();
         String link = "http://healthmap.org/ln.php?2154965";
-        List<String> healthMapDiseaseNames = Arrays.asList("Of interest 1", "Not of interest", "Of interest 2", "New");
-        String newDiseaseGroupName = "NEW FROM HEALTHMAP: New";
         String description = "Test description";
         int healthMapAlertId = 2154965;
-
         Location location = new Location();
-        DiseaseGroup diseaseGroupOfInterest1 = new DiseaseGroup();
-        DiseaseGroup diseaseGroupOfInterest2 = new DiseaseGroup();
-        DiseaseGroup diseaseGroupNew = new DiseaseGroup(null, null, newDiseaseGroupName, DiseaseGroupType.CLUSTER);
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
+
+        // Here we have:
+        // Malaria (of interest) linked to pf and pv (of interest) => existing disease groups for pf and pv
+        // Schistosomiasis (of interest) linked to sh (of interest) => existing disease group for sh
+        // Malaria (of interest) linked to pk (not of interest) => no disease group
+        // Malaria (of interest) linked to pz (non-existent) => no disease group
+        // Leishmaniasis (of interest) not linked to a sub-disease => existing disease group for Leishmaniases
+        // Not Of Interest 1 (not of interest) linked to ab (of interest) => existing disease group for ab
+        // Not Of Interest 2 (not of interest) not linked to a sub-disease => no disease group
+        // New (new) not linked to a sub-disease => new disease group
+        List<String> diseaseIds = Arrays.asList("1", "2", "3", "4", "5", "6");
+        List<String> healthMapDiseaseNames = Arrays.asList("Malaria", "Schistosomiasis", "Leishmaniasis",
+                "Not Of Interest 1", "Not Of Interest 2", "New");
+        String newDiseaseGroupName = "NEW FROM HEALTHMAP: New";
+        String comment = " p f, p k   , s h, Pv, ab, P z ";
+
+        DiseaseGroup diseaseGroupMalaria = new DiseaseGroup(1);
+        DiseaseGroup diseaseGroupSchistosomiasis = new DiseaseGroup(2);
+        DiseaseGroup diseaseGroupLeishmaniases = new DiseaseGroup(3);
+        DiseaseGroup diseaseGroupPf = new DiseaseGroup(4);
+        DiseaseGroup diseaseGroupPv = new DiseaseGroup(5);
+        DiseaseGroup diseaseGroupSh = new DiseaseGroup(6);
+        DiseaseGroup diseaseGroupAb = new DiseaseGroup(7);
+        DiseaseGroup diseaseGroupNew = new DiseaseGroup(null, null, newDiseaseGroupName, DiseaseGroupType.CLUSTER);
+
+        HealthMapDisease hmDiseaseMalaria = mockOutGetExistingHealthMapDisease(1, "Malaria", diseaseGroupMalaria);
+        HealthMapDisease hmDiseaseSchistosomiasis = mockOutGetExistingHealthMapDisease(2, "Schistosomiasis", diseaseGroupSchistosomiasis);
+        mockOutGetExistingHealthMapDisease(3, "Leishmaniasis", diseaseGroupLeishmaniases);
+        mockOutGetExistingHealthMapDisease(4, "Not Of Interest 1", null);
+        HealthMapDisease hmDiseaseNotOfInterest2 = mockOutGetExistingHealthMapDisease(5, "Not Of Interest 2", null);
+        mockOutGetExistingHealthMapSubDisease(hmDiseaseMalaria, "pf", diseaseGroupPf);
+        mockOutGetExistingHealthMapSubDisease(hmDiseaseMalaria, "pk", null);
+        mockOutGetExistingHealthMapSubDisease(hmDiseaseMalaria, "pv", diseaseGroupPv);
+        mockOutGetExistingHealthMapSubDisease(hmDiseaseSchistosomiasis, "sh", diseaseGroupSh);
+        mockOutGetExistingHealthMapSubDisease(hmDiseaseNotOfInterest2, "ab", diseaseGroupAb);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, null, null, summary,
                 publicationDate, link, description, originalUrl, "");
         healthMapAlert.setDiseaseIds(diseaseIds);
         healthMapAlert.setDiseases(healthMapDiseaseNames);
+        healthMapAlert.setComment(comment);
 
         HealthMapDisease healthMapDiseaseNew = new HealthMapDisease();
-        healthMapDiseaseNew.setHealthMapDiseaseId(4);
+        healthMapDiseaseNew.setId(6);
         healthMapDiseaseNew.setName("New");
         healthMapDiseaseNew.setDiseaseGroup(diseaseGroupNew);
 
@@ -484,9 +513,6 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(1, "Of interest 1", null, diseaseGroupOfInterest1);
-        mockOutGetExistingHealthMapDisease(2, "Not of interest", null, null);
-        mockOutGetExistingHealthMapDisease(3, "Of interest 2", null, diseaseGroupOfInterest2);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -494,78 +520,13 @@ public class HealthMapAlertConverterTest {
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
 
         // Assert
-        assertThat(occurrences).hasSize(3);
-        assertThat(occurrences.get(0).getDiseaseGroup()).isSameAs(diseaseGroupOfInterest1);
-        assertThat(occurrences.get(1).getDiseaseGroup()).isSameAs(diseaseGroupOfInterest2);
-        assertThat(occurrences.get(2).getDiseaseGroup()).isEqualTo(diseaseGroupNew);
-        verify(diseaseService).saveHealthMapDisease(eq(healthMapDiseaseNew));
-
-        for (DiseaseOccurrence occurrence : occurrences) {
-            assertThat(occurrence.getAlert()).isNotNull();
-            assertThat(occurrence.getAlert().getFeed()).isSameAs(feed);
-            assertThat(occurrence.getAlert().getSummary()).isEqualTo(description);
-            assertThat(occurrence.getAlert().getHealthMapAlertId()).isEqualTo(healthMapAlertId);
-            assertThat(occurrence.getAlert().getPublicationDate()).isEqualTo(publicationDate);
-            assertThat(occurrence.getAlert().getTitle()).isEqualTo(summary);
-            assertThat(occurrence.getAlert().getUrl()).isEqualTo(originalUrl);
-            assertThat(occurrence.getLocation()).isSameAs(location);
-            assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
-        }
-    }
-
-    @Test
-    public void feedExistsAndAlertDoesNotExistAndMultipleSubdiseasesWithOneNotOfInterestAndOneNew() {
-        // Arrange
-        String feedName = "Test feed";
-        String summary = "Test summary";
-        String feedLanguage = null;
-        String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
-        int diseaseId = 1;
-        int feedId = 1;
-        DateTime publicationDate = DateTime.now();
-        String link = "http://healthmap.org/ln.php?2154965";
-        String healthMapDiseaseName = "Malaria";
-        String comment = " p f, p k   , Pv, P z ";
-        String newDiseaseGroupName = "NEW FROM HEALTHMAP: Malaria [sub-name: pz]";
-        String description = "Test description";
-        int healthMapAlertId = 2154965;
-
-        Location location = new Location();
-        DiseaseGroup diseaseGroupOfInterest1 = new DiseaseGroup();
-        DiseaseGroup diseaseGroupOfInterest2 = new DiseaseGroup();
-        DiseaseGroup diseaseGroupNew = new DiseaseGroup(null, null, newDiseaseGroupName, DiseaseGroupType.CLUSTER);
-        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
-
-        HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
-                publicationDate, link, description, originalUrl, "");
-        healthMapAlert.setComment(comment);
-
-        HealthMapDisease healthMapDiseaseNew = new HealthMapDisease();
-        healthMapDiseaseNew.setHealthMapDiseaseId(diseaseId);
-        healthMapDiseaseNew.setName(healthMapDiseaseName);
-        healthMapDiseaseNew.setSubName("pz");
-        healthMapDiseaseNew.setDiseaseGroup(diseaseGroupNew);
-
-        // Prepare mock objects
-        AlertService alertService = mock(AlertService.class);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        EmailService emailService = mock(EmailService.class);
-        mockOutGetAlertByID(alertService, healthMapAlertId, null);
-        mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, "pf", diseaseGroupOfInterest1);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, "pk", null);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, "pv", diseaseGroupOfInterest2);
-        mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
-
-        // Act
-        HealthMapAlertConverter alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData);
-        List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
-
-        // Assert
-        assertThat(occurrences).hasSize(3);
-        assertThat(occurrences.get(0).getDiseaseGroup()).isSameAs(diseaseGroupOfInterest1);
-        assertThat(occurrences.get(1).getDiseaseGroup()).isSameAs(diseaseGroupOfInterest2);
-        assertThat(occurrences.get(2).getDiseaseGroup()).isEqualTo(diseaseGroupNew);
+        assertThat(occurrences).hasSize(6);
+        assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupPf)).isTrue();
+        assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupSh)).isTrue();
+        assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupPv)).isTrue();
+        assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupAb)).isTrue();
+        assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupLeishmaniases)).isTrue();
+        assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupNew)).isTrue();
         verify(diseaseService).saveHealthMapDisease(eq(healthMapDiseaseNew));
 
         for (DiseaseOccurrence occurrence : occurrences) {
@@ -609,7 +570,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, alert);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, null);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -637,7 +598,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedNewName, feedId, healthMapDiseaseName, diseaseId,
@@ -649,7 +610,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -685,7 +646,7 @@ public class HealthMapAlertConverterTest {
         int healthMapAlertId = 2154965;
 
         Location location = new Location();
-        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
 
         HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId,
@@ -697,7 +658,7 @@ public class HealthMapAlertConverterTest {
         EmailService emailService = mock(EmailService.class);
         mockOutGetAlertByID(alertService, healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null, diseaseGroup);
+        mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutDoesDiseaseOccurrenceExist(diseaseService, false);
 
         // Act
@@ -736,14 +697,29 @@ public class HealthMapAlertConverterTest {
     }
 
     private HealthMapDisease mockOutGetExistingHealthMapDisease(Integer diseaseId, String healthMapDiseaseName,
-                                                                String subName, DiseaseGroup diseaseGroup) {
-        HealthMapDisease healthMapDisease = new HealthMapDisease(diseaseId, healthMapDiseaseName, subName,
-                diseaseGroup);
-        diseaseMap.put(new HealthMapDiseaseKey(diseaseId, subName), healthMapDisease);
+                                                                DiseaseGroup diseaseGroup) {
+        HealthMapDisease healthMapDisease = new HealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
+        diseaseMap.put(diseaseId, healthMapDisease);
         return healthMapDisease;
+    }
+
+    private HealthMapSubDisease mockOutGetExistingHealthMapSubDisease(HealthMapDisease healthMapDisease, String name,
+                                                                      DiseaseGroup diseaseGroup) {
+        HealthMapSubDisease healthMapSubDisease = new HealthMapSubDisease(healthMapDisease, name, diseaseGroup);
+        subDiseaseMap.put(name, healthMapSubDisease);
+        return healthMapSubDisease;
     }
 
     private void mockOutDoesDiseaseOccurrenceExist(DiseaseService diseaseService, boolean result) {
         when(diseaseService.doesDiseaseOccurrenceExist(any(DiseaseOccurrence.class))).thenReturn(result);
+    }
+
+    private boolean doOccurrencesContainDiseaseGroup(List<DiseaseOccurrence> occurrences, DiseaseGroup diseaseGroup) {
+        for (DiseaseOccurrence occurrence : occurrences) {
+            if (ObjectUtils.nullSafeEquals(occurrence.getDiseaseGroup(), diseaseGroup)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

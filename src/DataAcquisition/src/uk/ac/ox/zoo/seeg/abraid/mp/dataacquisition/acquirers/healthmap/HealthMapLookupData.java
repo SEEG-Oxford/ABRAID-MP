@@ -4,9 +4,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapDiseaseKey;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +22,8 @@ public class HealthMapLookupData {
     private DiseaseService diseaseService;
 
     private Map<Integer, HealthMapCountry> countryMap;
-    private Map<HealthMapDiseaseKey, HealthMapDisease> diseaseMap;
+    private Map<Integer, HealthMapDisease> diseaseMap;
+    private Map<String, HealthMapSubDisease> subDiseaseMap;
     private Map<Integer, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
     private Provenance healthMapProvenance;
@@ -49,20 +48,27 @@ public class HealthMapLookupData {
     }
 
     /**
-     * Gets a list of HealthMap diseases, indexed by "HealthMap disease key" (i.e. ID and subname pair).
-     * @return A list of HealthMap diseases, indexed by HealthMap disease key.
+     * Gets a list of HealthMap diseases, indexed by HealthMap disease ID.
+     * @return A list of HealthMap diseases, indexed by HealthMap disease ID.
      */
-    public Map<HealthMapDiseaseKey, HealthMapDisease> getDiseaseMap() {
+    public Map<Integer, HealthMapDisease> getDiseaseMap() {
         if (diseaseMap == null) {
             List<HealthMapDisease> diseases = diseaseService.getAllHealthMapDiseases();
-            diseaseMap = new HashMap<>();
-            for (HealthMapDisease disease : diseases) {
-                HealthMapDiseaseKey key = new HealthMapDiseaseKey(disease.getHealthMapDiseaseId(),
-                        disease.getSubName());
-                diseaseMap.put(key, disease);
-            }
+            diseaseMap = index(diseases, on(HealthMapDisease.class).getId());
         }
         return diseaseMap;
+    }
+
+    /**
+     * Gets a list of HealthMap sub-diseases, indexed by sub-disease name.
+     * @return A list of HealthMap sub-diseases, indexed by sub-disease name.
+     */
+    public Map<String, HealthMapSubDisease> getSubDiseaseMap() {
+        if (subDiseaseMap == null) {
+            List<HealthMapSubDisease> subDiseases = diseaseService.getAllHealthMapSubDiseases();
+            subDiseaseMap = index(subDiseases, on(HealthMapSubDisease.class).getName());
+        }
+        return subDiseaseMap;
     }
 
     /**
