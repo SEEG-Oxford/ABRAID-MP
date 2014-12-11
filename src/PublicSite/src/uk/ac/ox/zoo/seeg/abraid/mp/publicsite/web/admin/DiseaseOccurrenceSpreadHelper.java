@@ -57,12 +57,16 @@ public class DiseaseOccurrenceSpreadHelper {
     }
 
     private List<DiseaseOccurrence> getOccurrencesForTable(int diseaseGroupId) {
-        return select(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(
-                        diseaseGroupId,
-                        DiseaseOccurrenceStatus.READY,
-                        DiseaseOccurrenceStatus.IN_REVIEW,
-                        DiseaseOccurrenceStatus.AWAITING_BATCHING),
-           having(on(DiseaseOccurrence.class).getLocation().getPrecision(), not(equalTo(LocationPrecision.COUNTRY))));
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(
+                diseaseGroupId,
+                DiseaseOccurrenceStatus.READY,
+                DiseaseOccurrenceStatus.IN_REVIEW,
+                DiseaseOccurrenceStatus.AWAITING_BATCHING
+        );
+        return filter(
+            having(on(DiseaseOccurrence.class).getLocation().getPrecision(), not(equalTo(LocationPrecision.COUNTRY))),
+            occurrences
+        );
     }
 
     private List<Country> getCountries() {
