@@ -20,7 +20,7 @@ WHERE feed_id = (SELECT id FROM feed WHERE feed.name = 'Uploaded');
 
 /* Clear alert titles */
 UPDATE alert
-SET title = ''
+SET title = NULL
 WHERE id IN (SELECT alert.id FROM feed JOIN alert ON alert.feed_id = feed.id WHERE feed.name = alert.title);
 
 /* Remove old 'Uploaded' feed and provenance */
