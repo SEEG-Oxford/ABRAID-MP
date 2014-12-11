@@ -110,6 +110,7 @@ public class HealthMapAlertConverter {
         alert.setFeed(retrieveFeed(healthMapAlert));
         alert.setTitle(healthMapAlert.getSummary());
         alert.setPublicationDate(healthMapAlert.getDate());
+        alert.setReviewedDate(healthMapAlert.getReviewed());
         setUrl(alert, healthMapAlert);
         alert.setSummary(healthMapAlert.getDescription());
         alert.setHealthMapAlertId(alertId);

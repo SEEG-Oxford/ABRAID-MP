@@ -26,6 +26,7 @@ public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
         // Arrange
         Feed feed = feedDao.getById(1);
         DateTime publicationDate = new DateTime("2014-01-03T01:00:00-05:00");
+        DateTime reviewedDate = new DateTime("2014-01-05T07:00:00-04:00");
         int healthMapAlertId = 100;
         String title = "Dengue/DHF update (15): Asia, Indian Ocean, Pacific";
         String summary = "This is a summary of the alert";
@@ -35,6 +36,7 @@ public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
         alert.setFeed(feed);
         alert.setHealthMapAlertId(healthMapAlertId);
         alert.setPublicationDate(publicationDate);
+        alert.setReviewedDate(reviewedDate);
         alert.setTitle(title);
         alert.setSummary(summary);
         alert.setUrl(url);
@@ -50,8 +52,8 @@ public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(alert.getCreatedDate()).isNotNull();
         assertThat(alert.getHealthMapAlertId()).isEqualTo(healthMapAlertId);
         // Test that the time zone has been converted correctly
-        DateTime expectedPublicationDate = new DateTime("2014-01-03T06:00:00");
-        assertThatDatesAreEqual(alert.getPublicationDate(), expectedPublicationDate);
+        assertThatDatesAreEqual(alert.getPublicationDate(), new DateTime("2014-01-03T06:00:00"));
+        assertThatDatesAreEqual(alert.getReviewedDate(), new DateTime("2014-01-05T11:00:00"));
         assertThat(alert.getTitle()).isEqualTo(title);
         assertThat(alert.getSummary()).isEqualTo(summary);
         assertThat(alert.getUrl()).isEqualTo(url);

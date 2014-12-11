@@ -2,6 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -98,5 +101,29 @@ public class ParseUtilsTest {
     public void convertNullString() {
         String convertedString = ParseUtils.convertString(null);
         assertThat(convertedString).isNull();
+    }
+
+    @Test
+    public void parseNullListOfIntegers() {
+        List<Integer> parsedIntegers = ParseUtils.parseIntegers(null);
+        assertThat(parsedIntegers).isNull();
+    }
+
+    @Test
+    public void parseValidAndInvalidIntegers() {
+        List<Integer> parsedIntegers = ParseUtils.parseIntegers(Arrays.asList("1", null, "2", "text", "3"));
+        assertThat(parsedIntegers).containsExactly(1, 2, 3);
+    }
+
+    @Test
+    public void convertNullListOfStrings() {
+        List<String> convertedStrings = ParseUtils.convertStrings(null);
+        assertThat(convertedStrings).isNull();
+    }
+
+    @Test
+    public void convertStrings() {
+        List<String> convertedStrings = ParseUtils.convertStrings(Arrays.asList("   first string ", null, "", "second"));
+        assertThat(convertedStrings).containsExactly("first string", null, null, "second");
     }
 }

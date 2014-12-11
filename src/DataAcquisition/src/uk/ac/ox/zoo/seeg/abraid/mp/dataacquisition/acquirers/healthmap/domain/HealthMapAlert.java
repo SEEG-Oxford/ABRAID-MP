@@ -30,6 +30,7 @@ public class HealthMapAlert {
     private List<Integer> diseaseIds;
     private String summary;
     private DateTime date;
+    private DateTime reviewed;
     private String link;
     @JsonProperty("descr")
     private String description;
@@ -72,10 +73,6 @@ public class HealthMapAlert {
         this.feedId = ParseUtils.parseInteger(feedId);
     }
 
-    public String getDisease() {
-        return disease;
-    }
-
     public void setDisease(String disease) {
         this.disease = ParseUtils.convertString(disease);
     }
@@ -85,11 +82,7 @@ public class HealthMapAlert {
     }
 
     public void setDiseases(List<String> diseases) {
-        this.diseases = diseases;
-    }
-
-    public Integer getDiseaseId() {
-        return diseaseId;
+        this.diseases = ParseUtils.convertStrings(diseases);
     }
 
     public void setDiseaseId(String diseaseId) {
@@ -105,17 +98,7 @@ public class HealthMapAlert {
      * @param diseaseIds The disease IDs.
      */
     public void setDiseaseIds(List<String> diseaseIds) {
-        if (diseaseIds != null) {
-            this.diseaseIds = new ArrayList<>();
-            for (String originalDiseaseId : diseaseIds) {
-                Integer parsedDiseaseId = ParseUtils.parseInteger(originalDiseaseId);
-                if (parsedDiseaseId != null) {
-                    this.diseaseIds.add(parsedDiseaseId);
-                }
-            }
-        } else {
-            this.diseaseIds = null;
-        }
+        this.diseaseIds = ParseUtils.parseIntegers(diseaseIds);
     }
 
     public String getSummary() {
@@ -132,6 +115,14 @@ public class HealthMapAlert {
 
     public void setDate(DateTime date) {
         this.date = date;
+    }
+
+    public DateTime getReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(DateTime reviewed) {
+        this.reviewed = reviewed;
     }
 
     public String getLink() {
@@ -171,7 +162,7 @@ public class HealthMapAlert {
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
+        this.comment = ParseUtils.convertString(comment);
     }
 
     /**

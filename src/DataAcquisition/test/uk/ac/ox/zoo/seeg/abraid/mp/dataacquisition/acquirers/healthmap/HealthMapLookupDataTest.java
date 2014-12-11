@@ -122,7 +122,6 @@ public class HealthMapLookupDataTest {
         expectedFeedMap.put(2, feed2);
 
         // Act
-        HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
         Map<Integer, Feed> actualFeedMap = lookupData.getFeedMap();
 
         // Assert
@@ -139,7 +138,6 @@ public class HealthMapLookupDataTest {
         when(locationService.getGeoNamesLocationPrecisionMappings()).thenReturn(expectedGeoNamesMap);
 
         // Act
-        HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
         Map<String, LocationPrecision> actualGeoNamesMap = lookupData.getGeoNamesMap();
 
         // Assert
@@ -153,7 +151,6 @@ public class HealthMapLookupDataTest {
         when(alertService.getProvenanceByName(ProvenanceNames.HEALTHMAP)).thenReturn(expectedProvenance);
 
         // Act
-        HealthMapLookupData lookupData = new HealthMapLookupData(alertService, locationService, diseaseService);
         Provenance actualProvenance = lookupData.getHealthMapProvenance();
 
         // Assert

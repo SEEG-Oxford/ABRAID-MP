@@ -35,10 +35,15 @@ public class Alert {
     private String title;
 
     // The publication date of the alert. This may be different from the actual date that the disease occurred,
-    // which if known is specified in DiseaseOccurrence.OccurrenceDate.
+    // which if known is specified in DiseaseOccurrence.occurrenceDate.
     @Column(name = "publication_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime publicationDate;
+
+    // The date on which the alert was reviewed.
+    @Column(name = "reviewed_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime reviewedDate;
 
     // The URL of the alert.
     @Column
@@ -98,6 +103,14 @@ public class Alert {
         this.publicationDate = publicationDate;
     }
 
+    public DateTime getReviewedDate() {
+        return reviewedDate;
+    }
+
+    public void setReviewedDate(DateTime reviewedDate) {
+        this.reviewedDate = reviewedDate;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -142,6 +155,7 @@ public class Alert {
         if (id != null ? !id.equals(alert.id) : alert.id != null) return false;
         if (publicationDate != null ? !publicationDate.equals(alert.publicationDate) : alert.publicationDate != null)
             return false;
+        if (reviewedDate != null ? !reviewedDate.equals(alert.reviewedDate) : alert.reviewedDate != null) return false;
         if (summary != null ? !summary.equals(alert.summary) : alert.summary != null) return false;
         if (title != null ? !title.equals(alert.title) : alert.title != null) return false;
         if (url != null ? !url.equals(alert.url) : alert.url != null) return false;
@@ -155,6 +169,7 @@ public class Alert {
         result = 31 * result + (feed != null ? feed.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (publicationDate != null ? publicationDate.hashCode() : 0);
+        result = 31 * result + (reviewedDate != null ? reviewedDate.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (summary != null ? summary.hashCode() : 0);
         result = 31 * result + (healthMapAlertId != null ? healthMapAlertId.hashCode() : 0);
