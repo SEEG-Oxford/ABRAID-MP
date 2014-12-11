@@ -12,7 +12,8 @@ CREATE TABLE healthmap_subdisease (
         CONSTRAINT uq_healthmap_subdisease_name UNIQUE
         -- Disallow commas and spaces as these are removed during data acquisition, and also constrain to lowercase
         CONSTRAINT ck_healthmap_subdisease_name CHECK (name NOT SIMILAR TO '%[ ,]%' AND name = LOWER(name)),
-    disease_group_id integer,
+    disease_group_id integer
+        CONSTRAINT fk_healthmap_subdisease_disease_group_id REFERENCES disease_group (id),
     created_date timestamp NOT NULL DEFAULT statement_timestamp()
 );
 
