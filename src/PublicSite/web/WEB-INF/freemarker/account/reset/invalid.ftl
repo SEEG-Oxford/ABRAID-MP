@@ -5,12 +5,15 @@
 <#import "../../shared/layout/common.ftl" as c/>
 <#import "../../shared/layout/form.ftl" as f/>
 <#import "../../shared/layout/panel.ftl" as p/>
+<#import "/spring.ftl" as spring />
 <@c.page title="ABRAID MP - Password Reset">
 <div class="container">
     <@p.panel "request-account-reset-body" "Password Reset">
         <#list failures as failure>
-            <div class="alert alert-danger" role="alert">${failure}</div>
+            <div class="alert alert-danger" role="alert" style="text-align: center">${failure}</div>
         </#list>
+        <br/>
+        <p style="text-align: center"><a href="<@spring.url '/account/reset/request' />" class="btn btn-primary">Request a new password reset link</a></p>
     </@p.panel>
 </div>
 </@c.page>

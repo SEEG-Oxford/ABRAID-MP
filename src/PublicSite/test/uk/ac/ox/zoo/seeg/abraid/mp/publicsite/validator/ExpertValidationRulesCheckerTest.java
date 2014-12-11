@@ -492,7 +492,7 @@ public class ExpertValidationRulesCheckerTest {
         target.checkPasswordResetRequest(null, "key", result);
 
         // Assert
-        assertThat(result).containsOnly("The specified password reset key is invalid. It may have expired, or a new key may have been generated for the target email address.");
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
     }
 
     @Test
@@ -503,10 +503,10 @@ public class ExpertValidationRulesCheckerTest {
 
         // Act/Assert
         target.checkPasswordResetRequest(1, null, result);
-        assertThat(result).containsOnly("The specified password reset key is invalid. It may have expired, or a new key may have been generated for the target email address.");
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
         result.clear();
         target.checkPasswordResetRequest(1, "", result);
-        assertThat(result).containsOnly("The specified password reset key is invalid. It may have expired, or a new key may have been generated for the target email address.");
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
         result.clear();
     }
 
@@ -522,7 +522,7 @@ public class ExpertValidationRulesCheckerTest {
         target.checkPasswordResetRequest(1, "key", result);
 
         // Assert
-        assertThat(result).containsOnly("The specified password reset key is invalid. It may have expired, or a new key may have been generated for the target email address.");
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
     }
 
     @Test

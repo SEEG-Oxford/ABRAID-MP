@@ -6,6 +6,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Utilities for Uri building and extracting.
+ * Copyright (c) 2014 University of Oxford
+ */
 public final class UriUtils {
     private static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
     private static final String X_FORWARDED_HOST = "X-Forwarded-Host";

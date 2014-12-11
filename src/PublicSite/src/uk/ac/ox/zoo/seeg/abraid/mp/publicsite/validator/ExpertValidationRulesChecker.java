@@ -48,8 +48,8 @@ public class ExpertValidationRulesChecker {
     private static final String FAILURE_MUST_MATCH = "%s pair must match.";
     private static final String FAILURE_NO_SUCH_USER = "No matching user found.";
     private static final String FAILURE_INVALID_PASSWORD_RESET =
-            "The specified password reset key is invalid. It may have expired, " +
-            "or a new key may have been generated for the target email address.";
+            "This password reset link is not valid. It may have expired, " +
+            "or a new link may have been requested for the same email address.";
 
     private final ExpertService expertService;
     private final PasswordEncoder passwordEncoder;
