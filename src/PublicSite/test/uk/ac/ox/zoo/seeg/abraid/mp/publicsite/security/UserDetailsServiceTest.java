@@ -32,7 +32,7 @@ public class UserDetailsServiceTest {
         DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
 
         UserDetailsService userDetailsService = new UserDetailsServiceImpl(new ExpertServiceImpl(adminUnitReviewDao,
-                expertDao, diseaseGroupDao, diseaseOccurrenceDao, diseaseOccurrenceReviewDao));
+                expertDao, diseaseGroupDao, diseaseOccurrenceDao, diseaseOccurrenceReviewDao, null, null));
 
         String fullName = "Helena Patching";
         String email = "helena.patching@zoo.ox.ac.uk";

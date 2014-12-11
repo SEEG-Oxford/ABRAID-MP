@@ -22,11 +22,15 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/r/libs/" ]]; then
 fi
 
 # Git clone
-if [[ ! -d "$ABRAID_SUPPORT_PATH/modelwrapper/repos/https_github_com_laurence_hudson_tessella_seegSDM_git_126ac02d0f87a06a3691f8c43fed14e2" ]]; then
+REPO_DIR="https_github_com_SEEG_Oxford_seegSDM_git_cf0db3f50a25bea80468794281f22883"
+if [[ ! -d "$ABRAID_SUPPORT_PATH/modelwrapper/repos/$REPO_DIR" ]]; then
   # Make an inital clone of the target repo
   # TODO Move to java-side context initialization.
   mkdir -p "$ABRAID_SUPPORT_PATH/modelwrapper/repos/"
-  git clone "https://github.com/laurence-hudson-tessella/seegSDM.git" "$ABRAID_SUPPORT_PATH/modelwrapper/repos/https_github_com_laurence_hudson_tessella_seegSDM_git_126ac02d0f87a06a3691f8c43fed14e2"
+  git clone "https://github.com/SEEG-Oxford/seegSDM.git" "$ABRAID_SUPPORT_PATH/modelwrapper/repos/$REPO_DIR"
+else
+  # Update the repo
+  ( cd "$ABRAID_SUPPORT_PATH/modelwrapper/repos/$REPO_DIR" && git pull origin master )
 fi
 
 echo "[[ MW | Checking raster input files ]]"

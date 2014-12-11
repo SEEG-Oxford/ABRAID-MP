@@ -522,7 +522,7 @@ public class DiseaseServiceTest {
         // Arrange
         int diseaseGroupId = 87;
         DiseaseOccurrenceStatistics expectedStatistics =
-                new DiseaseOccurrenceStatistics(1, DateTime.now(), DateTime.now());
+                new DiseaseOccurrenceStatistics(1, 0, DateTime.now(), DateTime.now());
         when(diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(expectedStatistics);
 
         // Act

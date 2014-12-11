@@ -22,7 +22,7 @@ public interface EmailService {
      * @throws TemplateException Fired if the template cannot be applied to the data.
      * @throws EmailException Fired if the email cannot be sent.
      */
-    void sendEmail(String toAddress, String subject, String templateName, Map<String, Object> templateData)
+    void sendEmail(String toAddress, String subject, String templateName, Map<String, ?> templateData)
             throws IOException, TemplateException, EmailException;
 
     /**
@@ -44,7 +44,7 @@ public interface EmailService {
      * @return A future for the background operation.
      */
     Future sendEmailInBackground(
-            String toAddress, String subject, String templateName, Map<String, Object> templateData);
+            String toAddress, String subject, String templateName, Map<String, ?> templateData);
 
     /**
      * Sends an email message, using a background process. Logs errors.
@@ -64,7 +64,7 @@ public interface EmailService {
      * @throws TemplateException Fired if the template cannot be applied to the data.
      * @throws EmailException Fired if the email cannot be sent.
      */
-    void sendEmail(String subject, String templateName, Map<String, Object> templateData)
+    void sendEmail(String subject, String templateName, Map<String, ?> templateData)
             throws IOException, TemplateException, EmailException;
 
     /**
@@ -83,7 +83,7 @@ public interface EmailService {
      * @param templateData The data to use when generating the body of the email.
      * @return A future for the background operation.
      */
-    Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData);
+    Future sendEmailInBackground(String subject, String templateName, Map<String, ?> templateData);
 
     /**
      * Sends an email message to the default address, using a background process. Logs errors.

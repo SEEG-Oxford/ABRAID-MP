@@ -21,15 +21,8 @@
             </h2>
         </div>
         <div class="panel-body" id="account-body">
-            <form action="#">
-                <p>Sign up with:</p>
-                <p class="form-group">
-                    <a class="btn btn-primary">TGHN account</a>
-                </p>
-            </form>
-            <hr/>
             <form action="#" data-bind="formSubmit: submit">
-                <p>Or create a new ABRAID-MP account:</p>
+                <p>Create a new ABRAID-MP account:</p>
                 <p class="form-group">
                     <label for="auth-username">Email address: </label>
                     <span class="input-group">

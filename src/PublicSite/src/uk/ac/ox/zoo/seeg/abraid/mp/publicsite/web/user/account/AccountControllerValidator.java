@@ -54,4 +54,51 @@ public class AccountControllerValidator {
 
         return validationFailures;
     }
+
+    /**
+     * Validates that a new PasswordResetRequest should be issued. Checks that a expert with the specified email
+     * address exists.
+     * @param email The email address.
+     * @return A list of validation failures.
+     */
+    public List<String> validateNewPasswordResetRequest(String email) {
+        List<String> validationFailures = new ArrayList<>();
+
+        rules.checkExpertExists(email, validationFailures);
+
+        return validationFailures;
+    }
+
+    /**
+     * Validates that a matching PasswordResetRequest exists.
+     * @param id The id of the PasswordResetRequest.
+     * @param key The key to validate.
+     * @return A list of validation failures.
+     */
+    public List<String> validatePasswordResetRequest(Integer id, String key) {
+        List<String> validationFailures = new ArrayList<>();
+
+        rules.checkPasswordResetRequest(id, key, validationFailures);
+
+        return validationFailures;
+    }
+
+    /**
+     * Validates a password change request made via a PasswordResetRequest.
+     * @param newPassword The new password.
+     * @param confirmPassword The new password (confirmation).
+     * @param id The id of the PasswordResetRequest.
+     * @param key The key to validate.
+     * @return A list of validation failures.
+     */
+    public List<String> validatePasswordResetProcessing(
+            String newPassword, String confirmPassword, Integer id, String key) {
+        List<String> validationFailures = new ArrayList<>();
+
+        rules.checkPasswordResetRequest(id, key, validationFailures);
+        rules.checkPasswordConfirmation(newPassword, confirmPassword, validationFailures);
+        rules.checkPassword(newPassword, validationFailures);
+
+        return validationFailures;
+    }
 }

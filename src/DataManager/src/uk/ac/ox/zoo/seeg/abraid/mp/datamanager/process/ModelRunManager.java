@@ -5,7 +5,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Prepares for and requests a model run.
@@ -41,20 +40,10 @@ public class ModelRunManager {
     }
 
     /**
-     * Gets the new weighting for each active expert.
-     * @return A map from expert ID to the new weighting value.
+     * Calculates and saves the new weighting for each active expert.
      */
     @Transactional(rollbackFor = Exception.class)
-    public Map<Integer, Double> prepareExpertsWeightings() {
-        return modelRunWorkflowService.calculateExpertsWeightings();
-    }
-
-    /**
-     * Saves the new weighting for each expert.
-     * @param newExpertsWeightings The map from expert to the new weighting value.
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void saveExpertsWeightings(Map<Integer, Double> newExpertsWeightings) {
-        modelRunWorkflowService.saveExpertsWeightings(newExpertsWeightings);
+    public void updateExpertsWeightings() {
+        modelRunWorkflowService.updateExpertsWeightings();
     }
 }

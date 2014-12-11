@@ -100,7 +100,7 @@ define([
 
             it("it specifies the correct form url", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[3]).toBe("/account/password");
+                expect(args[3]).toBe("account/password");
             });
 
             it("it specifies to not send JSON", function () {

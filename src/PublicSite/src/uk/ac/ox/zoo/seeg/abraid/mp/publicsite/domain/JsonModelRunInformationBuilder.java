@@ -58,10 +58,20 @@ public class JsonModelRunInformationBuilder {
         if (statistics.getOccurrenceCount() > 0) {
             String dateText = getDiseaseOccurrencesDateText(
                     statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
-            text = String.format("total %d, occurring %s", statistics.getOccurrenceCount(), dateText);
+            String nonCountryText = getNonCountryText(statistics.getOccurrenceCountExcludingCountries());
+            text = String.format("total %d (of which %s), occurring %s",
+                    statistics.getOccurrenceCount(), nonCountryText, dateText);
         }
         information.setDiseaseOccurrencesText(text);
         return this;
+    }
+
+    private String getNonCountryText(long occurrenceCountExcludingCountries) {
+        if (occurrenceCountExcludingCountries == 1) {
+            return "1 is a non-country occurrence";
+        } else {
+            return String.format("%d are non-country occurrences", occurrenceCountExcludingCountries);
+        }
     }
 
     /**
@@ -95,32 +105,33 @@ public class JsonModelRunInformationBuilder {
      */
     public JsonModelRunInformationBuilder populateBatchDateParameters(ModelRun lastCompletedModelRun,
                                                                       DiseaseOccurrenceStatistics statistics) {
-        // The minimum batch date is the minimum occurrence date if this is the first batch, otherwise
-        // it is the day after the latest batch end date.
+        // The minimum and maximum batch dates are equal to the minimum and maximum occurrence date
         DateTime minimumDate = statistics.getMinimumOccurrenceDate();
-        if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
-                lastCompletedModelRun.getBatchEndDate() != null) {
-            minimumDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
-        }
-
-        // The maximum batch date is simply the maximum occurrence date
         DateTime maximumDate = statistics.getMaximumOccurrenceDate();
 
-        // The default value of "batch end date" is the last day of the minimum date's year, limited to:
-        // (a) the maximum occurrence date; (b) 1 week before now (because that is when batching normally ends)
+        // The default value of "batch start date" is the minimum occurrence date if this is the first
+        // batch, otherwise it is the day after the latest batch end date
+        DateTime defaultStartDate = minimumDate;
+        if (lastCompletedModelRun != null && lastCompletedModelRun.getBatchingCompletedDate() != null &&
+                lastCompletedModelRun.getBatchEndDate() != null) {
+            defaultStartDate = lastCompletedModelRun.getBatchEndDate().plusDays(1);
+        }
+
+        // The default value of "batch end date" is the last day of the default start date's year, limited to
+        // the maximum occurrence date
         DateTime defaultEndDate = null;
-        if (minimumDate != null && maximumDate != null) {
-            DateTime defaultFinalBatchEndDate = DateTime.now().minusWeeks(1);
-            defaultEndDate = minimumDate.plusYears(1).withDayOfYear(1).minusDays(1);
-            if (defaultEndDate.isAfter(defaultFinalBatchEndDate)) {
-                defaultEndDate = defaultFinalBatchEndDate;
-            }
+        if (defaultStartDate != null && maximumDate != null) {
+            defaultEndDate = defaultStartDate.plusYears(1).withDayOfYear(1).minusDays(1);
             if (defaultEndDate.isAfter(maximumDate)) {
                 defaultEndDate = maximumDate;
+            }
+            if (defaultStartDate.isAfter(defaultEndDate)) {
+                defaultStartDate = defaultEndDate;
             }
         }
 
         information.setBatchDateMinimum(getDateText(minimumDate));
+        information.setBatchStartDateDefault(getDateText(defaultStartDate));
         information.setBatchEndDateDefault(getDateText(defaultEndDate));
         information.setBatchDateMaximum(getDateText(maximumDate));
         return this;
@@ -159,13 +170,22 @@ public class JsonModelRunInformationBuilder {
     private String getLastModelRunBatchingText(ModelRun lastRequestedModelRun) {
         String text = "";
 
-        if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
+        if (lastRequestedModelRun.getBatchStartDate() != null && lastRequestedModelRun.getBatchEndDate() != null) {
+            // Batching has been requested
             String batchStartDateText = getDateText(lastRequestedModelRun.getBatchStartDate());
             String batchEndDateText = getDateText(lastRequestedModelRun.getBatchEndDate());
-            int batchOccurrenceCount = lastRequestedModelRun.getBatchOccurrenceCount();
-            String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
-            text = String.format(" (including batching of %d occurrence%s for validation, start date %s, end date %s)",
-                    batchOccurrenceCount, pluralEnding, batchStartDateText, batchEndDateText);
+            String batchDateText = String.format("start date %s, end date %s", batchStartDateText, batchEndDateText);
+
+            if (lastRequestedModelRun.getBatchingCompletedDate() != null) {
+                // Batching is complete
+                int batchOccurrenceCount = lastRequestedModelRun.getBatchOccurrenceCount();
+                String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
+                text = String.format(" (including batching of %d occurrence%s for validation, %s)",
+                        batchOccurrenceCount, pluralEnding, batchDateText);
+            } else {
+                // Batching is not complete
+                text = String.format(" (but batching not yet completed, %s)", batchDateText);
+            }
         }
 
         return text;

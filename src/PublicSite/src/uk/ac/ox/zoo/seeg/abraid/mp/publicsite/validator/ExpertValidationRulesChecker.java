@@ -46,6 +46,10 @@ public class ExpertValidationRulesChecker {
     private static final String FAILURE_ALREADY_EXISTS = "%s already has an associated account.";
     private static final String FAILURE_INCORRECT_VALUE = "%s incorrect.";
     private static final String FAILURE_MUST_MATCH = "%s pair must match.";
+    private static final String FAILURE_NO_SUCH_USER = "No matching user found.";
+    private static final String FAILURE_INVALID_PASSWORD_RESET =
+            "This password reset link is not valid. It may have expired, " +
+            "or a new link may have been requested for the same email address.";
 
     private final ExpertService expertService;
     private final PasswordEncoder passwordEncoder;
@@ -76,6 +80,17 @@ public class ExpertValidationRulesChecker {
             if (expertService.getExpertByEmail(value) != null) {
                 validationFailures.add(String.format(FAILURE_ALREADY_EXISTS, EMAIL_ADDRESS_FIELD_NAME));
             }
+        }
+    }
+
+    /**
+     * Validates that an expert exists with a specific email address.
+     * @param value The value to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkExpertExists(String value, List<String> validationFailures) {
+        if (expertService.getExpertByEmail(value) == null) {
+            validationFailures.add(String.format(FAILURE_NO_SUCH_USER));
         }
     }
 
@@ -224,6 +239,20 @@ public class ExpertValidationRulesChecker {
      */
     public void checkIsSeegMember(Boolean value, List<String> validationFailures) {
         validateNotNull(SEEG_FIELD_NAME, value, validationFailures);
+    }
+
+    /**
+     * Validates a PasswordResetRequest, with the following conditions.
+     *  * Exists
+     *  * Has a matching key
+     * @param id The id of the PasswordResetRequest.
+     * @param key The key to validate.
+     * @param validationFailures A list of validation failures.
+     */
+    public void checkPasswordResetRequest(Integer id, String key, List<String> validationFailures) {
+        if (id == null || StringUtils.isEmpty(key) || !expertService.checkPasswordResetRequest(id, key)) {
+            validationFailures.add(FAILURE_INVALID_PASSWORD_RESET);
+        }
     }
 
     private static void validateNotNull(String name, Object value, List<String> validationFailures) {

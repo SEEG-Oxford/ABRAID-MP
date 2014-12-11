@@ -22,11 +22,14 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.BaseWebIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.hamcrest.text.StringContains.containsString;
 import static org.mockito.Mockito.when;
@@ -77,7 +80,9 @@ public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests
     public void covariatesPageReturnsCorrectContent() throws Exception {
         // Arrange
         when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        String expectedJavaScript = "var initialData = {\"diseases\":null,\"files\":null};";
+        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        String expectedJavaScript = "var initialData = {\"diseases\":[],\"files\":[]};";
 
         // Act
         ResultActions sendRequest = this.mockMvc.perform(get("/covariates"));
@@ -91,6 +96,8 @@ public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests
     @Test
     public void covariatesPageOnlyAcceptsGET() throws Exception {
         when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
 
         this.mockMvc.perform(get("/covariates")).andExpect(status().isOk());
         this.mockMvc.perform(post("/covariates")).andExpect(status().isMethodNotAllowed());

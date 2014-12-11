@@ -424,12 +424,13 @@ define([
                     var response = {
                         lastModelRunText: "a",
                         diseaseOccurrencesText: "b",
-                        batchEndDateDefault: "c",
-                        batchDateMinimum: "d",
-                        batchDateMaximum: "e",
-                        hasModelBeenSuccessfullyRun: "f",
-                        canRunModel: "g",
-                        hasGoldStandardOccurrences: "h"
+                        batchStartDateDefault: "c",
+                        batchEndDateDefault: "d",
+                        batchDateMinimum: "e",
+                        batchDateMaximum: "f",
+                        hasModelBeenSuccessfullyRun: "g",
+                        canRunModel: "h",
+                        hasGoldStandardOccurrences: "i"
                     };
 
                     // Act
@@ -443,6 +444,7 @@ define([
                     // Arrange
                     expect(vm.lastModelRunText()).toBe(response.lastModelRunText);
                     expect(vm.diseaseOccurrencesText()).toBe(response.diseaseOccurrencesText);
+                    expect(vm.batchStartDate()).toBe(response.batchStartDateDefault);
                     expect(vm.batchEndDate()).toBe(response.batchEndDateDefault);
                     expect(vm.batchDateMinimum()).toBe(response.batchDateMinimum);
                     expect(vm.batchDateMaximum()).toBe(response.batchDateMaximum);

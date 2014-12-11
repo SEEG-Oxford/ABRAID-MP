@@ -42,7 +42,7 @@ public class EmailServiceTest {
         verify(email).setHostName(expectation.getAddress());
         verify(email).setSmtpPort(expectation.getPort());
         verify(email).setSslSmtpPort("" + expectation.getPort());
-        verify(email).setSSLOnConnect(expectation.useSSL());
+        verify(email).setStartTLSRequired(expectation.useSSL());
 
         ArgumentCaptor<DefaultAuthenticator> captor = ArgumentCaptor.forClass(DefaultAuthenticator.class);
         verify(email).setAuthenticator(captor.capture());
