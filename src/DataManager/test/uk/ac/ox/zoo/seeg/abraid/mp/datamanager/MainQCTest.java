@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
-    public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
+    public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=fakekey&geonameId=";
 
     @Autowired
     private ApplicationContext applicationContext;

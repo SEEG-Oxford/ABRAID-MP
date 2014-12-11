@@ -102,9 +102,9 @@ public class CsvDataAcquirer {
             CsvDiseaseOccurrence csvDiseaseOccurrence = csvDiseaseOccurrences.get(i);
             try {
                 // Convert the CSV disease occurrence into an ABRAID disease occurrence
-                DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence);
+                DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence, isGoldStandard);
                 // Now acquire the ABRAID disease occurrence
-                if (diseaseOccurrenceDataAcquirer.acquire(occurrence, isGoldStandard)) {
+                if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
                     convertedOccurrences.add(occurrence);
                 }
             } catch (DataAcquisitionException e) {

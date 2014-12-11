@@ -66,6 +66,17 @@ public class Feed {
         this.name = name;
     }
 
+    public Feed(String name, String language) {
+        this.name = name;
+        this.language = language;
+    }
+
+    public Feed(String name, Provenance provenance) {
+        this.name = name;
+        this.provenance = provenance;
+        this.weighting = provenance.getDefaultFeedWeighting();
+    }
+
     public Feed(String name, Provenance provenance, double weighting, String language, Integer healthMapFeedId) {
         this.name = name;
         this.provenance = provenance;

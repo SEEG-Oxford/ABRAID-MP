@@ -87,6 +87,14 @@ public class Alert {
         this.feed = feed;
     }
 
+    /**
+     * If the Alert's title is blank, display the Feed's name (which is not nullable).
+     * @return The string to display on Data Validator.
+     */
+    public String getTitleForDisplay() {
+        return (title != null) ? title : feed.getName();
+    }
+
     public String getTitle() {
         return title;
     }

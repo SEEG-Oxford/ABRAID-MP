@@ -14,9 +14,8 @@ public interface DiseaseOccurrenceValidationService {
     /**
      * Adds validation parameters to a disease occurrence, including various checks.
      * @param occurrence The disease occurrence.
-     * @param isGoldStandard Whether or not this is a "gold standard" disease occurrence (i.e. should not be validated).
      */
-    void addValidationParametersWithChecks(DiseaseOccurrence occurrence, boolean isGoldStandard);
+    void addValidationParametersWithChecks(DiseaseOccurrence occurrence);
 
     /**
      * Adds validation parameters to a list of disease occurrences (without checks). Each occurrence must belong to

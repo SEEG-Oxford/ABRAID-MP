@@ -24,7 +24,7 @@ public class AlertDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveThenGetByHealthMapAlertId() {
         // Arrange
-        Feed feed = feedDao.getById(1);
+        Feed feed = feedDao.getById(2);
         DateTime publicationDate = new DateTime("2014-01-03T01:00:00-05:00");
         DateTime reviewedDate = new DateTime("2014-01-05T07:00:00-04:00");
         int healthMapAlertId = 100;

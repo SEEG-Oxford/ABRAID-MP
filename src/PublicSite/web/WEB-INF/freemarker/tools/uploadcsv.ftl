@@ -27,7 +27,7 @@
             <br>
             <br>
             <p> The CSV file must have a header row, and have columns in the following order (column names are
-                ignored). It must also use the UTF-8 character set, though this is only an issue if special characters
+                ignored). It must also use the UTF-8 character set, although this is only an issue if special characters
                 appear in the text.
             </p>
             <br>
@@ -77,8 +77,13 @@
                     <td>Must be in the format DD/MM/YYYY, MM/YYYY, YYYY, MMM-YY or MMM-YYYY</td>
                 </tr>
                 <tr>
-                    <td>Title</td>
+                    <td>Feed</td>
                     <td>Yes</td>
+                    <td>The source of the data</td>
+                </tr>
+                <tr>
+                    <td>Alert Title</td>
+                    <td>No</td>
                     <td>Text to display in the Data Validator</td>
                 </tr>
                 <tr>
