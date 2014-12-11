@@ -1,3 +1,2 @@
 1	HealthMap	1
-2	Manual dataset	1
-3	Manual gold standard dataset	1
+2	Uploaded	1
