@@ -157,16 +157,16 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     }
 
     private void deleteWorkingDirectory(ModelRunStatus modelRunStatus) {
-        if (modelRunStatus.equals(ModelRunStatus.COMPLETED) && !dryRun) {
+        if (dryRun) {
+            logger.info(String.format(LOG_NOT_DELETED_WORKSPACE_DIR_DRY_RUN, workingDirectoryPath.toAbsolutePath()));
+        } else if (!modelRunStatus.equals(ModelRunStatus.COMPLETED)) {
+            logger.warn(String.format(LOG_NOT_DELETED_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
+        } else {
             try {
                 FileUtils.deleteDirectory(workingDirectoryPath.toFile());
             } catch (IOException e) {
                 logger.error(String.format(LOG_COULD_NOT_DELETE_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
             }
-        } else if (dryRun) {
-            logger.info(String.format(LOG_NOT_DELETED_WORKSPACE_DIR_DRY_RUN, workingDirectoryPath.toAbsolutePath()));
-        } else {
-            logger.warn(String.format(LOG_NOT_DELETED_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
         }
     }
 
