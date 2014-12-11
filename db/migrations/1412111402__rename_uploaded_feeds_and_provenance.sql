@@ -8,10 +8,10 @@ INSERT INTO provenance (name, default_feed_weighting) VALUES ('Manual gold stand
 
 /* Create the five new feeds from distinct alert titles, under the gold standard provenance */
 INSERT INTO feed (name, provenance_id, weighting)
-SELECT distinct alert.title, (SELECT id FROM provenance WHERE provenance.name = 'Manual gold standard dataset'), 1
-FROM alert
-JOIN feed ON alert.feed_id = feed.id
-WHERE feed.name = 'Uploaded';
+SELECT DISTINCT a.title, (SELECT id FROM provenance p WHERE p.name = 'Manual gold standard dataset'), 1
+FROM alert a
+JOIN feed f ON a.feed_id = f.id
+WHERE f.name = 'Uploaded';
 
 /* Move alerts from 'Uploaded' feed to their new feed created above */
 UPDATE alert
@@ -20,8 +20,8 @@ WHERE feed_id = (SELECT id FROM feed WHERE feed.name = 'Uploaded');
 
 /* Clear alert titles */
 UPDATE alert
-SET title = ''
-WHERE id IN (SELECT alert.id FROM feed JOIN alert ON alert.feed_id = feed.id WHERE feed.name = alert.title);
+SET title = NULL
+WHERE id IN (SELECT a.id FROM feed f JOIN alert a ON a.feed_id = f.id WHERE f.name = a.title);
 
 /* Remove old 'Uploaded' feed and provenance */
 DELETE FROM feed
