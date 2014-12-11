@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.PasswordResetRequest;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
@@ -25,10 +26,16 @@ import static org.hamcrest.collection.IsIn.isIn;
  * Copyright (c) 2014 University of Oxford
  */
 public class AccountControllerHelper {
-    private static final String FAIL_NO_ID_MATCH = "No matching expert found to update (%s).";
-    private static final String EMAIL_DATA_KEY = "expert";
-    private static final String EMAIL_SUBJECT = "Updated user requiring visibility sign off";
-    private static final String EMAIL_TEMPLATE = "account/updatedUserEmail.ftl";
+    private static final String FAIL_NO_EXPERT_MATCH = "No matching expert found to update (%s).";
+    private static final String FAIL_NO_REQUEST_MATCH = "No matching password reset request found (%s).";
+    private static final String EXPERT_VISIBILITY_EMAIL_DATA_KEY = "expert";
+    private static final String VISIBILITY_EMAIL_SUBJECT = "Updated user requiring visibility sign off";
+    private static final String VISIBILITY_EMAIL_TEMPLATE = "account/updatedUserEmail.ftl";
+    private static final String PASSWORD_RESET_EMAIL_SUBJECT = "ABRAID-MP Password Reset";
+    private static final String PASSWORD_RESET_EMAIL_TEMPLATE = "account/passwordResetEmail.ftl";
+    private static final String ID_RESET_EMAIL_DATA_KEY = "id";
+    private static final String KEY_RESET_EMAIL_DATA_KEY = "key";
+    private static final String URL_RESET_EMAIL_DATA_KEY = "url";
     private final ExpertService expertService;
     private final DiseaseService diseaseService;
     private final EmailService emailService;
@@ -56,7 +63,7 @@ public class AccountControllerHelper {
         Expert expert = expertService.getExpertById(id);
         if (expert == null) {
             // Roll back
-            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_ID_MATCH, id)));
+            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_EXPERT_MATCH, id)));
         } else {
             boolean resetVisibility =
                     !expert.getName().equals(expertDto.getName()) ||
@@ -83,7 +90,7 @@ public class AccountControllerHelper {
             expertService.saveExpert(expert);
 
             if (resetVisibility) {
-                emailAdmin(expert);
+                sendVisibilityEmailToAdmin(expert);
             }
         }
         // End of transaction
@@ -101,7 +108,7 @@ public class AccountControllerHelper {
         Expert expert = expertService.getExpertById(id);
         if (expert == null) {
             // Roll back
-            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_ID_MATCH, id)));
+            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_EXPERT_MATCH, id)));
         } else {
             String passwordHash = passwordEncoder.encode(password);
             expert.setPassword(passwordHash);
@@ -110,11 +117,61 @@ public class AccountControllerHelper {
         // End of transaction
     }
 
-    private void emailAdmin(Expert expert) {
+    private void sendVisibilityEmailToAdmin(Expert expert) {
         if (expert.getVisibilityRequested()) {
             Map<String, Object> data = new HashMap<>();
-            data.put(EMAIL_DATA_KEY, expert);
-            emailService.sendEmailInBackground(EMAIL_SUBJECT, EMAIL_TEMPLATE, data);
+            data.put(EXPERT_VISIBILITY_EMAIL_DATA_KEY, expert);
+            emailService.sendEmailInBackground(VISIBILITY_EMAIL_SUBJECT, VISIBILITY_EMAIL_TEMPLATE, data);
         }
+    }
+
+    /**
+     * Updates the database to issue a new password reset request.
+     * @param email The email address of the expert to issue a password reset request for.
+     * @param url The base url of servlet to use in the "reset email".
+     * @throws ValidationException Thrown if an email matching expert cannot be found.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void processExpertPasswordResetRequestAsTransaction(String email, String url) throws ValidationException {
+        // Start of transaction
+        Expert expert = expertService.getExpertByEmail(email);
+        if (expert == null) {
+            // Roll back
+            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_EXPERT_MATCH, email)));
+        } else {
+            String key = PasswordResetRequest.createPasswordResetRequestKey();
+            Integer id = expertService.createAndSavePasswordResetRequest(email, key);
+            HashMap<String, Object> data = new HashMap<>();
+            data.put(KEY_RESET_EMAIL_DATA_KEY, key);
+            data.put(ID_RESET_EMAIL_DATA_KEY, id);
+            data.put(URL_RESET_EMAIL_DATA_KEY, url);
+            emailService.sendEmailInBackground(
+                    email, PASSWORD_RESET_EMAIL_SUBJECT, PASSWORD_RESET_EMAIL_TEMPLATE, data);
+        }
+        // End of transaction
+    }
+
+    /**
+     * Updates the database change expert's password using the password reset system.
+     * @param password The new password.
+     * @param id The id of the password reset request.
+     * @throws ValidationException Thrown if an id matching password reset request cannot be found.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void processExpertPasswordResetAsTransaction(String password, Integer id)
+            throws ValidationException {
+        // Start of transaction
+        PasswordResetRequest passwordResetRequest = expertService.getPasswordResetRequest(id);
+        if (passwordResetRequest == null) {
+            // Roll back
+            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_REQUEST_MATCH, id)));
+        } else {
+            String passwordHash = passwordEncoder.encode(password);
+            Expert expert = passwordResetRequest.getExpert();
+            expert.setPassword(passwordHash);
+            expertService.saveExpert(expert);
+            expertService.deletePasswordResetRequest(passwordResetRequest);
+        }
+        // End of transaction
     }
 }

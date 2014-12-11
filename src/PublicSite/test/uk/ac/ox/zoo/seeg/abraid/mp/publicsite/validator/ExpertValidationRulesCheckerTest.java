@@ -438,4 +438,105 @@ public class ExpertValidationRulesCheckerTest {
         // Assert
         assertThat(result).contains("Is SEEG member (seegmember) must be provided.");
     }
+
+    @Test
+    public void checkExpertExistsRejectsNull() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(mock(ExpertService.class), null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkExpertExists(null, result);
+
+        // Assert
+        assertThat(result).contains("No matching user found.");
+    }
+
+    @Test
+    public void checkExpertExistsRejectsMissingExpert() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService, null);
+        List<String> result = new ArrayList<>();
+        when(expertService.getExpertByEmail("abc")).thenReturn(null);
+
+        // Act
+        target.checkExpertExists("abc", result);
+
+        // Assert
+        assertThat(result).contains("No matching user found.");
+    }
+
+    @Test
+    public void checkExpertExistsAcceptsValidExpert() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService, null);
+        List<String> result = new ArrayList<>();
+        when(expertService.getExpertByEmail("abc")).thenReturn(mock(Expert.class));
+
+        // Act
+        target.checkExpertExists("abc", result);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void checkPasswordResetRequestRejectsNullID() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(null, null);
+        List<String> result = new ArrayList<>();
+
+        // Act
+        target.checkPasswordResetRequest(null, "key", result);
+
+        // Assert
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
+    }
+
+    @Test
+    public void checkPasswordResetRequestRejectsInvalidKey() throws Exception {
+        // Arrange
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(null, null);
+        List<String> result = new ArrayList<>();
+
+        // Act/Assert
+        target.checkPasswordResetRequest(1, null, result);
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
+        result.clear();
+        target.checkPasswordResetRequest(1, "", result);
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
+        result.clear();
+    }
+
+    @Test
+    public void checkPasswordResetRequestRejectsWrongKey() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService, null);
+        List<String> result = new ArrayList<>();
+        when(expertService.checkPasswordResetRequest(1, "key")).thenReturn(false);
+
+        // Act
+        target.checkPasswordResetRequest(1, "key", result);
+
+        // Assert
+        assertThat(result).containsOnly("This password reset link is not valid. It may have expired, or a new link may have been requested for the same email address.");
+    }
+
+    @Test
+    public void checkPasswordResetRequestAcceptsValidPair() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        ExpertValidationRulesChecker target = new ExpertValidationRulesChecker(expertService, null);
+        List<String> result = new ArrayList<>();
+        when(expertService.checkPasswordResetRequest(1, "key")).thenReturn(true);
+
+        // Act
+        target.checkPasswordResetRequest(1, "key", result);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
 }

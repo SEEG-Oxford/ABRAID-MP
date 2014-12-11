@@ -95,7 +95,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
      * @throws EmailException Fired if the email can not be sent.
      */
     @Override
-    public void sendEmail(String toAddress, String subject, String templateName, Map<String, Object> templateData)
+    public void sendEmail(String toAddress, String subject, String templateName, Map<String, ?> templateData)
             throws IOException, TemplateException, EmailException {
         Template template = freemarkerConfig.getTemplate(templateName);
         Writer bodyWriter = new StringWriter();
@@ -134,7 +134,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
      */
     @Override
     public Future sendEmailInBackground(final String toAddress, final String subject,
-                                        final String templateName, final Map<String, Object> templateData) {
+                                        final String templateName, final Map<String, ?> templateData) {
         return submitAsynchronousTask(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -186,7 +186,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
      * @throws org.apache.commons.mail.EmailException Fired if the email can not be sent.
      */
     @Override
-    public void sendEmail(String subject, String templateName, Map<String, Object> templateData)
+    public void sendEmail(String subject, String templateName, Map<String, ?> templateData)
             throws IOException, TemplateException, EmailException {
         sendEmail(defaultToAddress, subject, templateName, templateData);
     }
@@ -210,7 +210,7 @@ public class EmailServiceImpl extends AbstractAsynchronousActionHandler implemen
      * @return A future for the background operation.
      */
     @Override
-    public Future sendEmailInBackground(String subject, String templateName, Map<String, Object> templateData) {
+    public Future sendEmailInBackground(String subject, String templateName, Map<String, ?> templateData) {
         return sendEmailInBackground(defaultToAddress, subject, templateName, templateData);
     }
 

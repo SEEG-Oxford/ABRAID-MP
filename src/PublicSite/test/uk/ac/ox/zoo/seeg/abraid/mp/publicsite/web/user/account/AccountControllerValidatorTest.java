@@ -5,6 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ExpertValidationRulesChecker;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
@@ -88,6 +89,86 @@ public class AccountControllerValidatorTest {
 
         // Assert
         verify(checker).checkDiseaseInterests(eq(expert.getDiseaseInterests()), anyListOf(String.class));
+    }
+
+    @Test
+    public void validateNewPasswordResetRequestChecksExpertExists() throws Exception {
+        // Arrange
+        String email = "email";
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validateNewPasswordResetRequest(email);
+
+        // Assert
+        verify(checker).checkExpertExists(email, result);
+    }
+
+    @Test
+    public void validatePasswordResetRequestChecksRequestKey() throws Exception {
+        // Arrange
+        Integer id = 1;
+        String key = "key";
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validatePasswordResetRequest(id, key);
+
+        // Assert
+        verify(checker).checkPasswordResetRequest(id, key, result);
+    }
+
+    @Test
+    public void validatePasswordResetProcessingChecksRequestKey() throws Exception {
+        // Arrange
+        Integer id = 1;
+        String key = "key";
+        String newPassword = "newPassword";
+        String confirmPassword = "confirmPassword";
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validatePasswordResetProcessing(newPassword, confirmPassword, id, key);
+
+        // Assert
+        verify(checker).checkPasswordResetRequest(id, key, result);
+    }
+
+    @Test
+    public void validatePasswordResetProcessingChecksNewPassword() throws Exception {
+        // Arrange
+        Integer id = 1;
+        String key = "key";
+        String newPassword = "newPassword";
+        String confirmPassword = "confirmPassword";
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validatePasswordResetProcessing(newPassword, confirmPassword, id, key);
+
+        // Assert
+        verify(checker).checkPassword(newPassword, result);
+    }
+
+    @Test
+    public void validatePasswordResetProcessingChecksPasswordConfirmation() throws Exception {
+        // Arrange
+        Integer id = 1;
+        String key = "key";
+        String newPassword = "newPassword";
+        String confirmPassword = "confirmPassword";
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validatePasswordResetProcessing(newPassword, confirmPassword, id, key);
+
+        // Assert
+        verify(checker).checkPasswordConfirmation(newPassword, confirmPassword, result);
     }
 
     private static JsonExpertDetails mockExpert() {

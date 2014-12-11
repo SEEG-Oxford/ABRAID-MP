@@ -9,10 +9,12 @@ define([
 ], function (ko, $, _) {
     "use strict";
 
-    return function (sendJson, receiveJson, baseUrl, targetUrl, messages, excludeGenericFailureMessage) {
+    return function (sendJson, receiveJson, baseUrl, targetUrl, messages,
+                     excludeGenericFailureMessage, preventRepeatSubmissions) {
         var self = this;
 
         excludeGenericFailureMessage = excludeGenericFailureMessage || false;
+        preventRepeatSubmissions = preventRepeatSubmissions || false;
         messages = messages || {};
 
         // It is assumed that self.isValid will be overridden by the ko.validation mixin, this is provided as a
@@ -21,6 +23,8 @@ define([
 
         self.isSubmitting = ko.observable(false);
         self.notices = ko.observableArray([]);
+
+        self.allowSubmit = ko.observable(true).extend({ areSame: true });
 
         // This function should be overridden in the concrete viewmodels
         self.buildSubmissionData = function () {
@@ -75,6 +79,10 @@ define([
         };
 
         self.successHandler = function (data, textStatus, xhr) {
+            if (preventRepeatSubmissions) {
+                self.allowSubmit(false);
+            }
+            
             self.pushNotice(messages.success || "Form saved successfully.", "success");
             try {
                 processResponse(xhr, "success");

@@ -33,6 +33,7 @@
     <bean id="landSeaBorderDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LandSeaBorderDaoImpl" autowire="constructor" />
     <bean id="locationDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDaoImpl" autowire="constructor" />
     <bean id="modelRunDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDaoImpl" autowire="constructor" />
+    <bean id="passwordResetRequestDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.PasswordResetRequestDaoImpl" autowire="constructor" />
     <bean id="provenanceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ProvenanceDaoImpl" autowire="constructor" />
     <bean id="submodelStatisticDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.SubmodelStatisticDaoImpl" autowire="constructor" />
     <bean id="validatorDiseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ValidatorDiseaseGroupDaoImpl" autowire="constructor" />

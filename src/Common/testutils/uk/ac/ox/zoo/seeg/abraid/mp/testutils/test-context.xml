@@ -11,5 +11,4 @@
     <bean id="loggingContextName" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="TestContext"/>
     </bean>
-
 </beans>

@@ -33,7 +33,7 @@
 
     <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <property name="userDetailsService" ref="userDetailsService"/>
-        <property name="passwordEncoder" ref="passwordEncoder" /> <!-- defined in applicationContext -->
+        <property name="passwordEncoder" ref="passwordEncoder" /> <!-- Defined in common/beans-web via applicationContext -->
     </bean>
 
     <!-- The Authentication Filter bean from http custom-filter tag -->
