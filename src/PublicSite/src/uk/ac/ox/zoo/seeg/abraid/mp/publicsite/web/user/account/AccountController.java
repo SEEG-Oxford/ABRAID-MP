@@ -11,17 +11,15 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.UriUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonValidatorDiseaseGroup;
@@ -46,12 +44,6 @@ public class AccountController extends AbstractController {
 
     private static final String DISEASES_ATTRIBUTE_KEY = "diseases";
     private static final String JSON_EXPERT_ATTRIBUTE_KEY = "jsonExpert";
-    private static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
-    private static final String X_FORWARDED_HOST = "X-Forwarded-Host";
-    private static final String HTTPS_PROTO = "https";
-    private static final String HTTP_PROTO = "http";
-    private static final int HTTPS_PORT = 443;
-    private static final int HTTP_PORT = 80;
 
     private final CurrentUserService currentUserService;
     private final ExpertService expertService;
@@ -173,6 +165,7 @@ public class AccountController extends AbstractController {
     @RequestMapping(value = "/account/reset/request", method = RequestMethod.GET)
     public String getPasswordResetRequestPage() {
         if (currentUserService.getCurrentUser() != null) {
+            // Prevent logged in users from performing a password reset (without returning a 403 error page)
             return "redirect:/";
         }
 
@@ -197,7 +190,7 @@ public class AccountController extends AbstractController {
 
         // Issue request
         try {
-            helper.processExpertPasswordResetRequestAsTransaction(email, extractBaseURL(request));
+            helper.processExpertPasswordResetRequestAsTransaction(email, UriUtils.extractBaseURL(request));
         } catch (ValidationException e) {
             return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
         }
@@ -216,6 +209,7 @@ public class AccountController extends AbstractController {
     @RequestMapping(value = "/account/reset/process", method = RequestMethod.GET)
     public String getPasswordResetProcessingPage(Integer id, String key, Model model) {
         if (currentUserService.getCurrentUser() != null) {
+            // Prevent logged in users from performing a password reset (without returning a 403 error page)
             return "redirect:/";
         }
 
@@ -259,41 +253,6 @@ public class AccountController extends AbstractController {
 
         // Return successfully
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Could add success page
-    }
-
-    private String extractBaseURL(HttpServletRequest request) {
-        // Adapted from org.springframework.web.servlet.support.ServletUriComponentsBuilder#fromRequest (Apache v2)
-        String scheme = request.getScheme();
-        int port = request.getServerPort();
-        String host = request.getServerName();
-
-        String header = request.getHeader(X_FORWARDED_HOST);
-        if (StringUtils.hasText(header)) {
-            String[] hosts = StringUtils.commaDelimitedListToStringArray(header);
-            String hostToUse = hosts[0];
-            if (hostToUse.contains(":")) {
-                String[] hostAndPort = StringUtils.split(hostToUse, ":");
-                host = hostAndPort[0];
-                port = Integer.parseInt(hostAndPort[1]);
-            } else {
-                host = hostToUse;
-            }
-        }
-
-        String forwardedScheme = request.getHeader(X_FORWARDED_PROTO);
-        if (forwardedScheme != null) {
-            scheme = forwardedScheme;
-        }
-
-        UriComponentsBuilder builder = ServletUriComponentsBuilder.newInstance();
-        builder.scheme(scheme);
-        builder.host(host);
-        if (!((scheme.equals(HTTP_PROTO) && port == HTTP_PORT) || (scheme.equals(HTTPS_PROTO) && port == HTTPS_PORT))) {
-            builder.port(port);
-        }
-        builder.path(request.getContextPath());
-
-        return builder.build().toUriString();
     }
 
     private JsonExpertDetails loadExpertDTO() {
