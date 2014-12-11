@@ -19,7 +19,7 @@ public interface PasswordResetRequestDao {
     List<PasswordResetRequest> getAll();
 
     /**
-     * Gets password reset request identified by it's ID.
+     * Gets password reset request identified by its ID.
      * @param id The ID.
      * @return The password reset request, or null if it does not exist.
      */
@@ -46,7 +46,7 @@ public interface PasswordResetRequestDao {
     void save(PasswordResetRequest passwordResetRequest);
 
     /**
-     * Remove the password reset request(s) issued prior to 24 hours ago.
+     * Remove the password reset request(s) that have expired due to age.
      */
     void removeOldRequests();
 }

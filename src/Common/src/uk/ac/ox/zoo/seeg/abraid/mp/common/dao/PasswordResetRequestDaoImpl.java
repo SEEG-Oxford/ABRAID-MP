@@ -30,7 +30,7 @@ public class PasswordResetRequestDaoImpl extends AbstractDao<PasswordResetReques
     }
 
     /**
-     * Remove the password reset request(s) issued prior to 24 hours ago.
+     * Remove the password reset request(s) that have expired due to age.
      */
     @Override
     public void removeOldRequests() {

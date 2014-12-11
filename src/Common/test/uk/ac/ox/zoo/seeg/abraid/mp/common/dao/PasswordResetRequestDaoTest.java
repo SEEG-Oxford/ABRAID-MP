@@ -45,7 +45,6 @@ public class PasswordResetRequestDaoTest extends AbstractCommonSpringIntegration
         assertThat(request.getRequestDate().isAfter(DateTime.now().minusHours(1))).isTrue();
     }
 
-
     @Test
     public void loadNonExistentPasswordResetRequest() {
         PasswordResetRequest request = passwordResetRequestDao.getById(54321);

@@ -178,7 +178,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
-     * Verifies a PasswordResetRequest key against the stored key hash for a PasswordResetRequest identified by it's id.
+     * Verifies a PasswordResetRequest key against the stored key hash for a PasswordResetRequest identified by its id.
      * This will also delete any PasswordResetRequests older than 24 hours.
      * @param id The id of the PasswordResetRequest to check against.
      * @param key The key to check.
