@@ -37,7 +37,7 @@ import static org.mockito.Mockito.same;
  */
 public class MainTest extends AbstractWebServiceClientIntegrationTests {
     public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
-    public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=edwiles&geonameId=";
+    public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=fakekey&geonameId=";
     public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api";
     public static final String LARGE_RASTER_FILENAME =
             "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
