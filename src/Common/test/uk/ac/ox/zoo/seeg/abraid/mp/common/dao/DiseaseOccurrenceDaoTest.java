@@ -588,14 +588,11 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         setUpParameterValues(diseaseGroupId, expectedCount);
 
         // Act
-        List<DiseaseOccurrence> newOccurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForTriggeringModelRun(
+        long count = diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(
                 diseaseGroupId, DateTime.now().minusDays(1), DateTime.now().plusDays(1));
 
         // Assert
-        assertThat(newOccurrences).hasSize(expectedCount);
-        for (DiseaseOccurrence occurrence : newOccurrences) {
-            assertThat(occurrence.getLocation().getPrecision()).isNotEqualTo(LocationPrecision.COUNTRY);
-        }
+        assertThat(count).isEqualTo(expectedCount);
     }
 
     private void setUpParameterValues(int diseaseGroupId, int expectedCount) {

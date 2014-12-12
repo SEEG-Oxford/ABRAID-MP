@@ -94,6 +94,8 @@ public class ModelRunGatekeeper {
     }
 
     private boolean thresholdsDefined(DiseaseGroup diseaseGroup) {
+        // minEnvironmentalSuitability and minDistanceFromDiseaseExtent thresholds are used when selecting the "new"
+        // occurrences in getDistinctLocationsCount query, so we must ensure they are defined before continuing
         return (diseaseGroup.getMinNewLocationsTrigger() != null) &&
                (diseaseGroup.getMinEnvironmentalSuitability() != null) &&
                (diseaseGroup.getMinDistanceFromDiseaseExtent() != null);
@@ -102,10 +104,6 @@ public class ModelRunGatekeeper {
     private long getDistinctLocationsCount(int diseaseGroupId) {
         DateTime endDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
         DateTime startDate = modelRunService.subtractDaysBetweenModelRuns(endDate);
-
-        List<DiseaseOccurrence> occurrences =
-                diseaseService.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
-        Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
-        return locations.size();
+        return diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroupId, startDate, endDate);
     }
 }

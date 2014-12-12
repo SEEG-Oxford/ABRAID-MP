@@ -58,13 +58,13 @@ import javax.persistence.Table;
                         "and d.finalWeighting is null "
         ),
         @NamedQuery(
-                name = "getDiseaseOccurrencesForTriggeringModelRun",
-                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
-                        "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.status in ('READY', 'IN_REVIEW') " +
-                        "and d.createdDate between :startDate and :endDate " +
-                        "and d.environmentalSuitability >= d.diseaseGroup.minEnvironmentalSuitability " +
-                        "and d.distanceFromDiseaseExtent >= d.diseaseGroup.minDistanceFromDiseaseExtent"
+                name = "getDistinctLocationsCountForTriggeringModelRun",
+                query = "select count(distinct location) from DiseaseOccurrence " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
+                        "and status in ('READY', 'IN_REVIEW') " +
+                        "and createdDate between :startDate and :endDate " +
+                        "and environmentalSuitability >= diseaseGroup.minEnvironmentalSuitability " +
+                        "and distanceFromDiseaseExtent >= diseaseGroup.minDistanceFromDiseaseExtent"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",
