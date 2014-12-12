@@ -5,6 +5,13 @@
 <#import "../../layout/common.ftl" as c/>
 
 <@c.minimalPage title="ABRAID-MP Administration: Disease Occurrence Spread">
+
+<style>
+    th {
+        cursor: default !important;
+    }
+</style>
+
 <div class="container">
     <#if (table.errorMessage)??>
         <div class="alert alert-warning" role="alert">${table.errorMessage}</div>
@@ -18,6 +25,13 @@
                     <th>${year?string("0")}</th>
                 </#list>
             </tr>
+            <tr>
+                <th>Total</th>
+                <th></th>
+                <#list table.totalRow as total>
+                    <th>${total?c}</th>
+                </#list>
+            </tr>
             </thead>
             <tbody>
             <#list table.rows as row>
@@ -25,7 +39,7 @@
                     <td>${row.countryName}</td>
                     <td>${row.isForMinimumDiseaseSpread?string("Yes","No")}</td>
                     <#list row.occurrenceCounts as occurrenceCount>
-                        <td>${occurrenceCount}</td>
+                        <td>${occurrenceCount?c}</td>
                     </#list>
                 </tr>
             </#list>
