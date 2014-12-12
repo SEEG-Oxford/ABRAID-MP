@@ -178,16 +178,17 @@ public class HealthMapAlertConverter {
         diseaseGroups.addAll(extract(healthMapSubDiseases, on(HealthMapSubDisease.class).getDiseaseGroup()));
 
         // Add disease groups associated with diseases
-        Set<HealthMapDisease> diseasesInSubDiseases = new HashSet<>(
+        Set<HealthMapDisease> parentDiseasesOfSubDiseases = new HashSet<>(
                 extract(healthMapSubDiseases, on(HealthMapSubDisease.class).getHealthMapDisease()));
-        List<HealthMapDisease> healthMapDiseases = retrieveHealthMapDiseases(healthMapAlert, diseasesInSubDiseases);
+        List<HealthMapDisease> healthMapDiseases = retrieveHealthMapDiseases(healthMapAlert,
+                parentDiseasesOfSubDiseases);
         diseaseGroups.addAll(extract(healthMapDiseases, on(HealthMapDisease.class).getDiseaseGroup()));
 
         return diseaseGroups;
     }
 
     private List<HealthMapDisease> retrieveHealthMapDiseases(HealthMapAlert healthMapAlert,
-                                                             Set<HealthMapDisease> diseasesInSubDiseases) {
+                                                             Set<HealthMapDisease> parentDiseasesOfSubDiseases) {
         List<HealthMapDisease> healthMapDiseases = new ArrayList<>();
         List<Integer> diseaseIds = healthMapAlert.getDiseaseIds();
         List<String> diseaseNames = healthMapAlert.getDiseases();
@@ -199,7 +200,7 @@ public class HealthMapAlertConverter {
 
             // Exclude HealthMap diseases that have already appeared in a sub-disease. For example, if disease name
             // is Malaria and sub-disease is pf, we should only add the pf sub-disease, not the Malaria disease.
-            if (healthMapDisease != null && !diseasesInSubDiseases.contains(healthMapDisease)) {
+            if (healthMapDisease != null && !parentDiseasesOfSubDiseases.contains(healthMapDisease)) {
                 healthMapDiseases.add(healthMapDisease);
             }
         }

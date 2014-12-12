@@ -196,7 +196,7 @@ public class HealthMapAlert {
      */
     public Set<String> getSplitComment() {
         Set<String> splitComment = new HashSet<>();
-        for (String part : ParseUtils.splitCommaDelimitedString(this.comment)) {
+        for (String part : ParseUtils.splitCommaDelimitedString(comment)) {
             // For each comment part, remove whitespace and make lowercase
             splitComment.add(part.replaceAll("\\s", "").toLowerCase());
         }
@@ -207,10 +207,10 @@ public class HealthMapAlert {
         // Returns a non-null list of items, either from the input list or the input item
         if (list != null && list.size() > 0) {
             return list;
-        } else if (item == null) {
-            return new ArrayList<>();
-        } else {
+        } else if (item != null) {
             return Arrays.asList(item);
+        } else {
+            return new ArrayList<>();
         }
     }
 }
