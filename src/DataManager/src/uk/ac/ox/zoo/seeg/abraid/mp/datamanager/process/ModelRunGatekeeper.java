@@ -3,17 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.on;
 
 /**
  * Determines whether the model run should execute.
@@ -94,6 +85,8 @@ public class ModelRunGatekeeper {
     }
 
     private boolean thresholdsDefined(DiseaseGroup diseaseGroup) {
+        // minEnvironmentalSuitability and minDistanceFromDiseaseExtent thresholds are used when selecting the "new"
+        // occurrences in getDistinctLocationsCount query, so we must ensure they are defined before continuing
         return (diseaseGroup.getMinNewLocationsTrigger() != null) &&
                (diseaseGroup.getMinEnvironmentalSuitability() != null) &&
                (diseaseGroup.getMinDistanceFromDiseaseExtent() != null);
@@ -102,10 +95,6 @@ public class ModelRunGatekeeper {
     private long getDistinctLocationsCount(int diseaseGroupId) {
         DateTime endDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
         DateTime startDate = modelRunService.subtractDaysBetweenModelRuns(endDate);
-
-        List<DiseaseOccurrence> occurrences =
-                diseaseService.getDiseaseOccurrencesForTriggeringModelRun(diseaseGroupId, startDate, endDate);
-        Set<Location> locations = new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
-        return locations.size();
+        return diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroupId, startDate, endDate);
     }
 }

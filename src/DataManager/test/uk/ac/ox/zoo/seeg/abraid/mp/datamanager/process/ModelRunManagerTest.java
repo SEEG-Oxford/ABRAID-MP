@@ -6,8 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
@@ -138,9 +136,10 @@ public class ModelRunManagerTest {
 
     private void arrangeAndAct(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
         // Arrange
-        int newLocationsCount = 10;
+        long newLocationsCount = 10;
         setLastModelRunPrepDate(weekHasElapsed);
-        mockGetNewLocationsCountByDiseaseGroup(newLocationsCount);
+        when(diseaseService.getDistinctLocationsCountForTriggeringModelRun(
+                eq(DISEASE_GROUP_ID), any(DateTime.class), any(DateTime.class))).thenReturn(newLocationsCount);
         setMinNewLocations(newLocationsCount, newLocationCountOverThreshold);
 
         // Act
@@ -156,28 +155,16 @@ public class ModelRunManagerTest {
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
     }
 
-    private void setMinNewLocations(int newLocationsCount, Boolean newLocationCountOverThreshold) {
+    private void setMinNewLocations(long newLocationsCount, Boolean newLocationCountOverThreshold) {
         Integer minNewLocations = null;
         if (newLocationCountOverThreshold != null) {
-            int thresholdAdjustment = newLocationCountOverThreshold ? -1 : +1;
-            minNewLocations = newLocationsCount + thresholdAdjustment;
+            long thresholdAdjustment = newLocationCountOverThreshold ? -1 : +1;
+            minNewLocations = (int) (newLocationsCount + thresholdAdjustment);
         }
         diseaseGroup.setMinNewLocationsTrigger(minNewLocations);
     }
 
     private void mockGetDiseaseGroupById() {
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
-    }
-
-    // Ensure that the number of distinct locations extracted from the new occurrences is >= threshold
-    private void mockGetNewLocationsCountByDiseaseGroup(long newLocationsCount) {
-        List<DiseaseOccurrence> newOccurrences = new ArrayList<>();
-        for (int i = 0; i < newLocationsCount; i++) {
-            DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
-            when(occurrence.getLocation()).thenReturn(new Location(i));
-            newOccurrences.add(occurrence);
-        }
-        when(diseaseService.getDiseaseOccurrencesForTriggeringModelRun(
-                eq(DISEASE_GROUP_ID), any(DateTime.class), any(DateTime.class))).thenReturn(newOccurrences);
     }
 }

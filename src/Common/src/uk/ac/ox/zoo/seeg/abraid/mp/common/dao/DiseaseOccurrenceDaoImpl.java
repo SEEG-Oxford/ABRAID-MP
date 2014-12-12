@@ -200,20 +200,21 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets the list of new disease occurrences for the specified disease group.
+     * Gets the number of distinct locations from the new disease occurrences for the specified disease group.
      * A "new" occurrence has status READY or IN_REVIEW, and a suitable created_date.
      * Occurrences must additionally satisfy that environmental suitability and distance from disease extent values are
-     * greater than minimum specified for the disease group.
+     * greater than minimum specified on the disease group.
      * @param diseaseGroupId The ID of the disease group.
      * @param startDate Occurrences must be newer than this date.
      * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
-     * @return The list of relevant new occurrences.
+     * @return The number of locations.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesForTriggeringModelRun(Integer diseaseGroupId,
-                                                                              DateTime startDate, DateTime endDate) {
-        return listNamedQuery("getDiseaseOccurrencesForTriggeringModelRun",
+    public long getDistinctLocationsCountForTriggeringModelRun(Integer diseaseGroupId,
+                                                               DateTime startDate, DateTime endDate) {
+        Query query = getParameterisedNamedQuery("getDistinctLocationsCountForTriggeringModelRun",
                 "diseaseGroupId", diseaseGroupId, "startDate", startDate, "endDate", endDate);
+        return (long) query.uniqueResult();
     }
 
     /**
